@@ -9,7 +9,7 @@
 
 ### [xCode](https://apps.apple.com/us/app/xcode/id497799835) 11.5
 
-### [CocoaPods]https://guides.cocoapods.org/using/getting-started.html) 1.9.3+
+### [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) 1.9.3+
 
 
 ## Build
@@ -19,14 +19,14 @@
 
 ### Supply the following private configuration files:
 
-• /.travis.yml
+####• /.travis.yml
 [No description available]
 
 
-• /secrets.tar.enc
+####• /secrets.tar.enc
 [No description available]
 
-• /assets/configs.json.enc
+####• /assets/configs.json.enc
 1. JSON data with the following format:
 ```
 {
@@ -51,21 +51,21 @@
 
 Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generate content of /assets/configs.json.enc.
 
-• /ios/Runner/GoogleService-Info-Debug.plist
-• /ios/Runner/GoogleService-Info-Release.plist
+####• /ios/Runner/GoogleService-Info-Debug.plist
+####• /ios/Runner/GoogleService-Info-Release.plist
 
 The Firebase configuration file for iOS generated from Google Firebase console.
 
-• /android/keys.properties
+####• /android/keys.properties
 Contains a GoogleMaps and Android Backup API keys.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 androidBackupApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-• /android/app/src/debug/google-services.json
-• /android/app/src/release/google-services.json
-• /android/app/src/profile/google-services.json
+####• /android/app/src/debug/google-services.json
+####• /android/app/src/release/google-services.json
+####• /android/app/src/profile/google-services.json
 The Firebase configuration file for Android generated from Google Firebase console.
 
 ### Build the project
