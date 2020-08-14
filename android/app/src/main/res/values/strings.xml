@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2020 Board of Trustees of the University of Illinois.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Illinois</string>
+
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="at">at</string>
+
+    <string name="explores">Explores</string>
+    <string name="events">Events</string>
+    <string name="dinings">Dining Options</string>
+    <string name="places">Places</string>
+    <string name="laundries">Laundries</string>
+    <string name="parkings">Parking lots</string>
+    <string name="ok">OK</string>
+
+    <!-- MapDirectionsActivity -->
+    <string name="directionsTitle">Directions</string>
+    <string name="routeFailedMsg">Failed to find route.</string>
+    <string name="locationFailedMsg">Failed to detect current location.</string>
+    <string name="start">START</string>
+    <string name="finish">FINISH</string>
+    <string name="routeDistanceDurationFormat">%1$d m | %2$d sec</string>
+    <string name="routeLegStepFormat">Leg %1$d / Step %2$d</string>
+    <string name="mile">mile</string>
+    <string name="miles">miles</string>
+    <string name="minute">min</string>
+
+    <!-- MapActivity -->
+    <string name="mapTitle">Maps</string>
+
+    <!-- MapPickLocationActivity -->
+    <string name="pick_location">Pick Location</string>
+    <string name="custom">CUSTOM</string>
+    <string name="select_location_msg">Please, select a location</string>
+    <string name="location_label">Location: %1$s</string>
+    <string name="save">Save</string>
+</resources>

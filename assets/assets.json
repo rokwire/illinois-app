@@ -1,0 +1,2259 @@
+{
+	"dining": {
+		"food_types": ["Halal", "Kosher", "Sustainable Seafood", "Vegan", "Vegetarian"],
+		"food_ingredients": ["Alcohol", "Coconut", "Corn", "Eggs", "Fish", "Gelatin", "Gluten", "Milk", "MSG", "Peanuts", "Pork", "Red Dye", "Sesame", "Shellfish", "Soy", "Sulfites", "Tree Nuts", "Wheat"],
+		"strings": {
+			"en": {"Halal":"Halal", "Kosher":"Kosher", "Sustainable Seafood":"Sustainable Seafood", "Vegan":"Vegan", "Vegetarian":"Vegetarian", "Alcohol":"Alcohol", "Coconut":"Coconut", "Corn":"Corn", "Eggs":"Eggs", "Fish":"Fish", "Gelatin":"Gelatin", "Gluten":"Gluten", "Milk":"Milk", "MSG":"MSG", "Peanuts":"Peanuts", "Pork":"Pork", "Red Dye":"Red Dye", "Sesame":"Sesame", "Shellfish":"Shellfish", "Soy":"Soy", "Sulfites":"Sulfites", "Tree Nuts":"Tree Nuts", "Wheat":"Wheat", "Serving":"Serving", "Calories":"Calories", "CaloriesFromFat":"Calories From Fat",    "SaturatedFat":"Saturated Fat",    "Transfat":"Transfat",    "PolyUnsaturatedFat":"Poly Unsaturated Fat", "CalciumPercent":"Calcium Percent",      "IronPercent":"Iron Percent",         "Sugars":"Sugars",   "TotalCarbs":"Total Carbs",           "DietaryFiber":"Dietary Fiber",   "Protein":"Protein", "TotalFat":"Total Fat",    "Cholesterol":"Cholesterol", "Sodium":"Sodium"},
+			"es": {"Halal":"Halal", "Kosher":"Kosher", "Sustainable Seafood":"Sustainable Seafood", "Vegan":"Vegan", "Vegetarian":"Vegetarian", "Alcohol":"Alcohol", "Coconut":"Coconut", "Corn":"Corn", "Eggs":"Eggs", "Fish":"Fish", "Gelatin":"Gelatin", "Gluten":"Gluten", "Milk":"Milk", "MSG":"MSG", "Peanuts":"Peanuts", "Pork":"Pork", "Red Dye":"Red Dye", "Sesame":"Sesame", "Shellfish":"Shellfish", "Soy":"Soy", "Sulfites":"Sulfites", "Tree Nuts":"Tree Nuts", "Wheat":"Wheat", "Serving":"Porción", "Calories":"Calorías", "CaloriesFromFat":"Calorías de la grasa", "SaturatedFat":"Grasas saturadas", "Transfat":"Grasa Trans", "PolyUnsaturatedFat":"Grasa poliinsaturada", "CalciumPercent":"Porcentaje de calcio", "IronPercent":"Porcentaje de hierro", "Sugars":"Azúcares", "TotalCarbs":"Carbohidratos totales", "DietaryFiber":"Fibra dietética", "Protein":"Proteína", "TotalFat":"Grasa total", "Cholesterol":"Colesterol",  "Sodium":"Sodio"},
+			"zh": {"Halal":"Halal", "Kosher":"Kosher", "Sustainable Seafood":"Sustainable Seafood", "Vegan":"Vegan", "Vegetarian":"Vegetarian", "Alcohol":"Alcohol", "Coconut":"Coconut", "Corn":"Corn", "Eggs":"Eggs", "Fish":"Fish", "Gelatin":"Gelatin", "Gluten":"Gluten", "Milk":"Milk", "MSG":"MSG", "Peanuts":"Peanuts", "Pork":"Pork", "Red Dye":"Red Dye", "Sesame":"Sesame", "Shellfish":"Shellfish", "Soy":"Soy", "Sulfites":"Sulfites", "Tree Nuts":"Tree Nuts", "Wheat":"Wheat", "Serving":"服务",     "Calories":"卡路里",    "CaloriesFromFat":"来自脂肪的卡路里",        "SaturatedFat":"饱和脂肪",          "Transfat":"反式脂肪",     "PolyUnsaturatedFat":"多不饱和脂肪",            "CalciumPercent":"钙百分比",              "IronPercent":"铁百分比",              "Sugars":"糖",       "TotalCarbs":"碳水化合物总量",           "DietaryFiber":"膳食纤维",         "Protein":"蛋白质",    "TotalFat":"总脂肪",       "Cholesterol":"胆固醇",       "Sodium":"钠"}
+		}
+	},
+
+	"laundry": {
+		"locations": [
+			{"laundry_location": "589877048", "laundry_room_name": "ALLEN, ROOM 49",                "location_details":{"longitude":-88.22088,  "latitude":40.104416, "floor":0}},
+			{"laundry_location": "589877054", "laundry_room_name": "BOUSFIELD-RM 101 DRYERS",       "location_details":{"longitude":-88.237941, "latitude":40.102036, "floor":0}},
+			{"laundry_location": "589877017", "laundry_room_name": "BOUSFIELD-RM 103 WASHERS",      "location_details":{"longitude":-88.237941, "latitude":40.102036, "floor":0}},
+			{"laundry_location": "589877019", "laundry_room_name": "BUSEY EVANS ROOM 8",            "location_details":{"longitude":-88.222941, "latitude":40.105977, "floor":0}},
+			{"laundry_location": "589877004", "laundry_room_name": "CLARK HALL, ROOM 30",           "location_details":{"longitude":-88.234041, "latitude":40.103841, "floor":0}},
+			{"laundry_location": "589877022", "laundry_room_name": "DANIELS, NORTH ROOM 119",       "location_details":{"longitude":-88.221658, "latitude":40.111014, "floor":0}},
+			{"laundry_location": "589877043", "laundry_room_name": "DANIELS, SOUTH ROOM 40",        "location_details":{"longitude":-88.221658, "latitude":40.111014, "floor":0}},
+			{"laundry_location": "589877003", "laundry_room_name": "FAR, OGLESBY ROOM 1",           "location_details":{"longitude":-88.221665, "latitude":40.099275, "floor":0}},
+			{"laundry_location": "589877021", "laundry_room_name": "FAR, TRELEASE ROOM 13",         "location_details":{"longitude":-88.220323, "latitude":40.099124, "floor":0}},
+			{"laundry_location": "589877044", "laundry_room_name": "GOODWIN GREEN, GREEN ROOM 31",  "location_details":{"longitude":-88.223707, "latitude":40.109995, "floor":0}},
+			{"laundry_location": "589877027", "laundry_room_name": "GOODWIN-GREEN, GOODWIN ROOM 8", "location_details":{"longitude":-88.223707, "latitude":40.109995, "floor":0}},
+			{"laundry_location": "589877026", "laundry_room_name": "HOPKINS, ROOM 150",             "location_details":{"longitude":-88.237834, "latitude":40.102821, "floor":0}},
+			{"laundry_location": "589877032", "laundry_room_name": "ISR, TOWNSEND ROOM 80",         "location_details":{"longitude":-88.220951, "latitude":40.110287, "floor":0}},
+			{"laundry_location": "589877030", "laundry_room_name": "ISR, WARDALL ROOM 12",          "location_details":{"longitude":-88.22174,  "latitude":40.109602, "floor":0}},
+			{"laundry_location": "589877031", "laundry_room_name": "LAR, NORTH ROOM 45",            "location_details":{"longitude":-88.220382, "latitude":40.104371, "floor":0}},
+			{"laundry_location": "589877038", "laundry_room_name": "LAR, SOUTH ROOM 29",            "location_details":{"longitude":-88.220382, "latitude":40.104371, "floor":0}},
+			{"laundry_location": "589877057", "laundry_room_name": "NUGENT, ROOM 126",              "location_details":{"longitude":-88.237296, "latitude":40.104108, "floor":0}},
+			{"laundry_location": "589877036", "laundry_room_name": "NUGENT, ROOM 31",               "location_details":{"longitude":-88.237296, "latitude":40.104108, "floor":0}},
+			{"laundry_location": "589877037", "laundry_room_name": "NUGENT, ROOM 35",               "location_details":{"longitude":-88.237296, "latitude":40.104108, "floor":0}},
+			{"laundry_location": "589877040", "laundry_room_name": "ORCHARD DOWNS, NORTH LAUNDRY",  "location_details":{"longitude":-88.214132, "latitude":40.096854, "floor":0}},
+			{"laundry_location": "589877041", "laundry_room_name": "ORCHARD DOWNS, SOUTH LAUNDRY",  "location_details":{"longitude":-88.214132, "latitude":40.096854, "floor":0}},
+			{"laundry_location": "589877023", "laundry_room_name": "PAR, BABCOCK ROOM 23",          "location_details":{"longitude":-88.221113, "latitude":40.099810, "floor":0}},
+			{"laundry_location": "589877046", "laundry_room_name": "PAR, BLAISDELL ROOM 21B",       "location_details":{"longitude":-88.219809, "latitude":40.100422, "floor":0}},
+			{"laundry_location": "589877024", "laundry_room_name": "PAR, CARR ROOM 22",             "location_details":{"longitude":-88.220893, "latitude":40.100385, "floor":0}},
+			{"laundry_location": "589877008", "laundry_room_name": "PAR, SAUNDERS ROOM 23",         "location_details":{"longitude":-88.219788, "latitude":40.099835, "floor":0}},
+			{"laundry_location": "589877009", "laundry_room_name": "SCOTT, ROOM 170",               "location_details":{"longitude":-88.236672, "latitude":40.102274, "floor":0}},
+			{"laundry_location": "589877052", "laundry_room_name": "SHERMAN, 13 STORY ROOM 52",     "location_details":{"longitude":-88.232349, "latitude":40.107331, "floor":0}},
+			{"laundry_location": "589877051", "laundry_room_name": "SHERMAN, 5 STORY ROOM 29",      "location_details":{"longitude":-88.232349, "latitude":40.107331, "floor":0}},
+			{"laundry_location": "589877015", "laundry_room_name": "SNYDER, ROOM 182",              "location_details":{"longitude":-88.235126, "latitude":40.102377, "floor":0}},
+			{"laundry_location": "589877002", "laundry_room_name": "TVD, TAFT ROOM 13",             "location_details":{"longitude":-88.233621, "latitude":40.102012, "floor":0}},
+			{"laundry_location": "589877058", "laundry_room_name": "TVD, VAN DOREN ROOM 13",        "location_details":{"longitude":-88.233655, "latitude":40.102035, "floor":0}},
+			{"laundry_location": "589877061", "laundry_room_name": "WASSAJA, ROOM 1109",            "location_details":{"longitude":-88.23819,  "latitude":40.103971, "floor":0}},
+			{"laundry_location": "589877028", "laundry_room_name": "WESTON, ROOM 100",              "location_details":{"longitude":-88.235365, "latitude":40.103287, "floor":0}}
+		]
+	},
+
+	"sports": {
+		"types":[
+			{"shortName": "baseball",  "name":"Baseball",                  "custom_name":"Baseball",          "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":false, "icon":"images/athletics-baseball-orange.png"},
+			{"shortName": "mbball",    "name":"Men's Basketball",          "custom_name":"Basketball",        "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":true,  "icon":"images/athletics-basketball-orange.png"},
+			{"shortName": "mcross",    "name":"Men's Cross Country",       "custom_name":"Cross Country",     "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-cross-orange.png"},
+			{"shortName": "football",  "name":"Football",                  "custom_name":"Football",          "hasPosition":true,  "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"men",   "ticketed":true,  "icon":"images/athletics-football-orange.png"},
+			{"shortName": "mgolf",     "name":"Men's Golf",                "custom_name":"Golf",              "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-golf-orange.png"},
+			{"shortName": "mgym",      "name":"Men's Gymnastics",          "custom_name":"Gymnastics",        "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,                     "gender":"men",   "ticketed":false, "icon":"images/athletics-gymnastics-orange.png"},
+			{"shortName": "mten",      "name":"Men's Tennis",              "custom_name":"Tennis",            "hasPosition":false, "hasHeight":true,  "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false, "hasScores":true,  "gender":"men",   "ticketed":false, "icon":"images/athletics-tennis-orange.png"},
+			{"shortName": "mtrack",    "name":"Men's Track & Field",       "custom_name":"Track & Field",     "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-track-orange.png"},
+			{"shortName": "wrestling", "name":"Men's Wrestling",           "custom_name":"Wrestling",         "hasPosition":false, "hasHeight":true,  "hasWeight":true,  "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"men",   "ticketed":false, "icon":"images/athletics-wrestling-orange.png"},
+			{"shortName": "wbball",    "name":"Women's Basketball",        "custom_name":"Basketball",        "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":true,  "icon":"images/athletics-basketball-orange.png"},
+			{"shortName": "wcross",    "name":"Women's Cross Country",     "custom_name":"Cross Country",     "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-cross-orange.png"},
+			{"shortName": "wgolf",     "name":"Women's Golf",              "custom_name":"Golf",              "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-golf-orange.png"},
+			{"shortName": "wgym",      "name":"Women's Gymnastics",        "custom_name":"Gymnastics",        "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-gymnastics-orange.png"},
+			{"shortName": "wsoc",      "name":"Women's Soccer",            "custom_name":"Soccer",            "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":false, "icon":"images/athletics-soccer-orange.png"},
+			{"shortName": "softball",  "name":"Softball",                  "custom_name":"Softball",          "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":false, "icon":"images/athletics-softball-orange.png"},
+			{"shortName": "wswim",     "name":"Women's Swimming & Diving", "custom_name":"Swimming & Diving", "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-swim-orange.png"},
+			{"shortName": "wten",      "name":"Women's Tennis",            "custom_name":"Tennis",            "hasPosition":false, "hasHeight":false, "hasWeight":false, "hasSortByPosition":false, "hasSortByNumber":false, "hasScores":true,  "gender":"women", "ticketed":false, "icon":"images/athletics-tennis-orange.png"},
+			{"shortName": "wtrack",    "name":"Women's Track & Field",     "custom_name":"Track & Field",     "hasPosition":true,  "hasHeight":false, "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":false,                    "gender":"women", "ticketed":false, "icon":"images/athletics-track-orange.png"},
+			{"shortName": "wvball",    "name":"Women's Volleyball",        "custom_name":"Volleyball",        "hasPosition":true,  "hasHeight":true,  "hasWeight":false, "hasSortByPosition":true,  "hasSortByNumber":true,  "hasScores":true,  "gender":"women", "ticketed":true,  "icon":"images/athletics-volleyball-orange.png"}
+		]
+	},
+
+	"images": {
+		"random": {
+			"events":{
+				"Academic": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/536ab9a5-c9c8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ba94d55d-c9ca-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8d80c73d-cab8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5c8ecdc2-cab8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e7eac331-cab8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1901c69c-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/41b41fcd-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/41b41fcd-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/98296276-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b2ef73d2-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d24aa5df-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/fe1ce39d-cab9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2b12d45f-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/50436052-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/86e656ff-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/bff31abc-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e1f30139-caba-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/02ea99ca-cabb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/31840f7d-cabb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/604d7a95-cabb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ae46c0de-cabb-11e9-88b6-0a58a9feac2a.webp"],
+				"Entertainment": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a200ab0c-c9cc-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/dc059d5d-c9cc-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4bd2d215-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/960743f8-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b5c38d95-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d752bce5-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ef962306-cde2-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/0b591886-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/231194d6-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3f742b15-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6149506f-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/76a50491-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/909f42ab-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a82f30df-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c43ba19d-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e409138f-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ff7f0567-cde3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/16dd1855-cde4-11e9-88b6-0a58a9feac2a.webp"],
+				"Community": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3adfe066-c9ce-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6bb3f9ad-c9ce-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4085db95-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5a807ff5-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b2c378cf-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/cb2c02a8-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e41bc78a-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ffaeef8a-cdf8-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/179a9726-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3081cc2e-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/49256c79-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/68254af9-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/860161c1-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/9e2c7cfd-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b2178b24-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c92a1089-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/df397ce2-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/f8a5f87e-cdf9-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/121d971e-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2c900ef3-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/42fcbae0-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5b5335cd-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/707bc956-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8b8c01c8-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a383594c-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b989b49e-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d0e119a8-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e5bca07a-cdfa-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/00ac8410-cdfb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/13aa3f3e-cdfb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2978c9dc-cdfb-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3da9c481-cdfb-11e9-88b6-0a58a9feac2a.webp"],
+				"Career Development": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/31c7ffd8-c9d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6f192cf4-c9d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/35b8a0a3-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4d7c80f3-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/6a1b897c-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/991422fd-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/aec5f88a-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d130c6c5-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/efccd5cd-cf63-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/10d5f5af-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3d3741b6-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/5c99bfb1-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/76c5201c-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8b203e82-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/aa884883-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c1f1b2f2-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/dd587562-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/f95bc33b-cf64-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/12e89ad3-cf65-11e9-88b6-0a58a9feac2a.webp"],
+				"Athletics": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b475bd11-c9d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/d604fc38-c9d4-11e9-88b6-0a58a9feac2a.webp"],
+				"Other": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2890eff7-c9d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/51cb8f85-c9d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ec0606d4-d260-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/05874ca8-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1fa1b6f0-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/36b454f9-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4d715915-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/73410ea5-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/89b66a33-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a06eaea5-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b86cb864-d261-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/04e35b53-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3fc504de-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/59e10e64-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/7a8735e6-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/97131e28-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ad2a0f39-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c725839a-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e4aa8b4a-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/ff7d982d-d262-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1d45ec8a-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/3b49b1c0-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/53943299-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/73441f37-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8cada753-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a7fc273c-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c711f5f2-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/f93611a0-d263-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/108cec19-d264-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/2f74f16b-d264-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4d8e7b51-d264-11e9-88b6-0a58a9feac2a.webp"],
+				"Recreation": ["https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/c085d844-c9d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1d89fdf1-c9d6-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/0ecf5ef2-d265-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/24bba90b-d265-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1299a8cb-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/37803339-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/51e00fb5-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/740bca52-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/9a3871f5-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b4dd8f5c-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/dd84d091-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/fe42ecf2-d296-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/23cd21e7-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4b499ff8-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/74dbadd4-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8bc0c32b-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a654ab5d-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/bfd6a22d-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/e2a4b86c-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/fb4c18a2-d297-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/1b26aa99-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/36aada45-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/4fac59ef-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/741709bd-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/8a794bad-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/a2c995d6-d298-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/event/tout/b8169210-d298-11e9-88b6-0a58a9feac2a.webp"]
+			},
+			"sports":{
+				"baseball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/7746fb3f-d36f-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/cb753691-d36f-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/e807bab6-d9b0-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/03ed7808-d9b1-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/1fa33439-d9b1-11e9-88b6-0a58a9feac2a.webp"],
+				"mbball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/01dbdaff-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/25ebd2ee-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/4595ef6b-d370-11e9-88b6-0a58a9feac2a.webp"],
+				"mcross": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/200cd2f3-d29a-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/8d435b9b-d29a-11e9-88b6-0a58a9feac2a.webp"],
+				"football": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/d8cbf697-cab6-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/038e18c5-cab7-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/24870af6-cab7-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/4455ebec-cab7-11e9-88b6-0a58a9feac2a.webp","https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/63fda99f-cab7-11e9-88b6-0a58a9feac2a.webp"],
+				"mgolf": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/8b0c9120-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/aaf66464-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/cb0c922f-d370-11e9-88b6-0a58a9feac2a.webp"],
+				"mgym": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/f677a5c2-d370-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/16e511a6-d371-11e9-88b6-0a58a9feac2a.webp"],
+				"mten": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/5b20eef9-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/769e10f6-d371-11e9-88b6-0a58a9feac2a.webp"],
+				"mtrack": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/c58e5654-d29c-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/aaf95c42-d29d-11e9-88b6-0a58a9feac2a.webp"],
+				"wrestling": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/04783cae-d29b-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/10cfd476-d29c-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/f9da35cb-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/15f81545-d9b0-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/wrestling/tout/2d85f86c-d9b0-11e9-88b6-0a58a9feac2a.webp"],
+				"wbball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/b663be7a-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/ded21df5-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/fcdac77b-d371-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/611e2428-d816-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/80d688eb-d816-11e9-88b6-0a58a9feac2a.webp"],
+				"wcross": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/33b3ac5b-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/5008312a-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/482d69f4-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/696e1fe8-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/81933383-d9af-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/crosscountry/tout/9840bee9-d9af-11e9-88b6-0a58a9feac2a.webp"],
+				"wgolf": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/7a3276a7-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/8dbba2b8-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/be5fce7b-d9ad-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/da5837f3-d9ad-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/f4da3ab2-d9ad-11e9-88b6-0a58a9feac2a.webp"],
+				"wgym": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/ae63d3c2-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/cc48ed21-d372-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/e6d01799-d372-11e9-88b6-0a58a9feac2a.webp"],
+				"wsoc": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/79cdfd2e-d29f-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/119a5d80-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/fc95e333-d8d3-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/1efe4a3a-d8d4-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/football/tout/40140e24-d8d4-11e9-88b6-0a58a9feac2a.webp"],
+				"softball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/42213b9c-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/golf/tout/5f4c633c-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/62fdc77b-d817-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/93dfecae-d817-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/baseball/tout/b0a2bdb0-d817-11e9-88b6-0a58a9feac2a.webp"],
+				"wswim": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/a027b8dc-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/c0c87e50-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/d81943ef-d373-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/0b6484ab-d8d5-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/3237cfb7-d8d5-11e9-88b6-0a58a9feac2a.webp"],
+				"wten": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/0a965cd0-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/61c1817d-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/85318155-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/ac9c35c6-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/cfc157cf-d815-11e9-88b6-0a58a9feac2a.webp"],
+				"wtrack": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/3912674b-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/55934f55-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/6f84a592-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/85507adb-d374-11e9-88b6-0a58a9feac2a.webp"],
+				"wvball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/b5b2c188-d29e-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/e25bc8f6-d29e-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/642c5674-d814-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/907ac2c7-d814-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/b6963a95-d814-11e9-88b6-0a58a9feac2a.webp"]
+			}
+		}
+	},
+
+	"reminders": {
+		"content":[
+			{"id":"ST20200508","date":"2020-05-08","label":"Final Exams Begin (Spring 2020)"},
+			{"id":"ST20200515","date":"2020-05-15","label":"Final Exams End (Spring 2020)"},
+			{"id":"SD20200515","date":"2020-05-15","label":"Deadline to submit a Certified Housing Reciprocal Release Application for Fall 2020 for continuing students"},
+			{"id":"SA20200515","date":"2020-05-15","label":"Student health insurance change/waiver period begins for coverage period May 16, 2020 - August 21, 2020"},
+			{"id":"SD20200516","date":"2020-05-16","label":"University Housing undergraduate residence halls close at 3 pm"},
+			{"id":"2ST0200619","date":"2020-06-19","label":"Student health insurance change/waiver period ends for coverage period May 16, 2020 - August 21, 2020"}
+		]
+	},
+
+	"geo_fence": {
+		"regions": [
+			{"id":"@Rokwire",          "types":["test"],             "name":"1301 W Springfield Ave, Urbana, IL 61801, USA", "enabled": true, "location": {"latitude": 40.112501, "longitude":  -88.226915, "radius": 200}},
+
+			{"id":"state_farm_center", "types":["stadium"],          "name":"State Farm Center",                             "enabled": true, "location": {"latitude": 40.096247, "longitude":  -88.235923, "radius": 280}},
+			{"id":"memorial_stadium",  "types":["stadium"],          "name":"Memorial Stadium",                              "enabled": true, "location": {"latitude": 40.099187, "longitude":  -88.235956, "radius": 150}},
+
+			{"id":"illini_union",      "types":["voter"],            "name":"Illini Union",                                  "enabled": true, "location": {"latitude": 40.109211, "longitude":  -88.227221, "radius": 100}},
+			{"id":"arc",               "types":["voter"],            "name":"ARC",                                           "enabled": true, "location": {"latitude": 40.100729, "longitude":  -88.235799, "radius": 150}},
+
+			{"id":"MTD",               "types":["test", "MTD"],      "name":"Champaign–Urbana MTD",                          "enabled": true, "beacon": {"uuid": "d7d5a51f-ce7f-4a4c-a944-bed73578b201"}}
+		]
+	},
+
+	"privacy": {
+		"levels":[
+			{"value":1,"title":"1"},
+			{"value":2,"title":"2"},
+			{"value":3,"title":"3"},
+			{"value":4,"title":"4"},
+			{"value":5,"title":"5"}
+		],
+		"types":[
+			{"value":"feature","title":"Features"},
+			{"value":"stored","title":"Stored Information"}
+		],
+		"categories":[
+			{
+				"title":"Events worldwide and Dining around Campus",
+				"description":{
+					"stored":"Listed below is the data you may choose to share that will be stored over time."
+				},
+				"entries":[
+					{
+						"key":"com.illinois.events.view.evn_no_loc",
+						"text":"View worldwide events and dining locations on campus, athletic schedules and athletic news.",
+						"type":"feature",
+						"min_level":1
+					},
+					{
+						"key":"com.illinois.events.view.no_store",
+						"text":"View events and dining locations near you.",
+						"type":"feature",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.events.store.no_store",
+						"text":"Your location may be known at any given time, but never stored.",
+						"type":"stored",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.events.view.allow_store",
+						"text":"Receive a more personalized experience that learns your preferences over time.",
+						"type":"feature",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.events.store.allow_store",
+						"text":"We may remember your location over time and store personal preferences.",
+						"type":"stored",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.events.view.allow_notification",
+						"text":"Get various notifications, and receive reminders of items you have starred in the app.",
+						"type":"feature",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.events.store.allow_notification",
+						"text":"We may store items you have starred in the app and send various notifications to your phone.",
+						"type":"stored",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.events.view.smart_event",
+						"text":"Use the smarts of the Converge service to help yourself or a group pick events you'll love.",
+						"type":"feature",
+						"min_level":5
+					},
+					{
+						"key":"com.illinois.events.store.smart_event",
+						"text":"Your preferences may be shared with other users you invite to discover an event as a group.",
+						"type":"stored",
+						"min_level":5
+					}
+				]
+			},
+			{
+				"title":"Athletics",
+				"description":{
+					"stored":"Listed below is the data you may choose to share that will be stored over time."
+				},
+				"entries":[
+					{
+						"key":"com.illinois.athletics.view.upcoming_schedule",
+						"text":"See all upcoming schedules for athletic events, some real-time scoring, rosters, and athletic news.",
+						"type":"feature",
+						"min_level":1
+					},
+					{
+						"key":"com.illinois.athletics.view.use_location",
+						"text":"Find your seat, the closest restroom, and the nearest concession stand at State Farm Center. See realtime availability of parking spaces available for purchase and get directions to the entrance of those parking lots around State Farm Center.",
+						"type":"feature",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.athletics.store.use_location",
+						"text":"Your location may be known at any given time, but never stored.",
+						"type":"stored",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.athletics.view.store_prefs",
+						"text":"Easily follow your favorite sports teams with real time score updates, rosters of players and coaches, and the latest athletic news.",
+						"type":"feature",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.athletics.store.store_prefs",
+						"text":"We may remember your location over time and store personal preferences.",
+						"type":"stored",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.athletics.view.login_paciolan",
+						"text":"Buy tickets for athletic events (requires Paciolan login). Make future ordering easy by storing your payment information. Receive notifications of event start and final scores for your favorite teams.",
+						"type":"feature",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.athletics.store.login_paciolan",
+						"text":"We may securely store your credit card information, remember items you have ordered, and send various notifications to your phone.",
+						"type":"stored",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.athletics.store.order_history",
+						"text":"We will access your previous orders.",
+						"type":"stored",
+						"min_level":5
+					}
+				]
+			},
+			{
+				"title":"Wallet",
+				"description":{
+					"stored":"Listed below is the data you may choose to share that will be stored over time."
+				},
+				"entries":[
+					{
+						"key":"com.illinois.ilini_cash.view.enable_store_cc_else",
+						"text":"Buy Illini Cash for yourself or someone you know.",
+						"type":"feature",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.ilini_cash.store.enable_store_cc_else",
+						"text":"We will use, but not store, your credit card information.",
+						"type":"stored",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.ilini_cash.view.enable_store_cc_only",
+						"text":"Check your Illini Cash and Meal Plan balances and see past transactions. Display your Illini ID and MTD bus pass. ",
+						"type":"feature",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.ilini_cash.store.enable_store_cc_only",
+						"text":"We may store your credit card information and phone number and send notifications to your phone. We will store personally identifiable information if you signin with your NetID or a verfied phone number.",
+						"type":"stored",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.ilini_cash.store.enable_history",
+						"text":"We may store your history of interactions with the app. Use your history to identify users like you to help your and their recommendations.",
+						"type":"stored",
+						"min_level":5
+					}
+				]
+			},
+			{
+				"title":"Health and Wellness",
+				"description":{
+					"stored":"Listed below is the data you may choose to share that will be stored over time."
+				},
+				"entries":[
+					{
+						"key":"com.illinois.health_and_wellness.view.locate_and_connect",
+						"text":"Locate and connect to resources at the University to assist you with your 8 dimensions of Health and Wellness",
+						"type":"feature",
+						"min_level":1
+					},
+					{
+						"key":"com.illinois.health_and_wellness.view.way_finding",
+						"text":"Provide you wayfinding assistance to locating Health and Wellness resouces on campus.",
+						"type":"feature",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.health_and_wellness.store.location",
+						"text":"Your location may be known at any given time, but never stored.",
+						"type":"stored",
+						"min_level":2
+					}
+				]
+			},
+			{
+				"title":"Student and Community Involvement",
+				"description":{
+					"stored":"Listed below is the data you may choose to share that will be stored over time."
+				},
+				"entries":[
+					{
+						"key":"com.illinois.student_service.view.show",
+						"text":"Show campus dining locations and see menus for up to two weeks in the future.",
+						"type":"feature",
+						"min_level":1
+					},
+					{
+						"key":"com.illinois.student_service.view.location",
+						"text":"Show Event and Dining locations near your current location.",
+						"type":"feature",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.student_service.store.location",
+						"text":"Your location may be known at any given time, but never stored.",
+						"type":"stored",
+						"min_level":2
+					},
+					{
+						"key":"com.illinois.student_service.view.allergies",
+						"text":"Store your dining location preferences (including food allergies) and see menus for up to two weeks in the future.",
+						"type":"feature",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.student_service.store.allergies",
+						"text":"We may remember your location over time and store your preferences.",
+						"type":"stored",
+						"min_level":3
+					},
+					{
+						"key":"com.illinois.student_service.view.notification",
+						"text":"Provide assistance in registering to vote, voting by mail and finding voting locations on election day. Allow you to create a quick poll and receive results from people nearby or far away. Receive notifications that might interest you based on your preferences or location.",
+						"type":"feature",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.student_service.store.dining_location",
+						"text":"We may store your credit card information and phone number and send notifications to your phone. We may store the polls you participate in and start. We may store if you are registered to vote or are signed up for vote by mail.",
+						"type":"stored",
+						"min_level":4
+					},
+					{
+						"key":"com.illinois.student_service.view.dining_location",
+						"text":"See events, dining locations and news articles that interest you.",
+						"type":"feature",
+						"min_level":5
+					},
+					{
+						"key":"com.illinois.student_service.store.notification",
+						"text":"We may store your history of interactions with the app. Use your history to identify users like you to help your and their recommendations.",
+						"type":"stored",
+						"min_level":5
+					}
+				]
+			}
+		],
+		"features2": [
+			{
+				"key":"com.illinois.features2.entry.disable_location_awareness",
+				"text":"Disable location awareness",
+				"max_level":1
+			},
+			{
+				"key":"com.illinois.features2.entry.dont_store_location",
+				"text":"Don't store your location",
+				"max_level":2
+			},
+			{
+				"key":"com.illinois.features2.entry.remove_preferences",
+				"text":"Remove your preferences",
+				"max_level":2
+			},
+			{
+				"key":"com.illinois.features2.entry.log_out",
+				"text":"Log you off system",
+				"max_level":3
+			},
+			{
+				"key":"com.illinois.features2.entry.disable_notifications",
+				"text":"Turn off notifications",
+				"max_level":3
+			},
+			{
+				"key":"com.illinois.features2.entry.remove_credit_card",
+				"text":"Remove your credit card info",
+				"max_level":3
+			},
+			{
+				"key":"com.illinois.features2.entry.dont_share_location",
+				"text":"Don’t share your data with other users",
+				"max_level":4
+			}
+		]
+	},
+
+	"privacy_new":{
+		"description":[
+			{"level":1, "key": "com.illinois.description.1", "text": "You may not be able to use all features, but you are anonymous and we don't ask for anything or store any data. Anonymous data will be collected and used to optimize app performance."},
+			{"level":2, "key": "com.illinois.description.1", "text": "See what's happening around you. We use Wifi and Bluetooth location services to improve your experience, but we never store that data."},
+			{"level":3, "key": "com.illinois.description.2", "text": "You can personalize and customize the app. Wifi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
+			{"level":4, "key": "com.illinois.description.3", "text": "Let the app work for you. \nYou can access your iCard, save credit cards to make future purchases easier, access health information, and get notifications based on your specific interests."},
+			{"level":5, "key": "com.illinois.description.4", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends all enjoy."}
+		],
+		"categories":[
+			{
+				"title":"Events and Dining \nAround Campus",
+				"title_key": "privacy.category.event_and_dining.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-only-blue.png",
+						"off_icon_resource": "view-only-blue.png",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.event_and_dining.view.only.title",
+						"description" : "View events and dining locations around campus.",
+						"description_key" :"privacy.entry.event_and_dining.view.only.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-sharing-blue.png",
+						"off_icon_resource": "location-sharing-blue-off.png",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.event_and_dining.location.sharing.title",
+						"description" : "View events and dining locations near you.",
+						"description_key" :"privacy.entry.event_and_dining.location.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "personalization-blue.png",
+						"off_icon_resource": "personalization-blue-off.png",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.event_and_dining.personalizations.title",
+						"description" : "View events and dining locations near you.",
+						"description_key" :"privacy.entry.event_and_dining.personalizations.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notifications-blue.png",
+						"off_icon_resource": "notifications-blue-off.png",
+						"title" : "Notificaitons",
+						"title_key" :"privacy.entry.event_and_dining.notifications.title",
+						"description" : "Get various notifications & receive reminders of items you have starred in the app.",
+						"description_key" :"privacy.entry.event_and_dining.notifications.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.notifications.data_usage"
+					},
+					{
+						"min_level": 5,
+						"icon_resource": "share-blue.png",
+						"off_icon_resource": "share-blue-off.png",
+						"title" : "Sharing",
+						"title_key" :"privacy.entry.event_and_dining.sharing.title",
+						"description" : "Use the SMARTS of the CONVERGE service to help yourself or a group pick events.",
+						"description_key" :"privacy.entry.event_and_dining.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.event_and_dining.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Athletics",
+				"title_key": "privacy.category.athletics.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-only-blue.png",
+						"off_icon_resource": "view-only-blue.png",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.athletics.view.only.title",
+						"description" : "See all upcoming schedules for athletic events, real-time scoring, rosters and athletic news.",
+						"description_key" :"privacy.entry.athletics.view.only.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.athletics.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-sharing-blue.png",
+						"off_icon_resource": "location-sharing-blue-off.png",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.athletics.location.sharing.title",
+						"description" : "Find seats, nearby restrooms & concession stands. See real-time parking availability and directions.",
+						"description_key" :"privacy.entry.athletics.location.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.athletics.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "personalization-blue.png",
+						"off_icon_resource": "personalization-blue-off.png",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.athletics.personalizations.title",
+						"description" : "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
+						"description_key" :"privacy.entry.athletics.personalizations.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.athletics.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notifications-blue.png",
+						"off_icon_resource": "notifications-blue-off.png",
+						"title" : "Notificaitons",
+						"title_key" :"privacy.entry.athletics.notifications.title",
+						"description" : "Receive notifications of event start and final scores for your favorite teams.",
+						"description_key" :"privacy.entry.athletics.notifications.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.athletics.notifications.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "identiy-blue.png",
+						"off_icon_resource": "identiy-blue-off.png",
+						"title" : "Identity",
+						"title_key" :"privacy.entry.athletics.sharing.title",
+						"description" : "Store credit card information to buy tickets for athletic events.",
+						"description_key" :"privacy.entry.athletics.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.athletics.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Wallet",
+				"title_key": "privacy.category.wallet.title",
+				"entries2": [
+					{
+						"min_level": 3,
+						"icon_resource": "personalization-blue.png",
+						"off_icon_resource": "personalization-blue-off.png",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.wallet.personalizations.title",
+						"description" : "Customize your experience to see schedules, rosters, scores and news for your favorite Illini teams.",
+						"description_key" :"privacy.entry.wallet.personalizations.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage",
+						"additional_min_level": 4,
+						"additional_description" : "Check your Illini Cash & Meal Plan balances and see past transactions.",
+						"additional_description_key" :"privacy.entry.wallet.personalizations.additional_description",
+						"additional_dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"additional_dataUsage_key" :"privacy.entry.wallet.personalizations.additional_data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "identiy-blue.png",
+						"off_icon_resource": "identiy-blue-off.png",
+						"title" : "Identity",
+						"title_key" :"privacy.entry.wallet.sharing.title",
+						"description" : "Store credit card information to buy tickets for athletic events.",
+						"description_key" :"privacy.entry.wallet.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.wallet.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Health and Wellness",
+				"title_key": "privacy.category.health.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-only-blue.png",
+						"off_icon_resource": "view-only-blue.png",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.health.view.only.title",
+						"description" : "Locate and connect to resources to assist you with your EIGHT DIMENSIONS of health and wellness.",
+						"description_key" :"privacy.entry.health.view.only.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.health.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-sharing-blue.png",
+						"off_icon_resource": "location-sharing-blue-off.png",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.health.location.sharing.title",
+						"description" : "Provide you wayfinding assistance to locating health and wellness resources on campus.",
+						"description_key" :"privacy.entry.health.location.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
+					}
+				]
+			},
+			{
+				"title":"Student and Community Involvement",
+				"title_key": "privacy.category.involvement.title",
+				"entries2": [
+					{
+						"min_level": 1,
+						"icon_resource": "view-only-blue.png",
+						"off_icon_resource": "view-only-blue.png",
+						"title" : "View Only",
+						"title_key" :"privacy.entry.involvement.view.only.title",
+						"description" : "Show campus dining locations and see menus for up to 2 weeks in the future..",
+						"description_key" :"privacy.entry.involvement.view.only.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.involvement.view.only.data_usage"
+					},
+					{
+						"min_level": 2,
+						"icon_resource": "location-sharing-blue.png",
+						"off_icon_resource": "location-sharing-blue-off.png",
+						"title" : "Location Sharing",
+						"title_key" :"privacy.entry.involvement.location.sharing.title",
+						"description" : "Show event and dining locations near you. Allow you to create a quick poll and receive results from people nearby or far away.",
+						"description_key" :"privacy.entry.involvement.location.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.involvement.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "personalization-blue.png",
+						"off_icon_resource": "personalization-blue-off.png",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.involvement.personalizations.title",
+						"description" : "Store your dining location preferences, including food allergies, and see current and future menus. See events, dining locations and news articles that interest you.",
+						"description_key" :"privacy.entry.involvement.personalizations.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.involvement.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notifications-blue.png",
+						"off_icon_resource": "notifications-blue-off.png",
+						"title" : "Notificaitons",
+						"title_key" :"privacy.entry.involvement.notifications.title",
+						"description" : "Receive notifications that might interest you based on your preferences or location.",
+						"description_key" :"privacy.entry.involvement.notifications.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.involvement.notifications.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "identiy-blue.png",
+						"off_icon_resource": "identiy-blue-off.png",
+						"title" : "Identity",
+						"title_key" :"privacy.entry.involvement.sharing.title",
+						"description" : "Provide assistance in registering to vote, voting by mail and finding voting locations on election day.",
+						"description_key" :"privacy.entry.involvement.sharing.description",
+						"dataUsage" : "This features uses your phone’s Wifi and Bluetooth.",
+						"dataUsage_key" :"privacy.entry.involvement.sharing.data_usage"
+					}
+				]
+			}
+		],
+		"features2": [
+			{
+				"key":"com.illinois.features2.entry.disable_location_awareness",
+				"text":"Disable location awareness",
+				"max_level":1
+			},
+			{
+				"key":"com.illinois.features2.entry.dont_store_location",
+				"text":"Don't store your location",
+				"max_level":2
+			},
+			{
+				"key":"com.illinois.features2.entry.remove_preferences",
+				"text":"Remove your preferences",
+				"max_level":2
+			},
+			{
+				"key":"com.illinois.features2.entry.log_out",
+				"text":"Log you off system",
+				"max_level":3
+			},
+			{
+				"key":"com.illinois.features2.entry.disable_notifications",
+				"text":"Turn off notifications",
+				"max_level":3
+			},
+			{
+				"key":"com.illinois.features2.entry.remove_credit_card",
+				"text":"Remove your credit card info",
+				"max_level":3
+			},
+			{
+				"key":"com.illinois.features2.entry.dont_share_location",
+				"text":"Don’t share your data with other users",
+				"max_level":4
+			}
+		]
+	},
+
+	"voter": {
+		"rules": [
+			{
+				"date_start": null,
+				"date_end": "2020/02/05",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_online.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					},
+					{
+						"label": "widget.voter.option.register_now",
+						"value": "nrv_place"
+					}
+				],
+				"NRV_place_title": "widget.voter.nrv_place_title.place_to_vote.question",
+				"NRV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "https://ova.elections.il.gov/"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "https://illinois.turbovote.org/"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside"
+			},
+			{
+				"date_start": "2020/02/06",
+				"date_end": "2020/02/18",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_online.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					},
+					{
+						"label": "widget.voter.option.register_now",
+						"value": "nrv_place"
+					}
+				],
+				"NRV_place_title": "widget.voter.nrv_place_title.place_to_vote.question",
+				"NRV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "https://ova.elections.il.gov/"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "https://illinois.turbovote.org/"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"VBM_text": "widget.voter.vbm_text.early_voting_clerk.text",
+				"VBM_button": "widget.voter.option.more_info",
+				"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+			},
+			{
+				"date_start": "2020/02/19",
+				"date_end": "2020/03/01",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_vote_today.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"VBM_text": "widget.voter.vbm_text.early_voting_clerk.text",
+				"VBM_button": "widget.voter.option.more_info",
+				"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+			},
+			{
+				"date_start": "2020/03/02",
+				"date_end": "2020/03/11",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.register_vote_today.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.signed_to_vote_by_mail.question",
+				"RV_text": "widget.voter.rv_text.vote_by_mail_ballot.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "vbm_yes"
+					},
+					{
+						"label": "widget.voter.option.vote_by_mail",
+						"value": "rv_url"
+					},
+					{
+						"label": "widget.voter.option.no_thanks",
+						"value": "vbm_no"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/vote-by-mail-reside",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"VBM_text": "widget.voter.vbm_text.no_need_to_wait.text",
+				"VBM_button": "widget.voter.option.more_info",
+				"VBM_url": "https://www.champaigncountyclerk.com/elections/early-voting"
+			},
+			{
+				"date_start": "2020/03/12",
+				"date_end": "2020/03/16",
+				"NRV_title": "widget.voter.nrv_title.registered_to_vote.question",
+				"NRV_text": "widget.voter.nrv_text.grace_period_open.text",
+				"NRV_options": [
+					{
+						"label": "widget.voter.option.yes",
+						"value": "rv_yes"
+					}
+				],
+				"NRV_alert": "widget.voter.nrv_alert.text",
+				"RV_place_title": "widget.voter.rv_place_title.place_to_vote.question",
+				"RV_place_options": [
+					{
+						"label": "widget.voter.option.champaign_county",
+						"value": "champaign"
+					},
+					{
+						"label": "widget.voter.option.elsewhere",
+						"value": "elsewhere"
+					}
+				],
+				"RV_title": "widget.voter.rv_title.early_voting.text",
+				"RV_text": "widget.voter.rv_text.vote_now.text",
+				"RV_options": [
+					{
+						"label": "widget.voter.option.more_info",
+						"value": "rv_url"
+					}
+				],
+				"RV_url": "https://www.champaigncountyclerk.com/elections/early-voting",
+				"RV_alert": "widget.voter.rv_alert.vote_early.text",
+				"hide_for_period": true
+			},
+			{
+				"date_start": "2020/05/18"
+			}
+		]
+	},
+
+	"wellness": {
+		"panels": {
+			"home": {
+				"header": {
+					"image": "group-4.png",
+					"title": "panel.wellness.home.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.home.description.main_text",
+					"secondary_text": "panel.wellness.home.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.home.eight_dimensions.header.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.home.activities.physical",
+								"font_size": 20,
+								"image": "physical.png",
+								"action": {
+									"name": "panel",
+									"source": "physical"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.mental",
+								"font_size": 20,
+								"image": "mental.png",
+								"action": {
+									"name": "panel",
+									"source": "mental"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.environmental",
+								"image": "environmental.png",
+								"action": {
+									"name": "panel",
+									"source": "environmental"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.financial",
+								"font_size": 20,
+								"image": "financial-2.png",
+								"action": {
+									"name": "panel",
+									"source": "financial"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.spiritual",
+								"font_size": 20,
+								"image": "spiritual.png",
+								"action": {
+									"name": "panel",
+									"source": "spiritual"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.vocational",
+								"font_size": 20,
+								"image": "vocational.png",
+								"action": {
+									"name": "panel",
+									"source": "vocational"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.emotional",
+								"font_size": 20,
+								"image": "emotional.png",
+								"action": {
+									"name": "panel",
+									"source": "emotional"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.social",
+								"font_size": 20,
+								"image": "social.png",
+								"action": {
+									"name": "panel",
+									"source": "social"
+								}
+							}
+						]
+					},
+					{
+						"header": {
+							"icon": "icon-schedule.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.home.activities.interactive_mood_meter",
+								"image": "group-7.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/interactive-mood-meter"
+								}
+							},
+							{
+								"title": "panel.wellness.home.activities.memory_mix_up",
+								"image": "group-2.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/memory-mixup"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.upace",
+								"image": "group-18.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/group-fitness/upace-app/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk",
+								"image": "kognito.png",
+								"action": {
+									"name": "web",
+									"source": "https://counselingcenter.illinois.edu/emergency/kognito-risk-suicide-prevention-training"
+								}
+							}
+						]
+					}
+				]
+			},
+			"physical": {
+				"header": {
+					"image": "group.png",
+					"title": "panel.wellness.physical.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.physical.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.physical.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.upace",
+								"image": "group-18.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/group-fitness/upace-app/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"title": "panel.wellness.common.resources.campus_recreation.title",
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.physical.resources.personal_training",
+								"url": "https://campusrec.illinois.edu/programs/personal-training/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.physical.resources.group_fitness",
+								"url": "https://campusrec.illinois.edu/programs/group-fitness/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.physical.resources.aquatics",
+								"url": "https://campusrec.illinois.edu/programs/aquatics/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.physical.resources.food_nutrition",
+								"url": "https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						],
+						"social_media": [
+							{
+								"type": "instagram",
+								"url": "https://www.instagram.com/illinoiscampusrec/"
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_health_center.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.physical.resources.mymckinley.title",
+								"url":"https://mymckinley.illinois.edu/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.appointments_mckinley",
+								"url":"http://mckinley.illinois.edu/medical-services/appointments",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.immunization",
+								"url":"http://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.womens_health",
+								"url":"http://mckinley.illinois.edu/medical-services/womens-health",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.fitness",
+								"url":"http://mckinley.illinois.edu/health-education/fitness",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.nutrition",
+								"url":"http://mckinley.illinois.edu/health-education/nutrition",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.sexual_health",
+								"url":"http://mckinley.illinois.edu/health-education/sexual-health",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.lgbtq",
+								"url":"http://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.lab",
+								"url":"http://mckinley.illinois.edu/medical-services/laboratory",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.radiology",
+								"url":"http://mckinley.illinois.edu/medical-services/radiology",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.pharmacy",
+								"url":"http://mckinley.illinois.edu/pharmacy/about-pharmacy",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						],
+						"social_media": [
+							{
+								"type":"youtube",
+								"url":"https://www.youtube.com/user/MHCMcTV"
+							},
+							{
+								"type":"facebook",
+								"url":"https://www.facebook.com/MckinleyHC/"
+							},
+							{
+								"type":"instagram",
+								"url":"https://www.instagram.com/mckinleyhealthcenter/"
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.physical.resources.first_time_visitors",
+								"url":"http://mhcwellness.illinois.edu/first-time-visitors",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.primary_care",
+								"url":"http://mhcwellness.illinois.edu/primary-care",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.schedule_appointment",
+								"url":"http://mhcwellness.illinois.edu/mymckinley-schedule-appointment",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.dial_nurse",
+								"url":"http://mhcwellness.illinois.edu/dial-nurse",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.health_resource_centers",
+								"url":"http://mhcwellness.illinois.edu/health-resource-centers",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.exercise",
+								"url":"http://mhcwellness.illinois.edu/exercise",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.physical.resources.eat_well",
+								"url":"http://mhcwellness.illinois.edu/eat-well",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.sexual_health",
+								"url":"http://mhcwellness.illinois.edu/sexual-health",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					}
+				]
+			},
+			"mental": {
+				"header": {
+					"image": "group-444.png",
+					"title": "panel.wellness.mental.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.mental.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.mental.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center",
+								"image": "kognito.png",
+								"action": {
+									"name": "web",
+									"source": "https://counselingcenter.illinois.edu/emergency/kognito-risk-suicide-prevention-training"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.mood_meter",
+								"image": "group-7.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/interactive-mood-meter"
+								}
+							},
+							{
+								"title": "panel.wellness.mental.interactive_activities.activity.mixup",
+								"image": "group-2.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/memory-mixup"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"title": "panel.wellness.common.resources.counseling_center.title",
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.mental.resources.counseling",
+								"url": "https://counselingcenter.illinois.edu/counseling",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.mental.resources.outreach",
+								"url": "https://counselingcenter.illinois.edu/outreach-and-prevention-services",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.common.resources.ace_it",
+								"url": "https://counselingcenter.illinois.edu/aceit",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_health_center.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.mental.resources.mental_services",
+								"url":"http://mckinley.illinois.edu/medical-services/mental-health",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.stress_management",
+								"url":"http://mckinley.illinois.edu/health-education/stress-management",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.relaxation_techniques",
+								"url":"http://mckinley.illinois.edu/health-education/stress-management/relaxation-techniques",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						],
+						"social_media": [
+							{
+								"type":"youtube",
+								"url":"https://www.youtube.com/user/MHCMcTV"
+							},
+							{
+								"type":"facebook",
+								"url":"https://www.facebook.com/MckinleyHC/"
+							},
+							{
+								"type":"instagram",
+								"url":"https://www.instagram.com/mckinleyhealthcenter/"
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.mental_health",
+								"url":"http://mhcwellness.illinois.edu/mental-health",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.mental.resources.manage_stress",
+								"url":"http://mhcwellness.illinois.edu/manage-stress",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.mental.resources.get_sleep",
+								"url":"http://mhcwellness.illinois.edu/get-sleep",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					}
+				]
+			},
+			"environmental": {
+				"header": {
+					"image": "group-9.png",
+					"title": "panel.wellness.environmental.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.environmental.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.environmental.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.environmental.resources.arboretum",
+								"url": "http://arboretum.illinois.edu/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.campus_recreation.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.environmental.resources.campus_bike_center",
+								"url":"https://campusrec.illinois.edu/programs/campus-bike-center/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.environmental.resources.transportation_safety",
+								"url":"http://mhcwellness.illinois.edu/safety-transportation",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.environmental.resources.late_night_studying",
+								"url":"http://mhcwellness.illinois.edu/studying-late-night",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					}
+				]
+			},
+			"financial": {
+				"header": {
+					"image": "financial.png",
+					"title": "panel.wellness.financial.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.financial.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.financial.description.secondary_text"
+				},
+				"resources": [
+					{
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.financial.resources.financial_wellness_program",
+								"url": "https://extension.illinois.edu/cfiv/financial-wellness-college-students",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.financial.resources.your_legal_health",
+								"url": "https://odos.illinois.edu/sls/resources/brochures/docs/your-legal-health.pdf",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.financial.resources.student_money_management",
+								"url": "https://www.studentmoney.uillinois.edu/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.financial.resources.budgets",
+								"url":"http://mhcwellness.illinois.edu/budget-finances",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					}
+				]
+			},
+			"spiritual": {
+				"header": {
+					"image": "group-44.png",
+					"title": "panel.wellness.spiritual.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.spiritual.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.spiritual.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.spiritual.resources.reflection_rooms",
+								"url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.spiritual.resources.open_prayer",
+								"url": "https://union.illinois.edu/get-involved/office-of-registered-organizations/student-organization-complex",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.office_inclusion.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.programs",
+								"url":"https://oiir.illinois.edu/programs",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.spiritual.resources.interfaith",
+								"url":"https://oiir.illinois.edu/diversityed/interfaith",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.bnaacc",
+								"url":"https://oiir.illinois.edu/bnaacc",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.aacc",
+								"url":"https://oiir.illinois.edu/aacc",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.la_casa",
+								"url":"https://oiir.illinois.edu/la-casa-cultural-latina",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.native_american_house",
+								"url":"https://oiir.illinois.edu/native-american-house",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.spiritual.resources.dean_students.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.spiritual.resources.religious_worker",
+								"url":"https://odos.illinois.edu/resources/rwa/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_health_center.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.relaxation_techniques",
+								"url":"http://mckinley.illinois.edu/health-education/stress-management/relaxation-techniques",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						],
+						"social_media": [
+							{
+								"type":"youtube",
+								"url":"https://www.youtube.com/user/MHCMcTV"
+							},
+							{
+								"type":"facebook",
+								"url":"https://www.facebook.com/MckinleyHC/"
+							},
+							{
+								"type":"instagram",
+								"url":"https://www.instagram.com/mckinleyhealthcenter/"
+							}
+						]
+					}
+				]
+			},
+			"vocational": {
+				"header": {
+					"image": "group-15.png",
+					"title": "panel.wellness.vocational.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.vocational.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.vocational.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.vocational.resources.career_center",
+								"url": "https://www.careercenter.illinois.edu/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.vocational.resources.student_job_board",
+								"url": "https://secure.osfa.illinois.edu/vjb/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.vocational.resources.top_scholars",
+								"url": "https://topscholars.illinois.edu/",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title": "panel.wellness.vocational.resources.i_programs",
+								"url": "http://leadership.illinois.edu/i-programs",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.vocational.resources.networking",
+								"url":"http://mhcwellness.illinois.edu/networking",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.vocational.resources.student_assistance_center",
+								"url":"http://mhcwellness.illinois.edu/student-assistance-center%E2%80%A8",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.vocational.resources.academic_advisement",
+								"url":"http://mhcwellness.illinois.edu/academic-advisement",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.vocational.resources.faqs",
+								"url":"http://mhcwellness.illinois.edu/faq",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.vocational.resources.study_tips",
+								"url":"http://mhcwellness.illinois.edu/study-tips",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.vocational.resources.compass",
+								"url":"http://mhcwellness.illinois.edu/what-compass",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.vocational.resources.tutoring",
+								"url":"http://mhcwellness.illinois.edu/tutoring",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.involved",
+								"url":"http://mhcwellness.illinois.edu/getting-involved",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					}
+				]
+			},
+			"emotional": {
+				"header": {
+					"image": "path.png",
+					"title": "panel.wellness.emotional.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.emotional.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.emotional.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.mood_meter",
+								"image": "group-7.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/interactive-mood-meter"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.emotional.resources.community_care",
+								"url": "https://odos.uiuc.edu/community-of-care/resources/students/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.office_inclusion.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.programs",
+								"url":"https://oiir.illinois.edu/programs",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.women_center",
+								"url":"https://oiir.illinois.edu/womens-center",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.lgbt_center",
+								"url":"https://oiir.illinois.edu/lgbt-resource-center",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.counseling_center.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.interactive_activities.activity.kognito_at_risk_center",
+								"url":"https://counselingcenter.illinois.edu/emergency/kognito-risk-suicide-prevention-training",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.ace_it",
+								"url":"https://counselingcenter.illinois.edu/aceit",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						],
+						"social_media": [
+							{
+								"type":"twitter",
+								"url":"http://twitter.com/UI_Counseling"
+							},
+							{
+								"type":"facebook",
+								"url":"https://www.facebook.com/IllinoisCounselingCenter"
+							},
+							{
+								"type":"youtube",
+								"url":"https://www.youtube.com/channel/UCyxUtefuFNxkk2MuwhcDgig"
+							},
+							{
+								"type":"instagram",
+								"url":"https://www.instagram.com/illinoiscounselingcenter/"
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_health_center.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.stress_management",
+								"url":"http://mckinley.illinois.edu/health-education/stress-management",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.mental_health",
+								"url":"http://mckinley.illinois.edu/medical-services/mental-health",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						],
+						"social_media": [
+							{
+								"type":"youtube",
+								"url":"https://www.youtube.com/user/MHCMcTV"
+							},
+							{
+								"type":"facebook",
+								"url":"https://www.facebook.com/MckinleyHC/"
+							},
+							{
+								"type":"instagram",
+								"url":"https://www.instagram.com/mckinleyhealthcenter/"
+							}
+						]
+					}
+				]
+			},
+			"social": {
+				"header": {
+					"image": "group-16.png",
+					"title": "panel.wellness.social.header.title"
+				},
+				"description": {
+					"main_text": "panel.wellness.social.description.main_text",
+					"bullet": "panel.wellness.common.description.bullet",
+					"secondary_text": "panel.wellness.social.description.secondary_text"
+				},
+				"activities": [
+					{
+						"header": {
+							"icon": "campus-tools.png",
+							"title": "panel.wellness.common.interactive_activities.title"
+						},
+						"items": [
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.mood_meter",
+								"image": "group-7.png",
+								"action": {
+									"name": "web",
+									"source": "http://mhcwellness.illinois.edu/interactive-mood-meter"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.reflection",
+								"image": "reflection.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/"
+								}
+							},
+							{
+								"title": "panel.wellness.common.interactive_activities.activity.pledge",
+								"image": "pledge.png",
+								"action": {
+									"name": "web",
+									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
+								}
+							}
+						]
+					}
+				],
+				"resources": [
+					{
+						"ribbon_buttons": [
+							{
+								"title": "panel.wellness.social.resources.engage",
+								"url": "https://illinois.campuslabs.com/engage/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.campus_recreation.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.social.resources.intramural_sports",
+								"url":"https://campusrec.illinois.edu/programs/intramural/",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.social.resources.illini_union.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.social.resources.rso",
+								"url":"https://union.illinois.edu/get-involved/office-of-registered-organizations",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.social.resources.master_calendar",
+								"url":"https://mastercalendar.union.illinois.edu/MasterCalendar/MasterCalendar.aspx",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.office_inclusion.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.bnaacc",
+								"url":"https://oiir.illinois.edu/bnaacc",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.aacc",
+								"url":"https://oiir.illinois.edu/aacc",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.la_casa",
+								"url":"https://oiir.illinois.edu/la-casa-cultural-latina",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.native_american_house",
+								"url":"https://oiir.illinois.edu/native-american-house",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.women_center",
+								"url":"https://oiir.illinois.edu/womens-center",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.common.resources.lgbt_center",
+								"url":"https://oiir.illinois.edu/lgbt-resource-center",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.social.resources.international_education",
+								"url":"https://oiir.illinois.edu/cultural-resource-centers/international-education",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					},
+					{
+						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
+						"ribbon_buttons": [
+							{
+								"title":"panel.wellness.common.resources.involved",
+								"url":"http://mhcwellness.illinois.edu/getting-involved",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.social.resources.going_out",
+								"url":"http://mhcwellness.illinois.edu/going-out",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.social.resources.peer_pressure",
+								"url":"http://mhcwellness.illinois.edu/peer-pressure",
+								"icon": "link-out.png",
+								"hint": ""
+							},
+							{
+								"title":"panel.wellness.social.resources.roommates",
+								"url":"http://mhcwellness.illinois.edu/roommates",
+								"icon": "link-out.png",
+								"hint": ""
+							}
+						]
+					}
+				]
+			}
+		}
+	},
+
+	"covid19_guidelines": {
+		"content": {
+			"green": [
+				{
+					"image": "icon-stay-at-home.png",
+					"description": "Stay at home",
+					"requirement": "Required until April 31"
+				},
+				{
+					"image": "icon-face-mask.png",
+					"description": "Wearing facemask",
+					"requirement": "Recommended"
+				}
+			],
+			"yellow": [
+				{
+					"image": "icon-social-distance.png",
+					"description": "Social distancing",
+					"requirement": "Required"
+				},
+				{
+					"image": "icon-stay-at-home.png",
+					"description": "Stay at home",
+					"requirement": "Required until April 31"
+				},
+				{
+					"image": "icon-face-mask.png",
+					"description": "Wearing facemask",
+					"requirement": "Recommended"
+				}
+			],
+			"red": [
+				{
+					"image": "icon-stay-at-home.png",
+					"description": "Stay at home",
+					"requirement": "Required"
+				},
+				{
+					"image": "icon-separate-people.png",
+					"description": "Separate from other people",
+					"requirement": "Required"
+				},
+				{
+					"image": "icon-face-mask.png",
+					"description": "Wearing facemask",
+					"requirement": "Required"
+				}
+			]
+		},
+		"strings": {
+			"en": {
+				"Stay at home": "Stay at home",
+				"Separate from other people": "Separate from other people",
+				"Wearing facemask": "Wearing facemask",
+				"Social distancing": "Social distancing",
+				"Required": "Required",
+				"Required until April 31": "Required until April 31",
+				"Recommended": "Recommended"
+			},
+			"es": {
+				"Stay at home": "Quédate en casa",
+				"Separate from other people": "Separado de otras personas",
+				"Wearing facemask": "Usar mascarilla",
+				"Social distancing": "Distanciamiento social",
+				"Required": "Necesario",
+				"Required until April 31": "Requerido hasta el 31 de abril",
+				"Recommended": "Recomendado"
+			},
+			"zh": {
+				"Stay at home": "呆在家裡",
+				"Separate from other people": "與其他人分開",
+				"Wearing facemask": "戴口罩",
+				"Social distancing": "社交隔離",
+				"Required": "需要",
+				"Required until April 31": "要求至4月31日",
+				"Recommended": "推薦的"
+			}
+		},
+		"icons": {
+			"home": "icon-stay-at-home.png",
+			"separate": "icon-separate-people.png",
+			"distance": "icon-social-distance.png",
+			"mask": "icon-face-mask.png"
+		}
+	}
+}
+

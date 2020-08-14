@@ -1,0 +1,263 @@
+/*
+ * Copyright 2020 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/athletics/AthleticsCoachDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/model/Coach.dart';
+import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/service/Styles.dart';
+
+
+class AthleticsCoachListPanel extends StatefulWidget {
+  final SportDefinition sport;
+  final List<Coach> allCoaches;
+  AthleticsCoachListPanel(this.sport,this.allCoaches);
+
+  @override
+  _AthleticsCoachListPanelState createState() => _AthleticsCoachListPanelState();
+}
+
+class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> implements _CoachItemListener{
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: SimpleHeaderBarWithBack(
+          context: context,
+          titleWidget: Text(
+            Localization().getStringEx('panel.athletics_coach_list.header.title', 'Staff'),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.0),
+          ),
+        ),
+        body: Column(
+          children: <Widget>[
+            _CoachListHeading(widget.sport),
+            Expanded(
+              child: ListView(
+                children: _constructCoachList(context),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Styles().colors.background,
+        bottomNavigationBar: TabBarWidget(),
+    );
+  }
+
+  List<Widget> _constructCoachList(BuildContext context){
+    List<Widget> widgets = List<Widget>();
+    if(widget.allCoaches != null) {
+      widget.allCoaches.forEach((coach) =>
+      {
+        widgets.add(_CoachItem(coach,listener: this,))
+      });
+    }
+
+    return widgets;
+  }
+
+  void _onCoachItemTap(Coach coach){
+    Analytics.instance.logSelect(target: "Coach: "+coach.name);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => AthleticsCoachDetailPanel(widget.sport, coach)));
+  }
+}
+
+abstract class _CoachItemListener{
+  _onCoachItemTap(Coach coach);
+}
+
+class _CoachListHeading extends StatelessWidget{
+  final SportDefinition sport;
+
+  _CoachListHeading(this.sport);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: <Widget>[
+      Expanded(
+        child: Container(
+          color: Styles().colors.fillColorPrimaryVariant,
+          padding: EdgeInsets.only(left: 16, right: 16, top:12, bottom: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(sport.iconPath, width: 16, height: 16,),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(sport.name,
+                      style: TextStyle(
+                          color: Styles().colors.surfaceAccent,
+                          fontFamily: Styles().fontFamilies.medium,
+                          fontSize: 16
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.0,),
+              Text(Localization().getStringEx("panel.athletics_coach_list.label.heading.title", "2019-2020 Coach"),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: Styles().fontFamilies.extraBold,
+                    fontSize: 20,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+    );
+  }
+}
+
+class _CoachItem extends StatelessWidget{
+  final _horizontalMargin = 16.0;
+  final _photoMargin = 10.0;
+  final _photoWidth = 80.0;
+  final _blueHeight = 48.0;
+
+  final _CoachItemListener listener;
+  final Coach coach;
+
+  _CoachItem(this.coach, {this.listener});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: ()=>listener._onCoachItemTap(coach),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only( bottom: 8),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  color: Styles().colors.fillColorPrimary,
+                  height: _blueHeight,
+                  margin: EdgeInsets.only(top: _photoMargin*2, left: _horizontalMargin, right: _horizontalMargin,),
+                  child: Container(
+                    margin: EdgeInsets.only(right:(_photoWidth + (_photoMargin + _horizontalMargin))),
+                    child: Padding(
+                      padding: EdgeInsets.only(left:8,right:8),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child:  Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(coach.name,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontSize: 20
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadiusDirectional.only(
+                        topStart: Radius.zero,
+                        topEnd: Radius.zero,
+                        bottomStart: Radius.circular(5),
+                        bottomEnd: Radius.circular(5),
+                      ),
+                      boxShadow: [
+                        BoxShadow(color: Styles().colors.fillColorPrimary,blurRadius: 4,),
+                      ]
+
+                  ),
+                  constraints: BoxConstraints(
+                    minHeight: 85
+                  ),
+                  margin: EdgeInsets.only(top: _blueHeight + _photoMargin*2,left: _horizontalMargin, right: _horizontalMargin,),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 8, top: 8, bottom: 8, right:(_photoWidth + (_photoMargin + _horizontalMargin))),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              width: 80,
+                              child: Text(Localization().getStringEx("panel.athletics_coach_list.label.position.title", "Position"),
+                                  style: TextStyle(
+                                      color: Styles().colors.textBackground,
+                                      fontFamily: Styles().fontFamilies.medium,
+                                      fontSize: 14
+                                  )
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(coach.title,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                      color: Styles().colors.textBackground,
+                                      fontFamily: Styles().fontFamilies.bold,
+                                      fontSize: 14
+                                  )
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
+                    child: (AppString.isStringNotEmpty(coach.photoUrl) ?
+                      Image.network(coach.photoUrl,width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,):
+                      Container(height: 96, width: 80, color: Colors.white,)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
