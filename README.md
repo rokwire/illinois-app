@@ -1,5 +1,5 @@
-# illinois-app
-[Repo under construction for open source] The official app of the University of Illinois. Powered by the Rokwire Platform.
+# Illinois App
+The official mobile app of the University of Illinois. Powered by the [Rokwire Platform](https://rokwire.org/).
 
 ## Requirements
 
