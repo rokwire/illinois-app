@@ -13,7 +13,7 @@
 		"wallet.cards":["covid19_passport", "mtd", "id", "library"],
 
 		"browse": ["browse.all", "browse.content"],
-		"browse.all": ["athletics", "saved", "covid19", "dining", "events", "quick_polls", "wellness", "groups"],
+		"browse.all": ["athletics", "saved", "covid19", "dining", "events", "quick_polls", "wellness", "groups", "covid19"],
 		"browse.content": ["privacy_center","settings", "my_illini", "laundry",  "illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 
 		"settings": ["user_info", "connect", "customizations", "connected", "notifications", "covid19_settings", "privacy", "account", "feedback"],

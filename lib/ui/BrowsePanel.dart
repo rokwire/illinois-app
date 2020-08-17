@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Connectivity.dart';
@@ -42,6 +44,7 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class BrowsePanel extends StatefulWidget {
 
@@ -52,6 +55,10 @@ class BrowsePanel extends StatefulWidget {
 }
 
 class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListener {
+
+  static const _saferIllonoisAppDeeplink      = "edu.illinois.covid://covid.illinois.edu/health/status";
+  static const _saferIllonoisAppStoreApple    = "market://details?id=edu.illinois.covid";
+  static const _saferIllonoisAppStoreAndroid  = "itms-apps://itunes.apple.com/us/app/apple-store/id1524691383";
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
 
@@ -251,16 +258,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateGroups(),
       );
     }
-    /* TMP temporary for easy restore
     else if (code == 'covid19') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.covid19.title', 'COVID-19'),
+        title: Localization().getStringEx('panel.browse.button.covid19.title', 'Safer Illinois'),
         hint: Localization().getStringEx('panel.browse.button.covid19.hint', ''),
-        icon: 'images/icon-browse-covid19.png',
-        color: Styles().colors.accentColor2,
-        onTap: () => _navigateCovid19(),
+        icon: 'images/safer-illinois-logo.png',
+        color: Styles().colors.fillColorPrimary,
+        onTap: () => _navigateToSaferIllinois(),
       );
-    }*/
+    }
     else {
       return null;
     }
@@ -582,6 +588,29 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       result = result.substring(0, result.length - 1); //remove the last symbol &
     }
     return result;
+  }
+
+  Future<void> _navigateToSaferIllinois() async{
+    try {
+
+      if (await url_launcher.canLaunch(_saferIllonoisAppDeeplink)) {
+        await url_launcher.launch(_saferIllonoisAppDeeplink);
+      } else {
+        if(Platform.isAndroid){
+          if(await url_launcher.canLaunch(_saferIllonoisAppStoreAndroid)) {
+            await url_launcher.launch(_saferIllonoisAppStoreAndroid);
+          }
+        }
+        else{
+          if(await url_launcher.canLaunch(_saferIllonoisAppStoreApple)) {
+            await url_launcher.launch(_saferIllonoisAppStoreApple);
+          }
+        }
+      }
+    }
+    catch(e) {
+      print(e);
+    }
   }
 
   // NotificationsListener
