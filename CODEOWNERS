@@ -1,5 +1,16 @@
 # Default assignment
-*   @mihail-varbanov
-*   @mdryankov
-*   @dobromirdobrev
-*   @TodorBachvarov
+*   @mihail-varbanov @mdryankov @dobromirdobrev @TodorBachvarov
+
+# Dart UI assignment
+/lib/ui/ @mdryankov @TodorBachvarov
+
+# Dart Model/Service assignment
+/lib/model/ @mihail-varbanov
+/lib/service/ @mihail-varbanov
+
+# Android assignment
+*.java @dobromirdobrev
+
+# iOS assignment
+*.m @mihail-varbanov
+
