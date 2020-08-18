@@ -117,6 +117,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>com.touchnet.orderahead</string>
+		<string>edu.illinois.covid</string>
 	</array>
 </dict>
 </plist>
