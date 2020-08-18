@@ -57,8 +57,8 @@ class BrowsePanel extends StatefulWidget {
 class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListener {
 
   static const _saferIllonoisAppDeeplink      = "edu.illinois.covid://covid.illinois.edu/health/status";
-  static const _saferIllonoisAppStoreApple    = "market://details?id=edu.illinois.covid";
-  static const _saferIllonoisAppStoreAndroid  = "itms-apps://itunes.apple.com/us/app/apple-store/id1524691383";
+  static const _saferIllonoisAppStoreApple    = "itms-apps://itunes.apple.com/us/app/apple-store/id1524691383";
+  static const _saferIllonoisAppStoreAndroid  = "market://details?id=edu.illinois.covid";
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
 
