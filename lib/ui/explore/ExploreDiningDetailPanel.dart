@@ -344,7 +344,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (onlineOrderPlatformDetails == null) {
       return null;
     }
-    if (onlineOrderPlatformDetails['deep_link'] == null) {
+    if (AppString.isStringEmpty(onlineOrderPlatformDetails['deep_link'])) {
       return null;
     }
     return Align(
