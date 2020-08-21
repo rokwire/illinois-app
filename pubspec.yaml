@@ -41,7 +41,6 @@ dependencies:
   firebase_core: ^0.4.3+3
   firebase_messaging: ^6.0.9
   firebase_crashlytics: ^0.1.2+5
-  firebase_ml_vision: ^0.9.4
   # End Firebase
   xml: ^3.5.0
   logger: ^0.7.0+2
