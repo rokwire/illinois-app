@@ -108,12 +108,16 @@
 
 	"reminders": {
 		"content":[
-			{"id":"ST20200508","date":"2020-05-08","label":"Final Exams Begin (Spring 2020)"},
-			{"id":"ST20200515","date":"2020-05-15","label":"Final Exams End (Spring 2020)"},
-			{"id":"SD20200515","date":"2020-05-15","label":"Deadline to submit a Certified Housing Reciprocal Release Application for Fall 2020 for continuing students"},
-			{"id":"SA20200515","date":"2020-05-15","label":"Student health insurance change/waiver period begins for coverage period May 16, 2020 - August 21, 2020"},
-			{"id":"SD20200516","date":"2020-05-16","label":"University Housing undergraduate residence halls close at 3 pm"},
-			{"id":"2ST0200619","date":"2020-06-19","label":"Student health insurance change/waiver period ends for coverage period May 16, 2020 - August 21, 2020"}
+			{"id":"KC20200821","date":"2020-08-21","label":"Student health insurance change/waiver begins for coverage period Aug 22, 2020 - Jan 15, 2021"},
+			{"id":"KC20200824","date":"2020-08-24","label":"First day of instruction (Fall 2020)"},
+			{"id":"KC20200904","date":"2020-09-04","label":"10th day add/drop deadline (Fall 2020)"},
+			{"id":"KC20200907","date":"2020-09-07","label":"Labor Day (all-campus holiday)"},
+			{"id":"KC20200925","date":"2020-09-25","label":"Student health insurance open enrollment ends for coverage period Aug 22, 2020 - Jan 15, 2021"},
+			{"id":"KC20201019","date":"2020-10-19","label":"Priority registration Time Tickets available (Spring 2021)"},
+			{"id":"KC20201102","date":"2020-11-02","label":"Priority registration begins (Spring 2021)"},
+			{"id":"KC20201103","date":"2020-11-03","label":"Election Day (all-campus holiday)"},
+			{"id":"KC20201120","date":"2020-11-20","label":"Last day of on-campus instruction"},
+			{"id":"KC20201123","date":"2020-11-23","label":"(Open registration begins for all students (Spring 2021)"}
 		]
 	},
 
