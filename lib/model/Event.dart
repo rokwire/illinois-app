@@ -121,25 +121,25 @@ class Event with Explore implements Favorite {
     subCategory = json['subCategory'];
     sponsor = json['sponsor'];
     titleUrl = json['titleURL'];
-    targetAudience = targetAudience;
+    this.targetAudience = targetAudience;
     icalUrl = json['icalUrl'];
     outlookUrl = json['outlookUrl'];
     speaker = json['speaker'];
     registrationLabel = json['registrationLabel'];
     registrationUrl = json['registrationUrl'];
     cost = json['cost'];
-    contacts = contacts;
-    tags = tags;
+    this.contacts = contacts;
+    this.tags = tags;
     modifiedDate = AppDateTime().dateTimeFromString(json['modifiedDate']);
     submissionResult = json['submissionResult'];
     allDay = json['allDay'] ?? false;
     recurringFlag = json['recurringFlag'] ?? false;
     recurrenceId = json['recurrenceId'];
-    recurringEvents = recurringEvents;
+    this.recurringEvents = recurringEvents;
     convergeScore = json['converge_score'];
     convergeUrl = json['converge_url'];
     isSuperEvent = json['isSuperEvent'] ?? false;
-    subEventsMap = subEventsMap;
+    this.subEventsMap = subEventsMap;
     track = json['track'];
   }
 

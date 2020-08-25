@@ -615,10 +615,12 @@ class _EventsListState extends State<_EventsList>{
   List<Widget> _buildListItems() {
     List<Widget> listItems = List<Widget>();
     bool isParentSuper = widget.parentEvent.isSuperEvent;
-    for (Event event in widget.events) {
-      listItems.add(_EventEntry(event: event, parentEvent: widget.parentEvent,));
-      if (isParentSuper && (listItems.length >= _minVisibleItems)) {
-        break;
+    if (AppCollection.isCollectionNotEmpty(widget.events)) {
+      for (Event event in widget.events) {
+        listItems.add(_EventEntry(event: event, parentEvent: widget.parentEvent,));
+        if (isParentSuper && (listItems.length >= _minVisibleItems)) {
+          break;
+        }
       }
     }
     if (isParentSuper) {
