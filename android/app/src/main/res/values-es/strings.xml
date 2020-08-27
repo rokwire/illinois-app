@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2020 Board of Trustees of the University of Illinois.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">Illinois</string>
+
+    <string name="today">Hoy</string>
+    <string name="tomorrow">Mañana</string>
+    <string name="at">a</string>
+
+    <string name="explores">Explora</string>
+    <string name="events">Eventos</string>
+    <string name="dinings">Opciones para comer</string>
+    <string name="places">Lugares</string>
+    <string name="laundries">Lavanderías</string>
+    <string name="parkings">Estacionamientos</string>
+    <string name="ok">OK</string>
+
+    <!-- MapDirectionsActivity -->
+    <string name="directionsTitle">Direcciones</string>
+    <string name="routeFailedMsg">No se pudo encontrar la ruta.</string>
+    <string name="locationFailedMsg">No se pudo detectar la ubicación actual.</string>
+    <string name="start">COMIENZO</string>
+    <string name="finish">TERMINAR</string>
+    <string name="routeDistanceDurationFormat">%1$d m | %2$d seg</string>
+    <string name="routeLegStepFormat">Pierna %1$d / Paso %2$d</string>
+    <string name="mile">milla</string>
+    <string name="miles">millas</string>
+    <string name="minute">min</string>
+
+    <!-- MapActivity -->
+    <string name="mapTitle">Mapas</string>
+
+    <!-- MapPickLocationActivity -->
+    <string name="pick_location">Elegir ubicación</string>
+    <string name="custom">PERSONALIZADO</string>
+    <string name="select_location_msg">Por favor, seleccione una ubicación</string>
+    <string name="location_label">Ubicación: %1$s</string>
+    <string name="save">Salvar</string>
+</resources>

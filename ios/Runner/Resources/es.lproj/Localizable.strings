@@ -1,0 +1,38 @@
+//
+//File.strings
+//Runner
+
+//Created by Mladen Dryankov on 26.03.20.
+//  Copyright 2020 Board of Trustees of the University of Illinois.
+        
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//    http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+// Spanish
+
+"Directions" = "Directions";
+"Detecting current location..." = "Detecting current location...";
+"Resolving target address ..." = "Resolving target address ...";
+"Failed to resolve target address." = "Failed to resolve target address.";
+"Detecting current location..." = "Detecting current location...";
+"Failed to detect current location." = "Failed to detect current location.";
+"Looking for route..." = "Looking for route...";
+"Failed to find route." = "Failed to find route.";
+"START" = "START";
+"FINISH" = "FINISH";
+"Pick Location" = "Pick Location";
+"Location" = "Location";
+"Please select a location." = "Please select a location.";
+"CUSTOM" = "CUSTOM";
+"Today" = "Today";
+"Tomorrow" = "Tomorrow";

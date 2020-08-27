@@ -1,0 +1,84 @@
+/*
+ * Copyright 2020 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'package:flutter/material.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
+
+import 'package:illinois/service/Sports.dart';
+import 'package:illinois/model/sport/Game.dart';
+
+import 'package:illinois/service/Localization.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
+import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/service/Styles.dart';
+
+class AthleticsGameDayWidget extends StatefulWidget {
+  final Game game;
+  AthleticsGameDayWidget({this.game});
+
+  _AthleticsGameDayWidgetState createState() => _AthleticsGameDayWidgetState();
+
+  SportDefinition get sportDefinition {
+    return game?.sport?.shortName != null
+        ? Sports().getSportByShortName(game.sport.shortName)
+        : null;
+  }
+}
+
+class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Container(
+          color: Styles().colors.fillColorPrimary,
+          child: Semantics( excludeSemantics: true, header: true,
+            label: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
+            child:Padding(
+              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              child: Row(
+                children: <Widget>[
+                  AppString.isStringNotEmpty(widget.sportDefinition?.iconPath)
+                      ? Image.asset(widget.sportDefinition.iconPath)
+                      : Container(),
+                  Container(
+                    width: 10,
+                  ),
+                  Text(
+                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: Styles().fontFamilies.extraBold,
+                        fontSize: 20),
+                  )
+                ],
+              ),
+            )
+          ),
+        ),
+        AthleticsGameDetailHeading(game: widget.game),
+        Container(
+          height: 48,
+        )
+      ],
+    );
+  }
+}
