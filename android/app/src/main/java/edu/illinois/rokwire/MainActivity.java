@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -488,24 +487,19 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private boolean handleLaunchApp(Object params) {
         String deepLink = Utils.Map.getValueFromPath(params, "deep_link", null);
-        Uri deepLinkUri = Uri.parse(deepLink);
+        Uri deepLinkUri = !Utils.Str.isEmpty(deepLink) ? Uri.parse(deepLink) : null;
         if (deepLinkUri == null) {
             Log.d(TAG, "Invalid deep link: " + deepLink);
             return false;
         }
-        String uriScheme = deepLinkUri.getScheme();
-        PackageInfo appPackageInfo = null;
-        try {
-            appPackageInfo = getPackageManager().getPackageInfo(uriScheme, 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.i(TAG, "There is no app installed: " + uriScheme);
-        }
-        if (appPackageInfo == null) {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
+        boolean activityExists = appIntent.resolveActivityInfo(getPackageManager(), 0) != null;
+        if (activityExists) {
+            startActivity(appIntent);
+            return true;
+        } else {
             return false;
         }
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, deepLinkUri);
-        startActivity(appIntent);
-        return true;
     }
 
     @Override
