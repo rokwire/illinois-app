@@ -31,7 +31,7 @@ import 'package:url_launcher/url_launcher.dart';
 		"home":{
 			"widget1": {
 				"title": "UIUC Wednesday 2020/03/18",
-				"text": "7 Dobromir, can we have 3 widgets made like we hacked voter widget for covid. Stored in assets.json. They will be hidden by talent chooser/assets until needed.",
+				"text": "7 Dobromir, can we have 3 widgets made like we hacked voter widget for c o v i d. Stored in assets.json. They will be hidden by talent chooser/assets until needed.",
 				"can_close": true,
 				"buttons":[
 					{"title":"Yes", "link": {"url": "https://illinois.edu", "options": { "target": "internal" } } },

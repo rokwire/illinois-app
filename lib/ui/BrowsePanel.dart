@@ -258,10 +258,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateGroups(),
       );
     }
-    else if (code == 'covid19') {
+    else if (code == 'safer') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.covid19.title', 'Safer Illinois'),
-        hint: Localization().getStringEx('panel.browse.button.covid19.hint', ''),
+        title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
+        hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
         icon: 'images/safer-illinois-logo.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),

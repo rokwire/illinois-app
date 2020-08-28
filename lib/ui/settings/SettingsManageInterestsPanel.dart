@@ -59,7 +59,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   //Search
   TextEditingController _textEditingController = TextEditingController();
 
-  bool _progress = true;
+  bool _progress = false;
   @override
   void initState() {
     NotificationService().subscribe(this, User.notifyTagsUpdated);

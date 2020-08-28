@@ -27,6 +27,7 @@ class RibbonButton extends StatelessWidget {
   final EdgeInsets padding;
   final BorderRadius borderRadius;
   final BoxBorder border;
+  final List<BoxShadow> shadow;
   final TextStyle style;
   final double height;
   final String leftIcon;
@@ -39,6 +40,7 @@ class RibbonButton extends StatelessWidget {
     this.onTap,
     this.borderRadius = BorderRadius.zero,
     this.border,
+    this.shadow,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     this.style,
     this.height = 48.0,
@@ -63,7 +65,7 @@ class RibbonButton extends StatelessWidget {
       onTap: () { onTap(); anaunceChange(); },
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
         child: Container(
-          decoration: BoxDecoration(color: Colors.white, border:border, borderRadius: borderRadius),
+          decoration: BoxDecoration(color: Colors.white, border:border, borderRadius: borderRadius, boxShadow: shadow),
           height: this.height,
           child: Padding(
             padding: padding,
