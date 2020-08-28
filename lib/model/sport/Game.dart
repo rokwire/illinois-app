@@ -133,7 +133,7 @@ class Game implements Favorite{
         ? '$opponentName at $teamName'
         : '$teamName at $opponentName';
 
-    // Show cancelled label (COVID-19 use case)
+    // Show cancelled label (C O V I D - 1 9 use case)
     return ((status?.toUpperCase() ?? "") == "C") ? "$title\n$cancelledLabel" : title;
   }
 
