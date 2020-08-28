@@ -1128,9 +1128,7 @@ class _PinnedSliverHeading extends SliverPersistentHeaderDelegate{
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return MeasureSize(
-        child:Container(child: child,)
-    );
+    return Container(child: child,);
   }
 
   @override
