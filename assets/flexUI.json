@@ -20,7 +20,7 @@
 		"settings.connected": ["netid", "phone"],
 		"settings.connected.netid": ["info", "disconnect", "connect"],
 		"settings.connected.phone": ["info", "disconnect", "verify"],
-		"settings.notifications": ["reminders", "athletics_updates", "dining", "covid19"],
+		"settings.notifications": ["reminders", "athletics_updates", "dining"],
 		"settings.privacy": ["edit", "statement"],
 		"settings.account": ["personal_info"],
 
