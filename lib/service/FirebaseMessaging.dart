@@ -60,7 +60,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     'event_reminders'  : 'event_reminders',
     'athletic_updates' : 'athletic_updates',
     'dining_specials'  : 'dinning_specials',
-    'notify_covid19'   : 'covid19'
   };
 
 

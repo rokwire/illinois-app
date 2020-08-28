@@ -157,8 +157,8 @@
     "panel.browse.button.state_farm_wayfinding.hint":"",
     "panel.browse.button.groups.title":"Grupos",
     "panel.browse.button.groups.hint":"",
-    "panel.browse.button.covid19.title":"Safer Illinois",
-    "panel.browse.button.covid19.hint":"",
+    "panel.browse.button.safer.title":"Safer Illinois",
+    "panel.browse.button.safer.hint":"",
 
     "panel.browse.label.browse_all": "Explorar todo",
     "panel.browse.label.offline.sign_in": "Iniciar sesión no disponible sin conexión.",
