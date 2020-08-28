@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+Removed COVID references from code. [#20](https://github.com/rokwire/illinois-app/issues/20)
+
 ## [2.2.12] - 2020-08-27
 
 ### Fixed
