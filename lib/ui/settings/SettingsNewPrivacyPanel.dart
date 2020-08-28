@@ -183,16 +183,28 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
         color: Styles().colors.white,
         child: SafeArea(
           top: false,
-          child: _PrivacyLevelSlider(
-            initialValue: _sliderValue,
-            onValueChanged: (double value) {
-              if (value != _sliderValue) {
-                setState(() {
-                  _sliderValue = value;
-                });
-              }
-            },
-          ),
+          child: Column(children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(child:
+                Text(
+                  Localization().getStringEx("panel.settings_new.privacy.label.slider_help", "Adjust slider to change your privacy level"),
+                  style: TextStyle(color: Styles().colors.textSurface, fontSize: 18, fontFamily:Styles().fontFamilies.bold),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],),
+            Container(height: 6,),
+            _PrivacyLevelSlider(
+              initialValue: _sliderValue,
+              onValueChanged: (double value) {
+                if (value != _sliderValue) {
+                  setState(() {
+                    _sliderValue = value;
+                  });
+                }
+              },
+            ),
+          ],)
           ));
   }
 
@@ -250,10 +262,14 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                     children: <Widget>[
                       Expanded(
                         child: Center(
-                          child: Text(
-                            Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.title", "New Privacy Settings"),
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
+                          child: Container(
+                            padding: EdgeInsets.only(top: 42, bottom: 10, left: 40, right: 40),
+                            child: Text(
+                              Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.title", "Your new \nprivacy level"),
+                              style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
                         ),
                       ),
                       GestureDetector(
@@ -283,84 +299,112 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
             ),
           ],
         ),
-        Container(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Text(
-            Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.label1", "Your new privacy setting"),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Container(
-              color: Styles().colors.fillColorPrimary,
-              height: 30,
-              width: 30,
-              child: Center(
-                child: Text(
-                  _sliderValue?.round()?.toString() ?? "",
-                  style: TextStyle(color: Colors.white),
+        Expanded(child: SingleChildScrollView(
+          child: Column(children: <Widget>[
+            Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Container(
+                  child: Column(children: <Widget>[
+                    Container(
+                      height: 48,
+                      color: Styles().colors.fillColorPrimary,
+                    ),
+                    Container(
+                      height: 48,
+                      color: Styles().colors.white,
+                    ),
+
+                  ],),
                 ),
+                Center(
+                  child: Container(
+                      height: 86,
+                      width: 86,
+                      child: Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Container(
+                            padding: EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                                color: Styles().colors.white,
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(width:2, color: Styles().colors.fillColorPrimary,)
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Styles().colors.white,
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(width:2, color: Styles().colors.fillColorSecondary,)
+                              ),
+                              child: Center(
+                                child: Text(
+                                  _sliderValue?.round()?.toString() ?? "",
+                                  style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
+                                ),
+                              ),
+                            ),))
+                  ),
+                )
+              ],),
+            Container(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 26),
+              child: Text(
+                Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes:"),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimaryVariant),
               ),
             ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Text(
-            Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.label2", "requires us to make the following chages:"),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
-          ),
-        ),
-        _buildPrivacyFeature2DialogEntries(),
-        Container(
-          height: 10,
-        ),
-        Text(
-          Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.confirm", "Are you sure?"),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Colors.black),
-        ),
-        Container(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              RoundedButton(
-                  onTap: () {
-                    Navigator.pop(context);
-                    Analytics.instance.logAlert(text: "Update privacy", selection: "Yes");
-                    _save();
-                  },
-                  backgroundColor: Colors.transparent,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  textColor: Styles().colors.fillColorPrimary,
-                  label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.yes", "Yes")),
-              Container(
-                height: 10,
+            _buildPrivacyFeature2DialogEntries(),
+            Container(
+              height: 10,
+            ),
+            Text(
+              Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.confirm", "Are you sure?"),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimaryVariant),
+            ),
+            Container(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: RoundedButton(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Analytics.instance.logAlert(text: "Update privacy", selection: "Yes");
+                        _save();
+                      },
+                      backgroundColor: Colors.transparent,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.yes", "Yes")),
+                  ),
+                  Container(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child:RoundedButton(
+                      onTap: () {
+                        Analytics.instance.logAlert(text: "Update privacy", selection: "No");
+                        Navigator.pop(context);
+                      },
+                      backgroundColor: Colors.transparent,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      textColor: Styles().colors.fillColorPrimary,
+                      label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.no", "No"))
+                  )
+                ],
               ),
-              RoundedButton(
-                  onTap: () {
-                    Analytics.instance.logAlert(text: "Update privacy", selection: "No");
-                    Navigator.pop(context);
-                  },
-                  backgroundColor: Colors.transparent,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  textColor: Styles().colors.fillColorPrimary,
-                  label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.no", "No"))
-            ],
-          ),
-        ),
+            ),
+            Container(height:20)
+          ],),)),
       ],
     );
   }
@@ -370,16 +414,27 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
     if (_data?.features2 != null) {
       for (PrivacyFeature2 feature2 in _data.features2) {
         if (feature2.maxLevel.round() >= _sliderValue.round()) {
-          list.add(Text(
-            Localization().getStringEx(feature2.key, feature2.text),
-            style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Colors.black),
-          ));
+          list.add(
+              Row(children: <Widget>[
+                Container(
+                  width: 8, height: 8,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Styles().colors.fillColorSecondary,),
+                ),
+                Container(width: 8,),
+                Expanded( child:
+                Text(
+                  Localization().getStringEx(feature2.key, feature2.text),
+                  style: TextStyle( fontSize: 16, color: Styles().colors.fillColorPrimaryVariant,),
+                )
+                )
+              ],)
+              );
         }
       }
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 28, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: list,
@@ -496,7 +551,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
       return Container(); //empty
     }
     return Container(
-        height: 180,
+        height: 160,
         color: Styles().colors.white,
         child: Padding(
             padding: EdgeInsets.only(top: 24, left: 22, right: 22,),
@@ -791,6 +846,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     bool isEnabled = widget.currentPrivacyLevel>=minLevel;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(description,
           style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies.regular, color: isEnabled? Styles().colors.textSurface: Styles().colors.textSurfaceTransparent15),
@@ -920,12 +976,15 @@ class _PrivacyLevelSliderState extends State<_PrivacyLevelSlider> {
                               value: _discreteValue,
                               min: 1.0,
                               max: 5.0,
-                              divisions: 4,
+                              divisions: 5,
                               semanticFormatterCallback: (double value) => value.round().toString(),
                               label: "$_roundedValue",
                               onChanged: (double value) {
                                 setState(() {
                                   _discreteValue = value;
+                                  if(value>3.3 && value<4) { // remove the second 3rd division caused by {max == division}
+                                    _discreteValue = value = 4;
+                                  }
                                   widget.onValueChanged(value);
                                 });
                               },
@@ -1061,9 +1120,9 @@ class _CustomTickMarkShape extends SliderTickMarkShape {
 }
 
 class _PinnedSliverHeading extends SliverPersistentHeaderDelegate{
-
   final Widget child;
-  final double constExtent = 140;
+  double constExtent = 170;
+  Size childSize;
 
   _PinnedSliverHeading({@required this.child});
 

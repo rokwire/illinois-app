@@ -29,6 +29,7 @@ class RoundedButton extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final Color secondaryBorderColor;
+  final List<BoxShadow> shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
   final double height;
@@ -51,7 +52,8 @@ class RoundedButton extends StatelessWidget {
       this.onTap,
       this.height = 48,
       this.width,
-      this.showAdd = false});
+      this.showAdd = false,
+      this.shadow});
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +74,7 @@ class RoundedButton extends StatelessWidget {
                   color: (borderColor != null) ? borderColor : (backgroundColor ?? Styles().colors.fillColorPrimary),
                   width: borderWidth),
               borderRadius: BorderRadius.circular(height / 2),
+              boxShadow: this.shadow
             ),
             child: Container(
               height: (height - 2),

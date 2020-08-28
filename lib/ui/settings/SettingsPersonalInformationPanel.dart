@@ -55,7 +55,33 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
           style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1.0),
         ),
       ),
-      body: SingleChildScrollView(child: _buildContent()),
+      body: Column(
+        children:[
+          Expanded(child:
+            SingleChildScrollView(child: _buildContent()),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: <Widget>[
+                Container(height: 1, color: Styles().colors.surfaceAccent,),
+                Container(height: 24,),
+                RoundedButton(
+                  backgroundColor: Styles().colors.white,
+                  textColor: UiColors.fromHex("#f54400"),
+                  fontSize: 16,
+                  fontFamily: Styles().fontFamilies.regular,
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal data"),
+                  shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+                  onTap: _onTapDeleteData,
+                ),
+                Container(height: 16,),
+                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations."),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),),
+                Container(height: 30,),
+            ],),
+          ),
+        ]),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
     );
@@ -97,20 +123,6 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
             onTap: _onTapFoodFilters,
           ),
           Container(height: 29,),
-          Container(height: 1, color: Styles().colors.surfaceAccent,),
-          Container(height: 24,),
-          RoundedButton(
-            backgroundColor: Styles().colors.white,
-            textColor: UiColors.fromHex("#f54400"),
-            fontSize: 16,
-            fontFamily: Styles().fontFamilies.regular,
-            label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal data"),
-            onTap: _onTapDeleteData,
-          ),
-          Container(height: 16,),
-          Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations."),
-            style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),),
-          Container(height: 30,),
         ],));
   }
 
