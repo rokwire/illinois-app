@@ -3,27 +3,24 @@
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
 		"home": ["upgrade_version_message", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items"],
-		"campus_tools": ["events", "covid19", "dining", "athletics", "illini_cash", "laundry", "my_illini"],
-
-		"health.covid19": ["latest_update", "stay_informed", "news", "resources", "general", "faq"],
+		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini"],
 
 		"wallet": ["wallet.connect", "wallet.content", "wallet.cards"],
 		"wallet.connect":["netid", "phone"],
 		"wallet.content": ["illini_cash", "meal_plan"],
-		"wallet.cards":["covid19_passport", "mtd", "id", "library"],
+		"wallet.cards":["mtd", "id", "library"],
 
 		"browse": ["browse.all", "browse.content"],
-		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "covid19"],
+		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups"],
 		"browse.content": ["privacy_center","settings", "my_illini", "laundry",  "illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 
-		"settings": ["user_info", "connect", "customizations", "connected", "notifications", "covid19_settings", "privacy", "account", "feedback"],
+		"settings": ["user_info", "connect", "customizations", "connected", "notifications", "privacy", "account", "feedback"],
 		"settings.connect": ["netid", "phone"],
 		"settings.customizations": ["roles", "interests", "food_filters" ],
 		"settings.connected": ["netid", "phone"],
 		"settings.connected.netid": ["info", "disconnect", "connect"],
 		"settings.connected.phone": ["info", "disconnect", "verify"],
 		"settings.notifications": ["reminders", "athletics_updates", "dining", "covid19"],
-		"settings.covid19_settings": ["exposure_notifications", "provider_test_result", "qr_code"],
 		"settings.privacy": ["edit", "statement"],
 		"settings.account": ["personal_info"],
 
@@ -104,7 +101,6 @@
 			"settings.connect"                : { "loggedIn": false },
 			"settings.connected"              : { "loggedIn": true },
 			"settings.account"                : { "loggedIn": true },
-			"settings.covid19_settings"		  : { "shibbolethLoggedIn": true },
 			"settings.connected.netid"        : { "shibbolethLoggedIn": true },
 			"settings.connected.phone"        : { "phoneLoggedIn": true },
 			"settings.connected.netid.info"       : { "shibbolethLoggedIn": true },
