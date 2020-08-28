@@ -49,9 +49,9 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Allow Illinois to access Media Library.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Your bluetooth will be used for the maps, to scan for nearby beacons, initiate polls with nearby devices and Exposure Notifications of people nearby you whom have tested positive for COVID-19.</string>
+	<string>Your bluetooth will be used for the maps, to scan for nearby beacons and initiate polls with nearby devices.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Your bluetooth will be used for the maps, to scan for nearby beacons, initiate polls with nearby devices and Exposure Notifications of people nearby you whom have tested positive for COVID-19.</string>
+	<string>Your bluetooth will be used for the maps, to scan for nearby beacons and initiate polls with nearby devices.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Your calendar will be used to let you set reminders for important events.</string>
 	<key>NSCameraUsageDescription</key>
