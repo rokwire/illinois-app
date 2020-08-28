@@ -2,7 +2,7 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["upgrade_version_message", "voter_registration", "covid19_info", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items"],
+		"home": ["upgrade_version_message", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items"],
 		"campus_tools": ["events", "covid19", "dining", "athletics", "illini_cash", "laundry", "my_illini"],
 
 		"health.covid19": ["latest_update", "stay_informed", "news", "resources", "general", "faq"],
@@ -48,7 +48,6 @@
 			"meal_plan"                       : ["student"],
 			"create_poll"                     : ["student", "OR", "employee"],
 			"upgrade_version_message"         : ["student", "OR", "employee"],
-			"covid19_info"                    : ["student", "OR", "employee", "OR", "resident"],
 
 			"onboarding.login_netid"          : ["student", "OR", "employee"],
 			"onboarding.login_phone"          : ["NOT", ["employee", "OR", "student"]],
