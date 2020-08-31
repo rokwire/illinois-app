@@ -464,7 +464,7 @@ class IlliniCash with Service implements NotificationsListener {
         response.statusCode <= 301) {
       String xmlString = response.body;
 
-      XmlDocument document = parse(xmlString);
+      XmlDocument document = XmlDocument.parse(xmlString);
       Iterable<XmlElement> tokenElements = document.findAllElements("Token");
 
       if(tokenElements != null && tokenElements.isNotEmpty){
@@ -565,7 +565,7 @@ class _CreditCardResponse{
   _CreditCardResponse({this.name, this.lastFour, this.exp});
 
   factory _CreditCardResponse.fromXMLString(String xmlString){
-    XmlDocument document = parse(xmlString);
+    XmlDocument document = XmlDocument.parse(xmlString);
 
     String name = _getValueFromXmlItem(document, "name");
     String lastFour = _getValueFromXmlItem(document, "cc");

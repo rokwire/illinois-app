@@ -342,7 +342,7 @@ class AppToast {
       msg: msg,
       textColor: Colors.white,
       toastLength: Toast.LENGTH_LONG,
-      timeInSecForIos: 3,
+      timeInSecForIosWeb: 3,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Styles().colors.blackTransparent06,
     );

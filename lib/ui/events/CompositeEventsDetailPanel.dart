@@ -442,7 +442,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     }
     return Container(color: Styles().colors.background, child: HtmlWidget(
       longDescription,
-      bodyPadding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24),
+      tableCellPadding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24),
       textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
     ),);
   }

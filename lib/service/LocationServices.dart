@@ -82,7 +82,7 @@ class LocationServices with Service implements NotificationsListener {
       _lastStatus = LocationServicesStatus.PermissionNotDetermined;
     }
     else {
-      _lastStatus = await Location().hasPermission() ? LocationServicesStatus.PermissionAllowed : LocationServicesStatus.PermissionDenied;
+      _lastStatus = await Location().hasPermission() == PermissionStatus.granted ? LocationServicesStatus.PermissionAllowed : LocationServicesStatus.PermissionDenied;
     }
 
     _updateLocationMonitor();
@@ -114,7 +114,7 @@ class LocationServices with Service implements NotificationsListener {
       _lastStatus = LocationServicesStatus.ServiceDisabled;
     }
     else if (Storage().locationServicesPermisionRequested) {
-      _lastStatus = await Location().hasPermission() ? LocationServicesStatus.PermissionAllowed : LocationServicesStatus.PermissionDenied;
+      _lastStatus = await Location().hasPermission() == PermissionStatus.granted ? LocationServicesStatus.PermissionAllowed : LocationServicesStatus.PermissionDenied;
     }
     else {
       _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('request'));
@@ -148,7 +148,7 @@ class LocationServices with Service implements NotificationsListener {
 
   void _openLocationMonitor() {
     if (_locationMonitor == null) {
-      _locationMonitor = Location().onLocationChanged().listen((LocationData location) {
+      _locationMonitor = Location().onLocationChanged.listen((LocationData location) {
         _lastLocation = location;
         _notifyLocationChanged();
       });

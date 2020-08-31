@@ -549,7 +549,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
           dining.exploreLongDescription,
-          bodyPadding: EdgeInsets.all(0),
+          tableCellPadding: EdgeInsets.all(0),
         ));
   }
 

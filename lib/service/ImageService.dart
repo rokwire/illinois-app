@@ -92,7 +92,7 @@ class ImageService /* with Service */ {
 
   Future<ImagesResult> chooseFromDevice(ImageType imageType) async {
     // 1. choose the image from the gallery
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    PickedFile image = await ImagePicker().getImage(source: ImageSource.gallery);
     if (image == null) {
       //return cancel
       Log.d("Cancel picker image");
@@ -100,7 +100,7 @@ class ImageService /* with Service */ {
     }
 
     // 2. call the image service api
-    List<int> bytesFile = image.readAsBytesSync();
+    List<int> bytesFile = File(image.path).readAsBytesSync();
     var fName = basename(image.path);
     var contentType = mime(fName);
     return _callImageService(imageType, bytesFile, fName, contentType);

@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:illinois/model/RecentItem.dart';
 
 import 'package:illinois/service/RecentItems.dart';
@@ -178,7 +179,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 10),
         child: Html(
           data:article.description,
-          defaultTextStyle: TextStyle(color: Styles().colors.textBackground, fontSize: 20)
+          style: {"body":Style(color: Styles().colors.textBackground,)}
         ),
       ));
     }

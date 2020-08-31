@@ -796,18 +796,7 @@ class _CustomThumbShape extends SliderComponentShape {
   }
 
   @override
-  void paint(
-    PaintingContext context,
-    Offset thumbCenter, {
-    Animation<double> activationAnimation,
-    Animation<double> enableAnimation,
-    bool isDiscrete,
-    TextPainter labelPainter,
-    RenderBox parentBox,
-    SliderThemeData sliderTheme,
-    TextDirection textDirection,
-    double value,
-  }) {
+  void paint(PaintingContext context, Offset center, {Animation<double> activationAnimation, Animation<double> enableAnimation, bool isDiscrete, TextPainter labelPainter, RenderBox parentBox, SliderThemeData sliderTheme, TextDirection textDirection, double value, double textScaleFactor, Size sizeWithOverflow}) {
     final Canvas canvas = context.canvas;
     final ColorTween colorTween = ColorTween(
       begin: sliderTheme.disabledThumbColor,
@@ -828,11 +817,11 @@ class _CustomThumbShape extends SliderComponentShape {
       end: Styles().colors.fillColorPrimary,
     );
 
-    canvas.drawCircle(thumbCenter, 25, Paint()..color = colorTween4.evaluate(enableAnimation));
-    canvas.drawCircle(thumbCenter, 23, Paint()..color = colorTween2.evaluate(enableAnimation));
-    canvas.drawCircle(thumbCenter, 21, Paint()..color = colorTween3.evaluate(enableAnimation));
-    canvas.drawCircle(thumbCenter, 19, Paint()..color = colorTween.evaluate(enableAnimation));
-    labelPainter.paint(canvas, thumbCenter + Offset(-labelPainter.width / 2.0, -labelPainter.height / 2.0));
+    canvas.drawCircle(center, 25, Paint()..color = colorTween4.evaluate(enableAnimation));
+    canvas.drawCircle(center, 23, Paint()..color = colorTween2.evaluate(enableAnimation));
+    canvas.drawCircle(center, 21, Paint()..color = colorTween3.evaluate(enableAnimation));
+    canvas.drawCircle(center, 19, Paint()..color = colorTween.evaluate(enableAnimation));
+    labelPainter.paint(canvas, center + Offset(-labelPainter.width / 2.0, -labelPainter.height / 2.0));
   }
 }
 
