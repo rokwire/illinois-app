@@ -98,11 +98,12 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                       Container(height: 10,),
                       Row(children: <Widget>[
                         Expanded(child:
-                        Text(
-                          Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
-                        ),
+                          Semantics(header: true, child:
+                            Text(
+                              Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
+                            ),)
                         ),
                       ],),
                       Container(height: 24,)
