@@ -159,13 +159,14 @@ class _OnboardingLoginPhoneVerifyPanelState
                               onChanged: _onMethodChanged,
                             ),
                           ),
-                          Text(
-                            Localization().getStringEx(
-                                "panel.onboarding.verify_phone.text_me.label",
-                                "Text me"),
-                            style: TextStyle(
-                                fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                          )
+                          ExcludeSemantics(child:
+                            Text(
+                              Localization().getStringEx(
+                                  "panel.onboarding.verify_phone.text_me.label",
+                                  "Text me"),
+                              style: TextStyle(
+                                  fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                            ))
                         ],
                       ),
                     ],
