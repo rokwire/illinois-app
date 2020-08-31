@@ -197,7 +197,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   }
   _buildConfirmButton(){
     return
-      Semantics( button: true,
+      Semantics( button: true, enabled: _getIsContinueEnabled,
         child: Stack(children: <Widget>[
           GestureDetector(
               onTap: (){ widget?.onContinue(selectedOptions, ({bool loading})=>setState((){_loading = loading;}));},

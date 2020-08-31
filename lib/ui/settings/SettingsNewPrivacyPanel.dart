@@ -260,38 +260,49 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                   padding: EdgeInsets.all(8),
                   child: Row(
                     children: <Widget>[
-                      Expanded(
-                        child: Center(
-                          child: Container(
-                            padding: EdgeInsets.only(top: 42, bottom: 10, left: 40, right: 40),
-                            child: Text(
-                              Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.title", "Your new \nprivacy level"),
-                              style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            border: Border.all(color: Styles().colors.white, width: 2),
+                       Expanded(
+                          child: Center( child:
+                            Container(
+                              padding: EdgeInsets.only(top: 42, bottom: 10, left: 40, right: 40),
+                              child:
+                              Semantics(button:false,  hint: "${_sliderValue?.round()?.toString() ?? ""}",
+                                child: Text(
+                                  Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.title", "Your new \nprivacy level"),
+                                  style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            )
                           ),
-                          child: Center(
-                            child: Text(
-                              "\u00D7",
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.white,
+                      ),
+                      Semantics(
+                        explicitChildNodes: true,
+                        child:
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                                border: Border.all(color: Styles().colors.white, width: 2),
+                              ),
+                              child: Semantics( button: true, label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.button.back.title", "Back"),child:
+                                Center(child:
+                                ExcludeSemantics( child:
+                                  Text(
+                                    "\u00D7",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        )
+                      )
                     ],
                   ),
                 ),
@@ -337,10 +348,13 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                                   border: Border.all(width:2, color: Styles().colors.fillColorSecondary,)
                               ),
                               child: Center(
-                                child: Text(
-                                  _sliderValue?.round()?.toString() ?? "",
-                                  style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
-                                ),
+                                child: Semantics(
+                                  label: Localization().getStringEx("panel.settings_new.privacy.dialog.label.new_privacy", "Privacy Level: "),
+                                  child: Text(
+                                    _sliderValue?.round()?.toString() ?? "",
+                                    style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
+                                  ),
+                                )
                               ),
                             ),))
                   ),
@@ -648,14 +662,17 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                 alignment: Alignment.centerRight,
                 padding: EdgeInsets.symmetric(horizontal: 18),
                 child:
-                Container(
-                  decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
-                  child: GestureDetector(
-                    onTap: _onTapExpandAll,
-                    child: Text(
-                      _canClose? Localization().getStringEx("panel.settings_new.button.close_all.title","Close All") : Localization().getStringEx("panel.settings_new.button.expand_all.title","Expand All"),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textSurface, fontSize: 16)
-                    ),
+                Semantics(
+                  button: true,
+                  child: Container(
+                    decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))),
+                    child: GestureDetector(
+                      onTap: _onTapExpandAll,
+                      child: Text(
+                        _canClose? Localization().getStringEx("panel.settings_new.button.close_all.title","Close All") : Localization().getStringEx("panel.settings_new.button.expand_all.title","Expand All"),
+                        style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textSurface, fontSize: 16)
+                      ),
+                    )
                   )
                 )
               ),
@@ -878,7 +895,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                     Container(width: 9,),
                     RotationTransition(
                         turns: _iconTurns,
-                        child: Image.asset(isEnabled? "images/down-arrow-orange.png": "images/down-arrow-orange-off.png")),
+                        child: Image.asset(isEnabled? "images/down-arrow-orange.png": "images/down-arrow-orange-off.png", excludeFromSemantics: true,)),
                   ],
                 )))),
         !infoExpanded? Container():
