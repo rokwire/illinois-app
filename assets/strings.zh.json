@@ -293,8 +293,8 @@
 	"panel.athletics_roster_list.label.htwt.title":"高/重。",
 	"panel.athletics_roster_list.label.year.title":"年",
 
-	"panel.athletics_coach_list.label.heading.title":"2019-2020教练",
-	"panel.athletics_coach_list.label.heading.title": "2019-2020 Coach",
+	"panel.athletics_coach_list.header.title": "Staff",
+	"panel.athletics_coach_list.label.heading.title": "2019-2020教练",
 	"panel.athletics_coach_list.label.position.title":"位置",
 
 	"panel.athletics_coach_detail.header.title":"员工",
@@ -922,7 +922,7 @@
 	"panel.settings.new_privacy.privacy.button.set_privacy.slider.hint": "Privacy Level",
 	"panel.settings.new_privacy.privacy.button.set_privacy.slider.increase": "increased to",
 	"panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease": "decreased to",
-	
+
 	"panel.create_event.header.title":"创建活动",
 	"panel.create_event.title":"创建活动",
 	"panel.create_event.add_image":"添加活动图像",
