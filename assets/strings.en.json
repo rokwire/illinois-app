@@ -590,6 +590,8 @@
     "panel.settings.manage_interests.search.cancel.hint":"clear the search filter",
     "panel.settings.manage_interests.search.search_button.title":"Search",
     "panel.settings.manage_interests.search.search_button.hint": "filter tags",
+    "panel.settings.manage_interests.button.save.title": "Save Changes",
+    "panel.settings.manage_interests.button.save.hint": "",
 
     "panel.settings.illini_cash.label.title": "Illini Cash",
     "panel.settings.illini_cash.label.history": "History",
@@ -732,6 +734,8 @@
     "panel.food_filters.label.exclude_ingredients.hint": "",
     "panel.food_filters.value.on": "On",
     "panel.food_filters.value.off": "Off",
+    "panel.food_filters.button.save.title": "Save Changes",
+    "panel.food_filters.button.save.hint": "",
 
     "panel.food_special_offers.title.text": "Specials",
     "panel.food_special_offers.available.text": "Available at these locations",
@@ -890,7 +894,6 @@
     "panel.settings.personal_information.label.delete_message.description3":"delete:",
     "panel.settings.personal_information.button.forget_info.title": "Delete My Data",
 
-
     "panel.create_event.header.title":"Create An Event",
     "panel.create_event.title":"Create an Event",
     "panel.create_event.add_image":"Add event image",
@@ -958,7 +961,17 @@
     "panel.profile_info.dialog.remove_my_information.subtitle": "Are you sure?",
     "panel.profile_info.dialog.remove_my_information.yes.title": "Yes",
     "panel.profile_info.dialog.remove_my_information.no.title": "No",
-
+    "panel.profile_info.phone_number.name.title": "Full Name",
+    "panel.profile_info.phone_number.name.hint": "",
+    "panel.profile_info.phone_number.email.title": "Email",
+    "panel.profile_info.phone_number.email.hint": "",
+    "panel.profile_info.button.save.title":"Save Changes",
+    "panel.profile_info.button.save.hint":"",
+    "panel.profile_info.logout.title":"Illinois",
+    "panel.profile_info.logout.message":"Are you sure you want to sign out?",
+    "panel.profile_info.logout.button.yes":"Yes",
+    "panel.profile_info.logout.no":"No",
+    
     "panel.create_poll.header.title": "Create a Quick Poll",
     "panel.create_poll.description": "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app.",
     "panel.create_poll.text.wants_to_know": "wants to know…",
