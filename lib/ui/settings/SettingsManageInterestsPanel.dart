@@ -522,8 +522,8 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       Padding(
         padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
         child: RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
-          hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+          label: Localization().getStringEx("panel.settings.manage_interests.button.save.title", "Save Changes"),
+          hint: Localization().getStringEx("panel.settings.manage_interests.button.save.hint", ""),
           enabled: _canSave,
           fontFamily: Styles().fontFamilies.bold,
           backgroundColor: _canSave? Styles().colors.white: Styles().colors.background,

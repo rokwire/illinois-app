@@ -133,7 +133,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
           ? SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings_new.privacy.label.title", "Choose Your Privacy Level"),
+          Localization().getStringEx("panel.settings.new_privacy.privacy.label.title", "Choose Your Privacy Level"),
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
         ),
       )
@@ -187,7 +187,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
             Row(children: <Widget>[
               Expanded(child:
                 Text(
-                  Localization().getStringEx("panel.settings_new.privacy.label.slider_help", "Adjust slider to change your privacy level"),
+                  Localization().getStringEx("panel.settings.new_privacy.privacy.label.slider_help", "Adjust slider to change your privacy level"),
                   style: TextStyle(color: Styles().colors.textSurface, fontSize: 18, fontFamily:Styles().fontFamilies.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -220,11 +220,11 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                     child: Stack(children: <Widget>[
                       RoundedButton(
                           label: _disabled
-                              ? Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.disabled.title", "Scroll to Review")
-                              : Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.title", "Set my Privacy"),
+                              ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.title", "Scroll to Review")
+                              : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set my Privacy"),
                           hint: _disabled
-                              ? Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.disabled.hint", "")
-                              : Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.hint", ""),
+                              ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.hint", "")
+                              : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.hint", ""),
                           height: 48,
                           borderColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.fillColorSecondary,
                           backgroundColor: Styles().colors.fillColorPrimaryVariant,
@@ -267,7 +267,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                               child:
                               Semantics(button:false,  hint: "${_sliderValue?.round()?.toString() ?? ""}",
                                 child: Text(
-                                  Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.title", "Your new \nprivacy level"),
+                                  Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.title", "Your new \nprivacy level"),
                                   style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold),
                                   textAlign: TextAlign.center,
                                 ),
@@ -287,7 +287,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                                 borderRadius: BorderRadius.all(Radius.circular(15)),
                                 border: Border.all(color: Styles().colors.white, width: 2),
                               ),
-                              child: Semantics( button: true, label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.button.back.title", "Back"),child:
+                              child: Semantics( button: true, label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.button.back.title", "Back"),child:
                                 Center(child:
                                 ExcludeSemantics( child:
                                   Text(
@@ -349,7 +349,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                               ),
                               child: Center(
                                 child: Semantics(
-                                  label: Localization().getStringEx("panel.settings_new.privacy.dialog.label.new_privacy", "Privacy Level: "),
+                                  label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.label.new_privacy", "Privacy Level: "),
                                   child: Text(
                                     _sliderValue?.round()?.toString() ?? "",
                                     style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
@@ -366,7 +366,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 26),
               child: Text(
-                Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes:"),
+                Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes:"),
                 textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimaryVariant),
               ),
@@ -376,7 +376,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
               height: 10,
             ),
             Text(
-              Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.confirm", "Are you sure?"),
+              Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.confirm", "Are you sure?"),
               textAlign: TextAlign.center,
               style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimaryVariant),
             ),
@@ -398,7 +398,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors.fillColorSecondary,
                       textColor: Styles().colors.fillColorPrimary,
-                      label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.yes", "Yes")),
+                      label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.yes", "Yes")),
                   ),
                   Container(
                     width: 10,
@@ -412,7 +412,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                       backgroundColor: Colors.transparent,
                       borderColor: Styles().colors.fillColorSecondary,
                       textColor: Styles().colors.fillColorPrimary,
-                      label: Localization().getStringEx("panel.settings_new.privacy.dialog.update_privacy.no", "No"))
+                      label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.no", "No"))
                   )
                 ],
               ),
@@ -507,11 +507,11 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
 
   Widget _titleLayout() {
     String title = (widget.mode != SettingsPrivacyPanelMode.update)
-        ? Localization().getStringEx("panel.settings_new.privacy.label.set_your_privacy_level", "Set your privacy level")
-        : Localization().getStringEx("panel.settings_new.privacy.label.update_your_privacy_level", "Update your privacy level");
+        ? Localization().getStringEx("panel.settings.new_privacy.privacy.label.set_your_privacy_level", "Set your privacy level")
+        : Localization().getStringEx("panel.settings.new_privacy.privacy.label.update_your_privacy_level", "Update your privacy level");
     String hint = (widget.mode != SettingsPrivacyPanelMode.update)
-        ? Localization().getStringEx("panel.settings_new.privacy.label.set_your_privacy_level.hint", "Header 1")
-        : Localization().getStringEx("panel.settings_new.privacy.label.update_your_privacy_level.hint", "Header 1");
+        ? Localization().getStringEx("panel.settings.new_privacy.privacy.label.set_your_privacy_level.hint", "Header 1")
+        : Localization().getStringEx("panel.settings.new_privacy.privacy.label.update_your_privacy_level.hint", "Header 1");
     Widget titleWidget = Semantics(
         label: title,
         hint: hint,
@@ -530,8 +530,8 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
 
     Widget subTitleWidget;
     if (widget.mode == SettingsPrivacyPanelMode.update) {
-      String subTitle = Localization().getStringEx("panel.settings_new.privacy.label.some_details_have_changed", "Some details have changed");
-      String subTitleHint = Localization().getStringEx("panel.settings_new.privacy.label.some_details_have_changed.hint", "Header 2");
+      String subTitle = Localization().getStringEx("panel.settings.new_privacy.privacy.label.some_details_have_changed", "Some details have changed");
+      String subTitleHint = Localization().getStringEx("panel.settings.new_privacy.privacy.label.some_details_have_changed.hint", "Header 2");
       subTitleWidget = Semantics(
           label: subTitle,
           hint: subTitleHint,
@@ -590,7 +590,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                     color: Styles().colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(100)),
                   ),
-                  child: Semantics( label:Localization().getStringEx("panel.settings_new.label.privacy_level.title", "Privacy Level: "),
+                  child: Semantics( label:Localization().getStringEx("panel.settings.new_privacy.label.privacy_level.title", "Privacy Level: "),
                     child: Text(level.toString(),
                       style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary)),
                   ),
@@ -648,13 +648,13 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 22),
-                child: Text(Localization().getStringEx("panel.settings_new.label.description.title", "Features and Data Collection"),
+                child: Text(Localization().getStringEx("panel.settings.new_privacy.label.description.title", "Features and Data Collection"),
                   style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ),
               Container(height: 7,),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 22),
-                child: Text(Localization().getStringEx("panel.settings_new.label.description.info", "Learn more about specific features, and use dropdown for more information about how data is being used."),
+                child: Text(Localization().getStringEx("panel.settings.new_privacy.label.description.info", "Learn more about specific features, and use dropdown for more information about how data is being used."),
                   style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textSurface, fontSize: 16)),
               ),
               Container(height: 12,),
@@ -669,7 +669,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                     child: GestureDetector(
                       onTap: _onTapExpandAll,
                       child: Text(
-                        _canClose? Localization().getStringEx("panel.settings_new.button.close_all.title","Close All") : Localization().getStringEx("panel.settings_new.button.expand_all.title","Expand All"),
+                        _canClose? Localization().getStringEx("panel.settings.new_privacy.button.close_all.title","Close All") : Localization().getStringEx("panel.settings.new_privacy.button.expand_all.title","Expand All"),
                         style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textSurface, fontSize: 16)
                       ),
                     )
@@ -718,10 +718,10 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               key: expansionTileKey,
               initiallyExpanded: expanded,
               title:
-              Semantics(label: category.title,
-                  hint: Localization().getStringEx("panel.settings_new.label.hint","Double tap to ") +(expanded?"Hide" : "Show ")+" information",
+              Semantics(label: Localization().getStringEx(category.titleKey??"",category.title),
+                  hint: Localization().getStringEx("panel.settings.new_privacy.label.hint","Double tap to ") +(expanded?"Hide" : "Show ")+" information",
                   excludeSemantics:true,child:
-                  Container(child: Text(category.title, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 16),))),
+                  Container(child: Text(Localization().getStringEx(category.titleKey??"",category.title), style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 16),))),
               backgroundColor: Styles().colors.fillColorPrimary,
               children: _buildCategoryEntries(category),
               trailing: RotationTransition(
@@ -889,7 +889,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                 padding: EdgeInsets.only(top: 8),
                 child: Row(
                   children: <Widget>[
-                    Text(Localization().getStringEx("panel.settings_new.button.expand_data.title","See Data Usage"),
+                    Text(Localization().getStringEx("panel.settings.new_privacy.button.expand_data.title","See Data Usage"),
                       style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies.regular, color: isEnabled? Styles().colors.fillColorPrimary: Styles().colors.fillColorPrimaryTransparent015),
                     ),
                     Container(width: 9,),
@@ -979,11 +979,11 @@ class _PrivacyLevelSliderState extends State<_PrivacyLevelSlider> {
                       valueIndicatorTextStyle: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies.extraBold, color: Styles().colors.fillColorPrimary)),
                   child: MergeSemantics(
                       child: Semantics(
-                          label: Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.slider.hint", "Privacy Level"),
+                          label: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
                           enabled: true,
-                          increasedValue: Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.slider.increase", "increased to") +
+                          increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to") +
                               (_roundedValue + 1).toString(),
-                          decreasedValue: Localization().getStringEx("panel.settings_new.privacy.button.set_privacy.slider.decrease", "decreased to") +
+                          decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
                               (_roundedValue - 1).toString(),
                           child:
                           Padding(
