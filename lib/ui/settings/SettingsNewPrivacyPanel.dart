@@ -718,10 +718,10 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               key: expansionTileKey,
               initiallyExpanded: expanded,
               title:
-              Semantics(label: category.title,
+              Semantics(label: Localization().getStringEx(category.titleKey??"",category.title),
                   hint: Localization().getStringEx("panel.settings.new_privacy.label.hint","Double tap to ") +(expanded?"Hide" : "Show ")+" information",
                   excludeSemantics:true,child:
-                  Container(child: Text(category.title, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 16),))),
+                  Container(child: Text(Localization().getStringEx(category.titleKey??"",category.title), style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 16),))),
               backgroundColor: Styles().colors.fillColorPrimary,
               children: _buildCategoryEntries(category),
               trailing: RotationTransition(
