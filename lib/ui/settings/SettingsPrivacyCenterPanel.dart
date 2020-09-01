@@ -87,7 +87,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                                     onPressed: _onTapBack))),
                             Expanded(child:Container()),
                             Container(height: 90,
-                              child: Image.asset("images/group-3.png",excludeFromSemantics: true,),
+                              child: Image.asset("images/group-3-blue.png",excludeFromSemantics: true,),
                             ),
                             Expanded(child:Container()),
                             Container(width: 42,)
