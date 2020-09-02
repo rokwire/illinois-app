@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.2.16] - 2020-09-02
+### Removed Save buttons from Profile Informations panels
+
 ## [2.2.15] - 2020-09-01
 ### Exposed Strings for localisation
 
