@@ -53,8 +53,8 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   List<String> _followingTags;
   bool _tagSearchMode = false;
 
-  //Athletics sports
-  List<String> _preferredSports;
+//  //Athletics sports
+//  List<String> _preferredSports;
 
   //Search
   TextEditingController _textEditingController = TextEditingController();
@@ -66,7 +66,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     _initTabs();
     _initCategories();
     _initTags();
-    _loadPreferredSports();
+//    _loadPreferredSports();
     //_stopProgress();
     super.initState();
   }
@@ -143,7 +143,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                   _buildTabContent(),
                 ])),
           )),
-          _buildSaveButton()
+//          _buildSaveButton()
           ]),
           _progress
               ? Container(
@@ -164,7 +164,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
         case _InterestTab.Athletics:
           return Padding(
             padding: EdgeInsets.all(16),
-            child: AthleticsTeamsWidget(preferredSports: _preferredSports ?? List<String>(), onSportTaped: (String sport){switchSport(sport);}),
+            child: AthleticsTeamsWidget(), //TBD pass _preferredSpords and tapListener if using save button
           );
       }
     }
@@ -186,10 +186,11 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   void _loadPreferences() {
-    _preferredCategories = List<String>();
-    if(User()?.getInterestsCategories()?.isNotEmpty??false){
-      _preferredCategories.addAll(User()?.getInterestsCategories());
-    }
+//    _preferredCategories = List<String>();
+//    if(User().getInterestsCategories()?.isNotEmpty??false){
+//      _preferredCategories.addAll(User().getInterestsCategories());
+//    }
+    _preferredCategories = User().getInterestsCategories() ?? new List();
     setState(() {});
   }
 
@@ -231,17 +232,17 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
             selected: _preferredCategories.contains(categoryName),
             onTap: () {
               Analytics.instance.logSelect(target: "Category: $categoryName");
-//              _startProgress();
-//              User().switchInterestCategory(categoryName).then((_) {
-//                setState(() {
-//                  _preferredCategories = User().getInterestsCategories();
-//
-//                  _stopProgress();
-//                  AppSemantics.announceCheckBoxStateChange(context, _preferredCategories.contains(categoryName), categoryName);
-//                });
-//              });
-            switchCategory(categoryName);
-            setState(() {});
+              _startProgress();
+              User().switchInterestCategory(categoryName).then((_) {
+                setState(() {
+                  _preferredCategories = User().getInterestsCategories();
+
+                  _stopProgress();
+                  AppSemantics.announceCheckBoxStateChange(context, _preferredCategories.contains(categoryName), categoryName);
+                });
+              });
+//            switchCategory(categoryName);
+//            setState(() {});
             }));
       }
     }
@@ -261,11 +262,11 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Tags
   void _initTags() {
-    _followingTags = List<String>();
-    if(User()?.getTags()?.isNotEmpty?? false) {
-      _followingTags.addAll(User()?.getTags());
-    }
-
+//    _followingTags = List<String>();
+//    if(User()?.getTags()?.isNotEmpty?? false) {
+//      _followingTags.addAll(User()?.getTags());
+//    }
+    _followingTags = User().getTags();
     ExploreService().loadEventTags().then((List<String> tagList) {
       setState(() {
         _tags = tagList;
@@ -431,13 +432,14 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   bool _isTagSelected(String tag) {
-    return _followingTags.contains(tag); //If we support positive/negative tags
+//    return _followingTags.contains(tag);
+    return User().isTagged(tag, true);
   }
 
   void _onTagTaped(String tag) {
     Analytics.instance.logSelect(target: "Tag: $tag");
-//    User().switchTag(tag);
-    switchTag(tag);
+    User().switchTag(tag);
+//    switchTag(tag);
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag), tag);
   }
 
@@ -452,7 +454,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   //Athletics
-  void _loadPreferredSports() {
+/*  void _loadPreferredSports() {
     _preferredSports = List<String>();
     if(User()?.getSportsInterestSubCategories()?.isNotEmpty ?? false) {
       _preferredSports.addAll(User()?.getSportsInterestSubCategories());
@@ -469,7 +471,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       }
     }
     setState(() {});
-  }
+  }*/
 
   // NotificationsListener
 
@@ -517,7 +519,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   ////
 
   //SaveButton
-  Widget _buildSaveButton(){
+/*  Widget _buildSaveButton(){
     return
       Padding(
         padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
@@ -573,13 +575,13 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       return false;
     }
     return !IterableEquality().equals(_preferredSports, User().getSportsInterestSubCategories());
-  }
+  }*/
 
 
 
   ////
   //Progress
-/*void _startProgress() {
+void _startProgress() {
     setState(() {
       _progress = true;
     });
@@ -590,7 +592,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       _progress = false;
     });
   }
-*///////
+//////
 
   static String _interestTabName(_InterestTab tab) {
     switch (tab) {
