@@ -148,7 +148,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
               ),
             ),
           ),
-          _buildSaveButton()
+//          _buildSaveButton()
         ],
       ),
       backgroundColor: Styles().colors.background,
@@ -202,7 +202,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
     else{
       _selectedTypesPrefs.add(foodOption);
     }
-
+    DiningService().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
 
     setState((){});
   }
@@ -215,6 +215,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
     else{
       _selectedIngredientsPrefs.add(foodOption);
     }
+    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
 
     setState((){});
   }
