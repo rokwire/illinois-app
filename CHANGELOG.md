@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [2.2.15] - 2020-09-01
+### Removed Save Buttons from PersonalInformation panels (#38)
+
+## [2.2.15] - 2020-09-01
 ### Exposed Strings for localisation
 
 ## [2.2.14] - 2020-08-31
