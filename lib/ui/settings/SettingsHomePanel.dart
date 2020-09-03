@@ -32,6 +32,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -125,6 +126,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'feedback') {
         contentList.add(_buildFeedback(),);
       }
+      else if (code == 'privacy_center') {
+        contentList.add(_buildPrivacyCenterButton(),);
+      }
     }
 
     if (!kReleaseMode) {
@@ -176,6 +180,42 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       bottomNavigationBar: TabBarWidget(),
     );
   }
+  //Privacy Center
+  Widget _buildPrivacyCenterButton(){
+    return GestureDetector(
+        onTap: (){
+          Analytics.instance.logSelect(target: "Privacy Center");
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
+        },
+        child: Semantics(
+            button: true,
+            child:Container(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+              child:Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                decoration: BoxDecoration(
+                    color: UiColors.fromHex("9318bb"),
+                    //border: Border.all(color: Colors.grey, width: 1),
+                    borderRadius: BorderRadius.circular(6),
+                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+                ),
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          color: Styles().colors.white,
+                          fontSize: 20,
+                          fontFamily: Styles().fontFamilies.bold),
+                    ),
+                    Image.asset("images/group-8.png", excludeFromSemantics: true,),
+                  ],),
+              ),
+            )));
+  }
+
 
   // User Info
 
