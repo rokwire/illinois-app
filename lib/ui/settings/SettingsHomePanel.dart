@@ -874,74 +874,12 @@ class _DebugContainerState extends State<_DebugContainer> {
         _clickedCount++;
 
         if (_clickedCount == 7) {
-          _showPinDialog();
+          if (Auth().isDebugManager) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
+          }
           _clickedCount = 0;
         }
       },
     );
-  }
-
-  void _showPinDialog(){
-    TextEditingController pinController = TextEditingController(text: (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) ? this.pinOfTheDay : '');
-    showDialog(context: context, barrierDismissible: false, builder: (context) =>  Dialog(
-      child:  Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois'),
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                Localization().getStringEx('panel.debug.label.pin', 'Please enter pin'),
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
-              ),
-            ),
-            Container(height: 6,),
-            TextField(controller: pinController, autofocus: true, keyboardType: TextInputType.number, obscureText: true,
-              onSubmitted:(String value){
-                _onEnterPin(value);
-                }
-            ,),
-            Container(height: 6,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                FlatButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      //_finish();
-                    },
-                    child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel'))),
-                Container(width: 6),
-                FlatButton(
-                    onPressed: () {
-                      _onEnterPin(pinController?.text);
-                      //_finish();
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
-              ],
-            )
-          ],
-        ),
-      ),
-    ));
-  }
-
-  String get pinOfTheDay {
-    return AppDateTime().formatUniLocalTimeFromUtcTime(DateTime.now(), "MMdd");
-  }
-
-  void _onEnterPin(String pin){
-    if (this.pinOfTheDay == pin) {
-      Navigator.pop(context);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
-    } else {
-      AppToast.show("Invalid pin");
-    }
   }
 }
