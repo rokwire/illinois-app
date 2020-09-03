@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show debug panel only for debug managers.[#51](https://github.com/rokwire/illinois-app/issues/51)
+- Update es and zh strings.[#55](https://github.com/rokwire/illinois-app/issues/55)
 
 ## [2.2.16] - 2020-09-02
 ### Removed Save buttons from Profile Informations panels
