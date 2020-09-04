@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.2.18+318] - 2020-09-04
 ### Fixed
+- Phone verification / Shibboleth login fails after multiple logins. [#29] (https://github.com/rokwire/illinois-app/issues/29)
 - Fix events filtering.[#49](https://github.com/rokwire/illinois-app/issues/49)
 - Make events date format consistent.[#33](https://github.com/rokwire/illinois-app/issues/33)
 
