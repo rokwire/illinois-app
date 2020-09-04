@@ -156,6 +156,10 @@ class Auth with Service implements NotificationsListener {
     return authInfo?.userGroupMembership?.contains('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager') ?? false;
   }
 
+  bool get isDebugManager {
+    return authInfo?.userGroupMembership?.contains('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug') ?? false;
+  }
+
   bool isMemberOf(String groupName) {
     return authInfo?.userGroupMembership?.contains(groupName) ?? false;
   }
