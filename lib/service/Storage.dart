@@ -181,16 +181,6 @@ class Storage with Service {
     _setStringWithName(phoneNumberKey, phoneNumber);
   }
 
-  static const String localUserUuidKey  = 'user_local_uuid';
-
-  String get localUserUuid {
-    return _getStringWithName(localUserUuidKey);
-  }
-
-  set localUserUuid(String value) {
-    _setStringWithName(localUserUuidKey, value);
-  }
-
   /////////////
   // UserPII
 
