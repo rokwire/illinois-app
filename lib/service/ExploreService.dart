@@ -41,19 +41,21 @@ class ExploreService /* with Service */ {
 
   ExploreService._internal();
 
-  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, DateTime startDate, DateTime endDate, Set<
-      String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
+  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, DateTime startDate, DateTime startDateLimit,
+    DateTime endDate, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
     if(_enabled) {
       if (startDate == null) {
         startDate = DateTime.now();
       }
       http.Response response;
       DateTime startDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(startDate);
+      DateTime startDateLimitInGmt = AppDateTime().getUtcTimeFromDeviceTime(startDateLimit);
       DateTime endDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(endDate);
       String queryParameters = _buildEventsQueryParameters(
           searchText,
           locationData,
           startDateInGmt,
+          startDateLimitInGmt,
           endDateInGmt,
           categories,
           tags,
@@ -265,7 +267,7 @@ class ExploreService /* with Service */ {
   }
 
   String _buildEventsQueryParameters(String searchText, Core.LocationData locationData,
-      DateTime startDate, DateTime endDate, Set<String> categories, Set<String> tags,
+      DateTime startDate, DateTime startDateLimit, DateTime endDate, Set<String> categories, Set<String> tags,
       int recurrenceId, int limit) {
 
     String queryParameters = "";
@@ -288,6 +290,13 @@ class ExploreService /* with Service */ {
       String startDateFormatted = AppDateTime().formatDateTime(
           startDate, ignoreTimeZone: true);
       queryParameters += 'startDate=$startDateFormatted&';
+    }
+
+    ///StartDateLimit
+    if (startDateLimit != null) {
+      String startDateLimitFormatted = AppDateTime().formatDateTime(
+          startDateLimit, ignoreTimeZone: true);
+      queryParameters += 'startDateLimit=$startDateLimitFormatted&';
     }
 
     ///End Date

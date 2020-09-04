@@ -537,14 +537,14 @@ class ExplorePanelState extends State<ExplorePanel>
     List<String> tags = _getSelectedEventTags(selectedFilterList);
     Map<String, DateTime> period = _getSelectedEventTimePeriod(selectedFilterList);
     _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
-    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags?.toSet(), startDate: period['start_date'], endDate: period['end_date']) : null;
+    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags?.toSet(), startDate: period['start_date'], startDateLimit: period['end_date']) : null;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
     List<String> tags = _getSelectedEventTags(selectedFilterList);
     Map<String, DateTime> period = _getSelectedEventTimePeriod(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, tags: tags?.toSet(), startDate: period['start_date'], endDate: period['end_date']);
+    return ExploreService().loadEvents(categories: categories, tags: tags?.toSet(), startDate: period['start_date'], startDateLimit: period['end_date']);
   }
 
   Future<List<Explore>> _loadDining(List<ExploreFilter> selectedFilterList) async {
