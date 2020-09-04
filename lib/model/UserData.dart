@@ -20,7 +20,7 @@ class UserData {
 
 
   final String uuid;
-  final bool overThirteen;
+  bool overThirteen;
 
   static const analyticsUuid = 'UUIDxxxxxx';
 
@@ -54,6 +54,21 @@ class UserData {
         voterByMail: json['voter_by_mail'],
         voted: json['voted'] ?? false
     ) : null;
+  }
+
+  void loadFromUserData(UserData data){
+    overThirteen = data.overThirteen;
+    privacySettings = data.privacySettings;
+    roles = data.roles;
+    interests = data.interests;
+    favorites = data.favorites;
+    positiveTags = data.positiveTags;
+    negativeTags = data.negativeTags;
+    fcmTokens = data.fcmTokens;
+    registeredVoter = data.registeredVoter;
+    votePlace = data.votePlace;
+    voterByMail = data.voterByMail;
+    voted = data.voted;
   }
 
   toJson() {
