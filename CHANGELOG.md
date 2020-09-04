@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.2.18+318] - 2020-09-04
+### Fixed
+- Phone verification / Shibboleth login fails after multiple logins. [#29] (https://github.com/rokwire/illinois-app/issues/29)
+- Fix events filtering.[#49](https://github.com/rokwire/illinois-app/issues/49)
+- Make events date format consistent.[#33](https://github.com/rokwire/illinois-app/issues/33)
+
+## [2.2.17] - 2020-09-03
+### Changed
+- Show debug panel only for debug managers.[#51](https://github.com/rokwire/illinois-app/issues/51)
+- Update es and zh strings.[#55](https://github.com/rokwire/illinois-app/issues/55)
+
+## [2.2.16] - 2020-09-02
+### Removed Save buttons from Profile Informations panels
+
+## [2.2.15] - 2020-09-01
+### Exposed Strings for localisation
+
+## [2.2.14] - 2020-08-31
+
+### Improved VO features [#24]
+
 ## [2.2.13] - 2020-08-28
 
 ### Fixed

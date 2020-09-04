@@ -434,11 +434,11 @@
 
 	"privacy_new":{
 		"description":[
-			{"level":1, "key": "com.illinois.description.1", "text": "You may not be able to use all features, but you are anonymous and we don't ask for anything or store any data. Anonymous data will be collected and used to optimize app performance."},
-			{"level":2, "key": "com.illinois.description.1", "text": "See what's happening around you. We use Wifi and Bluetooth location services to improve your experience, but we never store that data."},
-			{"level":3, "key": "com.illinois.description.2", "text": "You can personalize and customize the app. Wifi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
-			{"level":4, "key": "com.illinois.description.3", "text": "Let the app work for you. \nYou can access your iCard, save credit cards to make future purchases easier, access health information, and get notifications based on your specific interests."},
-			{"level":5, "key": "com.illinois.description.4", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends all enjoy."}
+			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous and we don't ask for anything or store any data. Anonymous data will be collected and used to optimize app performance."},
+			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wifi and Bluetooth location services to improve your experience, but we never store that data."},
+			{"level":3, "key": "privacy.category.description.3", "text": "You can personalize and customize the app. Wifi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience."},
+			{"level":4, "key": "privacy.category.description.4", "text": "Let the app work for you. \nYou can access your iCard, save credit cards to make future purchases easier, access health information, and get notifications based on your specific interests."},
+			{"level":5, "key": "privacy.category.description.5", "text": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends all enjoy."}
 		],
 		"categories":[
 			{

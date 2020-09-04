@@ -15,6 +15,8 @@
  */
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -36,22 +38,22 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
   //User _user;
   Set<UserRole> _selectedRoles = Set<UserRole>();
 
-  //Timer _saveRolesTimer;
+  Timer _saveRolesTimer;
 
   @override
   void initState() {
     NotificationService().subscribe(this, User.notifyRolesUpdated);
-    _selectedRoles =UserRole.userRolesFromList(User().roles?.map((role) => role?.toJson())?.toList()) ?? Set<UserRole>();
+    _selectedRoles = User().roles ?? Set<UserRole>();
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    /*if (_saveRolesTimer != null) {
+    if (_saveRolesTimer != null) {
       _stopSaveRolesTimer();
       _saveSelectedRoles();
-    }*/
+    }
     super.dispose();
   }
 
@@ -193,7 +195,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
           ),
         ),
       )),
-      _buildSaveButton()
+//      _buildSaveButton()
       ],)
     ;
   }
@@ -234,12 +236,12 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
 
       setState(() {});
 
-//      _startSaveRolesTimer();
+      _startSaveRolesTimer();
     }
   }
 
   //TBD clear up when sure that timer saving approach won't be needed
-  /*void _startSaveRolesTimer() {
+  void _startSaveRolesTimer() {
     _stopSaveRolesTimer();
     _saveRolesTimer = Timer(Duration(seconds: 3), _saveSelectedRoles);
   }
@@ -249,7 +251,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
       _saveRolesTimer.cancel();
       _saveRolesTimer = null;
     }
-  }*/
+  }
 
   void _saveSelectedRoles() {
     User().roles = _selectedRoles;

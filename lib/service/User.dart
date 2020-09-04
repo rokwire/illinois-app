@@ -67,6 +67,7 @@ class User with Service implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifyToken,
       User.notifyPrivacyLevelChanged,
+      Auth.notifyLoggedOut,
     ]);
   }
 
@@ -103,6 +104,9 @@ class User with Service implements NotificationsListener {
     else if(name == AppLivecycle.notifyStateChanged && param == AppLifecycleState.resumed){
       //_loadUser();
     }
+    else if(name == Auth.notifyLoggedOut){
+      _recreateUser(); // Always create userData on logout. // https://github.com/rokwire/illinois-app/issues/29
+    }
   }
 
   // User
@@ -119,10 +123,14 @@ class User with Service implements NotificationsListener {
     return UserData.analyticsUuid;
   }
 
-  Future<void> _createUser() async {  
+  Future<void> _createUser() async {
     UserData userData = await _requestCreateUser();
     applyUserData(userData);
-    Storage().localUserUuid = userData?.uuid;
+  }
+
+  Future<void> _recreateUser() async {
+    UserData userData = await _requestCreateUser();
+    applyUserData(userData, migrateData: true);
   }
 
   Future<void> _loadUser() async {
@@ -223,37 +231,16 @@ class User with Service implements NotificationsListener {
       _clearStoredUserData();
       _notifyUserDeleted();
 
-      try {
-        _userData = await requestUser(Storage().localUserUuid);
-      } on UserNotFoundException catch (_) {
-        _userData = await _requestCreateUser();
-        if (_userData?.uuid != null) {
-          Storage().localUserUuid = _userData?.uuid;
-        }
-      }
+      _userData = await _requestCreateUser();
+
       if (_userData != null) {
         Storage().userData = _userData;
         _notifyUserUpdated();
       }
     }
-
   }
 
-  void initLocalUser() {
-    String localUserUuid = Storage().localUserUuid;
-    String currentUserUuid = _userData?.uuid;
-    if ((localUserUuid != null) && (currentUserUuid == null) || (currentUserUuid != localUserUuid)) {
-      requestUser(localUserUuid).then((UserData userData){
-        if (userData != null) {
-          applyUserData(userData);
-        }
-        //clearStoredPiiAccount();
-      }).catchError((_){
-      });
-    }
-  }
-
-  void applyUserData(UserData userData, { bool applyCachedSettings = false }) {
+  void applyUserData(UserData userData, { bool applyCachedSettings = false, bool migrateData = false }) {
     
     // 1. We might need to remove FCM token from current user
     String applyUserUuid = userData?.uuid;
@@ -270,6 +257,11 @@ class User with Service implements NotificationsListener {
     bool applyUserUpdated = _applyFCMToken(userData);
     if (applyCachedSettings) {
       applyUserUpdated = _updateUserSettingsFromStorage(userData) || applyUserUpdated;
+    }
+
+    if(migrateData && _userData != null){
+      userData.loadFromUserData(_userData);
+      applyCachedSettings = true;
     }
 
     _userData = userData;

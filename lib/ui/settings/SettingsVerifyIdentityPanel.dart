@@ -76,7 +76,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
                 TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", "or ")),
                 TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "faculty member "),
                     style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
-                TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan.")),
+                TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan.")),
               ],
             ),
           )

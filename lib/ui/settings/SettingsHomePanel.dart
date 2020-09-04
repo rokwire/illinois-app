@@ -32,6 +32,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -125,6 +126,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'feedback') {
         contentList.add(_buildFeedback(),);
       }
+      else if (code == 'privacy_center') {
+        contentList.add(_buildPrivacyCenterButton(),);
+      }
     }
 
     if (!kReleaseMode) {
@@ -176,6 +180,42 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       bottomNavigationBar: TabBarWidget(),
     );
   }
+  //Privacy Center
+  Widget _buildPrivacyCenterButton(){
+    return GestureDetector(
+        onTap: (){
+          Analytics.instance.logSelect(target: "Privacy Center");
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
+        },
+        child: Semantics(
+            button: true,
+            child:Container(
+              padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+              child:Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                decoration: BoxDecoration(
+                    color: UiColors.fromHex("9318bb"),
+                    //border: Border.all(color: Colors.grey, width: 1),
+                    borderRadius: BorderRadius.circular(6),
+                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+                ),
+                child:  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          color: Styles().colors.white,
+                          fontSize: 20,
+                          fontFamily: Styles().fontFamilies.bold),
+                    ),
+                    Image.asset("images/group-8.png", excludeFromSemantics: true,),
+                  ],),
+              ),
+            )));
+  }
+
 
   // User Info
 
@@ -834,74 +874,12 @@ class _DebugContainerState extends State<_DebugContainer> {
         _clickedCount++;
 
         if (_clickedCount == 7) {
-          _showPinDialog();
+          if (Auth().isDebugManager) {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
+          }
           _clickedCount = 0;
         }
       },
     );
-  }
-
-  void _showPinDialog(){
-    TextEditingController pinController = TextEditingController(text: (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) ? this.pinOfTheDay : '');
-    showDialog(context: context, barrierDismissible: false, builder: (context) =>  Dialog(
-      child:  Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              Localization().getStringEx('app.title', 'Illinois'),
-              style: TextStyle(fontSize: 24, color: Colors.black),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                Localization().getStringEx('panel.debug.label.pin', 'Please enter pin'),
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
-              ),
-            ),
-            Container(height: 6,),
-            TextField(controller: pinController, autofocus: true, keyboardType: TextInputType.number, obscureText: true,
-              onSubmitted:(String value){
-                _onEnterPin(value);
-                }
-            ,),
-            Container(height: 6,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                FlatButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      //_finish();
-                    },
-                    child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel'))),
-                Container(width: 6),
-                FlatButton(
-                    onPressed: () {
-                      _onEnterPin(pinController?.text);
-                      //_finish();
-                    },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
-              ],
-            )
-          ],
-        ),
-      ),
-    ));
-  }
-
-  String get pinOfTheDay {
-    return AppDateTime().formatUniLocalTimeFromUtcTime(DateTime.now(), "MMdd");
-  }
-
-  void _onEnterPin(String pin){
-    if (this.pinOfTheDay == pin) {
-      Navigator.pop(context);
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
-    } else {
-      AppToast.show("Invalid pin");
-    }
   }
 }
