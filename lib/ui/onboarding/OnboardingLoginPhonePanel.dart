@@ -23,6 +23,7 @@ import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingLoginPhonePanel extends StatefulWidget with OnboardingPanel {
 
@@ -55,6 +56,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
         backgroundColor: Styles().colors.background,
         body: Stack(
           children: <Widget>[
+            ScalableScrollView(scrollableChild:
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -98,59 +100,56 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                 Container(
                   height: 32,
                 ),
-                Expanded(
-                  child: Container(),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: RoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
-                        hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.background,
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: () => _onLoginTapped()),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: GestureDetector(
-                      onTap: () => _onSkipTapped(),
-                      child: Semantics(
-                          label: skipTitle,
-                          hint: Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.hint', 'Skip verification'),
-                          button: true,
-                          excludeSemantics: true,
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 24),
-                            child: Text(
-                              skipTitle,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Styles().colors.fillColorPrimary,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Styles().colors.fillColorSecondary,
-                                fontFamily: Styles().fontFamilies.medium,
-                                fontSize: 16,
-                              ),
-                            ),
-                          )),
-                    )),
-                  ],
-                )
-              ],
-            ),
-            _progress
-                ? Container(
+                ]),
+                bottomNotScrollableWidget:
+                  Column(children: <Widget>[
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: ScalableRoundedButton(
+                            label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
+                            hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
+                            borderColor: Styles().colors.fillColorSecondary,
+                            backgroundColor: Styles().colors.background,
+                            textColor: Styles().colors.fillColorPrimary,
+                            onTap: () => _onLoginTapped()),
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: GestureDetector(
+                          onTap: () => _onSkipTapped(),
+                          child: Semantics(
+                              label: skipTitle,
+                              hint: Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.hint', 'Skip verification'),
+                              button: true,
+                              excludeSemantics: true,
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: 24),
+                                child: Text(
+                                  skipTitle,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Styles().colors.fillColorPrimary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Styles().colors.fillColorSecondary,
+                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              )),
+                        )),
+                    ])])   ),
+                    _progress
+                    ? Container(
                     alignment: Alignment.center,
                     child: CircularProgressIndicator(),
-                  )
-                : Container(),
-          ],
-        ));
+                    )
+                        : Container(),
+              ],
+            ),);
   }
 
   void _onLoginTapped() {

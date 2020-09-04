@@ -49,7 +49,7 @@ class AthleticsSportItemWidget extends StatelessWidget {
           button:true,
           excludeSemantics: true,
           child: Container(
-            height: 50,
+//            height: 50,
             color: Colors.white,
             child: Padding(
               padding: EdgeInsets.only(left: 10, top: 0, bottom: 0),
@@ -59,22 +59,20 @@ class AthleticsSportItemWidget extends StatelessWidget {
                     padding: EdgeInsets.only(right: 10),
                     child: Image.asset(sport.iconPath),
                   ),
+                  Expanded(child:
                   Text(
                     label,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.bold,
                         color: Styles().colors.fillColorPrimary,
                         fontSize: 16),
-                  ),
+                  ),),
                   showChevron
                       ? Padding(
                           padding: EdgeInsets.symmetric(horizontal: 6),
                           child: Image.asset('images/chevron-right.png'),
                         )
                       : Container(),
-                  Expanded(
-                    child: Container(),
-                  ),
                   Visibility(
                     visible: checkMarkVisibility,
                     child: GestureDetector(
