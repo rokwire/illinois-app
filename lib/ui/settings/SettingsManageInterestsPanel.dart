@@ -123,14 +123,14 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                     textAlign: TextAlign.start,
                                   ),
                                   Image.asset('images/example.png'),
-                                  Container(
-                                      width: 200,
-                                      child: Text(
+                                  Expanded(child: Container(
+                                      child:Text(
                                         Localization()
                                             .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                                         maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 16),
-                                      ))
+                                      )))
                                 ],
                               )))),
                   Padding(
