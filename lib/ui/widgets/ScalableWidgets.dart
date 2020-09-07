@@ -133,6 +133,7 @@ class ScalableRoundedButton extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final Color secondaryBorderColor;
+  final List<BoxShadow> shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
   final bool showAdd;
@@ -151,6 +152,7 @@ class ScalableRoundedButton extends StatelessWidget {
         this.borderColor,
         this.borderWidth = 2.0,
         this.secondaryBorderColor,
+        this.shadow,
         this.onTap,
         this.showAdd = false,
         this.showChevron = false
@@ -174,6 +176,7 @@ class ScalableRoundedButton extends StatelessWidget {
                   color: (borderColor != null) ? borderColor : (backgroundColor ?? Styles().colors.fillColorPrimary),
                   width: borderWidth),
               borderRadius: borderRadius,
+              boxShadow: this.shadow
             ),
             child: Container(
               decoration: BoxDecoration(
