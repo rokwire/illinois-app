@@ -242,12 +242,14 @@ class TabWidget extends StatelessWidget {
                                       : AssetImage(iconResource)),
                                   width: 20.0,
                                   height: 20.0)),
+                          Expanded(child:
                           Text(
                             label,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.bold,
                                 color: selected ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray,
                                 fontSize: 12),
+                          )
                           )
                         ],
                       ),

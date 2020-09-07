@@ -81,11 +81,13 @@ class SectionTitlePrimary extends StatelessWidget{
                     child: Image.asset(
                         iconPath),
                   ) : Container(),
-                  Text(
-                    title,
-                    style: TextStyle(
-                        color: textColor ?? Styles().colors.textColorPrimary,
-                        fontSize: 20),
+                  Expanded(child:
+                    Text(
+                      title,
+                      style: TextStyle(
+                          color: textColor ?? Styles().colors.textColorPrimary,
+                          fontSize: 20),
+                    )
                   ),
                 ],
               )),
