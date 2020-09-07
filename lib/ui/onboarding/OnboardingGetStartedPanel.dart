@@ -58,10 +58,6 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                 Expanded(child: Container(),),
                 Padding(
                 padding: EdgeInsets.all(24),
-                child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Center(
                         child: Column(
                           children: <Widget>[
                             Semantics(
@@ -86,7 +82,8 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                       color: Colors.white,
                                     ),
                                   ),
-                                ])),
+                                ])
+                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 20),
                               child: ScalableRoundedButton(
@@ -104,10 +101,7 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                               ),
                             )
                           ],
-                        ),
-                      ),
-                    )),
-              )
+              ))
               ],)
             ]))],) ));
   }
