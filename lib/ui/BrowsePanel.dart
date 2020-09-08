@@ -429,13 +429,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                 child:  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: Styles().colors.white,
-                            fontSize: 20,
-                            fontFamily: Styles().fontFamilies.bold),
+                      Expanded(child:
+                        Text(
+                          Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: Styles().colors.white,
+                              fontSize: 20,
+                              fontFamily: Styles().fontFamilies.bold),
+                        ),
                       ),
                       Image.asset("images/group-8.png", excludeFromSemantics: true,),
                   ],),
@@ -655,7 +657,7 @@ class _RibbonButton extends StatelessWidget {
         button: true,
         excludeSemantics: true,
         child: Container(
-          height: 48,
+//          height: 48,
           padding: padding,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 14),
