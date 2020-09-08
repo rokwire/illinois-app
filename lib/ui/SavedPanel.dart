@@ -416,6 +416,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           ),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
             child: ToggleRibbonButton(
+              height: null,
               label: Localization().getStringEx("panel.saved.notifications.enable.label", "Enable notifications"),
               toggled: false,
               onTap: _onAuthorizeTapped,
@@ -661,7 +662,9 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                       children: <Widget>[
                         Image.asset(cardDetailImgRes),
                         Padding(padding: EdgeInsets.only(right: 10),),
-                        Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                        Expanded(child:
+                          Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                        )
                       ],
                     ),
                   )),)

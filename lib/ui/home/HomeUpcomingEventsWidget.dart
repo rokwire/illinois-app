@@ -39,6 +39,7 @@ import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -237,14 +238,20 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           Container(
             height: 20,
           ),
-          SmallRoundedButton(
-            label: Localization().getStringEx(
-                'widget.home_upcoming_events.button.more.title',
-                'View all events'),
-            hint: Localization().getStringEx(
-                'widget.home_upcoming_events.button.more.hint', ''),
-            showChevron: false,
-            onTap: () => _navigateToExploreEvents(),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: ScalableRoundedButton(
+                label: Localization().getStringEx(
+                    'widget.home_upcoming_events.button.more.title',
+                    'View all events'),
+                hint: Localization().getStringEx(
+                    'widget.home_upcoming_events.button.more.hint', ''),
+                showChevron: false,
+                borderColor: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors.fillColorPrimary,
+                backgroundColor: Styles().colors.white,
+                onTap: () => _navigateToExploreEvents(),
+              ),
           ),
           Container(
             height: 48,
