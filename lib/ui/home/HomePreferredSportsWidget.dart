@@ -135,6 +135,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                           child: Row(children: <Widget>[
                             Expanded(child:
                             Text(Localization().getStringEx(menSelectClearTextKey, ''),
+                              textAlign: TextAlign.right,
                               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.medium),),
                             ),
                             Padding(padding: EdgeInsets.symmetric(horizontal: 8),
