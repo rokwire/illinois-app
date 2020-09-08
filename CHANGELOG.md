@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.0] - 2020-09-08
+### Fixed
+- Fix end date time appearing.[#32](https://github.com/rokwire/illinois-app/issues/32)
+
 ## [2.2.18] - 2020-09-04
 ### Fixed
 - Fix events filtering.[#49](https://github.com/rokwire/illinois-app/issues/49)
