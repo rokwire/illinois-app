@@ -174,15 +174,16 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     bool starVisible = User().favoritesStarVisible;
     return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
       children: <Widget>[
-        Text(
-          (category != null) ? category.toUpperCase() : "",
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies.bold,
-              fontSize: 14,
-              color: Styles().colors.fillColorPrimary,
-              letterSpacing: 1),
+        Expanded(child:
+          Text(
+            (category != null) ? category.toUpperCase() : "",
+            style: TextStyle(
+                fontFamily: Styles().fontFamilies.bold,
+                fontSize: 14,
+                color: Styles().colors.fillColorPrimary,
+                letterSpacing: 1),
+          ),
         ),
-        Expanded(child: Container()),
         Visibility(visible: starVisible, child: Container(child: Padding(padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
             child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
