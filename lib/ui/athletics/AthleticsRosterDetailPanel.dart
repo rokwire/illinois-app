@@ -208,13 +208,15 @@ class _RosterDetailHeading extends StatelessWidget{
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Image.asset(sport.iconPath, width: 16, height: 16,),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Text(sport.name,
-                                    style: TextStyle(
-                                        color: Styles().colors.surfaceAccent,
-                                        fontFamily: Styles().fontFamilies.medium,
-                                        fontSize: 16
+                                Expanded(child:
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(sport.name,
+                                      style: TextStyle(
+                                          color: Styles().colors.surfaceAccent,
+                                          fontFamily: Styles().fontFamilies.medium,
+                                          fontSize: 16
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -304,13 +306,14 @@ class _LineEntryWidget extends StatelessWidget{
                   ),
                 ),
               ),
+              Expanded(child:
               Text(
                 value,
                 style: TextStyle(
                   fontFamily: Styles().fontFamilies.bold,
                   fontSize: 16,
                 ),
-              )
+              ))
             ],
           ),
         ) : Container()
