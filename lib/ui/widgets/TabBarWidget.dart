@@ -29,7 +29,8 @@ import 'package:illinois/service/Styles.dart';
 
 class TabBarWidget extends StatefulWidget {
 
-  static const double tabBarHeight = 60;
+  static double tabBarHeight = 60;
+  static double tabTextSize = 12;
 
   final TabController tabController;
 
@@ -77,6 +78,12 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
   @override
   Widget build(BuildContext context) {
+    double height = 35 + (TabBarWidget.tabTextSize * (MediaQuery.of(context).textScaleFactor?? 60)); // 35 is icon height + paddings
+    if(TabBarWidget.tabBarHeight < height){
+      TabBarWidget.tabBarHeight = height;
+    }
+
+
     Color backgroundColor;
     switch(Config().configEnvironment) {
       case ConfigEnvironment.dev:        backgroundColor = Colors.yellowAccent; break;
@@ -219,41 +226,46 @@ class TabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double scaleFactor = MediaQuery.of(context).textScaleFactor;
+    scaleFactor = scaleFactor > 2 ? 2 : scaleFactor;
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.translucent,
       child: Stack(
         children: <Widget>[
           Center(
-            child: Tab(
-                child: Semantics(
-                    label: label,
-                    hint: hint,
-                    excludeSemantics: true,
-                    child: Container(
-                      height: TabBarWidget.tabBarHeight,
-                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                              padding: EdgeInsets.only(bottom: 5),
-                              child: Image(
-                                  image: (selected
-                                      ? AssetImage(iconResourceSelected)
-                                      : AssetImage(iconResource)),
-                                  width: 20.0,
-                                  height: 20.0)),
-                          Expanded(child:
-                          Text(
-                            label,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                color: selected ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray,
-                                fontSize: 12),
-                          )
-                          )
-                        ],
-                      ),
-                    ))),
+            child: Semantics(
+                label: label,
+                hint: hint,
+                excludeSemantics: true,
+                child: Container(
+                  padding: EdgeInsets.only(top: 10),
+                  height: TabBarWidget.tabBarHeight,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.only(bottom: 5),
+                          child: Image(
+                              image: (selected
+                                  ? AssetImage(iconResourceSelected)
+                                  : AssetImage(iconResource)),
+                              width: 20.0,
+                              height: 20.0)),
+                      Expanded(child:
+                      Text(
+                        label,
+                        textScaleFactor: scaleFactor,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.bold,
+                            color: selected ? Styles().colors.fillColorSecondary : Styles().colors.mediumGray,
+                            fontSize: TabBarWidget.tabTextSize),
+                      )
+                      )
+                    ],
+                  ),
+                )),
           ),
           selected ? Positioned.fill(
             child: Column(
