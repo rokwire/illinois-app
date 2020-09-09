@@ -26,6 +26,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
@@ -352,7 +353,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 6)),
-                      RoundedButton(
+                      ScalableRoundedButton(
                         label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
                         backgroundColor: Colors.white,
