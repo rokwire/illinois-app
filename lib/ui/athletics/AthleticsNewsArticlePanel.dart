@@ -24,6 +24,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -139,7 +140,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),
-                                    child: RoundedButton(
+                                    child: ScalableRoundedButton(
                                       label: 'Share this article',
                                       backgroundColor: Styles().colors.background,
                                       textColor: Styles().colors.fillColorPrimary,

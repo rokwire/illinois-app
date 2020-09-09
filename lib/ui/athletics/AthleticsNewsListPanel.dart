@@ -26,6 +26,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -71,7 +72,6 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-
             Expanded(child: Stack( children: <Widget>[Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -79,13 +79,13 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
                       title: Localization().getStringEx("panel.athletics_news_list.title", 'Athletics News'),
                       imageRes: 'images/icon-news.png'),
                   Container(
-                    height: 56,
+                    height: 28 + 20*(MediaQuery.of(context).textScaleFactor),
                     child:Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
                       child: Row( mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget> [
                           _buildFilterLabel(),
                           Expanded(
-                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors.fillColorSecondaryVariant, FilterSelectorWidget(
+                            child: Padding(padding: EdgeInsets.only(top: 2),child:_wrapWithBottomBorder(Styles().colors.fillColorSecondaryVariant, ScalableFilterSelectorWidget(
                               label: _filters[_selectedFilterIndex],
                               active: _filterOptionsVisible,
                               visible: true,

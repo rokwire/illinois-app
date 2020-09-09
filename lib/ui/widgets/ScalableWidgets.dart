@@ -263,6 +263,7 @@ class ScalableFilterSelectorWidget extends StatelessWidget {
                         Expanded(child:
                           Text(
                             label,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: labelFontSize, color: (active ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies.bold),
                           ),
