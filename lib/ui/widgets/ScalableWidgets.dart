@@ -278,3 +278,39 @@ class ScalableFilterSelectorWidget extends StatelessWidget {
                 ))));
   }
 }
+
+class ScalableSmallRoundedButton extends StatelessWidget{
+  final String label;
+  final String hint;
+  final Function onTap;
+  final int widthCoeficient;
+  final showChevron;
+
+  const ScalableSmallRoundedButton({Key key, this.label, this.hint, this.onTap, this.widthCoeficient = 5, this.showChevron = false}) : super(key: key);
+
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      Row(children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: Container(),
+        ),
+        Expanded(
+          flex: widthCoeficient,
+          child: ScalableRoundedButton(
+            label: this.label,
+            hint: this.hint,
+            onTap: onTap,
+            textColor: Styles().colors.fillColorPrimary,
+            borderColor: Styles().colors.fillColorSecondary,
+            backgroundColor: Styles().colors.background,
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(),),
+      ],);
+  }
+}

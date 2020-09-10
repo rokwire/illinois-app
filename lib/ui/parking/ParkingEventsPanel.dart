@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
@@ -86,20 +87,27 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Container(height: 5,),
-                  Text(
-                    Localization().getStringEx("panel.parking_events.label.loading", "Loading parking events. Please wait..."),
-                    style: TextStyle(
-                      fontFamily: Styles().fontFamilies.regular,
-                      fontSize: 16,
-                      color: Styles().colors.mediumGray,
-                    ),
-                  )
-                ],
+              Expanded(child:
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    CircularProgressIndicator(),
+                    Container(height: 5,),
+                    Row(children: <Widget>[
+                      Expanded(child:
+                        Text(
+                          Localization().getStringEx("panel.parking_events.label.loading", "Loading parking events. Please wait..."),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: Styles().fontFamilies.regular,
+                            fontSize: 16,
+                            color: Styles().colors.mediumGray,
+                          ),
+                        )
+                      )
+                    ],)
+                  ],
+                )
               )
             ],
           ),
