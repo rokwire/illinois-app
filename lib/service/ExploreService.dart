@@ -411,14 +411,14 @@ class ExploreService /* with Service */ {
   Future<void> _buildEventsForSuperEvent(Event superEvent, DateTime nowUtc) async {
     List<Map<String, dynamic>> subEventsMap = superEvent.subEventsMap;
     if (AppCollection.isCollectionEmpty(subEventsMap)) {
+      Log.e('Super event does not contain sub events!');
       return;
     }
-    StringBuffer idsBuffer = StringBuffer();
-    subEventsMap.forEach((subEventMap) {
-      String id = subEventMap['id'];
-      idsBuffer.write('id=$id&');
-    });
-    String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
+    String superEventId = superEvent?.id;
+    if (AppString.isStringEmpty(superEventId)) {
+      Log.e('Super event has no id!');
+      return;
+    }
     String dateTimeQueryParam = '';
     if (nowUtc == null) {
       nowUtc = DateTime.now().toUtc();
@@ -426,7 +426,7 @@ class ExploreService /* with Service */ {
     String dateFormatted = AppDateTime().formatDateTime(nowUtc, ignoreTimeZone: true);
     dateTimeQueryParam = '&startDate=$dateFormatted';
     http.Response response;
-    String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
+    String queryParameters = '?superEventId=$superEventId$dateTimeQueryParam';
     try {
       response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
           '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
@@ -439,17 +439,22 @@ class ExploreService /* with Service */ {
       return;
     }
     String responseBody = response.body;
-    List<dynamic> subEventsJsonList = AppJson.decode(responseBody);
-    for (Map<String, dynamic> subEventJson in subEventsMap) {
-      String id = subEventJson['id'];
-      dynamic eventJson = subEventsJsonList?.firstWhere((jsonEntry) => id == jsonEntry['id'], orElse: () => print('No matching sub event')) ?? null;
-      if (eventJson != null) {
-        Event event = Event.fromJson(eventJson);
-        event.track = subEventJson['track'];
-        if (true == subEventJson['isFeatured']) {
-          superEvent.addFeaturedEvent(event);
+    List<dynamic> subEventsJsonList = AppJson.decodeList(responseBody);
+    if (AppCollection.isCollectionNotEmpty(subEventsJsonList)) {
+      for (dynamic eventJson in subEventsJsonList) {
+        String id = eventJson['id'];
+        Map<String, dynamic> subEventJson = subEventsMap.firstWhere((jsonEntry) => (id == jsonEntry['id']), orElse: () {
+          print('No matching sub event');
+          return null;
+        });
+        if (subEventJson != null) {
+          Event event = Event.fromJson(eventJson);
+          event.track = subEventJson['track'];
+          if (true == subEventJson['isFeatured']) {
+            superEvent.addFeaturedEvent(event);
+          }
+          superEvent.addSubEvent(event);
         }
-        superEvent.addSubEvent(event);
       }
     }
   }
