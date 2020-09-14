@@ -30,6 +30,7 @@ import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
@@ -345,7 +346,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(horizontal: 16),
           borderColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
           borderWidth: 1,
-          height: 42,
+          height: 22 + 16*MediaQuery.of(context).textScaleFactor,
           onTap:() { _onTab(tab); }
         ),
       ],));
@@ -353,7 +354,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Container(color: Colors.white,
       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Row(children:tabs),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(children:tabs),
+        )
       ),
     );
   }
@@ -367,21 +371,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    content.add(Padding(padding: EdgeInsets.only(top: 16), child: Row(children: <Widget>[
-      Expanded(child: Container(),),
-      RoundedButton(label: 'See all events',
-        backgroundColor: Styles().colors.white,
-        textColor: Styles().colors.fillColorPrimary,
-        fontFamily: Styles().fontFamilies.bold,
-        fontSize: 16,
-        padding: EdgeInsets.symmetric(horizontal: 32, ),
-        borderColor: Styles().colors.fillColorSecondary,
-        borderWidth: 2,
-        height: 42,
-        onTap:() {  }
-      ),
-      Expanded(child: Container(),),
-    ],),),);
+    content.add(Padding(padding: EdgeInsets.only(top: 16), child:
+      ScalableSmallRoundedButton(
+          label: 'See all events',
+          backgroundColor: Styles().colors.white,
+          textColor: Styles().colors.fillColorPrimary,
+          fontFamily: Styles().fontFamilies.bold,
+          fontSize: 16,
+          padding: EdgeInsets.symmetric(horizontal: 32, ),
+          borderColor: Styles().colors.fillColorSecondary,
+          borderWidth: 2,
+  //        height: 42,
+          onTap:() {  }
+    )));
 
     return Column(
       children: <Widget>[
@@ -580,7 +582,9 @@ class _EventCard extends StatelessWidget {
                     image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
                   ),
                 ),
-                Expanded(child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(bottom: 2), child:
                     Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
                   ),
@@ -591,7 +595,10 @@ class _EventCard extends StatelessWidget {
                     Text(comment.member.officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
                   ],)
                 ],),),),
-                Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                Expanded(
+                  flex: 3,
+                  child: Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                )
               ],),
               Padding(padding: EdgeInsets.only(top:8), child:
                 ExpandableText(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
@@ -635,7 +642,9 @@ class _EventContent extends StatelessWidget {
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
-      Text(event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
+      Expanded(child:
+        Text(event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),)
+      ),
     ],)),);
 
     return Stack(children: <Widget>[

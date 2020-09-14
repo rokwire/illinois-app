@@ -138,6 +138,7 @@ class ScalableRoundedButton extends StatelessWidget {
   final bool enabled;
   final bool showAdd;
   final bool showChevron;
+  final int maxLines;
 
   ScalableRoundedButton(
       {this.label = '',
@@ -155,7 +156,8 @@ class ScalableRoundedButton extends StatelessWidget {
         this.shadow,
         this.onTap,
         this.showAdd = false,
-        this.showChevron = false
+        this.showChevron = false,
+        this.maxLines = 10
       });
 
   @override
@@ -196,6 +198,8 @@ class ScalableRoundedButton extends StatelessWidget {
                     Text(
                       label,
                       textAlign: textAlign,
+                      maxLines: maxLines,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: fontFamily ?? Styles().fontFamilies.bold,
                         fontSize: fontSize,
@@ -282,11 +286,43 @@ class ScalableFilterSelectorWidget extends StatelessWidget {
 class ScalableSmallRoundedButton extends StatelessWidget{
   final String label;
   final String hint;
+  final Color backgroundColor;
   final Function onTap;
+  final Color textColor;
+  final TextAlign textAlign;
+  final String fontFamily;
+  final double fontSize;
+  final Color borderColor;
+  final double borderWidth;
+  final Color secondaryBorderColor;
+  final List<BoxShadow> shadow;
+  final EdgeInsetsGeometry padding;
+  final bool enabled;
+  final bool showAdd;
+  final bool showChevron;
   final int widthCoeficient;
-  final showChevron;
+  final int maxLines;
 
-  const ScalableSmallRoundedButton({Key key, this.label, this.hint, this.onTap, this.widthCoeficient = 5, this.showChevron = false}) : super(key: key);
+  const ScalableSmallRoundedButton({Key key,
+    this.label = '',
+    this.hint = '',
+    this.backgroundColor,
+    this.textColor = Colors.white,
+    this.textAlign = TextAlign.center,
+    this.fontFamily,
+    this.widthCoeficient = 5,
+    this.fontSize = 20.0,
+    this.padding = const EdgeInsets.all(5),
+    this.enabled = true,
+    this.borderColor,
+    this.borderWidth = 2.0,
+    this.secondaryBorderColor,
+    this.shadow,
+    this.onTap,
+    this.showAdd = false,
+    this.showChevron = false,
+    this.maxLines = 10
+  }) : super(key: key);
 
 
   @override
@@ -303,9 +339,20 @@ class ScalableSmallRoundedButton extends StatelessWidget{
             label: this.label,
             hint: this.hint,
             onTap: onTap,
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.background,
+            textColor: textColor ?? Styles().colors.fillColorPrimary,
+            borderColor: borderColor?? Styles().colors.fillColorSecondary,
+            backgroundColor: backgroundColor?? Styles().colors.background,
+            showChevron: showChevron,
+            textAlign: textAlign,
+            padding: padding,
+            enabled: enabled,
+            fontSize: fontSize,
+            borderWidth: borderWidth,
+            fontFamily: fontFamily,
+            secondaryBorderColor: secondaryBorderColor,
+            shadow: shadow,
+            showAdd: showAdd,
+            maxLines: maxLines,
           ),
         ),
         Expanded(

@@ -26,6 +26,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class GroupCreatePanel extends StatefulWidget {
   _GroupCreatePanelState createState() => _GroupCreatePanelState();
@@ -294,22 +295,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildButtonsLayout() {
     return
       Stack(children: <Widget>[
-        Container(height: 80, color: Styles().colors.white,
+        Container( color: Styles().colors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
-            child: RoundedButton(
+            child: ScalableRoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.create.title", "Create group"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors.fillColorSecondary,
               textColor: Styles().colors.fillColorPrimary,
               onTap: _onCreateTap,
-              height: 48,
+//              height: 48,
             ),
           )
           ,),
         Visibility(visible: _loading,
           child: Container(
-            height: 48,
+//            height: 48,
             child: Align(alignment: Alignment.center,
               child: SizedBox(height: 24, width: 24,
                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
