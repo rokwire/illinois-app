@@ -105,19 +105,25 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
     return Scaffold(
         backgroundColor: Colors.black.withOpacity(0.3), //Colors.transparent,
         body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(top: widget.topOffset),
-            child: Padding(
-              padding: EdgeInsets.all(5),
-              child: Stack(children: <Widget>[
-                Column(children: <Widget>[ Container(
-                  decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
-                  child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
-                ),],),
+          child:
+//          Padding(
+//            padding: EdgeInsets.only(top: widget.topOffset),
+//            child:
+            Padding(
+              padding: EdgeInsets.only(left:5, right: 5, top: /*widget.topOffset*/30, bottom: 5),
+              child:
+              Stack(children: <Widget>[
+                SingleChildScrollView(child:
+                Column(children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
+                    child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
+                  ),
+                ],)),
                 Container(alignment: Alignment.topRight, child: _buildCloseButton()),
               ]),
             )
-          ),
+//          ),
         ),
 
     );
@@ -207,10 +213,10 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         ((digit+1) < _digitsCount) ? _digitFocusNodes[digit+1] : null));
 
     }
-    return Row(
+    return SingleChildScrollView(scrollDirection: Axis.horizontal,child:Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: widgets,);
+      children: widgets,));
   }
 
   Widget _buildPinField(TextEditingController controller, FocusNode focusNode, FocusNode prevFocusNode, FocusNode nextFocusNode){
@@ -225,7 +231,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       }
     };
     return Container(
-      width: 45,
+      width: 20+ 20*MediaQuery.of(context).textScaleFactor,
       child: TextFormField(
         controller: controller,
         focusNode: focusNode,
@@ -260,7 +266,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
             label: Localization().getStringEx('dialog.continue.title', 'Continue'),
             hint: Localization().getStringEx('dialog.continue.hint', ''),
             backgroundColor: Styles().colors.white,
-            height: 42,
+            height: 20 + 16*MediaQuery.of(context).textScaleFactor,
             fontSize: 16.0,
             textColor: Styles().colors.fillColorPrimary,
             borderColor: Styles().colors.fillColorSecondary,

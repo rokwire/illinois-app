@@ -28,8 +28,10 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
+import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -165,9 +167,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 10,),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 80),
-            child: RoundedButton(
+            child: ScalableRoundedButton(
               label: Localization().getStringEx("panel.polls_home.button.find_poll.title","Find Poll"),
               onTap: ()=>_onFindPollTapped(),
+              backgroundColor: Styles().colors.fillColorPrimary,
+              textColor: Styles().colors.white,
               borderColor: Styles().colors.fillColorSecondary,
             ),
           ),
@@ -400,7 +404,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildCreatePollButton() {
     if (_canCreatePoll) {
       return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors.white,child:
-        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll"),
+        ScalableRoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a poll"),
             textColor: Styles().colors.fillColorPrimary,
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.white,
@@ -776,9 +780,12 @@ class _PollCardState extends State<_PollCard>{
           child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
             Text(votesNum, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),),
             Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 12,),),
+            Expanded(child:
             Text(pollStatus ?? '', style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 12, ),),
-            Expanded(child: Container(),),
-            Text(pin, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 12, ),),
+            ),
+            Expanded(child:
+              Text(pin, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 12, ),),
+            )
           ],),),
           ),
           Row(children: <Widget>[Expanded(child: Container(),)],),
@@ -841,21 +848,28 @@ class _PollCardState extends State<_PollCard>{
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
             Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
-            Expanded(key: progressKey, child:Stack(children: <Widget>[
+            Expanded(
+              flex: 5,
+              key: progressKey, child:
+                Stack(children: <Widget>[
               CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.white, progressColor: useCustomColor ?Styles().colors.fillColorPrimary:Styles().colors.lightGray, progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(height: 30, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              Container(/*height: 15+ 16*MediaQuery.of(context).textScaleFactor,*/ child:
                 Padding(padding: EdgeInsets.only(left: 5), child:
                     Row(children: <Widget>[
+                      Expanded( child:
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors.white:Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),),
-                      Visibility( visible: didVote,
+                        child: Expanded(child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors.white:Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),),)),
+                        Visibility( visible: didVote,
                         child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
                       ),
                     ],),)
-              ],),),
+              ),
             ],)
             ),
-            Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', style: TextStyle(color: votesColor, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500,height: 1.29),),),
+            Expanded(
+              flex: 5,
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: TextStyle(color: votesColor, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500,height: 1.29),),),
+            )
           ],)
       ))));
     }

@@ -77,6 +77,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
               label: _showAll
                   ? Localization().getStringEx("widget.section_list.button.show_less.label", "Show less")
                   : Localization().getStringEx("widget.section_list.button.show_more.label", "Show more"),
+              backgroundColor: Styles().colors.white,
               onTap: () => _onShowMoreTap(),
             ),)
           ])),
