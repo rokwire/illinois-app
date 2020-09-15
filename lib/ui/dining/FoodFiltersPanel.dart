@@ -148,7 +148,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
               ),
             ),
           ),
-          _buildSaveButton()
+//          _buildSaveButton()
         ],
       ),
       backgroundColor: Styles().colors.background,
@@ -202,7 +202,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
     else{
       _selectedTypesPrefs.add(foodOption);
     }
-
+    DiningService().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
 
     setState((){});
   }
@@ -215,6 +215,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
     else{
       _selectedIngredientsPrefs.add(foodOption);
     }
+    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
 
     setState((){});
   }
@@ -225,8 +226,8 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
       Padding(
         padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
         child: RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
-          hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+          label: Localization().getStringEx("panel.food_filters.button.save.title", "Save Changes"),
+          hint: Localization().getStringEx("panel.food_filters.button.save.hint", ""),
           enabled: _canSave,
           fontFamily: Styles().fontFamilies.bold,
           backgroundColor: Styles().colors.white,

@@ -87,7 +87,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                                     onPressed: _onTapBack))),
                             Expanded(child:Container()),
                             Container(height: 90,
-                              child: Image.asset("images/group-3.png",excludeFromSemantics: true,),
+                              child: Image.asset("images/group-6.png",excludeFromSemantics: true,),
                             ),
                             Expanded(child:Container()),
                             Container(width: 42,)
@@ -98,11 +98,12 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                       Container(height: 10,),
                       Row(children: <Widget>[
                         Expanded(child:
-                        Text(
-                          Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
-                        ),
+                          Semantics(header: true, child:
+                            Text(
+                              Localization().getStringEx("panel.settings.privacy_center.label.title", "Privacy Center"),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies.extraBold),
+                            ),)
                         ),
                       ],),
                       Container(height: 24,)
@@ -365,13 +366,13 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
               fontSize: 16,
               fontFamily: Styles().fontFamilies.regular,
               label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
-              hint: Localization().getStringEx("panel.settings.privacy_center.label.description", "This will delete all of your personal information that was shared and stored within the app."),
+              hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
               shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
               onTap: _onTapDeleteData,
             ),
             Container(height: 16,),
             ExcludeSemantics(
-            child: Text(Localization().getStringEx("panel.settings.privacy_center.label.description", "This will delete all of your personal information that was shared and stored within the app."),
+            child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
               textAlign: TextAlign.center,
               style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),)),
           ],);

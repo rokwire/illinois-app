@@ -184,9 +184,6 @@ class AppDateTime with Service {
           displayDay += " ${Localization().getStringEx('model.explore.time.at', 'at')}";
         }
       }
-      else if ((1 < timeDaysDiff) && (timeDaysDiff < 7)) {
-        displayDay = formatDateTime(dateTimeToCompare, format: "EEEE", ignoreTimeZone: true, showTzSuffix: false);
-      }
       else {
         displayDay = formatDateTime(dateTimeToCompare, format: "MMM dd", ignoreTimeZone: true, showTzSuffix: false);
       }

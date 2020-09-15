@@ -325,7 +325,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreLocationDetail() {
     String locationText = ExploreHelper.getLongDisplayLocation(widget.parentEvent, _locationData);
-    if ((locationText != null) && locationText.isNotEmpty) {
+    if (!(widget?.parentEvent?.isVirtual ?? false) && widget?.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -549,8 +549,10 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onLocationDetailTapped(){
-    Analytics.instance.logSelect(target: "Location Detail");
-    NativeCommunicator().launchExploreMapDirections(target: widget.parentEvent);
+    if(widget?.parentEvent?.location?.latitude != null && widget?.parentEvent?.location?.longitude != null) {
+      Analytics.instance.logSelect(target: "Location Detail");
+      NativeCommunicator().launchExploreMapDirections(target: widget.parentEvent);
+    }
   }
 
   void _onTapHeaderStar() {

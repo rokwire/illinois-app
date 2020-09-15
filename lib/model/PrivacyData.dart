@@ -86,11 +86,12 @@ class PrivacyData{
 
 class PrivacyCategory{
   String title;
+  String titleKey;
   Map<String, dynamic> description;
   List<PrivacyEntry> entries;
   List<PrivacyEntry2> entries2;
 
-  PrivacyCategory({this.title,this.description,this.entries, this.entries2});
+  PrivacyCategory({this.title, this.titleKey, this.description,this.entries, this.entries2});
 
   factory PrivacyCategory.fromJson(Map<String, dynamic> json) {
     List<dynamic> entriesJson = json['entries'];
@@ -104,6 +105,7 @@ class PrivacyCategory{
 
     return PrivacyCategory(
       title:PrivacyData().getLocalizedString(json["title"]),
+      titleKey:PrivacyData().getLocalizedString(json["title_key"]),
       description:json['description'],
       entries: entries,
       entries2: entries2

@@ -329,7 +329,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget _exploreLocationDetail() {
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData);
-    if ((locationText != null) && locationText.isNotEmpty) {
+    if (!(widget?.event?.isVirtual ?? false) && widget?.event?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -623,8 +623,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onLocationDetailTapped() {
-    Analytics.instance.logSelect(target: "Location Detail");
-    NativeCommunicator().launchExploreMapDirections(target: widget.event);
+    if(widget?.event?.location?.latitude != null && widget?.event?.location?.longitude != null) {
+      Analytics.instance.logSelect(target: "Location Detail");
+      NativeCommunicator().launchExploreMapDirections(target: widget.event);
+    }
   }
 
   void _onTapModify() {

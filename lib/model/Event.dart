@@ -72,6 +72,7 @@ class Event with Explore implements Favorite {
   List<Event> recurringEvents;
 
   bool isSuperEvent;
+  bool isVirtual;
   List<Map<String, dynamic>> subEventsMap;
   String track;
   List<Event> _subEvents;
@@ -141,6 +142,7 @@ class Event with Explore implements Favorite {
     isSuperEvent = json['isSuperEvent'] ?? false;
     this.subEventsMap = subEventsMap;
     track = json['track'];
+    isVirtual = json['isVirtual'];
   }
 
   void _initFromOther(Event other) {
@@ -181,6 +183,7 @@ class Event with Explore implements Favorite {
     isSuperEvent = other?.isSuperEvent;
     subEventsMap = other?.subEventsMap;
     track = other?.track;
+    isVirtual = other?.isVirtual;
   }
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -235,7 +238,8 @@ class Event with Explore implements Favorite {
       "converge_url": convergeUrl,
       "isSuperEvent": isSuperEvent,
       "subEvents": subEventsMap,
-      "track": track
+      "track": track,
+      'isVirtual': isVirtual,
     };
   }
 
@@ -421,7 +425,11 @@ class Event with Explore implements Favorite {
     }
     String startTime = AppDateTime().getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
     String endTime = AppDateTime().getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);
-    return '$startTime-$endTime';
+    String displayTime = '$startTime';
+    if (AppString.isStringNotEmpty(endTime)) {
+      displayTime += '-$endTime';
+    }
+    return displayTime;
   }
 
   String get displayRecurringDates {
