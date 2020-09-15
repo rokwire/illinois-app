@@ -51,7 +51,7 @@ class ExploreViewTypeTab extends StatelessWidget {
             Row(children: <Widget>[
               Image.asset(iconResource),
               Container(width: 5,),
-              Text(label, style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.white, fontSize: 16),)
+              Text(label, style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.white, fontSize: 16,),textScaleFactor:( MediaQuery.of(context).textScaleFactor> 2 ? MediaQuery.of(context).textScaleFactor - 0.8 : MediaQuery.of(context).textScaleFactor),)
             ]),
           ],)
         )),
