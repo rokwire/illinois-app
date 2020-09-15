@@ -24,6 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -202,7 +203,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                   Analytics.instance.logSelect(target: "Back");
                   Navigator.pop(context);
                 }), Align(alignment: Alignment.bottomCenter, child:
-            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: RoundedButton(
+            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: ScalableRoundedButton(
                 label: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.label",
                     "Next"),

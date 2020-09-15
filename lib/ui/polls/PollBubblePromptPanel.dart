@@ -21,6 +21,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -88,10 +89,11 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
                 child: Padding(
                     padding: EdgeInsets.all(5),
                     child: Stack(children: <Widget>[
+                          SingleChildScrollView(child:
                           Column(children: <Widget>[ Container(
                             decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                             child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(),),),
-                          ),],),
+                          ),],)),
                       Container(alignment: Alignment.topRight, child: _buildCloseButton()),
                     ])
       ))));
@@ -184,11 +186,11 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
       result.add(Padding(padding: EdgeInsets.only(top: (0 < result.length) ? 10 : 0), child:
         Stack(children: <Widget>[
-          RoundedButton(
+          ScalableRoundedButton(
             label: _poll.options[optionIndex],
             backgroundColor: (0 < _optionVotes(optionIndex)) ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary,
             hint: Localization().getStringEx("panel.poll_prompt.hint.select_option","Double tab to select this option"),
-            height: 42,
+//            height: 42,
             fontSize: 16.0,
             textColor: Colors.white,
             borderColor: Styles().colors.fillColorSecondary,
@@ -253,9 +255,12 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
             ],),),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
               CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(height: 30, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              Container(height: 15 + 16*MediaQuery.of(context).textScaleFactor, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
-                  Text(optionString, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                Row(children: <Widget>[
+                  Expanded(child:
+                    Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                ],))
               ],),),
               ],)
             ),
@@ -295,26 +300,29 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
       Semantics(label: semanticsText, excludeSemantics: true, child:
         Row(children: <Widget>[
           Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
-          Expanded(key: progressKey, child:Stack(children: <Widget>[
+          Expanded(
+              key: progressKey, child:Stack(children: <Widget>[
             CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-            Container(height: 30, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               Padding(padding: EdgeInsets.only(left: 5), child:
-                Text(_poll.options[optionIndex], style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                Text(_poll.options[optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
             ],),),
             ],)
           ),
-          Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', style: TextStyle(color: Styles().colors.surfaceAccent, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
-        ],))
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: TextStyle(color: Styles().colors.surfaceAccent, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+          )
+          ],))
       ));
     }
     return result;
   }
 
   Widget _buildVoteDoneButton(Function handler) {
-    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
+    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
         backgroundColor: Styles().colors.fillColorPrimary,
-        height: 42,
+//        height: 42,
         fontSize: 16.0,
         textColor: Colors.white,
         borderColor: Colors.white,

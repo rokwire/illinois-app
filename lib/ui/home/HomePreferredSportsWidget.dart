@@ -116,27 +116,34 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
             hint: Localization().getStringEx('widget.home_prefered_sports.label.mens_sports.hint', ""), header:true, excludeSemantics: true,
             child: Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10),
               child: Row(children: <Widget>[
-                    Text(
-                      Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS"),
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS"),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
+                      )
                     ),
-                    Expanded(child: Container(),),
                     Visibility(visible: (!_displayPreferredSports && User().privacyMatch(_minPrivacyLevel)),
-                      child: Semantics(excludeSemantics: true,
+                      child: Expanded(
+                        flex: 3,
+                        child:Semantics(excludeSemantics: true,
                         label: Localization().getStringEx('widget.athletics_teams.men_sports.title.checkmark', 'Tap to select or deselect all men sports'),
                         checked: allMenSelected,
                         child: GestureDetector(
                           onTap: () => Sports().switchAllSports(_menSports, _sportPreferences, !allMenSelected),
                           child: Row(children: <Widget>[
+                            Expanded(child:
                             Text(Localization().getStringEx(menSelectClearTextKey, ''),
+                              textAlign: TextAlign.right,
                               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.medium),),
+                            ),
                             Padding(padding: EdgeInsets.symmetric(horizontal: 8),
                               child: Image.asset(menSelectClearImageKey),
                             ),
                           ],),
                         ),
-                      ),
+                      )),
                     ),
                   ],
                 ),
@@ -158,27 +165,34 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                 hint: Localization().getStringEx('widget.home_prefered_sports.label.womens_sports.hint', ""),header:true, excludeSemantics: true,
                 child: Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10),
                   child: Row(children: <Widget>[
-                      Text(
-                        Localization().getStringEx('widget.home_prefered_sports.label.womes_sports', "WOMEN'S SPORTS"),
-                        textAlign: TextAlign.left,
-                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
+                      Expanded(
+                        flex: 5,
+                        child: Text(
+                          Localization().getStringEx('widget.home_prefered_sports.label.womes_sports', "WOMEN'S SPORTS"),
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
+                        ),
                       ),
-                      Expanded(child: Container(),),
+
                       Visibility(visible: (!_displayPreferredSports && User().privacyMatch(_minPrivacyLevel)),
-                        child: Semantics(excludeSemantics: true,
+                        child: Expanded(
+                          flex: 3,
+                          child: Semantics(excludeSemantics: true,
                           label: Localization().getStringEx('widget.athletics_teams.women_sports.title.checkmark', 'Tap to select or deselect all women sports'),
                           checked: allWomenSelected,
                           child: GestureDetector(
                             onTap: () => Sports().switchAllSports(_womenSports, _sportPreferences, !allWomenSelected),
                             child: Row(children: <Widget>[
+                              Expanded(child:
                               Text(Localization().getStringEx(womenSelectClearTextKey, ''),
                                 style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.medium),),
+                              ),
                               Padding(padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: Image.asset(womenSelectClearImageKey),
                               )
                             ],),
                           ),
-                        ),
+                        )),
                       ),
                     ],
                   ),
@@ -300,7 +314,9 @@ class _HomePreferredSportFilterTab extends StatelessWidget {
           child:Center(child: Text(text,style:TextStyle(
               fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium,
               fontSize: 16,
-              color: Styles().colors.fillColorPrimary))),
+              color: Styles().colors.fillColorPrimary),
+              overflow: TextOverflow.ellipsis,
+          )),
         ),
         ));
   }

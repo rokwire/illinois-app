@@ -42,17 +42,20 @@ class SettingsDialog extends StatefulWidget{
              type: MaterialType.transparency,
              child: Container(
                color: Styles().colors.blackTransparent06,
-               child: Stack(
-                 children: <Widget>[
-                   Align(alignment: Alignment.center,
-                       child: Container(
-                         padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
-                         child: SettingsDialog(title:title, continueButtonTitle:continueTitle , message: message, options: options, onContinue: onContinue,longButtonTitle: longButtonTitle??false,)
+               child: SingleChildScrollView(child:
+               Column(children:[
+                   Stack(
+                     children: <Widget>[
+                       Align(alignment: Alignment.center,
+                           child: Container(
+                             padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
+                             child: SettingsDialog(title:title, continueButtonTitle:continueTitle , message: message, options: options, onContinue: onContinue,longButtonTitle: longButtonTitle??false,)
+                           )
                        )
-                   )
-                 ],
-               ),
-             ),
+                     ],
+                   ),
+                 ])
+             )),
            );
         },
      );
@@ -82,7 +85,8 @@ class _SettingsDialogState extends State<SettingsDialog>{
               Expanded(child:
               Text(
                 widget.title??"",
-                maxLines: 99,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies.bold,),
               )),
               Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true,
@@ -99,7 +103,8 @@ class _SettingsDialogState extends State<SettingsDialog>{
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(border:  Border.all(color: Styles().colors.fillColorPrimary,width: 1), borderRadius: BorderRadius.only(bottomRight: Radius.circular(4), bottomLeft: Radius.circular(4))),
-            child: Column(children: <Widget>[
+            child:
+              Column(children: <Widget>[
               Container(height: 16,),
               RichText(
                 text: TextSpan(
@@ -110,16 +115,19 @@ class _SettingsDialogState extends State<SettingsDialog>{
               _buildOptions(),
               Container(height: 14,),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Expanded(child:
                   _buildCancellButton(),
+                  ),
                   Container(width: 8,),
                   Expanded(child:
                   _buildConfirmButton()
                   ),
               ],),
               Container(height: 8,),
-            ],),),
-
+            ],))
         ],
       ),
     );
@@ -137,8 +145,9 @@ class _SettingsDialogState extends State<SettingsDialog>{
       if(options?.isNotEmpty??false)
         return Container(
           padding: EdgeInsets.only(top: 18),
-          child: Column(
+          child:SingleChildScrollView(child:Column(
             children: options,
+          )
           ),
         );
     }
@@ -182,7 +191,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
         onTap: (){ Navigator.pop(context);},
         child: Container(
           alignment: Alignment.center,
-          height: widget.longButtonTitle?56 : 42,
+//          height: widget.longButtonTitle?56 : 42,
           decoration: BoxDecoration(
             color: (Styles().colors.white),
             border: Border.all(
@@ -191,8 +200,14 @@ class _SettingsDialogState extends State<SettingsDialog>{
             borderRadius: BorderRadius.circular(25),
           ),
           padding: EdgeInsets.symmetric(horizontal: 16, ),
-          child: Text(
-            Localization().getStringEx("widget.settings.dialog.button.cancel.title","Cancel"), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Text(
+
+                Localization().getStringEx("widget.settings.dialog.button.cancel.title","Cancel"), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+            )
+          ],)
         )));
   }
   _buildConfirmButton(){
@@ -203,7 +218,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               onTap: (){ widget?.onContinue(selectedOptions, ({bool loading})=>setState((){_loading = loading;}));},
               child: Container(
                 alignment: Alignment.center,
-                height: widget.longButtonTitle? 56: 42,
+//                height: widget.longButtonTitle? 56: 42,
                 decoration: BoxDecoration(
                   color: (_getIsContinueEnabled? Styles().colors.fillColorSecondaryVariant : Styles().colors.white),
                   border: Border.all(

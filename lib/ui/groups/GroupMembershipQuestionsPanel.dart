@@ -21,6 +21,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -132,10 +133,10 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
       content.add(_buildQuestion(index: index));
     }
 
-    content.add(Row(children: <Widget>[
-      Expanded(child: Container(),),
-      GroupMembershipAddButton(title: 'Add question', onTap: () { _addQuestion();  },),
-    ],),);
+    content.add(SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: <Widget>[
+//      Expanded(child: Container(),),
+      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor ,title: 'Add question', onTap: () { _addQuestion();  },),
+    ],),));
 
     return Padding(padding: EdgeInsets.all(32),
       child: Column(crossAxisAlignment:CrossAxisAlignment.start, children: content),
@@ -175,8 +176,9 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     return Container(color: Colors.white,
       child: Padding(padding: EdgeInsets.all(16),
         child: Row(children: <Widget>[
-          Expanded(child: Container(),),
-          RoundedButton(label: 'Save questions',
+          Expanded(flex: 1,child: Container(),),
+          Expanded(flex: 5,
+          child: ScalableRoundedButton(label: 'Save questions',
             backgroundColor: Styles().colors.white,
             textColor: Styles().colors.fillColorPrimary,
             fontFamily: Styles().fontFamilies.bold,
@@ -184,10 +186,11 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
             padding: EdgeInsets.symmetric(horizontal: 32, ),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
-            height: 42,
+//            height: 42,
             onTap:() { _onSubmit();  }
+            )
           ),
-          Expanded(child: Container(),),
+          Expanded(flex: 1, child: Container(),),
         ],),
       ),
     );

@@ -26,6 +26,7 @@ import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -284,25 +285,21 @@ class _PendingMemberCard extends StatelessWidget {
                     ),
                   ),
                   Container(height: 12,),
-                  Row(
-                    children: <Widget>[
-                      RoundedButton(
+                      ScalableRoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
                         borderColor: Styles().colors.fillColorSecondary,
                         textColor: Styles().colors.fillColorPrimary,
                         backgroundColor: Styles().colors.white,
                         fontSize: 16,
-                        height: 32,
+//                        height: 32,
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
                           Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, groupDetail: groupDetail,)));
                         },
                       ),
-                      Expanded(child: Container(),),
-                    ],
-                  )
+//                      Expanded(child: Container(),),
                 ],
               ),
             ),
@@ -359,13 +356,15 @@ class _GroupMemberCard extends StatelessWidget{
                     Container(height: 12,),
                     Row(
                       children: <Widget>[
-                        Text(
-                          member?.name ?? "",
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies.bold,
-                              fontSize: 16,
-                              color: Styles().colors.fillColorPrimary
-                          ),
+                        Expanded(child:
+                          Text(
+                            member?.name ?? "",
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies.bold,
+                                fontSize: 16,
+                                color: Styles().colors.fillColorPrimary
+                            ),
+                          )
                         )
                       ],
                     )

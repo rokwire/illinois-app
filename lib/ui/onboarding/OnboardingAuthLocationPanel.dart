@@ -23,6 +23,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 
 class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
@@ -40,7 +41,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
-            child: Column(
+            child: ScalableScrollView( scrollableChild: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Stack(children: <Widget>[
@@ -77,28 +78,29 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 Container(
                   height: 12,
                 ),
-                Expanded(
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            Localization().getStringEx(
-                                'panel.onboarding.location.label.description',
-                                "Share your location to know what's nearest to you while on campus."),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.regular,
-                                fontSize: 20,
-                                color: Styles().colors.fillColorPrimary),
-                          ),
-                        ))),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      Localization().getStringEx(
+                          'panel.onboarding.location.label.description',
+                          "Share your location to know what's nearest to you while on campus."),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies.regular,
+                          fontSize: 20,
+                          color: Styles().colors.fillColorPrimary),
+                    ),
+                  )),
+                ]),
+                bottomNotScrollableWidget:
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      RoundedButton(
+                      ScalableRoundedButton(
                         label: Localization().getStringEx(
                             'panel.onboarding.location.button.allow.title',
                             'Share my Location'),
@@ -140,7 +142,6 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                     ],
                   ),
                 ),
-              ],
             )));
   }
 

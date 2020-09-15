@@ -52,22 +52,22 @@ class HomeHeader extends StatelessWidget {
                         )
                       : Container(),
                 ),
+                Expanded(child:
                 Text(
                   title,
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
+                ),
                 (onSettingsTap == null) ? Container() :
-                Expanded(
-                  child: GestureDetector(
+                  GestureDetector(
                       onTap: onSettingsTap,
                       child: Container(
+                        padding: EdgeInsets.only(right: 20),
                           alignment: Alignment.centerRight,
-                          child: Padding(
-                              padding: EdgeInsets.only(right: 0),
-                              child: Image.asset(
+                          child: Image.asset(
                                 'images/settings-white.png',
                                 excludeFromSemantics: true,
-                              )))))
+                              )))
               ],
             ),
           ),

@@ -35,7 +35,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 48,
+        height: 24 + (16*(MediaQuery.of(context).textScaleFactor??1)),
         color: Styles().colors.fillColorPrimaryVariant,
         child: Padding(
             padding: EdgeInsets.only(left: 18),

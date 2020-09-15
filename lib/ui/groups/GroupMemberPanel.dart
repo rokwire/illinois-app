@@ -24,6 +24,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -211,6 +212,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             children: <Widget>[
               Container(height: 24,),
               ToggleRibbonButton(
+                  height: null,
                   borderRadius: BorderRadius.circular(4),
                   label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                   toggled: _member?.admin ?? false,
@@ -239,9 +241,9 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
     return Container(color: Colors.white,
       child: Padding(padding: EdgeInsets.all(16),
         child: Stack(children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child: Container(),),
-            RoundedButton(label: 'Update member',
+//          Row(children: <Widget>[
+//            Expanded(child: Container(),),
+            ScalableSmallRoundedButton(label: 'Update member',
               backgroundColor: Styles().colors.white,
               textColor: Styles().colors.fillColorPrimary,
               fontFamily: Styles().fontFamilies.bold,
@@ -249,11 +251,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
               padding: EdgeInsets.symmetric(horizontal: 32, ),
               borderColor: Styles().colors.fillColorSecondary,
               borderWidth: 2,
-              height: 42,
+//              height: 42,
               onTap:() { _onSubmit();  }
             ),
-            Expanded(child: Container(),),
-          ],),
+//            Expanded(child: Container(),),
+//          ],),
           Visibility(visible: (_submitting == true), child:
             Center(child:
               Padding(padding: EdgeInsets.only(top: 10.5), child:

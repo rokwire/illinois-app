@@ -30,6 +30,7 @@ import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
 class SettingsPersonalInformationPanel extends StatefulWidget{
@@ -66,7 +67,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               children: <Widget>[
                 Container(height: 1, color: Styles().colors.surfaceAccent,),
                 Container(height: 24,),
-                RoundedButton(
+                ScalableRoundedButton(
                   backgroundColor: Styles().colors.white,
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,

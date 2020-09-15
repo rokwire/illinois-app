@@ -24,6 +24,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/LocalNotifications.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'dart:io' show Platform;
 
@@ -42,7 +43,8 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context) ,
             onSwipeRight: () => _goBack(context),
-            child: Column(
+            child: ScalableScrollView(
+            scrollableChild:Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Stack(children: <Widget>[
@@ -90,14 +92,13 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                         fontSize: 20,
                         color: Styles().colors.fillColorPrimary),
                   )),
-                ),
-                Expanded(
-                  child: Padding(
+                ),]),
+                bottomNotScrollableWidget: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        RoundedButton(
+                        ScalableRoundedButton(
                           label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                           hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
                           borderColor: Styles().colors.fillColorSecondary,
@@ -133,8 +134,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                     ),
                   ),
                 ),
-              ],
-            )));
+            ));
   }
 
   void _onReceiveNotifications(BuildContext context) {

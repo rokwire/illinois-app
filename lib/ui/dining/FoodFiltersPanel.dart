@@ -163,6 +163,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
       String foodLabel = DiningService().getLocalizedString(foodType);
       list.add(
           ToggleRibbonButton(
+            height: null,
             label: foodLabel,
             onTap: (){_onFoodTypePrefTapped(foodType);},
             toggled: selected,
@@ -182,6 +183,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
       String ingredientLabel = DiningService().getLocalizedString(foodIngredient);
       list.add(
           ToggleRibbonButton(
+            height: null,
             label: ingredientLabel,
             onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
             toggled: selected,

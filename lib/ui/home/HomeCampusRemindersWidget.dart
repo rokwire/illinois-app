@@ -24,6 +24,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Reminders.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -70,11 +71,13 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
               titleStyle: TextStyle(color: Styles().colors.white, fontSize: 14, letterSpacing: 1.0, fontFamily: Styles().fontFamilies.bold),
               widgets: _buildReminders(),
             ),
-            Padding(padding: EdgeInsets.only(top: 24, bottom: 32), child: SmallRoundedButton(
+            Padding(padding: EdgeInsets.only(top: 24, bottom: 32), child:
+
+            ScalableSmallRoundedButton(
               label: _showAll
                   ? Localization().getStringEx("widget.section_list.button.show_less.label", "Show less")
                   : Localization().getStringEx("widget.section_list.button.show_more.label", "Show more"),
-              showChevron: false,
+              backgroundColor: Styles().colors.white,
               onTap: () => _onShowMoreTap(),
             ),)
           ])),

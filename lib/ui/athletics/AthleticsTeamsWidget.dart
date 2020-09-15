@@ -151,6 +151,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
         padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10),
         child: Row(
           children: <Widget>[
+            Expanded(child:
             Semantics(label:Localization().getStringEx(
                 "widget.athletics_teams.label.men_sports.title",
                 "MEN'S SPORTS"),
@@ -163,15 +164,13 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                       "widget.athletics_teams.label.men_sports.title",
                       "MEN'S SPORTS"),
                   textAlign: TextAlign.left,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       color: Colors.white,
                       fontSize: 14,
                       letterSpacing: 1.0),
-                )),
-            Expanded(
-              child: Container(),
-            ),
+                ))),
             Visibility(visible: User().privacyMatch(3),
               child: Semantics(excludeSemantics: true,
                 label: Localization().getStringEx(
@@ -210,6 +209,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
         padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10),
         child: Row(
           children: <Widget>[
+            Expanded(child:
             Semantics(label:Localization().getStringEx(
                 "widget.athletics_teams.label.women_sports.title",
                 "WOMEN'S SPORTS"),
@@ -222,15 +222,13 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                       "widget.athletics_teams.label.women_sports.title",
                       "WOMEN'S SPORTS"),
                   textAlign: TextAlign.left,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       color: Colors.white,
                       fontSize: 14,
                       letterSpacing: 1.0),
-                )),
-            Expanded(
-              child: Container(),
-            ),
+                ))),
             Visibility(visible: User().privacyMatch(3),
               child: Semantics(excludeSemantics: true,
                 label: Localization().getStringEx(

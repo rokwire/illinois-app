@@ -22,6 +22,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
   @override
@@ -84,7 +85,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   Widget _buildButtons(){
     return _canCreatePoll?
     Padding(padding: EdgeInsets.only(right: 120), child:
-    RoundedButton(
+    ScalableRoundedButton(
       label: Localization().getStringEx("widget.home_create_poll.button.create_poll.label","Create a poll"),
       padding: EdgeInsets.symmetric(horizontal: 16),
       textColor: Styles().colors.fillColorPrimary,
@@ -94,9 +95,9 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     )) :
     Padding(padding: EdgeInsets.only(right: 120), child:
     Stack(children: <Widget>[
-      RoundedButton(
+      ScalableRoundedButton(
         label: Localization().getStringEx("widget.home_create_poll.button.login.label","Login"),
-        height: 48,
+//        height: 48,
         padding: EdgeInsets.symmetric(horizontal: 16),
         textColor: Styles().colors.fillColorPrimary,
         borderColor: Styles().colors.fillColorSecondary,
