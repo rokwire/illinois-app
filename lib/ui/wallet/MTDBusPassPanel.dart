@@ -178,13 +178,13 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBussContent() {
-    String role = Auth().authCard?.role;
+    String studentLevel = Auth().authCard?.studentLevel;
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(
         children: <Widget>[
           _buildAvatar(),
           Text(
-            role,
+            studentLevel,
             style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 36, color: Styles().colors.white),
           ),
           BussClockWidget(),
