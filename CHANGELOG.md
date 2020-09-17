@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.2] - 2020-09-17
+### Changed
+- Use student_level instead of role from auth card API.[#80](https://github.com/rokwire/illinois-app/issues/80)
+
 ## [2.3.1] - 2020-09-15
 ### Fixed
 - Load ordered sub events.[#48](https://github.com/rokwire/illinois-app/issues/48)
