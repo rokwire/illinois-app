@@ -367,7 +367,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Auth()?.authCard?.role ?? "",
+              Auth()?.authCard?.studentLevel ?? "",
               style: TextStyle(
                 color: Styles().colors.fillColorPrimary,
                 fontFamily: Styles().fontFamilies.extraBold,

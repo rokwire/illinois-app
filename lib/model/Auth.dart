@@ -179,6 +179,7 @@ class AuthCard {
   final String uin;
   final String fullName;
   final String role;
+  final String studentLevel;
   final String cardNumber;
   final String expirationDate;
   final String libraryNumber;
@@ -189,13 +190,14 @@ class AuthCard {
     return (photoBase64 != null) ? await compute(AppBytes.decodeBase64Bytes, photoBase64) : null;
   }
 
-  AuthCard({this.uin, this.cardNumber, this.libraryNumber, this.expirationDate, this.fullName, this.role, this.magTrack2, this.photoBase64});
+  AuthCard({this.uin, this.cardNumber, this.libraryNumber, this.expirationDate, this.fullName, this.role, this.studentLevel, this.magTrack2, this.photoBase64});
 
   factory AuthCard.fromJson(Map<String, dynamic> json) {
     return AuthCard(
       uin: json['UIN'],
       fullName: json['full_name'],
       role: json['role'],
+      studentLevel: json['student_level'],
       cardNumber: json['card_number'],
       expirationDate: json['expiration_date'],
       libraryNumber: json['library_number'],
@@ -209,6 +211,7 @@ class AuthCard {
       'UIN': uin,
       'full_name': fullName,
       'role': role,
+      'student_level': studentLevel,
       'card_number': cardNumber,
       'expiration_date': expirationDate,
       'library_number': libraryNumber,
@@ -222,6 +225,7 @@ class AuthCard {
       'UIN': uin,
       'full_name': fullName,
       'role': role,
+      'student_level': studentLevel,
       'card_number': cardNumber,
       'expiration_date': expirationDate,
       'library_number': libraryNumber,
@@ -235,6 +239,7 @@ class AuthCard {
           o.uin == uin &&
           o.fullName == fullName &&
           o.role == role &&
+          o.studentLevel == studentLevel &&
           o.cardNumber == cardNumber &&
           o.expirationDate == expirationDate &&
           o.libraryNumber == libraryNumber &&
@@ -245,6 +250,7 @@ class AuthCard {
       uin.hashCode ^
       fullName.hashCode ^
       role.hashCode ^
+      studentLevel.hashCode ^
       cardNumber.hashCode ^
       expirationDate.hashCode ^
       libraryNumber.hashCode ^
