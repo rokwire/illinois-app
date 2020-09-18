@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/ExpandableText.dart';
 //import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/SearchPanel.dart';
@@ -66,22 +67,26 @@ class HeaderBar extends AppBar {
                       }))),
               Visibility(
                   visible: rightButtonVisible,
-                  child: Semantics(
-                    label: rightButtonText,
-                    button: true,
-                    excludeSemantics: true,
-                    child:InkWell(
-                    onTap: onRightButtonTap,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Text(rightButtonText,
-                          style: TextStyle(color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies.semiBold,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Styles().colors.fillColorSecondary,
-                              decorationThickness: 1,
-                              decorationStyle: TextDecorationStyle.solid)),),)))
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: Semantics(
+                      label: rightButtonText,
+                      button: true,
+                      excludeSemantics: true,
+                      child:InkWell(
+                      onTap: onRightButtonTap,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                        child: Text(rightButtonText,
+                            style: TextStyle(color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: Styles().fontFamilies.semiBold,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Styles().colors.fillColorSecondary,
+                                decorationThickness: 1,
+                                decorationStyle: TextDecorationStyle.solid)),),)),
+                  )
+              )
             ],
             centerTitle: true);
 }

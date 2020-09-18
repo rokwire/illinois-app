@@ -20,6 +20,7 @@ import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -45,18 +46,18 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
 
     return Scaffold(body: SwipeDetector(
         onSwipeLeft: () => _goNext(context),
-        child: Stack(
+        child: Column(children: <Widget>[
+          Expanded(child:
+          Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
               Image.asset('images/splash_image.png', fit: BoxFit.cover, semanticLabel: strWelcome,
                 height: double.infinity,
                 width: double.infinity,),
-              Column(children: <Widget>[Expanded(child: Container(),), Padding(
+              Column(children: <Widget>[
+                Expanded(child: Container(),),
+                Padding(
                 padding: EdgeInsets.all(24),
-                child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Center(
                         child: Column(
                           children: <Widget>[
                             Semantics(
@@ -81,10 +82,11 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                                       color: Colors.white,
                                     ),
                                   ),
-                                ])),
+                                ])
+                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 20),
-                              child: RoundedButton(
+                              child: ScalableRoundedButton(
                                 label: Localization().getStringEx(
                                     'panel.onboarding.get_started.button.get_started.title',
                                     'Get Started'),
@@ -99,12 +101,9 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
                               ),
                             )
                           ],
-                        ),
-                      ),
-                    )),
-              )
+              ))
               ],)
-            ])));
+            ]))],) ));
   }
 
   void _goNext(BuildContext context) {

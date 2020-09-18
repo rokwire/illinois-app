@@ -22,6 +22,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -64,12 +65,14 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
         behavior: HitTestBehavior.translucent,
         onTap: ()=>FocusScope.of(context).requestFocus(new FocusNode()),
         child: Stack(children: <Widget>[
+
           Padding(
             padding: EdgeInsets.only(left: 18, right: 18, top: 24, bottom: 24),
             child: SafeArea( child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+            Expanded(child:SingleChildScrollView(child: Column(children: [
                 Padding(
                   padding: EdgeInsets.only(left: 64, right: 64, bottom: 12),
                   child: Text(
@@ -154,8 +157,9 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     ),
                   ),
                 ),
-                Expanded(child: Container()),
-                RoundedButton(
+                ]))),
+                Container(child:
+                ScalableRoundedButton(
                     label: Localization().getStringEx(
                         "panel.onboarding.confirm_phone.button.confirm.label",
                         "Confirm phone number"),
@@ -165,6 +169,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     backgroundColor: Styles().colors.background,
                     textColor: Styles().colors.fillColorPrimary,
                     onTap: () => _onTapConfirm())
+                )
               ],
             ),),),
           Visibility(

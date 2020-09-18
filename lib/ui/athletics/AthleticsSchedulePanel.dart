@@ -70,7 +70,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
           ],),
           Padding(padding: EdgeInsets.only(top: 8)),
           Row(children: <Widget>[
-            Text(scheduleLabel, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Colors.white )),
+            Expanded(child: Text(scheduleLabel, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Colors.white ))),
           ],)
         ],)
         ),),
@@ -214,19 +214,23 @@ class _ScheduleTabButton extends StatelessWidget {
           button: true,
           excludeSemantics: true,
           child:Container(
-            height: buttonHeight,
+            height: 32 + 16*MediaQuery.of(context).textScaleFactor,
             decoration: BoxDecoration(
               color: selected ? Colors.white : Styles().colors.lightGray,
               border: Border.fromBorderSide(borderSide),
               borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),
-            child: Center(
-                child: Text(text,
+            child:
+            Row( children:[
+            Expanded(child: Text(text,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                         fontFamily:
                         selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium,
                         fontSize: 16,
                         color: Styles().colors.fillColorPrimary))),
+            ])
           )),
     );
   }

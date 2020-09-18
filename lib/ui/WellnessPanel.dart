@@ -91,7 +91,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: IconButton(
                   icon: Image.asset('images/chevron-left-white.png'),
                   onPressed: () => _onTapBack(),)),
-          flexibleSpace: Column(
+          flexibleSpace: SingleChildScrollView(child:Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               _buildImage(_jsonContent, 'header.image'),
@@ -99,11 +99,12 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                 padding: EdgeInsets.only(top: 12, bottom: 24),
                 child: Semantics(label: headerTitle, hint:  Localization().getStringEx("app.common.heading.one.hint","Header 1"), header: true, excludeSemantics: true, child: Text(
                   headerTitle,
+                  textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white, fontSize: 24),
                 )),
               )
             ],
-          ),
+          )),
           centerTitle: true,
         ),
       ),
@@ -194,15 +195,17 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                         padding: EdgeInsets.only(right: 16),
                         child: _buildImage(activitiesContent, 'header.icon'),
                       ),
-                      Semantics(label: sectionHeaderText,
-                          hint: Localization().getStringEx("app.common.heading.two.hint", "Header 2"),
-                          header: true,
-                          excludeSemantics: true,
-                          child:
-                          Text(
-                            AppString.getDefaultEmptyString(value: sectionHeaderText),
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          )
+                      Expanded(child:
+                        Semantics(label: sectionHeaderText,
+                            hint: Localization().getStringEx("app.common.heading.two.hint", "Header 2"),
+                            header: true,
+                            excludeSemantics: true,
+                            child:
+                            Text(
+                              AppString.getDefaultEmptyString(value: sectionHeaderText),
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            )
+                        )
                       )
                     ],
                   ),
@@ -386,6 +389,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
             : null;
         String hintValue = AppString.isStringNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
         RibbonButton button = RibbonButton(
+          height: null,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
           borderRadius: BorderRadius.all(Radius.circular(5)),
           label: title,

@@ -23,6 +23,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 
 class OnboardingAuthBluetoothPanel extends StatefulWidget with OnboardingPanel {
@@ -54,7 +55,7 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(),
             onSwipeRight: () => _goBack(),
-            child: Column(
+            child: ScalableScrollView( scrollableChild: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Stack(children: <Widget>[
@@ -88,31 +89,31 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
                                 color: Styles().colors.fillColorPrimary),
                           )),
                     )),
-                Container(
-                  height: 12,
-                ),
-                Expanded(
-                    child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            Localization().getStringEx(
-                                'panel.onboarding.bluetooth.label.description',
-                                "Use Bluetooth to navigate campus buildings, find polls from friends, and board MTD buses."),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.regular,
-                                fontSize: 20,
-                                color: Styles().colors.fillColorPrimary),
-                          ),
-                        ))),
+                  Container(
+                    height: 12,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        Localization().getStringEx(
+                            'panel.onboarding.bluetooth.label.description',
+                            "Use Bluetooth to navigate campus buildings, find polls from friends, and board MTD buses."),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.regular,
+                            fontSize: 20,
+                            color: Styles().colors.fillColorPrimary),
+                  ))),
+                ]),
+                bottomNotScrollableWidget:
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      RoundedButton(
+                      ScalableRoundedButton(
                         label: Localization().getStringEx(
                             'panel.onboarding.bluetooth.button.allow.title',
                             'Share my location'),
@@ -154,7 +155,6 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
                     ],
                   ),
                 ),
-              ],
             )));
   }
 

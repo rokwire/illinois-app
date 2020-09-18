@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.3.2] - 2020-09-17
+### Changed
+- Use student_level instead of role from auth card API.[#80](https://github.com/rokwire/illinois-app/issues/80)
+
+## [2.3.1] - 2020-09-15
 ### Fixed
 - Load ordered sub events.[#48](https://github.com/rokwire/illinois-app/issues/48)
+- ImproveAccessibility large text support(https://github.com/rokwire/illinois-app/issues/37)
 
 ## [2.3.0] - 2020-09-08
 ### Fixed

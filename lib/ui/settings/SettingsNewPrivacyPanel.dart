@@ -31,6 +31,7 @@ import "package:illinois/service/User.dart";
 import "package:illinois/ui/onboarding/OnboardingBackButton.dart";
 import "package:illinois/ui/widgets/HeaderBar.dart";
 import "package:illinois/ui/widgets/RoundedButton.dart";
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import "package:illinois/ui/widgets/TabBarWidget.dart";
 import "package:illinois/utils/Utils.dart";
 import "package:illinois/service/Styles.dart";
@@ -155,6 +156,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                   delegate: SliverChildListDelegate([
                     _buildContentHeadingWidget(),
                     _descriptionLayout(),
+                    _buildSliderInstructions()
                   ]),
                 ),
                 SliverPersistentHeader(
@@ -184,15 +186,6 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
         child: SafeArea(
           top: false,
           child: Column(children: <Widget>[
-            Row(children: <Widget>[
-              Expanded(child:
-                Text(
-                  Localization().getStringEx("panel.settings.new_privacy.privacy.label.slider_help", "Adjust slider to change your privacy level"),
-                  style: TextStyle(color: Styles().colors.textSurface, fontSize: 18, fontFamily:Styles().fontFamilies.bold),
-                  textAlign: TextAlign.center,
-                ),
-              )
-            ],),
             Container(height: 6,),
             _PrivacyLevelSlider(
               initialValue: _sliderValue,
@@ -218,14 +211,13 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
               children: <Widget>[
                 Expanded(
                     child: Stack(children: <Widget>[
-                      RoundedButton(
+                      ScalableRoundedButton(
                           label: _disabled
                               ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.title", "Scroll to Review")
                               : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.title", "Set my Privacy"),
                           hint: _disabled
                               ? Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.disabled.hint", "")
                               : Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.hint", ""),
-                          height: 48,
                           borderColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.fillColorSecondary,
                           backgroundColor: Styles().colors.fillColorPrimaryVariant,
                           textColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.white,
@@ -556,6 +548,22 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
       titleWidget,
       subTitleWidget,
     ],);
+  }
+  Widget _buildSliderInstructions(){
+    return Container(
+      padding: EdgeInsets.only(left: 22, right: 22,),
+      color: Styles().colors.white,
+      child: Row(children: <Widget>[
+        Expanded(child:
+        Text(
+          Localization().getStringEx("panel.settings.new_privacy.privacy.label.slider_help", "Adjust slider to change your privacy level"),
+          style: TextStyle(color: Styles().colors.textSurface, fontSize: 18, fontFamily:Styles().fontFamilies.bold),
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+        ),
+        )
+      ],)
+    );
   }
 
   Widget _descriptionLayout() {
@@ -889,8 +897,10 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                 padding: EdgeInsets.only(top: 8),
                 child: Row(
                   children: <Widget>[
-                    Text(Localization().getStringEx("panel.settings.new_privacy.button.expand_data.title","See Data Usage"),
-                      style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies.regular, color: isEnabled? Styles().colors.fillColorPrimary: Styles().colors.fillColorPrimaryTransparent015),
+                    Expanded(child:
+                      Text(Localization().getStringEx("panel.settings.new_privacy.button.expand_data.title","See Data Usage"),
+                        style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies.regular, color: isEnabled? Styles().colors.fillColorPrimary: Styles().colors.fillColorPrimaryTransparent015),
+                      )
                     ),
                     Container(width: 9,),
                     RotationTransition(
@@ -904,6 +914,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
             Container(
               padding: EdgeInsets.only(top: 6, bottom: 8),
               child: Container(
+                alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(left: 8),
                 decoration: BoxDecoration(
                     border: Border(left: BorderSide(width: 1, color: Styles().colors.fillColorSecondary))
@@ -1127,7 +1138,7 @@ class _CustomTickMarkShape extends SliderTickMarkShape {
 
 class _PinnedSliverHeading extends SliverPersistentHeaderDelegate{
   final Widget child;
-  double constExtent = 170;
+  double constExtent = 140;
   Size childSize;
 
   _PinnedSliverHeading({@required this.child});

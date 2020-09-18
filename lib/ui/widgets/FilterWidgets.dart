@@ -44,14 +44,13 @@ class FilterListItemWidget extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: labelsStyle,
-                    ),
-                    Expanded(
-                      child: Container(),
+                    Expanded(child:
+                      Text(
+                        label,
+//                        maxLines: 1,
+//                        overflow: TextOverflow.ellipsis,
+                        style: labelsStyle,
+                      ),
                     ),
                     hasSubLabel
                         ? Text(

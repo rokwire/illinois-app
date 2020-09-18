@@ -178,7 +178,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                           ),
                           Padding(
                             padding: EdgeInsets.all(24),
-                            child: Row(
+                            child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 Row(
@@ -241,7 +241,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                   ],
                                 )
                               ],
-                            ),
+                            )),
                           ),
                           _buildLaundryRoomAppliancesListWidget()
                         ],
@@ -409,7 +409,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
     String imageAssetPath = _getImageAssetPath(appliance?.applianceType);
     String deviceName = _getDeviceName(appliance?.applianceType);
     return Container(
-      height: 46,
+//      height: 46,
       color: Colors.white,
       child: Padding(
         padding: EdgeInsets.all(12),
@@ -427,13 +427,14 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
                     fontFamily: Styles().fontFamilies.regular),
               ),
             ),
+            Expanded(child:
             Text(
               appliance?.status,
               style: TextStyle(
                   color: Styles().colors.textBackground,
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies.regular),
-            )
+            ))
           ],
         ),
       ),

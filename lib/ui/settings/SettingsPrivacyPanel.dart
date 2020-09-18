@@ -27,6 +27,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -218,14 +219,13 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               children: <Widget>[
                 Expanded(
                   child: Stack(children: <Widget>[
-                    RoundedButton(
+                    ScalableRoundedButton(
                         label: _disabled
                             ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.title', 'Scroll to Review')
                             : Localization().getStringEx('panel.settings.privacy.button.set_privacy.title', 'Set my Privacy'),
                         hint: _disabled
                             ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.hint', '')
                             : Localization().getStringEx('panel.settings.privacy.button.set_privacy.hint', ''),
-                        height: 48,
                         borderColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.fillColorSecondary,
                         backgroundColor: Styles().colors.fillColorPrimaryVariant,
                         textColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.white,
@@ -715,18 +715,20 @@ class _PrivacyLevelSliderState extends State<_PrivacyLevelSlider> {
                     Expanded(
                         child: Row(children: <Widget>[
                       Image.asset("images/chevron-left.png"),
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(Localization().getStringEx('widget.privacy_level_slider.label.left.title', "More Privacy"),
-                              style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14))),
+                      Expanded(child:
+                        Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text(Localization().getStringEx('widget.privacy_level_slider.label.left.title', "More Privacy"),
+                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14)))),
                     ])),
                     Expanded(
                         child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(Localization().getStringEx('widget.privacy_level_slider.label.right.title', "More Features"),
-                              style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14))),
-                      Image.asset("images/chevron-right.png"),
+                          Expanded(child:
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: Text(Localization().getStringEx('widget.privacy_level_slider.label.right.title', "More Features"),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14)))),
+                          Image.asset("images/chevron-right.png"),
                     ])),
                   ],
                 ),
@@ -870,9 +872,11 @@ class _PreferenceTab extends StatelessWidget {
               borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),
             child: Center(
-                child: Text(text,
-                    style: TextStyle(fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
-          )),
+                child:
+                  Text(text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary)))),
+          ),
     );
   }
 }

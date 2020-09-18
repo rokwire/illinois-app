@@ -129,17 +129,16 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                   excludeSemantics: true,
                   child: Row(
                     children: <Widget>[
-                      Text(
-                        Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies.bold,
-                            color: Colors.white,
-                            fontSize: 14,
-                            letterSpacing: 1.0),
-                      ),
-                      Expanded(
-                        child: Container(),
+                      Expanded(child:
+                        Text(
+                          Localization().getStringEx("panel.food_details.label.nutrition_fatcts.title", "NUTRITION FACTS"),
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies.bold,
+                              color: Colors.white,
+                              fontSize: 14,
+                              letterSpacing: 1.0),
+                        ),
                       )
                     ],
                   ),
@@ -153,6 +152,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
               hint: Localization().getStringEx("panel.food_details.button.eat_smart.title", ""),
               button: true,
               child: RibbonButton(
+                height: null,
                 label: Localization().getStringEx("panel.food_details.button.eat_smart.title", "EatSmart Website"),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
                 border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
@@ -205,18 +205,17 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             excludeSemantics: true,
             child: Row(
               children: <Widget>[
-                Text(
-                  Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies.bold,
-                      color: Colors.white,
-                      fontSize: 14,
-                      letterSpacing: 1.0),
-                ),
                 Expanded(
-                  child: Container(),
-                )
+                  child:Text(
+                    Localization().getStringEx("panel.food_details.label.include_ingredients.title", "INCLUDES THESE INGREDIENTS"),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontFamily: Styles().fontFamilies.bold,
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 1.0),
+                  ),
+                ),
               ],
             ),
           ),
@@ -257,6 +256,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
             excludeSemantics: true,
             child: Row(
               children: <Widget>[
+                Expanded(child:
                 Text(
                   Localization().getStringEx("panel.food_details.label.dietary_preferences.title", "DIETARY PREFERENCES"),
                   textAlign: TextAlign.left,
@@ -265,10 +265,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
                       color: Colors.white,
                       fontSize: 14,
                       letterSpacing: 1.0),
-                ),
-                Expanded(
-                  child: Container(),
-                )
+                ),),
               ],
             ),
           ),
@@ -326,20 +323,27 @@ class _FactItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                AppString.isStringNotEmpty(label) ? label : "",
-                style: TextStyle(
-                    color: Styles().colors.fillColorPrimary,
-                    fontSize: 16,
-                    fontFamily: Styles().fontFamilies.bold),
+              Expanded(
+                flex: 5,
+                child: Text(
+                  AppString.isStringNotEmpty(label) ? label : "",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Styles().colors.fillColorPrimary,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.bold),
+                ),
               ),
-              Text(
+              Expanded(
+                flex: 3,
+                child: Text(
                 AppString.isStringNotEmpty(value) ? value : "",
+                textAlign: TextAlign.right,
                 style: TextStyle(
                     color: Styles().colors.mediumGray,
                     fontSize: 14,
                     fontFamily: Styles().fontFamilies.medium),
-              ),
+              )),
             ],
           ),
         ),

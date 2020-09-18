@@ -24,6 +24,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
@@ -124,12 +125,17 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Row(
           children: <Widget>[
-            Text(name, style: TextStyle(color: Styles().colors.textBackground, fontSize: 19, fontFamily: Styles().fontFamilies.regular)),
+            Expanded(flex: 5,
+              child: Text(name, style: TextStyle(color: Styles().colors.textBackground, fontSize: 19, fontFamily: Styles().fontFamilies.regular)),
+            ),
             Container(
               width: 7,
             ),
-            Text(wantToKnowText,
+            Expanded(
+              flex: 3,
+              child: Text(wantToKnowText,
                 style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold)),
+            )
           ],
         )));
   }
@@ -234,10 +240,12 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                     child: Row(
                     children: <Widget>[
                       Image.asset('images/icon-settings.png'),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(additionalSettingsText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
-                        ),
+                      Expanded(child:
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(additionalSettingsText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+                          ),
+                        )
                       )
                     ],
                   ),
@@ -323,10 +331,11 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       child: Container(
           child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-              child: Stack(children: <Widget>[
-                RoundedButton(
+          Expanded(child:
+            Stack(children: <Widget>[
+                ScalableRoundedButton(
                   label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save"),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors.fillColorPrimary,
@@ -334,7 +343,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                   onTap: () {
                     _onCreatePoll(status: PollStatus.created);
                   },
-                  height: 48,
+//                  height: 48,
                 ),
                 Visibility(visible: (_progressPollStatus == PollStatus.created),
                   child: Container(
@@ -353,7 +362,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
           ),
           Expanded(
             child: Stack(children: <Widget>[
-              RoundedButton(
+              ScalableRoundedButton(
                 label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start poll!"),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors.fillColorSecondary,
@@ -361,7 +370,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 onTap: () {
                   _onCreatePoll(status: PollStatus.opened);
                 },
-                height: 48,
+//                height: 48,
               ),
               Visibility(visible: (_progressPollStatus == PollStatus.opened),
                 child: Container(
@@ -520,7 +529,7 @@ class _PollOptionViewState extends State<PollOptionView> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-          height: widget.height,
+          height: widget.height/2 + (16*MediaQuery.of(context).textScaleFactor),
           width: double.infinity,
           child: Semantics(
               label: widget.title,

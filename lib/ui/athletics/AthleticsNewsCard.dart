@@ -93,26 +93,25 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: <Widget>[
-            Container(
+          Expanded(
+            child: Container(
               color: Styles().colors.fillColorPrimary,
-            constraints: new BoxConstraints(
+              constraints: new BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width - 106),
               child: Padding(
               padding: EdgeInsets.only(left: 8, right: 8, top:6, bottom: 4),
                 child:
-                 Text(
-                  (category != null) ? category.toUpperCase() : "",
-                  softWrap: true,
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies.bold,
-                      fontSize: 14,
-                      color: Colors.white),
-                )
+                     Text(
+                      (category != null) ? category.toUpperCase() : "",
+                      softWrap: true,
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies.bold,
+                          fontSize: 14,
+                          color: Colors.white),
+                    )
+                 ),
               ),
             ),
-          Expanded(
-            child: Container(),
-          ),
           Visibility(visible: User().favoritesStarVisible,
             child: GestureDetector(
                 behavior: HitTestBehavior.opaque,

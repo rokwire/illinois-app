@@ -33,6 +33,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -167,12 +168,24 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                         Visibility(
                           visible: true,
                           child: Padding(
-                            padding: EdgeInsets.only(top: 20, bottom: 60),
-                            child: SmallRoundedButton(
-                              label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
-                              hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
-                              onTap: _onTapMoreUpcomingEvents,
-                            ),
+                            padding: EdgeInsets.only(top: 20, bottom: 60, left: 10, right:10),
+                            child: 
+                            Row(children: <Widget>[
+                              Expanded(flex: 1, child: Container()),
+                              Expanded(
+                                flex: 5,
+                                child: ScalableRoundedButton(
+                                  label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
+                                  hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
+                                  onTap: _onTapMoreUpcomingEvents,
+                                  backgroundColor: Styles().colors.background,
+                                  borderColor: Styles().colors.fillColorSecondary,
+                                  textColor: Styles().colors.fillColorPrimary,
+                                ),
+                              ),
+                              Expanded(flex: 1, child: Container())
+                            ],),
+                          
                           ),
                         ),
                         Stack(
@@ -212,12 +225,15 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                           ),
                                           Image.asset(
                                               'images/icon-check-example.png'),
-                                          Text(
-                                            Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
-                                            style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.medium,
-                                                color: Styles().colors.textBackground,
-                                                fontSize: 16),
+                                          Expanded(
+                                            child:Text(
+                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  color: Styles().colors.textBackground,
+                                                  fontSize: 16),
+                                            )
                                           )
                                         ],
                                       ),
@@ -271,11 +287,13 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                   child: Image.asset(
                                                       'images/explore.png'),
                                                 ),
-                                                Text(
-                                                  Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20),
+                                                Expanded(child:
+                                                  Text(
+                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20),
+                                                  )
                                                 )
                                               ],
                                             )),

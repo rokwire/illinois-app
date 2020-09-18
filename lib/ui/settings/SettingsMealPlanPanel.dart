@@ -24,6 +24,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/VerticalTitleContentSection.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
@@ -195,7 +196,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       excludeSemantics: true,
       child: Container(
         color: Styles().colors.fillColorPrimaryVariant,
-        height: 56,
+//        height: 56,
         child: Align(
           alignment: Alignment.centerLeft,
           child: Padding(
@@ -204,12 +205,14 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
               children: <Widget>[
                 Image.asset(AppString.getDefaultEmptyString(
                     value: iconSrc, defaultValue: 'images/icon-settings.png')),
-                Padding(
-                  padding: EdgeInsets.only(left: 12),
-                  child: Text(
-                    AppString.getDefaultEmptyString(value: title),
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
+                Expanded(child:
+                  Padding(
+                    padding: EdgeInsets.only(left: 12),
+                    child: Text(
+                      AppString.getDefaultEmptyString(value: title),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  )
                 )
               ],
             ),
@@ -325,13 +328,12 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           ],),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
-            Expanded(child: RoundedButton(
+            Expanded(child: ScalableRoundedButton(
               textColor: Styles().colors.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.meal_plan.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.view_history.hint', ''),
               backgroundColor: Colors.white,
               borderColor: Styles().colors.fillColorSecondary,
-              height: 32,
               fontSize: 16,
               onTap: _onTapViewHistory,)),
           ],)
@@ -751,10 +753,14 @@ class _DateValue extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(title, style: TextStyle(
-              color: Styles().colors.fillColorPrimary,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies.bold),),
+          Expanded(child:
+            Text(title,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Styles().colors.fillColorPrimary,
+                fontSize: 16,
+                fontFamily: Styles().fontFamilies.bold),),
+          ),
           Image.asset('images/icon-down.png')
         ],), Container(height: 2, color: Styles().colors.fillColorSecondary,)
     ],),),);

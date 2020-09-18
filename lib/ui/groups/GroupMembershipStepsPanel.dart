@@ -217,14 +217,15 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     List<Widget> commands = [
-      GroupMembershipAddButton(title: 'Connect event', onTap: () { _addEvent(stepIndex: index);  },),
-      Expanded(child: Container(),),
+      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: 'Connect event', onTap: () { _addEvent(stepIndex: index);  },),
+//      Expanded(child: Container(),),
+      Container(width: 10,)
     ];
     if ((index + 1) == _steps.length) {
-      commands.add(GroupMembershipAddButton(title: 'Add step', onTap: () { _addStep();  },),);
+      commands.add(GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: 'Add step', onTap: () { _addStep();  },),);
     }
 
-    stepContent.add(Padding(padding: EdgeInsets.only(top: 8), child: Row(children: commands,),),);
+    stepContent.add(Padding(padding: EdgeInsets.only(top: 8), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children: commands,),),));
 
     return Padding(padding: EdgeInsets.symmetric(vertical: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: stepContent,),);
@@ -243,7 +244,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
             padding: EdgeInsets.symmetric(horizontal: 32, ),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
-            height: 42,
+            height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
             onTap:() { _onSubmit();  }
           ),
           Expanded(child: Container(),),
