@@ -1516,6 +1516,7 @@
 
 	"widget.id_card.header.title": "Illini ID",
 	"widget.id_card.header.button.close.title": "关闭",
+	"widget.id_card.label.update_i_card": "Update your i-card",
 	"widget.buss_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
 	"widget.card.label.expires.title": "卡过期",
