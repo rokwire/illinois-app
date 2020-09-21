@@ -1516,6 +1516,7 @@
 
     "widget.id_card.header.title": "Illini ID",
     "widget.id_card.header.button.close.title": "Cerrar",
+    "widget.id_card.label.update_i_card": "Update your i-card",
     "widget.buss_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",
     "widget.card.label.expires.title": "La tarjeta caduca",
