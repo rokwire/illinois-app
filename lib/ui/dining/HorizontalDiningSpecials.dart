@@ -105,7 +105,6 @@ class _SpecialOfferState extends State<_SpecialOffer> {
   double _imageHeight;
 
   final EdgeInsets _textPadding = EdgeInsets.all(16.0);
-  final TextStyle _textStyle = TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.textBackground,);
 
   @override
   void initState() {
@@ -133,7 +132,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
     //List<TextBox> boxes = renderObject.getBoxesForSelection(TextSelection(baseOffset: 0, extentOffset: special.title.length));
     //double _imageHeight = (boxes.last.bottom - boxes.first.top) + _textPadding.top + _textPadding.bottom;
 
-    Html html = Html(key:_keyHtml, data: widget.special.title, defaultTextStyle: _textStyle,);
+    Html html = Html(key:_keyHtml, data: widget.special.title);
 
     return GestureDetector(
       onTap: () => _onOfferTap(context),

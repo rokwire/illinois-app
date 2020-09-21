@@ -43,7 +43,7 @@ class LaundryService /* with Service */ {
     final response = await Network().get(roomDataUrl);
     String responseBody = response?.body;
     if (response?.statusCode == 200) {
-      xml.XmlDocument roomsXmlResponse = xml.parse(responseBody);
+      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
       if (laundryRoomsXml != null) {
         rooms = List();
@@ -85,7 +85,7 @@ class LaundryService /* with Service */ {
     if (response?.statusCode == 200) {
       final String undefinedValue = 'undefined';
       final String zeroValue = '0';
-      xml.XmlDocument roomsXmlResponse = xml.parse(responseBody);
+      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
       if (laundryRoomsXml != null) {
         for (xml.XmlElement item in laundryRoomsXml) {
@@ -122,7 +122,7 @@ class LaundryService /* with Service */ {
     final response = await Network().get(appliancesUrl);
     String responseBody = response?.body;
     if (response?.statusCode == 200) {
-      xml.XmlDocument roomsXmlResponse = xml.parse(responseBody);
+      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
       var appliancesXml = roomsXmlResponse.findAllElements('appliance');
       if (appliancesXml != null) {
         laundryRoomAppliances = List();

@@ -476,7 +476,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
           longDescription,
-          bodyPadding: EdgeInsets.all(0),
+          tableCellPadding: EdgeInsets.all(0),
         ));
   }
 
