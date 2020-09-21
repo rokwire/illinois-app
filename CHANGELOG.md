@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.3] - 2020-09-21
+### Changed
+- Handle properly role & student_level state within the UI [#84] (https://github.com/rokwire/illinois-app/issues/84)
+- Upgrade Flutter to v 1.20.2 + libraries update [#25] (https://github.com/rokwire/illinois-app/issues/25)
+
 ## [2.3.2] - 2020-09-17
 ### Changed
 - Use student_level instead of role from auth card API.[#80](https://github.com/rokwire/illinois-app/issues/80)
