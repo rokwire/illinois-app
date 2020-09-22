@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.4] - 2020-09-22
+### Changed
+ - i-Card may not being updated if the last update time is greater than 24 hours [#86] (https://github.com/rokwire/illinois-app/issues/86)
+
+
 ## [2.3.3] - 2020-09-21
 ### Changed
 - Handle properly role & student_level state within the UI [#84] (https://github.com/rokwire/illinois-app/issues/84)
