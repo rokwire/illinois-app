@@ -97,82 +97,84 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         onTap: widget.onTap,
         child: Semantics(
           label: semanticLabel,
-          excludeSemantics: true,
+//          excludeSemantics: true,
           child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
               alignment: Alignment.topCenter,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      border: widget.border
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _exploreTop(),
-                      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                        Expanded(child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Visibility(
-                              visible: isEvent,
-                              child: _exploreName(),
-                            ),
-                            _exploreDetails(),
-                          ],)),
-                        Visibility(visible: (widget.showSmallImage &&
-                            AppString.isStringNotEmpty(imageUrl)),
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
-                              child: SizedBox(
-                                width: _smallImageSize,
-                                height: _smallImageSize,
-                                child: Image.network(
-                                  imageUrl, fit: BoxFit.fill, headers: AppImage.getAuthImageHeaders(),),),)),
-                      ],),
-                      _explorePaymentTypes(),
-                      _buildConvergeButton(),
-                      Visibility(visible: _showInterests(),
-                          child: Column(
+                ExcludeSemantics(
+                  child:Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        border: widget.border
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _exploreTop(),
+                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          Expanded(child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Container(
-                                height: 1, color: Styles().colors.surfaceAccent,),
-                              Padding(padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Flexible(flex: 8,
-                                        child: Container(width: double.infinity, child:
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(Localization().getStringEx(
-                                                'widget.card.label.interests',
-                                                'Because of your interest in:'),
-                                              style: TextStyle(
+                              Visibility(
+                                visible: isEvent,
+                                child: _exploreName(),
+                              ),
+                              _exploreDetails(),
+                            ],)),
+                          Visibility(visible: (widget.showSmallImage &&
+                              AppString.isStringNotEmpty(imageUrl)),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+                                child: SizedBox(
+                                  width: _smallImageSize,
+                                  height: _smallImageSize,
+                                  child: Image.network(
+                                    imageUrl, fit: BoxFit.fill, headers: AppImage.getAuthImageHeaders(),),),)),
+                        ],),
+                        _explorePaymentTypes(),
+                        _buildConvergeButton(),
+                        Visibility(visible: _showInterests(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  height: 1, color: Styles().colors.surfaceAccent,),
+                                Padding(padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Flexible(flex: 8,
+                                          child: Container(width: double.infinity, child:
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(Localization().getStringEx(
+                                                  'widget.card.label.interests',
+                                                  'Because of your interest in:'),
+                                                style: TextStyle(
+                                                    color: Styles().colors.textBackground,
+                                                    fontSize: 12,
+                                                    fontFamily: Styles().fontFamilies.bold),),
+                                              Text(AppString.getDefaultEmptyString(
+                                                  value: interestsLabelValue), style: TextStyle(
                                                   color: Styles().colors.textBackground,
                                                   fontSize: 12,
-                                                  fontFamily: Styles().fontFamilies.bold),),
-                                            Text(AppString.getDefaultEmptyString(
-                                                value: interestsLabelValue), style: TextStyle(
-                                                color: Styles().colors.textBackground,
-                                                fontSize: 12,
-                                                fontFamily: Styles().fontFamilies.medium),)
-                                          ],)),
-                                      ),
-                                      Flexible(flex: 2,
-                                        child: Container(width: double.infinity, alignment: Alignment.centerRight,
-                                            child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-
+                                                  fontFamily: Styles().fontFamilies.medium),)
+                                            ],)),
                                         ),
-                                      )
-                                    ],
-                                  ))
-                            ],)),
-                      Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._cardHeight,),)
-                    ],
+                                        Flexible(flex: 2,
+                                          child: Container(width: double.infinity, alignment: Alignment.centerRight,
+                                              child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
+
+                                          ),
+                                        )
+                                      ],
+                                    ))
+                              ],)),
+                        Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._cardHeight,),)
+                      ],
+                    ),
                   ),
                 ),
                 _topBorder(),

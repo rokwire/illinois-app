@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
  - [#87] Add role & student_level in analytics
  - Improved Semantics for ExploreDetailPanel [#15] (https://github.com/rokwire/illinois-app/issues/15)
+ - Improve Semantics for ExploreCard [#19] (https://github.com/rokwire/illinois-app/issues/19)
 
 ## [2.3.4] - 2020-09-22
 ### Changed
