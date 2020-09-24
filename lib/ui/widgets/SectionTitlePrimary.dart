@@ -49,7 +49,7 @@ class SectionTitlePrimary extends StatelessWidget{
             Visibility(visible:useImageSlant,child:Container(
               height: 112,
               width: double.infinity,
-              child: Image.asset(slantImageRes, color: slantColor ?? Styles().colors.fillColorPrimary, fit: BoxFit.fill),
+              child: Image.asset(slantImageRes, excludeFromSemantics: true, color: slantColor ?? Styles().colors.fillColorPrimary, fit: BoxFit.fill),
               )
             ),
             Visibility(visible:!useImageSlant,child:
@@ -79,7 +79,7 @@ class SectionTitlePrimary extends StatelessWidget{
                     padding: EdgeInsets.only(
                         right: 16),
                     child: Image.asset(
-                        iconPath),
+                        iconPath, excludeFromSemantics: true,),
                   ) : Container(),
                   Expanded(child:
                     Text(
