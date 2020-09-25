@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -130,12 +129,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 Container(height: 16,),
                 Html(
                   data: widget.special.text ?? "",
-                  style: {
-                    "body": Style(
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.textBackground
-                    )
-                  },
+                  defaultTextStyle: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground,),
                 ),
                 /*Text(
                   widget.special.text ?? "",

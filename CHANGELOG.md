@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
- - [#87] Add role & student_level in analytics
+ - Rollback temporary flutter_html to 0.11.1 due to accessibility issue [#92] (https://github.com/rokwire/illinois-app/issues/92)
+
+## [2.3.5] - 2020-09-23
+ - Add role & student_level in analytics [#87] (https://github.com/rokwire/illinois-app/issues/87)
  - Improved Semantics for ExploreDetailPanel [#15] (https://github.com/rokwire/illinois-app/issues/15)
  - Improve Semantics for ExploreCard [#19] (https://github.com/rokwire/illinois-app/issues/19)
 
