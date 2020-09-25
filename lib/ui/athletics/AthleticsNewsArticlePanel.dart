@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:illinois/model/RecentItem.dart';
 
 import 'package:illinois/service/RecentItems.dart';
@@ -178,9 +177,12 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
     if (!AppString.isStringEmpty(article.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
-        child: Html(
-          data:article.description,
-          style: {"body":Style(color: Styles().colors.textBackground,)}
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
+          child: Html(
+            data:article.description,
+            defaultTextStyle: TextStyle(color: Styles().colors.textBackground,),
+          ),
         ),
       ));
     }
@@ -188,13 +190,16 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
     if (!AppString.isStringEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
-        child: Html(
-          data:fullText,
-            onLinkTap: (url){
-              Navigator.push(context, CupertinoPageRoute(
-                builder: (context) => WebPanel(url: url,)
-              ));
-            },
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
+          child: Html(
+            data:fullText,
+              onLinkTap: (url){
+                Navigator.push(context, CupertinoPageRoute(
+                  builder: (context) => WebPanel(url: url,)
+                ));
+              },
+          ),
         ),
       ));
     }
