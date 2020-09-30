@@ -201,7 +201,6 @@ class Analytics with Service implements NotificationsListener {
   
   String               _currentPageName;
   Map<String, dynamic> _currentPageAttributes;
-  bool                 _currentPageAnonymous;
   PackageInfo          _packageInfo;
   AndroidDeviceInfo    _androidDeviceInfo;
   IosDeviceInfo        _iosDeviceInfo;
@@ -458,9 +457,7 @@ class Analytics with Service implements NotificationsListener {
           panelAttributes = (panel as AnalyticsPageAttributes).analyticsPageAttributes;
         }
 
-        bool anonymous = (panel is AnalyticsPageAnonymous) && (panel as AnalyticsPageAnonymous).analyticsPageAnonymous;
-
-        logPage(name: panelName, attributes: panelAttributes, anonymous: anonymous);
+        logPage(name: panelName, attributes: panelAttributes);
       }
     }
   }
@@ -602,7 +599,7 @@ class Analytics with Service implements NotificationsListener {
 
   // Public Accessories
 
-  void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, bool anonymous}) {
+  void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes}) {
     if ((event != null) && User().privacyMatch(2)) {
       
       event[LogEventPageName] = _currentPageName;
@@ -646,7 +643,7 @@ class Analytics with Service implements NotificationsListener {
           analyticsEvent[LogStdSessionUuidName]= _sessionUuid;
         }
         else if (attributeName == LogStdUserUuidName) {
-          analyticsEvent[LogStdUserUuidName]= (anonymous == true) ? User.analyticsUuid : User().uuid;
+          analyticsEvent[LogStdUserUuidName]= User().uuid;
         }
         else if (attributeName == LogStdUserPrivacyLevelName) {
           analyticsEvent[LogStdUserPrivacyLevelName]= User().privacyLevel;
@@ -677,7 +674,7 @@ class Analytics with Service implements NotificationsListener {
     logEvent({
       LogEventName          : LogLivecycleEventName,
       LogLivecycleName      : name,
-    }, anonymous: _currentPageAnonymous);
+    });
   }
 
   String get currentPageName {
@@ -688,19 +685,12 @@ class Analytics with Service implements NotificationsListener {
     return _currentPageAttributes;
   }
 
-  bool get currentPageAnonymous {
-    return _currentPageAnonymous;
-  }
-
-  void logPage({String name,  Map<String, dynamic> attributes, bool anonymous}) {
-
-    bool previousPageAnonymous = (_currentPageAnonymous == true);
+  void logPage({String name,  Map<String, dynamic> attributes}) {
 
     // Update Current page name
     String previousPageName = _currentPageName;
     _currentPageName        = name;
     _currentPageAttributes  = attributes;
-    _currentPageAnonymous   = anonymous;
 
     // Build event data
     Map<String, dynamic> event = {
@@ -714,32 +704,32 @@ class Analytics with Service implements NotificationsListener {
     }
 
     // Log the event
-    logEvent(event, anonymous: (anonymous == true) || previousPageAnonymous);
+    logEvent(event);
   }
 
-  void logSelect({String target, bool anonymous}) {
+  void logSelect({String target}) {
     logEvent({
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
-    }, anonymous: anonymous);
+    });
   }
 
-  void logAlert({String text, String selection, bool anonymous}) {
+  void logAlert({String text, String selection}) {
     logEvent({
       LogEventName          : LogAlertEventName,
       LogAlertTextName      : text,
       LogAlertSelectionName : selection,
-    }, anonymous: anonymous);
+    });
   }
 
-  void logHttpResponse(Http.Response response, {String requestMethod, String requestUrl, bool anonymous}) {
+  void logHttpResponse(Http.Response response, {String requestMethod, String requestUrl}) {
     Map<String, dynamic> httpResponseEvent = {
       LogEventName                    : LogHttpResponseEventName,
       LogHttpRequestUrlName           : requestUrl,
       LogHttpRequestMethodName        : requestMethod,
       LogHttpResponseCodeName         : response?.statusCode
     };
-    logEvent(httpResponseEvent, anonymous: anonymous);
+    logEvent(httpResponseEvent);
   }
 
   void logMapRoute({String action, Map<String, dynamic> params}) {
@@ -817,10 +807,4 @@ abstract class AnalyticsPageName {
 
 abstract class AnalyticsPageAttributes {
   Map<String, dynamic> get analyticsPageAttributes;
-}
-
-abstract class AnalyticsPageAnonymous {
-  bool get analyticsPageAnonymous {
-    return true;
-  }
 }

@@ -136,10 +136,10 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'GET', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'GET', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -166,10 +166,10 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async{
+  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async{
     Http.Response response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'POST', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'POST', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -202,10 +202,10 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'PUT', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'PUT', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -232,10 +232,10 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'PATCH', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'PATCH', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -262,10 +262,10 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'DELETE', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'DELETE', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);

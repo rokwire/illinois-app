@@ -22,8 +22,6 @@ class UserData {
   final String uuid;
   bool overThirteen;
 
-  static const analyticsUuid = 'UUIDxxxxxx';
-
   Set<UserRole> roles;
   Map<String, List<String>> interests;
   Map<String, Set<String>>  favorites;

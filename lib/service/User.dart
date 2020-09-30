@@ -119,10 +119,6 @@ class User with Service implements NotificationsListener {
     return _userData;
   }
 
-  static String get analyticsUuid {
-    return UserData.analyticsUuid;
-  }
-
   Future<void> _createUser() async {
     UserData userData = await _requestCreateUser();
     applyUserData(userData);
