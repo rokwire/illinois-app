@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/ExpandableText.dart';
 //import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/SearchPanel.dart';

@@ -20,7 +20,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/service/Styles.dart';
@@ -223,7 +222,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   //SaveButton
-  Widget _buildSaveButton(){
+  /*Widget _buildSaveButton(){
     return
       Padding(
         padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
@@ -250,5 +249,5 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   bool get _canSave{
     return true; //TBD
-  }
+  }*/
 }

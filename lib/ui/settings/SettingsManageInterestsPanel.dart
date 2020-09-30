@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,7 +22,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:illinois/utils/Utils.dart';

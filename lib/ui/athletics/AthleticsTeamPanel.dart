@@ -42,7 +42,6 @@ import 'package:illinois/ui/athletics/AthleticsCoachListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsScheduleCard.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
 import 'package:illinois/utils/Utils.dart';

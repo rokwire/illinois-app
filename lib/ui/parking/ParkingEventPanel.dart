@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Parking.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -24,7 +23,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';

@@ -22,7 +22,6 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
