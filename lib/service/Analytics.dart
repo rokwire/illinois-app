@@ -64,6 +64,7 @@ class Analytics with Service implements NotificationsListener {
 
   // Standard (shared) Attributes
   static const String   LogStdTimestampName                = "timestamp";
+  static const String   LogStdAppIdName                    = "app_id";
   static const String   LogStdAppVersionName               = "app_version";
   static const String   LogStdOSName                       = "os_name";
   static const String   LogStdOSVersionName                = "os_version";
@@ -87,6 +88,7 @@ class Analytics with Service implements NotificationsListener {
 
   static const List<String> DefaultAttributes = [
     LogStdTimestampName,
+    LogStdAppIdName,
     LogStdAppVersionName,
     LogStdOSName,
     LogStdOSVersionName,
@@ -204,6 +206,7 @@ class Analytics with Service implements NotificationsListener {
   PackageInfo          _packageInfo;
   AndroidDeviceInfo    _androidDeviceInfo;
   IosDeviceInfo        _iosDeviceInfo;
+  String               _appId;
   String               _appVersion;
   String               _osVersion;
   String               _deviceModel;
@@ -263,6 +266,7 @@ class Analytics with Service implements NotificationsListener {
 
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       _packageInfo = packageInfo;
+      _appId = _packageInfo?.packageName;
       _appVersion = "${_packageInfo?.version}+${_packageInfo?.buildNumber}";
     });
 
@@ -611,6 +615,9 @@ class Analytics with Service implements NotificationsListener {
       for (String attributeName in defaultAttributes) {
         if (attributeName == LogStdTimestampName) {
           analyticsEvent[LogStdTimestampName] = DateTime.now().toUtc().toIso8601String();
+        }
+        else if (attributeName == LogStdAppIdName) {
+          analyticsEvent[LogStdAppIdName] = _appId;
         }
         else if (attributeName == LogStdAppVersionName) {
           analyticsEvent[LogStdAppVersionName]= _appVersion;
