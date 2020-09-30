@@ -217,7 +217,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         title: Localization().getStringEx('panel.browse.button.dining.title', 'Dining'),
         hint: Localization().getStringEx('panel.browse.button.dining.hint', ''),
         icon: 'images/icon-browse-dinings.png',
-        color: Styles().colors.fillColorSecondary,
+        color: Styles().colors.mango,
         onTap: () => _navigateToExploreDining(),
       );
     }

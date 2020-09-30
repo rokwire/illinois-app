@@ -283,6 +283,8 @@ class UiColors {
   Color get disabledTextColor          => _colorMap['disabledTextColor'];
   Color get disabledTextColorTwo       => _colorMap['disabledTextColorTwo'];
 
+  Color get mango                      => _colorMap['mango'];
+
   Color getColor(String key){
     dynamic color = _colorMap[key];
     return (color is Color) ? color : null;
