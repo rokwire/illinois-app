@@ -7,25 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [2.3.6] - 2020-09-30
- - Improve log data [#95] (https://github.com/rokwire/illinois-app/issues/95)
- - Rollback temporary flutter_html to 0.11.1 due to accessibility issue [#92] (https://github.com/rokwire/illinois-app/issues/92)
- - Better phone number validation is needed [#47] (https://github.com/rokwire/illinois-app/issues/47)
- - BrowsePanel: updated color for Dining button [#44(https://github.com/rokwire/illinois-app/issues/44)
+ - Improve log data [#95](https://github.com/rokwire/illinois-app/issues/95)
+ - Rollback temporary flutter_html to 0.11.1 due to accessibility issue [#92](https://github.com/rokwire/illinois-app/issues/92)
+ - Better phone number validation is needed [#47](https://github.com/rokwire/illinois-app/issues/47)
+ - BrowsePanel: updated color for Dining button [#44](https://github.com/rokwire/illinois-app/issues/44)
 
 ## [2.3.5] - 2020-09-23
- - Add role & student_level in analytics [#87] (https://github.com/rokwire/illinois-app/issues/87)
- - Improved Semantics for ExploreDetailPanel [#15] (https://github.com/rokwire/illinois-app/issues/15)
- - Improve Semantics for ExploreCard [#19] (https://github.com/rokwire/illinois-app/issues/19)
+ - Add role & student_level in analytics [#87](https://github.com/rokwire/illinois-app/issues/87)
+ - Improved Semantics for ExploreDetailPanel [#15](https://github.com/rokwire/illinois-app/issues/15)
+ - Improve Semantics for ExploreCard [#19](https://github.com/rokwire/illinois-app/issues/19)
 
 ## [2.3.4] - 2020-09-22
 ### Changed
- - i-Card may not being updated if the last update time is greater than 24 hours [#86] (https://github.com/rokwire/illinois-app/issues/86)
+ - i-Card may not being updated if the last update time is greater than 24 hours [#86](https://github.com/rokwire/illinois-app/issues/86)
 
 
 ## [2.3.3] - 2020-09-21
 ### Changed
-- Handle properly role & student_level state within the UI [#84] (https://github.com/rokwire/illinois-app/issues/84)
-- Upgrade Flutter to v 1.20.2 + libraries update [#25] (https://github.com/rokwire/illinois-app/issues/25)
+- Handle properly role & student_level state within the UI [#84](https://github.com/rokwire/illinois-app/issues/84)
+- Upgrade Flutter to v 1.20.2 + libraries update [#25](https://github.com/rokwire/illinois-app/issues/25)
 
 ## [2.3.2] - 2020-09-17
 ### Changed
@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.1] - 2020-09-15
 ### Fixed
 - Load ordered sub events.[#48](https://github.com/rokwire/illinois-app/issues/48)
-- ImproveAccessibility large text support(https://github.com/rokwire/illinois-app/issues/37)
+- ImproveAccessibility large text support [#37](https://github.com/rokwire/illinois-app/issues/37)
 
 ## [2.3.0] - 2020-09-08
 ### Fixed
