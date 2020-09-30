@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Improve log data [#95] (https://github.com/rokwire/illinois-app/issues/95)
  - Rollback temporary flutter_html to 0.11.1 due to accessibility issue [#92] (https://github.com/rokwire/illinois-app/issues/92)
  - Better phone number validation is needed [#47] (https://github.com/rokwire/illinois-app/issues/47)
+ - BrowsePanel: updated color for Dining button [#44(https://github.com/rokwire/illinois-app/issues/44)
 
 ## [2.3.5] - 2020-09-23
  - Add role & student_level in analytics [#87] (https://github.com/rokwire/illinois-app/issues/87)

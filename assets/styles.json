@@ -45,7 +45,9 @@
     "mediumGray2"                           :"#979797",
     "lightGray"                             :"#EDEDED",
     "disabledTextColor"                     :"#BDBDBD",
-    "disabledTextColorTwo"                  :"#868F9D"
+    "disabledTextColorTwo"                  :"#868F9D",
+
+    "mango"                                 :"#f29835"
   },
   "font_family": {
     "black": "ProximaNovaBlack",
