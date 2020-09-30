@@ -227,12 +227,22 @@ class _OnboardingLoginPhoneVerifyPanelState
     if (AppString.isStringNotEmpty(_validationErrorMsg)) {
       return;
     }
+
     String phoneNumber = _phoneNumberController.text;
-    if (AppString.isStringNotEmpty(phoneNumber) &&
-        !phoneNumber.startsWith("+1") &&
-        kReleaseMode) {
-      phoneNumber = '+1$phoneNumber';
+    if(kReleaseMode) {
+      if (AppString.isUsPhoneValid(phoneNumber)) {
+        phoneNumber = AppString.constructUsPhone(phoneNumber);
+        if (AppString.isUsPhoneNotValid(phoneNumber)) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding.verify_phone.validation.server_error.text", "Please enter a valid phone number"));
+          return;
+        }
+      }
+      else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding.verify_phone.validation.server_error.text", "Please enter a valid phone number"));
+        return;
+      }
     }
+
     setState(() {
       _isLoading = true;
     });
