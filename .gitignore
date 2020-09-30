@@ -38,6 +38,7 @@ xcuserdata
 /ios/Flutter/App.framework
 /ios/Flutter/Flutter.framework
 /ios/Flutter/Generated.xcconfig
+/ios/Flutter/.last_build_id
 /ios/Flutter/flutter_assets/*
 /ios/Flutter/flutter_export_environment.sh
 
