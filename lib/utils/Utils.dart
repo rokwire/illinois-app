@@ -84,8 +84,8 @@ class AppString {
 
   /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
 
-  static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid: 23456789120
-  static const String _phonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid: 123456789120
+  static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
+  static const String _phonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
   static const String _phonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
 
   static bool isUsPhoneValid(String phone){
