@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created "Runner-Dev" XCode build environment for dev builds.
+
+### Changed
+- "ios/Runner/GoogleService-Info-Debug/Release.plist" secret file refs updated to "ios/Runner/GoogleService-Info-Dev/Prod.plist".
 
 ## [2.3.6] - 2020-09-30
  - Improve log data [#95](https://github.com/rokwire/illinois-app/issues/95)
