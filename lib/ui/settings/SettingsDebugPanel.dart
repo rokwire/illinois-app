@@ -30,6 +30,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
+import 'package:illinois/ui/settings/debug/HttpProxySettingsPanel.dart';
 import 'package:illinois/ui/settings/debug/MessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -275,6 +276,16 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
                             textColor: Styles().colors.fillColorPrimary,
                             borderColor: Styles().colors.fillColorPrimary,
                             onTap: _onTapClearVoting)),
+                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Http Proxy",
+                            backgroundColor: Styles().colors.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors.fillColorPrimary,
+                            borderColor: Styles().colors.fillColorPrimary,
+                            onTap: _onTapHttpProxy)),
                     Padding(padding: EdgeInsets.only(top: 5), child: Container()),
                   ],
                 ),
@@ -541,6 +552,10 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
         _selectedEnv = Config().configEnvironment;
       });
     }
+  }
+
+  void _onTapHttpProxy() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context)=>HttpProxySettingsPanel()));
   }
 
   // SettingsListenerMixin
