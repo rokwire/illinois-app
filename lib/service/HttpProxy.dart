@@ -16,11 +16,13 @@
 
 import 'dart:io';
 
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class HttpProxy extends Service{
+class HttpProxy extends Service implements NotificationsListener{
   
   HttpProxy._internal();
   static final HttpProxy _instance = HttpProxy._internal();
@@ -36,6 +38,8 @@ class HttpProxy extends Service{
   @override
   void createService() {
     super.createService();
+
+    NotificationService().subscribe(this, [Config.notifyEnvironmentChanged]);
   }
 
   @override
@@ -45,8 +49,20 @@ class HttpProxy extends Service{
   }
 
   @override
+  void destroyService() {
+    super.destroyService();
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(),]);
+    return Set.from([Storage(),Config()]);
+  }
+
+  void onNotification(String name, dynamic param){
+    if(name == Config.notifyEnvironmentChanged){
+      _handleChanged();
+    }
   }
 
 
@@ -84,7 +100,11 @@ class HttpProxy extends Service{
   }
 
   void _handleChanged(){
-    if(httpProxyEnabled && AppString.isStringNotEmpty(httpProxyHost) && AppString.isStringNotEmpty(httpProxyPort)){
+    if(httpProxyEnabled &&
+        AppString.isStringNotEmpty(httpProxyHost) &&
+        AppString.isStringNotEmpty(httpProxyPort) &&
+        Config().configEnvironment == ConfigEnvironment.dev
+    ){
       HttpOverrides.global = _MyHttpOverrides(host: httpProxyHost, port: httpProxyPort);
     }
     else{
