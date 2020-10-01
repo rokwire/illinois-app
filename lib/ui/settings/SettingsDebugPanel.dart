@@ -58,6 +58,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
   void initState() {
     
     NotificationService().subscribe(this, [
+      Config.notifyEnvironmentChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
     ]);
@@ -311,6 +312,9 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
       setState(() {});
     }
     else if (name == GeoFence.notifyCurrentBeaconsUpdated) {
+      setState(() {});
+    }
+    else if(name == Config.notifyEnvironmentChanged){
       setState(() {});
     }
   }
