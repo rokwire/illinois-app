@@ -277,15 +277,18 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
                             borderColor: Styles().colors.fillColorPrimary,
                             onTap: _onTapClearVoting)),
                     Padding(padding: EdgeInsets.only(top: 5), child: Container()),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Http Proxy",
-                            backgroundColor: Styles().colors.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors.fillColorPrimary,
-                            borderColor: Styles().colors.fillColorPrimary,
-                            onTap: _onTapHttpProxy)),
+                    Visibility(
+                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Http Proxy",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapHttpProxy)),
+                    ),
                     Padding(padding: EdgeInsets.only(top: 5), child: Container()),
                   ],
                 ),
@@ -555,7 +558,9 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
   }
 
   void _onTapHttpProxy() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context)=>HttpProxySettingsPanel()));
+    if(Config().configEnvironment == ConfigEnvironment.dev) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => HttpProxySettingsPanel()));
+    }
   }
 
   // SettingsListenerMixin
