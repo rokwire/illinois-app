@@ -39,6 +39,12 @@ class HttpProxy extends Service{
   }
 
   @override
+  Future<void> initService() {
+    _handleChanged();
+    return super.initService();
+  }
+
+  @override
   Set<Service> get serviceDependsOn {
     return Set.from([Storage(),]);
   }
