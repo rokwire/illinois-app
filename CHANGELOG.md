@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created "Runner-Dev" XCode build environment for dev builds.
+- Enable http proxying in flutter env [#100](https://github.com/rokwire/illinois-app/issues/100)
 
 ### Changed
 - "ios/Runner/GoogleService-Info-Debug/Release.plist" secret file refs updated to "ios/Runner/GoogleService-Info-Dev/Prod.plist".
