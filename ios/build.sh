@@ -12,7 +12,7 @@ else
 GOOGLE_SERVICE_SRC="${PROJECT_DIR}/Runner/GoogleService-Info-Prod.plist"
 echo "Using GoogleService-Info-Prod.plist"
 fi
-GOOGLE_SERVICE_DEST="${DERIVED_FILE_DIR}/GoogleService-Info.plist"
+GOOGLE_SERVICE_DEST="${CODESIGNING_FOLDER_PATH}/GoogleService-Info.plist"
 cp "${GOOGLE_SERVICE_SRC}" "${GOOGLE_SERVICE_DEST}"
 
 # Upload app DSYM for Crashlytics
