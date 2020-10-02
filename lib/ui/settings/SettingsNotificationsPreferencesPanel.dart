@@ -61,7 +61,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
               Container(height: 8,),
               InfoButton(
                 title: Localization().getStringEx("panel.settings.notification_prefferences.button.notifications.title", "Notifications"),
-                description: Localization().getStringEx("panel.settings.notification_prefferences.button.notifications.description", "Customize your notificaitons"),
+                description: Localization().getStringEx("panel.settings.notification_prefferences.button.notifications.description", "Customize your notifications"),
                 iconRes: "images/notifications-blue.png",
                 onTap: (){_onTapNotifications(context);},
               ),
