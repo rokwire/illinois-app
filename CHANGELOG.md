@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [2.3.8] - 2020-10-02
+### Fixed
 - Fix typo in notifications title [#27] (https://github.com/rokwire/illinois-app/issues/27)
+
+### Changed
+- Locale strings from net just override the built-in asset strings [104](https://github.com/rokwire/safer-illinois-app/issues/104).
 
 ## [2.3.7] - 2020-10-01
 ### Added
