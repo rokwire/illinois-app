@@ -29,6 +29,7 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
@@ -82,6 +83,7 @@ class Services {
     
     Crashlytics(),
     Storage(),
+    HttpProxy(),
     Config(),
 
     AppLivecycle(),
