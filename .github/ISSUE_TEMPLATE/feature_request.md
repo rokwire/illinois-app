@@ -2,8 +2,8 @@
 name: Feature request
 about: Suggest an idea for this project
 title: "[FEATURE] "
-labels: ''
-assignees: ''
+labels: 'Type: Feature Request'
+assignees: pmarkhennessy
 
 ---
 
