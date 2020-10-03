@@ -2,7 +2,7 @@
 name: Accessibility report
 about: Report an issue with accessiblity
 title: "[ACCESSIBILITY]"
-labels: Accessibility
+labels: ''
 assignees: pmarkhennessy
 
 ---
