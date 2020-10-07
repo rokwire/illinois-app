@@ -131,7 +131,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
     }
 
-    if (!kReleaseMode) {
+    if (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
     }
 
