@@ -82,6 +82,7 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
 
   Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
+  List<dynamic> get supportedLocales                { return (_config != null) ? (_config['languages']) : null; }
 
 //NA: String get redirectAuthUrl        { return otherUniversityServices['redirect_auth_url']; }      // "edu.illinois.ncsa.rokwireauthpoc:rokwireauthpoc.ncsa.illinois.edu/oauth2-cb"
   String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
