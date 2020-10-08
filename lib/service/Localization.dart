@@ -44,7 +44,8 @@ class Localization with Service implements NotificationsListener {
   Localization._internal();
 
   // Multilanguage support
-  final List<String> supportedLanguages = ['en', 'es','zh'];
+  final List<String> defaultSupportedLanguages = ['en', 'es','zh'];
+  List<String> get supportedLanguages => (Config()?.supportedLocales?.isNotEmpty??false) ? Config().supportedLocales.cast<String>() : defaultSupportedLanguages;
   Iterable<Locale> supportedLocales() => supportedLanguages.map<Locale>((language) => Locale(language, ""));  
 
   // Data
@@ -169,7 +170,7 @@ class Localization with Service implements NotificationsListener {
     if (_defaultLocale != null) {
       _updateStringsFromNet(_defaultLocale.languageCode, cache: _defaultCachedStrings).then((Map<String,dynamic> update) {
         if (update != null) {
-          _localeStrings = _buildStrings(asset: _defaultAssetsStrings, cache: _defaultCachedStrings = update);
+          _defaultStrings = _buildStrings(asset: _defaultAssetsStrings, cache: _defaultCachedStrings = update);
           NotificationService().notify(notifyStringsUpdated, null);
         }
       });
@@ -178,8 +179,9 @@ class Localization with Service implements NotificationsListener {
 
   void _updateLocaleStrings() {
     if (_currentLocale != null) {
-      _updateStringsFromNet(_currentLocale.languageCode, cache: _localeCachedStrings).then((Map<String,dynamic> update) {
-        if (update != null) {
+     final String requestedLocale = _currentLocale.languageCode;
+     _updateStringsFromNet(_currentLocale.languageCode, cache: _localeCachedStrings).then((Map<String,dynamic> update) {
+        if (update != null && (requestedLocale == _currentLocale?.languageCode)) { // Sync: If the locale was not changed while update was in process
           _localeStrings = _buildStrings(asset: _localeAssetsStrings, cache: _localeCachedStrings = update);
           NotificationService().notify(notifyStringsUpdated, null);
         }

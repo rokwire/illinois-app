@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Make debug button being visible as in Safer Illinois App [#112](https://github.com/rokwire/illinois-app/issues/112)
+- Support languages defined only in the backend [#114](https://github.com/rokwire/illinois-app/issues/114)
 
 ## [2.3.8] - 2020-10-02
 ### Fixed
