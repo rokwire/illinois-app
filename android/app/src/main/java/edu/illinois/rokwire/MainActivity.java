@@ -58,12 +58,17 @@ import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
 import edu.illinois.rokwire.poll.PollPlugin;
-import io.flutter.app.FlutterActivity;
+import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugins.GeneratedPluginRegistrant;
+import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugin.common.StandardMessageCodec;
+import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;
+import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService;
+import io.flutter.view.FlutterMain;
 
-public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
+public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, PluginRegistry.PluginRegistrantCallback {
 
     private static final String TAG = "MainActivity";
 
@@ -88,10 +93,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        registerPlugins();
         instance = this;
         initScreenOrientation();
-        initMethodChannel();
+
+        // TODO: Check do we need the next two lines at all?
+        FlutterFirebaseMessagingService.setPluginRegistrant(this);
+        FlutterMain.startInitialization(this);
     }
 
     @Override
@@ -140,26 +147,23 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return keys;
     }
 
-    private void registerPlugins() {
-        GeneratedPluginRegistrant.registerWith(this);
+    @Override
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+        super.configureFlutterEngine(flutterEngine);
+        METHOD_CHANNEL = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NATIVE_CHANNEL);
+        METHOD_CHANNEL.setMethodCallHandler(this);
 
-        // MapView
-        Registrar registrar = registrarFor("MapPlugin");
-        registrar.platformViewRegistry().registerViewFactory("mapview", new MapViewFactory(this, registrar));
+        flutterEngine
+                .getPlatformViewsController()
+                .getRegistry()
+                .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
 
-        // Poll
-        Registrar pollsRegistrar = registrarFor("PollPlugin");
-        pollPlugin = PollPlugin.registerWith(pollsRegistrar);
+        flutterEngine.getPlugins().add(new PollPlugin(this));
     }
 
     private void initScreenOrientation() {
         preferredScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         supportedScreenOrientations = new HashSet<>(Collections.singletonList(preferredScreenOrientation));
-    }
-
-    private void initMethodChannel() {
-        METHOD_CHANNEL = new MethodChannel(getFlutterView(), NATIVE_CHANNEL);
-        METHOD_CHANNEL.setMethodCallHandler(this);
     }
 
     private void initWithParams(Object keys) {
@@ -250,7 +254,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             app.showNotification(title, body);
         }
     }
-    
 
     private void requestLocationPermission(MethodChannel.Result result) {
         //check if granted
@@ -599,6 +602,14 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.e(TAG, errorMsg);
             exception.printStackTrace();
         }
+    }
+
+    @Override
+    public void registerWith(PluginRegistry registry) {
+        if (registry != null && registry.hasPlugin("io.flutter.plugins.firebasemessaging")) {
+            FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
+        }
+
     }
 
     // RequestLocationCallback

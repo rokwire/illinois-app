@@ -18,6 +18,8 @@ package edu.illinois.rokwire.maps;
 
 import android.content.Context;
 
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MessageCodec;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
@@ -26,16 +28,16 @@ import io.flutter.plugin.platform.PlatformViewFactory;
 public class MapViewFactory extends PlatformViewFactory {
 
     private Context activityContext;
-    private final PluginRegistry.Registrar mPluginRegistrar;
+    private BinaryMessenger messenger;
 
-    public MapViewFactory(Context context, PluginRegistry.Registrar registrar) {
+    public MapViewFactory(Context context, BinaryMessenger messenger) {
         super(StandardMessageCodec.INSTANCE);
         this.activityContext = context;
-        this.mPluginRegistrar = registrar;
+        this.messenger = messenger;
     }
 
     @Override
     public PlatformView create(Context context, int i, Object args) {
-        return new MapViewController(activityContext, mPluginRegistrar, i, args);
+        return new MapViewController(activityContext, messenger, i, args);
     }
 }

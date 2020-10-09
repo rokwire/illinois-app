@@ -75,7 +75,7 @@ class LocalNotifications with Service {
     _flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid = new AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = new IOSInitializationSettings(onDidReceiveLocalNotification: _onDidReceiveLocalNotification);
-    var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    var initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     _flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: _onSelectNotification);
   }
 
@@ -90,9 +90,9 @@ class LocalNotifications with Service {
 
   Future showNotification({String title, String message, String payload = ''}) async {
     if (_flutterLocalNotificationsPlugin != null) {
-      var androidPlatformChannelSpecifics = AndroidNotificationDetails('1000', 'DEFAULT_CHANNEL', 'It is default channel', importance: Importance.Max, priority: Priority.High);
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails('1000', 'DEFAULT_CHANNEL', 'It is default channel', importance: Importance.max, priority: Priority.high);
       var iOSPlatformChannelSpecifics = IOSNotificationDetails(presentAlert: true, presentSound: true,);
-      var platformChannelSpecifics = NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
       await _flutterLocalNotificationsPlugin.show(0, title, message, platformChannelSpecifics, payload: payload, );
     }
   }
