@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.3.9] - 2020-10-09
 - Upgrade Flutter to v1.22.1 [#116](https://github.com/rokwire/illinois-app/issues/116)
 - Make debug button being visible as in Safer Illinois App [#112](https://github.com/rokwire/illinois-app/issues/112)
 - Support languages defined only in the backend [#114](https://github.com/rokwire/illinois-app/issues/114)
