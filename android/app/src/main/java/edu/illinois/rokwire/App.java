@@ -16,6 +16,7 @@
 
 package edu.illinois.rokwire;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
@@ -31,12 +32,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import io.flutter.app.FlutterApplication;
-import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugins.GeneratedPluginRegistrant;
-import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService;
-
-public class App extends FlutterApplication implements PluginRegistry.PluginRegistrantCallback, LifecycleObserver {
+public class App extends Application implements LifecycleObserver {
 
     private static final String CHANNEL_ID = "Polls_Channel_ID";
 
@@ -47,18 +43,9 @@ public class App extends FlutterApplication implements PluginRegistry.PluginRegi
         super.onCreate();
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
-        init();
         createNotificationChannel(this);
     }
 
-    private void init() {
-        FlutterFirebaseMessagingService.setPluginRegistrant(this);
-    }
-
-    @Override
-    public void registerWith(PluginRegistry pluginRegistry) {
-        GeneratedPluginRegistrant.registerWith(pluginRegistry);
-    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onMoveToForeground() {

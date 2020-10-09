@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart' as Firebase;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Service.dart';
 
@@ -33,7 +33,7 @@ class Crashlytics with Service {
     // This is only to be used for confirming that reports are being
     // submitted as expected. It is not intended to be used for everyday
     // development.
-    Firebase.Crashlytics.instance.enableInDevMode = false;
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
 
     // Pass all uncaught errors to Firebase.Crashlytics.
     FlutterError.onError = handleFlutterError;
@@ -41,20 +41,20 @@ class Crashlytics with Service {
 
   void handleFlutterError(FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
-    Firebase.Crashlytics.instance.recordFlutterError(details);
+    FirebaseCrashlytics.instance.recordFlutterError(details);
   }
 
   void handleZoneError(dynamic exception, StackTrace stack) {
     print(exception);
-    Firebase.Crashlytics.instance.recordError(exception, stack);
+    FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
   void recordError(dynamic exception, StackTrace stack) {
     print(exception);
-    Firebase.Crashlytics.instance.recordError(exception, stack);
+    FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
   void log(String message) {
-    Firebase.Crashlytics.instance.log(message);
+    FirebaseCrashlytics.instance.log(message);
   }
 }

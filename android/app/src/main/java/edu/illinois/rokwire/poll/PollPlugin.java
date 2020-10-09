@@ -28,34 +28,25 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.Utils;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry;
 
-public class PollPlugin implements MethodChannel.MethodCallHandler {
+public class PollPlugin implements MethodChannel.MethodCallHandler, FlutterPlugin {
 
     private static final String TAG = "PollPlugin";
 
     private MainActivity context;
     private MethodChannel methodChannel;
+    private EventChannel eventChannel;
 
     private PollBleServer blePollServer;
     private PollBleClient bleClient;
 
-    public static PollPlugin registerWith(PluginRegistry.Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "edu.illinois.rokwire/polls");
-        PollPlugin pollPlugin = new PollPlugin((MainActivity)registrar.activity(), channel);
-        channel.setMethodCallHandler(pollPlugin);
-        return pollPlugin;
-    }
-
-    private PollPlugin(MainActivity activity, MethodChannel methodChannel) {
+    public PollPlugin(MainActivity activity) {
         this.context = activity;
-        this.methodChannel = methodChannel;
-        this.methodChannel.setMethodCallHandler(this);
-
-        bindPollServer();
-        bindPollClient();
     }
 
     @Override
@@ -180,6 +171,32 @@ public class PollPlugin implements MethodChannel.MethodCallHandler {
             handler.post(() -> methodChannel.invokeMethod("on_poll_created", pollId));
         }
     };
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        setupChannels(binding.getBinaryMessenger(), binding.getApplicationContext());
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        disposeChannels();
+    }
+
+    private void setupChannels(BinaryMessenger messenger, Context context) {
+        methodChannel = new MethodChannel(messenger, "edu.illinois.rokwire/polls");
+        methodChannel.setMethodCallHandler(this);
+        eventChannel = new EventChannel(messenger, "edu.illinois.rokwire/polls_events");
+        bindPollServer();
+        bindPollClient();
+    }
+
+    private void disposeChannels() {
+        methodChannel.setMethodCallHandler(null);
+        eventChannel.setStreamHandler(null);
+        methodChannel = null;
+        eventChannel = null;
+    }
+
 
     /////////////////////
 }
