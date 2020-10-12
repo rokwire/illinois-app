@@ -29,11 +29,9 @@ class Crashlytics with Service {
 
   @override
   void createService() {
-    // Set `enableInDevMode` to true to see reports while in debug mode
-    // This is only to be used for confirming that reports are being
-    // submitted as expected. It is not intended to be used for everyday
-    // development.
-    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+
+    // Enable automatic data collection
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
     // Pass all uncaught errors to Firebase.Crashlytics.
     FlutterError.onError = handleFlutterError;
