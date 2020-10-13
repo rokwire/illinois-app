@@ -24,10 +24,9 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/utils/Utils.dart';
-
-import 'Crashlytics.dart';
 
 enum NetworkAuth {
   App,
@@ -99,7 +98,7 @@ class Network  {
       }
     } catch (e) { 
       Log.e(e.toString());
-      Crashlytics().recordError(e, null);
+      FirebaseCrashlytics().recordError(e, null);
     }
     return null;
   }
@@ -130,7 +129,7 @@ class Network  {
         }
       } catch (e) { 
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -160,7 +159,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -196,7 +195,7 @@ class Network  {
 
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -226,7 +225,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -256,7 +255,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -286,7 +285,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout)) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -303,7 +302,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseBytesHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;

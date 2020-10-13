@@ -24,6 +24,7 @@ import 'package:firebase_messaging/firebase_messaging.dart' as FirebaseMessaging
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/FirebaseService.dart';
 
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
@@ -142,7 +143,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), User()]);
+    return Set.from([FirebaseService(), Storage(), Config(), User()]);
   }
 
   // NotificationsListener

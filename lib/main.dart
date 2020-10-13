@@ -15,12 +15,12 @@
  */
 
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Config.dart';
@@ -30,7 +30,6 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Crashlytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Onboarding.dart';
@@ -59,12 +58,10 @@ void main() async {
 
   runZonedGuarded(() async {
     runApp(App());
-  }, Crashlytics().handleZoneError);
+  }, FirebaseCrashlytics().handleZoneError);
 }
 
 Future<void> _init() async {
-  await Firebase.initializeApp(); // Requires to happen before anything else!
-
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
   Services().create();
