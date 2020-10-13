@@ -40,7 +40,6 @@ public class PollPlugin implements MethodChannel.MethodCallHandler, FlutterPlugi
 
     private MainActivity context;
     private MethodChannel methodChannel;
-    private EventChannel eventChannel;
 
     private PollBleServer blePollServer;
     private PollBleClient bleClient;
@@ -185,16 +184,13 @@ public class PollPlugin implements MethodChannel.MethodCallHandler, FlutterPlugi
     private void setupChannels(BinaryMessenger messenger, Context context) {
         methodChannel = new MethodChannel(messenger, "edu.illinois.rokwire/polls");
         methodChannel.setMethodCallHandler(this);
-        eventChannel = new EventChannel(messenger, "edu.illinois.rokwire/polls_events");
         bindPollServer();
         bindPollClient();
     }
 
     private void disposeChannels() {
         methodChannel.setMethodCallHandler(null);
-        eventChannel.setStreamHandler(null);
         methodChannel = null;
-        eventChannel = null;
     }
 
 
