@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Contributor guidelines (CONTRIBUTING.md). [#126](https://github.com/rokwire/illinois-app/issues/124)
+- Contributor guidelines (CONTRIBUTING.md). [#126](https://github.com/rokwire/illinois-app/issues/126)
 
 ## [2.3.12] - 2020-10-21
 - Unable to log in with iOS Default Browser changed [#124](https://github.com/rokwire/illinois-app/issues/124)
