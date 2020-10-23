@@ -177,18 +177,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Container(
       color: Styles().colors.fillColorPrimary,
       padding: EdgeInsets.symmetric(horizontal: 12),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: <Widget>[
-            _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
-            Container(width: 24,),
-            _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
-            Container(width: 24,),
-            _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
-          ],
-        )
-      ),
+      child:
+      Row(children: [
+        Expanded(child:
+//          SingleChildScrollView(
+//            scrollDirection: Axis.horizontal,
+//            child:
+            Row(
+              children: <Widget>[
+                _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
+                Container(width: 24,),
+                _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
+                Container(width: 24,),
+                Expanded(child: Container()),
+                _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
+              ],
+            )
+//          )
+        ),
+      ],)
     );
   }
 
@@ -221,20 +228,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     },
                   ),
                 Container(width: 12,),
-                AppCollection.isCollectionEmpty(_types)
-                    ? Container()
-                    : FilterSelectorWidget(
-                      label: _selectedType,
-                      hint: "",
-                      active: (_activeFilterType == FilterType.type),
-                      visible: true,
-                      onTap: (){
-                        Analytics.instance.logSelect(target: "TypeFilter");
-                        setState(() {
-                          _activeFilterType = (_activeFilterType != FilterType.type) ? FilterType.type : FilterType.none;
-                        });
-                      },
-                    ),
+//                AppCollection.isCollectionEmpty(_types)
+//                    ? Container()
+//                    : FilterSelectorWidget(
+//                      label: _selectedType,
+//                      hint: "",
+//                      active: (_activeFilterType == FilterType.type),
+//                      visible: true,
+//                      onTap: (){
+//                        Analytics.instance.logSelect(target: "TypeFilter");
+//                        setState(() {
+//                          _activeFilterType = (_activeFilterType != FilterType.type) ? FilterType.type : FilterType.none;
+//                        });
+//                      },
+//                    ),
               ],
             ),
           ),
