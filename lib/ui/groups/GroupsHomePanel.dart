@@ -398,6 +398,10 @@ class _GroupCard extends StatelessWidget{
     return Groups().getUserMembership(group.id) != null;
   }
 
+  bool get _isAdmin{
+    return Groups().getUserMembership(group.id)?.admin ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -413,57 +417,36 @@ class _GroupCard extends StatelessWidget{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildHeading(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(group?.title ?? "",
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies.extraBold,
-                      fontSize: 20,
-                      color: Styles().colors.fillColorPrimary
-                  ),
+//              _buildHeading(),
+              _isMember?_buildMember() :
+              Text("CATEGORY",
+                style: TextStyle(
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 16,
+                    color: Styles().colors.fillColorPrimary
                 ),
               ),
-              _buildMember()
+              Container(height: 3,),
+              Row(children:[
+                Expanded(child:
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 0),
+                    child: Text(group?.title ?? "",
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies.extraBold,
+                          fontSize: 20,
+                          color: Styles().colors.fillColorPrimary
+                      ),
+                    ),
+                  )
+                ),
+              ]),
+              Container(height: 4,)
             ],
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildHeading(){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        _buildCertified(),
-        Container(width: group.certified ? 8 : 0,),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8, left: 0),
-            child: Text(group?.category ?? "" ,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold,
-                  fontSize: 12,
-                  color: Styles().colors.mediumGray
-              ),
-            ),
-          ),
-        ),
-        _buildSaved()
-      ],
-    );
-  }
-
-  Widget _buildCertified(){
-    return group.certified
-        ? Image.asset('images/icon-certified.png')
-        : Container();
-  }
-
-  Widget _buildSaved(){
-    return Image.asset('images/icon-star-selected.png');
-    //return true ? Image.asset('images/icon-star-selected.png') : Image.asset('images/icon-star.png');
   }
 
   Widget _buildMember(){
@@ -473,11 +456,11 @@ class _GroupCard extends StatelessWidget{
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Styles().colors.fillColorPrimary,
+                color: _isAdmin? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
                 borderRadius: BorderRadius.all(Radius.circular(2)),
               ),
               child: Center(
-                child: Text("MEMBER",
+                child: Text(_isAdmin? "ADMIN" : "MEMBER",
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       fontSize: 12,
