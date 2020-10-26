@@ -273,9 +273,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildGroupsContent(){
     if(AppCollection.isCollectionNotEmpty(_groups)){
       List<Widget> widgets = List<Widget>();
+      widgets.add(Container(height: 8,));
       for(Group group in _groups){
         widgets.add(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: _GroupCard(group: group),
         ));
       }
@@ -412,7 +413,8 @@ class _GroupCard extends StatelessWidget{
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Styles().colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8))
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
