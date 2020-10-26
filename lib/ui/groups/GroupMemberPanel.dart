@@ -38,7 +38,8 @@ class GroupMemberPanel extends StatefulWidget {
 class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   GroupMember _member;
-  bool _submitting;
+  bool _updating = false;
+  bool _removing = false;
 
   //String _selectedOfficerTitle = "President";
   List<String> _officerTitleTypes;
@@ -52,6 +53,46 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         _officerTitleTypes = officerTitles;
       });
     });
+  }
+
+  void _update() {
+    if (_updating != true) {
+
+      setState(() {
+        _updating = true;
+      });
+
+      Groups().updateGroupMember(widget.groupDetail?.id, _member).then((GroupMember member) {
+        if (mounted) {
+          setState(() {
+            _updating = false;
+          });
+          if (member == null) {
+            AppAlert.showDialogResult(context, 'Failed to update member');
+          }
+        }
+      });
+    }
+  }
+
+  void _remove() {
+    if (_removing != true) {
+
+      setState(() {
+        _removing = true;
+      });
+
+      Groups().updateGroupMember(widget.groupDetail?.id, _member).then((GroupMember member) {
+        if (mounted) {
+          setState(() {
+            _removing = false;
+          });
+          if (member == null) {
+            AppAlert.showDialogResult(context, 'Failed to update member');
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -76,7 +117,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
               ),
             ),
           ),
-          _buildSubmit(),
         ],
       ),
       bottomNavigationBar: TabBarWidget(),
@@ -84,7 +124,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildHeading(){
-    bool badgeVisible = _member?.status == GroupMemberStatus.officer;
     String memberStatus;
     if (_member?.status == GroupMemberStatus.officer) {
       memberStatus = _member?.officerTitle;
@@ -119,22 +158,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Visibility(
-                    visible: badgeVisible,
-                    child: Container(width: 16, height: 16,
-                      margin: EdgeInsets.only(right: 6),
-                      decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(16)) ),
-                      child: Image.asset('images/icon-saved-white.png'),
-                    )
-                  ),
-                  Text(memberStatus.toUpperCase(),
-                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),
-                  ),
-                ],
-              ),
-              Container(height: 8,),
               Text(_member?.name ?? "",
                 style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary
                 ),
@@ -151,77 +174,36 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildDetails(BuildContext context){
-    bool canOfficerTitle = (_member?.status == GroupMemberStatus.officer);
     bool canAdmin = ((_member?.status != null) && (_member?.status != GroupMemberStatus.inactive));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(height: 32,),
-        Text(Localization().getStringEx("panel.member_detail.label.status", "STATUS"),
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies.bold,
-              fontSize: 12,
-              color: Styles().colors.fillColorPrimary
-          ),
-        ),
-        Container(height: 8,),
-        GroupDropDownButton<GroupMemberStatus>(
-          emptySelectionText: 'Select member status.',
-          initialSelectedValue: _member.status ?? GroupMemberStatus.values.first,
-          items: GroupMemberStatus.values,
-          constructTitle: (dynamic status) => groupMemberStatusToDisplayString(status),
-          onValueChanged: (value) {
-            setState(() {
-              _member.status = value;
-            });
-          },
-        ),
-        Visibility(
-          visible: canOfficerTitle,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(height: 24,),
-              Text(Localization().getStringEx("panel.member_detail.label.officer_title", "OFFICER TITLE"),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 12,
-                    color: Styles().colors.fillColorPrimary
-                ),
-              ),
-              Container(height: 8,),
-              GroupDropDownButton<String>(
-                emptySelectionText: 'Select officer title.',
-                initialSelectedValue: _member?.officerTitle,
-                items: _officerTitleTypes ?? [],
-                constructTitle: (dynamic title) => title,
-                onValueChanged: (value){
-                  setState(() {
-                    _member.officerTitle = value;
-                  });
-                },
-              ),
-            ]
-          ),
-        ),
         Visibility(
           visible: canAdmin,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(height: 24,),
-              ToggleRibbonButton(
-                  height: null,
-                  borderRadius: BorderRadius.circular(4),
-                  label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
-                  toggled: _member?.admin ?? false,
-                  context: context,
-                  onTap: () {
-                    setState(() {
-                      _member.admin = !(_member?.admin ?? false);
-                    });
-                  }
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  ToggleRibbonButton(
+                      height: null,
+                      borderRadius: BorderRadius.circular(4),
+                      label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
+                      toggled: _member?.admin ?? false,
+                      context: context,
+                      onTap: () {
+                        setState(() {
+                          _member.admin = !(_member?.admin ?? false);
+                          _update();
+                        });
+                      }
+                  ),
+                  _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ) : Container()
+                ],
               ),
+              Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies.regular,
@@ -232,63 +214,33 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             ]
           ),
         ),
+        Container(height: 22,),
+        _buildRemoveFromGroup(),
       ],
     );
   }
 
-  Widget _buildSubmit() {
-    return Container(color: Colors.white,
-      child: Padding(padding: EdgeInsets.all(16),
-        child: Stack(children: <Widget>[
-//          Row(children: <Widget>[
-//            Expanded(child: Container(),),
-            ScalableSmallRoundedButton(label: 'Update member',
-              backgroundColor: Styles().colors.white,
-              textColor: Styles().colors.fillColorPrimary,
-              fontFamily: Styles().fontFamilies.bold,
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 32, ),
-              borderColor: Styles().colors.fillColorSecondary,
-              borderWidth: 2,
-//              height: 42,
-              onTap:() { _onSubmit();  }
-            ),
-//            Expanded(child: Container(),),
-//          ],),
-          Visibility(visible: (_submitting == true), child:
-            Center(child:
-              Padding(padding: EdgeInsets.only(top: 10.5), child:
-               Container(width: 21, height:21, child:
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,)
-                ),
-              ),
+  Widget _buildRemoveFromGroup() {
+    return Stack(children: <Widget>[
+        ScalableRoundedButton(label: 'Remove from Group',
+          backgroundColor: Styles().colors.white,
+          textColor: Styles().colors.fillColorPrimary,
+          fontFamily: Styles().fontFamilies.bold,
+          fontSize: 16,
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+          borderColor: Styles().colors.fillColorPrimary,
+          borderWidth: 2,
+          onTap:() { _remove();  }
+        ),
+      Visibility(visible: (_removing == true), child:
+        Center(child:
+          Padding(padding: EdgeInsets.only(top: 10.5), child:
+           Container(width: 21, height:21, child:
+              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), strokeWidth: 2,)
             ),
           ),
-        ],),
+        ),
       ),
-    );
-  }
-
-  void _onSubmit() {
-    if (_submitting != true) {
-
-      setState(() {
-        _submitting = true;
-      });
-
-      Groups().updateGroupMember(widget.groupDetail?.id, _member).then((GroupMember member) {
-        if (mounted) {
-          setState(() {
-            _submitting = false;
-          });
-          if (member != null) {
-            Navigator.pop(context);
-          }
-          else {
-            AppAlert.showDialogResult(context, 'Failed to update member');
-          }
-        }
-      });
-    }
+    ],);
   }
 }
