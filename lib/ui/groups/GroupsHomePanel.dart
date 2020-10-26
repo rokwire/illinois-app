@@ -23,6 +23,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -190,10 +191,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       : Container(
         width: double.infinity,
         color: Styles().colors.white,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Padding(
-            padding: const EdgeInsets.all(15),
+        child: Padding(
+            padding: const EdgeInsets.only(left: 6, right: 16, bottom: 13),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -212,10 +211,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       });
                     },
                   ),
+                Expanded(child: Container()),
+                IconButton(
+                  icon: Image.asset(
+                    'images/icon-search.png',
+                    color: Styles().colors.fillColorSecondary,
+                    width: 25,
+                    height: 25,
+                  ),
+                  onPressed: () {
+                    Analytics.instance.logSelect(target: "Search");
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+                  },
+                ),
               ],
             ),
           ),
-        ),
       );
   }
 
@@ -227,6 +238,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             label: _activeFilterList[index],
             selected: (_selectedCategory == _activeFilterList[index]),
             onTap: ()=> _onTapFilterEntry(_activeFilterList[index]),
+            selectedIconRes: "images/checkbox-selected.png",
+            unselectedIconRes: "images/oval-orange.png",
           );
         }
     );
