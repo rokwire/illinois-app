@@ -42,6 +42,17 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   List<FocusNode> _focusNodes;
   List<TextEditingController> _controllers;
 
+
+
+  bool get _addButtonEnabled{
+    for(TextEditingController textEditingController in _controllers){
+      if(AppString.isStringEmpty(textEditingController.text)){
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void initState() {
     _questions = GroupMembershipQuestion.listFromOthers(widget.questions) ?? [];
@@ -105,7 +116,6 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         ],
       ),
       backgroundColor: Styles().colors.background,
-      bottomNavigationBar: TabBarWidget(),
     );
   }
 
@@ -115,7 +125,6 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
               Text('Edit Questions', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
@@ -132,10 +141,15 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
       content.add(_buildQuestion(index: index));
     }
 
-    content.add(SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: <Widget>[
-//      Expanded(child: Container(),),
-      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor ,title: 'Add question', onTap: () { _addQuestion();  },),
-    ],),));
+    content.add(Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Expanded(child: Container(),),
+      GroupMembershipAddButton(
+        height: 26 + 16*MediaQuery.of(context).textScaleFactor ,
+        title: 'Add question',
+        onTap: _addQuestion,
+        enabled: _addButtonEnabled,
+      ),
+    ],));
 
     return Padding(padding: EdgeInsets.all(32),
       child: Column(crossAxisAlignment:CrossAxisAlignment.start, children: content),
@@ -154,6 +168,8 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
               maxLines: 2,
               controller: _controllers[index],
               focusNode: _focusNodes[index],
+              onChanged: _onTextChanged,
+              textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
               style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground,),
             ),
@@ -177,7 +193,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         child: Row(children: <Widget>[
           Expanded(flex: 1,child: Container(),),
           Expanded(flex: 5,
-          child: ScalableRoundedButton(label: 'Save questions',
+          child: ScalableRoundedButton(label: 'Update questions',
             backgroundColor: Styles().colors.white,
             textColor: Styles().colors.fillColorPrimary,
             fontFamily: Styles().fontFamilies.bold,
@@ -198,7 +214,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   void _addQuestion() {
     setState(() {
       _questions.add(GroupMembershipQuestion());
-      _controllers.add(TextEditingController(text: _questions.last.question ?? ''));
+      _controllers.add(TextEditingController());
       _focusNodes.add(FocusNode());
     });
     Timer(Duration(milliseconds: 100), () {
@@ -232,6 +248,10 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     widget.questions.replaceRange(0, widget.questions.length, _questions);
 
     Navigator.pop(context);
+  }
+
+  void _onTextChanged(String text){
+    setState(() {});
   }
 
 }
