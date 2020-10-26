@@ -47,10 +47,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   String _selectedCategory;
   List<String> _categories;
 
-  final String _allTypesValue = Localization().getStringEx("panel.groups_home.label.all_types", "All types");
-  String _selectedType;
-  List<String> _types;
-
   FilterType __activeFilterType = FilterType.none;
   bool get _hasActiveFilter{ return _activeFilterType != FilterType.none; }
   FilterType get _activeFilterType{ return __activeFilterType; }
@@ -63,7 +59,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   List<String> get _activeFilterList{
     switch(_activeFilterType){
-      case FilterType.type: return _types;
       case FilterType.category: return _categories;
       default: return null;
     }
@@ -92,8 +87,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _isGroupsLoading = true;
     });
     String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    String selectedType = _allTypesValue != _allTypesValue ? _selectedType : null;
-    Groups().loadGroups(category: selectedCategory, type: selectedType).then((List<Group> groups){
+    Groups().loadGroups(category: selectedCategory).then((List<Group> groups){
       _groups = groups;
     }).whenComplete((){
       setState(() {
@@ -112,11 +106,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _categories = categories;
     _selectedCategory = _allCategoriesValue;
 
-    List<String> types = List<String>();
-    types.add(_allTypesValue);
-    types.addAll(await Groups().types);
-    _types = types;
-    _selectedType = _allTypesValue;
     setState(() {
       _isFilterLoading = false;
     });
@@ -176,24 +165,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildTabs(){
     return Container(
       color: Styles().colors.fillColorPrimary,
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 10),
       child:
       Row(children: [
         Expanded(child:
-//          SingleChildScrollView(
-//            scrollDirection: Axis.horizontal,
-//            child:
             Row(
               children: <Widget>[
                 _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
-                Container(width: 24,),
+                Container(width: 15,),
                 _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
-                Container(width: 24,),
+                Container(width: 15,),
                 Expanded(child: Container()),
                 _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
               ],
             )
-//          )
         ),
       ],)
     );
@@ -227,21 +212,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       });
                     },
                   ),
-                Container(width: 12,),
-//                AppCollection.isCollectionEmpty(_types)
-//                    ? Container()
-//                    : FilterSelectorWidget(
-//                      label: _selectedType,
-//                      hint: "",
-//                      active: (_activeFilterType == FilterType.type),
-//                      visible: true,
-//                      onTap: (){
-//                        Analytics.instance.logSelect(target: "TypeFilter");
-//                        setState(() {
-//                          _activeFilterType = (_activeFilterType != FilterType.type) ? FilterType.type : FilterType.none;
-//                        });
-//                      },
-//                    ),
               ],
             ),
           ),
@@ -331,7 +301,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _onTapFilterEntry(String entry){
     String analyticsTarget;
     switch(_activeFilterType){
-      case FilterType.type: _selectedType = entry; analyticsTarget = "TypeFilter"; break;
       case FilterType.category: _selectedCategory = entry; analyticsTarget = "CategoryFilter"; break;
       default: break;
     }
@@ -389,7 +358,7 @@ class _GroupTabButton extends StatelessWidget{
               Stack(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: EdgeInsets.symmetric(vertical: 8),
                     child: Text(
                       title,
                       style: TextStyle(
