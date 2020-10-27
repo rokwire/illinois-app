@@ -27,6 +27,7 @@ import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -322,7 +323,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         for (Group group in _myGroups) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: _GroupCard(group: group),
+            child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup),
           ));
         }
         widgets.add(Container(height: 8,));
@@ -335,26 +336,49 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildPendingGroups(){
     if(AppCollection.isCollectionNotEmpty(_pendingGroups)) {
       List<Widget> widgets = List<Widget>();
+      widgets.add(Container(height: 16,));
       widgets.add(
-          Text("Pending",
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text("Pending",
             style: TextStyle(
                 fontFamily: Styles().fontFamilies.bold,
                 fontSize: 20,
                 color: Styles().colors.fillColorPrimary
             ),
           )
+        )
       );
       widgets.add(Container(height: 8,));
       for (Group group in _pendingGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: _GroupCard(group: group),
+          child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup,),
         ));
       }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: widgets,);
+      return
+        Stack(children: [
+          Container(
+            height: 112,
+            color: Styles().colors.backgroundVariant,
+            child:
+            Column(children: [
+              Container(height: 80,),
+              Container(
+                height: 32,
+                child: CustomPaint(
+                  painter: TrianglePainter(painterColor: Styles().colors.background),
+                  child: Container(),
+                )
+              ),
+            ],)
+          ),
+          Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widgets,)
+        ],);
+
     }
 
     return Container();
@@ -481,10 +505,11 @@ class _GroupTabButton extends StatelessWidget{
   }
 }
 
+enum _GroupCardDisplayType {myGroup, allGroups}
 class _GroupCard extends StatelessWidget{
   final Group group;
-
-  _GroupCard({@required this.group});
+  final _GroupCardDisplayType displayType;
+  _GroupCard({@required this.group, this.displayType = _GroupCardDisplayType.allGroups});
 
   bool get _isMember{
     return Groups().getUserMembership(group.id) != null;
@@ -510,15 +535,7 @@ class _GroupCard extends StatelessWidget{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-//              _buildHeading(),
-              _isMember?_buildMember() :
-              Text("CATEGORY",
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 16,
-                    color: Styles().colors.fillColorPrimary
-                ),
-              ),
+              _buildHeading(),
               Container(height: 3,),
               Row(children:[
                 Expanded(child:
@@ -534,17 +551,58 @@ class _GroupCard extends StatelessWidget{
                   )
                 ),
               ]),
-              Container(height: 4,)
+              Container(height: 4,),
+              displayType == _GroupCardDisplayType.allGroups? Container() :
+                 _buildUpdateTime()
             ],
           ),
         ),
       ),
     );
   }
+  Widget _buildHeading(){
+    if(displayType == _GroupCardDisplayType.allGroups){
+      return
+        _isMember? _buildMember():
+        Text("CATEGORY",
+        style: TextStyle(
+            fontFamily: Styles().fontFamilies.bold,
+            fontSize: 16,
+            color: Styles().colors.fillColorPrimary
+        ),
+      );
+    } else {
+      return _isMember? _buildMember(): _buildMembershipStatus();
+    }
+  }
+
+  Widget _buildMembershipStatus(){
+    return Row(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Styles().colors.mediumGray,
+            borderRadius: BorderRadius.all(Radius.circular(2)),
+          ),
+          child: Center(
+            child: Text(_membershipStatusText,
+              style: TextStyle(
+                  fontFamily: Styles().fontFamilies.bold,
+                  fontSize: 12,
+                  color: Styles().colors.white
+              ),
+            ),
+          ),
+        ),
+        Expanded(child: Container(),),
+      ],
+    );
+  }
 
   Widget _buildMember(){
-    return _isMember
-        ? Row(
+    return
+        Row(
           children: <Widget>[
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -564,13 +622,33 @@ class _GroupCard extends StatelessWidget{
             ),
             Expanded(child: Container(),),
           ],
+        );
+  }
+
+  Widget _buildUpdateTime(){
+    return Container(
+        child: Text(
+          _timeUpdatedText,
+          style: TextStyle(
+              fontFamily: Styles().fontFamilies.regular,
+              fontSize: 14,
+              color: Styles().colors.textSurface
+          ),
         )
-        : Container();
+    );
   }
 
   void _onTapCard(BuildContext context) {
     Analytics.instance.logSelect(target: "${group.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
+  }
+
+  String get _membershipStatusText{
+    return "GROUP PENDING"; //TBD
+  }
+
+  String get _timeUpdatedText{
+    return "Updated about 2 hours ago";//TBD
   }
 }
 
