@@ -43,6 +43,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool get _isLoading => _isFilterLoading || _isGroupsLoading;
 
   List<Group> _groups;
+  List<Group> _myGroups;
+  List<Group> _pendingGroups;
 
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
   String _selectedCategory;
@@ -90,11 +92,27 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
     Groups().loadGroups(category: selectedCategory).then((List<Group> groups){
       _groups = groups;
+      _loadMyGroups();
+      _loadPendingGroups();
     }).whenComplete((){
       setState(() {
         _isGroupsLoading = false;
       });
     });
+  }
+
+  void _loadMyGroups(){
+    //TBD
+    if(_groups!=null && _groups.isNotEmpty){
+      _myGroups = _groups.where((element) => Groups().getUserMembership(element.id) != null)?.toList();
+    }
+  }
+
+  void _loadPendingGroups(){
+    //TBD
+    if(_groups!=null && _groups.isNotEmpty){
+      _pendingGroups = _groups.where((element) => Groups().getUserMembership(element.id) == null)?.toList();
+    }
   }
 
   Future<void> _loadFilters() async{
@@ -141,7 +159,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     scrollDirection: Axis.vertical,
                     child: Column(
                       children: <Widget>[
-                        _buildGroupsContent(),
+                        _myGroupsSelected? _buildMyGroupsContent() : _buildAllGroupsContent(),
+                        _myGroupsSelected? _buildPendingGroups() : Container(),
                       ],
                     ),
                   ),
@@ -186,7 +205,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildFilterButtons(){
-    return _isFilterLoading
+    return _isFilterLoading || _myGroupsSelected
       ? Container()
       : Container(
         width: double.infinity,
@@ -282,8 +301,67 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         child: Container(color: Color(0x99000000)))
     );
   }
+  Widget _buildMyGroupsContent(){
+    if(AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_pendingGroups)) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+        child: Text(
+          Localization().getStringEx("panel.groups_home.label.no_results",
+              "There are no groups for the desired filter"),
+          style: TextStyle(
+              fontFamily: Styles().fontFamilies.regular,
+              fontSize: 16,
+              color: Styles().colors.textBackground
+          ),
+        ),
+      );
+    } else {
+      List<Widget> widgets = List<Widget>();
+      if(AppCollection.isCollectionNotEmpty(_myGroups)) {
+        widgets.add(Container(height: 8,));
+        for (Group group in _myGroups) {
+          widgets.add(Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: _GroupCard(group: group),
+          ));
+        }
+        widgets.add(Container(height: 8,));
+      }
 
-  Widget _buildGroupsContent(){
+      return Column(children: widgets,);
+    }
+  }
+
+  Widget _buildPendingGroups(){
+    if(AppCollection.isCollectionNotEmpty(_pendingGroups)) {
+      List<Widget> widgets = List<Widget>();
+      widgets.add(
+          Text("Pending",
+            style: TextStyle(
+                fontFamily: Styles().fontFamilies.bold,
+                fontSize: 20,
+                color: Styles().colors.fillColorPrimary
+            ),
+          )
+      );
+      widgets.add(Container(height: 8,));
+      for (Group group in _pendingGroups) {
+        widgets.add(Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: _GroupCard(group: group),
+        ));
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: widgets,);
+    }
+
+    return Container();
+  }
+
+  Widget _buildAllGroupsContent(){
+
     if(AppCollection.isCollectionNotEmpty(_groups)){
       List<Widget> widgets = List<Widget>();
       widgets.add(Container(height: 8,));
