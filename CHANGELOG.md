@@ -5,19 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+### Changed
+- Hide groups [#135](https://github.com/rokwire/illinois-app/issues/135)
+
 ## [2.3.12] - 2020-10-21
+### Fixed
 - Unable to log in with iOS Default Browser changed [#124](https://github.com/rokwire/illinois-app/issues/124)
 
 ## [2.3.11] - 2020-10-13
+### Changed
 - Upgrade Flutter to v1.22.1 - Additional fixes and cleanup [#116](https://github.com/rokwire/illinois-app/issues/116)
 
 ## [2.3.10] - 2020-10-12
+### Changed
 - Upgrade Flutter to v1.22.1 - fix broken Android polls plugin and crashlytics[#116](https://github.com/rokwire/illinois-app/issues/116)
 
 ## [2.3.9] - 2020-10-09
+### Changed
 - Upgrade Flutter to v1.22.1 [#116](https://github.com/rokwire/illinois-app/issues/116)
-- Make debug button being visible as in Safer Illinois App [#112](https://github.com/rokwire/illinois-app/issues/112)
 - Support languages defined only in the backend [#114](https://github.com/rokwire/illinois-app/issues/114)
+
+### Fixed
+- Make debug button being visible as in Safer Illinois App [#112](https://github.com/rokwire/illinois-app/issues/112)
 
 ## [2.3.8] - 2020-10-02
 ### Fixed
