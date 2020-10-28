@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Remove legacy crashlytics dependency from Android [#137](https://github.com/rokwire/illinois-app/issues/137)
+- Fix crash in Android [#139](https://github.com/rokwire/illinois-app/issues/139)
 
 ## [2.3.12] - 2020-10-21
 ### Fixed
