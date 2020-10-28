@@ -37,8 +37,10 @@ import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupAdminPanel.dart';
+import 'GroupMembersPanel.dart';
+import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About, Officers }
+enum _DetailTab { Events, About }
 
 class GroupDetailPanel extends StatefulWidget {
 
@@ -60,11 +62,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   _DetailTab       _currentTab = _DetailTab.Events;
 
-  bool get isMember {
+  bool get _isMember {
     return Groups().getUserMembership(widget.groupId) != null;
   }
   
-  bool get isAdmin {
+  bool get _isAdmin {
     return Groups().getUserMembership(widget.groupId)?.admin ?? false;
   }
 
@@ -184,9 +186,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildGroupContent() {
     List<Widget> content = [
-      _buildData()
+      _buildGroupInfo()
     ];
-    if (isMember) {
+    if (_isMember) {
       content.add(_buildTabs());
       if (_currentTab == _DetailTab.Events) {
         content.add(_buildEvents());
@@ -194,19 +196,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
       }
-      else if (_currentTab == _DetailTab.Officers) {
-        content.add(_buildOfficers());
-      }
-      content.add(_buildSocial());
     }
     else {
       content.add(_buildAbout());
-      content.add(_buildMembershipRules());
       content.add(_buildOfficers());
       if (isPublic) {
         content.add(_buildEvents());
       }
-      content.add(_buildSocial());
       content.add(_buildMembershipRequest());
     }
 
@@ -234,46 +230,65 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     );
   }
 
-  Widget _buildData() {
-    List<Widget> commands = [
-      RibbonButton(label: 'Website',
-        icon: 'images/external-link.png',
-        leftIcon: 'images/globe.png',
-        padding: EdgeInsets.symmetric(horizontal: 0),
-        onTap: (){ _onWebsite(); },),
-    ];
-    if (isMember && isAdmin) {
-      commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-      commands.add(RibbonButton(label: 'Admin View',
-        icon: 'images/chevron-right.png',
-        leftIcon: 'images/icon-settings.png',
-        padding: EdgeInsets.symmetric(horizontal: 0),
-        onTap: (){ _onAdminView(); },),
-      );
-    }
-
-    List<Widget> tags = [];
-    if (_groupDetail?.tags != null) {
-      for (String tag in _groupDetail.tags) {
-        if (0 < (tag?.length ?? 0)) {
-          tags.add(Container(decoration:BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius:BorderRadius.circular(3),), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8), child:
-              Text(tag?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Colors.white, ),),),),
-          );
-        }
-      }
-    }
+  Widget _buildGroupInfo() {
+    List<Widget> commands = List<Widget>();
 
     String members;
     int membersCount = _groupDetail?.membersCount ?? 0;
     if (membersCount == 0) {
-      members = 'No Current Members';
+      members = 'No Members';
     }
     else if (membersCount == 1) {
-      members = '1 Current Member';
+      members = '1 Member';
     }
     else {
-      members = '$membersCount Current Members';
+      members = '$membersCount Members';
+    }
+
+    if(_isMember){
+      if(_isAdmin){
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.groups_admin.button.manage_members.title", "Manage Members"),
+          hint: Localization().getStringEx("panel.groups_admin.button.manage_members.hint", ""),
+          leftIcon: 'images/icon-member.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: onTapMembers,
+        ));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.groups_admin.button.group_settings.title", "Group Settings"),
+          hint: Localization().getStringEx("panel.groups_admin.button.group_settings.hint", ""),
+          leftIcon: 'images/icon-gear.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: onTapSettings,
+        ));
+      }
+    } else {
+      List<Widget> tags = [];
+      if (_groupDetail?.tags != null) {
+        for (String tag in _groupDetail.tags) {
+          if (0 < (tag?.length ?? 0)) {
+            tags.add(Container(decoration:BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius:BorderRadius.circular(3),), child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8), child:
+            Text(tag?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Colors.white, ),),),),
+            );
+          }
+        }
+      }
+
+      commands.add(
+        RibbonButton(label: 'Website',
+          icon: 'images/external-link.png',
+          leftIcon: 'images/globe.png',
+          padding: EdgeInsets.symmetric(horizontal: 0),
+          onTap: (){ _onWebsite(); },)
+      );
+      commands.add(
+        Padding(padding: EdgeInsets.symmetric(vertical: 4),
+          child: Wrap(runSpacing: 8, spacing: 8, children:tags),
+        ),);
     }
 
     return Container(color: Colors.white,
@@ -282,19 +297,40 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Row(children: <Widget>[
-                  Padding(padding: EdgeInsets.only(right: 8),
-                    child: Image.asset('images/certified.png')),
-                  Expanded(child:
-                    Text(_groupDetail?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+              _isMember? Container():
+                Padding(padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Row(children: <Widget>[
+                    Expanded(child:
+                      Text(_groupDetail?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+                    ),
+                  ],),),
+              (!_isMember)? Container():
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _isAdmin? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                        ),
+                        child: Center(
+                          child: Text(_isAdmin? "ADMIN" : "MEMBER",
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies.bold,
+                                fontSize: 12,
+                                color: Styles().colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Container(),),
+                    ],
                   ),
-                ],),),
+                ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(_groupDetail?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
-              ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Wrap(runSpacing: 8, spacing: 8, children:tags),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(members,  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.textBackground, ),)
@@ -304,20 +340,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
             ],),
           ),
-          Align(alignment: Alignment.topRight,
-            child: Semantics(
-              label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-              hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-              button: true,
-              child: GestureDetector(
-                onTap: () { _onSwitchFavorite(); },
-                child: Container(height: 48, width: 48,
-                  child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
-                ),
-              )
-            ),
-          ),
-          
         ],),
       );
   }
@@ -329,7 +351,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       switch(tab) {
         case _DetailTab.Events: title = 'Events'; break;
         case _DetailTab.About: title = 'About'; break;
-        case _DetailTab.Officers: title = 'Current officers'; break;
       }
       bool selected = (_currentTab == tab);
 
@@ -521,6 +542,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (url != null) {
       launch(url);
     }
+  }
+
+
+  void onTapMembers(){
+    Analytics().logPage(name: "Group Members");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupDetail: _groupDetail)));
+  }
+
+  void onTapSettings(){
+    Analytics().logPage(name: "Group Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(groupDetail: _groupDetail,)));
   }
 
   void _onAdminView() {
