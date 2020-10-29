@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.14] - 2020-10-29
 ### Fixed
 - Hide groups. Appropriate fix [#135](https://github.com/rokwire/illinois-app/issues/135)
 - Prevent crash in Android [#144](https://github.com/rokwire/illinois-app/issues/144)
@@ -13,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.3.13] - 2020-10-28
 ### Changed
 - Hide groups [#135](https://github.com/rokwire/illinois-app/issues/135)
+
+### Fixed
+- Remove legacy crashlytics dependency from Android [#137](https://github.com/rokwire/illinois-app/issues/137)
+- Fix crash in Android [#139](https://github.com/rokwire/illinois-app/issues/139)
 
 ## [2.3.12] - 2020-10-21
 ### Fixed
