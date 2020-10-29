@@ -85,7 +85,7 @@ class Network  {
 
         Future<Http.StreamedResponse> responseStreamFuture = client.send(request);
         if ((responseStreamFuture != null) && (timeout != null)) {
-          responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout), onTimeout: _responseStreamTimeoutHandler);
+          responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout));
         }
 
         Http.StreamedResponse responseStream = await responseStreamFuture;
@@ -410,10 +410,6 @@ class Network  {
   }
 
   Http.Response _responseTimeoutHandler() {
-    return null;
-  }
-
-  Http.StreamedResponse _responseStreamTimeoutHandler() {
     return null;
   }
 

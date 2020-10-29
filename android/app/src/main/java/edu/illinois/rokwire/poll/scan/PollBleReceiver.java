@@ -30,25 +30,28 @@ import java.util.ArrayList;
 
 import edu.illinois.rokwire.App;
 import edu.illinois.rokwire.MainActivity;
+import edu.illinois.rokwire.Utils;
 import edu.illinois.rokwire.poll.PollBleClient;
 
 public class PollBleReceiver extends BroadcastReceiver {
+
+    private static String TAG = PollBleReceiver.class.getCanonicalName();
 
     @TargetApi(Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null) {
-            Log.d("BleReceiver", "onReceive - intent is null");
+            Log.d(TAG, "onReceive - intent is null");
             return;
         }
 
         // Too floody
-        //Log.d("BleReceiver", "onReceive - " + intent.getAction());
+        //Log.d(TAG, "onReceive - " + intent.getAction());
 
         App app = (MainActivity.getInstance() != null) ? MainActivity.getInstance().getApp() : null;
         if ((app == null) || app.inBackground) {
             // Too floody
-            // Log.d("BleReceiver", "onReceive - App is null or in background");
+            // Log.d(TAG, "onReceive - App is null or in background");
             return;
         }
 
@@ -56,18 +59,33 @@ public class PollBleReceiver extends BroadcastReceiver {
 
             ScanResult scanResult = extractData(intent.getExtras());
             if (scanResult == null) {
-                Log.d("BleReceiver", "The scan result is null");
+                Log.d(TAG, "The scan result is null");
                 return;
             }
             BluetoothDevice device = scanResult.getDevice();
             if (device == null) {
-                Log.d("BleReceiver", "The device is null");
+                Log.d(TAG, "The device is null");
                 return;
             }
 
-            Intent bleClientIntent = new Intent(context, PollBleClient.class);
-            bleClientIntent.putExtra("edu.illinois.rokwire.poll.FOUND_DEVICE", scanResult);
-            context.startService(bleClientIntent);
+            /** Try to prevent crash ({@link IllegalStateException}) when starting service.
+             It should be started when the app is in foreground.
+             However for Android >= 9 (API 28) it looks like that even after onResume() is called, the app "thinks" that it is in background, yet.
+             There is an open issue for this: https://issuetracker.google.com/issues/113122354 that is not fixed, yet.
+             */
+            if (context != null) {
+                Intent bleClientIntent = new Intent(context, PollBleClient.class);
+                bleClientIntent.putExtra("edu.illinois.rokwire.poll.FOUND_DEVICE", scanResult);
+                try {
+                    context.startService(bleClientIntent);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                    String message = e.getMessage();
+                    if (!Utils.Str.isEmpty(message)) {
+                        Log.e(TAG, message);
+                    }
+                }
+            }
         }
     }
 
@@ -81,16 +99,16 @@ public class PollBleReceiver extends BroadcastReceiver {
                     if (firstItem instanceof ScanResult) {
                        return (ScanResult) firstItem;
                     } else {
-                        Log.d("BleReceiver", "first item is not ScanResult");
+                        Log.d(TAG, "first item is not ScanResult");
                     }
                 } else {
-                    Log.d("BleReceiver", "list is empty");
+                    Log.d(TAG, "list is empty");
                 }
             } else {
-                Log.d("BleReceiver", "list is null");
+                Log.d(TAG, "list is null");
             }
         } else {
-            Log.d("BleReceiver", "extras are null");
+            Log.d(TAG, "extras are null");
         }
         return null;
     }
