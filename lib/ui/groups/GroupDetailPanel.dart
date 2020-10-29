@@ -25,6 +25,7 @@ import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -429,20 +430,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildEvents() {
     
     List<Widget> content = [];
+    if(_isAdmin){
+      content.add(_buildAdminEventOptions());
+    }
+
     if (_groupEvents != null) {
       for (GroupEvent groupEvent in _groupEvents) {
-        content.add(_EventCard(groupEvent: groupEvent,));
+        content.add(_EventCard(groupEvent: groupEvent, groupId: widget.groupId, isAdmin: _isAdmin));
       }
     }
 
     content.add(Padding(padding: EdgeInsets.only(top: 16), child:
       ScalableSmallRoundedButton(
           label: 'See all events',
+          widthCoeficient: 2,
           backgroundColor: Styles().colors.white,
           textColor: Styles().colors.fillColorPrimary,
           fontFamily: Styles().fontFamilies.bold,
           fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 32, ),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           borderColor: Styles().colors.fillColorSecondary,
           borderWidth: 2,
   //        height: 42,
@@ -451,10 +457,68 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(
       children: <Widget>[
-        SectionTitlePrimary(title: 'Upcoming Events (${_groupEvents?.length ?? 0}+)',
+        SectionTitlePrimary(title: 'Upcoming Events (${_groupEvents?.length ?? 0})',
           iconPath: 'images/icon-calendar.png',
           children: content,),
       ]);
+  }
+
+  Widget _buildAdminEventOptions(){
+    bool haveEvents = _groupEvents?.isNotEmpty ?? false;
+    haveEvents = false;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            borderRadius: BorderRadius.all(Radius.circular(8))
+        ),
+        child: Column(children: [
+          haveEvents? Container():
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text("No upcoming events", style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.textBackground, ), textAlign: TextAlign.left,),
+                Container(height: 8,),
+                Text("Create a new event or share an existing event with your members. ", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, )),
+                Container(height: 16,),
+              ],),
+          Row(
+            children: [
+              Expanded(child:
+                ScalableRoundedButton(
+                    label: "Browse",
+                    backgroundColor: Styles().colors.white,
+                    textColor: Styles().colors.fillColorPrimary,
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 16,
+                    borderColor: Styles().colors.fillColorSecondary,
+                    borderWidth: 2,
+                    //        height: 42,
+                    onTap:() { /*TBD browse events*/ }
+                ),
+              ),
+              Container(width: 16,),
+              Expanded(child:
+                ScalableRoundedButton(
+                  label: "Create event",
+                  backgroundColor: Styles().colors.white,
+                  textColor: Styles().colors.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies.bold,
+                  fontSize: 16,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  borderWidth: 2,
+                  //        height: 42,
+                  onTap:() { /*TBD create event*/ },
+                  showAdd: true,),
+              )
+            ],
+          ),
+        ],)
+      ),
+    );;
   }
 
   Widget _buildAbout() {
@@ -561,7 +625,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadMembershipStepEvents() {
-    
     Set<String> stepEventIds = Set<String>();
     List<GroupMembershipStep> steps = _groupDetail?.membershipQuest?.steps;
     if (0 < (steps?.length ?? 0)) {
@@ -641,10 +704,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 }
 
 class _EventCard extends StatefulWidget {
-
   final GroupEvent groupEvent;
+  final String groupId;
+  final bool isAdmin;
 
-  _EventCard({this.groupEvent});
+  _EventCard({this.groupEvent, this.groupId, this.isAdmin = false});
 
   @override
   createState()=> _EventCardState();
@@ -656,13 +720,25 @@ class _EventCardState extends State<_EventCard>{
   Widget build(BuildContext context) {
     GroupEvent event = widget.groupEvent;
     List<Widget> content = [
-      _EventContent(event: event,),
+      _EventContent(event: event, isAdmin: widget.isAdmin,),
     ];
+    List<Widget> content2 = [];
+
+    if(widget.isAdmin){
+      content2.add(
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.groupId)?.photoURL,
+                  onTap: (){
+                    Analytics().logPage(name: "Add post");
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.groupId,)));
+                  }))
+      );
+    }
 
     if (0 < (event?.comments?.length ?? 0)) {
       content.add(Container(color: Styles().colors.surfaceAccent, height: 1,));
-      
-      List<Widget> content2 = [];
+
       for (GroupEventComment comment in event.comments) {
         content2.add(_buildComment(comment));
         if(!_showAllComments){
@@ -697,7 +773,7 @@ class _EventCardState extends State<_EventCard>{
         content2.add(Container(height: 7,));
       }
 
-      content.add(Padding(padding: EdgeInsets.all(8), child:
+      content.add(Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children:content2))
       );
 
@@ -749,18 +825,50 @@ class _EventCardState extends State<_EventCard>{
           ],),
         ));
   }
+
+  Widget _buildAddPostButton({String photoUrl,Function onTap}){
+    return
+      InkWell(
+          onTap: onTap,
+          child: Container(
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              photoUrl == null ? Container():
+              Container(height: 32, width: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(image:NetworkImage(photoUrl), fit: BoxFit.cover),
+                ),
+              ),
+              Container(width: 6,),
+              Expanded(child:
+              Container(
+                  height: 45,
+                  alignment: Alignment.centerLeft,
+                  padding:EdgeInsets.symmetric(horizontal: 12) ,
+                  decoration: BoxDecoration(
+                      color: Styles().colors.white,
+                      boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                      borderRadius: BorderRadius.all(Radius.circular(8))
+                  ),
+                  child:
+                  Text("Add a public post ...",style: TextStyle(fontSize: 16, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular),)
+              ))
+            ],),
+          ));
+  }
 }
 
 class _EventContent extends StatelessWidget {
   final Event event;
-  
-  _EventContent({this.event});
+  final bool isAdmin;
+
+  _EventContent({this.event, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
     
     List<Widget> content = [
-      Padding(padding: EdgeInsets.only(bottom: 8), child:
+      Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
         Text(event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
       ),
     ];
@@ -778,14 +886,28 @@ class _EventContent extends StatelessWidget {
         )
       ),
       Align(alignment: Alignment.topRight,
-        child: GestureDetector(onTap: () { /* switch favorite */ },
-          child: Container(width: 48, height: 48,
-            child: Align(alignment: Alignment.center,
+      child:
+      Container(
+        padding: EdgeInsets.only(top: 16, right: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+        GestureDetector(onTap: () { /*TBD switch */ },
+            child: Container(
               child: Image.asset('images/icon-star.png'),
             ),
           ),
-        ),
-      ),
+        !isAdmin? Container() :
+        Container(
+          padding: EdgeInsets.only(left: 12),
+          child:
+          GestureDetector(onTap: () { /*TBD options*/ },
+              child: Container(
+                child: Image.asset('images/icon-groups-options-orange.png'),
+              ),
+            ),
+          )
+      ],),))
     ],);
 
   }
