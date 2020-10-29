@@ -287,14 +287,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ));
       }
     } else {
-      List<Widget> tags = [];
-      if (_groupDetail?.tags != null) {
+      String tags = "";
+      if (_groupDetail?.tags?.isNotEmpty ?? false) {
         for (String tag in _groupDetail.tags) {
           if (0 < (tag?.length ?? 0)) {
-            tags.add(Container(decoration:BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius:BorderRadius.circular(3),), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8), child:
-            Text(tag?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Colors.white, ),),),),
-            );
+            tags+=((tags.isNotEmpty? ", ": "") + tag ?? '');
           }
         }
       }
@@ -306,10 +303,32 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(horizontal: 0),
           onTap: (){ _onWebsite(); },)
       );
-      commands.add(
-        Padding(padding: EdgeInsets.symmetric(vertical: 4),
-          child: Wrap(runSpacing: 8, spacing: 8, children:tags),
-        ),);
+      if(tags?.isNotEmpty ?? false) {
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
+        commands.add(Container(height: 12,));
+        commands.add(
+          Padding(padding: EdgeInsets.symmetric(vertical: 4),
+            child: Row(children: [
+              Expanded(child:
+              RichText(
+                text: new TextSpan(
+                  style: TextStyle(color: Styles().colors.textSurface,
+                      fontFamily: Styles().fontFamilies.bold,
+                      fontSize: 12),
+                  children: <TextSpan>[
+                    new TextSpan(text: "Group Tags: "),
+                    new TextSpan(
+                        text: tags,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.regular)),
+                  ],
+                ),
+              )
+              )
+            ],),
+          ),);
+        commands.add(Container(height: 12,));
+      }
     }
 
     return Container(color: Colors.white,
@@ -445,9 +464,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
-          Text('About this group', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
+          Text('About us', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
-        Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ),),
+        ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), trimLines: 4, iconColor: Styles().colors.fillColorPrimary,),
       ],),);
   }
 
@@ -463,16 +482,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
       content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
     }
-    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-          Text('Current Officers', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
+    return
+      Stack(children: [
+        Container(
+            height: 112,
+            color: Styles().colors.backgroundVariant,
+            child:
+            Column(children: [
+              Container(height: 80,),
+              Container(
+                  height: 32,
+                  child: CustomPaint(
+                    painter: TrianglePainter(painterColor: Styles().colors.background),
+                    child: Container(),
+                  )
+              ),
+            ],)
         ),
-        SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: content),
-        ),
-        
-      ],),);
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            Text('Admins', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
+          ),
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: content),
+          ),
+
+        ],),)
+      ],);
   }
 
   Widget _buildMembershipRules() {
