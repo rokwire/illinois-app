@@ -304,7 +304,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           onTap: (){ _onWebsite(); },)
       );
       if(tags?.isNotEmpty ?? false) {
-        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
         commands.add(Container(height: 12,));
         commands.add(
           Padding(padding: EdgeInsets.symmetric(vertical: 4),
@@ -327,7 +326,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               )
             ],),
           ),);
-        commands.add(Container(height: 12,));
       }
     }
 
@@ -642,64 +640,61 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 }
 
-class _EventCard extends StatelessWidget {
+class _EventCard extends StatefulWidget {
 
   final GroupEvent groupEvent;
-  
+
   _EventCard({this.groupEvent});
 
   @override
+  createState()=> _EventCardState();
+}
+class _EventCardState extends State<_EventCard>{
+  bool _showAllComments = false;
+
+  @override
   Widget build(BuildContext context) {
-    
+    GroupEvent event = widget.groupEvent;
     List<Widget> content = [
-      _EventContent(event: groupEvent,),
+      _EventContent(event: event,),
     ];
 
-    if (0 < (groupEvent?.comments?.length ?? 0)) {
+    if (0 < (event?.comments?.length ?? 0)) {
       content.add(Container(color: Styles().colors.surfaceAccent, height: 1,));
       
       List<Widget> content2 = [];
-      for (GroupEventComment comment in groupEvent.comments) {
-        content2.add(Padding(
-          padding: EdgeInsets.symmetric(vertical: 4),
-          child: Container(
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Styles().colors.white,
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-              borderRadius: BorderRadius.all(Radius.circular(4))
-            ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Container(height: 32, width: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
-                  ),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Padding(padding: EdgeInsets.only(bottom: 2), child:
-                    Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
-                  ),
-                  Row(children: <Widget>[
-                    Padding(padding: EdgeInsets.only(right: 2), child: 
-                      Image.asset('images/icon-badge.png'),
-                    ),
-                    Text(comment.member.officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
-                  ],)
-                ],),),),
-                Expanded(
-                  flex: 3,
-                  child: Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
-                )
-              ],),
-              Padding(padding: EdgeInsets.only(top:8), child:
-                ExpandableText(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
-              ),
-            ],),
-          )));
+      for (GroupEventComment comment in event.comments) {
+        content2.add(_buildComment(comment));
+        if(!_showAllComments){
+          break;
+        }
+      }
+      if(!_showAllComments && (1 < (event?.comments?.length ?? 0))){
+        content2.add(
+            Container(color: Styles().colors.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:12, bottom: 10),)
+        );
+        content2.add(
+            Semantics(
+              button: true,
+              label: "See previous posts",
+              child: GestureDetector(
+              onTap: (){setState(() {
+                _showAllComments = true;
+              });},
+              child: Center(child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text("See previous posts", style: TextStyle(fontSize: 16,
+                    fontFamily: Styles().fontFamilies.bold,
+                    color: Styles().colors.fillColorPrimary),),
+                  Padding(
+                    padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color:  Styles().colors.fillColorPrimary,),),
+                ],),
+              ),),
+            )
+        );
+        content2.add(Container(height: 7,));
       }
 
       content.add(Padding(padding: EdgeInsets.all(8), child:
@@ -719,6 +714,40 @@ class _EventCard extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
       ),
     );
+  }
+
+  Widget _buildComment(GroupEventComment comment){
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+              color: Styles().colors.white,
+              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+              borderRadius: BorderRadius.all(Radius.circular(4))
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Container(height: 32, width: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(bottom: 2), child:
+                  Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
+                  ),
+                  Text(AppDateTime.timeAgoSinceDate(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                ],),),),
+            ],),
+            Padding(padding: EdgeInsets.only(top:8), child:
+            Text(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
+            ),
+          ],),
+        ));
   }
 }
 
