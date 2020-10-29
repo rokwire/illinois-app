@@ -42,7 +42,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   LinkedHashSet<String> _groupsNames;
 
   bool _nameIsValid = true;
-  bool _loading = false;
+  bool _groupNamesLoading = false;
+  bool _groupCategoeriesLoading = false;
+  bool _creating = false;
+  bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
 
   @override
   void initState() {
@@ -54,12 +57,65 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     super.initState();
   }
 
+  //Init
+  void _initGroupNames(){
+    _groupNamesLoading = true;
+    Groups().loadGroups().then((groups){
+      _groupsNames = groups?.map((group) => group?.title?.toLowerCase()?.trim())?.toSet();
+    }).catchError((error){
+      print(error);
+    }).whenComplete((){
+      setState(() {
+        _groupNamesLoading = false;
+      });
+    });
+  }
+
+  void _initPrivacyData(){
+    _groupPrivacyOptions = GroupPrivacy.values;
+    _groupDetail.privacy = _groupPrivacyOptions[0]; //default value Private
+  }
+
+  void _initCategories(){
+    setState(() {
+      _groupCategoeriesLoading = true;
+    });
+    Groups().categories.then((categories){
+      _groupCategories = categories;
+    }).whenComplete((){
+      setState(() {
+        _groupCategoeriesLoading = false;
+      });
+    });
+  }
+
+  void _initTypes(){
+    Groups().types.then((types){
+      setState(() {
+        _groupTypes = types;
+      });
+    });
+  }
+  //
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(
           children: <Widget>[
-            Expanded(
+            _loading
+            ? Expanded(child:
+                Center(child:
+                  Container(
+                    child: Align(alignment: Alignment.center,
+                      child: SizedBox(height: 24, width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                      ),
+                    ),
+                  ),
+                )
+              )
+            : Expanded(
               child: Container(
                 color: Colors.white,
                 child: CustomScrollView(
@@ -96,44 +152,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ),
         backgroundColor: Styles().colors.background);
   }
-
-  //Init
-  void _initGroupNames(){
-    _loading = true;
-    Groups().loadGroups().then((groups){
-      _groupsNames = groups?.map((group) => group?.title?.toLowerCase()?.trim())?.toSet();
-      setState(() {
-        _loading = false;
-      });
-    }).catchError((error){
-      setState(() {
-        _loading = false;
-      });
-      print(error);
-    });
-  }
-
-  void _initPrivacyData(){
-    _groupPrivacyOptions = GroupPrivacy.values;
-    _groupDetail.privacy = _groupPrivacyOptions[0]; //default value Private
-  }
-
-  void _initCategories(){
-    Groups().categories.then((categories){
-      setState(() {
-        _groupCategories = categories;
-      });
-    });
-  }
-
-  void _initTypes(){
-    Groups().types.then((types){
-      setState(() {
-        _groupTypes = types;
-      });
-    });
-  }
-  //
 
   //Name
   Widget _buildNameField() {
@@ -293,7 +311,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Buttons
   Widget _buildButtonsLayout() {
     return
-      Stack(children: <Widget>[
+      Stack(alignment: Alignment.center, children: <Widget>[
         Container( color: Styles().colors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
@@ -303,13 +321,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               borderColor: Styles().colors.fillColorSecondary,
               textColor: Styles().colors.fillColorPrimary,
               onTap: _onCreateTap,
-//              height: 48,
             ),
           )
           ,),
-        Visibility(visible: _loading,
+        Visibility(visible: _creating,
           child: Container(
-//            height: 48,
             child: Align(alignment: Alignment.center,
               child: SizedBox(height: 24, width: 24,
                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
@@ -322,13 +338,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onCreateTap(){
     setState(() {
-      _loading = true;
+      _creating = true;
     });
     Groups().createGroup(_groupDetail).then((detail){
       if(detail!=null){
         //ok
         setState(() {
-          _loading = false;
+          _creating = false;
         });
 
         Navigator.pop(context);
@@ -336,7 +352,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }).catchError((e){
       //error
       setState(() {
-        _loading = false;
+        _creating = false;
       });
     });
   }

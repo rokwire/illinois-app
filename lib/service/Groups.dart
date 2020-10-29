@@ -142,8 +142,19 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<GroupDetail>createGroup(GroupDetail groupDetail) async {
-    return Future<GroupDetail>.delayed(Duration(seconds: 1), (){ return groupDetail; });
+  Future<String>createGroup(GroupDetail groupDetail) async {
+    String url = '${Config().groupsUrl}/groups';
+    try {
+      String body = jsonEncode(groupDetail.toJson());
+      Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
+      int responseCode = response?.statusCode ?? -1;
+      String responseBody = response?.body;
+      Map<String,dynamic> jsonData = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+      return jsonData['inserted_id'];
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   Future<GroupDetail>updateGroup(GroupDetail groupDetail) async {
