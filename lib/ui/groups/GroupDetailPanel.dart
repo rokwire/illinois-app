@@ -34,6 +34,8 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupAdminPanel.dart';
@@ -135,6 +137,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return Scaffold(
+      appBar: SimpleHeaderBarWithBack(
+        context: context,
+      ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
       body: content,
@@ -186,6 +191,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildGroupContent() {
     List<Widget> content = [
+      _buildImageHeader(),
       _buildGroupInfo()
     ];
     if (_isMember) {
@@ -208,25 +214,40 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(children: <Widget>[
         Expanded(
-          child: CustomScrollView(
+          child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            slivers: <Widget>[
-              SliverToutHeaderBar(
-                  context: context,
-                  imageUrl: _groupDetail?.imageURL,
-              ),
-              SliverList(
-                delegate:SliverChildListDelegate([
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: content,
-                  ),
-                ]),
-              ),
-            ]
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: content,
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildImageHeader(){
+    return Container(
+      height: 200,
+      color: Styles().colors.background,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          AppString.isStringNotEmpty(_groupDetail?.imageURL) ?  Positioned.fill(child:Image.network(_groupDetail?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
+            child: Container(
+              height: 53,
+            ),
+          ),
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.white),
+            child: Container(
+              height: 30,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -358,7 +379,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         tabs.add(Padding(padding: EdgeInsets.only(left: 8),child: Container(),));
       }
 
-      tabs.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      tabs.add(Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
         RoundedButton(label: title,
           backgroundColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.background,
           textColor: selected ? Colors.white :  Styles().colors.fillColorPrimary,
@@ -373,14 +394,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       ],));
     }
 
-    return Container(color: Colors.white,
-      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(children:tabs),
+    return
+      Row(children: [
+        Expanded(
+          child: Container(
+            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children:tabs),
+                )
+            ),
+          )
         )
-      ),
-    );
+      ],);
   }
 
   Widget _buildEvents() {
