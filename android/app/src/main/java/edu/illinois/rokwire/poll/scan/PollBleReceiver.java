@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import edu.illinois.rokwire.App;
 import edu.illinois.rokwire.MainActivity;
+import edu.illinois.rokwire.Utils;
 import edu.illinois.rokwire.poll.PollBleClient;
 
 public class PollBleReceiver extends BroadcastReceiver {
@@ -65,9 +66,24 @@ public class PollBleReceiver extends BroadcastReceiver {
                 return;
             }
 
-            Intent bleClientIntent = new Intent(context, PollBleClient.class);
-            bleClientIntent.putExtra("edu.illinois.rokwire.poll.FOUND_DEVICE", scanResult);
-            context.startService(bleClientIntent);
+            /** Try to prevent crash ({@link IllegalStateException}) when starting service.
+             It should be started when the app is in foreground.
+             However for Android >= 9 (API 28) it looks like that even after onResume() is called, the app "thinks" that it is in background, yet.
+             There is an open issue for this: https://issuetracker.google.com/issues/113122354 that is not fixed, yet.
+             */
+            if (context != null) {
+                Intent bleClientIntent = new Intent(context, PollBleClient.class);
+                bleClientIntent.putExtra("edu.illinois.rokwire.poll.FOUND_DEVICE", scanResult);
+                try {
+                    context.startService(bleClientIntent);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                    String message = e.getMessage();
+                    if (!Utils.Str.isEmpty(message)) {
+                        Log.e("BleReceiver", message);
+                    }
+                }
+            }
         }
     }
 
