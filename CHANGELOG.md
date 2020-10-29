@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Hide groups. Appropriate fix [#135](https://github.com/rokwire/illinois-app/issues/135)
 
+## [2.3.13] - 2020-10-28
 ### Changed
 - Hide groups [#135](https://github.com/rokwire/illinois-app/issues/135)
 
