@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Hide groups [#135](https://github.com/rokwire/illinois-app/issues/135)
 
+### Fixed
+- Remove legacy crashlytics dependency from Android [#137](https://github.com/rokwire/illinois-app/issues/137)
+- Fix crash in Android [#139](https://github.com/rokwire/illinois-app/issues/139)
+
 ## [2.3.12] - 2020-10-21
 ### Fixed
 - Unable to log in with iOS Default Browser changed [#124](https://github.com/rokwire/illinois-app/issues/124)
