@@ -35,21 +35,23 @@ import edu.illinois.rokwire.poll.PollBleClient;
 
 public class PollBleReceiver extends BroadcastReceiver {
 
+    private static String TAG = PollBleReceiver.class.getCanonicalName();
+
     @TargetApi(Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null) {
-            Log.d("BleReceiver", "onReceive - intent is null");
+            Log.d(TAG, "onReceive - intent is null");
             return;
         }
 
         // Too floody
-        //Log.d("BleReceiver", "onReceive - " + intent.getAction());
+        //Log.d(TAG, "onReceive - " + intent.getAction());
 
         App app = (MainActivity.getInstance() != null) ? MainActivity.getInstance().getApp() : null;
         if ((app == null) || app.inBackground) {
             // Too floody
-            // Log.d("BleReceiver", "onReceive - App is null or in background");
+            // Log.d(TAG, "onReceive - App is null or in background");
             return;
         }
 
@@ -57,12 +59,12 @@ public class PollBleReceiver extends BroadcastReceiver {
 
             ScanResult scanResult = extractData(intent.getExtras());
             if (scanResult == null) {
-                Log.d("BleReceiver", "The scan result is null");
+                Log.d(TAG, "The scan result is null");
                 return;
             }
             BluetoothDevice device = scanResult.getDevice();
             if (device == null) {
-                Log.d("BleReceiver", "The device is null");
+                Log.d(TAG, "The device is null");
                 return;
             }
 
@@ -80,7 +82,7 @@ public class PollBleReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                     String message = e.getMessage();
                     if (!Utils.Str.isEmpty(message)) {
-                        Log.e("BleReceiver", message);
+                        Log.e(TAG, message);
                     }
                 }
             }
@@ -97,16 +99,16 @@ public class PollBleReceiver extends BroadcastReceiver {
                     if (firstItem instanceof ScanResult) {
                        return (ScanResult) firstItem;
                     } else {
-                        Log.d("BleReceiver", "first item is not ScanResult");
+                        Log.d(TAG, "first item is not ScanResult");
                     }
                 } else {
-                    Log.d("BleReceiver", "list is empty");
+                    Log.d(TAG, "list is empty");
                 }
             } else {
-                Log.d("BleReceiver", "list is null");
+                Log.d(TAG, "list is null");
             }
         } else {
-            Log.d("BleReceiver", "extras are null");
+            Log.d(TAG, "extras are null");
         }
         return null;
     }
