@@ -19,10 +19,14 @@ import 'dart:convert';
 import 'dart:core';
 
 import 'package:collection/collection.dart';
+import 'package:http/http.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class Groups /* with Service */ {
 
@@ -78,7 +82,19 @@ class Groups /* with Service */ {
   // Enumeration APIs
 
   Future<List<String>> get categories async {
-    return ((await _sampleJson)['categories'] as List)?.cast<String>();
+    String url = '${Config().groupsUrl}/group-categories';
+    try {
+      Response response = await Network().get(url, auth: NetworkAuth.App,);
+      int responseCode = response?.statusCode ?? -1;
+      String responseBody = response?.body;
+      List<dynamic> categoriesJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+      if(AppCollection.isCollectionNotEmpty(categoriesJson)){
+        return categoriesJson.map((e) => e.toString()).toList();
+      }
+    } catch (e) {
+      print(e);
+    }
+    return [];
   }
 
   Future<List<String>> get types async {
