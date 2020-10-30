@@ -25,6 +25,7 @@ import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
@@ -138,8 +139,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
+      appBar: AppBar(
+        leading: _HeaderBackButton(),
+        actions: [
+          Semantics(
+              label:  'Options',
+              button: true,
+              excludeSemantics: true,
+              child: IconButton(
+                icon: Image.asset(
+                  'images/groups-more-inactive.png',
+                ),
+                onPressed:_onOptionsTap,
+              ))
+        ],
       ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
@@ -210,7 +223,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (isPublic) {
         content.add(_buildEvents());
       }
-      content.add(_buildMembershipRequest());
     }
 
     return Column(children: <Widget>[
@@ -223,6 +235,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             ),
           ),
         ),
+        _buildMembershipRequest()
       ],
     );
   }
@@ -591,23 +604,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildMembershipRequest() {
-    return Container(color: Colors.white,
+    return
+      _isMember? Container() :
+      Container(color: Colors.white,
       child: Padding(padding: EdgeInsets.all(16),
-        child: Row(children: <Widget>[
-          Expanded(child: Container(),),
-          RoundedButton(label: 'Request to join this group',
+          child: ScalableRoundedButton(label: 'Request to join',
             backgroundColor: Styles().colors.white,
             textColor: Styles().colors.fillColorPrimary,
             fontFamily: Styles().fontFamilies.bold,
             fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, ),
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
-            height: 42,
             onTap:() { _onMembershipRequest();  }
           ),
-          Expanded(child: Container(),),
-        ],),
       ),
     );
   }
@@ -653,6 +663,47 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         }
       }
     }
+  }
+
+  void _onOptionsTap(){
+    //TBD rest options
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context){
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(height: 48,),
+                RibbonButton(
+                  leftIcon: "images/trash.png",
+                  label:"Delete",
+                  onTap: (){
+                    Navigator.pop(context);
+                    //TBD
+                  },
+                ),
+                Container(height: 1, color: Styles().colors.surfaceAccent,),
+                RibbonButton(
+                  leftIcon: "images/icon-edit.png",
+                  label:"Edit",
+                  onTap: (){
+                    //TBD
+                  },
+                ),
+                Container(height: 8,)
+              ],
+            ),
+          );
+        }
+    );
   }
 
   void _onTab(_DetailTab tab) {
@@ -1012,23 +1063,12 @@ class _HeaderBackButton extends StatelessWidget {
       label: Localization().getStringEx('headerbar.back.title', 'Back'),
       hint: Localization().getStringEx('headerbar.back.hint', ''),
       button: true,
-      child: GestureDetector(
-        onTap: () {
-          Analytics.instance.logSelect(target: "Back");
-          Navigator.pop(context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ClipOval(
-            child: Container(
-                height: 32,
-                width: 32,
-                color: Styles().colors.fillColorPrimary,
-                child: Image.asset('images/chevron-left-white.png')
-            ),
-          ),
-        ),
-      )
+      child: IconButton(
+            icon: Image.asset('images/chevron-left-white.png'),
+            onPressed: (){
+              Analytics.instance.logSelect(target: "Back");
+              Navigator.pop(context);
+            }),
     );
   }
 }
