@@ -344,30 +344,7 @@ class UserRole{
   const UserRole._internal(this._value);
 
   factory UserRole.fromString(String userRoleString) {
-    if (userRoleString != null) {
-      if (userRoleString == 'student') {
-        return UserRole.student;
-      }
-      else if (userRoleString == 'visitor') {
-        return UserRole.visitor;
-      }
-      else if (userRoleString == 'fan') {
-        return UserRole.fan;
-      }
-      else if (userRoleString == 'employee') {
-        return UserRole.employee;
-      }
-      else if (userRoleString == 'alumni') {
-        return UserRole.alumni;
-      }
-      else if (userRoleString == 'parent') {
-        return UserRole.parent;
-      }
-      else if (userRoleString == 'resident') {
-        return UserRole.resident;
-      }
-    }
-    return null;
+    return (userRoleString != null) ? UserRole._internal(userRoleString) : null;
   }
 
   toString() => _value;
