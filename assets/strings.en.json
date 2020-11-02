@@ -1539,14 +1539,6 @@
 	"model.groups.member.status.officer": "Officer",
 	"model.groups.member.status.unknown": "Unknown",
 
-    "model.user.role.student.title": "Student",
-    "model.user.role.visitor.title": "Campus Visitor",
-    "model.user.role.fan.title": "Athletics Fan",
-    "model.user.role.employee.title": "Employee",
-    "model.user.role.alumni.title": "Alumni",
-    "model.user.role.parent.title": "Parent",
-    "model.user.role.resident.title": "Illinois Resident",
-
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
     "logic.date_time.greeting.evening": "Good evening",
