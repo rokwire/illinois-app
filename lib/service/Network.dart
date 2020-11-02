@@ -49,7 +49,7 @@ class Network  {
 
   Network._internal();
 
-  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client }) async {
+  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, int timeout, Http.Client client }) async {
     try {
       
       Uri uri;

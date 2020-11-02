@@ -1539,14 +1539,6 @@
     "model.groups.member.status.officer": "Oficial",
     "model.groups.member.status.unknown": "Desconocido",
 
-    "model.user.role.student.title": "Alumno",
-    "model.user.role.visitor.title": "Visitante",
-    "model.user.role.fan.title": "Aficionado al atletismo",
-    "model.user.role.employee.title": "Empleado",
-    "model.user.role.alumni.title": "Alumni",
-    "model.user.role.parent.title": "Padre",
-    "model.user.role.resident.title": "Residente",
-
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",

@@ -477,7 +477,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             fontSize: 14));
   }
 
-  Widget _buildBalanceTableItem({key,String text,bool showBorder = true, Color backColor,TextStyle textStyle, TextAlign textAlign = TextAlign.left}) {
+  Widget _buildBalanceTableItem({String text, bool showBorder = true, Color backColor, TextStyle textStyle, TextAlign textAlign = TextAlign.left}) {
     return
       Container(
           width: double.infinity,
