@@ -640,7 +640,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
                     child: Text(categoryStateDescription, style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground, fontSize: 16)))));
   }
 
-  Widget _buildEntryWidget(PrivacyEntry entry, {bool isLast = false}) {
+  Widget _buildEntryWidget(PrivacyEntry entry) {
     bool active = _isActive(entry);
     if (entry.type == widget.selectedPrivacyState)
       return Padding(
