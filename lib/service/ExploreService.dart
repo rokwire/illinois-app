@@ -326,42 +326,40 @@ class ExploreService /* with Service */ {
   }
 
   String _constructEventTimeFilterParams(EventTimeFilter eventFilter){
-    DateTime now = AppDateTime().now;
-    DateTime startDate = now, endDate;
-
-    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(startDate.toUtc());
-    int hoursDiffToUni = now.hour - nowUni.hour;
-    DateTime startDateUni = startDate.add(Duration(hours: hoursDiffToUni));
-    String formattedStartDate = AppDateTime().formatDateTime(startDateUni, ignoreTimeZone: true);
+    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
 
     switch (eventFilter) {
       case EventTimeFilter.today:{
-          endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+          DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59);
+          String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
           String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
           return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
         }
       case EventTimeFilter.thisWeekend:{
-        int currentWeekDay = now.weekday;
-        DateTime weekendStartDateTime = DateTime(now.year, now.month, now.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
-        startDate = now.isBefore(weekendStartDateTime) ? weekendStartDateTime : now;
-        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59)
+        int currentWeekDay = nowUni.weekday;
+        DateTime weekendStartDateTime = DateTime(nowUni.year, nowUni.month, nowUni.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
+        DateTime startDate = nowUni.isBefore(weekendStartDateTime) ? weekendStartDateTime : nowUni;
+        DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59)
             .add(Duration(days: (7 - currentWeekDay)));
-        formattedStartDate = AppDateTime().formatDateTime(startDateUni, ignoreTimeZone: true);
+        String formattedStartDate = AppDateTime().formatDateTime(startDate, ignoreTimeZone: true);
         String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
         return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
       }
       case EventTimeFilter.next7Day:{
-        endDate = now.add(Duration(days: 6));
+        DateTime endDate = nowUni.add(Duration(days: 6));
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
         String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
         return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
       }
       case EventTimeFilter.next30Days:{
-        DateTime next = startDate.add(Duration(days: 30));
-        endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        DateTime next = nowUni.add(Duration(days: 30));
+        DateTime endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
         String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
         return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
       }
       case EventTimeFilter.upcoming:{
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
         return "endDate.gte=$formattedStartDate";
       }
     }
