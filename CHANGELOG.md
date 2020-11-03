@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- FlexUI Remove role rule for laundry[#130](https://github.com/rokwire/illinois-app/issues/130)
+
 ## [2.3.15] - 2020-11-02
 ### Fixed
 - Do not ignore unknown user roles [#147](https://github.com/rokwire/illinois-app/issues/147).
