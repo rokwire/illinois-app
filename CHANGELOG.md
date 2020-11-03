@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.16] - 2020-11-03
+### Added
+- Improved event filters based on dates [#83](https://github.com/rokwire/illinois-app/issues/83)
+
 ### Fixed
 - FlexUI Remove role rule for laundry[#130](https://github.com/rokwire/illinois-app/issues/130)
 
