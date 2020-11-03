@@ -248,7 +248,7 @@ class _SearchPanelState extends State<SearchPanel> {
     if (AppString.isStringEmpty(keyword)) {
       return;
     }
-    ExploreService().loadEvents(searchText: keyword, startDate: DateTime.now()).then((events) => _onEventsSearchFinished(events));
+    ExploreService().loadEvents(searchText: keyword, eventFilter: EventTimeFilter.upcoming,).then((events) => _onEventsSearchFinished(events));
   }
 
   void _onEventsSearchFinished(List<Explore> events) {

@@ -529,22 +529,22 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>> _loadAll(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, startDate: AppDateTime().now);
+    return ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
   }
 
   Future<List<Explore>> _loadNearMe(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
     List<String> tags = _getSelectedEventTags(selectedFilterList);
-    Map<String, DateTime> period = _getSelectedEventTimePeriod(selectedFilterList);
+    EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
-    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags?.toSet(), startDate: period['start_date'], startDateLimit: period['end_date']) : null;
+    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags?.toSet(), eventFilter: eventFilter) : null;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
     List<String> tags = _getSelectedEventTags(selectedFilterList);
-    Map<String, DateTime> period = _getSelectedEventTimePeriod(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, tags: tags?.toSet(), startDate: period['start_date'], startDateLimit: period['end_date']);
+    EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
+    return ExploreService().loadEvents(categories: categories, tags: tags?.toSet(), eventFilter: eventFilter);
   }
 
   Future<List<Explore>> _loadDining(List<ExploreFilter> selectedFilterList) async {
@@ -608,53 +608,27 @@ class ExplorePanelState extends State<ExplorePanel>
     return selectedCategories;
   }
 
-  Map<String,DateTime> _getSelectedEventTimePeriod(List<ExploreFilter> selectedFilterList) {
-    
-    DateTime now = AppDateTime().now;
-    DateTime startDate = now, endDate;
+  EventTimeFilter _getSelectedEventTimePeriod(List<ExploreFilter> selectedFilterList) {
     Set<int> selectedIndexes = _getSelectedFilterIndexes(selectedFilterList, ExploreFilterType.event_time);
     int index = (selectedIndexes != null && selectedIndexes.isNotEmpty) ? selectedIndexes.first : -1; //Get first one because only categories has more than one selectable index
     switch (index) {
 
       case 0: // 'Upcoming':
-        break;
-      
+        return EventTimeFilter.upcoming;
       case 1: // 'Today':
-        {
-          endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
-        }
-        break;
-      
+        return EventTimeFilter.today;
       case 2: // 'Next 7 days':
-        {
-          endDate = now.add(Duration(days: 6));
-        }
-        break;
-      
+        return EventTimeFilter.next7Day;
       case 3: // 'This Weekend':
-        {
-          int currentWeekDay = now.weekday;
-          DateTime weekendStartDateTime = DateTime(
-              now.year, now.month, now.day, 0, 0, 0)
-              .add(Duration(days: (6 - currentWeekDay)));
-          startDate =
-          now.isBefore(weekendStartDateTime) ? weekendStartDateTime : now;
-          endDate = DateTime(now.year, now.month, now.day, 23, 59, 59)
-              .add(Duration(days: (7 - currentWeekDay)));
-        }
-        break;
+        return EventTimeFilter.thisWeekend;
       
       case 4: //'Next 30 days':
-        {
-          DateTime next = startDate.add(Duration(days: 30));
-          endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
-        }
-        break;
+        return EventTimeFilter.next30Days;
       default:
-        break;
+        return EventTimeFilter.upcoming;
     }
 
-    //Filter by the time in the University
+    /*//Filter by the time in the University
     DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc());
     int hoursDiffToUni = now.hour - nowUni.hour;
     DateTime startDateUni = startDate.add(Duration(hours: hoursDiffToUni));
@@ -664,7 +638,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return {
       'start_date' : startDateUni,
       'end_date' : endDateUni
-    };
+    };*/
   }
 
   List<String> _getSelectedEventTags(List<ExploreFilter> selectedFilterList) {
