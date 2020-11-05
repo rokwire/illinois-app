@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Pass application id as header field in FCM API calls from sports service [#154](https://github.com/rokwire/safer-illinois-app/issues/154).
+- Handle native method call for querying location permission status in Android.
 
 ## [2.3.16] - 2020-11-03
 ### Added
