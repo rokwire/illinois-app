@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Pass application id as header field in FCM API calls from sports service [#154](https://github.com/rokwire/safer-illinois-app/issues/154).
 
+### Fixed
+- Fix location permission request in Android [#153](https://github.com/rokwire/illinois-app/issues/153)
+
 ## [2.3.16] - 2020-11-03
 ### Added
 - Improved event filters based on dates [#83](https://github.com/rokwire/illinois-app/issues/83)
