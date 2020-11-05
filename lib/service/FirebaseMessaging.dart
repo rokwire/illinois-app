@@ -203,7 +203,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       if (Config().sportsServiceUrl != null) {
         String url = "${Config().sportsServiceUrl}/api/subscribe";
         String body = json.encode({'token': _token, 'topic': topic});
-        Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
+        Response response = await Network().post(url, body: body, auth: NetworkAuth.App, headers: { Network.RokwireAppId : Config().appCanonicalId });
         if ((response != null) && (response.statusCode == 200)) {
           Log.d("FCM: Succesfully subscribed for $topic topic");
           Storage().addFirebaseSubscriptionTopic(topic);
@@ -233,7 +233,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       if (Config().sportsServiceUrl != null) {
         String url = "${Config().sportsServiceUrl}/api/unsubscribe";
         String body = json.encode({'token': _token, 'topic': topic});
-        Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
+        Response response = await Network().post(url, body: body, auth: NetworkAuth.App, headers: { Network.RokwireAppId : Config().appCanonicalId });
         if ((response != null) && (response.statusCode == 200)) {
           Log.d("FCM: Succesfully unsubscribed from $topic topic");
           Storage().removeFirebaseSubscriptionTopic(topic);
@@ -254,7 +254,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
       if (Config().sportsServiceUrl != null) {
         String url = "${Config().sportsServiceUrl}/api/message";
         String body = json.encode({'topic': topic, 'message': message});
-        final response = await Network().post(url, timeout: 10, body: body, auth: NetworkAuth.App, headers: { "Accept": "application/json", "content-type": "application/json" });
+        final response = await Network().post(url, timeout: 10, body: body, auth: NetworkAuth.App, headers: {
+          "Accept": "application/json",
+          "content-type": "application/json",
+          Network.RokwireAppId : Config().appCanonicalId
+        });
         if ((response != null) && (response.statusCode == 200)) {
           return true;
         } else {
