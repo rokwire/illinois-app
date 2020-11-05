@@ -200,21 +200,23 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
 
     try {
-      String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/subscribe" : null;
-      String body = json.encode({'token': _token, 'topic': topic});
-      Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
-      if ((response != null) && (response.statusCode == 200)) {
-        Log.d("FCM: Succesfully subscribed for $topic topic");
-        Storage().addFirebaseSubscriptionTopic(topic);
-        return true;
-      } else {
-        Log.e("FCM: Error occured on subscribing for $topic topic");
-        return false;
+      if (Config().sportsServiceUrl != null) {
+        String url = "${Config().sportsServiceUrl}/api/subscribe";
+        String body = json.encode({'token': _token, 'topic': topic});
+        Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
+        if ((response != null) && (response.statusCode == 200)) {
+          Log.d("FCM: Succesfully subscribed for $topic topic");
+          Storage().addFirebaseSubscriptionTopic(topic);
+          return true;
+        } else {
+          Log.e("FCM: Error occured on subscribing for $topic topic");
+          return false;
+        }
       }
     } catch (e) {
       Log.e(e.toString());
-      return false;
     }
+    return false;
   }
 
   Future<bool> unsubscribeFromTopic(String topic) async {
@@ -228,37 +230,41 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
 
     try {
-      String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/unsubscribe" : null;
-      String body = json.encode({'token': _token, 'topic': topic});
-      Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
-      if ((response != null) && (response.statusCode == 200)) {
-        Log.d("FCM: Succesfully unsubscribed from $topic topic");
-        Storage().removeFirebaseSubscriptionTopic(topic);
-        return true;
-      } else {
-        Log.e("FCM: Error occured on unsubscribe from $topic topic");
-        return false;
+      if (Config().sportsServiceUrl != null) {
+        String url = "${Config().sportsServiceUrl}/api/unsubscribe";
+        String body = json.encode({'token': _token, 'topic': topic});
+        Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
+        if ((response != null) && (response.statusCode == 200)) {
+          Log.d("FCM: Succesfully unsubscribed from $topic topic");
+          Storage().removeFirebaseSubscriptionTopic(topic);
+          return true;
+        } else {
+          Log.e("FCM: Error occured on unsubscribe from $topic topic");
+          return false;
+        }
       }
     } catch (e) {
       Log.e(e.toString());
-      return false;
     }
+    return false;
   }
 
   Future<bool> send({String topic, dynamic message}) async {
     try {
-      String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/message" : null;
-      String body = json.encode({'topic': topic, 'message': message});
-      final response = await Network().post(url, timeout: 10, body: body, auth: NetworkAuth.App, headers: { "Accept": "application/json", "content-type": "application/json" });
-      if ((response != null) && (response.statusCode == 200)) {
-        return true;
-      } else {
-        return false;
+      if (Config().sportsServiceUrl != null) {
+        String url = "${Config().sportsServiceUrl}/api/message";
+        String body = json.encode({'topic': topic, 'message': message});
+        final response = await Network().post(url, timeout: 10, body: body, auth: NetworkAuth.App, headers: { "Accept": "application/json", "content-type": "application/json" });
+        if ((response != null) && (response.statusCode == 200)) {
+          return true;
+        } else {
+          return false;
+        }
       }
     } catch (e) {
-      Log.e(e.toString());
-      return false;
+       Log.e(e.toString());
     }
+    return false;
   }
 
   // Message Processing
