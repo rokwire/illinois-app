@@ -415,19 +415,6 @@ class Storage with Service {
   }
 
   //////////////////
-  // Location Services
-
-  static const String locationServicesPermisionRequestedKey  = 'location_services_permision_requested';
-
-  bool get locationServicesPermisionRequested {
-    return _getBoolWithName(locationServicesPermisionRequestedKey);
-  }
-
-  set locationServicesPermisionRequested(bool value) {
-    _setBoolWithName(locationServicesPermisionRequestedKey, value);
-  }
-
-  //////////////////
   // Favorites
 
   static const String favoritesKey  = 'user_favorites_list';
