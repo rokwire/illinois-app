@@ -41,22 +41,13 @@ class ExploreService /* with Service */ {
 
   ExploreService._internal();
 
-  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, DateTime startDate, DateTime startDateLimit,
-    DateTime endDate, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
+  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, EventTimeFilter eventFilter = EventTimeFilter.upcoming, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
     if(_enabled) {
-      if (startDate == null) {
-        startDate = DateTime.now();
-      }
       http.Response response;
-      DateTime startDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(startDate);
-      DateTime startDateLimitInGmt = AppDateTime().getUtcTimeFromDeviceTime(startDateLimit);
-      DateTime endDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(endDate);
       String queryParameters = _buildEventsQueryParameters(
           searchText,
           locationData,
-          startDateInGmt,
-          startDateLimitInGmt,
-          endDateInGmt,
+          eventFilter,
           categories,
           tags,
           recurrenceId,
@@ -75,7 +66,7 @@ class ExploreService /* with Service */ {
         //File cacheFile = File(cacheFilePath);
         //cacheFile.writeAsString(responseBody, flush: true);
         List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, nowUtc: startDateInGmt);
+        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, nowUtc: DateTime.now().toUtc());
         return events;
       } else {
         Log.e('Failed to load events');
@@ -266,9 +257,7 @@ class ExploreService /* with Service */ {
     return null;
   }
 
-  String _buildEventsQueryParameters(String searchText, Core.LocationData locationData,
-      DateTime startDate, DateTime startDateLimit, DateTime endDate, Set<String> categories, Set<String> tags,
-      int recurrenceId, int limit) {
+  String _buildEventsQueryParameters(String searchText, Core.LocationData locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
 
     String queryParameters = "";
 
@@ -285,25 +274,10 @@ class ExploreService /* with Service */ {
       queryParameters += 'latitude=$lat&longitude=$lng&radius=$radius&';
     }
 
-    ///StartDate
-    if (startDate != null) {
-      String startDateFormatted = AppDateTime().formatDateTime(
-          startDate, ignoreTimeZone: true);
-      queryParameters += 'startDate=$startDateFormatted&';
-    }
-
-    ///StartDateLimit
-    if (startDateLimit != null) {
-      String startDateLimitFormatted = AppDateTime().formatDateTime(
-          startDateLimit, ignoreTimeZone: true);
-      queryParameters += 'startDateLimit=$startDateLimitFormatted&';
-    }
-
-    ///End Date
-    if (endDate != null) {
-      String endDateFormatted = AppDateTime().formatDateTime(
-          endDate, ignoreTimeZone: true);
-      queryParameters += 'endDate=$endDateFormatted&';
+    /// Time Filter
+    String timeParams = _constructEventTimeFilterParams(eventTimeFilter);
+    if(timeParams != null){
+      queryParameters += "$timeParams&";
     }
 
     ///User Roles
@@ -349,6 +323,48 @@ class ExploreService /* with Service */ {
     queryParameters = "?" + queryParameters;
     queryParameters = queryParameters.substring(0, queryParameters.length - 1); //remove the last "&"
     return queryParameters;
+  }
+
+  String _constructEventTimeFilterParams(EventTimeFilter eventFilter){
+    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+
+    switch (eventFilter) {
+      case EventTimeFilter.today:{
+          DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59);
+          String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+          String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+          return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+        }
+      case EventTimeFilter.thisWeekend:{
+        int currentWeekDay = nowUni.weekday;
+        DateTime weekendStartDateTime = DateTime(nowUni.year, nowUni.month, nowUni.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
+        DateTime startDate = nowUni.isBefore(weekendStartDateTime) ? weekendStartDateTime : nowUni;
+        DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59)
+            .add(Duration(days: (7 - currentWeekDay)));
+        String formattedStartDate = AppDateTime().formatDateTime(startDate, ignoreTimeZone: true);
+        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+      }
+      case EventTimeFilter.next7Day:{
+        DateTime endDate = nowUni.add(Duration(days: 6));
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+      }
+      case EventTimeFilter.next30Days:{
+        DateTime next = nowUni.add(Duration(days: 30));
+        DateTime endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+      }
+      case EventTimeFilter.upcoming:{
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        return "endDate.gte=$formattedStartDate";
+      }
+    }
+
+    return null;
   }
 
   String _constructSearchParams(String searchInput) {
