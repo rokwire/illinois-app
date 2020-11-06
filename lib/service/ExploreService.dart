@@ -76,36 +76,6 @@ class ExploreService /* with Service */ {
     return null;
   }
 
-  Future<List<Event>> loadSuperEventSubEvents(String superEventId) async {
-    if(_enabled) {
-      if (AppString.isStringEmpty(superEventId)) {
-        return null;
-      }
-      DateTime nowUtc = DateTime.now().toUtc();
-      String dateTimeFormatted = AppDateTime().formatDateTime(nowUtc, ignoreTimeZone: true);
-      http.Response response;
-      try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-            '${Config().eventsOrConvergeUrl}?superEventId=$superEventId&startDate=$dateTimeFormatted', auth: NetworkAuth.App) : null;
-      } catch (e) {
-        Log.e('Failed to retrieve super event with id: $superEventId');
-        Log.e(e.toString());
-        return null;
-      }
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      if ((response != null) && (responseCode >= 200 && responseCode <= 300)) {
-        List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> subEvents = await _buildEvents(eventsJsonList: jsonList);
-        return subEvents;
-      } else {
-        Log.e('Failed to retrieve sub events for super event with id: $superEventId');
-        Log.e(responseBody);
-      }
-    }
-    return null;
-  }
-
   Future<Explore> getEventById(String eventId) async {
     if(_enabled) {
       if (AppString.isStringEmpty(eventId)) {
