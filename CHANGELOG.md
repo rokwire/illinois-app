@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fix startup screen issue. [#158](https://github.com/rokwire/illinois-app/issues/158)
+- Fix showing sub events for a sub event. [#161](https://github.com/rokwire/illinois-app/issues/161)
 
 ## [2.3.17] - 2020-11-05
 ### Added
