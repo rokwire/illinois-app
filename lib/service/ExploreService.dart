@@ -66,40 +66,10 @@ class ExploreService /* with Service */ {
         //File cacheFile = File(cacheFilePath);
         //cacheFile.writeAsString(responseBody, flush: true);
         List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, nowUtc: DateTime.now().toUtc());
+        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, eventFilter: eventFilter);
         return events;
       } else {
         Log.e('Failed to load events');
-        Log.e(responseBody);
-      }
-    }
-    return null;
-  }
-
-  Future<List<Event>> loadSuperEventSubEvents(String superEventId) async {
-    if(_enabled) {
-      if (AppString.isStringEmpty(superEventId)) {
-        return null;
-      }
-      DateTime nowUtc = DateTime.now().toUtc();
-      String dateTimeFormatted = AppDateTime().formatDateTime(nowUtc, ignoreTimeZone: true);
-      http.Response response;
-      try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-            '${Config().eventsOrConvergeUrl}?superEventId=$superEventId&startDate=$dateTimeFormatted', auth: NetworkAuth.App) : null;
-      } catch (e) {
-        Log.e('Failed to retrieve super event with id: $superEventId');
-        Log.e(e.toString());
-        return null;
-      }
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      if ((response != null) && (responseCode >= 200 && responseCode <= 300)) {
-        List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> subEvents = await _buildEvents(eventsJsonList: jsonList);
-        return subEvents;
-      } else {
-        Log.e('Failed to retrieve sub events for super event with id: $superEventId');
         Log.e(responseBody);
       }
     }
@@ -161,9 +131,9 @@ class ExploreService /* with Service */ {
         idsBuffer.write('id=$eventId&');
       });
       String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
-      DateTime startDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(DateTime.now());
-      String dateFormatted = AppDateTime().formatDateTime(startDateInGmt, ignoreTimeZone: true);
-      String dateTimeQueryParam = '&startDate=$dateFormatted';
+      EventTimeFilter upcomingFilter = EventTimeFilter.upcoming;
+      String timeQueryParams = _constructEventTimeFilterParams(upcomingFilter);
+      String dateTimeQueryParam = '&$timeQueryParams';
       http.Response response;
       String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
       try {
@@ -177,7 +147,7 @@ class ExploreService /* with Service */ {
       String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
         List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, nowUtc: startDateInGmt);
+        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, eventFilter: upcomingFilter);
         return events;
       } else {
         Log.e('Failed to load events by ids');
@@ -377,7 +347,7 @@ class ExploreService /* with Service */ {
     return param;
   }
 
-  Future<List<Event>> _buildEvents({List<dynamic> eventsJsonList, bool excludeRecurringEvents = true, DateTime nowUtc}) async {
+  Future<List<Event>> _buildEvents({List<dynamic> eventsJsonList, bool excludeRecurringEvents = true, EventTimeFilter eventFilter}) async {
     if (AppCollection.isCollectionEmpty(eventsJsonList)) {
       return null;
     }
@@ -407,7 +377,7 @@ class ExploreService /* with Service */ {
             addEventToList = false;
           }
         } else if(event.isSuperEvent) {
-          await _buildEventsForSuperEvent(event, nowUtc);
+          await _buildEventsForSuperEvent(event, eventFilter);
         }
         if (addEventToList) {
           events.add(event);
@@ -424,7 +394,7 @@ class ExploreService /* with Service */ {
     return events;
   }
 
-  Future<void> _buildEventsForSuperEvent(Event superEvent, DateTime nowUtc) async {
+  Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter eventFilter) async {
     List<Map<String, dynamic>> subEventsMap = superEvent.subEventsMap;
     if (AppCollection.isCollectionEmpty(subEventsMap)) {
       Log.e('Super event does not contain sub events!');
@@ -435,14 +405,12 @@ class ExploreService /* with Service */ {
       Log.e('Super event has no id!');
       return;
     }
-    String dateTimeQueryParam = '';
-    if (nowUtc == null) {
-      nowUtc = DateTime.now().toUtc();
+    String queryParameters = '?superEventId=$superEventId';
+    String dateTimeQueryParam = _constructEventTimeFilterParams(eventFilter);
+    if (AppString.isStringNotEmpty(dateTimeQueryParam)) {
+      queryParameters += '&$dateTimeQueryParam';
     }
-    String dateFormatted = AppDateTime().formatDateTime(nowUtc, ignoreTimeZone: true);
-    dateTimeQueryParam = '&startDate=$dateFormatted';
     http.Response response;
-    String queryParameters = '?superEventId=$superEventId$dateTimeQueryParam';
     try {
       response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
           '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
