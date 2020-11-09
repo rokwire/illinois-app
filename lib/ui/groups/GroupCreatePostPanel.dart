@@ -97,7 +97,15 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                                 alignment: Alignment.center,
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 child: Text(Localization().getStringEx('panel.group_create_post.label.post', 'Post'),
-                                  style: TextStyle(color: _postEnabled?Styles().colors.white : Styles().colors.disabledTextColorTwo, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold,),)),
+                                  style: TextStyle(
+                                    color: _postEnabled?Styles().colors.white : Styles().colors.disabledTextColorTwo,
+                                      fontSize: 16,
+                                      fontFamily: Styles().fontFamilies.semiBold,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Styles().colors.fillColorSecondary,
+                                      decorationThickness: 1,
+                                      decorationStyle: TextDecorationStyle.solid
+                                  ),)),
                               onTap: _onTapPost))
                     ],
                   ),
