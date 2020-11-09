@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/style.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
@@ -104,9 +105,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                     delegate: SliverChildListDelegate([
                       Column(
                         children: [
-                          Container(height: 12,),
                           _buildEventInfo(),
-                          _buildUserInfo(),
                           _buildPostField()
                         ],
                       )
@@ -122,7 +121,26 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
   }
 
   Widget _buildEventInfo(){
-    return EventContent(event: widget.groupEvent);
+    return
+      Container(
+          decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [
+              BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2)),
+            ],
+          ),
+          padding: EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.only(bottom: 8,right: 25), child:
+              Text(widget.groupEvent?.title??"",  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
+            ),
+            Row(children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
+              Expanded(
+                child: Text(widget.groupEvent?.timeDisplayString??"",  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
+              )
+            ],)
+      ]));
   }
 
   Widget _buildUserInfo(){
@@ -156,7 +174,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
   }
 
   Widget _buildPostField(){
-    String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "");
+    String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "Write a comment");
     String fieldHint = Localization().getStringEx("panel.group_create_post.post.field.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
