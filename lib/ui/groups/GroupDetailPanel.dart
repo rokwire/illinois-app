@@ -25,6 +25,8 @@ import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/ui/events/CreateEventPanel.dart';
+import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -34,11 +36,15 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupAdminPanel.dart';
+import 'GroupMembersPanel.dart';
+import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About, Officers }
+enum _DetailTab { Events, About }
 
 class GroupDetailPanel extends StatefulWidget {
 
@@ -60,11 +66,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   _DetailTab       _currentTab = _DetailTab.Events;
 
-  bool get isMember {
+  bool get _isMember {
     return Groups().getUserMembership(widget.groupId) != null;
   }
   
-  bool get isAdmin {
+  bool get _isAdmin {
     return Groups().getUserMembership(widget.groupId)?.admin ?? false;
   }
 
@@ -133,6 +139,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return Scaffold(
+      appBar: AppBar(
+        leading: _HeaderBackButton(),
+        actions: [
+          Semantics(
+              label:  'Options',
+              button: true,
+              excludeSemantics: true,
+              child: IconButton(
+                icon: Image.asset(
+                  'images/groups-more-inactive.png',
+                ),
+                onPressed:_onOptionsTap,
+              ))
+        ],
+      ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
       body: content,
@@ -184,9 +205,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildGroupContent() {
     List<Widget> content = [
-      _buildData()
+      _buildImageHeader(),
+      _buildGroupInfo()
     ];
-    if (isMember) {
+    if (_isMember) {
       content.add(_buildTabs());
       if (_currentTab == _DetailTab.Events) {
         content.add(_buildEvents());
@@ -194,86 +216,131 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
       }
-      else if (_currentTab == _DetailTab.Officers) {
-        content.add(_buildOfficers());
-      }
-      content.add(_buildSocial());
     }
     else {
       content.add(_buildAbout());
-      content.add(_buildMembershipRules());
       content.add(_buildOfficers());
       if (isPublic) {
         content.add(_buildEvents());
       }
-      content.add(_buildSocial());
-      content.add(_buildMembershipRequest());
     }
 
     return Column(children: <Widget>[
         Expanded(
-          child: CustomScrollView(
+          child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            slivers: <Widget>[
-              SliverToutHeaderBar(
-                  context: context,
-                  imageUrl: _groupDetail?.imageURL,
-              ),
-              SliverList(
-                delegate:SliverChildListDelegate([
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: content,
-                  ),
-                ]),
-              ),
-            ]
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: content,
+            ),
           ),
         ),
+        _buildMembershipRequest()
       ],
     );
   }
 
-  Widget _buildData() {
-    List<Widget> commands = [
-      RibbonButton(label: 'Website',
-        icon: 'images/external-link.png',
-        leftIcon: 'images/globe.png',
-        padding: EdgeInsets.symmetric(horizontal: 0),
-        onTap: (){ _onWebsite(); },),
-    ];
-    if (isMember && isAdmin) {
-      commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
-      commands.add(RibbonButton(label: 'Admin View',
-        icon: 'images/chevron-right.png',
-        leftIcon: 'images/icon-settings.png',
-        padding: EdgeInsets.symmetric(horizontal: 0),
-        onTap: (){ _onAdminView(); },),
-      );
-    }
+  Widget _buildImageHeader(){
+    return Container(
+      height: 200,
+      color: Styles().colors.background,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          AppString.isStringNotEmpty(_groupDetail?.imageURL) ?  Positioned.fill(child:Image.network(_groupDetail?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
+            child: Container(
+              height: 53,
+            ),
+          ),
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.white),
+            child: Container(
+              height: 30,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-    List<Widget> tags = [];
-    if (_groupDetail?.tags != null) {
-      for (String tag in _groupDetail.tags) {
-        if (0 < (tag?.length ?? 0)) {
-          tags.add(Container(decoration:BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius:BorderRadius.circular(3),), child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8), child:
-              Text(tag?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Colors.white, ),),),),
-          );
-        }
-      }
-    }
+  Widget _buildGroupInfo() {
+    List<Widget> commands = List<Widget>();
 
     String members;
     int membersCount = _groupDetail?.membersCount ?? 0;
     if (membersCount == 0) {
-      members = 'No Current Members';
+      members = 'No Members';
     }
     else if (membersCount == 1) {
-      members = '1 Current Member';
+      members = '1 Member';
     }
     else {
-      members = '$membersCount Current Members';
+      members = '$membersCount Members';
+    }
+
+    if(_isMember){
+      if(_isAdmin){
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.groups_admin.button.manage_members.title", "Manage Members"),
+          hint: Localization().getStringEx("panel.groups_admin.button.manage_members.hint", ""),
+          leftIcon: 'images/icon-member.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: onTapMembers,
+        ));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.groups_admin.button.group_settings.title", "Group Settings"),
+          hint: Localization().getStringEx("panel.groups_admin.button.group_settings.hint", ""),
+          leftIcon: 'images/icon-gear.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: onTapSettings,
+        ));
+      }
+    } else {
+      String tags = "";
+      if (_groupDetail?.tags?.isNotEmpty ?? false) {
+        for (String tag in _groupDetail.tags) {
+          if (0 < (tag?.length ?? 0)) {
+            tags+=((tags.isNotEmpty? ", ": "") + tag ?? '');
+          }
+        }
+      }
+
+      commands.add(
+        RibbonButton(label: 'Website',
+          icon: 'images/external-link.png',
+          leftIcon: 'images/globe.png',
+          padding: EdgeInsets.symmetric(horizontal: 0),
+          onTap: (){ _onWebsite(); },)
+      );
+      if(tags?.isNotEmpty ?? false) {
+        commands.add(Container(height: 12,));
+        commands.add(
+          Padding(padding: EdgeInsets.symmetric(vertical: 4),
+            child: Row(children: [
+              Expanded(child:
+              RichText(
+                text: new TextSpan(
+                  style: TextStyle(color: Styles().colors.textSurface,
+                      fontFamily: Styles().fontFamilies.bold,
+                      fontSize: 12),
+                  children: <TextSpan>[
+                    new TextSpan(text: "Group Tags: "),
+                    new TextSpan(
+                        text: tags,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.regular)),
+                  ],
+                ),
+              )
+              )
+            ],),
+          ),);
+      }
     }
 
     return Container(color: Colors.white,
@@ -282,19 +349,40 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Row(children: <Widget>[
-                  Padding(padding: EdgeInsets.only(right: 8),
-                    child: Image.asset('images/certified.png')),
-                  Expanded(child:
-                    Text(_groupDetail?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+              _isMember? Container():
+                Padding(padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Row(children: <Widget>[
+                    Expanded(child:
+                      Text(_groupDetail?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+                    ),
+                  ],),),
+              (!_isMember)? Container():
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _isAdmin? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                        ),
+                        child: Center(
+                          child: Text(_isAdmin? "ADMIN" : "MEMBER",
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies.bold,
+                                fontSize: 12,
+                                color: Styles().colors.white
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Container(),),
+                    ],
                   ),
-                ],),),
+                ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(_groupDetail?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
-              ),
-              Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Wrap(runSpacing: 8, spacing: 8, children:tags),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(members,  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.textBackground, ),)
@@ -304,20 +392,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
             ],),
           ),
-          Align(alignment: Alignment.topRight,
-            child: Semantics(
-              label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-              hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-              button: true,
-              child: GestureDetector(
-                onTap: () { _onSwitchFavorite(); },
-                child: Container(height: 48, width: 48,
-                  child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
-                ),
-              )
-            ),
-          ),
-          
         ],),
       );
   }
@@ -329,7 +403,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       switch(tab) {
         case _DetailTab.Events: title = 'Events'; break;
         case _DetailTab.About: title = 'About'; break;
-        case _DetailTab.Officers: title = 'Current officers'; break;
       }
       bool selected = (_currentTab == tab);
 
@@ -337,7 +410,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         tabs.add(Padding(padding: EdgeInsets.only(left: 8),child: Container(),));
       }
 
-      tabs.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      tabs.add(Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
         RoundedButton(label: title,
           backgroundColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.background,
           textColor: selected ? Colors.white :  Styles().colors.fillColorPrimary,
@@ -352,33 +425,43 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       ],));
     }
 
-    return Container(color: Colors.white,
-      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(children:tabs),
+    return
+      Row(children: [
+        Expanded(
+          child: Container(
+            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children:tabs),
+                )
+            ),
+          )
         )
-      ),
-    );
+      ],);
   }
 
   Widget _buildEvents() {
     
     List<Widget> content = [];
+    if(_isAdmin){
+      content.add(_buildAdminEventOptions());
+    }
+
     if (_groupEvents != null) {
       for (GroupEvent groupEvent in _groupEvents) {
-        content.add(_EventCard(groupEvent: groupEvent,));
+        content.add(_EventCard(groupEvent: groupEvent, groupId: widget.groupId, isAdmin: _isAdmin));
       }
     }
 
     content.add(Padding(padding: EdgeInsets.only(top: 16), child:
       ScalableSmallRoundedButton(
           label: 'See all events',
+          widthCoeficient: 2,
           backgroundColor: Styles().colors.white,
           textColor: Styles().colors.fillColorPrimary,
           fontFamily: Styles().fontFamilies.bold,
           fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 32, ),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           borderColor: Styles().colors.fillColorSecondary,
           borderWidth: 2,
   //        height: 42,
@@ -387,10 +470,68 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(
       children: <Widget>[
-        SectionTitlePrimary(title: 'Upcoming Events (${_groupEvents?.length ?? 0}+)',
+        SectionTitlePrimary(title: 'Upcoming Events (${_groupEvents?.length ?? 0})',
           iconPath: 'images/icon-calendar.png',
           children: content,),
       ]);
+  }
+
+  Widget _buildAdminEventOptions(){
+    bool haveEvents = _groupEvents?.isNotEmpty ?? false;
+    haveEvents = false;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            borderRadius: BorderRadius.all(Radius.circular(8))
+        ),
+        child: Column(children: [
+          haveEvents? Container():
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text("No upcoming events", style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.textBackground, ), textAlign: TextAlign.left,),
+                Container(height: 8,),
+                Text("Create a new event or share an existing event with your members. ", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, )),
+                Container(height: 16,),
+              ],),
+          Row(
+            children: [
+              Expanded(child:
+                ScalableRoundedButton(
+                    label: "Browse",
+                    backgroundColor: Styles().colors.white,
+                    textColor: Styles().colors.fillColorPrimary,
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 16,
+                    borderColor: Styles().colors.fillColorSecondary,
+                    borderWidth: 2,
+                    //        height: 42,
+                    onTap:() { /*TBD browse events*/ }
+                ),
+              ),
+              Container(width: 16,),
+              Expanded(child:
+                ScalableRoundedButton(
+                  label: "Create event",
+                  backgroundColor: Styles().colors.white,
+                  textColor: Styles().colors.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies.bold,
+                  fontSize: 16,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  borderWidth: 2,
+                  //        height: 42,
+                  onTap:() { /*TBD create event*/ },
+                  showAdd: true,),
+              )
+            ],
+          ),
+        ],)
+      ),
+    );;
   }
 
   Widget _buildAbout() {
@@ -398,9 +539,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
-          Text('About this group', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
+          Text('About us', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
-        Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ),),
+        ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), trimLines: 4, iconColor: Styles().colors.fillColorPrimary,),
       ],),);
   }
 
@@ -416,16 +557,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
       content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
     }
-    return Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-          Text('Current Officers', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
+    return
+      Stack(children: [
+        Container(
+            height: 112,
+            color: Styles().colors.backgroundVariant,
+            child:
+            Column(children: [
+              Container(height: 80,),
+              Container(
+                  height: 32,
+                  child: CustomPaint(
+                    painter: TrianglePainter(painterColor: Styles().colors.background),
+                    child: Container(),
+                  )
+              ),
+            ],)
         ),
-        SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: content),
-        ),
-        
-      ],),);
+        Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+            Text('Admins', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
+          ),
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: content),
+          ),
+
+        ],),)
+      ],);
   }
 
   Widget _buildMembershipRules() {
@@ -445,23 +604,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildMembershipRequest() {
-    return Container(color: Colors.white,
+    return
+      _isMember? Container() :
+      Container(color: Colors.white,
       child: Padding(padding: EdgeInsets.all(16),
-        child: Row(children: <Widget>[
-          Expanded(child: Container(),),
-          RoundedButton(label: 'Request to join this group',
+          child: ScalableRoundedButton(label: 'Request to join',
             backgroundColor: Styles().colors.white,
             textColor: Styles().colors.fillColorPrimary,
             fontFamily: Styles().fontFamilies.bold,
             fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, ),
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
-            height: 42,
             onTap:() { _onMembershipRequest();  }
           ),
-          Expanded(child: Container(),),
-        ],),
       ),
     );
   }
@@ -479,7 +635,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadMembershipStepEvents() {
-    
     Set<String> stepEventIds = Set<String>();
     List<GroupMembershipStep> steps = _groupDetail?.membershipQuest?.steps;
     if (0 < (steps?.length ?? 0)) {
@@ -510,6 +665,47 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
+  void _onOptionsTap(){
+    //TBD rest options
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context){
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(height: 48,),
+                RibbonButton(
+                  leftIcon: "images/trash.png",
+                  label:"Delete",
+                  onTap: (){
+                    Navigator.pop(context);
+                    //TBD
+                  },
+                ),
+                Container(height: 1, color: Styles().colors.surfaceAccent,),
+                RibbonButton(
+                  leftIcon: "images/icon-edit.png",
+                  label:"Edit",
+                  onTap: (){
+                    //TBD
+                  },
+                ),
+                Container(height: 8,)
+              ],
+            ),
+          );
+        }
+    );
+  }
+
   void _onTab(_DetailTab tab) {
     setState(() {
       _currentTab = tab;
@@ -521,6 +717,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (url != null) {
       launch(url);
     }
+  }
+
+
+  void onTapMembers(){
+    Analytics().logPage(name: "Group Members");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupDetail: _groupDetail)));
+  }
+
+  void onTapSettings(){
+    Analytics().logPage(name: "Group Settings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(groupDetail: _groupDetail,)));
   }
 
   void _onAdminView() {
@@ -547,67 +754,77 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 }
 
-class _EventCard extends StatelessWidget {
-
+class _EventCard extends StatefulWidget {
   final GroupEvent groupEvent;
-  
-  _EventCard({this.groupEvent});
+  final String groupId;
+  final bool isAdmin;
+
+  _EventCard({this.groupEvent, this.groupId, this.isAdmin = false});
+
+  @override
+  createState()=> _EventCardState();
+}
+class _EventCardState extends State<_EventCard>{
+  bool _showAllComments = false;
 
   @override
   Widget build(BuildContext context) {
-    
+    GroupEvent event = widget.groupEvent;
     List<Widget> content = [
-      _EventContent(event: groupEvent,),
+      _EventContent(event: event, isAdmin: widget.isAdmin,),
     ];
+    List<Widget> content2 = [];
 
-    if (0 < (groupEvent?.comments?.length ?? 0)) {
+    if(widget.isAdmin){
+      content2.add(
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.groupId)?.photoURL,
+                  onTap: (){
+                    Analytics().logPage(name: "Add post");
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.groupId,)));
+                  }))
+      );
+    }
+
+    if (0 < (event?.comments?.length ?? 0)) {
       content.add(Container(color: Styles().colors.surfaceAccent, height: 1,));
-      
-      List<Widget> content2 = [];
-      for (GroupEventComment comment in groupEvent.comments) {
-        content2.add(Padding(
-          padding: EdgeInsets.symmetric(vertical: 4),
-          child: Container(
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Styles().colors.white,
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-              borderRadius: BorderRadius.all(Radius.circular(4))
-            ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Container(height: 32, width: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
-                  ),
-                ),
-                Expanded(
-                  flex: 5,
-                  child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Padding(padding: EdgeInsets.only(bottom: 2), child:
-                    Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
-                  ),
-                  Row(children: <Widget>[
-                    Padding(padding: EdgeInsets.only(right: 2), child: 
-                      Image.asset('images/icon-badge.png'),
-                    ),
-                    Text(comment.member.officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
-                  ],)
-                ],),),),
-                Expanded(
-                  flex: 3,
-                  child: Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
-                )
-              ],),
-              Padding(padding: EdgeInsets.only(top:8), child:
-                ExpandableText(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
-              ),
-            ],),
-          )));
+
+      for (GroupEventComment comment in event.comments) {
+        content2.add(_buildComment(comment));
+        if(!_showAllComments){
+          break;
+        }
+      }
+      if(!_showAllComments && (1 < (event?.comments?.length ?? 0))){
+        content2.add(
+            Container(color: Styles().colors.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:12, bottom: 10),)
+        );
+        content2.add(
+            Semantics(
+              button: true,
+              label: "See previous posts",
+              child: GestureDetector(
+              onTap: (){setState(() {
+                _showAllComments = true;
+              });},
+              child: Center(child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text("See previous posts", style: TextStyle(fontSize: 16,
+                    fontFamily: Styles().fontFamilies.bold,
+                    color: Styles().colors.fillColorPrimary),),
+                  Padding(
+                    padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color:  Styles().colors.fillColorPrimary,),),
+                ],),
+              ),),
+            )
+        );
+        content2.add(Container(height: 7,));
       }
 
-      content.add(Padding(padding: EdgeInsets.all(8), child:
+      content.add(Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children:content2))
       );
 
@@ -625,18 +842,84 @@ class _EventCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildComment(GroupEventComment comment){
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+              color: Styles().colors.white,
+              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+              borderRadius: BorderRadius.all(Radius.circular(4))
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Container(height: 32, width: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
+                ),
+              ),
+              Expanded(
+                flex: 5,
+                child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(bottom: 2), child:
+                  Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
+                  ),
+                  Text(AppDateTime.timeAgoSinceDate(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                ],),),),
+            ],),
+            Padding(padding: EdgeInsets.only(top:8), child:
+            Text(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
+            ),
+          ],),
+        ));
+  }
+
+  Widget _buildAddPostButton({String photoUrl,Function onTap}){
+    return
+      InkWell(
+          onTap: onTap,
+          child: Container(
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              photoUrl == null ? Container():
+              Container(height: 32, width: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(image:NetworkImage(photoUrl), fit: BoxFit.cover),
+                ),
+              ),
+              Container(width: 6,),
+              Expanded(child:
+              Container(
+                  height: 45,
+                  alignment: Alignment.centerLeft,
+                  padding:EdgeInsets.symmetric(horizontal: 12) ,
+                  decoration: BoxDecoration(
+                      color: Styles().colors.white,
+                      boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                      borderRadius: BorderRadius.all(Radius.circular(8))
+                  ),
+                  child:
+                  Text("Add a public post ...",style: TextStyle(fontSize: 16, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular),)
+              ))
+            ],),
+          ));
+  }
 }
 
 class _EventContent extends StatelessWidget {
   final Event event;
-  
-  _EventContent({this.event});
+  final bool isAdmin;
+
+  _EventContent({this.event, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
     
     List<Widget> content = [
-      Padding(padding: EdgeInsets.only(bottom: 8), child:
+      Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
         Text(event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
       ),
     ];
@@ -654,14 +937,28 @@ class _EventContent extends StatelessWidget {
         )
       ),
       Align(alignment: Alignment.topRight,
-        child: GestureDetector(onTap: () { /* switch favorite */ },
-          child: Container(width: 48, height: 48,
-            child: Align(alignment: Alignment.center,
+      child:
+      Container(
+        padding: EdgeInsets.only(top: 16, right: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+        GestureDetector(onTap: () { /*TBD switch */ },
+            child: Container(
               child: Image.asset('images/icon-star.png'),
             ),
           ),
-        ),
-      ),
+        !isAdmin? Container() :
+        Container(
+          padding: EdgeInsets.only(left: 12),
+          child:
+          GestureDetector(onTap: () { /*TBD options*/ },
+              child: Container(
+                child: Image.asset('images/icon-groups-options-orange.png'),
+              ),
+            ),
+          )
+      ],),))
     ],);
 
   }
@@ -766,23 +1063,12 @@ class _HeaderBackButton extends StatelessWidget {
       label: Localization().getStringEx('headerbar.back.title', 'Back'),
       hint: Localization().getStringEx('headerbar.back.hint', ''),
       button: true,
-      child: GestureDetector(
-        onTap: () {
-          Analytics.instance.logSelect(target: "Back");
-          Navigator.pop(context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: ClipOval(
-            child: Container(
-                height: 32,
-                width: 32,
-                color: Styles().colors.fillColorPrimary,
-                child: Image.asset('images/chevron-left-white.png')
-            ),
-          ),
-        ),
-      )
+      child: IconButton(
+            icon: Image.asset('images/chevron-left-white.png'),
+            onPressed: (){
+              Analytics.instance.logSelect(target: "Back");
+              Navigator.pop(context);
+            }),
     );
   }
 }

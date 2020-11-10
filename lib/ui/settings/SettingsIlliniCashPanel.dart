@@ -479,7 +479,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               fontSize: 14));
   }
 
-  Widget _buildBalanceTableItem({key,String text,bool showBorder = true, Color backColor,TextStyle textStyle}) {
+  Widget _buildBalanceTableItem({String text, bool showBorder = true, Color backColor, TextStyle textStyle}) {
     return
            Container(
              width: double.infinity,

@@ -184,6 +184,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 ScalableSmallRoundedButton(
                   maxLines: 2,
                   label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                  textColor: Styles().colors.fillColorPrimary,
                   onTap: _onTapAddImage,
                   showChevron: false,
                 )
@@ -660,7 +661,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-          ScalableSmallRoundedButton(
+          ScalableRoundedButton(
             label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors.fillColorSecondary,

@@ -196,10 +196,14 @@ class GroupMembershipAddButton extends StatelessWidget {
   final GestureTapCallback onTap;
   final double             height;
   final EdgeInsetsGeometry padding;
+  final bool               enabled;
   
-  GroupMembershipAddButton({this.title, this.onTap,
+  GroupMembershipAddButton({
+    this.title,
+    this.onTap,
     this.height = 42,
     this.padding = const EdgeInsets.only(left:24, right: 8,),
+    this.enabled = true
   });
 
   @override
@@ -207,14 +211,13 @@ class GroupMembershipAddButton extends StatelessWidget {
     return GestureDetector(onTap: onTap,
       child: Container(height: height,
         decoration: BoxDecoration(color: Colors.white,
-          border: Border.all(color: Styles().colors.fillColorSecondary, width: 2),
+          border: Border.all(color: enabled ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent, width: 2),
           borderRadius: BorderRadius.circular(height / 2),
         ),
         child: Padding(padding: EdgeInsets.only(left:16, right: 8, ),
           child: Center(
             child: Row(children: <Widget>[
-              Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
-              Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-add-20x18.png'),),
+              Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: enabled ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),),
             ],)
           )
         ),

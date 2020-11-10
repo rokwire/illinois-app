@@ -348,8 +348,21 @@ class Config with Service implements NotificationsListener {
 
   // Upgrade
 
+  String get appId {
+    return _packageInfo?.packageName;
+  }
+
+  String get appCanonicalId {
+    final String iosSuffix = '.ios';
+    String result = appId;
+    if (Platform.isIOS && (result?.endsWith(iosSuffix) ?? false)) {
+      result = result.substring(0, result.length - iosSuffix.length);
+    }
+    return result;
+  }
+
   String get appVersion {
-    return _packageInfo.version;
+    return _packageInfo?.version;
   }
 
   String get upgradeRequiredVersion {
