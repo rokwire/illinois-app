@@ -22,7 +22,7 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -152,7 +152,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
                       border: Border.all(
                           color: Styles().colors.fillColorPrimary,
                           width: 1)),
-                  height: 48,
+//                  height: 48,
                   child: TextField(
                     controller: _nameController,
                     onChanged: (text){ setState(() {});},
@@ -192,7 +192,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
                     border: Border.all(
                         color: Styles().colors.fillColorPrimary,
                         width: 1)),
-                height: 48,
+//                height: 48,
                 child: TextField(
                   controller: _emailController,
                   onChanged: (text){ setState(() {});},
@@ -220,7 +220,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
     return
       Padding(
         padding: EdgeInsets.symmetric( vertical: 5, horizontal: 16),
-        child: RoundedButton(
+        child: ScalableRoundedButton(
           label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
           hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
           backgroundColor: Styles().colors.background,
@@ -243,7 +243,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
                   padding: EdgeInsets.symmetric( vertical: 5),
                   child:
                   Stack(children: <Widget>[
-                    RoundedButton(
+                    ScalableRoundedButton(
                       label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
                       hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
                       enabled: _canSave,
@@ -269,7 +269,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
             Expanded(
               child:Padding(
                 padding: EdgeInsets.symmetric( vertical: 5),
-                child: RoundedButton(
+                child: ScalableRoundedButton(
                   label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
                   hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
                   backgroundColor: Styles().colors.white,
@@ -454,6 +454,7 @@ class _PersonalInfoEntry extends StatelessWidget {
             margin: EdgeInsets.only(top: 25),
             child: Row(
               children: <Widget>[
+                Expanded(child:
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -474,6 +475,7 @@ class _PersonalInfoEntry extends StatelessWidget {
                           TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary),
                     )
                   ],
+                )
                 ),
               ],
             ),

@@ -29,6 +29,7 @@ import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -149,6 +150,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
           ),
           Container(height: 20,),
           RibbonButton(
+            height: null,
             label: Localization().getStringEx("panel.groups_admin.button.manage_members.title", "Manage Members"),
             hint: Localization().getStringEx("panel.groups_admin.button.manage_members.hint", ""),
             leftIcon: 'images/icon-member.png',
@@ -157,6 +159,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
           ),
           Container(height: 1, color: Styles().colors.surfaceAccent,),
           RibbonButton(
+            height: null,
             label: Localization().getStringEx("panel.groups_admin.button.group_settings.title", "Group Settings"),
             hint: Localization().getStringEx("panel.groups_admin.button.group_settings.hint", ""),
             leftIcon: 'images/icon-gear.png',
@@ -344,7 +347,9 @@ class _EventCard extends StatelessWidget {
                       image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
                     ),
                   ),
-                  Expanded(child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Expanded(
+                    flex: 5,
+                    child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.only(bottom: 2), child:
                     Text(comment.member.name, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
                     ),
@@ -355,7 +360,10 @@ class _EventCard extends StatelessWidget {
                       Text(comment.member.officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
                     ],)
                   ],),),),
-                  Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                  Expanded(
+                    flex:3,
+                    child: Text(AppDateTime().getDisplayDateTime(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                  )
                 ],),
                 Padding(padding: EdgeInsets.only(top:8), child:
                 Text(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
@@ -438,14 +446,14 @@ class _EventCard extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Expanded(child: Container()),
-                        RoundedButton(
+                        ScalableRoundedButton(
                           label:"Delete",
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorPrimary,
                           textColor: Styles().colors.fillColorPrimary,
                           fontFamily: 'ProximaNovaRegulat',
                           fontSize: 16,
-                          height: 42,
+//                          height: 42,
                           borderWidth: 2,
                           onTap: (){
                             Navigator.pop(context);
@@ -453,14 +461,14 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        RoundedButton(
+                        ScalableRoundedButton(
                           label:"Edit",
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorPrimary,
                           textColor: Styles().colors.fillColorPrimary,
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 16,
-                          height: 42,
+//                          height: 42,
                           borderWidth: 2,
                           onTap: (){
                             Navigator.pop(context);
@@ -471,14 +479,14 @@ class _EventCard extends StatelessWidget {
                           },
                         ),
                         Container(height: 8,),
-                        RoundedButton(
+                        ScalableRoundedButton(
                           label:"Cancel",
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorSecondary,
                           textColor: Styles().colors.fillColorPrimary,
                           fontFamily: Styles().fontFamilies.bold,
                           fontSize: 16,
-                          height: 42,
+//                          height: 42,
                           borderWidth: 2,
                           onTap: (){
                             Navigator.pop(context);
@@ -570,7 +578,9 @@ class EventContent extends StatelessWidget {
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
-      Text(event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
+      Expanded(
+        child: Text(event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
+      )
     ],)),);
 
     return Stack(children: <Widget>[

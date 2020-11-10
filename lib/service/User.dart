@@ -17,7 +17,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
@@ -26,6 +25,7 @@ import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -119,10 +119,6 @@ class User with Service implements NotificationsListener {
     return _userData;
   }
 
-  static String get analyticsUuid {
-    return UserData.analyticsUuid;
-  }
-
   Future<void> _createUser() async {
     UserData userData = await _requestCreateUser();
     applyUserData(userData);
@@ -169,7 +165,7 @@ class User with Service implements NotificationsListener {
     if (!success) {
       //error
       String message = "Error on updating user - " + (response != null ? response.statusCode.toString() : "null");
-      Crashlytics().log(message);
+      FirebaseCrashlytics().log(message);
     }
     else if (_client == client) {
       _client = null;

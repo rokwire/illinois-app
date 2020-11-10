@@ -81,6 +81,42 @@ class AppString {
       return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
     }
   }
+
+  /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
+
+  static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
+  static const String _phonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
+  static const String _phonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+
+  static bool isUsPhoneValid(String phone){
+    if(isStringNotEmpty(phone)){
+      return (phone.length == 10 && RegExp(_phonePattern1).hasMatch(phone))
+              || (phone.length == 11 && RegExp(_phonePattern2).hasMatch(phone))
+              || (phone.length == 12 && RegExp(_phonePattern3).hasMatch(phone));
+    }
+    return false;
+  }
+
+  static bool isUsPhoneNotValid(String phone){
+    return !isUsPhoneValid(phone);
+  }
+
+  /// US Phone construction
+
+  static String constructUsPhone(String phone){
+    if(isUsPhoneValid(phone)){
+      if(phone.length == 10 && RegExp(_phonePattern1).hasMatch(phone)){
+        return "+1$phone";
+      }
+      else if (phone.length == 11 && RegExp(_phonePattern2).hasMatch(phone)){
+        return "+$phone";
+      }
+      else if (phone.length == 12 && RegExp(_phonePattern3).hasMatch(phone)){
+        return phone;
+      }
+    }
+    return null;
+  }
 }
 
 class AppCollection {
@@ -342,7 +378,7 @@ class AppToast {
       msg: msg,
       textColor: Colors.white,
       toastLength: Toast.LENGTH_LONG,
-      timeInSecForIos: 3,
+      timeInSecForIosWeb: 3,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Styles().colors.blackTransparent06,
     );

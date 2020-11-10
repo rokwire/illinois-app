@@ -27,6 +27,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -218,14 +219,13 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               children: <Widget>[
                 Expanded(
                   child: Stack(children: <Widget>[
-                    RoundedButton(
+                    ScalableRoundedButton(
                         label: _disabled
                             ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.title', 'Scroll to Review')
                             : Localization().getStringEx('panel.settings.privacy.button.set_privacy.title', 'Set my Privacy'),
                         hint: _disabled
                             ? Localization().getStringEx('panel.settings.privacy.button.set_privacy.disabled.hint', '')
                             : Localization().getStringEx('panel.settings.privacy.button.set_privacy.hint', ''),
-                        height: 48,
                         borderColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.fillColorSecondary,
                         backgroundColor: Styles().colors.fillColorPrimaryVariant,
                         textColor: _disabled ? Styles().colors.disabledTextColorTwo : Styles().colors.white,
@@ -640,7 +640,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
                     child: Text(categoryStateDescription, style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground, fontSize: 16)))));
   }
 
-  Widget _buildEntryWidget(PrivacyEntry entry, {bool isLast = false}) {
+  Widget _buildEntryWidget(PrivacyEntry entry) {
     bool active = _isActive(entry);
     if (entry.type == widget.selectedPrivacyState)
       return Padding(
@@ -715,18 +715,20 @@ class _PrivacyLevelSliderState extends State<_PrivacyLevelSlider> {
                     Expanded(
                         child: Row(children: <Widget>[
                       Image.asset("images/chevron-left.png"),
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(Localization().getStringEx('widget.privacy_level_slider.label.left.title', "More Privacy"),
-                              style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14))),
+                      Expanded(child:
+                        Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text(Localization().getStringEx('widget.privacy_level_slider.label.left.title', "More Privacy"),
+                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14)))),
                     ])),
                     Expanded(
                         child: Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(Localization().getStringEx('widget.privacy_level_slider.label.right.title', "More Features"),
-                              style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14))),
-                      Image.asset("images/chevron-right.png"),
+                          Expanded(child:
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                child: Text(Localization().getStringEx('widget.privacy_level_slider.label.right.title', "More Features"),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 14)))),
+                          Image.asset("images/chevron-right.png"),
                     ])),
                   ],
                 ),
@@ -796,18 +798,7 @@ class _CustomThumbShape extends SliderComponentShape {
   }
 
   @override
-  void paint(
-    PaintingContext context,
-    Offset thumbCenter, {
-    Animation<double> activationAnimation,
-    Animation<double> enableAnimation,
-    bool isDiscrete,
-    TextPainter labelPainter,
-    RenderBox parentBox,
-    SliderThemeData sliderTheme,
-    TextDirection textDirection,
-    double value,
-  }) {
+  void paint(PaintingContext context, Offset center, {Animation<double> activationAnimation, Animation<double> enableAnimation, bool isDiscrete, TextPainter labelPainter, RenderBox parentBox, SliderThemeData sliderTheme, TextDirection textDirection, double value, double textScaleFactor, Size sizeWithOverflow}) {
     final Canvas canvas = context.canvas;
     final ColorTween colorTween = ColorTween(
       begin: sliderTheme.disabledThumbColor,
@@ -828,11 +819,11 @@ class _CustomThumbShape extends SliderComponentShape {
       end: Styles().colors.fillColorPrimary,
     );
 
-    canvas.drawCircle(thumbCenter, 25, Paint()..color = colorTween4.evaluate(enableAnimation));
-    canvas.drawCircle(thumbCenter, 23, Paint()..color = colorTween2.evaluate(enableAnimation));
-    canvas.drawCircle(thumbCenter, 21, Paint()..color = colorTween3.evaluate(enableAnimation));
-    canvas.drawCircle(thumbCenter, 19, Paint()..color = colorTween.evaluate(enableAnimation));
-    labelPainter.paint(canvas, thumbCenter + Offset(-labelPainter.width / 2.0, -labelPainter.height / 2.0));
+    canvas.drawCircle(center, 25, Paint()..color = colorTween4.evaluate(enableAnimation));
+    canvas.drawCircle(center, 23, Paint()..color = colorTween2.evaluate(enableAnimation));
+    canvas.drawCircle(center, 21, Paint()..color = colorTween3.evaluate(enableAnimation));
+    canvas.drawCircle(center, 19, Paint()..color = colorTween.evaluate(enableAnimation));
+    labelPainter.paint(canvas, center + Offset(-labelPainter.width / 2.0, -labelPainter.height / 2.0));
   }
 }
 
@@ -881,9 +872,11 @@ class _PreferenceTab extends StatelessWidget {
               borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),
             child: Center(
-                child: Text(text,
-                    style: TextStyle(fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
-          )),
+                child:
+                  Text(text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary)))),
+          ),
     );
   }
 }

@@ -20,7 +20,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/service/Styles.dart';
@@ -163,6 +162,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
       String foodLabel = DiningService().getLocalizedString(foodType);
       list.add(
           ToggleRibbonButton(
+            height: null,
             label: foodLabel,
             onTap: (){_onFoodTypePrefTapped(foodType);},
             toggled: selected,
@@ -182,6 +182,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
       String ingredientLabel = DiningService().getLocalizedString(foodIngredient);
       list.add(
           ToggleRibbonButton(
+            height: null,
             label: ingredientLabel,
             onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
             toggled: selected,
@@ -221,7 +222,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   //SaveButton
-  Widget _buildSaveButton(){
+  /*Widget _buildSaveButton(){
     return
       Padding(
         padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
@@ -248,5 +249,5 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   bool get _canSave{
     return true; //TBD
-  }
+  }*/
 }

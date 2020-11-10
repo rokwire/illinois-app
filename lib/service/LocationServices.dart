@@ -21,7 +21,6 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:location/location.dart';
 
 enum LocationServicesStatus {
@@ -53,7 +52,7 @@ class LocationServices with Service implements NotificationsListener {
     return _instance;
   }
 
-  // Iniitlaization   
+  // Initialization
 
   @override
   void createService() {
@@ -70,21 +69,11 @@ class LocationServices with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    this.status.then((_){});
+    _lastStatus = await this.status;
   }
 
   Future<LocationServicesStatus> get status async {
-
-    if (!await Location().serviceEnabled()) {
-      _lastStatus = LocationServicesStatus.ServiceDisabled;
-    }
-    else if (!Storage().locationServicesPermisionRequested) {
-      _lastStatus = LocationServicesStatus.PermissionNotDetermined;
-    }
-    else {
-      _lastStatus = await Location().hasPermission() ? LocationServicesStatus.PermissionAllowed : LocationServicesStatus.PermissionDenied;
-    }
-
+    _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('query'));
     _updateLocationMonitor();
     return _lastStatus;
   }
@@ -109,16 +98,9 @@ class LocationServices with Service implements NotificationsListener {
   }
 
   Future<LocationServicesStatus> requestPermission() async {
-
-    if (!await Location().serviceEnabled()) {
-      _lastStatus = LocationServicesStatus.ServiceDisabled;
-    }
-    else if (Storage().locationServicesPermisionRequested) {
-      _lastStatus = await Location().hasPermission() ? LocationServicesStatus.PermissionAllowed : LocationServicesStatus.PermissionDenied;
-    }
-    else {
+    _lastStatus = await this.status;
+    if (_lastStatus == LocationServicesStatus.PermissionNotDetermined) {
       _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('request'));
-      Storage().locationServicesPermisionRequested = true;
       _notifyStatusChanged();
     }
 
@@ -148,7 +130,7 @@ class LocationServices with Service implements NotificationsListener {
 
   void _openLocationMonitor() {
     if (_locationMonitor == null) {
-      _locationMonitor = Location().onLocationChanged().listen((LocationData location) {
+      _locationMonitor = Location().onLocationChanged.listen((LocationData location) {
         _lastLocation = location;
         _notifyLocationChanged();
       });

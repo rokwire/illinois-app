@@ -26,6 +26,7 @@ import 'package:http/http.dart' as Http;
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
@@ -63,6 +64,7 @@ class Analytics with Service implements NotificationsListener {
 
   // Standard (shared) Attributes
   static const String   LogStdTimestampName                = "timestamp";
+  static const String   LogStdAppIdName                    = "app_id";
   static const String   LogStdAppVersionName               = "app_version";
   static const String   LogStdOSName                       = "os_name";
   static const String   LogStdOSVersionName                = "os_version";
@@ -77,6 +79,8 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogStdUserPrivacyLevelName         = "user_privacy_level";
   static const String   LogStdUserRolesName                = "user_roles";
   static const String   LogStdAccessibilityName            = "accessibility";
+  static const String   LogStdAuthCardRoleName             = "icard_role";
+  static const String   LogStdAuthCardStudentLevel         = "icard_student_level";
   
   static const String   LogEvent                           = "event";
   static const String   LogEventName                       = "name";
@@ -84,6 +88,7 @@ class Analytics with Service implements NotificationsListener {
 
   static const List<String> DefaultAttributes = [
     LogStdTimestampName,
+    LogStdAppIdName,
     LogStdAppVersionName,
     LogStdOSName,
     LogStdOSVersionName,
@@ -98,6 +103,8 @@ class Analytics with Service implements NotificationsListener {
     LogStdUserPrivacyLevelName,
     LogStdUserRolesName,
     LogStdAccessibilityName,
+    LogStdAuthCardRoleName,
+    LogStdAuthCardStudentLevel,
   ];
 
   // Livecycle Event
@@ -196,10 +203,10 @@ class Analytics with Service implements NotificationsListener {
   
   String               _currentPageName;
   Map<String, dynamic> _currentPageAttributes;
-  bool                 _currentPageAnonymous;
   PackageInfo          _packageInfo;
   AndroidDeviceInfo    _androidDeviceInfo;
   IosDeviceInfo        _iosDeviceInfo;
+  String               _appId;
   String               _appVersion;
   String               _osVersion;
   String               _deviceModel;
@@ -259,6 +266,7 @@ class Analytics with Service implements NotificationsListener {
 
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       _packageInfo = packageInfo;
+      _appId = _packageInfo?.packageName;
       _appVersion = "${_packageInfo?.version}+${_packageInfo?.buildNumber}";
     });
 
@@ -453,9 +461,7 @@ class Analytics with Service implements NotificationsListener {
           panelAttributes = (panel as AnalyticsPageAttributes).analyticsPageAttributes;
         }
 
-        bool anonymous = (panel is AnalyticsPageAnonymous) && (panel as AnalyticsPageAnonymous).analyticsPageAnonymous;
-
-        logPage(name: panelName, attributes: panelAttributes, anonymous: anonymous);
+        logPage(name: panelName, attributes: panelAttributes);
       }
     }
   }
@@ -597,7 +603,7 @@ class Analytics with Service implements NotificationsListener {
 
   // Public Accessories
 
-  void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, bool anonymous}) {
+  void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes}) {
     if ((event != null) && User().privacyMatch(2)) {
       
       event[LogEventPageName] = _currentPageName;
@@ -610,47 +616,56 @@ class Analytics with Service implements NotificationsListener {
         if (attributeName == LogStdTimestampName) {
           analyticsEvent[LogStdTimestampName] = DateTime.now().toUtc().toIso8601String();
         }
+        else if (attributeName == LogStdAppIdName) {
+          analyticsEvent[LogStdAppIdName] = _appId;
+        }
         else if (attributeName == LogStdAppVersionName) {
-          analyticsEvent[LogStdAppVersionName]= _appVersion;
+          analyticsEvent[LogStdAppVersionName] = _appVersion;
         }
         else if (attributeName == LogStdOSName) {
-          analyticsEvent[LogStdOSName]= Platform.operatingSystem;
+          analyticsEvent[LogStdOSName] = Platform.operatingSystem;
         }
         else if (attributeName == LogStdOSVersionName) {
-          analyticsEvent[LogStdOSVersionName]=_osVersion; // Platform.operatingSystemVersion;
+          analyticsEvent[LogStdOSVersionName] = _osVersion; // Platform.operatingSystemVersion;
         }
         else if (attributeName == LogStdLocaleName) {
-          analyticsEvent[LogStdLocaleName]= Platform.localeName;
+          analyticsEvent[LogStdLocaleName] = Platform.localeName;
         }
         else if (attributeName == LogStdDeviceModelName) {
-          analyticsEvent[LogStdDeviceModelName]= _deviceModel;
+          analyticsEvent[LogStdDeviceModelName] = _deviceModel;
         }
         else if (attributeName == LogStdConnectionName) {
-          analyticsEvent[LogStdConnectionName]= _connectionName;
+          analyticsEvent[LogStdConnectionName] = _connectionName;
         }
         else if (attributeName == LogStdLocationSvcName) {
-          analyticsEvent[LogStdLocationSvcName]= _locationServices;
+          analyticsEvent[LogStdLocationSvcName] = _locationServices;
         }
         else if (attributeName == LogStdNotifySvcName) {
-          analyticsEvent[LogStdNotifySvcName]= _notificationServices;
+          analyticsEvent[LogStdNotifySvcName] = _notificationServices;
         }
         else if (attributeName == LogStdLocationName) {
-          analyticsEvent[LogStdLocationName]= _location;
+          analyticsEvent[LogStdLocationName] = _location;
         }
         else if (attributeName == LogStdSessionUuidName) {
-          analyticsEvent[LogStdSessionUuidName]= _sessionUuid;
+          analyticsEvent[LogStdSessionUuidName] = _sessionUuid;
         }
         else if (attributeName == LogStdUserUuidName) {
-          analyticsEvent[LogStdUserUuidName]= (anonymous == true) ? User.analyticsUuid : User().uuid;
+          analyticsEvent[LogStdUserUuidName] = User().uuid;
         }
         else if (attributeName == LogStdUserPrivacyLevelName) {
-          analyticsEvent[LogStdUserPrivacyLevelName]= User().privacyLevel;
+          analyticsEvent[LogStdUserPrivacyLevelName] = User().privacyLevel;
         }
         else if (attributeName == LogStdUserRolesName) {
-          analyticsEvent[LogStdUserRolesName]= _userRoles;
+          analyticsEvent[LogStdUserRolesName] = _userRoles;
         }
         else if (attributeName == LogStdAccessibilityName) {
-          analyticsEvent[LogStdAccessibilityName]= _accessibilityState;
+          analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
+        }
+        else if(attributeName == LogStdAuthCardRoleName){
+          analyticsEvent[LogStdAuthCardRoleName] = Auth()?.authCard?.role;
+        }
+        else if(attributeName == LogStdAuthCardStudentLevel){
+          analyticsEvent[LogStdAuthCardStudentLevel] = Auth()?.authCard?.studentLevel;
         }
       }
 
@@ -666,7 +681,7 @@ class Analytics with Service implements NotificationsListener {
     logEvent({
       LogEventName          : LogLivecycleEventName,
       LogLivecycleName      : name,
-    }, anonymous: _currentPageAnonymous);
+    });
   }
 
   String get currentPageName {
@@ -677,19 +692,12 @@ class Analytics with Service implements NotificationsListener {
     return _currentPageAttributes;
   }
 
-  bool get currentPageAnonymous {
-    return _currentPageAnonymous;
-  }
-
-  void logPage({String name,  Map<String, dynamic> attributes, bool anonymous}) {
-
-    bool previousPageAnonymous = (_currentPageAnonymous == true);
+  void logPage({String name,  Map<String, dynamic> attributes}) {
 
     // Update Current page name
     String previousPageName = _currentPageName;
     _currentPageName        = name;
     _currentPageAttributes  = attributes;
-    _currentPageAnonymous   = anonymous;
 
     // Build event data
     Map<String, dynamic> event = {
@@ -703,32 +711,32 @@ class Analytics with Service implements NotificationsListener {
     }
 
     // Log the event
-    logEvent(event, anonymous: (anonymous == true) || previousPageAnonymous);
+    logEvent(event);
   }
 
-  void logSelect({String target, bool anonymous}) {
+  void logSelect({String target}) {
     logEvent({
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
-    }, anonymous: anonymous);
+    });
   }
 
-  void logAlert({String text, String selection, bool anonymous}) {
+  void logAlert({String text, String selection}) {
     logEvent({
       LogEventName          : LogAlertEventName,
       LogAlertTextName      : text,
       LogAlertSelectionName : selection,
-    }, anonymous: anonymous);
+    });
   }
 
-  void logHttpResponse(Http.Response response, {String requestMethod, String requestUrl, bool anonymous}) {
+  void logHttpResponse(Http.Response response, {String requestMethod, String requestUrl}) {
     Map<String, dynamic> httpResponseEvent = {
       LogEventName                    : LogHttpResponseEventName,
       LogHttpRequestUrlName           : requestUrl,
       LogHttpRequestMethodName        : requestMethod,
       LogHttpResponseCodeName         : response?.statusCode
     };
-    logEvent(httpResponseEvent, anonymous: anonymous);
+    logEvent(httpResponseEvent);
   }
 
   void logMapRoute({String action, Map<String, dynamic> params}) {
@@ -806,10 +814,4 @@ abstract class AnalyticsPageName {
 
 abstract class AnalyticsPageAttributes {
   Map<String, dynamic> get analyticsPageAttributes;
-}
-
-abstract class AnalyticsPageAnonymous {
-  bool get analyticsPageAnonymous {
-    return true;
-  }
 }

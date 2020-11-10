@@ -51,4 +51,8 @@ public class Constants {
     public static final float INDOORS_BUILDING_ZOOM = 17.0f;
     public static final String ANALYTICS_ROUTE_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f,\"floor\":%d}";
     public static final String ANALYTICS_USER_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f,\"floor\":%d,\"timestamp\":%d}";
+
+    // Shared Prefs
+    static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
+    static final String LOCATION_PERMISSIONS_REQUESTED_KEY = "location_permissions_requested";
 }

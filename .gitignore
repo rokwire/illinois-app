@@ -38,6 +38,7 @@ xcuserdata
 /ios/Flutter/App.framework
 /ios/Flutter/Flutter.framework
 /ios/Flutter/Generated.xcconfig
+/ios/Flutter/.last_build_id
 /ios/Flutter/flutter_assets/*
 /ios/Flutter/flutter_export_environment.sh
 
@@ -47,8 +48,8 @@ xcuserdata
 
 /assets/configs.json.enc
 
-/ios/Runner/GoogleService-Info-Debug.plist
-/ios/Runner/GoogleService-Info-Release.plist
+/ios/Runner/GoogleService-Info-Dev.plist
+/ios/Runner/GoogleService-Info-Prod.plist
 
 /android/keys.properties
 /android/app/src/debug/google-services.json

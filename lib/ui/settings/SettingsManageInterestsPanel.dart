@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -23,7 +22,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -123,14 +121,14 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
                                     textAlign: TextAlign.start,
                                   ),
                                   Image.asset('images/example.png'),
-                                  Container(
-                                      width: 200,
-                                      child: Text(
+                                  Expanded(child: Container(
+                                      child:Text(
                                         Localization()
                                             .getStringEx('panel.settings.manage_interests.instructions.follow', ' to follow the tags that interest you most'),
                                         maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.white, fontSize: 16),
-                                      ))
+                                      )))
                                 ],
                               )))),
                   Padding(

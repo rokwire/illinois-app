@@ -141,19 +141,21 @@ class LaundryRoomRibbonButton extends StatelessWidget {
                 color: backgroundColor,
                 border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
                 borderRadius: borderRadius),
-            height: 48,
+//            height: 48,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    label,
-                    style: TextStyle(
-                        color: Styles().colors.fillColorPrimary,
-                        fontSize: 16,
-                        fontFamily: labelFontFamily ?? Styles().fontFamilies.medium),
+                  Expanded(child:
+                    Text(
+                      label,
+                      style: TextStyle(
+                          color: Styles().colors.fillColorPrimary,
+                          fontSize: 16,
+                          fontFamily: labelFontFamily ?? Styles().fontFamilies.medium),
+                    ),
                   ),
                   Image.asset('images/chevron-right.png')
                 ],

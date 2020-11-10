@@ -19,11 +19,14 @@ package edu.illinois.rokwire;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
@@ -58,12 +61,17 @@ import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
 import edu.illinois.rokwire.poll.PollPlugin;
-import io.flutter.app.FlutterActivity;
+import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugins.GeneratedPluginRegistrant;
+import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugin.common.StandardMessageCodec;
+import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;
+import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService;
+import io.flutter.view.FlutterMain;
 
-public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
+public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, PluginRegistry.PluginRegistrantCallback {
 
     private static final String TAG = "MainActivity";
 
@@ -88,10 +96,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        registerPlugins();
         instance = this;
         initScreenOrientation();
-        initMethodChannel();
+
+        // TODO: Check do we need the next two lines at all?
+        FlutterFirebaseMessagingService.setPluginRegistrant(this);
+        FlutterMain.startInitialization(this);
     }
 
     @Override
@@ -140,26 +150,23 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return keys;
     }
 
-    private void registerPlugins() {
-        GeneratedPluginRegistrant.registerWith(this);
+    @Override
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+        super.configureFlutterEngine(flutterEngine);
+        METHOD_CHANNEL = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NATIVE_CHANNEL);
+        METHOD_CHANNEL.setMethodCallHandler(this);
 
-        // MapView
-        Registrar registrar = registrarFor("MapPlugin");
-        registrar.platformViewRegistry().registerViewFactory("mapview", new MapViewFactory(this, registrar));
+        flutterEngine
+                .getPlatformViewsController()
+                .getRegistry()
+                .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
 
-        // Poll
-        Registrar pollsRegistrar = registrarFor("PollPlugin");
-        pollPlugin = PollPlugin.registerWith(pollsRegistrar);
+        flutterEngine.getPlugins().add(new PollPlugin(this));
     }
 
     private void initScreenOrientation() {
         preferredScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         supportedScreenOrientations = new HashSet<>(Collections.singletonList(preferredScreenOrientation));
-    }
-
-    private void initMethodChannel() {
-        METHOD_CHANNEL = new MethodChannel(getFlutterView(), NATIVE_CHANNEL);
-        METHOD_CHANNEL.setMethodCallHandler(this);
     }
 
     private void initWithParams(Object keys) {
@@ -250,9 +257,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             app.showNotification(title, body);
         }
     }
-    
 
     private void requestLocationPermission(MethodChannel.Result result) {
+        Utils.AppSharedPrefs.saveBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, true);
         //check if granted
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED  ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -281,6 +288,31 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.d(TAG, "already granted");
             GeofenceMonitor.getInstance().onLocationPermissionGranted();
             result.success("allowed");
+        }
+    }
+
+    private String getLocationServicesStatus() {
+        boolean locationServicesEnabled;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationServicesEnabled = ((lm != null) && lm.isLocationEnabled());
+        } else {
+            // This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            locationServicesEnabled = (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
+        if (locationServicesEnabled) {
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                return "allowed";
+            } else {
+                boolean locationPermissionRequested = Utils.AppSharedPrefs.getBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, false);
+                return locationPermissionRequested ? "denied" : "not_determined";
+            }
+        } else {
+            return "disabled";
         }
     }
 
@@ -564,7 +596,13 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     result.success(true); // notifications are allowed in Android by default
                     break;
                 case Constants.APP_LOCATION_SERVICES_PERMISSION:
-                    requestLocationPermission(result);
+                    String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);
+                    if ("query".equals(locationServicesMethod)) {
+                        String locationServicesStatus = getLocationServicesStatus();
+                        result.success(locationServicesStatus);
+                    } else if ("request".equals(locationServicesMethod)) {
+                        requestLocationPermission(result);
+                    }
                     break;
                 case Constants.APP_BLUETOOTH_AUTHORIZATION:
                     result.success("allowed"); // bluetooth is always enabled in Android by default
@@ -599,6 +637,14 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.e(TAG, errorMsg);
             exception.printStackTrace();
         }
+    }
+
+    @Override
+    public void registerWith(PluginRegistry registry) {
+        if (registry != null && registry.hasPlugin("io.flutter.plugins.firebasemessaging")) {
+            FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
+        }
+
     }
 
     // RequestLocationCallback

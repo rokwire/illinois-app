@@ -26,11 +26,11 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsRosterListPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
@@ -302,7 +302,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             Visibility(
                               visible: showGetTickets,
                               child: Expanded(
-                                child: RoundedButton(
+                                child: ScalableRoundedButton(
                                   label: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.title', 'Get Tickets'),
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
                                   backgroundColor: Colors.white,
@@ -320,7 +320,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             Visibility(
                               visible: showParking,
                               child: Expanded(
-                                child: RoundedButton(
+                                child: ScalableRoundedButton(
                                     label: Localization().getStringEx('widget.game_detail_heading.button.parking.title', 'Parking'),
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
                                     backgroundColor: Colors.white,
@@ -339,7 +339,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                       ),
                       Visibility(
                         visible: showGameDayGuide,
-                        child: RoundedButton(
+                        child: ScalableRoundedButton(
                           label: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.title', 'Game Day Guide'),
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
                           backgroundColor: Colors.white,
@@ -352,7 +352,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 6)),
-                      RoundedButton(
+                      ScalableRoundedButton(
                         label: Localization().getStringEx('widget.game_detail_heading.button.roster.title', 'Roster'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
                         backgroundColor: Colors.white,
@@ -504,7 +504,7 @@ class _DetailRibbonButton extends StatelessWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Container(
-            height: 48,
+            height: 28+ 16* MediaQuery.of(context).textScaleFactor,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
               child: Row(

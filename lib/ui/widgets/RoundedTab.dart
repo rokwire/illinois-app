@@ -33,7 +33,7 @@ class RoundedTab extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child:
         Container(
-            height: 40,
+//            height: 40,
             decoration: new ShapeDecoration(
               color: _borderColor,
               shape: RoundedRectangleBorder(

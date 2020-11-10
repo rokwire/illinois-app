@@ -469,13 +469,15 @@ class _RosterInfoLine extends StatelessWidget{
               ),
             ),
           ),
-          Text(value,
-              style: TextStyle(
-                  color: Styles().colors.textBackground,
-                  fontFamily: Styles().fontFamilies.bold,
-                  fontSize: 14
-              )
-          ),
+          Expanded(child:
+            Text(value,
+                style: TextStyle(
+                    color: Styles().colors.textBackground,
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 14
+                )
+            ),
+          )
         ],
       ) : Container()
     );

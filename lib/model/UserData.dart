@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class UserData {
@@ -21,8 +20,6 @@ class UserData {
 
   final String uuid;
   bool overThirteen;
-
-  static const analyticsUuid = 'UUIDxxxxxx';
 
   Set<UserRole> roles;
   Map<String, List<String>> interests;
@@ -347,30 +344,7 @@ class UserRole{
   const UserRole._internal(this._value);
 
   factory UserRole.fromString(String userRoleString) {
-    if (userRoleString != null) {
-      if (userRoleString == 'student') {
-        return UserRole.student;
-      }
-      else if (userRoleString == 'visitor') {
-        return UserRole.visitor;
-      }
-      else if (userRoleString == 'fan') {
-        return UserRole.fan;
-      }
-      else if (userRoleString == 'employee') {
-        return UserRole.employee;
-      }
-      else if (userRoleString == 'alumni') {
-        return UserRole.alumni;
-      }
-      else if (userRoleString == 'parent') {
-        return UserRole.parent;
-      }
-      else if (userRoleString == 'resident') {
-        return UserRole.resident;
-      }
-    }
-    return null;
+    return (userRoleString != null) ? UserRole._internal(userRoleString) : null;
   }
 
   toString() => _value;
@@ -438,27 +412,6 @@ class UserRole{
         targetAudiences.add('public');
     }
     return targetAudiences;
-  }
-
-  static String toRoleString(UserRole role) {
-    if (role != null) {
-      if (role == student) {
-        return Localization().getStringEx('model.user.role.student.title', 'Student');
-      } else if (role == visitor) {
-        return Localization().getStringEx('model.user.role.visitor.title', 'Visitor');
-      } else if (role == fan) {
-        return Localization().getStringEx('model.user.role.fan.title', 'Athletics Fan');
-      } else if (role == employee) {
-        return Localization().getStringEx('model.user.role.employee.title', 'Employee');
-      } else if (role == alumni) {
-        return Localization().getStringEx('model.user.role.alumni.title', 'Alumni');
-      } else if (role == parent) {
-        return Localization().getStringEx('model.user.role.parent.title', 'Parent');
-      } else if (role == resident) {
-        return Localization().getStringEx('model.user.role.resident.title', 'Resident');
-      }
-    }
-    return null;
   }
 }
 

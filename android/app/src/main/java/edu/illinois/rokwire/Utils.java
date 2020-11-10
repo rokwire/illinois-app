@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -765,6 +766,28 @@ public class Utils {
             return beaconsResponse;
         }
     }
+
+    public static class AppSharedPrefs {
+
+        public static boolean getBool(Context context, String key, boolean defaults) {
+            if ((context == null) || Str.isEmpty(key)) {
+                return defaults;
+            }
+            SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.DEFAULT_SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+            return sharedPreferences.getBoolean(key, defaults);
+        }
+
+        public static void saveBool(Context context, String key, boolean value) {
+            if ((context == null) || Str.isEmpty(key)) {
+                return;
+            }
+            SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.DEFAULT_SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(key, value);
+            editor.apply();
+        }
+    }
+
 
     public enum ExploreType {
         EVENT, DINING, LAUNDRY, PARKING, UNKNOWN

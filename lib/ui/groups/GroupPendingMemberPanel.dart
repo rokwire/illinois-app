@@ -21,7 +21,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -183,7 +183,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         children: <Widget>[
           Expanded(
             child: Stack(children: <Widget>[
-              RoundedButton(
+              ScalableRoundedButton(
                 label: Localization().getStringEx("panel.pending_member_detail.button.deny.title", "Deny"),
                 hint: Localization().getStringEx("panel.pending_member_detail.button.deny.hint", ""),
                 backgroundColor: Styles().colors.white,
@@ -206,7 +206,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           Container(width: 8,),
           Expanded(
             child: Stack(children: <Widget>[
-              RoundedButton(
+              ScalableRoundedButton(
                 label: Localization().getStringEx("panel.pending_member_detail.button.add.title", "Add"),
                 hint: Localization().getStringEx("panel.pending_member_detail.button.add.hint", ""),
                 backgroundColor: Styles().colors.white,

@@ -22,8 +22,8 @@ import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -202,7 +202,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                   Analytics.instance.logSelect(target: "Back");
                   Navigator.pop(context);
                 }), Align(alignment: Alignment.bottomCenter, child:
-            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: RoundedButton(
+            Padding(padding: EdgeInsets.only(left: 18, right: 18, bottom: 24),child: ScalableRoundedButton(
                 label: Localization().getStringEx(
                     "panel.onboarding.verify_phone.button.next.label",
                     "Next"),
@@ -227,12 +227,22 @@ class _OnboardingLoginPhoneVerifyPanelState
     if (AppString.isStringNotEmpty(_validationErrorMsg)) {
       return;
     }
+
     String phoneNumber = _phoneNumberController.text;
-    if (AppString.isStringNotEmpty(phoneNumber) &&
-        !phoneNumber.startsWith("+1") &&
-        kReleaseMode) {
-      phoneNumber = '+1$phoneNumber';
+    if(kReleaseMode) {
+      if (AppString.isUsPhoneValid(phoneNumber)) {
+        phoneNumber = AppString.constructUsPhone(phoneNumber);
+        if (AppString.isUsPhoneNotValid(phoneNumber)) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding.verify_phone.validation.server_error.text", "Please enter a valid phone number"));
+          return;
+        }
+      }
+      else {
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.onboarding.verify_phone.validation.server_error.text", "Please enter a valid phone number"));
+        return;
+      }
     }
+
     setState(() {
       _isLoading = true;
     });

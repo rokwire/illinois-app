@@ -425,7 +425,11 @@ class Event with Explore implements Favorite {
     }
     String startTime = AppDateTime().getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
     String endTime = AppDateTime().getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);
-    return '$startTime-$endTime';
+    String displayTime = '$startTime';
+    if (AppString.isStringNotEmpty(endTime)) {
+      displayTime += '-$endTime';
+    }
+    return displayTime;
   }
 
   String get displayRecurringDates {
@@ -547,5 +551,7 @@ class Contact {
     };
   }
 }
+
+enum EventTimeFilter{today, thisWeekend, next7Day, next30Days, upcoming,}
 
 

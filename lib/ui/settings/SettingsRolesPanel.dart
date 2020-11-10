@@ -23,7 +23,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/model/UserData.dart';
@@ -200,7 +199,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
     ;
   }
 
-  Widget _buildSaveButton(){
+  /*Widget _buildSaveButton(){
     return
         Padding(
             padding: EdgeInsets.symmetric( vertical: 20,horizontal: 16),
@@ -216,7 +215,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
               onTap: _onSaveChangesClicked,
             ),
          );
-  }
+  }*/
 
   void _onRoleGridButton(RoleGridButton button) {
 
@@ -257,14 +256,14 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
     User().roles = _selectedRoles;
   }
 
-  _onSaveChangesClicked(){
+  /*_onSaveChangesClicked(){
     _saveSelectedRoles();
     Navigator.pop(context);
   }
 
   bool get _canSave{
     return _selectedRoles != User().roles ;
-  }
+  }*/
 
   // NotificationsListener
 

@@ -44,7 +44,8 @@ class Localization with Service implements NotificationsListener {
   Localization._internal();
 
   // Multilanguage support
-  final List<String> supportedLanguages = ['en', 'es','zh'];
+  final List<String> defaultSupportedLanguages = ['en', 'es','zh'];
+  List<String> get supportedLanguages => (Config()?.supportedLocales?.isNotEmpty??false) ? Config().supportedLocales.cast<String>() : defaultSupportedLanguages;
   Iterable<Locale> supportedLocales() => supportedLanguages.map<Locale>((language) => Locale(language, ""));  
 
   // Data
@@ -52,9 +53,13 @@ class Localization with Service implements NotificationsListener {
   
   Locale _defaultLocale;
   Map<String,dynamic> _defaultStrings;
+  Map<String,dynamic> _defaultAssetsStrings;
+  Map<String,dynamic> _defaultCachedStrings;
   
   Locale _currentLocale;
   Map<String,dynamic> _localeStrings;
+  Map<String,dynamic> _localeAssetsStrings;
+  Map<String,dynamic> _localeCachedStrings;
 
   DateTime  _pausedDateTime;
 
@@ -77,14 +82,12 @@ class Localization with Service implements NotificationsListener {
     
     String defaultLanguage = supportedLanguages[0];
     _defaultLocale = Locale.fromSubtags(languageCode : defaultLanguage);
-    _defaultStrings = await _loadStrings(defaultLanguage);
-    _updateDefaultStrings();
+    await _initDefaultStirngs(defaultLanguage);
 
     String curentLanguage = Storage().currentLanguage;
     if (curentLanguage != null) {
       _currentLocale = Locale.fromSubtags(languageCode : curentLanguage);
-      _localeStrings = await _loadStrings(curentLanguage);
-      _updateLocaleStrings();
+      _initLocaleStirngs(curentLanguage);
     }
   }
 
@@ -103,7 +106,7 @@ class Localization with Service implements NotificationsListener {
     if ((value == null) || (value.languageCode == _defaultLocale.languageCode)) {
       // use default
       _currentLocale = null;
-      _localeStrings = null;
+      _localeStrings = _localeAssetsStrings = _localeCachedStrings = null;
       Storage().currentLanguage = null;
       //Notyfy when we change the locale (valid change)
       NotificationService().notify(notifyLocaleChanged, null);
@@ -111,10 +114,7 @@ class Localization with Service implements NotificationsListener {
     else if ((_currentLocale == null) || (_currentLocale.languageCode != value.languageCode)) {
       _currentLocale = value;
       Storage().currentLanguage = value.languageCode;
-      _loadStrings(value.languageCode).then((Map<String,dynamic> strings) {
-        _localeStrings = strings;
-        _updateLocaleStrings();
-      });
+      _initLocaleStirngs(value.languageCode);
       //Notyfy when we change the locale (valid change)
       NotificationService().notify(notifyLocaleChanged, null);
     }
@@ -130,37 +130,72 @@ class Localization with Service implements NotificationsListener {
     return assetsDir;
   }
 
-  Future<Map<String,dynamic>> _loadStrings(String language) async {
+  Future<void> _initDefaultStirngs(String language) async {
+    _defaultStrings = _buildStrings(
+      asset: _defaultAssetsStrings = await _loadAssetsStrings(language),
+      cache: _defaultCachedStrings = await _loadCachedStrings(language));
+    _updateDefaultStrings();
+  }
 
+  Future<void> _initLocaleStirngs(String language) async {
+    _localeStrings = _buildStrings(
+      asset: _localeAssetsStrings = await _loadAssetsStrings(language),
+      cache: _localeCachedStrings = await _loadCachedStrings(language));
+    _updateLocaleStrings();
+  }
+
+  Future<Map<String,dynamic>> _loadAssetsStrings(String language) async {
     dynamic jsonData;
-    String assetName = 'strings.$language.json';
+    try {
+      String jsonString = await rootBundle.loadString('assets/strings.$language.json');
+      jsonData = AppJson.decode(jsonString);
+    }
+    catch (e) { print(e?.toString()); }
+    return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
+  }
 
+  Future<Map<String,dynamic>> _loadCachedStrings(String language) async {
+    dynamic jsonData;
     try { 
-      String cacheFilePath = (_assetsDir != null) ? join(_assetsDir.path, assetName) : null;
+      String cacheFilePath = (_assetsDir != null) ? join(_assetsDir.path, 'strings.$language.json') : null;
       File cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
       
       String jsonString = ((cacheFile != null) && await cacheFile.exists()) ? await cacheFile.readAsString() : null;
       jsonData = AppJson.decode(jsonString);
-    } on Exception catch (e) { print(e.toString()); }
-    if ((jsonData != null) && (jsonData is Map<String,dynamic>)) {
-      return jsonData;
-    }
-
-    try {
-      String jsonString = await rootBundle.loadString('assets/$assetName');
-      jsonData = AppJson.decode(jsonString);
-    } on Exception catch (e) { print(e.toString()); }
+    } catch (e) { print(e?.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }
 
-  Future<Map<String,dynamic>> _updateStringsFromNet(String language, Map<String,dynamic> strings) async {
+  void _updateDefaultStrings() {
+    if (_defaultLocale != null) {
+      _updateStringsFromNet(_defaultLocale.languageCode, cache: _defaultCachedStrings).then((Map<String,dynamic> update) {
+        if (update != null) {
+          _defaultStrings = _buildStrings(asset: _defaultAssetsStrings, cache: _defaultCachedStrings = update);
+          NotificationService().notify(notifyStringsUpdated, null);
+        }
+      });
+    }
+  }
+
+  void _updateLocaleStrings() {
+    if (_currentLocale != null) {
+     final String requestedLocale = _currentLocale.languageCode;
+     _updateStringsFromNet(_currentLocale.languageCode, cache: _localeCachedStrings).then((Map<String,dynamic> update) {
+        if (update != null && (requestedLocale == _currentLocale?.languageCode)) { // Sync: If the locale was not changed while update was in process
+          _localeStrings = _buildStrings(asset: _localeAssetsStrings, cache: _localeCachedStrings = update);
+          NotificationService().notify(notifyStringsUpdated, null);
+        }
+      });
+    }
+  }
+  Future<Map<String,dynamic>> _updateStringsFromNet(String language, { Map<String, dynamic> cache }) async {
     Map<String, dynamic> jsonData;
     try {
       String assetName = 'strings.$language.json';
       http.Response response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$assetName") : null;
       String jsonString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       jsonData = (jsonString != null) ? AppJson.decode(jsonString) : null;
-      if ((jsonData != null) && jsonData.isNotEmpty && ((strings == null) || !DeepCollectionEquality().equals(jsonData, strings))) {
+      if ((jsonData != null) && ((cache == null) || !DeepCollectionEquality().equals(jsonData, cache))) {
         String cacheFilePath = (_assetsDir != null) ? join(_assetsDir.path, assetName) : null;
         File cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
         if (cacheFile != null) {
@@ -173,26 +208,15 @@ class Localization with Service implements NotificationsListener {
     return jsonData;
   }
 
-  void _updateDefaultStrings() {
-    if (_defaultLocale != null) {
-      _updateStringsFromNet(_defaultLocale.languageCode, _defaultStrings).then((Map<String,dynamic> update) {
-        if (update != null) {
-          _defaultStrings = update;
-          NotificationService().notify(notifyStringsUpdated, null);
-        }
-      });
+  static Map<String, dynamic> _buildStrings({Map<String, dynamic> asset, Map<String, dynamic> cache}) {
+    Map<String, dynamic> strings = Map<String, dynamic>();
+    if ((asset != null) && (0 < asset.length)) {
+      strings.addAll(asset);
     }
-  }
-
-  void _updateLocaleStrings() {
-    if (_currentLocale != null) {
-      _updateStringsFromNet(_currentLocale.languageCode, _localeStrings).then((Map<String,dynamic> update) {
-        if (update != null) {
-          _localeStrings = update;
-          NotificationService().notify(notifyStringsUpdated, null);
-        }
-      });
+    if ((cache != null) && (0 < cache.length)) {
+      strings.addAll(cache);
     }
+    return strings;
   }
 
   // NotificationsListener

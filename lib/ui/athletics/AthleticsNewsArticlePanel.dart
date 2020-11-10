@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:illinois/model/RecentItem.dart';
 
 import 'package:illinois/service/RecentItems.dart';
@@ -24,8 +25,8 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:share/share.dart';
@@ -139,7 +140,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),
-                                    child: RoundedButton(
+                                    child: ScalableRoundedButton(
                                       label: 'Share this article',
                                       backgroundColor: Styles().colors.background,
                                       textColor: Styles().colors.fillColorPrimary,
@@ -176,9 +177,14 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
     if (!AppString.isStringEmpty(article.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
-        child: Html(
-          data:article.description,
-          defaultTextStyle: TextStyle(color: Styles().colors.textBackground, fontSize: 20)
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
+          child: Html(
+            data:article.description,
+            style: {
+              "body": Style(color: Styles().colors.textBackground,)
+            },
+          ),
         ),
       ));
     }
@@ -186,13 +192,16 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
     if (!AppString.isStringEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
-        child: Html(
-          data:fullText,
-            onLinkTap: (url){
-              Navigator.push(context, CupertinoPageRoute(
-                builder: (context) => WebPanel(url: url,)
-              ));
-            },
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
+          child: Html(
+            data:fullText,
+              onLinkTap: (url){
+                Navigator.push(context, CupertinoPageRoute(
+                  builder: (context) => WebPanel(url: url,)
+                ));
+              },
+          ),
         ),
       ));
     }

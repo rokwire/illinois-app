@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
@@ -157,28 +156,19 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     if (Connectivity().isNotOffline) {
       setState(() {_isEventLoading = true;});
 
-      DateTime now = AppDateTime().now;
-      DateTime startDate = now, endDate;
+      EventTimeFilter eventFilter;
       // endDate should be null for Upcoming
       if(_selectedTime == _timeFilterToday){
-        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+        eventFilter = EventTimeFilter.today;
       } else if(_selectedTime == _timeFilterNextSevenDays){
-        endDate = now.add(Duration(days: 6));
+        eventFilter = EventTimeFilter.next7Day;
       } else if(_selectedTime == _timeFilterThisWeekend){
-        int currentWeekDay = now.weekday;
-        DateTime weekendStartDateTime = DateTime(
-            now.year, now.month, now.day, 0, 0, 0)
-            .add(Duration(days: (6 - currentWeekDay)));
-        startDate =
-        now.isBefore(weekendStartDateTime) ? weekendStartDateTime : now;
-        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59)
-            .add(Duration(days: (7 - currentWeekDay)));
+        eventFilter = EventTimeFilter.thisWeekend;
       } else if(_selectedTime == _timeFilterNextMonth) {
-        DateTime next = startDate.add(Duration(days: 30));
-        endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        eventFilter = EventTimeFilter.next30Days;
       }
 
-      ExploreService().loadEvents(searchText: _textEditingController.text, startDate: startDate, endDate: endDate).then((List<Explore> result) {
+      ExploreService().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Explore> result) {
         _events = result;
         _isEventLoading = false;
         _applyFilter();

@@ -22,13 +22,13 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipStepsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -181,7 +181,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child:
             Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
                 hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
-                SmallRoundedButton(
+                ScalableSmallRoundedButton(
+                  maxLines: 2,
                   label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
                   onTap: _onTapAddImage,
                   showChevron: false,
@@ -448,7 +449,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     for(int i=0; i<buttons.length;i++){
       if(i%2==0){
         lastRowChildren = new List();
-        rows.add(Row(children:lastRowChildren,));
+        rows.add(SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children:lastRowChildren,)));
         rows.add(Container(height: 8,));
       } else {
         lastRowChildren?.add(Container(width: 13,));
@@ -601,14 +602,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text(
-                      title,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies.bold,
-                          fontSize: 16,
-                          color: Styles().colors.fillColorPrimary),
+                    Expanded(child:
+                      Text(
+                        title,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.bold,
+                            fontSize: 16,
+                            color: Styles().colors.fillColorPrimary),
+                      ),
                     ),
-                    Expanded(child:Container()),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
                       child: Image.asset('images/chevron-right.png'),
@@ -658,13 +660,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-          RoundedButton(
+          ScalableSmallRoundedButton(
             label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors.fillColorSecondary,
             textColor: Styles().colors.fillColorPrimary,
             onTap: _onUpdateTap,
-            height: 48,
+//            height: 48,
           ),
           Visibility(visible: _loading,
             child: Container(
@@ -749,17 +751,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 padding: EdgeInsets.only(right: 10),
                 child: Image.asset(iconRes, excludeFromSemantics: true,)
               ),
-            Semantics(
-              label: title,
-              hint: title,
-              header: true,
-              excludeSemantics: true,
-              child:
-              Text(
-                title,
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+            Expanded(child:
+              Semantics(
+                label: title,
+                hint: title,
+                header: true,
+                excludeSemantics: true,
+                child:
+                Text(
+                  title,
+                  style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+                ),
               ),
-            ),
+            )
           ],)
 
     );

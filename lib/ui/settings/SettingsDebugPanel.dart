@@ -30,6 +30,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
+import 'package:illinois/ui/settings/debug/HttpProxySettingsPanel.dart';
 import 'package:illinois/ui/settings/debug/MessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -57,6 +58,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
   void initState() {
     
     NotificationService().subscribe(this, [
+      Config.notifyEnvironmentChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
     ]);
@@ -276,6 +278,19 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
                             borderColor: Styles().colors.fillColorPrimary,
                             onTap: _onTapClearVoting)),
                     Padding(padding: EdgeInsets.only(top: 5), child: Container()),
+                    Visibility(
+                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Http Proxy",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapHttpProxy)),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
                   ],
                 ),
               ),
@@ -297,6 +312,9 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
       setState(() {});
     }
     else if (name == GeoFence.notifyCurrentBeaconsUpdated) {
+      setState(() {});
+    }
+    else if(name == Config.notifyEnvironmentChanged){
       setState(() {});
     }
   }
@@ -540,6 +558,12 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
         Config().configEnvironment = env;
         _selectedEnv = Config().configEnvironment;
       });
+    }
+  }
+
+  void _onTapHttpProxy() {
+    if(Config().configEnvironment == ConfigEnvironment.dev) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => HttpProxySettingsPanel()));
     }
   }
 

@@ -24,7 +24,6 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
@@ -38,7 +37,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/HomeHeader.dart';
 import 'package:illinois/ui/widgets/ImageHolderListItem.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -134,7 +133,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Set<String> userTags = User().getTags()?.toSet();
       Set<String> tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
-      ExploreService().loadEvents(limit: 20, startDate: AppDateTime().now, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {
+      ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {
 
         bool haveEvents = (events != null) && events.isNotEmpty;
         bool haveTagsFilters = (tagsFilter != null) && tagsFilter.isNotEmpty;
@@ -156,7 +155,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           }
         }
         else {
-          ExploreService().loadEvents(limit: 20, startDate: AppDateTime().now).then((List<Explore> events) {
+          ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Explore> events) {
             setState(() {
               _tagsFilter = null;
               _categoriesFilter = null;
@@ -237,14 +236,20 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           Container(
             height: 20,
           ),
-          SmallRoundedButton(
-            label: Localization().getStringEx(
-                'widget.home_upcoming_events.button.more.title',
-                'View all events'),
-            hint: Localization().getStringEx(
-                'widget.home_upcoming_events.button.more.hint', ''),
-            showChevron: false,
-            onTap: () => _navigateToExploreEvents(),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: ScalableRoundedButton(
+                label: Localization().getStringEx(
+                    'widget.home_upcoming_events.button.more.title',
+                    'View all events'),
+                hint: Localization().getStringEx(
+                    'widget.home_upcoming_events.button.more.hint', ''),
+                showChevron: false,
+                borderColor: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors.fillColorPrimary,
+                backgroundColor: Styles().colors.white,
+                onTap: () => _navigateToExploreEvents(),
+              ),
           ),
           Container(
             height: 48,

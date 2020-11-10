@@ -20,8 +20,8 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:sprintf/sprintf.dart';
 
 class PollBubbleResultPanel extends StatefulWidget {
@@ -37,7 +37,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   bool _resultsVisible = false;
 
   List<GlobalKey> _progressKeys;
-  double _progressWidth;
+  //double _progressWidth;
 
   @override
   void initState() {
@@ -80,10 +80,10 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
                 child: Padding(
                     padding: EdgeInsets.all(5),
                     child: Stack(children: <Widget>[
-                          Column(children: <Widget>[ Container(
+                          SingleChildScrollView(child:Column(children: <Widget>[ Container(
                             decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.circular(5)),
                             child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildContent(poll),),),
-                          ),],),
+                          ),],)),
                       Container(alignment: Alignment.topRight, child: _buildCloseButton()),
                     ])
       ))));
@@ -172,25 +172,27 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
           Row(children: <Widget>[
             Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
             Expanded(key: progressKey, child:Stack(children: <Widget>[
-              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
-              Container(height: 30, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors.fillColorPrimary, progressColor: Styles().colors.lightGray.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(/*height:30, width: _progressWidth*/),),
+              Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
                   Text(poll.options[optionIndex], style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
               ],),),
               ],)
             ),
-            Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', style: TextStyle(color: Styles().colors.surfaceAccent, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
-        ],))
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', style: TextStyle(color: Styles().colors.surfaceAccent, fontFamily: Styles().fontFamilies.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+            )
+            ],))
       ));
     }
     return result;
   }
 
   Widget _buildResultsDoneButton() {
-    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: RoundedButton(
+    return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
         label: 'Done',
         backgroundColor: Styles().colors.fillColorPrimary,
-        height: 42,
+//        height: 42,
         fontSize: 16.0,
         textColor: Colors.white,
         borderColor: Styles().colors.fillColorSecondary,
@@ -213,10 +215,10 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
 
   Widget _buildViewResultsButton() {
     return Padding(padding: EdgeInsets.only(top: 20, left: 50, right: 50), child:
-      RoundedButton(
+      ScalableRoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.view_poll_results.title', 'View poll results'),
         backgroundColor: Styles().colors.fillColorPrimary,
-        height: 42,
+//        height: 42,
         fontSize: 16.0,
         textColor: Colors.white,
         borderColor: Styles().colors.fillColorSecondary,
@@ -249,7 +251,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
       }
       if (0 < progressWidth) {
         setState(() {
-          _progressWidth = progressWidth;
+          //_progressWidth = progressWidth;
         });
       }
     }

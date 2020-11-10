@@ -24,10 +24,9 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/utils/Utils.dart';
-
-import 'Crashlytics.dart';
 
 enum NetworkAuth {
   App,
@@ -40,8 +39,7 @@ class Network  {
   static const String RokwireApiKey = 'ROKWIRE-API-KEY';
   static const String RokwireUserUuid = 'ROKWIRE-USER-UUID';
   static const String RokwireUserPrivacyLevel = 'ROKWIRE-USER-PRIVACY-LEVEL';
-  static const String RokwireHSApiKey = 'ROKWIRE-HS-API-KEY';
-  static const String RokwireHSUserId = 'USER-ID';
+  static const String RokwireAppId = 'APP';
 
   static final Network _network = new Network._internal();
   factory Network() {
@@ -50,7 +48,7 @@ class Network  {
 
   Network._internal();
 
-  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client }) async {
+  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, int timeout, Http.Client client }) async {
     try {
       
       Uri uri;
@@ -86,7 +84,7 @@ class Network  {
 
         Future<Http.StreamedResponse> responseStreamFuture = client.send(request);
         if ((responseStreamFuture != null) && (timeout != null)) {
-          responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout), onTimeout: _responseStreamTimeoutHandler);
+          responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout));
         }
 
         Http.StreamedResponse responseStream = await responseStreamFuture;
@@ -99,7 +97,7 @@ class Network  {
       }
     } catch (e) { 
       Log.e(e.toString());
-      Crashlytics().recordError(e, null);
+      FirebaseCrashlytics().recordError(e, null);
     }
     return null;
   }
@@ -130,16 +128,16 @@ class Network  {
         }
       } catch (e) { 
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'GET', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'GET', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -160,16 +158,16 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async{
+  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async{
     Http.Response response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'POST', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'POST', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -196,16 +194,16 @@ class Network  {
 
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'PUT', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'PUT', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -226,16 +224,16 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'PATCH', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'PATCH', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -256,16 +254,16 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl, bool analyticsAnonymous }) async {
+  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
     if (sendAnalytics) {
-      Analytics().logHttpResponse(response, requestMethod:'DELETE', requestUrl: analyticsUrl ?? url, anonymous: analyticsAnonymous);
+      Analytics().logHttpResponse(response, requestMethod:'DELETE', requestUrl: analyticsUrl ?? url);
     }
 
     _saveCookiesFromResponse(url, response);
@@ -286,7 +284,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout)) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -303,7 +301,7 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseBytesHandler) : response;
       } catch (e) {
         Log.e(e.toString());
-        Crashlytics().recordError(e, null);
+        FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
@@ -411,10 +409,6 @@ class Network  {
   }
 
   Http.Response _responseTimeoutHandler() {
-    return null;
-  }
-
-  Http.StreamedResponse _responseStreamTimeoutHandler() {
     return null;
   }
 

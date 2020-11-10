@@ -23,9 +23,9 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
   final Map<String, dynamic> onboardingContext;
@@ -176,11 +176,10 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
         Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20),
           child: Stack(children:<Widget>[
-            RoundedButton(
+            ScalableRoundedButton(
               label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
               hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
               enabled: _allowNext,
-              height: 48,
               backgroundColor: (Styles().colors.background),
               borderColor: (_allowNext
                   ? Styles().colors.fillColorSecondary

@@ -161,11 +161,13 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                   child: Image.asset(
                                       'images/icon-athletics-orange.png'),
                                 ),
-                                Text(
-                                  Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + sportName,
-                                  style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                                )
+                                Expanded(child:
+                                  Text(
+                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + sportName,
+                                    style:
+                                    TextStyle(color: Colors.white, fontSize: 20),
+                                  )
+                                ),
                               ],
                             ),
                           ),

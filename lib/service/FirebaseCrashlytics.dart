@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart' as Firebase;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart' as GoogleFirebase;
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/Service.dart';
 
-class Crashlytics with Service {
-  static final Crashlytics _crashlytics = new Crashlytics._internal();
+class FirebaseCrashlytics with Service {
+  static final FirebaseCrashlytics _crashlytics = new FirebaseCrashlytics._internal();
 
-  factory Crashlytics() {
+  factory FirebaseCrashlytics() {
     return _crashlytics;
   }
 
-  Crashlytics._internal();
+  FirebaseCrashlytics._internal();
 
   @override
-  void createService() {
-    // Set `enableInDevMode` to true to see reports while in debug mode
-    // This is only to be used for confirming that reports are being
-    // submitted as expected. It is not intended to be used for everyday
-    // development.
-    Firebase.Crashlytics.instance.enableInDevMode = false;
+  Future<void> initService() async{
+    await super.initService();
+
+    // Enable automatic data collection
+    GoogleFirebase.FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
     // Pass all uncaught errors to Firebase.Crashlytics.
     FlutterError.onError = handleFlutterError;
@@ -41,20 +41,23 @@ class Crashlytics with Service {
 
   void handleFlutterError(FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
-    Firebase.Crashlytics.instance.recordFlutterError(details);
+    GoogleFirebase.FirebaseCrashlytics.instance.recordFlutterError(details);
   }
 
   void handleZoneError(dynamic exception, StackTrace stack) {
     print(exception);
-    Firebase.Crashlytics.instance.recordError(exception, stack);
+    GoogleFirebase.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
   void recordError(dynamic exception, StackTrace stack) {
     print(exception);
-    Firebase.Crashlytics.instance.recordError(exception, stack);
+    GoogleFirebase.FirebaseCrashlytics.instance.recordError(exception, stack);
   }
 
   void log(String message) {
-    Firebase.Crashlytics.instance.log(message);
+    GoogleFirebase.FirebaseCrashlytics.instance.log(message);
   }
+
+  @override
+  Set<Service> get serviceDependsOn =>  Set.from([FirebaseService()]);
 }

@@ -415,19 +415,6 @@ class Storage with Service {
   }
 
   //////////////////
-  // Location Services
-
-  static const String locationServicesPermisionRequestedKey  = 'location_services_permision_requested';
-
-  bool get locationServicesPermisionRequested {
-    return _getBoolWithName(locationServicesPermisionRequestedKey);
-  }
-
-  set locationServicesPermisionRequested(bool value) {
-    _setBoolWithName(locationServicesPermisionRequestedKey, value);
-  }
-
-  //////////////////
   // Favorites
 
   static const String favoritesKey  = 'user_favorites_list';
@@ -613,6 +600,39 @@ class Storage with Service {
 
   set voterHiddenForPeriod(bool value) {
     _setBoolWithName(_voterHiddenForPeriodKey, value);
+  }
+
+  /////////////
+  // Http Proxy
+
+  static const String _httpProxyEnabledKey = 'http_proxy_enabled';
+
+  bool get httpProxyEnabled {
+    return _getBoolWithName(_httpProxyEnabledKey, defaultValue: false);
+  }
+
+  set httpProxyEnabled(bool value) {
+    _setBoolWithName(_httpProxyEnabledKey, value);
+  }
+
+  static const String _httpProxyHostKey = 'http_proxy_host';
+
+  String get httpProxyHost {
+    return _getStringWithName(_httpProxyHostKey);
+  }
+
+  set httpProxyHost(String value) {
+    _setStringWithName(_httpProxyHostKey, value);
+  }
+
+  static const String _httpProxyPortKey = 'http_proxy_port';
+
+  String get httpProxyPort {
+    return _getStringWithName(_httpProxyPortKey);
+  }
+
+  set httpProxyPort(String value) {
+    _setStringWithName(_httpProxyPortKey, value);
   }
 
   /////////////

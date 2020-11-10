@@ -177,14 +177,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Container(
       color: Styles().colors.fillColorPrimary,
       padding: EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        children: <Widget>[
-          _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
-          Container(width: 24,),
-          _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
-          Container(width: 24,),
-          _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: <Widget>[
+            _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
+            Container(width: 24,),
+            _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
+            Container(width: 24,),
+            _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
+          ],
+        )
       ),
     );
   }

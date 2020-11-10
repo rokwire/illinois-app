@@ -1516,6 +1516,7 @@
 
 	"widget.id_card.header.title": "Illini ID",
 	"widget.id_card.header.button.close.title": "关闭",
+	"widget.id_card.label.update_i_card": "Update your i-card",
 	"widget.buss_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
 	"widget.card.label.expires.title": "卡过期",
@@ -1537,14 +1538,6 @@
 	"model.groups.member.status.inactive": "不活躍",
 	"model.groups.member.status.officer": "官",
 	"model.groups.member.status.unknown": "未知",
-
-	"model.user.role.student.title": "學生",
-	"model.user.role.visitor.title": "遊客",
-	"model.user.role.fan.title": "田徑迷",
-	"model.user.role.employee.title": "僱員",
-	"model.user.role.alumni.title": "校友",
-	"model.user.role.parent.title": "父母",
-	"model.user.role.resident.title": "居民",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

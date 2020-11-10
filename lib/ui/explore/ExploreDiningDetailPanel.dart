@@ -25,6 +25,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:location/location.dart' as Core;
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -439,14 +440,16 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                       Padding(
                         padding: EdgeInsets.only(right: 10),
                         child:Image.asset('images/icon-time.png'),),
-                      FilterSelectorWidget(
-                        label: displayTime,
-                        labelFontSize: 16,
-                        labelFontFamily: Styles().fontFamilies.bold,
-                        padding: EdgeInsets.symmetric(vertical: 5),
-                        visible: true,
-                        active: _diningWorktimeExpanded,
-                        onTap: _onDiningWorktimeTapped,
+                      Expanded(child:
+                        ScalableFilterSelectorWidget(
+                          label: displayTime,
+                          labelFontSize: 16,
+                          labelFontFamily: Styles().fontFamilies.bold,
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          visible: true,
+                          active: _diningWorktimeExpanded,
+                          onTap: _onDiningWorktimeTapped,
+                        )
                       )
                     ],
                   )),
@@ -480,6 +483,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 Semantics(container:true, child:
                   Row(
                     children: <Widget>[
+                      Expanded(child:
                       Text(meal,
                         textAlign: TextAlign.start,
                         style: TextStyle(
@@ -487,7 +491,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                             fontSize: 15,
                             color: Styles().colors.textBackground
                         ),
-                      ),
+                      ),),
                       Expanded(
                         child: Semantics( excludeSemantics: true, label: timeHint,
                           child: Text(mealDisplayTime,
@@ -549,7 +553,6 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
           dining.exploreLongDescription,
-          bodyPadding: EdgeInsets.all(0),
         ));
   }
 
@@ -807,6 +810,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
               child: Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 2,
                     child: Text(Localization().getStringEx("widget.food_detail.label.menu.title", "Menu"),
                       style: TextStyle(
                         fontFamily: Styles().fontFamilies.bold,
@@ -815,37 +819,42 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                       ),
                     ),
                   ),
-                  Semantics(
-                    label: hasFoodFilterApplied
-                        ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
-                        : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
-                    hint: hasFoodFilterApplied
-                        ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
-                        : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", ""),
-                    button: false,
-                    child: GestureDetector(
-                      onTap: _onFoodFilersTapped,
-                      child: Container(
-                        child: Row(
-                          children: <Widget>[
-                            Text(hasFoodFilterApplied
-                                ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
-                                : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                  color: Styles().colors.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies.regular,
-                                  fontSize: 16
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 4),
-                              child: Image.asset('images/chevron-right.png'),
-                            )
-                          ],
+                  Expanded(
+                    flex: 5,
+                    child:
+                    Semantics(
+                      label: hasFoodFilterApplied
+                          ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
+                          : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
+                      hint: hasFoodFilterApplied
+                          ? Localization().getStringEx("widget.food_detail.button.filters_applied.hint", "")
+                          : Localization().getStringEx("widget.food_detail.button.filters_empty.hint", ""),
+                      button: false,
+                      child: GestureDetector(
+                        onTap: _onFoodFilersTapped,
+                        child: Container(
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(child:
+                              Text(hasFoodFilterApplied
+                                  ? Localization().getStringEx("widget.food_detail.button.filters_applied.title", "Food Filters Applied")
+                                  : Localization().getStringEx("widget.food_detail.button.filters_empty.title", "Add Food Filters"),
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color: Styles().colors.fillColorPrimary,
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: 16
+                                ),
+                              )),
+                              Padding(
+                                padding: EdgeInsets.only(left: 4),
+                                child: Image.asset('images/chevron-right.png'),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   )
                 ],
               ),

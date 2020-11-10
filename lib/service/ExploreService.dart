@@ -41,22 +41,13 @@ class ExploreService /* with Service */ {
 
   ExploreService._internal();
 
-  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, DateTime startDate, DateTime startDateLimit,
-    DateTime endDate, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
+  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, EventTimeFilter eventFilter = EventTimeFilter.upcoming, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
     if(_enabled) {
-      if (startDate == null) {
-        startDate = DateTime.now();
-      }
       http.Response response;
-      DateTime startDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(startDate);
-      DateTime startDateLimitInGmt = AppDateTime().getUtcTimeFromDeviceTime(startDateLimit);
-      DateTime endDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(endDate);
       String queryParameters = _buildEventsQueryParameters(
           searchText,
           locationData,
-          startDateInGmt,
-          startDateLimitInGmt,
-          endDateInGmt,
+          eventFilter,
           categories,
           tags,
           recurrenceId,
@@ -75,40 +66,10 @@ class ExploreService /* with Service */ {
         //File cacheFile = File(cacheFilePath);
         //cacheFile.writeAsString(responseBody, flush: true);
         List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, nowUtc: startDateInGmt);
+        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: excludeRecurring, eventFilter: eventFilter);
         return events;
       } else {
         Log.e('Failed to load events');
-        Log.e(responseBody);
-      }
-    }
-    return null;
-  }
-
-  Future<List<Event>> loadSuperEventSubEvents(String superEventId) async {
-    if(_enabled) {
-      if (AppString.isStringEmpty(superEventId)) {
-        return null;
-      }
-      DateTime nowUtc = DateTime.now().toUtc();
-      String dateTimeFormatted = AppDateTime().formatDateTime(nowUtc, ignoreTimeZone: true);
-      http.Response response;
-      try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-            '${Config().eventsOrConvergeUrl}?superEventId=$superEventId&startDate=$dateTimeFormatted', auth: NetworkAuth.App) : null;
-      } catch (e) {
-        Log.e('Failed to retrieve super event with id: $superEventId');
-        Log.e(e.toString());
-        return null;
-      }
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      if ((response != null) && (responseCode >= 200 && responseCode <= 300)) {
-        List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> subEvents = await _buildEvents(eventsJsonList: jsonList);
-        return subEvents;
-      } else {
-        Log.e('Failed to retrieve sub events for super event with id: $superEventId');
         Log.e(responseBody);
       }
     }
@@ -170,9 +131,9 @@ class ExploreService /* with Service */ {
         idsBuffer.write('id=$eventId&');
       });
       String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
-      DateTime startDateInGmt = AppDateTime().getUtcTimeFromDeviceTime(DateTime.now());
-      String dateFormatted = AppDateTime().formatDateTime(startDateInGmt, ignoreTimeZone: true);
-      String dateTimeQueryParam = '&startDate=$dateFormatted';
+      EventTimeFilter upcomingFilter = EventTimeFilter.upcoming;
+      String timeQueryParams = _constructEventTimeFilterParams(upcomingFilter);
+      String dateTimeQueryParam = '&$timeQueryParams';
       http.Response response;
       String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
       try {
@@ -186,7 +147,7 @@ class ExploreService /* with Service */ {
       String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
         List<dynamic> jsonList = AppJson.decode(responseBody);
-        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, nowUtc: startDateInGmt);
+        List<Event> events = await _buildEvents(eventsJsonList: jsonList, excludeRecurringEvents: false, eventFilter: upcomingFilter);
         return events;
       } else {
         Log.e('Failed to load events by ids');
@@ -266,9 +227,7 @@ class ExploreService /* with Service */ {
     return null;
   }
 
-  String _buildEventsQueryParameters(String searchText, Core.LocationData locationData,
-      DateTime startDate, DateTime startDateLimit, DateTime endDate, Set<String> categories, Set<String> tags,
-      int recurrenceId, int limit) {
+  String _buildEventsQueryParameters(String searchText, Core.LocationData locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
 
     String queryParameters = "";
 
@@ -285,25 +244,10 @@ class ExploreService /* with Service */ {
       queryParameters += 'latitude=$lat&longitude=$lng&radius=$radius&';
     }
 
-    ///StartDate
-    if (startDate != null) {
-      String startDateFormatted = AppDateTime().formatDateTime(
-          startDate, ignoreTimeZone: true);
-      queryParameters += 'startDate=$startDateFormatted&';
-    }
-
-    ///StartDateLimit
-    if (startDateLimit != null) {
-      String startDateLimitFormatted = AppDateTime().formatDateTime(
-          startDateLimit, ignoreTimeZone: true);
-      queryParameters += 'startDateLimit=$startDateLimitFormatted&';
-    }
-
-    ///End Date
-    if (endDate != null) {
-      String endDateFormatted = AppDateTime().formatDateTime(
-          endDate, ignoreTimeZone: true);
-      queryParameters += 'endDate=$endDateFormatted&';
+    /// Time Filter
+    String timeParams = _constructEventTimeFilterParams(eventTimeFilter);
+    if(timeParams != null){
+      queryParameters += "$timeParams&";
     }
 
     ///User Roles
@@ -351,6 +295,48 @@ class ExploreService /* with Service */ {
     return queryParameters;
   }
 
+  String _constructEventTimeFilterParams(EventTimeFilter eventFilter){
+    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+
+    switch (eventFilter) {
+      case EventTimeFilter.today:{
+          DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59);
+          String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+          String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+          return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+        }
+      case EventTimeFilter.thisWeekend:{
+        int currentWeekDay = nowUni.weekday;
+        DateTime weekendStartDateTime = DateTime(nowUni.year, nowUni.month, nowUni.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
+        DateTime startDate = nowUni.isBefore(weekendStartDateTime) ? weekendStartDateTime : nowUni;
+        DateTime endDate = DateTime(nowUni.year, nowUni.month, nowUni.day, 23, 59, 59)
+            .add(Duration(days: (7 - currentWeekDay)));
+        String formattedStartDate = AppDateTime().formatDateTime(startDate, ignoreTimeZone: true);
+        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+      }
+      case EventTimeFilter.next7Day:{
+        DateTime endDate = nowUni.add(Duration(days: 6));
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+      }
+      case EventTimeFilter.next30Days:{
+        DateTime next = nowUni.add(Duration(days: 30));
+        DateTime endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        String formattedEndDate = AppDateTime().formatDateTime(endDate, ignoreTimeZone: true);
+        return "startDate.lte=$formattedEndDate&endDate.gte=$formattedStartDate";
+      }
+      case EventTimeFilter.upcoming:{
+        String formattedStartDate = AppDateTime().formatDateTime(nowUni, ignoreTimeZone: true);
+        return "endDate.gte=$formattedStartDate";
+      }
+    }
+
+    return null;
+  }
+
   String _constructSearchParams(String searchInput) {
     String param = "";
     RegExp regExp = new RegExp("\\s+");
@@ -361,7 +347,7 @@ class ExploreService /* with Service */ {
     return param;
   }
 
-  Future<List<Event>> _buildEvents({List<dynamic> eventsJsonList, bool excludeRecurringEvents = true, DateTime nowUtc}) async {
+  Future<List<Event>> _buildEvents({List<dynamic> eventsJsonList, bool excludeRecurringEvents = true, EventTimeFilter eventFilter}) async {
     if (AppCollection.isCollectionEmpty(eventsJsonList)) {
       return null;
     }
@@ -391,7 +377,7 @@ class ExploreService /* with Service */ {
             addEventToList = false;
           }
         } else if(event.isSuperEvent) {
-          await _buildEventsForSuperEvent(event, nowUtc);
+          await _buildEventsForSuperEvent(event, eventFilter);
         }
         if (addEventToList) {
           events.add(event);
@@ -408,25 +394,23 @@ class ExploreService /* with Service */ {
     return events;
   }
 
-  Future<void> _buildEventsForSuperEvent(Event superEvent, DateTime nowUtc) async {
+  Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter eventFilter) async {
     List<Map<String, dynamic>> subEventsMap = superEvent.subEventsMap;
     if (AppCollection.isCollectionEmpty(subEventsMap)) {
+      Log.e('Super event does not contain sub events!');
       return;
     }
-    StringBuffer idsBuffer = StringBuffer();
-    subEventsMap.forEach((subEventMap) {
-      String id = subEventMap['id'];
-      idsBuffer.write('id=$id&');
-    });
-    String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
-    String dateTimeQueryParam = '';
-    if (nowUtc == null) {
-      nowUtc = DateTime.now().toUtc();
+    String superEventId = superEvent?.id;
+    if (AppString.isStringEmpty(superEventId)) {
+      Log.e('Super event has no id!');
+      return;
     }
-    String dateFormatted = AppDateTime().formatDateTime(nowUtc, ignoreTimeZone: true);
-    dateTimeQueryParam = '&startDate=$dateFormatted';
+    String queryParameters = '?superEventId=$superEventId';
+    String dateTimeQueryParam = _constructEventTimeFilterParams(eventFilter);
+    if (AppString.isStringNotEmpty(dateTimeQueryParam)) {
+      queryParameters += '&$dateTimeQueryParam';
+    }
     http.Response response;
-    String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
     try {
       response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
           '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
@@ -439,17 +423,22 @@ class ExploreService /* with Service */ {
       return;
     }
     String responseBody = response.body;
-    List<dynamic> subEventsJsonList = AppJson.decode(responseBody);
-    for (Map<String, dynamic> subEventJson in subEventsMap) {
-      String id = subEventJson['id'];
-      dynamic eventJson = subEventsJsonList?.firstWhere((jsonEntry) => id == jsonEntry['id'], orElse: () => print('No matching sub event')) ?? null;
-      if (eventJson != null) {
-        Event event = Event.fromJson(eventJson);
-        event.track = subEventJson['track'];
-        if (true == subEventJson['isFeatured']) {
-          superEvent.addFeaturedEvent(event);
+    List<dynamic> subEventsJsonList = AppJson.decodeList(responseBody);
+    if (AppCollection.isCollectionNotEmpty(subEventsJsonList)) {
+      for (dynamic eventJson in subEventsJsonList) {
+        String id = eventJson['id'];
+        Map<String, dynamic> subEventJson = subEventsMap.firstWhere((jsonEntry) => (id == jsonEntry['id']), orElse: () {
+          print('No matching sub event');
+          return null;
+        });
+        if (subEventJson != null) {
+          Event event = Event.fromJson(eventJson);
+          event.track = subEventJson['track'];
+          if (true == subEventJson['isFeatured']) {
+            superEvent.addFeaturedEvent(event);
+          }
+          superEvent.addSubEvent(event);
         }
-        superEvent.addSubEvent(event);
       }
     }
   }

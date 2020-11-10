@@ -44,6 +44,7 @@ class ExpandableTextState extends State<ExpandableText> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         TextPainter textPainter = TextPainter(
+          textScaleFactor: MediaQuery.of(context).textScaleFactor,
           text: TextSpan(
             text: "...",
             style: widget.style,
@@ -69,6 +70,7 @@ class ExpandableTextState extends State<ExpandableText> {
           return Column(
             children: <Widget>[
               RichText(
+                textScaleFactor: MediaQuery.of(context).textScaleFactor,
                 softWrap: true,
                 overflow: TextOverflow.clip,
                 text: TextSpan(

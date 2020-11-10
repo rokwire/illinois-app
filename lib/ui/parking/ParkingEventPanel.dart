@@ -23,7 +23,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -94,20 +94,27 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          CircularProgressIndicator(),
-                          Container(height: 5,),
-                          Text(
-                            Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait..."),
-                            style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
-                              fontSize: 16,
-                              color: Styles().colors.mediumGray,
-                            ),
-                          )
-                        ],
+                      Expanded( child:
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            CircularProgressIndicator(),
+                            Container(height: 5,),
+                            Row(children:[
+                              Expanded(child:
+                                Text(
+                                  Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait..."),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: 16,
+                                    color: Styles().colors.mediumGray,
+                                  ),
+                                )
+                              )
+                            ])
+                          ],
+                        )
                       )
                     ],
                   ),
@@ -171,7 +178,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
 class _ParkingLotWidget extends StatefulWidget {
   final ParkingLot inventory;
 
-  _ParkingLotWidget({Key key, this.inventory});
+  _ParkingLotWidget({Key key, this.inventory}) : super(key: key);
 
   @override
   _ParkingLotWidgetState createState() => _ParkingLotWidgetState();
@@ -208,6 +215,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
     return Semantics(container: true, child: Container(color: Colors.white, child: Row(
       children: <Widget>[
         Expanded(
+          flex: 5,
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Column(
@@ -241,17 +249,18 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
             ),
           ),
         ),
-        Semantics(explicitChildNodes: true, child: Visibility(
-          visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 16), child: RoundedButton(
+        Expanded(
+          flex: 3,
+          child: Semantics(explicitChildNodes: true, child: Visibility(
+          visible: directionsVisible, child: Padding(padding: EdgeInsets.only(right: 8), child: ScalableRoundedButton(
             label: Localization().getStringEx('panel.parking_lots.button.directions.title', 'Directions'),
             hint: Localization().getStringEx('panel.parking_lots.button.directions.hint', ''),
             backgroundColor: Colors.white,
-            height: 32,
             fontSize: 16.0,
             textColor: Styles().colors.fillColorPrimary,
             borderColor: Styles().colors.fillColorSecondary,
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            onTap: _onTapDirections),),)
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            onTap: _onTapDirections),),))
         )
       ],
     ),));

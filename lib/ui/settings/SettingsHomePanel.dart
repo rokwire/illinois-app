@@ -35,8 +35,8 @@ import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -131,7 +131,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
     }
 
-    if (!kReleaseMode) {
+    if (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
     }
 
@@ -144,7 +144,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         context: context,
         titleWidget: _DebugContainer(
             child: Container(
-          height: 40,
+//          height: 40,
           child: Padding(
             //PS I know it is ugly..
             padding: EdgeInsets.only(top: 10),
@@ -202,6 +202,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    Expanded(child:
                     Text(
                       Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
                       textAlign: TextAlign.start,
@@ -209,7 +210,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                           color: Styles().colors.white,
                           fontSize: 20,
                           fontFamily: Styles().fontFamilies.bold),
-                    ),
+                    )),
                     Image.asset("images/group-8.png", excludeFromSemantics: true,),
                   ],),
               ),
@@ -276,6 +277,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               ),
             )),);
           contentList.add(RibbonButton(
+            height: null,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
@@ -298,6 +300,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               ),
             )),);
           contentList.add(RibbonButton(
+            height: null,
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.title", "Verify Your Phone Number"),
@@ -345,6 +348,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       
       if (code == 'roles') {
         customizationOptions.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.role.title", "Who you are"),
@@ -352,6 +356,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'interests') {
         customizationOptions.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.manage_interests.title", "Manage your interests"),
@@ -359,6 +364,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'food_filters') {
         customizationOptions.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.customizations.food_filters.title", "Food filters"),
@@ -432,6 +438,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'connect') {
         contentList.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.net_id.button.connect", "Connect your NetID"),
@@ -439,6 +446,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.net_id.button.disconnect", "Disconnect your NetID"),
@@ -474,6 +482,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'verify') {
         contentList.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
@@ -481,6 +490,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
+            height: null,
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.disconnect","Disconnect your Phone",),
@@ -608,6 +618,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
       if (code == 'edit') {
         contentList.add(RibbonButton(
+          height: null,
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.edit_my_privacy.title", "Edit My Privacy"),
@@ -616,6 +627,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
       else if (code == 'statement') {
         contentList.add(RibbonButton(
+          height: null,
           borderRadius: borderRadius,
           border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
           label: Localization().getStringEx("panel.settings.home.privacy.privacy_statement.title", "Privacy Statement"),
@@ -693,7 +705,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          child: RoundedButton(
+          child: ScalableRoundedButton(
             label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
             hint: Localization().getStringEx("panel.settings.home.button.feedback.hint", ""),
             backgroundColor: Styles().colors.background,
@@ -748,7 +760,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget _buildDebug() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 24),
-      child: RoundedButton(
+      child: ScalableRoundedButton(
         label: Localization().getStringEx("panel.profile_info.button.debug.title", "Debug"),
         hint: Localization().getStringEx("panel.profile_info.button.debug.hint", ""),
         backgroundColor: Styles().colors.background,
