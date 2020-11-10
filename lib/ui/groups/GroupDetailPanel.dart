@@ -109,7 +109,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     });
 
-    Groups().loadGroupMembers(widget.groupId, status: GroupMemberStatus.officer).then((List<GroupMember> members) {
+    Groups().loadGroupMembers(widget.groupId, status: GroupMemberStatus.admin).then((List<GroupMember> members) {
       if (mounted) {
         setState(() {
           _groupOfficers = members;
