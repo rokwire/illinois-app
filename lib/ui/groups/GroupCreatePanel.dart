@@ -80,7 +80,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       _groupCategoeriesLoading = true;
     });
     Groups().categories.then((categories){
-      _groupCategories = categories;
+      setState(() {
+//        TMP: categories = ["Long Test1","Very Long Test2","Very very long Test3","Test4",];
+        _groupCategories = categories;
+      });
     }).whenComplete((){
       setState(() {
         _groupCategoeriesLoading = false;
@@ -129,7 +132,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildNameField(),
                             _buildNameError(),
                             _buildDescriptionField(),
+                            Container(height: 24,),
+                            Container(height: 1, color: Styles().colors.surfaceAccent,),
+                            Container(height: 24,),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
                             _buildCategoryDropDown(),
+                            Container(height: 24,),
+                            Container(height: 1, color: Styles().colors.surfaceAccent,),
+                            Container(height: 24,),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             _buildPrivacyDropDown(),
                         ],),)
 
@@ -221,11 +232,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildSectionTitle(title,null),
-          Text(
-            description,
-            style: TextStyle(color: Styles().colors.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
-          ),
+          _buildSectionTitle(title,description),
           Container(height: 5,),
           Container(
             height: 114,
@@ -241,7 +248,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     excludeSemantics: true,
                     child: TextField(
                       controller: _eventDescriptionController,
-                      onChanged: onNameChanged,
                       maxLines: 100,
                       decoration: InputDecoration(border: InputBorder.none,),
                       style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
@@ -287,12 +293,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Column(children: <Widget>[
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child:  _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY SETTINGS"),null)),
+          child:  _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY"),null)),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:  GroupDropDownButton(
               emptySelectionText: Localization().getStringEx("panel.groups_create.privacy.hint.default","Select privacy setting.."),
-              buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy oprions"),
+              buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy options"),
               items: _groupPrivacyOptions,
               initialSelectedValue: _group.privacy,
               constructDescription:
@@ -373,7 +379,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   // Common
   Widget _buildSectionTitle(String title, String description){
     return Container(
-      padding: EdgeInsets.only(bottom: 8, top:24),
+      padding: EdgeInsets.only(bottom: 8, top:16),
       child:
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,6 +407,33 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     );
   }
+
+  Widget _buildTitle(String title, String iconRes){
+    return
+      Container(
+        padding: EdgeInsets.only(left: 16),
+        child:
+          Semantics(
+            label: title,
+            hint: title,
+            header: true,
+            excludeSemantics: true,
+            child:
+            Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.asset(iconRes, color: Styles().colors.fillColorSecondary,),
+              Expanded(child:
+              Container(
+                  padding: EdgeInsets.only(left: 14, right: 4),
+                  child:Text(
+                    title,
+                    style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold,),
+                  )
+              ))
+      ],)));
+  }
+
   void onNameChanged(String name){
     _group.title = name;
      validateName(name);

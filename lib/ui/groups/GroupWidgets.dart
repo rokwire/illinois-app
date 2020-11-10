@@ -115,12 +115,14 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
   }
 
   Widget _buildDropDownItem(String title, String description, bool isSelected){
-    return Container(
-        padding: EdgeInsets.symmetric(vertical: 14),
-        color: Styles().colors.white,
+    return
+      Container(
+          color: (Colors.white),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            Container(height: 20,),
             Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,8 +140,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                         ),
                       )),
                   isSelected
-                      ? Image.asset('images/deselected-dark.png')
-                      : Container()
+                      ? Image.asset("images/checkbox-selected.png")
+                      : Image.asset("images/oval-orange.png")
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():
@@ -149,6 +151,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                 style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
               ),
             ),
+            Container(height: 20,),
+            Container(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,)
           ],)
     );
   }
