@@ -33,12 +33,12 @@ class GroupCreatePanel extends StatefulWidget {
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _eventTitleController = TextEditingController();
+  final _eventDescriptionController = TextEditingController();
 
   Group _group;
 
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
-  List<String> _groupTypes;
   LinkedHashSet<String> _groupsNames;
 
   bool _nameIsValid = true;
@@ -53,7 +53,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _initGroupNames();
     _initPrivacyData();
     _initCategories();
-    _initTypes();
     super.initState();
   }
 
@@ -89,13 +88,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     });
   }
 
-  void _initTypes(){
-    Groups().types.then((types){
-      setState(() {
-        _groupTypes = types;
-      });
-    });
-  }
   //
 
   @override
@@ -136,8 +128,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           child: Column(children: <Widget>[
                             _buildNameField(),
                             _buildNameError(),
+                            _buildDescriptionField(),
                             _buildCategoryDropDown(),
-                            _buildTypeDropDown(),
                             _buildPrivacyDropDown(),
                         ],),)
 
@@ -216,6 +208,52 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     ));
   }
   //
+  //Description
+  //Name
+  Widget _buildDescriptionField() {
+    String title = Localization().getStringEx("panel.groups_create.description.title", "DESCRIPTION");
+    String description = Localization().getStringEx("panel.groups_create.description.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String fieldTitle = Localization().getStringEx("panel.groups_create.description.field", "DESCRIPTION FIELD");
+    String fieldHint = Localization().getStringEx("panel.groups_create.description.field.hint", "");
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _buildSectionTitle(title,null),
+          Text(
+            description,
+            style: TextStyle(color: Styles().colors.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
+          ),
+          Container(height: 5,),
+          Container(
+            height: 114,
+            padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            child:
+            Row(children: [
+              Expanded(child:
+                Semantics(
+                    label: fieldTitle,
+                    hint: fieldHint,
+                    textField: true,
+                    excludeSemantics: true,
+                    child: TextField(
+                      controller: _eventDescriptionController,
+                      onChanged: onNameChanged,
+                      maxLines: 100,
+                      decoration: InputDecoration(border: InputBorder.none,),
+                      style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                    )),
+            )],)
+          ),
+        ],
+      ),
+
+    );
+  }
+  //
 
   //Category
   Widget _buildCategoryDropDown() {
@@ -237,31 +275,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   Log.d("Selected Category: $value");
                 });
               }
-            )
-          ],
-        ));
-  }
-  //
-
-  //Types
-  Widget _buildTypeDropDown() {
-    return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSectionTitle(Localization().getStringEx("panel.groups_create.type.title", "GROUP TYPE"),
-              Localization().getStringEx("panel.groups_create.type.description", "Which type best represents your group?"),),
-            GroupDropDownButton(
-                emptySelectionText: Localization().getStringEx("panel.groups_create.type.default_text", "Select type.."),
-                buttonHint: Localization().getStringEx("panel.groups_create.type.hint", "Double tap to show types options"),
-                items: _groupTypes,
-                onValueChanged: (value) {
-                  setState(() {
-                    _group.type = value;
-                  Log.d("Selected Type: $value");
-                  });
-                }
             )
           ],
         ));
