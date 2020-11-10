@@ -111,22 +111,20 @@ class Groups /* with Service */ {
 
   // Groups APIs
 
-  Future<List<Group>> loadGroups({String category, String type}) async {
-    List<Group> result;
-    List<dynamic> json = (await _sampleJson)['groups'];
-    if (json != null) {
-      result = [];
-      for (dynamic jsonEntry in json) {
-        Group group = Group.fromJson(jsonEntry);
-        if ((group != null) &&
-            ((category == null) || (category == group.category)) &&
-            ((type == null) || (type == group.category)))
-        {
-          result.add(group);
-        }
+  Future<List<GroupDetail>> loadGroups({String category, String type}) async {
+    String url = '${Config().groupsUrl}/groups';
+    try {
+      Response response = await Network().get(url, auth: NetworkAuth.App,);
+      int responseCode = response?.statusCode ?? -1;
+      String responseBody = response?.body;
+      List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+      if(AppCollection.isCollectionNotEmpty(groupsJson)){
+        return groupsJson.map((e) => GroupDetail.fromJson(e)).toList();
       }
+    } catch (e) {
+      print(e);
     }
-    return result;
+    return [];
   }
 
   Future<GroupDetail>loadGroupDetail(String groupId) async {
@@ -203,7 +201,7 @@ class Groups /* with Service */ {
     return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
   }
 
-  Future<bool> acceptMembership(String groupId, String userUin, bool decision) {
+  Future<bool> acceptMembership(String groupId, String userId, bool decision) {
     return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
   }
 

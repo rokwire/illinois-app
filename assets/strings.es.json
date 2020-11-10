@@ -1534,10 +1534,10 @@
     "model.explore.time.at": "a",
     "model.explore.time.all_day": "Todo el dia",
 
-    "model.groups.member.status.current": "Actual",
-    "model.groups.member.status.inactive": "Inactivo",
-    "model.groups.member.status.officer": "Oficial",
-    "model.groups.member.status.unknown": "Desconocido",
+    "model.groups.member.status.pending": "Pending",
+    "model.groups.member.status.member": "Memeber",
+    "model.groups.member.status.admin": "Admin",
+    "model.groups.member.status.unknown": "Unknown",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",

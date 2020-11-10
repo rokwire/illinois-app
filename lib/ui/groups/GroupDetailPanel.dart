@@ -531,7 +531,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ],)
       ),
-    );;
+    );
   }
 
   Widget _buildAbout() {

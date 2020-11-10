@@ -98,8 +98,8 @@ class GroupDetail extends Group {
     super._initFromJson(json);
     try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
     try { description     = json['description'];  } catch(e) { print(e.toString()); }
-    try { imageURL        = json['imageURL'];     } catch(e) { print(e.toString()); }
-    try { webURL          = json['webURL'];       } catch(e) { print(e.toString()); }
+    try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
+    try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
     try { membersCount    = json['membersCount']; } catch(e) { print(e.toString()); }
     try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
     try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
@@ -172,7 +172,7 @@ String groupPrivacyToString(GroupPrivacy value) {
 // Member
 
 class Member {
-	String       uin;
+	String       id;
 	String       name;
 	String       email;
 	String       photoURL;
@@ -187,14 +187,14 @@ class Member {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { uin         = json['uin'];      } catch(e) { print(e.toString()); }
+    try { id          = json['id'];      } catch(e) { print(e.toString()); }
     try { name        = json['name'];     } catch(e) { print(e.toString()); }
     try { email       = json['email'];    } catch(e) { print(e.toString()); }
-    try { photoURL    = json['photoURL']; } catch(e) { print(e.toString()); }
+    try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(Member other) {
-    uin         = other?.uin;
+    id          = other?.id;
     name        = other?.name;
     email       = other?.email;
     photoURL    = other?.photoURL;
@@ -210,23 +210,23 @@ class Member {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['uin']                = uin;
-    json['name']               = name;
-    json['email']              = email;
-    json['photoURL']           = photoURL;
+    json['id']                  = id;
+    json['name']                = name;
+    json['email']               = email;
+    json['photo_url']           = photoURL;
     return json;
   }
 
   bool operator == (dynamic o) {
     return (o is Member) &&
-           (o.uin == uin) &&
+           (o.id == id) &&
            (o.name == name) &&
            (o.email == email) &&
            (o.photoURL == photoURL);
   }
 
   int get hashCode {
-    return (uin?.hashCode ?? 0) ^
+    return (id?.hashCode ?? 0) ^
            (name?.hashCode ?? 0) ^
            (email?.hashCode ?? 0) ^
            (photoURL?.hashCode ?? 0);
@@ -329,18 +329,18 @@ class GroupPendingMember extends Member {
 //////////////////////////////
 // GroupMemberStatus
 
-enum GroupMemberStatus { current, inactive, officer }
+enum GroupMemberStatus { pending, member, admin }
 
 GroupMemberStatus groupMemberStatusFromString(String value) {
   if (value != null) {
-    if (value == 'current') {
-      return GroupMemberStatus.current;
+    if (value == 'pending') {
+      return GroupMemberStatus.pending;
     }
-    else if (value == 'inactive') {
-      return GroupMemberStatus.inactive;
+    else if (value == 'member') {
+      return GroupMemberStatus.member;
     }
-    else if (value == 'officer') {
-      return GroupMemberStatus.officer;
+    else if (value == 'admin') {
+      return GroupMemberStatus.admin;
     }
   }
   return null;
@@ -348,14 +348,14 @@ GroupMemberStatus groupMemberStatusFromString(String value) {
 
 String groupMemberStatusToString(GroupMemberStatus value) {
   if (value != null) {
-    if (value == GroupMemberStatus.current) {
-      return 'current';
+    if (value == GroupMemberStatus.pending) {
+      return 'pending';
     }
-    else if (value == GroupMemberStatus.inactive) {
-      return 'inactive';
+    else if (value == GroupMemberStatus.member) {
+      return 'member';
     }
-    else if (value == GroupMemberStatus.officer) {
-      return 'officer';
+    else if (value == GroupMemberStatus.admin) {
+      return 'admin';
     }
   }
   return null;
@@ -363,14 +363,14 @@ String groupMemberStatusToString(GroupMemberStatus value) {
 
 String groupMemberStatusToDisplayString(GroupMemberStatus value) {
   if (value != null) {
-    if (value == GroupMemberStatus.current) {
-      return Localization().getStringEx('model.groups.member.status.current', 'Current');
+    if (value == GroupMemberStatus.pending) {
+      return Localization().getStringEx('model.groups.member.status.pending', 'Pending');
     }
-    else if (value == GroupMemberStatus.inactive) {
-      return Localization().getStringEx('model.groups.member.status.inactive', 'Inactive');
+    else if (value == GroupMemberStatus.member) {
+      return Localization().getStringEx('model.groups.member.status.member', 'Member');
     }
-    else if (value == GroupMemberStatus.officer) {
-      return Localization().getStringEx('model.groups.member.status.officer', 'Officer');
+    else if (value == GroupMemberStatus.admin) {
+      return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
     }
   }
   return null;

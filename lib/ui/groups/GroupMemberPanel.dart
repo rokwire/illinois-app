@@ -124,23 +124,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildHeading(){
-    String memberStatus;
-    if (_member?.status == GroupMemberStatus.officer) {
-      memberStatus = _member?.officerTitle;
-      if ((memberStatus == null) || (memberStatus.length == 0)) {
-        memberStatus = groupMemberStatusToDisplayString(GroupMemberStatus.officer);
-      }
-    }
-    else {
-      memberStatus = groupMemberStatusToDisplayString(_member?.status);
-      if ((memberStatus != null) && (0 < memberStatus.length)) {
-        memberStatus = "${memberStatus.toUpperCase()} MEMBER";
-      }
-    }
-    if ((memberStatus == null) || (memberStatus.length == 0)) {
-      memberStatus = "MEMBER";
-    }
-
     String memberDateAdded = (_member?.dateAdded != null) ? AppDateTime().formatDateTime(_member?.dateAdded, format: "MMMM dd") : null;
     String memberSince = (memberDateAdded != null) ? "Member since $memberDateAdded" : '';
 
@@ -174,7 +157,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildDetails(BuildContext context){
-    bool canAdmin = ((_member?.status != null) && (_member?.status != GroupMemberStatus.inactive));
+    bool canAdmin = ((_member?.status != null) && (_member?.status != GroupMemberStatus.admin));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[

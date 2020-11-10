@@ -1534,10 +1534,10 @@
 	"model.explore.time.at":"在",
 	"model.explore.time.all_day": "一整天",
 
-	"model.groups.member.status.current": "當前",
-	"model.groups.member.status.inactive": "不活躍",
-	"model.groups.member.status.officer": "官",
-	"model.groups.member.status.unknown": "未知",
+	"model.groups.member.status.pending": "Pending",
+	"model.groups.member.status.member": "Memeber",
+	"model.groups.member.status.admin": "Admin",
+	"model.groups.member.status.unknown": "Unknown",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

@@ -237,7 +237,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         _decision = decision;
       });
     }
-    Groups().acceptMembership(widget.groupDetail.id, widget.member.uin, decision).then((bool result) {
+    Groups().acceptMembership(widget.groupDetail.id, widget.member.id, decision).then((bool result) {
       if (mounted) {
         setState(() {
           _decision = null;
