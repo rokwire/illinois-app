@@ -30,8 +30,8 @@ import 'package:illinois/service/Styles.dart';
 
 class GroupMemberPanel extends StatefulWidget {
   final GroupMember member;
-  final GroupDetail groupDetail;
-  GroupMemberPanel({this.member, this.groupDetail});
+  final Group group;
+  GroupMemberPanel({this.member, this.group});
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
 }
 
@@ -62,7 +62,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         _updating = true;
       });
 
-      Groups().updateGroupMember(widget.groupDetail?.id, _member).then((GroupMember member) {
+      Groups().updateGroupMember(widget.group?.id, _member).then((GroupMember member) {
         if (mounted) {
           setState(() {
             _updating = false;
@@ -82,7 +82,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         _removing = true;
       });
 
-      Groups().updateGroupMember(widget.groupDetail?.id, _member).then((GroupMember member) {
+      Groups().updateGroupMember(widget.group?.id, _member).then((GroupMember member) {
         if (mounted) {
           setState(() {
             _removing = false;

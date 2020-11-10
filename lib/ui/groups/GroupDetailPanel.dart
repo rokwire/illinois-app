@@ -46,20 +46,20 @@ import 'GroupSettingsPanel.dart';
 
 enum _DetailTab { Events, About }
 
-class GroupDetailPanel extends StatefulWidget {
+class GroupPanel extends StatefulWidget {
 
   final String groupId;
 
-  GroupDetailPanel({this.groupId});
+  GroupPanel({this.groupId});
 
   @override
-  _GroupDetailPanelState createState() => _GroupDetailPanelState();
+  _GroupPanelState createState() => _GroupPanelState();
 }
 
-class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
+class _GroupPanelState extends State<GroupPanel> implements NotificationsListener {
 
-  GroupDetail        _groupDetail;
-  bool               _loadingGroupDetail;
+  Group              _group;
+  bool               _loadingGroup;
   List<GroupEvent>   _groupEvents;
   List<GroupMember>  _groupOfficers;
   Map<String, Event> _stepsEvents = Map<String, Event>();
@@ -75,7 +75,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get isPublic {
-    return _groupDetail?.privacy == GroupPrivacy.public;
+    return _group?.privacy == GroupPrivacy.public;
   }
 
   bool get isFavorite {
@@ -89,12 +89,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     NotificationService().subscribe(this, Groups.notifyUserMembershipUpdated);
     Groups().updateUserMemberships();
     
-    _loadingGroupDetail = true;
-    Groups().loadGroupDetail(widget.groupId).then((GroupDetail groupDetail){
+    _loadingGroup = true;
+    Groups().loadGroup(widget.groupId).then((Group group){
       if (mounted) {
         setState(() {
-          _loadingGroupDetail = false;
-          _groupDetail = groupDetail;
+          _loadingGroup = false;
+          _group = group;
           _loadMembershipStepEvents();
         });
       }
@@ -128,10 +128,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   Widget build(BuildContext context) {
     Widget content;
-    if (_loadingGroupDetail == true) {
+    if (_loadingGroup == true) {
       content = _buildLoadingContent();
     }
-    else if (_groupDetail != null) {
+    else if (_group != null) {
       content = _buildGroupContent();
     }
     else {
@@ -247,7 +247,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_groupDetail?.imageURL) ?  Positioned.fill(child:Image.network(_groupDetail?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -269,7 +269,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<Widget> commands = List<Widget>();
 
     String members;
-    int membersCount = _groupDetail?.membersCount ?? 0;
+    int membersCount = _group?.membersCount ?? 0;
     if (membersCount == 0) {
       members = 'No Members';
     }
@@ -302,8 +302,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     } else {
       String tags = "";
-      if (_groupDetail?.tags?.isNotEmpty ?? false) {
-        for (String tag in _groupDetail.tags) {
+      if (_group?.tags?.isNotEmpty ?? false) {
+        for (String tag in _group.tags) {
           if (0 < (tag?.length ?? 0)) {
             tags+=((tags.isNotEmpty? ", ": "") + tag ?? '');
           }
@@ -353,7 +353,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Padding(padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(children: <Widget>[
                     Expanded(child:
-                      Text(_groupDetail?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+                      Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
                     ),
                   ],),),
               (!_isMember)? Container():
@@ -382,7 +382,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   ),
                 ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
-                child: Text(_groupDetail?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
+                child: Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 32, color: Styles().colors.fillColorPrimary),),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(members,  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.textBackground, ),)
@@ -535,7 +535,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildAbout() {
-    String description = _groupDetail?.description ?? '';
+    String description = _group?.description ?? '';
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
@@ -589,7 +589,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRules() {
     List<Widget> content = [];
-    List<GroupMembershipStep> steps = _groupDetail?.membershipQuest?.steps;
+    List<GroupMembershipStep> steps = _group?.membershipQuest?.steps;
     if (steps != null) {
       for (int index = 0; index < steps.length; index++) {
         content.add(_MembershipStepCard(membershipStep: steps[index], stepsEvents:_stepsEvents, stepIndex: index,));
@@ -636,7 +636,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _loadMembershipStepEvents() {
     Set<String> stepEventIds = Set<String>();
-    List<GroupMembershipStep> steps = _groupDetail?.membershipQuest?.steps;
+    List<GroupMembershipStep> steps = _group?.membershipQuest?.steps;
     if (0 < (steps?.length ?? 0)) {
       for (GroupMembershipStep step in steps) {
         if (step.eventIds != null) {
@@ -713,7 +713,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onWebsite() {
-    String url = _groupDetail?.webURL;
+    String url = _group?.webURL;
     if (url != null) {
       launch(url);
     }
@@ -722,16 +722,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void onTapMembers(){
     Analytics().logPage(name: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupDetail: _groupDetail)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
 
   void onTapSettings(){
     Analytics().logPage(name: "Group Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(groupDetail: _groupDetail,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
   void _onAdminView() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdminPanel(groupDetail: _groupDetail, groupEvents: _groupEvents,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdminPanel(group: _group, groupEvents: _groupEvents,)));
   }
 
   void _onSocialFacebook() {
@@ -747,7 +747,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onMembershipRequest() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(groupDetail: _groupDetail)));    
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
   }
 
   void _onSwitchFavorite() {
@@ -856,10 +856,11 @@ class _EventCardState extends State<_EventCard>{
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Container(height: 32, width: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover),
-                ),
+                decoration: AppString.isStringNotEmpty(comment?.member?.photoURL)
+                    ? BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover))
+                    : null,
               ),
               Expanded(
                 flex: 5,

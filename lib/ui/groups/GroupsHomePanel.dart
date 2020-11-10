@@ -43,9 +43,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isGroupsLoading = false;
   bool get _isLoading => _isFilterLoading || _isGroupsLoading;
 
-  List<GroupDetail> _groups;
-  List<GroupDetail> _myGroups;
-  List<GroupDetail> _pendingGroups;
+  List<Group> _groups;
+  List<Group> _myGroups;
+  List<Group> _pendingGroups;
 
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
   String _selectedCategory;
@@ -91,7 +91,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _isGroupsLoading = true;
     });
     String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    Groups().loadGroups(category: selectedCategory).then((List<GroupDetail> groups){
+    Groups().loadGroups(category: selectedCategory).then((List<Group> groups){
       _groups = groups;
       _loadMyGroups();
       _loadPendingGroups();
@@ -320,7 +320,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Widget> widgets = List<Widget>();
       if(AppCollection.isCollectionNotEmpty(_myGroups)) {
         widgets.add(Container(height: 8,));
-        for (GroupDetail group in _myGroups) {
+        for (Group group in _myGroups) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup),
@@ -350,7 +350,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         )
       );
       widgets.add(Container(height: 8,));
-      for (GroupDetail group in _pendingGroups) {
+      for (Group group in _pendingGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup,),
@@ -389,7 +389,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(AppCollection.isCollectionNotEmpty(_groups)){
       List<Widget> widgets = List<Widget>();
       widgets.add(Container(height: 8,));
-      for(GroupDetail group in _groups){
+      for(Group group in _groups){
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: _GroupCard(group: group),
@@ -507,7 +507,7 @@ class _GroupTabButton extends StatelessWidget{
 
 enum _GroupCardDisplayType {myGroup, allGroups}
 class _GroupCard extends StatelessWidget{
-  final GroupDetail group;
+  final Group group;
   final _GroupCardDisplayType displayType;
   _GroupCard({@required this.group, this.displayType = _GroupCardDisplayType.allGroups});
 
@@ -640,7 +640,7 @@ class _GroupCard extends StatelessWidget{
 
   void _onTapCard(BuildContext context) {
     Analytics.instance.logSelect(target: "${group.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPanel(groupId: group.id)));
   }
 
   String get _membershipStatusText{

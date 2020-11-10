@@ -24,9 +24,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipRequestPanel extends StatefulWidget {
-  final GroupDetail groupDetail;
+  final Group group;
 
-  GroupMembershipRequestPanel({this.groupDetail});
+  GroupMembershipRequestPanel({this.group});
 
   @override
   _GroupMembershipRequestPanelState createState() =>
@@ -44,7 +44,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   void initState() {
     _focusNodes = List();
     _controllers = List();
-    _questions = widget.groupDetail?.membershipQuest?.questions ?? [];
+    _questions = widget.group?.membershipQuest?.questions ?? [];
     for (int index = 0; index < _questions.length; index++) {
       _controllers.add(TextEditingController());
       _focusNodes.add(FocusNode());
@@ -197,7 +197,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         _submitting = true;
       });
 
-      Groups().requestMembership(widget.groupDetail?.id, membershipRequest).then((bool result){
+      Groups().requestMembership(widget.group?.id, membershipRequest).then((bool result){
         if (mounted) {
           setState(() {
             _submitting = false;

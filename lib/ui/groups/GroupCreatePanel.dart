@@ -34,7 +34,7 @@ class GroupCreatePanel extends StatefulWidget {
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _eventTitleController = TextEditingController();
 
-  GroupDetail _groupDetail;
+  Group _group;
 
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
@@ -49,7 +49,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   void initState() {
-    _groupDetail = GroupDetail();
+    _group = Group();
     _initGroupNames();
     _initPrivacyData();
     _initCategories();
@@ -73,7 +73,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _initPrivacyData(){
     _groupPrivacyOptions = GroupPrivacy.values;
-    _groupDetail.privacy = _groupPrivacyOptions[0]; //default value Private
+    _group.privacy = _groupPrivacyOptions[0]; //default value Private
   }
 
   void _initCategories(){
@@ -233,7 +233,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               constructTitle: (item) => item,
               onValueChanged: (value) {
                 setState(() {
-                  _groupDetail.category = value;
+                  _group.category = value;
                   Log.d("Selected Category: $value");
                 });
               }
@@ -258,7 +258,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 items: _groupTypes,
                 onValueChanged: (value) {
                   setState(() {
-                    _groupDetail.type = value;
+                    _group.type = value;
                   Log.d("Selected Type: $value");
                   });
                 }
@@ -281,7 +281,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               emptySelectionText: Localization().getStringEx("panel.groups_create.privacy.hint.default","Select privacy setting.."),
               buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy oprions"),
               items: _groupPrivacyOptions,
-              initialSelectedValue: _groupDetail.privacy,
+              initialSelectedValue: _group.privacy,
               constructDescription:
                   (item) => item == GroupPrivacy.private?
               Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
@@ -293,7 +293,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
               onValueChanged: (value) {
                 setState(() {
-                  _groupDetail.privacy = value;
+                  _group.privacy = value;
                 });
               }
           )
@@ -340,7 +340,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {
       _creating = true;
     });
-    Groups().createGroup(_groupDetail).then((detail){
+    Groups().createGroup(_group).then((detail){
       if(detail!=null){
         //ok
         setState(() {
@@ -389,7 +389,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
   void onNameChanged(String name){
-    _groupDetail.title = name;
+    _group.title = name;
      validateName(name);
   }
 

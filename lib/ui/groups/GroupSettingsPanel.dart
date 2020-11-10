@@ -33,9 +33,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupSettingsPanel extends StatefulWidget {
-  final GroupDetail groupDetail;
+  final Group group;
   
-  GroupSettingsPanel({this.groupDetail});
+  GroupSettingsPanel({this.group});
 
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
 }
@@ -51,15 +51,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   bool _nameIsValid = true;
   bool _loading = false;
 
-  GroupDetail _groupDetail; // edit settings here until submit
+  Group _group; // edit settings here until submit
 
   @override
   void initState() {
-    _groupDetail = GroupDetail.fromOther(widget.groupDetail);
+    _group = Group.fromOther(widget.group);
     _initPrivacyData();
     _initCategories();
     _initTags();
-    _fillGroupDetails();
+    _fillGroups();
     super.initState();
   }
 
@@ -137,15 +137,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
-  void _fillGroupDetails(){
-    if(_groupDetail!=null){
+  void _fillGroups(){
+    if(_group!=null){
       //textFields
-      if(_groupDetail.title!=null)
-        _eventTitleController.text=_groupDetail.title;
-      if(_groupDetail.description!=null)
-        _eventDescriptionController.text=_groupDetail.description;
-      if(_groupDetail.webURL!=null)
-        _linkController.text = _groupDetail.webURL;
+      if(_group.title!=null)
+        _eventTitleController.text=_group.title;
+      if(_group.description!=null)
+        _eventDescriptionController.text=_group.description;
+      if(_group.webURL!=null)
+        _linkController.text = _group.webURL;
     }
   }
 
@@ -205,7 +205,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         )
     );
     if(_imageUrl!=null){
-      _groupDetail.imageURL = _imageUrl;
+      _group.imageURL = _imageUrl;
     }
     Log.d("Image Url: $_imageUrl");
   }
@@ -302,7 +302,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 excludeSemantics: true,
                 child: TextField(
                   controller: _eventDescriptionController,
-                  onChanged: (description){ _groupDetail.description = description;},
+                  onChanged: (description){ _group.description = description;},
                   maxLines: 64,
                   decoration: InputDecoration(
                     hintText: fieldTitle,
@@ -361,7 +361,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             color: Styles().colors.textBackground,
                             fontSize: 16,
                             fontFamily: Styles().fontFamilies.regular),
-                        onChanged: (link){ _groupDetail.webURL = link;},
+                        onChanged: (link){ _group.webURL = link;},
                       ),
                     ),
                   ),
@@ -410,12 +410,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             GroupDropDownButton(
                 emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
                 buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
-                initialSelectedValue: _groupDetail?.category,
+                initialSelectedValue: _group?.category,
                 items: _groupCategories,
                 constructTitle: (item) => item,
                 onValueChanged: (value) {
                   setState(() {
-                    _groupDetail?.category = value;
+                    _group?.category = value;
                     Log.d("Selected Category: $value");
                   });
                 }
@@ -476,7 +476,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   Widget _buildTagButton(String tag){
-    bool isSelected = _groupDetail?.tags?.contains(tag)??false;
+    bool isSelected = _group?.tags?.contains(tag)??false;
     return
       InkWell(
       child: Container(
@@ -501,15 +501,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void onTagTap(String tag){
-    if(_groupDetail!=null) {
-      if (_groupDetail.tags == null) {
-        _groupDetail.tags = new List();
+    if(_group!=null) {
+      if (_group.tags == null) {
+        _group.tags = new List();
       }
 
-      if (_groupDetail.tags.contains(tag)) {
-        _groupDetail.tags.remove(tag);
+      if (_group.tags.contains(tag)) {
+        _group.tags.remove(tag);
       } else {
-        _groupDetail.tags.add(tag);
+        _group.tags.add(tag);
       }
     }
       setState(() {});
@@ -531,7 +531,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
-                  initialSelectedValue: _groupDetail?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
+                  initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
                   constructDescription:
                       (item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
@@ -542,7 +542,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         Localization().getStringEx("panel.common.privacy_title.public",  "Public"),
                   onValueChanged: (value) {
                     setState(() {
-                      _groupDetail?.privacy = value;
+                      _group?.privacy = value;
                     });
                   }
               )
@@ -560,7 +560,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Membership
   Widget _buildMembershipLayout(){
-    int questionsCount = _groupDetail?.membershipQuest?.questions?.length ?? 0;
+    int questionsCount = _group?.membershipQuest?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
       "$questionsCount Questions" :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
@@ -631,24 +631,24 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapMembershipSteps(){
     Analytics.instance.logSelect(target: "Membership Steps");
-    if (_groupDetail.membershipQuest == null) {
-      _groupDetail.membershipQuest = GroupMembershipQuest();
+    if (_group.membershipQuest == null) {
+      _group.membershipQuest = GroupMembershipQuest();
     }
-    if (_groupDetail.membershipQuest.steps == null) {
-      _groupDetail.membershipQuest.steps = [];
+    if (_group.membershipQuest.steps == null) {
+      _group.membershipQuest.steps = [];
     }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipStepsPanel(steps: _groupDetail.membershipQuest.steps,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipStepsPanel(steps: _group.membershipQuest.steps,)));
   }
 
   void _onTapMembershipQuestion(){
     Analytics.instance.logSelect(target: "Membership Question");
-    if (_groupDetail.membershipQuest == null) {
-      _groupDetail.membershipQuest = GroupMembershipQuest();
+    if (_group.membershipQuest == null) {
+      _group.membershipQuest = GroupMembershipQuest();
     }
-    if (_groupDetail.membershipQuest.questions == null) {
-      _groupDetail.membershipQuest.questions = [];
+    if (_group.membershipQuest.questions == null) {
+      _group.membershipQuest.questions = [];
     }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _groupDetail.membershipQuest.questions,))).then((_){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.membershipQuest.questions,))).then((_){
       setState(() {
       });
     });
@@ -688,7 +688,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _loading = true;
     });
-    Groups().updateGroup(_groupDetail).then((detail){
+    Groups().updateGroup(_group).then((detail){
       if(detail!=null){
         //ok
         setState(() {
@@ -771,7 +771,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void onNameChanged(String name){
-    _groupDetail.title = name;
+    _group.title = name;
     validateName(name);
   }
 

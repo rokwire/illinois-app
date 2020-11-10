@@ -111,7 +111,7 @@ class Groups /* with Service */ {
 
   // Groups APIs
 
-  Future<List<GroupDetail>> loadGroups({String category, String type}) async {
+  Future<List<Group>> loadGroups({String category}) async {
     String url = '${Config().groupsUrl}/groups';
     try {
       Response response = await Network().get(url, auth: NetworkAuth.App,);
@@ -119,7 +119,7 @@ class Groups /* with Service */ {
       String responseBody = response?.body;
       List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
       if(AppCollection.isCollectionNotEmpty(groupsJson)){
-        return groupsJson.map((e) => GroupDetail.fromJson(e)).toList();
+        return groupsJson.map((e) => Group.fromJson(e)).toList();
       }
     } catch (e) {
       print(e);
@@ -127,23 +127,24 @@ class Groups /* with Service */ {
     return [];
   }
 
-  Future<GroupDetail>loadGroupDetail(String groupId) async {
-    List<dynamic> json = (await _sampleJson)['groups'];
-    if (json != null) {
-      for (dynamic jsonEntry in json) {
-        GroupDetail groupDetail = GroupDetail.fromJson(jsonEntry);
-        if ((groupDetail != null) && (groupDetail.id == groupId)) {
-          return groupDetail;
-        }
-      }
+  Future<Group>loadGroup(String groupId) async {
+    String url = '${Config().groupsUrl}/groups/$groupId';
+    try {
+      Response response = await Network().get(url, auth: NetworkAuth.App,);
+      int responseCode = response?.statusCode ?? -1;
+      String responseBody = response?.body;
+      Map<String,dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+      return groupsJson != null ? Group.fromJson(groupsJson) : null;
+    } catch (e) {
+      print(e);
     }
     return null;
   }
 
-  Future<String>createGroup(GroupDetail groupDetail) async {
+  Future<String>createGroup(Group group) async {
     String url = '${Config().groupsUrl}/groups';
     try {
-      String body = jsonEncode(groupDetail.toJson());
+      String body = jsonEncode(group.toJson());
       Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
@@ -155,8 +156,8 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<GroupDetail>updateGroup(GroupDetail groupDetail) async {
-    return Future<GroupDetail>.delayed(Duration(seconds: 1), (){ return groupDetail; });
+  Future<Group>updateGroup(Group group) async {
+    return Future<Group>.delayed(Duration(seconds: 1), (){ return group; });
   }
 
   // Members APIs

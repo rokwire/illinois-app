@@ -38,10 +38,10 @@ import 'package:illinois/service/Styles.dart';
 import 'GroupFindEventPanel.dart';
 
 class GroupAdminPanel extends StatefulWidget {
-  final GroupDetail groupDetail;
+  final Group group;
   final List<GroupEvent>   groupEvents;
   
-  GroupAdminPanel({this.groupDetail, this.groupEvents});
+  GroupAdminPanel({this.group, this.groupEvents});
 
   _GroupAdminPanelState createState() => _GroupAdminPanelState();
 }
@@ -96,7 +96,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   Widget _buildHeading(){
     String members;
-    int membersCount = widget.groupDetail?.membersCount ?? 0;
+    int membersCount = widget.group?.membersCount ?? 0;
     if (membersCount == 0) {
       members = 'No Current Members';
     }
@@ -116,7 +116,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
           Row(
             children: <Widget>[
               Expanded(
-                child: Text(widget.groupDetail?.category?.toUpperCase() ?? '',
+                child: Text(widget.group?.category?.toUpperCase() ?? '',
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies.bold,
                     fontSize: 12,
@@ -133,7 +133,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
             ],
           ),
           Container(height: 12,),
-          Text(widget.groupDetail?.title,
+          Text(widget.group?.title,
             style: TextStyle(
               fontFamily: Styles().fontFamilies.extraBold,
               fontSize: 32,
@@ -178,10 +178,10 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
         children: widget.groupEvents.map((event){
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: _EventCard(groupEvent: event,groupId: widget?.groupDetail?.id, onDeleteTap: (GroupEvent event){
+            child: _EventCard(groupEvent: event,groupId: widget?.group?.id, onDeleteTap: (GroupEvent event){
               if(event!=null){
                 widget.groupEvents.remove(event);
-//                Groups().updateGroupEvents(widget?.groupDetail?.id, widget.groupEvents);//TBD Consider how to notify service for the update
+//                Groups().updateGroupEvents(widget?.group?.id, widget.groupEvents);//TBD Consider how to notify service for the update
                 setState(() {});
               }
             },),
@@ -207,12 +207,12 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   void onTapMembers(){
     Analytics().logPage(name: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupDetail: widget.groupDetail)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: widget.group)));
   }
 
   void onTapSettings(){
     Analytics().logPage(name: "Group Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(groupDetail: widget.groupDetail,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: widget.group,)));
   }
 }
 

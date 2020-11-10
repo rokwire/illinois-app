@@ -27,8 +27,8 @@ import 'package:illinois/service/Styles.dart';
 
 class GroupPendingMemberPanel extends StatefulWidget {
   final GroupPendingMember member;
-  final GroupDetail groupDetail;
-  GroupPendingMemberPanel({this.member, this.groupDetail});
+  final Group group;
+  GroupPendingMemberPanel({this.member, this.group});
   _GroupPendingMemberPanelState createState() => _GroupPendingMemberPanelState();
 }
 
@@ -117,7 +117,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
     List<Widget> list = List<Widget>();
     for (int index = 0; index < widget.member.membershipRequest.answers.length; index++) {
       GroupMembershipAnswer answer = widget.member.membershipRequest.answers[index];
-      GroupMembershipQuestion question = (index < (widget.groupDetail?.membershipQuest?.questions?.length ?? 0)) ? widget.groupDetail.membershipQuest.questions[index] : null;
+      GroupMembershipQuestion question = (index < (widget.group?.membershipQuest?.questions?.length ?? 0)) ? widget.group.membershipQuest.questions[index] : null;
       list.add(_MembershipAnswer(member: widget.member, question: question, answer: answer));
       list.add(Container(height: 10,));
     }
@@ -237,7 +237,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         _decision = decision;
       });
     }
-    Groups().acceptMembership(widget.groupDetail.id, widget.member.id, decision).then((bool result) {
+    Groups().acceptMembership(widget.group.id, widget.member.id, decision).then((bool result) {
       if (mounted) {
         setState(() {
           _decision = null;

@@ -33,9 +33,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembersPanel extends StatefulWidget{
-  final GroupDetail groupDetail;
+  final Group group;
 
-  GroupMembersPanel({@required this.groupDetail});
+  GroupMembersPanel({@required this.group});
 
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
 }
@@ -67,7 +67,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     setState(() {
       _isMembersLoading = true;
     });
-    Groups().loadGroupMembers(widget.groupDetail?.id).then((List<GroupMember> members){
+    Groups().loadGroupMembers(widget.group?.id).then((List<GroupMember> members){
       _members = members;
       _applyMembersFilter();
     }).whenComplete((){
@@ -81,7 +81,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     setState(() {
       _isPendingMembersLoading = true;
     });
-    Groups().loadPendingMembers(widget.groupDetail?.id).then((List<GroupPendingMember> members){
+    Groups().loadPendingMembers(widget.group?.id).then((List<GroupPendingMember> members){
       _pendingMembers = members;
     }).whenComplete((){
       setState(() {
@@ -142,7 +142,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
         if(requests.isNotEmpty){
           requests.add(Container(height: 10,));
         }
-        requests.add(_PendingMemberCard(member: member, groupDetail: widget.groupDetail,));
+        requests.add(_PendingMemberCard(member: member, group: widget.group,));
       }
 
       if(_pendingMembers.length > 2 && _showAllRequestVisibility){
@@ -180,7 +180,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
         if(members.isNotEmpty){
           members.add(Container(height: 10,));
         }
-        members.add(_GroupMemberCard(member: member, groupDetail: widget.groupDetail,));
+        members.add(_GroupMemberCard(member: member, group: widget.group,));
       }
       if(members.isNotEmpty) {
         members.add(Container(height: 10,));
@@ -252,8 +252,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
 
 class _PendingMemberCard extends StatelessWidget {
   final GroupPendingMember member;
-  final GroupDetail groupDetail;
-  _PendingMemberCard({@required this.member, this.groupDetail});
+  final Group group;
+  _PendingMemberCard({@required this.member, this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -296,7 +296,7 @@ class _PendingMemberCard extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
-                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, groupDetail: groupDetail,)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, group: group,)));
                         },
                       ),
 //                      Expanded(child: Container(),),
@@ -312,8 +312,8 @@ class _PendingMemberCard extends StatelessWidget {
 
 class _GroupMemberCard extends StatelessWidget{
   final GroupMember member;
-  final GroupDetail groupDetail;
-  _GroupMemberCard({@required this.member, @required this.groupDetail});
+  final Group group;
+  _GroupMemberCard({@required this.member, @required this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -380,6 +380,6 @@ class _GroupMemberCard extends StatelessWidget{
 
   void _onTapMemberCard(BuildContext context)async{
     Analytics().logSelect(target: "Member Detail");
-    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(member: member, groupDetail: groupDetail,)));
+    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(member: member, group: group,)));
   }
 }

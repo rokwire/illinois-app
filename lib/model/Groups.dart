@@ -22,11 +22,19 @@ import 'package:illinois/service/Localization.dart';
 // Group
 
 class Group {
-	String       id;
-	String       category;
-	String       type;
-	String       title;
-	bool         certified;
+	String              id;
+	String              category;
+	String              type;
+	String              title;
+	bool                certified;
+
+  GroupPrivacy         privacy;
+  String               description;
+  String               imageURL;
+  String               webURL;
+  int                  membersCount;
+  List<String>         tags;
+  GroupMembershipQuest membershipQuest;
 
   Group({Map<String, dynamic> json, Group other}) {
     if (json != null) {
@@ -38,19 +46,33 @@ class Group {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { id         = json['id'];         } catch(e) { print(e.toString()); }
-    try { category   = json['category'];   } catch(e) { print(e.toString()); }
-    try { type       = json['type'];       } catch(e) { print(e.toString()); }
-    try { title      = json['title'];      } catch(e) { print(e.toString()); }
-    try { certified  = json['certified']; } catch(e) { print(e.toString()); }
+    try { id              = json['id'];         } catch(e) { print(e.toString()); }
+    try { category        = json['category'];   } catch(e) { print(e.toString()); }
+    try { type            = json['type'];       } catch(e) { print(e.toString()); }
+    try { title           = json['title'];      } catch(e) { print(e.toString()); }
+    try { certified       = json['certified']; } catch(e) { print(e.toString()); }
+    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
+    try { description     = json['description'];  } catch(e) { print(e.toString()); }
+    try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
+    try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
+    try { membersCount    = json['membersCount']; } catch(e) { print(e.toString()); }
+    try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
+    try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(Group other) {
-    id         = other?.id;
-    category   = other?.category;
-    type       = other?.type;
-    title      = other?.title;
-    certified  = other?.certified;
+    id              = other?.id;
+    category        = other?.category;
+    type            = other?.type;
+    title           = other?.title;
+    certified       = other?.certified;
+    privacy         = other?.privacy;
+    description     = other?.description;
+    imageURL        = other?.imageURL;
+    webURL          = other?.webURL;
+    membersCount    = other?.membersCount;
+    tags            = (other?.tags != null) ? List.from(other?.tags) : null;
+    membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
   }
 
   factory Group.fromJson(Map<String, dynamic> json) {
@@ -68,66 +90,6 @@ class Group {
     json['type']              = type;
     json['title']             = title;
     json['certified']         = certified;
-    return json;
-  }
-}
-
-//////////////////////////////
-// GroupDetail
-
-class GroupDetail extends Group {
-	GroupPrivacy         privacy;
-	String               description;
-	String               imageURL;
-	String               webURL;
-  int                  membersCount;
-	List<String>         tags;
-	GroupMembershipQuest membershipQuest;
-
-  GroupDetail({Map<String, dynamic> json, GroupDetail other}) : super() {
-    if (json != null) {
-      _initFromJson(json);
-    }
-    else if (other != null) {
-      _initFromOther(other);
-    }
-  }
-
-  @override
-  void _initFromJson(Map<String, dynamic> json) {
-    super._initFromJson(json);
-    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
-    try { description     = json['description'];  } catch(e) { print(e.toString()); }
-    try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
-    try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { membersCount    = json['membersCount']; } catch(e) { print(e.toString()); }
-    try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
-    try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
-  }
-
-  @override
-  void _initFromOther(Group other) {
-    super._initFromOther(other);
-    GroupDetail groupDetail = (other is GroupDetail) ? other : null;
-    privacy         = groupDetail?.privacy;
-    description     = groupDetail?.description;
-    imageURL        = groupDetail?.imageURL;
-    webURL          = groupDetail?.webURL;
-    membersCount    = groupDetail?.membersCount;
-    tags            = (groupDetail?.tags != null) ? List.from(groupDetail?.tags) : null;
-    membershipQuest = GroupMembershipQuest.fromOther(groupDetail?.membershipQuest);
-  }
-
-  factory GroupDetail.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? GroupDetail(json: json) : null;
-  }
-
-  factory GroupDetail.fromOther(GroupDetail other) {
-    return (other != null) ? GroupDetail(other: other) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = super.toJson() ?? {};
     json['privacy']           = groupPrivacyToString(privacy);
     json['description']       = description;
     json['imageURL']          = imageURL;
@@ -135,6 +97,7 @@ class GroupDetail extends Group {
     json['membersCount']      = membersCount;
     json['tags']              = tags;
     json['membershipQuest']   = membershipQuest?.toJson();
+
     return json;
   }
 }
