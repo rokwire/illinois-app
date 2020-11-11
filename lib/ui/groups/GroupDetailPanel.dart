@@ -75,7 +75,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         }
       }
     }
-    return true;
+    return false;
   }
   
   bool get _isAdmin {
@@ -86,7 +86,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         }
       }
     }
-    return true;
+    return false;
   }
 
   bool get isPublic {
