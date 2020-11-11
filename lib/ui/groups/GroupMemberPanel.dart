@@ -29,7 +29,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMemberPanel extends StatefulWidget {
-  final GroupMember member;
+  final Member member;
   final Group group;
   GroupMemberPanel({this.member, this.group});
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
@@ -37,7 +37,7 @@ class GroupMemberPanel extends StatefulWidget {
 
 class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
-  GroupMember _member;
+  Member _member;
   bool _updating = false;
   bool _removing = false;
 
@@ -47,7 +47,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   @override
   void initState() {
     super.initState();
-    _member = GroupMember.fromOther(widget.member);
+    _member = Member.fromOther(widget.member);
     Groups().officerTitles.then((List<String> officerTitles){
       setState(() {
         _officerTitleTypes = officerTitles;
@@ -62,7 +62,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         _updating = true;
       });
 
-      Groups().updateGroupMember(widget.group?.id, _member).then((GroupMember member) {
+      /*Groups().updateGroupMember(widget.group?.id, _member).then((Member member) {
         if (mounted) {
           setState(() {
             _updating = false;
@@ -71,7 +71,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             AppAlert.showDialogResult(context, 'Failed to update member');
           }
         }
-      });
+      });*/
     }
   }
 
@@ -82,7 +82,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         _removing = true;
       });
 
-      Groups().updateGroupMember(widget.group?.id, _member).then((GroupMember member) {
+      /*Groups().updateGroupMember(widget.group?.id, _member).then((Member member) {
         if (mounted) {
           setState(() {
             _removing = false;
@@ -91,7 +91,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             AppAlert.showDialogResult(context, 'Failed to update member');
           }
         }
-      });
+      });*/
     }
   }
 

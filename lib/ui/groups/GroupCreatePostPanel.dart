@@ -38,7 +38,7 @@ class GroupCreatePostPanel extends StatefulWidget{
 }
 
 class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
-  GroupMember _member;
+  Member _member;
   
   TextEditingController _postController = new TextEditingController();
 

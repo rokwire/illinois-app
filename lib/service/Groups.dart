@@ -32,7 +32,7 @@ class Groups /* with Service */ {
 
   static const String notifyUserMembershipUpdated  = "edu.illinois.rokwire.groups.membership.updated";
 
-  Map<String, GroupMember> _userMembership;
+  Map<String, Member> _userMembership;
 
   // Singletone instance
 
@@ -59,17 +59,17 @@ class Groups /* with Service */ {
 
   // Current User Membership
 
-  GroupMember getUserMembership(String groupId) {
+  Member getUserMembership(String groupId) {
     return (_userMembership != null) ? _userMembership[groupId] : null;
   }
 
   Future<void> updateUserMemberships() async {
-    Map<String, GroupMember> userMembership;
+    Map<String, Member> userMembership;
     Map<String, dynamic> json = (await _sampleJson)['userMembership'];
     if (json != null) {
-      userMembership = Map<String, GroupMember>();
+      userMembership = Map<String, Member>();
       json.forEach((String groupId, dynamic memberJson) {
-        userMembership[groupId] = GroupMember.fromJson(memberJson);
+        userMembership[groupId] = Member.fromJson(memberJson);
       });
     }
 
@@ -119,7 +119,10 @@ class Groups /* with Service */ {
       String responseBody = response?.body;
       List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
       if(AppCollection.isCollectionNotEmpty(groupsJson)){
-        return groupsJson.map((e) => Group.fromJson(e)).toList();
+        List<Group> groups = groupsJson.map((e) => Group.fromJson(e)).toList();
+        return AppString.isStringNotEmpty(category) && AppCollection.isCollectionNotEmpty(groups)
+            ? groups.where((group) => category == group.category).toList()
+            : groups;
       }
     } catch (e) {
       print(e);
@@ -162,23 +165,6 @@ class Groups /* with Service */ {
 
   // Members APIs
 
-  Future<List<GroupMember>> loadGroupMembers(String groupId, {GroupMemberStatus status}) async {
-    List<GroupMember> result;
-    List<dynamic> json = (await _sampleJson)['members'];
-    if (json != null) {
-      result = [];
-      for (dynamic jsonEntry in json) {
-        GroupMember groupMember = GroupMember.fromJson(jsonEntry);
-        if ((groupMember != null) &&
-            ((status == null) || (status == groupMember.status)))
-        {
-          result.add(groupMember);
-        }
-      }
-    }
-    return result;
-  }
-
   Future<List<GroupPendingMember>> loadPendingMembers(String groupId) async {
     List<GroupPendingMember> result;
     List<dynamic> json = (await _sampleJson)['pending_members'];
@@ -194,8 +180,8 @@ class Groups /* with Service */ {
     return result;
   }
 
-  Future<GroupMember> updateGroupMember(String groupId, GroupMember groupMember) async {
-    return Future<GroupMember>.delayed(Duration(seconds: 1), (){ return groupMember; });
+  Future<Member> updateMember(String groupId, Member groupMember) async {
+    return Future<Member>.delayed(Duration(seconds: 1), (){ return groupMember; });
   }
 
   Future<bool> requestMembership(String groupId, GroupMembershipRequest membershipRequest) {

@@ -48,8 +48,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
 
   bool _showAllRequestVisibility = true;
 
-  List<GroupPendingMember> _pendingMembers;
-  List<GroupMember> _members;
+  List<Member> _pendingMembers;
+  List<Member> _members;
 
   String _allMembersFilter;
   String _selectedMembersFilter;
@@ -60,33 +60,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     super.initState();
 
     _loadMembers();
-    _loadPendingMembers();
   }
 
   void _loadMembers(){
     setState(() {
-      _isMembersLoading = true;
-    });
-    Groups().loadGroupMembers(widget.group?.id).then((List<GroupMember> members){
-      _members = members;
-      _applyMembersFilter();
-    }).whenComplete((){
-      setState(() {
-        _isMembersLoading = false;
-      });
-    });
-  }
-
-  void _loadPendingMembers(){
-    setState(() {
-      _isPendingMembersLoading = true;
-    });
-    Groups().loadPendingMembers(widget.group?.id).then((List<GroupPendingMember> members){
-      _pendingMembers = members;
-    }).whenComplete((){
-      setState(() {
-        _isPendingMembersLoading = false;
-      });
+      _isMembersLoading = false;
+      _pendingMembers = widget.group.getMembersByStatus(GroupMemberStatus.pending);
+      _members = AppCollection.isCollectionNotEmpty(widget?.group?.members) ? widget?.group?.members.where((member) => member.status != GroupMemberStatus.pending).toList() : [];
     });
   }
 
@@ -96,7 +76,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     _selectedMembersFilter = _allMembersFilter;
     membersFilter.add(_allMembersFilter);
     if(AppCollection.isCollectionNotEmpty(_members)){
-      for(GroupMember member in _members){
+      for(Member member in _members){
         if(AppString.isStringNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
           membersFilter.add(member.officerTitle);
         }
@@ -173,7 +153,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
   Widget _buildMembers(){
     if((_members?.length ?? 0) > 0) {
       List<Widget> members = List<Widget>();
-      for (GroupMember member in _members) {
+      for (Member member in _members) {
         if(_selectedMembersFilter != _allMembersFilter && _selectedMembersFilter != member.officerTitle){
           continue;
         }
@@ -311,7 +291,7 @@ class _PendingMemberCard extends StatelessWidget {
 }
 
 class _GroupMemberCard extends StatelessWidget{
-  final GroupMember member;
+  final Member member;
   final Group group;
   _GroupMemberCard({@required this.member, @required this.group});
 

@@ -17,6 +17,7 @@
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/Utils.dart';
 
 //////////////////////////////
 // Group
@@ -33,6 +34,7 @@ class Group {
   String               imageURL;
   String               webURL;
   int                  membersCount;
+  List<Member>         members;
   List<String>         tags;
   GroupMembershipQuest membershipQuest;
 
@@ -55,9 +57,15 @@ class Group {
     try { description     = json['description'];  } catch(e) { print(e.toString()); }
     try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
     try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { membersCount    = json['membersCount']; } catch(e) { print(e.toString()); }
     try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
     try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
+    try { membersCount    = json['members_count']; } catch(e) { print(e.toString()); }
+    try {
+      List<dynamic> _members    = json['members'];
+      if(AppCollection.isCollectionNotEmpty(_members)){
+        members = _members.map((memberJson) => Member.fromJson(memberJson)).toList();
+      }
+    } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(Group other) {
@@ -71,6 +79,7 @@ class Group {
     imageURL        = other?.imageURL;
     webURL          = other?.webURL;
     membersCount    = other?.membersCount;
+    members         = other?.members;
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
     membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
   }
@@ -92,13 +101,21 @@ class Group {
     json['certified']         = certified;
     json['privacy']           = groupPrivacyToString(privacy);
     json['description']       = description;
-    json['imageURL']          = imageURL;
-    json['webURL']            = webURL;
-    json['membersCount']      = membersCount;
+    json['image_url']         = imageURL;
+    json['web_url']           = webURL;
     json['tags']              = tags;
+    json['members_count']     = membersCount;
+    json['members']           = members;
     json['membershipQuest']   = membershipQuest?.toJson();
 
     return json;
+  }
+
+  List<Member> getMembersByStatus(GroupMemberStatus status){
+    if(AppCollection.isCollectionNotEmpty(members) && status != null){
+      return members.where((member) => member.status == status).toList();
+    }
+    return [];
   }
 }
 
@@ -135,10 +152,15 @@ String groupPrivacyToString(GroupPrivacy value) {
 // Member
 
 class Member {
-	String       id;
-	String       name;
-	String       email;
-	String       photoURL;
+	String            id;
+	String            name;
+	String            email;
+	String            photoURL;
+
+  GroupMemberStatus status;
+  bool              admin;
+  String            officerTitle;
+  DateTime          dateAdded;
 
   Member({Map<String, dynamic> json, Member other}) {
     if (json != null) {
@@ -154,6 +176,9 @@ class Member {
     try { name        = json['name'];     } catch(e) { print(e.toString()); }
     try { email       = json['email'];    } catch(e) { print(e.toString()); }
     try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
+    try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
+    try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
+
   }
 
   void _initFromOther(Member other) {
@@ -161,6 +186,10 @@ class Member {
     name        = other?.name;
     email       = other?.email;
     photoURL    = other?.photoURL;
+    status      = other?.status;
+    admin       = other?.admin;
+    officerTitle= other?.officerTitle;
+    dateAdded   = other?.dateAdded;
   }
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -177,6 +206,10 @@ class Member {
     json['name']                = name;
     json['email']               = email;
     json['photo_url']           = photoURL;
+    json['status']              = groupMemberStatusToString(status);
+    json['admin']               = admin;
+    json['officerTitle']        = officerTitle;
+    json['dateAdded']           = AppDateTime().formatDateTime(dateAdded, format: AppDateTime.iso8601DateTimeFormat);
     return json;
   }
 
@@ -185,74 +218,7 @@ class Member {
            (o.id == id) &&
            (o.name == name) &&
            (o.email == email) &&
-           (o.photoURL == photoURL);
-  }
-
-  int get hashCode {
-    return (id?.hashCode ?? 0) ^
-           (name?.hashCode ?? 0) ^
-           (email?.hashCode ?? 0) ^
-           (photoURL?.hashCode ?? 0);
-  }
-}
-
-//////////////////////////////
-// GroupMember
-
-class GroupMember extends Member {
-	GroupMemberStatus status;
-  bool              admin;
-  String            officerTitle;
-  DateTime          dateAdded;
-
-  GroupMember({Map<String, dynamic> json, GroupMember other}) : super() {
-    if (json != null) {
-      _initFromJson(json);
-    }
-    else if (other != null) {
-      _initFromOther(other);
-    }
-  }
-
-  @override
-  void _initFromJson(Map<String, dynamic> json) {
-    super._initFromJson(json);
-    try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
-    try { admin        = json['admin'];        } catch(e) { print(e.toString()); }
-    try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
-    try { dateAdded    = AppDateTime().dateTimeFromString(json['dateAdded'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { print(e.toString()); }
-  }
-
-  @override
-  void _initFromOther(Member other) {
-    super._initFromOther(other);
-    GroupMember groupMember = (other is GroupMember) ? other : null;
-    status         = groupMember?.status;
-    admin          = groupMember?.admin;
-    officerTitle   = groupMember?.officerTitle;
-    dateAdded      = groupMember?.dateAdded;
-  }
-
-  factory GroupMember.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? GroupMember(json: json) : null;
-  }
-
-  factory GroupMember.fromOther(GroupMember other) {
-    return (other != null) ? GroupMember(other: other) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
-    json['status']             = groupMemberStatusToString(status);
-    json['admin']              = admin;
-    json['officerTitle']       = officerTitle;
-    json['dateAdded']          = AppDateTime().formatDateTime(dateAdded, format: AppDateTime.iso8601DateTimeFormat);
-    return json;
-  }
-
-  bool operator == (dynamic o) {
-    return (o is GroupMember) &&
-           (super == o) &&
+           (o.photoURL == photoURL) &&
            (o.status == status) &&
            (o.admin == admin) &&
            (o.officerTitle == officerTitle) &&
@@ -260,7 +226,10 @@ class GroupMember extends Member {
   }
 
   int get hashCode {
-    return (super.hashCode) ^
+    return (id?.hashCode ?? 0) ^
+           (name?.hashCode ?? 0) ^
+           (email?.hashCode ?? 0) ^
+           (photoURL?.hashCode ?? 0) ^
            (status?.hashCode ?? 0) ^
            (admin?.hashCode ?? 0) ^
            (officerTitle?.hashCode ?? 0) ^
@@ -646,7 +615,7 @@ class GroupEvent extends Event {
 // GroupEventComment
 
 class GroupEventComment {
-  GroupMember  member;
+  Member       member;
   DateTime     dateCreated;
 	String       text;
 
@@ -657,7 +626,7 @@ class GroupEventComment {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
-    try { member      = GroupMember.fromJson(json['member']); } catch(e) { print(e.toString()); }
+    try { member      = Member.fromJson(json['member']); } catch(e) { print(e.toString()); }
     try { dateCreated = AppDateTime().dateTimeFromString(json['dateCreated'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { print(e.toString()); }
     try { text         = json['text']; } catch(e) { print(e.toString()); }
   }

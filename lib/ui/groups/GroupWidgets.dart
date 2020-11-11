@@ -93,7 +93,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                       isExpanded: true,
                       focusColor: Styles().colors.white,
                       underline: Container(),
-                      hint: Text(buttonTitle, style: selectedValue == null?hintStyle:valueStyle),
+                      hint: Text(buttonTitle ?? "", style: selectedValue == null?hintStyle:valueStyle),
                       items: _constructItems(),
                       onChanged: (value){
                         selectedValue = value;

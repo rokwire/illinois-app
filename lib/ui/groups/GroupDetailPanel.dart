@@ -21,6 +21,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -61,17 +62,31 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   Group              _group;
   bool               _loadingGroup;
   List<GroupEvent>   _groupEvents;
-  List<GroupMember>  _groupOfficers;
+  List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
 
   _DetailTab       _currentTab = _DetailTab.Events;
 
   bool get _isMember {
-    return Groups().getUserMembership(widget.groupId) != null;
+    if(_group?.members?.isNotEmpty ?? false){
+      for(Member member in _group.members){
+        if(member.email == Auth()?.authInfo?.email){
+          return true;
+        }
+      }
+    }
+    return true;
   }
   
   bool get _isAdmin {
-    return Groups().getUserMembership(widget.groupId)?.admin ?? false;
+    if(_group?.members?.isNotEmpty ?? false){
+      for(Member member in _group.members){
+        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.admin){
+          return true;
+        }
+      }
+    }
+    return true;
   }
 
   bool get isPublic {
@@ -95,6 +110,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         setState(() {
           _loadingGroup = false;
           _group = group;
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
           _loadMembershipStepEvents();
         });
       }
@@ -105,14 +121,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         setState(() {
           _groupEvents = events;
           _applyStepEvents(events);
-        });
-      }
-    });
-
-    Groups().loadGroupMembers(widget.groupId, status: GroupMemberStatus.admin).then((List<GroupMember> members) {
-      if (mounted) {
-        setState(() {
-          _groupOfficers = members;
         });
       }
     });
@@ -219,7 +227,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
     else {
       content.add(_buildAbout());
-      content.add(_buildOfficers());
+      content.add(_buildAdmins());
       if (isPublic) {
         content.add(_buildEvents());
       }
@@ -545,11 +553,11 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       ],),);
   }
 
-  Widget _buildOfficers() {
+  Widget _buildAdmins() {
     List<Widget> content = [];
-    if (0 < (_groupOfficers?.length ?? 0)) {
+    if (0 < (_groupAdmins?.length ?? 0)) {
       content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
-      for (GroupMember officer in _groupOfficers) {
+      for (Member officer in _groupAdmins) {
         if (1 < content.length) {
           content.add(Padding(padding: EdgeInsets.only(left: 8), child: Container()),);
         }
@@ -966,7 +974,7 @@ class _EventContent extends StatelessWidget {
 }
 
 class _OfficerCard extends StatelessWidget {
-  final GroupMember groupMember;
+  final Member groupMember;
   
   _OfficerCard({this.groupMember});
 
@@ -977,12 +985,14 @@ class _OfficerCard extends StatelessWidget {
       Container(height: 144, width: 128,
         decoration: BoxDecoration(
           //color: Styles().colors.fillColorPrimary,
-          image: DecorationImage(image:NetworkImage(groupMember?.photoURL), fit: BoxFit.cover),
-          borderRadius: BorderRadius.all(Radius.circular(4))),
+          image: AppString.isStringNotEmpty(groupMember?.photoURL)
+            ? DecorationImage(image: NetworkImage(groupMember?.photoURL), fit: BoxFit.cover)
+            : null,
+            borderRadius: BorderRadius.all(Radius.circular(4))),
         ),
       Padding(padding: EdgeInsets.only(top: 4),
-        child: Text(groupMember?.name, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),),
-      Text(groupMember?.officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),),
+        child: Text(groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),),
+      Text(groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),),
     ],);
   }
 }
