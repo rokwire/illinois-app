@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Contributor guidelines (CONTRIBUTING.md). [#126](https://github.com/rokwire/illinois-app/issues/126)
+- A pull request template. [#128](https://github.com/rokwire/illinois-app/issues/128)
 
 ## [2.3.18] - 2020-11-06
 ### Fixed
