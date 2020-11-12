@@ -92,9 +92,11 @@ class Group {
     return (other != null) ? Group(other: other) : null;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool withId = true}) {
     Map<String, dynamic> json = {};
-    json['id']                = id;
+    if(withId){
+      json['id'] = id;
+    }
     json['category']          = category;
     json['type']              = type;
     json['title']             = title;

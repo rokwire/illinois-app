@@ -23,6 +23,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -111,8 +112,8 @@ class Groups /* with Service */ {
 
   // Groups APIs
 
-  Future<List<Group>> loadGroups({String category}) async {
-    String url = '${Config().groupsUrl}/groups';
+  Future<List<Group>> loadGroups({String category, bool myGroups = false}) async {
+    String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
     try {
       Response response = await Network().get(url, auth: NetworkAuth.App,);
       int responseCode = response?.statusCode ?? -1;
@@ -120,7 +121,7 @@ class Groups /* with Service */ {
       List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
       if(AppCollection.isCollectionNotEmpty(groupsJson)){
         List<Group> groups = groupsJson.map((e) => Group.fromJson(e)).toList();
-        return AppString.isStringNotEmpty(category) && AppCollection.isCollectionNotEmpty(groups)
+        return !myGroups && AppString.isStringNotEmpty(category) && AppCollection.isCollectionNotEmpty(groups)
             ? groups.where((group) => category == group.category).toList()
             : groups;
       }
@@ -147,7 +148,11 @@ class Groups /* with Service */ {
   Future<String>createGroup(Group group) async {
     String url = '${Config().groupsUrl}/groups';
     try {
-      String body = jsonEncode(group.toJson());
+      Map<String,dynamic> json = group.toJson(withId: false);
+      json["creator_email"] = Auth()?.authInfo?.email ?? "";
+      json["creator_name"] = Auth()?.authInfo?.fullName ?? "";
+      json["creator_photo_url"] = "";
+      String body = jsonEncode(json);
       Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
