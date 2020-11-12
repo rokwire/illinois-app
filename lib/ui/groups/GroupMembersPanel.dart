@@ -66,7 +66,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     setState(() {
       _isMembersLoading = false;
       _pendingMembers = widget.group.getMembersByStatus(GroupMemberStatus.pending);
+//      TMP: _pendingMembers = [GroupPendingMember(json: {"name":"Todor Bachvarov","photo_url":"https://s3.ivisa.com/website-assets/blog/id-photo2.jpg"})];
       _members = AppCollection.isCollectionNotEmpty(widget?.group?.members) ? widget?.group?.members.where((member) => member.status != GroupMemberStatus.pending).toList() : [];
+    _applyMembersFilter();
     });
   }
 
@@ -197,15 +199,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
         color: Styles().colors.white,
         child: Row(
           children: <Widget>[
-            Text(
-              Localization().getStringEx("panel.manage_members.label.filter_by", "Filter by"),
-              style: TextStyle(
-                fontFamily: Styles().fontFamilies.regular,
-                fontSize: 16,
-                color: Styles().colors.textBackground,
-              ),
-            ),
-            Container(width: 10,),
             Expanded(
               child: Container(
                 child: GroupDropDownButton<String>(
@@ -243,7 +236,7 @@ class _PendingMemberCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: <Widget>[
           ClipRRect(
@@ -260,11 +253,11 @@ class _PendingMemberCard extends StatelessWidget {
                     member?.name ?? "",
                     style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
-                      fontSize: 16,
+                      fontSize: 20,
                       color: Styles().colors.fillColorPrimary
                     ),
                   ),
-                  Container(height: 12,),
+                  Container(height: 4,),
                       ScalableRoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
@@ -273,7 +266,8 @@ class _PendingMemberCard extends StatelessWidget {
                         backgroundColor: Styles().colors.white,
                         fontSize: 16,
 //                        height: 32,
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        showChevron: true,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
                           Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, group: group,)));
@@ -284,6 +278,7 @@ class _PendingMemberCard extends StatelessWidget {
               ),
             ),
           ),
+          Container(width: 8,)
         ],
       ),
     );
@@ -305,7 +300,7 @@ class _GroupMemberCard extends StatelessWidget{
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: <Widget>[
             ClipRRect(
@@ -320,32 +315,39 @@ class _GroupMemberCard extends StatelessWidget{
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            member?.officerTitle ?? "",
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 16,
-                                color: Styles().colors.fillColorPrimary
-                            ),
-                          ),
-                        ),
-                        Image.asset('images/chevron-blue-right.png'),
-                      ],
-                    ),
-                    Container(height: 12,),
-                    Row(
-                      children: <Widget>[
                         Expanded(child:
                           Text(
                             member?.name ?? "",
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 16,
+                                fontSize: 20,
                                 color: Styles().colors.fillColorPrimary
                             ),
                           )
                         )
+                      ],
+                    ),
+                    Container(height: 4,),
+                    !_isAdmin? Container():
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Styles().colors.fillColorSecondary,
+                            borderRadius: BorderRadius.all(Radius.circular(2)),
+                          ),
+                          child: Center(
+                            child: Text("ADMIN",
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontSize: 12,
+                                  color: Styles().colors.white
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Container(),),
                       ],
                     )
                   ],
@@ -361,5 +363,9 @@ class _GroupMemberCard extends StatelessWidget{
   void _onTapMemberCard(BuildContext context)async{
     Analytics().logSelect(target: "Member Detail");
     await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(member: member, group: group,)));
+  }
+
+  bool get _isAdmin{
+    return member?.admin ?? true;
   }
 }
