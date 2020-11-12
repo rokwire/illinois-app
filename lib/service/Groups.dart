@@ -132,40 +132,56 @@ class Groups /* with Service */ {
   }
 
   Future<Group>loadGroup(String groupId) async {
-    String url = '${Config().groupsUrl}/groups/$groupId';
-    try {
-      Response response = await Network().get(url, auth: NetworkAuth.App,);
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      Map<String,dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-      return groupsJson != null ? Group.fromJson(groupsJson) : null;
-    } catch (e) {
-      print(e);
+    if(AppString.isStringNotEmpty(groupId)) {
+      String url = '${Config().groupsUrl}/groups/$groupId';
+      try {
+        Response response = await Network().get(url, auth: NetworkAuth.App,);
+        int responseCode = response?.statusCode ?? -1;
+        String responseBody = response?.body;
+        Map<String, dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+        return groupsJson != null ? Group.fromJson(groupsJson) : null;
+      } catch (e) {
+        print(e);
+      }
     }
     return null;
   }
 
   Future<String>createGroup(Group group) async {
-    String url = '${Config().groupsUrl}/groups';
-    try {
-      Map<String,dynamic> json = group.toJson(withId: false);
-      json["creator_email"] = Auth()?.authInfo?.email ?? "";
-      json["creator_name"] = Auth()?.authInfo?.fullName ?? "";
-      json["creator_photo_url"] = "";
-      String body = jsonEncode(json);
-      Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      Map<String,dynamic> jsonData = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-      return jsonData['inserted_id'];
-    } catch (e) {
-      print(e);
+    if(group != null) {
+      String url = '${Config().groupsUrl}/groups';
+      try {
+        Map<String, dynamic> json = group.toJson(withId: false);
+        json["creator_email"] = Auth()?.authInfo?.email ?? "";
+        json["creator_name"] = Auth()?.authInfo?.fullName ?? "";
+        json["creator_photo_url"] = "";
+        String body = jsonEncode(json);
+        Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
+        int responseCode = response?.statusCode ?? -1;
+        String responseBody = response?.body;
+        Map<String, dynamic> jsonData = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+        return jsonData['inserted_id'];
+      } catch (e) {
+        print(e);
+      }
     }
     return null;
   }
 
-  Future<Group>updateGroup(Group group) async {
-    return Future<Group>.delayed(Duration(seconds: 1), (){ return group; });
+  Future<void>updateGroup(Group group) async {
+    if(group != null) {
+      String url = '${Config().groupsUrl}/groups/${group.id}';
+      try {
+        Map<String, dynamic> json = group.toJson();
+        String body = jsonEncode(json);
+        Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
+        if((response?.statusCode ?? -1) != 200){
+          throw "Unable to update the group";
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 
   // Members APIs

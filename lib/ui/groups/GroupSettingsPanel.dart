@@ -688,18 +688,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _loading = true;
     });
-    Groups().updateGroup(_group).then((detail){
-      if(detail!=null){
-        //ok
-        setState(() {
-          _loading = false;
-        });
+    Groups().updateGroup(_group).then((_){
+      setState(() {
+        _loading = false;
+      });
 
-        Navigator.pop(context);
-      } else {
-        AppAlert.showDialogResult(context, "Unable to update group"); //TBD localize
-      }
+      Navigator.pop(context);
     }).catchError((e){
+      AppAlert.showDialogResult(context, "Unable to update the group"); //TBD localize
       //error
       setState(() {
         _loading = false;
