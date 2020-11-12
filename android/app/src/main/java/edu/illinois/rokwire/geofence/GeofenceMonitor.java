@@ -579,6 +579,9 @@ public class GeofenceMonitor implements BeaconConsumer {
     @Override
     public Context getApplicationContext() {
         Log.i(TAG, "BeaconScanner.getApplicationContext");
+        if (MainActivity.getInstance() != null) {
+            return MainActivity.getInstance().getApplicationContext();
+        }
         return null;
     }
 

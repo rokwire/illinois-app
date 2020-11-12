@@ -178,7 +178,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
 class _ParkingLotWidget extends StatefulWidget {
   final ParkingLot inventory;
 
-  _ParkingLotWidget({Key key, this.inventory});
+  _ParkingLotWidget({Key key, this.inventory}) : super(key: key);
 
   @override
   _ParkingLotWidgetState createState() => _ParkingLotWidgetState();

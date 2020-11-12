@@ -552,4 +552,6 @@ class Contact {
   }
 }
 
+enum EventTimeFilter{today, thisWeekend, next7Day, next30Days, upcoming,}
+
 
