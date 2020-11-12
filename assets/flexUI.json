@@ -39,7 +39,6 @@
 			"pref_sports"                     : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"campus_reminders"                : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
 
-			"laundry"                         : ["student"],
 			"my_illini"                       : ["student"],
 			"illini_cash"                     : ["student", "OR", "employee", "OR", "parent"],
 			"meal_plan"                       : ["student"],

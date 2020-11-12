@@ -19,11 +19,14 @@ package edu.illinois.rokwire;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
@@ -256,6 +259,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     private void requestLocationPermission(MethodChannel.Result result) {
+        Utils.AppSharedPrefs.saveBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, true);
         //check if granted
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED  ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -284,6 +288,31 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.d(TAG, "already granted");
             GeofenceMonitor.getInstance().onLocationPermissionGranted();
             result.success("allowed");
+        }
+    }
+
+    private String getLocationServicesStatus() {
+        boolean locationServicesEnabled;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // This is new method provided in API 28
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationServicesEnabled = ((lm != null) && lm.isLocationEnabled());
+        } else {
+            // This is Deprecated in API 28
+            int mode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            locationServicesEnabled = (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
+        if (locationServicesEnabled) {
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                return "allowed";
+            } else {
+                boolean locationPermissionRequested = Utils.AppSharedPrefs.getBool(this, Constants.LOCATION_PERMISSIONS_REQUESTED_KEY, false);
+                return locationPermissionRequested ? "denied" : "not_determined";
+            }
+        } else {
+            return "disabled";
         }
     }
 
@@ -567,7 +596,13 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     result.success(true); // notifications are allowed in Android by default
                     break;
                 case Constants.APP_LOCATION_SERVICES_PERMISSION:
-                    requestLocationPermission(result);
+                    String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);
+                    if ("query".equals(locationServicesMethod)) {
+                        String locationServicesStatus = getLocationServicesStatus();
+                        result.success(locationServicesStatus);
+                    } else if ("request".equals(locationServicesMethod)) {
+                        requestLocationPermission(result);
+                    }
                     break;
                 case Constants.APP_BLUETOOTH_AUTHORIZATION:
                     result.success("allowed"); // bluetooth is always enabled in Android by default

@@ -39,8 +39,7 @@ class Network  {
   static const String RokwireApiKey = 'ROKWIRE-API-KEY';
   static const String RokwireUserUuid = 'ROKWIRE-USER-UUID';
   static const String RokwireUserPrivacyLevel = 'ROKWIRE-USER-PRIVACY-LEVEL';
-  static const String RokwireHSApiKey = 'ROKWIRE-HS-API-KEY';
-  static const String RokwireHSUserId = 'USER-ID';
+  static const String RokwireAppId = 'APP';
 
   static final Network _network = new Network._internal();
   factory Network() {
@@ -49,7 +48,7 @@ class Network  {
 
   Network._internal();
 
-  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client }) async {
+  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, int timeout, Http.Client client }) async {
     try {
       
       Uri uri;
@@ -85,7 +84,7 @@ class Network  {
 
         Future<Http.StreamedResponse> responseStreamFuture = client.send(request);
         if ((responseStreamFuture != null) && (timeout != null)) {
-          responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout), onTimeout: _responseStreamTimeoutHandler);
+          responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout));
         }
 
         Http.StreamedResponse responseStream = await responseStreamFuture;
@@ -410,10 +409,6 @@ class Network  {
   }
 
   Http.Response _responseTimeoutHandler() {
-    return null;
-  }
-
-  Http.StreamedResponse _responseStreamTimeoutHandler() {
     return null;
   }
 
