@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -119,6 +121,39 @@ class Group {
     }
     return [];
   }
+
+  bool get currentUserIsUserAdmin{
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.admin){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool get currentUserIsPendingMember{
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.pending){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool get currentUserIsUserMember{
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.email == Auth()?.authInfo?.email && member.status != GroupMemberStatus.pending){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 //////////////////////////////
@@ -160,7 +195,6 @@ class Member {
 	String            photoURL;
 
   GroupMemberStatus status;
-  bool              admin;
   String            officerTitle;
   DateTime          dateAdded;
 
@@ -189,7 +223,6 @@ class Member {
     email       = other?.email;
     photoURL    = other?.photoURL;
     status      = other?.status;
-    admin       = other?.admin;
     officerTitle= other?.officerTitle;
     dateAdded   = other?.dateAdded;
   }
@@ -209,7 +242,6 @@ class Member {
     json['email']               = email;
     json['photo_url']           = photoURL;
     json['status']              = groupMemberStatusToString(status);
-    json['admin']               = admin;
     json['officerTitle']        = officerTitle;
     json['dateAdded']           = AppDateTime().formatDateTime(dateAdded, format: AppDateTime.iso8601DateTimeFormat);
     return json;
@@ -222,7 +254,6 @@ class Member {
            (o.email == email) &&
            (o.photoURL == photoURL) &&
            (o.status == status) &&
-           (o.admin == admin) &&
            (o.officerTitle == officerTitle) &&
            (o.dateAdded == dateAdded);
   }
@@ -233,10 +264,13 @@ class Member {
            (email?.hashCode ?? 0) ^
            (photoURL?.hashCode ?? 0) ^
            (status?.hashCode ?? 0) ^
-           (admin?.hashCode ?? 0) ^
            (officerTitle?.hashCode ?? 0) ^
            (dateAdded?.hashCode ?? 0);
   }
+
+  bool get isAdmin           => status == GroupMemberStatus.admin;
+  bool get isMember          => status == GroupMemberStatus.member;
+  bool get isPendingMember   => status == GroupMemberStatus.pending;
 }
 
 //////////////////////////////

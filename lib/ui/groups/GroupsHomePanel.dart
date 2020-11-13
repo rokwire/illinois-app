@@ -40,12 +40,19 @@ enum FilterType {none, category, type}
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
 
   bool _isFilterLoading = false;
-  bool _isGroupsLoading = false;
-  bool get _isLoading => _isFilterLoading || _isGroupsLoading;
+  bool _isAllGroupsLoading = false;
+  bool _isMyGroupsLoading = false;
+  bool get _isLoading => _isFilterLoading || _isAllGroupsLoading || _isMyGroupsLoading;
 
-  List<Group> _groups;
+  List<Group> _allGroups;
   List<Group> _myGroups;
-  List<Group> _pendingGroups;
+  List<Group> _myPendingGroups;
+  List<Group> get _allFilteredGroups {
+    String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
+    return AppString.isStringNotEmpty(selectedCategory) && AppCollection.isCollectionNotEmpty(_allGroups)
+        ? _allGroups.where((group) => selectedCategory == group.category).toList()
+        : _allGroups;
+  }
 
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
   String _selectedCategory;
@@ -74,9 +81,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Groups.notifyUserMembershipUpdated);
-    _loadFilters().whenComplete((){
-      _loadGroups();
-    });
+    _loadFilters();
+    _loadGroups();
     Groups().updateUserMemberships();
   }
 
@@ -88,32 +94,38 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _loadGroups(){
     setState(() {
-      _isGroupsLoading = true;
+      _isAllGroupsLoading = true;
     });
-    String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    Groups().loadGroups(category: selectedCategory).then((List<Group> groups){
-      _groups = groups;
-      _loadMyGroups();
-      _loadPendingGroups();
+
+    Groups().loadGroups(myGroups: false).then((List<Group> groups){
+      if(groups != null) {
+        _allGroups = groups;
+      }
     }).whenComplete((){
       setState(() {
-        _isGroupsLoading = false;
+        _isAllGroupsLoading = false;
       });
     });
   }
 
   void _loadMyGroups(){
-    //TBD
-    if(_groups!=null && _groups.isNotEmpty){
-      _myGroups = _groups.where((element) => Groups().getUserMembership(element.id) != null)?.toList();
-    }
-  }
-
-  void _loadPendingGroups(){
-    //TBD
-    if(_groups!=null && _groups.isNotEmpty){
-      _pendingGroups = _groups.where((element) => Groups().getUserMembership(element.id) == null)?.toList();
-    }
+    setState(() {
+      _isMyGroupsLoading = true;
+    });
+    Groups().loadGroups(myGroups: true).then((List<Group> groups){
+      if(AppCollection.isCollectionNotEmpty(groups)) {
+        _myGroups = groups.where((group) => group.currentUserIsUserMember).toList();
+        _myPendingGroups = groups.where((group) => group.currentUserIsPendingMember).toList();
+      }
+      else{
+        _myGroups = [];
+        _myPendingGroups = [];
+      }
+    }).whenComplete((){
+      setState(() {
+        _isMyGroupsLoading = false;
+      });
+    });
   }
 
   Future<void> _loadFilters() async{
@@ -129,6 +141,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isFilterLoading = false;
     });
+  }
+
+  void _loadContentFromNet({bool force = false}){
+    if(_myGroupsSelected){
+      if(force || _myGroups == null && _myPendingGroups == null){
+        _loadMyGroups();
+      }
+    }
+    else if(force || _allGroups == null){
+      _loadGroups();
+    }
   }
 
   @override
@@ -160,8 +183,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     scrollDirection: Axis.vertical,
                     child: Column(
                       children: <Widget>[
-                        _myGroupsSelected? _buildMyGroupsContent() : _buildAllGroupsContent(),
-                        _myGroupsSelected? _buildPendingGroups() : Container(),
+                        _myGroupsSelected
+                            ? _buildMyGroupsContent()
+                            : _buildAllGroupsContent(),
                       ],
                     ),
                   ),
@@ -302,8 +326,18 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         child: Container(color: Color(0x99000000)))
     );
   }
+
   Widget _buildMyGroupsContent(){
-    if(AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_pendingGroups)) {
+    return Column(
+      children: [
+        _buildMyGroupsSection(),
+        _buildMyPendingGroupsSection(),
+      ],
+    );
+  }
+
+  Widget _buildMyGroupsSection(){
+    if(AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_myPendingGroups)) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Text(
@@ -333,8 +367,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  Widget _buildPendingGroups(){
-    if(AppCollection.isCollectionNotEmpty(_pendingGroups)) {
+  Widget _buildMyPendingGroupsSection(){
+    if(AppCollection.isCollectionNotEmpty(_myPendingGroups)) {
       List<Widget> widgets = List<Widget>();
       widgets.add(Container(height: 16,));
       widgets.add(
@@ -350,7 +384,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         )
       );
       widgets.add(Container(height: 8,));
-      for (Group group in _pendingGroups) {
+      for (Group group in _myPendingGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup,),
@@ -386,10 +420,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildAllGroupsContent(){
 
-    if(AppCollection.isCollectionNotEmpty(_groups)){
+    if(AppCollection.isCollectionNotEmpty(_allFilteredGroups)){
       List<Widget> widgets = List<Widget>();
       widgets.add(Container(height: 8,));
-      for(Group group in _groups){
+      for(Group group in _allFilteredGroups){
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: _GroupCard(group: group),
@@ -412,7 +446,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  void switchTabSelection() {setState((){ _myGroupsSelected = !_myGroupsSelected; }); }
+  void switchTabSelection() {
+    setState((){ _myGroupsSelected = !_myGroupsSelected; });
+    _loadContentFromNet();
+  }
 
   void _onTapFilterEntry(String entry){
     String analyticsTarget;
@@ -511,14 +548,6 @@ class _GroupCard extends StatelessWidget{
   final _GroupCardDisplayType displayType;
   _GroupCard({@required this.group, this.displayType = _GroupCardDisplayType.allGroups});
 
-  bool get _isMember{
-    return Groups().getUserMembership(group.id) != null;
-  }
-
-  bool get _isAdmin{
-    return Groups().getUserMembership(group.id)?.admin ?? false;
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -563,7 +592,7 @@ class _GroupCard extends StatelessWidget{
   Widget _buildHeading(){
     if(displayType == _GroupCardDisplayType.allGroups){
       return
-        _isMember? _buildMember():
+        group.currentUserIsUserMember ? _buildMember():
         Text("CATEGORY",
         style: TextStyle(
             fontFamily: Styles().fontFamilies.bold,
@@ -572,7 +601,7 @@ class _GroupCard extends StatelessWidget{
         ),
       );
     } else {
-      return _isMember? _buildMember(): _buildMembershipStatus();
+      return group.currentUserIsUserMember? _buildMember(): _buildMembershipStatus();
     }
   }
 
@@ -607,11 +636,11 @@ class _GroupCard extends StatelessWidget{
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: _isAdmin? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
+                color: group.currentUserIsUserAdmin ? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
                 borderRadius: BorderRadius.all(Radius.circular(2)),
               ),
               child: Center(
-                child: Text(_isAdmin? "ADMIN" : "MEMBER",
+                child: Text(group.currentUserIsUserAdmin ? "ADMIN" : "MEMBER",
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       fontSize: 12,

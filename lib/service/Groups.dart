@@ -112,18 +112,15 @@ class Groups /* with Service */ {
 
   // Groups APIs
 
-  Future<List<Group>> loadGroups({String category, bool myGroups = false}) async {
+  Future<List<Group>> loadGroups({bool myGroups = false}) async {
     String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
     try {
-      Response response = await Network().get(url, auth: NetworkAuth.App,);
+      Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : NetworkAuth.App,);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
       List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
       if(AppCollection.isCollectionNotEmpty(groupsJson)){
-        List<Group> groups = groupsJson.map((e) => Group.fromJson(e)).toList();
-        return !myGroups && AppString.isStringNotEmpty(category) && AppCollection.isCollectionNotEmpty(groups)
-            ? groups.where((group) => category == group.category).toList()
-            : groups;
+        return groupsJson.map((e) => Group.fromJson(e)).toList();
       }
     } catch (e) {
       print(e);

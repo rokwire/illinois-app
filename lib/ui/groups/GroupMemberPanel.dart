@@ -38,6 +38,7 @@ class GroupMemberPanel extends StatefulWidget {
 class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Member _member;
+  bool _isAdmin = false;
   bool _updating = false;
   bool _removing = false;
 
@@ -48,6 +49,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   void initState() {
     super.initState();
     _member = Member.fromOther(widget.member);
+
+    _isAdmin = _member.isAdmin;
     Groups().officerTitles.then((List<String> officerTitles){
       setState(() {
         _officerTitleTypes = officerTitles;
@@ -174,11 +177,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       height: null,
                       borderRadius: BorderRadius.circular(4),
                       label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
-                      toggled: _member?.admin ?? false,
+                      toggled: !_isAdmin ?? false,
                       context: context,
                       onTap: () {
                         setState(() {
-                          _member.admin = !(_member?.admin ?? false);
+                          _isAdmin = !(_isAdmin ?? false);
                           _update();
                         });
                       }

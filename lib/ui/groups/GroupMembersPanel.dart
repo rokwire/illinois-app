@@ -366,6 +366,6 @@ class _GroupMemberCard extends StatelessWidget{
   }
 
   bool get _isAdmin{
-    return member?.admin ?? true;
+    return member?.isAdmin ?? true;
   }
 }
