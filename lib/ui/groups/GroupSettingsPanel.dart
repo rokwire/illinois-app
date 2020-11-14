@@ -43,6 +43,7 @@ class GroupSettingsPanel extends StatefulWidget {
 class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
+  final _groupTagsController = TextEditingController();
   final _linkController = TextEditingController();
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
@@ -282,7 +283,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Description
   Widget _buildDescriptionField() {
     String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
-    String fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "Tell people what this gtoup is about");
+    String fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
 
     return Container(
@@ -290,13 +291,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildInfoHeader(title,null),
+          _buildInfoHeader(title,fieldTitle),
           Container(
             height: 230,
             padding: EdgeInsets.only(left: 8,right: 8, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
-                label: fieldTitle,
+                label: title,
                 hint: fieldHint,
                 textField: true,
                 excludeSemantics: true,
@@ -305,7 +306,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   onChanged: (description){ _group.description = description;},
                   maxLines: 64,
                   decoration: InputDecoration(
-                    hintText: fieldTitle,
+                    hintText: fieldHint,
                     border: InputBorder.none,),
                   style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 )),
@@ -425,22 +426,60 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
   //
 
-  //Types
-  Widget _buildTagsLayout() {
+  //Tags
+  Widget _buildTagsLayout(){
+    String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
+    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.tags.title", "TAGS"),
-              Localization().getStringEx("panel.groups_settings.tags.description", "Tags help people understand more about your group. Select all that apply to your group."),),
-            Container(height: 8,),
-            _constructTagsContent()
+            _buildSectionTitle(fieldTitle,
+              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
+            Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    height: 48,
+                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+                    child: Semantics(
+                        label: fieldTitle,
+                        hint: fieldHint,
+                        textField: true,
+                        excludeSemantics: true,
+                        child: TextField(
+                          controller: _groupTagsController,
+                          decoration: InputDecoration(border: InputBorder.none,),
+                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                        )),
+                  ),
+                ),
+                Container(width: 8,),
+                Expanded(
+                    flex: 2,
+                    child:
+                    ScalableRoundedButton(
+                      label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
+                      hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", "Add"),
+                      backgroundColor: Styles().colors.white,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      onTap: _onTapAddTag,
+                    )
+                )
+              ],
+            ),
+            Container(height: 10,),
+            _constructTagButtonsContent()
           ],
         ));
   }
 
-  Widget _constructTagsContent(){
+  Widget _constructTagButtonsContent(){
     List<Widget> buttons = _buildTagsButtons();
     if(buttons?.isEmpty??true)
       return Container();
@@ -460,43 +499,43 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     rows.add(Container(height: 24,));
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: rows,
     );
   }
 
   List<Widget> _buildTagsButtons(){
-      List<String> tags = _groupTags;
-      List<Widget> result = new List();
-      if (AppCollection.isCollectionNotEmpty(tags)) {
-        tags.forEach((String tag) {
-          result.add(_buildTagButton(tag));
-        });
-      }
-      return result;
+    List<String> tags = _group?.tags;
+    List<Widget> result = new List();
+    if (AppCollection.isCollectionNotEmpty(tags)) {
+      tags.forEach((String tag) {
+        result.add(_buildTagButton(tag));
+      });
+    }
+    return result;
   }
 
   Widget _buildTagButton(String tag){
-    bool isSelected = _group?.tags?.contains(tag)??false;
     return
       InkWell(
-      child: Container(
-          decoration: BoxDecoration(
-              color: isSelected? Styles().colors.fillColorPrimary: Styles().colors.lightGray,
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Row(children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
-              child: Text(tag,
-                style: TextStyle(color: isSelected? Styles().colors.white : Styles().colors.textBackground , fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
-              )),
-            Container (
-              padding: EdgeInsets.only(top:8,bottom: 8,right: 8),
-              child: Image.asset(isSelected?"images/small-add-orange.png" : "images/small-add.png"),
-            )
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors.fillColorPrimary,
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Row(children: <Widget>[
+                Container(
+                    padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
+                    child: Text(tag,
+                      style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
+                    )),
+                Container (
+                  padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
+                  child: Image.asset("images/small-add-orange.png"),
+                )
 
-          ],)
-        ),
-      onTap: () => onTagTap(tag)
+              ],)
+          ),
+          onTap: () => onTagTap(tag)
       );
   }
 
@@ -512,7 +551,20 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _group.tags.add(tag);
       }
     }
-      setState(() {});
+    setState(() {});
+  }
+
+  void _onTapAddTag(){
+    String tag = _groupTagsController.text?.toString();
+    if(_group!=null) {
+      if (_group.tags == null) {
+        _group.tags = new List<String>();
+      }
+      _group.tags.add(tag);
+      _groupTagsController.clear();
+    }
+
+    setState(() {});
   }
   //
 
@@ -572,10 +624,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child: Column( children: <Widget>[
           _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
           Container(height: 12,),
-          _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.steps.title","Membership steps"),
-            description: Localization().getStringEx("panel.groups_settings.membership.button.steps.description","Share the steps someone will take to become a member."),
-            onTap: _onTapMembershipSteps),
-          Container(height: 10,),
+//          _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.steps.title","Membership steps"),
+//            description: Localization().getStringEx("panel.groups_settings.membership.button.steps.description","Share the steps someone will take to become a member."),
+//            onTap: _onTapMembershipSteps),
+//          Container(height: 10,),
           _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
             description: questionsDescription,
             onTap: _onTapMembershipQuestion),
