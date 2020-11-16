@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -66,7 +67,18 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     setState(() {
       _isMembersLoading = false;
       _pendingMembers = widget.group.getMembersByStatus(GroupMemberStatus.pending);
-//      TMP: _pendingMembers = [GroupPendingMember(json: {"name":"Todor Bachvarov","photo_url":"https://s3.ivisa.com/website-assets/blog/id-photo2.jpg"})];
+//      TMP: _pendingMembers = [GroupPendingMember(json: {
+//        "name":"Todor Bachvarov",
+//        "photo_url":"https://s3.ivisa.com/website-assets/blog/id-photo2.jpg",
+//        "membershipRequest":{
+//          "dateCreated":AppDateTime().formatDateTime(DateTime.now(), format: AppDateTime.iso8601DateTimeFormat),
+//          "answers":[
+//          {"answer":"Test Answer 1"},
+//          {"answer":"Test Answer 2"},
+//          {"answer":"Test Answer 3"}
+//          ]
+//        }
+//        })];
       _members = AppCollection.isCollectionNotEmpty(widget?.group?.members) ? widget?.group?.members.where((member) => member.status != GroupMemberStatus.pending).toList() : [];
     _applyMembersFilter();
     });
