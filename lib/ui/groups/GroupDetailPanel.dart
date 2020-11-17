@@ -101,20 +101,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   void initState() {
     super.initState();
 
-    NotificationService().subscribe(this, Groups.notifyUserMembershipUpdated);
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
     Groups().updateUserMemberships();
-    
-    _loadingGroup = true;
-    Groups().loadGroup(widget.groupId).then((Group group){
-      if (mounted) {
-        setState(() {
-          _loadingGroup = false;
-          _group = group;
-          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
-          _loadMembershipStepEvents();
-        });
-      }
-    });
+
+    _loadGroup();
 
     Groups().loadEvents(widget.groupId, limit: 3).then((List<GroupEvent> events) { 
       if (mounted) {
@@ -131,6 +121,24 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     super.dispose();
 
     NotificationService().unsubscribe(this);
+  }
+
+  void _loadGroup(){
+    setState(() {
+      _loadingGroup = true;
+    });
+    Groups().loadGroup(widget.groupId).then((Group group){
+      if (mounted) {
+        setState(() {
+          _loadingGroup = false;
+          if(group != null) {
+            _group = group;
+            _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+            _loadMembershipStepEvents();
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -174,6 +182,9 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   void onNotification(String name, dynamic param) {
     if (name == Groups.notifyUserMembershipUpdated) {
       setState(() {});
+    }
+    else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
+      _loadGroup();
     }
   }
 
@@ -613,21 +624,22 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildMembershipRequest() {
     return
-      _isMember? Container() :
-      Container(color: Colors.white,
-      child: Padding(padding: EdgeInsets.all(16),
-          child: ScalableRoundedButton(label: 'Request to join',
-            backgroundColor: Styles().colors.white,
-            textColor: Styles().colors.fillColorPrimary,
-            fontFamily: Styles().fontFamilies.bold,
-            fontSize: 16,
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-            borderColor: Styles().colors.fillColorSecondary,
-            borderWidth: 2,
-            onTap:() { _onMembershipRequest();  }
-          ),
-      ),
-    );
+      _group.currentUserIsPendingMember
+          ? Container()
+          : Container(color: Colors.white,
+              child: Padding(padding: EdgeInsets.all(16),
+                  child: ScalableRoundedButton(label: 'Request to join',
+                    backgroundColor: Styles().colors.white,
+                    textColor: Styles().colors.fillColorPrimary,
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 16,
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    borderColor: Styles().colors.fillColorSecondary,
+                    borderWidth: 2,
+                    onTap:() { _onMembershipRequest();  }
+                  ),
+              ),
+            );
   }
 
   Widget _buildSocial() {

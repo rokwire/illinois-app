@@ -31,7 +31,9 @@ import 'package:illinois/utils/Utils.dart';
 
 class Groups /* with Service */ {
 
-  static const String notifyUserMembershipUpdated  = "edu.illinois.rokwire.groups.membership.updated";
+  static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
+  static const String notifyGroupCreated            = "edu.illinois.rokwire.group.created";
+  static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
 
   Map<String, Member> _userMembership;
 
@@ -132,7 +134,7 @@ class Groups /* with Service */ {
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
-        Response response = await Network().get(url, auth: NetworkAuth.App,);
+        Response response = await Network().get(url, auth: Auth().isShibbolethLoggedIn ? NetworkAuth.User : NetworkAuth.App,);
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
         Map<String, dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
@@ -157,7 +159,11 @@ class Groups /* with Service */ {
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
         Map<String, dynamic> jsonData = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-        return jsonData['inserted_id'];
+        if(jsonData != null){
+          String groupId = jsonData['inserted_id'];
+          NotificationService().notify(notifyGroupCreated, group.id);
+          return groupId;
+        }
       } catch (e) {
         print(e);
       }
@@ -165,23 +171,51 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<void>updateGroup(Group group) async {
+  Future<bool>updateGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups/${group.id}';
       try {
         Map<String, dynamic> json = group.toJson();
         String body = jsonEncode(json);
         Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
-        if((response?.statusCode ?? -1) != 200){
-          throw "Unable to update the group";
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, group.id);
+          return true;
         }
       } catch (e) {
         print(e);
       }
     }
+    return false;
   }
 
   // Members APIs
+
+  Future<bool> requestMembership(Group group, GroupMembershipRequest membershipRequest) async{
+    if(group != null) {
+      String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
+      try {
+        Map<String, dynamic> json = {};
+        json["email"] = Auth()?.authInfo?.email ?? "";
+        json["name"] = Auth()?.authInfo?.fullName ?? "";
+        json["creator_photo_url"] = "";
+        json["member_answers"] = []; // TBD: Implement it
+
+        String body = jsonEncode(json);
+        Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, group.id);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
+  }
+
+
+  // Old
 
   Future<List<GroupPendingMember>> loadPendingMembers(String groupId) async {
     List<GroupPendingMember> result;
@@ -200,10 +234,6 @@ class Groups /* with Service */ {
 
   Future<Member> updateMember(String groupId, Member groupMember) async {
     return Future<Member>.delayed(Duration(seconds: 1), (){ return groupMember; });
-  }
-
-  Future<bool> requestMembership(String groupId, GroupMembershipRequest membershipRequest) {
-    return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
   }
 
   Future<bool> acceptMembership(String groupId, String userId, bool decision) {

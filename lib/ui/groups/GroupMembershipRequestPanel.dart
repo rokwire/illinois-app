@@ -197,18 +197,15 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         _submitting = true;
       });
 
-      Groups().requestMembership(widget.group?.id, membershipRequest).then((bool result){
+      Groups().requestMembership(widget.group, membershipRequest).then((_){
         if (mounted) {
           setState(() {
             _submitting = false;
           });
-          if (result) {
-            Navigator.pop(context);
-          }
-          else {
-            AppAlert.showDialogResult(context, 'Failed to submit request');
-          }
+          Navigator.pop(context);
         }
+      }).catchError((){
+        AppAlert.showDialogResult(context, 'Failed to submit request');
       });
     }
   }
