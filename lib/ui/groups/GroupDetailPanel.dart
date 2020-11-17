@@ -624,7 +624,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildMembershipRequest() {
     return
-      _group.currentUserIsPendingMember
+      !Auth().isShibbolethLoggedIn || _group.currentUserIsMember
           ? Container()
           : Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),

@@ -123,7 +123,7 @@ class Group {
   }
 
   bool get currentUserIsUserAdmin{
-    if(AppCollection.isCollectionNotEmpty(members)){
+    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
         if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.admin){
           return true;
@@ -134,7 +134,7 @@ class Group {
   }
 
   bool get currentUserIsPendingMember{
-    if(AppCollection.isCollectionNotEmpty(members)){
+    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
         if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.pending){
           return true;
@@ -144,8 +144,19 @@ class Group {
     return false;
   }
 
+  bool get currentUserIsMember{
+    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.email == Auth()?.authInfo?.email){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool get currentUserIsUserMember{
-    if(AppCollection.isCollectionNotEmpty(members)){
+    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
         if(member.email == Auth()?.authInfo?.email && member.status != GroupMemberStatus.pending){
           return true;
