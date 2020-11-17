@@ -97,6 +97,30 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return false;
   }
 
+  Color get _memberStatusColor{
+    Member member = _group.currentUserAsMember;
+    if(member != null){
+      switch(member.status){
+        case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
+        case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
+        case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
+      }
+    }
+    return Styles().colors.white;
+  }
+
+  String get _memberStatusText{
+    Member member = _group.currentUserAsMember;
+    if(member != null){
+      switch(member.status){
+        case GroupMemberStatus.admin    :  return "ADMIN";
+        case GroupMemberStatus.member   :  return "MEMBER";
+        case GroupMemberStatus.pending  :  return "PENDING MEMBERSHIP";
+      }
+    }
+    return "";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -383,11 +407,11 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: _isAdmin? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
+                          color: _memberStatusColor,
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                         child: Center(
-                          child: Text(_isAdmin? "ADMIN" : "MEMBER",
+                          child: Text(_memberStatusText,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.bold,
                                 fontSize: 12,

@@ -122,6 +122,17 @@ class Group {
     return [];
   }
 
+  Member get currentUserAsMember{
+    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
+      for (Member member in members) {
+        if (member.email == Auth()?.authInfo?.email) {
+          return member;
+        }
+      }
+    }
+    return null;
+  }
+
   bool get currentUserIsUserAdmin{
     if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
