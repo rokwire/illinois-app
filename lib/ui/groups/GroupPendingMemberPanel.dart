@@ -27,7 +27,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupPendingMemberPanel extends StatefulWidget {
-  final GroupPendingMember member;
+  final Member member;
   final Group group;
   GroupPendingMemberPanel({this.member, this.group});
   _GroupPendingMemberPanelState createState() => _GroupPendingMemberPanelState();
@@ -100,7 +100,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                     color: Styles().colors.fillColorPrimary
                 ),
               ),
-              Text(Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ${AppDateTime().formatDateTime(widget?.member?.membershipRequest?.dateCreated, format: "MMM dd, yyyy") ?? ""}"),
+              Text( "24/12/2021",//Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ${AppDateTime().formatDateTime(widget?.member?.membershipRequest?.dateCreated, format: "MMM dd, yyyy") ?? ""}"),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies.regular,
                     fontSize: 14,
@@ -126,13 +126,13 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildQuestions(){
     List<Widget> list = List<Widget>();
-    for (int index = 0; index < widget.member.membershipRequest.answers.length; index++) {
+    /*for (int index = 0; index < widget.member.membershipRequest.answers.length; index++) {
       GroupMembershipAnswer answer = widget.member.membershipRequest.answers[index];
       GroupMembershipQuestion question = (index < (widget.group?.membershipQuest?.questions?.length ?? 0)) ? widget.group.membershipQuest.questions[index] : null;
       TMP: if(question == null){ question = GroupMembershipQuestion(json: {"question":"Is it test ${index+1} ?"});}
       list.add(_MembershipAnswer(member: widget.member, question: question, answer: answer));
       list.add(Container(height: 16,));
-    }
+    }*/
 
     return
       Container(
