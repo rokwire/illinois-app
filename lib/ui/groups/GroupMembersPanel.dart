@@ -67,7 +67,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     setState(() {
       _isMembersLoading = false;
       _pendingMembers = widget.group.getMembersByStatus(GroupMemberStatus.pending);
-//      TMP: _pendingMembers = [GroupPendingMember(json: {
+//      TMP: _pendingMembers = [Member(json: {
 //        "name":"Todor Bachvarov",
 //        "photo_url":"https://s3.ivisa.com/website-assets/blog/id-photo2.jpg",
 //        "membershipRequest":{
@@ -132,7 +132,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
   Widget _buildRequests(){
     if((_pendingMembers?.length ?? 0) > 0) {
       List<Widget> requests = List<Widget>();
-      for (GroupPendingMember member in (_pendingMembers.length > 2 && _showAllRequestVisibility) ? _pendingMembers.sublist(0, 1) : _pendingMembers) {
+      for (Member member in (_pendingMembers.length > 2 && _showAllRequestVisibility) ? _pendingMembers.sublist(0, 1) : _pendingMembers) {
         if(requests.isNotEmpty){
           requests.add(Container(height: 10,));
         }
@@ -236,7 +236,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
 }
 
 class _PendingMemberCard extends StatelessWidget {
-  final GroupPendingMember member;
+  final Member member;
   final Group group;
   _PendingMemberCard({@required this.member, this.group});
 
