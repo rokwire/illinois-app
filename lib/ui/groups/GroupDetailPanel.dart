@@ -27,8 +27,11 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
+import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -180,7 +183,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
     return Scaffold(
       appBar: AppBar(
-        leading: _HeaderBackButton(),
+        leading: HeaderBackButton(),
         actions: [
           Semantics(
               label:  'Options',
@@ -224,7 +227,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         ),
       ]),
       SafeArea(
-        child: _HeaderBackButton()
+        child: HeaderBackButton()
       ),
     ],);
   }
@@ -241,7 +244,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         ),
       ]),
       SafeArea(
-        child: _HeaderBackButton()
+        child: HeaderBackButton()
       ),
     ],);
   }
@@ -976,7 +979,10 @@ class _EventContent extends StatelessWidget {
     ],)),);
 
     return Stack(children: <Widget>[
-      GestureDetector(onTap: () { /* push event detail */ },
+      GestureDetector(onTap: () {
+        Analytics().logPage(name: "Group Settings");
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: event,)));
+      },
         child: Padding(padding: EdgeInsets.all(16), child:
          Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
         )
@@ -988,7 +994,7 @@ class _EventContent extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-        GestureDetector(onTap: () { /*TBD switch */ },
+        GestureDetector(onTap: () { /*TBD switch favorite */ },
             child: Container(
               child: Image.asset('images/icon-star.png'),
             ),
@@ -1099,23 +1105,6 @@ class _MembershipStepCard extends StatelessWidget {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
       ),
-    );
-  }
-}
-
-class _HeaderBackButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: Localization().getStringEx('headerbar.back.title', 'Back'),
-      hint: Localization().getStringEx('headerbar.back.hint', ''),
-      button: true,
-      child: IconButton(
-            icon: Image.asset('images/chevron-left-white.png'),
-            onPressed: (){
-              Analytics.instance.logSelect(target: "Back");
-              Navigator.pop(context);
-            }),
     );
   }
 }

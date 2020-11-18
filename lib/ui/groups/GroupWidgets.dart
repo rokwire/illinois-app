@@ -15,6 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 
 /////////////////////////////////////
@@ -226,6 +228,23 @@ class GroupMembershipAddButton extends StatelessWidget {
           )
         ),
       ),
+    );
+  }
+}
+
+class HeaderBackButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: Localization().getStringEx('headerbar.back.title', 'Back'),
+      hint: Localization().getStringEx('headerbar.back.hint', ''),
+      button: true,
+      child: IconButton(
+          icon: Image.asset('images/chevron-left-white.png'),
+          onPressed: (){
+            Analytics.instance.logSelect(target: "Back");
+            Navigator.pop(context);
+          }),
     );
   }
 }
