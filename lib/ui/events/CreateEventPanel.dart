@@ -29,6 +29,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -43,8 +44,9 @@ import 'package:intl/intl.dart';
 class CreateEventPanel extends StatefulWidget {
   final GroupEvent editEvent;
   final Function onEditTap;
+  final Group group;
 
-  const CreateEventPanel({Key key, this.editEvent, this.onEditTap}) : super(key: key);
+  const CreateEventPanel({Key key, this.editEvent, this.onEditTap, this.group}) : super(key: key);
 
   @override
   _CreateEventPanelState createState() => _CreateEventPanelState();
@@ -63,6 +65,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   TimeOfDay endTime;
   bool _allDay = false;
   Location _location;
+  bool _isOnline = false;
 
   bool _loading = false;
 
@@ -71,6 +74,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   final _eventPurchaseUrlController = TextEditingController();
   final _eventWebsiteController = TextEditingController();
   final _eventLocationController = TextEditingController();
+  final _eventCallUrlController = TextEditingController();
 
   @override
   void initState() {
@@ -81,6 +85,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   @override
   void dispose() {
+    _eventTitleController.dispose();
+    _eventDescriptionController.dispose();
+    _eventPurchaseUrlController.dispose();
+    _eventWebsiteController.dispose();
+    _eventLocationController.dispose();
+    _eventCallUrlController.dispose();
     super.dispose();
   }
 
@@ -356,25 +366,79 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                    Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
-                                    hint: Localization().getStringEx("panel.create_event.date_time.start_date.hint",""), button: true, excludeSemantics: true, child:
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 8),
-                                              child:
+                                       Expanded(
+                                         flex:2,
+                                         child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
+                                             hint: Localization().getStringEx("panel.create_event.date_time.start_date.hint",""), button: true, excludeSemantics: true, child:
+                                             Column(
+                                               crossAxisAlignment:
+                                               CrossAxisAlignment.start,
+                                               children: <Widget>[
+                                                 Padding(
+                                                   padding:
+                                                   EdgeInsets.only(bottom: 8),
+                                                   child:
+                                                   Row(
+                                                     children: <Widget>[
+                                                       Text(
+                                                         Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
+                                                         style: TextStyle(
+                                                             color: Styles().colors.fillColorPrimary,
+                                                             fontSize: 14,
+                                                             fontFamily:
+                                                             Styles().fontFamilies.bold,
+                                                             letterSpacing: 1),
+                                                       ),
+                                                       Padding(
+                                                         padding: EdgeInsets.only(
+                                                             left: 2),
+                                                         child: Text(
+                                                           '*',
+                                                           style: TextStyle(
+                                                               color: Styles().colors.fillColorSecondary,
+                                                               fontSize: 14,
+                                                               fontFamily:
+                                                               Styles().fontFamilies.bold),
+                                                         ),
+                                                       )
+                                                     ],
+                                                   ),
+                                                 ),
+                                                 _EventDateDisplayView(
+                                                   label: startDate != null
+                                                       ? AppDateTime()
+                                                       .formatDateTime(
+                                                       startDate,
+                                                       format: "EEE, MMM dd, yyyy")
+                                                       : "-",
+                                                   onTap: _onTapStartDate,
+                                                 )
+                                               ],
+                                             )
+                                         ),
+                                       ),
+                                    Container(width: 10),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
+                                          hint: Localization().getStringEx("panel.create_event.date_time.start_time.hint",""), button: true, excludeSemantics: true, child:
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding:
+                                                EdgeInsets.only(bottom: 8),
+                                                child:
                                                 Row(
                                                   children: <Widget>[
                                                     Text(
-                                                    Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
+                                                      Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
                                                       style: TextStyle(
                                                           color: Styles().colors.fillColorPrimary,
                                                           fontSize: 14,
                                                           fontFamily:
-                                                              Styles().fontFamilies.bold,
+                                                          Styles().fontFamilies.bold,
                                                           letterSpacing: 1),
                                                     ),
                                                     Padding(
@@ -386,74 +450,29 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                             color: Styles().colors.fillColorSecondary,
                                                             fontSize: 14,
                                                             fontFamily:
-                                                                Styles().fontFamilies.bold),
+                                                            Styles().fontFamilies.bold),
                                                       ),
                                                     )
                                                   ],
                                                 ),
-                                            ),
-                                            _EventDateDisplayView(
-                                              label: startDate != null
-                                                  ? AppDateTime()
-                                                  .formatDateTime(
-                                                  startDate,
-                                                  format: AppDateTime
-                                                      .scheduleServerQueryDateTimeFormat)
-                                                  : "-",
-                                              onTap: _onTapStartDate,
-                                            )
-                                          ],
-                                        )
-                                    ),
-                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
-                                       hint: Localization().getStringEx("panel.create_event.date_time.end_date.hint",""), button: true, excludeSemantics: true, child:
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 8),
-                                                child:
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorPrimary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                                Styles().fontFamilies.bold,
-                                                            letterSpacing: 1),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 2),
-                                                        child: Text(
-                                                          '*',
-                                                          style: TextStyle(
-                                                              color: Styles().colors.fillColorSecondary,
-                                                              fontSize: 14,
-                                                              fontFamily:
-                                                                  Styles().fontFamilies.bold),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
                                               ),
                                               _EventDateDisplayView(
-                                                label: endDate != null
-                                                    ? AppDateTime()
-                                                    .formatDateTime(
-                                                    endDate,
-                                                    format: AppDateTime
-                                                        .scheduleServerQueryDateTimeFormat)
+                                                label: startTime != null &&
+                                                    !_allDay
+                                                    ? DateFormat("h:mma").format(
+                                                    _populateDateTimeWithTimeOfDay(
+                                                        startDate,
+                                                        startTime) ??
+                                                        (_populateDateTimeWithTimeOfDay(
+                                                            DateTime.now(),
+                                                            startTime)))
                                                     : "-",
-                                                onTap: _onTapEndDate,
+                                                onTap: _onTapStartTime,
                                               )
                                             ],
                                           )
-                                     )
+                                      ),
+                                    ),
                                       ],
                                     ),
                                   ),
@@ -463,113 +482,116 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                      Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
-                                      hint: Localization().getStringEx("panel.create_event.date_time.start_time.hint",""), button: true, excludeSemantics: true, child:
-                                          Column(
-                                            crossAxisAlignment:
+                                        Expanded(
+                                          flex: 2,
+                                          child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
+                                              hint: Localization().getStringEx("panel.create_event.date_time.end_date.hint",""), button: true, excludeSemantics: true, child:
+                                              Column(
+                                                crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Padding(
-                                                padding:
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
                                                     EdgeInsets.only(bottom: 8),
-                                                child:
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorPrimary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                                Styles().fontFamilies.bold,
-                                                            letterSpacing: 1),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 2),
-                                                        child: Text(
-                                                          '*',
+                                                    child:
+                                                    Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
                                                           style: TextStyle(
-                                                              color: Styles().colors.fillColorSecondary,
+                                                              color: Styles().colors.fillColorPrimary,
                                                               fontSize: 14,
                                                               fontFamily:
-                                                                  Styles().fontFamilies.bold),
+                                                              Styles().fontFamilies.bold,
+                                                              letterSpacing: 1),
                                                         ),
-                                                      )
-                                                    ],
-                                                ),
-                                              ),
-                                              _EventDateDisplayView(
-                                                label: startTime != null &&
-                                                        !_allDay
-                                                    ? DateFormat("h:mma").format(
-                                                        _populateDateTimeWithTimeOfDay(
-                                                                startDate,
-                                                                startTime) ??
-                                                            (_populateDateTimeWithTimeOfDay(
-                                                                DateTime.now(),
-                                                                startTime)))
-                                                    : "-",
-                                                onTap: _onTapStartTime,
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left: 2),
+                                                          child: Text(
+                                                            '*',
+                                                            style: TextStyle(
+                                                                color: Styles().colors.fillColorSecondary,
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                Styles().fontFamilies.bold),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  _EventDateDisplayView(
+                                                    label: endDate != null
+                                                        ? AppDateTime()
+                                                        .formatDateTime(
+                                                        endDate,
+                                                        format: "EEE, MMM dd, yyyy")
+                                                        : "-",
+                                                    onTap: _onTapEndDate,
+                                                  )
+                                                ],
                                               )
-                                            ],
-                                          )
-                                      ),
-                                       Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
-                                           hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
-                                          Column(
-                                            crossAxisAlignment:
+                                          ),
+                                        ),
+                                        Container(width: 10,),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
+                                              hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
+                                              Column(
+                                                crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Padding(
-                                                padding:
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
                                                     EdgeInsets.only(bottom: 8),
-                                                child:
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorPrimary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                                Styles().fontFamilies.bold,
-                                                            letterSpacing: 1),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 2),
-                                                        child: Text(
-                                                          '*',
+                                                    child:
+                                                    Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
                                                           style: TextStyle(
-                                                              color: Styles().colors.fillColorSecondary,
+                                                              color: Styles().colors.fillColorPrimary,
                                                               fontSize: 14,
                                                               fontFamily:
-                                                                  Styles().fontFamilies.bold),
+                                                              Styles().fontFamilies.bold,
+                                                              letterSpacing: 1),
                                                         ),
-                                                      )
-                                                    ],
-                                                ),
-                                              ),
-                                              _EventDateDisplayView(
-                                                label: endTime != null && !_allDay
-                                                    ? DateFormat("h:mma").format(
+                                                        Padding(
+                                                          padding: EdgeInsets.only(
+                                                              left: 2),
+                                                          child: Text(
+                                                            '*',
+                                                            style: TextStyle(
+                                                                color: Styles().colors.fillColorSecondary,
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                Styles().fontFamilies.bold),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  _EventDateDisplayView(
+                                                    label: endTime != null && !_allDay
+                                                        ? DateFormat("h:mma").format(
                                                         _populateDateTimeWithTimeOfDay(
-                                                                endDate,
-                                                                endTime) ??
+                                                            endDate,
+                                                            endTime) ??
                                                             (_populateDateTimeWithTimeOfDay(
-                                                                    startDate,
-                                                                    endTime) ??
+                                                                startDate,
+                                                                endTime) ??
                                                                 _populateDateTimeWithTimeOfDay(
                                                                     DateTime
                                                                         .now(),
                                                                     endTime)))
-                                                    : "-",
-                                                onTap: _onTapEndTime,
+                                                        : "-",
+                                                    onTap: _onTapEndTime,
+                                                  )
+                                                ],
                                               )
-                                            ],
                                           )
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -619,71 +641,151 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     ),
                                   )
                                   ),
-                                  Semantics(label:Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
-                                      header: true, excludeSemantics: true, child:
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 8),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
-                                            style: TextStyle(
-                                                color: Styles().colors.fillColorPrimary,
-                                                fontSize: 14,
-                                                fontFamily: Styles().fontFamilies.bold,
-                                                letterSpacing: 1),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 2),
-                                            child: Text(
-                                              '*',
-                                              style: TextStyle(
-                                                  color: Styles().colors.fillColorSecondary,
-                                                  fontSize: 14,
-                                                  fontFamily: Styles().fontFamilies.bold),
+                                  (_isOnline) ? Container():
+                                  Column(
+                                      children: [
+                                        Semantics(label:Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
+                                            header: true, excludeSemantics: true, child:
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 8),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
+                                                    style: TextStyle(
+                                                        color: Styles().colors.fillColorPrimary,
+                                                        fontSize: 14,
+                                                        fontFamily: Styles().fontFamilies.bold,
+                                                        letterSpacing: 1),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(left: 2),
+                                                    child: Text(
+                                                      '*',
+                                                      style: TextStyle(
+                                                          color: Styles().colors.fillColorSecondary,
+                                                          fontSize: 14,
+                                                          fontFamily: Styles().fontFamilies.bold),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                        ),
+                                        Semantics(label:Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
+                                            hint: Localization().getStringEx("panel.create_event.location.adress.title.hint",''), textField: true, excludeSemantics: true, child:
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 16),
+                                              child: Container(
+                                                padding:
+                                                EdgeInsets.symmetric(horizontal: 12),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Styles().colors.fillColorPrimary,
+                                                        width: 1)),
+                                                height: 48,
+                                                child: TextField(
+                                                  controller: _eventLocationController,
+                                                  decoration: InputDecoration(
+                                                      border: InputBorder.none),
+                                                  maxLengthEnforced: true,
+                                                  style: TextStyle(
+                                                      color: Styles().colors.fillColorPrimary,
+                                                      fontSize: 20,
+                                                      fontFamily: Styles().fontFamilies.medium),
+                                                ),
+                                              ),
+                                            )
+                                        ),
+                                        Semantics(label:Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
+                                            hint: Localization().getStringEx("panel.create_event.location.button.select_location.button.hint",""), button: true, excludeSemantics: true, child:
+                                            Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                    child: SmallRoundedButton(
+                                                      onTap: _onTapSelectLocation,
+                                                      label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
+                                                      showChevron: false,
+                                                    ))
+                                              ],
+                                            )),
+                                      ]),
+                                      (!_isOnline) ? Container():
+                                      Column(
+                                        children: [
+                                          Semantics(label:Localization().getStringEx("panel.create_event.additional_info.call_url.title","LINK TO VIDEO CALL"),
+                                              hint: Localization().getStringEx("panel.create_event.additional_info.call_url.hint",""), textField: true, excludeSemantics: true, child:
+                                              Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding: EdgeInsets.only(bottom: 8),
+                                                      child: Text(
+                                                        Localization().getStringEx("panel.create_event.additional_info.call_url.title","LINK TO VIDEO CALL"),
+                                                        style: TextStyle(
+                                                            color: Styles().colors.fillColorPrimary,
+                                                            fontSize: 14,
+                                                            fontFamily: Styles().fontFamilies.bold,
+                                                            letterSpacing: 1),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(bottom: 12),
+                                                      child: Container(
+                                                        padding:
+                                                        EdgeInsets.symmetric(horizontal: 12),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            border: Border.all(
+                                                                color: Styles().colors.fillColorPrimary,
+                                                                width: 1)),
+                                                        height: 48,
+                                                        child: TextField(
+                                                          controller: _eventPurchaseUrlController,
+                                                          decoration: InputDecoration(
+                                                              border: InputBorder.none),
+                                                          style: TextStyle(
+                                                              color: Styles().colors.fillColorPrimary,
+                                                              fontSize: 16,
+                                                              fontFamily: Styles().fontFamilies.regular),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ])),
+                                          Semantics(label:Localization().getStringEx("panel.create_event.additional_info.button.confirm.call_url",'Confirm video call URL'),
+                                            hint: Localization().getStringEx("panel.create_event.additional_info.button.confirm.hint",""), button: true, excludeSemantics: true, child:
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 24),
+                                              child: GestureDetector(
+                                                onTap: _onTapConfirmCallUrl,
+                                                child: Text(
+                                                  Localization().getStringEx("panel.create_event.additional_info.button.confirm.title",'Confirm URL'),
+                                                  style: TextStyle(
+                                                      color: Styles().colors.fillColorPrimary,
+                                                      fontSize: 16,
+                                                      fontFamily: Styles().fontFamilies.medium,
+                                                      decoration: TextDecoration.underline,
+                                                      decorationThickness: 1,
+                                                      decorationColor:
+                                                      Styles().colors.fillColorSecondary),
+                                                ),
+                                              ),
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
-                                    )
-                                  ),
-                                  Semantics(label:Localization().getStringEx("panel.create_event.location.adress.title",'EVENT ADDRESS'),
-                                      hint: Localization().getStringEx("panel.create_event.location.adress.title.hint",''), textField: true, excludeSemantics: true, child:
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 16),
-                                        child: Container(
-                                          padding:
-                                              EdgeInsets.symmetric(horizontal: 12),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Styles().colors.fillColorPrimary,
-                                                  width: 1)),
-                                          height: 48,
-                                          child: TextField(
-                                            controller: _eventLocationController,
-                                            decoration: InputDecoration(
-                                                border: InputBorder.none),
-                                            maxLengthEnforced: true,
-                                            style: TextStyle(
-                                                color: Styles().colors.fillColorPrimary,
-                                                fontSize: 20,
-                                                fontFamily: Styles().fontFamilies.medium),
-                                          ),
-                                        ),
-                                      )
-                                  ),
-                                 Semantics(label:Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
-                                    hint: Localization().getStringEx("panel.create_event.location.button.select_location.button.hint",""), button: true, excludeSemantics: true, child:
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                            child: SmallRoundedButton(
-                                          onTap: _onTapSelectLocation,
-                                          label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
-                                          showChevron: false,
-                                        ))
-                                      ],
-                                    )),
+                                  Container(height: 18,),
+                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
+                                      hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
+                                      ToggleRibbonButton(
+                                        label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
+                                        toggled: _isOnline,
+                                        onTap: _onOnlineToggled,
+                                        context: context,
+                                        border: Border.all(color: Styles().colors.fillColorPrimary),
+                                        borderRadius:
+                                        BorderRadius.all(Radius.circular(4)),
+                                      ))
                                 ])),
                         Container(
                           color: Styles().colors.background,
@@ -905,6 +1007,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         ),
                                       )
                                 ),
+                                (GroupPrivacy.public == widget.group?.privacy)?
+                                  Container(
+                                    padding: EdgeInsets.only(top: 20),
+                                    child: Text(
+                                      Localization().getStringEx("panel.create_event.additional_info.group.description","This event will only show up on your group's page. Only members can see it"),
+                                      style: TextStyle(
+                                          color: Styles().colors.textSurface,
+                                          fontSize: 16,
+                                          fontFamily: Styles().fontFamilies.regular,
+                                      ),
+                                    ),
+                                  ) : Container()
                               ],
                             ),
                           ),
@@ -915,17 +1029,20 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
+                              (widget.group!=null)? Container():
                               Expanded(
                                   child: RoundedButton(
-                                label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
-                                backgroundColor: Colors.white,
-                                borderColor: Styles().colors.fillColorPrimary,
-                                textColor: Styles().colors.fillColorPrimary,
-                                onTap: _onTapCancel,
-                              )),
+                                    label:  Localization().getStringEx("panel.create_event.additional_info.button.cancel.title","Cancel"),
+                                    backgroundColor: Colors.white,
+                                    borderColor: Styles().colors.fillColorPrimary,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    onTap: _onTapCancel,
+                                  )),
+                              (widget.group!=null)? Container():
                               Container(
                                 width: 6,
                               ),
+                              (widget.group!=null)? Container():
                               Expanded(
                                   child: RoundedButton(
                                 label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
@@ -936,7 +1053,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 onTap: isEdit? (){
                                   widget.onEditTap(_populateEventWithData(widget.editEvent));
                                 } : _onTapPreview,
-                              ))
+                              )),
+                              (widget.group==null)? Container():
+                              Expanded(
+                                  child: RoundedButton(
+                                    label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
+                                    Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
+                                    backgroundColor: Colors.white,
+                                    borderColor: Styles().colors.fillColorSecondary,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    onTap: isEdit? (){
+                                      widget.onEditTap(_populateEventWithData(widget.editEvent));
+                                    } : _onTapCreate,
+                                  ))
                             ],
                           ),
                         )
@@ -1017,6 +1146,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     setState(() {});
   }
 
+  void _onOnlineToggled() {
+    _isOnline = !_isOnline;
+    setState(() {});
+  }
+
   void _onTapSelectLocation() {
     Analytics.instance.logSelect(target: "Select Location");
     _performSelectLocation();
@@ -1054,6 +1188,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
       _location.name = locationName;
       _eventLocationController.text = locationName;
+
+      if(AppString.isStringNotEmpty(_location.description)){
+        _eventCallUrlController?.text = _location.description;
+      }
     }
   }
 
@@ -1064,6 +1202,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         CupertinoPageRoute(
             builder: (context) =>
                 WebPanel(url: _eventPurchaseUrlController.text)));
+  }
+
+  void _onTapConfirmCallUrl() {
+    Analytics.instance.logSelect(target: "Confirm Purchase url");
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) =>
+                WebPanel(url: _eventCallUrlController.text)));
   }
 
   void _onTapConfirmWebsiteUrl() {
@@ -1094,8 +1241,29 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       });
     }
   }
+
+  void _onTapCreate() async {
+    Analytics.instance.logSelect(target: "Create");
+    if (_isDataValid()) {
+      Event event = _constructEventFromData();
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => GroupEventDetailPanel(
+                  event: event, previewMode: true))).then((dynamic data) {
+        if (data != null) {
+          Navigator.pop(context);
+        }
+      });
+    }
+  }
   
   Event _populateEventWithData(Event event){
+    if(_location==null) {
+      _location = new Location();
+    }
+    _location.description = _isOnline? (_eventCallUrlController?.text?.toString()?? "") : (_eventLocationController?.text?.toString()?? "");
+
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : null;
     event.title = _eventTitleController.text;
@@ -1108,6 +1276,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.longDescription = _eventDescriptionController.text;
     event.registrationUrl = _eventPurchaseUrlController.text;
     event.titleUrl = _eventWebsiteController.text;
+    event.isVirtual = _isOnline;
 
     return event;
   }
@@ -1263,7 +1432,7 @@ class _EventDateDisplayView extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 48,
-        width: 142,
+//        width: 142,
         decoration: BoxDecoration(
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4))),
@@ -1276,7 +1445,7 @@ class _EventDateDisplayView extends StatelessWidget {
               style: TextStyle(
                   color: Styles().colors.fillColorPrimary,
                   fontSize: 16,
-                  fontFamily: Styles().fontFamilies.medium),
+                  fontFamily: Styles().fontFamilies.regular),
             ),
             Image.asset('images/icon-down-orange.png')
           ],

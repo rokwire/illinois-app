@@ -24,7 +24,7 @@ class GroupEventDetailPanel extends StatefulWidget{
 
   final Event event;
 
-  const GroupEventDetailPanel({Key key, this.event}) : super(key: key);
+  const GroupEventDetailPanel({Key key, this.event, bool previewMode}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {

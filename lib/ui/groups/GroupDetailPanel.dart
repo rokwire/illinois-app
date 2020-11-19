@@ -27,7 +27,6 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -561,7 +560,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                   borderColor: Styles().colors.fillColorSecondary,
                   borderWidth: 2,
                   //        height: 42,
-                  onTap:() { /*TBD create event*/ },
+                  onTap: _onTapCreateEvent,
                   showAdd: true,),
               )
             ],
@@ -867,6 +866,11 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onSwitchFavorite() {
+  }
+
+  void _onTapCreateEvent(){
+    Analytics().logPage(name: "Create Event");
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
   }
 }
 
