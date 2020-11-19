@@ -191,7 +191,7 @@ class Groups /* with Service */ {
 
   // Members APIs
 
-  Future<bool> requestMembership(Group group, GroupMembershipRequest membershipRequest) async{
+  Future<bool> requestMembership(Group group, List<GroupMembershipQuestionAnswer> answers) async{
     if(group != null) {
       String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
       try {
@@ -199,7 +199,7 @@ class Groups /* with Service */ {
         json["email"] = Auth()?.authInfo?.email ?? "";
         json["name"] = Auth()?.authInfo?.fullName ?? "";
         json["creator_photo_url"] = "";
-        json["member_answers"] = []; // TBD: Implement it
+        json["member_answers"] = AppCollection.isCollectionNotEmpty(answers) ? answers.map((e) => e.toJson()).toList() : [];
 
         String body = jsonEncode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
@@ -233,20 +233,7 @@ class Groups /* with Service */ {
 
   // Old
 
-  Future<List<GroupPendingMember>> loadPendingMembers(String groupId) async {
-    List<GroupPendingMember> result;
-    List<dynamic> json = (await _sampleJson)['pending_members'];
-    if (json != null) {
-      result = [];
-      for (dynamic jsonEntry in json) {
-        GroupPendingMember pendingMember = GroupPendingMember.fromJson(jsonEntry);
-        if (pendingMember != null) {
-          result.add(pendingMember);
-        }
-      }
-    }
-    return result;
-  }
+
 
   Future<Member> updateMember(String groupId, Member groupMember) async {
     return Future<Member>.delayed(Duration(seconds: 1), (){ return groupMember; });

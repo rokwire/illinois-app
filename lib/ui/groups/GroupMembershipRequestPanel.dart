@@ -176,14 +176,14 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   void _onSubmit() {
     if (_submitting != true) {
-      GroupMembershipRequest membershipRequest = GroupMembershipRequest(answers: [], dateCreated: DateTime.now());
+      List<GroupMembershipQuestionAnswer> answers = List<GroupMembershipQuestionAnswer>();
       for (int index = 0; index < _questions.length; index++) {
         String question = _questions[index].question;
         TextEditingController controller = _controllers[index];
         FocusNode focusNode = _focusNodes[index];
         String answer = controller.text;
         if ((answer != null) && (0 < answer.length)) {
-          membershipRequest.answers.add(GroupMembershipAnswer(answer: answer));
+          answers.add(GroupMembershipQuestionAnswer(question: question, answer: answer));
         }
         else {
           AppAlert.showDialogResult(context, 'Please answer \'$question\'').then((_){
@@ -197,7 +197,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         _submitting = true;
       });
 
-      Groups().requestMembership(widget.group, membershipRequest).then((_){
+      Groups().requestMembership(widget.group, answers).then((_){
         if (mounted) {
           setState(() {
             _submitting = false;

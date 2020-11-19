@@ -323,8 +323,8 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 }
 
 class _MembershipAnswer extends StatelessWidget{
-  final GroupPendingMember member;
-  final GroupMembershipAnswer answer;
+  final Member member;
+  final GroupMembershipQuestionAnswer answer;
   final GroupMembershipQuestion question;
   _MembershipAnswer({@required this.member, @required this.answer, @required this.question});
 

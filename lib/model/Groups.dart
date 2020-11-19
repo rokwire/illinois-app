@@ -331,27 +331,6 @@ class Member {
 }
 
 //////////////////////////////
-// GroupPendingMember
-
-class GroupPendingMember extends Member {
-	GroupMembershipRequest membershipRequest;
-
-  GroupPendingMember({Map<String, dynamic> json}) : super(json: json) {
-    try { membershipRequest = GroupMembershipRequest.fromJson(json['membershipRequest']); } catch(e) { print(e.toString()); }
-  }
-
-  factory GroupPendingMember.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? GroupPendingMember(json: json) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
-    json['membershipRequest']  = membershipRequest?.toJson();
-    return json;
-  }
-}
-
-//////////////////////////////
 // GroupMemberStatus
 
 enum GroupMemberStatus { pending, member, admin }
@@ -543,68 +522,33 @@ class GroupMembershipQuestion {
 }
 
 //////////////////////////////
-// GroupMembershipRequest
-
-class GroupMembershipRequest {
-  DateTime dateCreated;
-  List<GroupMembershipAnswer> answers;
-
-  GroupMembershipRequest({Map<String, dynamic> json, this.answers, this.dateCreated}) {
-    if (json != null) {
-      _initFromJson(json);
-    }
-  }
-
-  void _initFromJson(Map<String, dynamic> json) {
-    try { dateCreated = AppDateTime().dateTimeFromString(json['dateCreated'], format: AppDateTime.iso8601DateTimeFormat); } catch(e) { print(e.toString()); }
-    try { answers     = GroupMembershipAnswer.listFromJson(json['answers']); } catch(e) { print(e.toString()); }
-  }
-
-  factory GroupMembershipRequest.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? GroupMembershipRequest(json: json) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
-    json['dateCreated'] = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.iso8601DateTimeFormat);
-    json['answers']    = GroupMembershipAnswer.listToJson(answers);
-    return json;
-  }
-}
-
-//////////////////////////////
 // GroupMembershipAnswer
 
-class GroupMembershipAnswer {
-	String       answer;
+class GroupMembershipQuestionAnswer {
+  String       question;
+  String       answer;
 
-  GroupMembershipAnswer({Map<String, dynamic> json, this.answer}) {
-    if (json != null) {
-      _initFromJson(json);
-    }
-  }
+  GroupMembershipQuestionAnswer({this.question, this.answer});
 
-  void _initFromJson(Map<String, dynamic> json) {
-    try { answer = json['answer'];   } catch(e) { print(e.toString()); }
-  }
-
-  factory GroupMembershipAnswer.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? GroupMembershipAnswer(json: json) : null;
+  factory GroupMembershipQuestionAnswer.fromJson(Map<String, dynamic> json){
+    return json != null ? GroupMembershipQuestionAnswer(question: json["question"], answer: json["answer"]) : null;
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
-    json['answer'] = answer;
-    return json;
+    return {
+      "question": question,
+      "answer": answer,
+    };
   }
 
-  static List<GroupMembershipAnswer> listFromJson(List<dynamic> json) {
-    List<GroupMembershipAnswer> values;
+
+  static List<GroupMembershipQuestionAnswer> listFromJson(List<dynamic> json) {
+    List<GroupMembershipQuestionAnswer> values;
     if (json != null) {
       values = [];
       for (dynamic entry in json) {
-          GroupMembershipAnswer value;
-          try { value = GroupMembershipAnswer.fromJson((entry as Map)?.cast<String, dynamic>()); }
+          GroupMembershipQuestionAnswer value;
+          try { value = GroupMembershipQuestionAnswer.fromJson((entry as Map)?.cast<String, dynamic>()); }
           catch(e) { print(e.toString()); }
           values.add(value);
       }
@@ -612,11 +556,11 @@ class GroupMembershipAnswer {
     return values;
   }
 
-  static List<dynamic> listToJson(List<GroupMembershipAnswer> values) {
+  static List<dynamic> listToJson(List<GroupMembershipQuestionAnswer> values) {
     List<dynamic> json;
     if (values != null) {
       json = [];
-      for (GroupMembershipAnswer value in values) {
+      for (GroupMembershipQuestionAnswer value in values) {
         json.add(value?.toJson());
       }
     }
