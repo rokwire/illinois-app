@@ -44,7 +44,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   void initState() {
     _focusNodes = List();
     _controllers = List();
-    _questions = widget.group?.membershipQuest?.questions ?? [];
+    _questions = widget.group?.questions ?? [];
     for (int index = 0; index < _questions.length; index++) {
       _controllers.add(TextEditingController());
       _focusNodes.add(FocusNode());

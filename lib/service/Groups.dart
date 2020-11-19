@@ -117,7 +117,7 @@ class Groups /* with Service */ {
   Future<List<Group>> loadGroups({bool myGroups = false}) async {
     String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
     try {
-      Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : NetworkAuth.App,);
+      Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App,);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
       List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
@@ -205,6 +205,22 @@ class Groups /* with Service */ {
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
         if((response?.statusCode ?? -1) == 200){
           NotificationService().notify(notifyGroupUpdated, group.id);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
+  }
+
+  Future<bool> cancelRequestMembership(String groupId) async{
+    if(groupId != null) {
+      String url = '${Config().groupsUrl}/group/$groupId/pending-members';
+      try {
+        Response response = await Network().delete(url, auth: NetworkAuth.User,);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
           return true;
         }
       } catch (e) {

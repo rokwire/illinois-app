@@ -598,7 +598,7 @@ class _GroupCard extends StatelessWidget{
   Widget _buildHeading(){
     if(displayType == _GroupCardDisplayType.allGroups){
       return
-        group.currentUserIsUserMember ? _buildMember():
+        group.currentUserIsGenericMember ? _buildMember():
         Text("CATEGORY",
         style: TextStyle(
             fontFamily: Styles().fontFamilies.bold,
@@ -642,11 +642,11 @@ class _GroupCard extends StatelessWidget{
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: group.currentUserIsUserAdmin ? Styles().colors.fillColorSecondary:  Styles().colors.fillColorPrimary,
+                color: group.currentUserStatusColor,
                 borderRadius: BorderRadius.all(Radius.circular(2)),
               ),
               child: Center(
-                child: Text(group.currentUserIsUserAdmin ? "ADMIN" : "MEMBER",
+                child: Text(group.currentUserStatusText,
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       fontSize: 12,

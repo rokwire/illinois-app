@@ -244,10 +244,8 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
         return;
       }
     }
-    
-    widget.questions.replaceRange(0, widget.questions.length, _questions);
 
-    Navigator.pop(context);
+    Navigator.pop(context, _questions);
   }
 
   void _onTextChanged(String text){

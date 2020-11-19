@@ -63,7 +63,8 @@ class GroupPanel extends StatefulWidget {
 class _GroupPanelState extends State<GroupPanel> implements NotificationsListener {
 
   Group              _group;
-  bool               _loadingGroup;
+  bool               _loading = false;
+  bool               _cancelling = false;
   List<GroupEvent>   _groupEvents;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
@@ -100,30 +101,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return false;
   }
 
-  Color get _memberStatusColor{
-    Member member = _group.currentUserAsMember;
-    if(member != null){
-      switch(member.status){
-        case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
-        case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
-        case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
-      }
-    }
-    return Styles().colors.white;
-  }
-
-  String get _memberStatusText{
-    Member member = _group.currentUserAsMember;
-    if(member != null){
-      switch(member.status){
-        case GroupMemberStatus.admin    :  return "ADMIN";
-        case GroupMemberStatus.member   :  return "MEMBER";
-        case GroupMemberStatus.pending  :  return "PENDING MEMBERSHIP";
-      }
-    }
-    return "";
-  }
-
   @override
   void initState() {
     super.initState();
@@ -152,12 +129,12 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void _loadGroup(){
     setState(() {
-      _loadingGroup = true;
+      _loading = true;
     });
     Groups().loadGroup(widget.groupId).then((Group group){
       if (mounted) {
         setState(() {
-          _loadingGroup = false;
+          _loading = false;
           if(group != null) {
             _group = group;
             _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
@@ -168,10 +145,24 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     });
   }
 
+  void _cancelMembershipRequest(){
+    setState(() {
+      _cancelling = true;
+    });
+    Groups().cancelRequestMembership(widget.groupId).whenComplete((){
+      if (mounted) {
+        setState(() {
+          _cancelling = false;
+        });
+        _loadGroup();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content;
-    if (_loadingGroup == true) {
+    if (_loading == true) {
       content = _buildLoadingContent();
     }
     else if (_group != null) {
@@ -281,7 +272,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
             ),
           ),
         ),
-        _buildMembershipRequest()
+        _buildMembershipRequest(),
+        _buildCancelMembershipRequest(),
       ],
     );
   }
@@ -410,11 +402,11 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: _memberStatusColor,
+                          color: _group.currentUserStatusColor,
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                         child: Center(
-                          child: Text(_memberStatusText,
+                          child: Text(_group.currentUserStatusText,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.bold,
                                 fontSize: 12,
@@ -651,7 +643,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildMembershipRequest() {
     return
-      !Auth().isShibbolethLoggedIn || _group.currentUserIsMember
+      !Auth().isShibbolethLoggedIn || _group.currentUserIsGenericMember
           ? Container()
           : Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
@@ -669,6 +661,31 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
             );
   }
 
+  Widget _buildCancelMembershipRequest() {
+    return
+      Auth().isShibbolethLoggedIn && _group.currentUserIsPendingMember
+          ? Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(color: Colors.white,
+                  child: Padding(padding: EdgeInsets.all(16),
+                    child: ScalableRoundedButton(label: 'Cancel Request',
+                        backgroundColor: Styles().colors.white,
+                        textColor: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies.bold,
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        borderWidth: 2,
+                        onTap:() { _onCancelMembershipRequest();  }
+                    ),
+                  )),
+              _cancelling ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ) : Container(),
+            ],
+          )
+          : Container();
+  }
+
   Widget _buildSocial() {
     return Padding(padding: EdgeInsets.all(16), child: Row(children: <Widget>[
       Expanded(child: Container(),),
@@ -679,6 +696,55 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       _SocialButton(imageAsset:'images/ig-24x24.png', onTap: () { _onSocialInstagram(); }),
       Expanded(child: Container(),),
     ],),);
+  }
+
+  Widget _buildLogoutDialog(BuildContext context) {
+    return Dialog(
+      backgroundColor: Styles().colors.fillColorPrimary,
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 26),
+              child: Text(
+                "Are you sure you want to cancel your request to join this group?",
+                textAlign: TextAlign.left,
+                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                RoundedButton(
+                  label: "Back",
+                  fontFamily: "ProximaNovaRegular",
+                  textColor: Styles().colors.fillColorPrimary,
+                  borderColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  onTap: ()=>Navigator.pop(context),
+                ),
+                Container(width: 16,),
+                RoundedButton(
+                  label: "Cancel request",
+                  fontFamily: "ProximaNovaBold",
+                  textColor: Styles().colors.fillColorPrimary,
+                  borderColor: Styles().colors.white,
+                  backgroundColor: Styles().colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  onTap: (){
+                    _cancelMembershipRequest();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _loadMembershipStepEvents() {
@@ -795,6 +861,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void _onMembershipRequest() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+  }
+
+  void _onCancelMembershipRequest(){
+    showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
 
   void _onSwitchFavorite() {

@@ -612,7 +612,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Membership
   Widget _buildMembershipLayout(){
-    int questionsCount = _group?.membershipQuest?.questions?.length ?? 0;
+    int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
       "$questionsCount Questions" :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
@@ -694,15 +694,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onTapMembershipQuestion(){
     Analytics.instance.logSelect(target: "Membership Question");
-    if (_group.membershipQuest == null) {
-      _group.membershipQuest = GroupMembershipQuest();
+    if (_group.questions == null) {
+      _group.questions = [];
     }
-    if (_group.membershipQuest.questions == null) {
-      _group.membershipQuest.questions = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.membershipQuest.questions,))).then((_){
-      setState(() {
-      });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.questions,))).then((dynamic questions){
+      if(questions is List<GroupMembershipQuestion>){
+        _group.questions = questions;
+      }
+      setState(() {});
     });
   }
 

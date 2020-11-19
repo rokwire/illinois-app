@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+import 'dart:ui';
+
 import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
 
 //////////////////////////////
@@ -38,7 +41,8 @@ class Group {
   int                  membersCount;
   List<Member>         members;
   List<String>         tags;
-  GroupMembershipQuest membershipQuest;
+  List<GroupMembershipQuestion>  questions;
+  GroupMembershipQuest membershipQuest; // MD: Looks as deprecated. Consider and remove if need!
 
   Group({Map<String, dynamic> json, Group other}) {
     if (json != null) {
@@ -68,6 +72,12 @@ class Group {
         members = _members.map((memberJson) => Member.fromJson(memberJson)).toList();
       }
     } catch(e) { print(e.toString()); }
+    try {
+      List<dynamic> _questions    = json['membership_questions'];
+      if(AppCollection.isCollectionNotEmpty(_questions)){
+        questions = GroupMembershipQuestion.listFromJson(_questions);
+      }
+    } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(Group other) {
@@ -83,6 +93,7 @@ class Group {
     membersCount    = other?.membersCount;
     members         = other?.members;
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
+    questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromOther(e)).toList()  : null;
     membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
   }
 
@@ -110,6 +121,7 @@ class Group {
     json['tags']              = tags;
     json['members_count']     = membersCount;
     json['members']           = members;
+    json['membership_questions']= AppCollection.isCollectionNotEmpty(questions) ? questions.map((e) => e?.question ?? "").toList() : null;
     json['membershipQuest']   = membershipQuest?.toJson();
 
     return json;
@@ -155,7 +167,7 @@ class Group {
     return false;
   }
 
-  bool get currentUserIsMember{
+  bool get currentUserIsGenericMember{
     if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
         if(member.email == Auth()?.authInfo?.email){
@@ -175,6 +187,30 @@ class Group {
       }
     }
     return false;
+  }
+
+  Color get currentUserStatusColor{
+    Member member = currentUserAsMember;
+    if(member != null){
+      switch(member.status){
+        case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
+        case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
+        case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
+      }
+    }
+    return Styles().colors.white;
+  }
+
+  String get currentUserStatusText{
+    Member member = currentUserAsMember;
+    if(member != null){
+      switch(member.status){
+        case GroupMemberStatus.admin    :  return "ADMIN";
+        case GroupMemberStatus.member   :  return "MEMBER";
+        case GroupMemberStatus.pending  :  return "PENDING MEMBERSHIP";
+      }
+    }
+    return "";
   }
 }
 
