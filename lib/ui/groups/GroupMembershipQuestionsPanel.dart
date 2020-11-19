@@ -61,8 +61,8 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     }
     _focusNodes = List();
     _controllers = List();
-    for (GroupMembershipQuestion questoin in _questions) {
-      _controllers.add(TextEditingController(text: questoin.question ?? ''));
+    for (GroupMembershipQuestion question in _questions) {
+      _controllers.add(TextEditingController(text: question.question ?? ''));
       _focusNodes.add(FocusNode());
     }
 

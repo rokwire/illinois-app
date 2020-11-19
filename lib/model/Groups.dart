@@ -16,7 +16,6 @@
 
 import 'dart:ui';
 
-import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
@@ -75,7 +74,7 @@ class Group {
     try {
       List<dynamic> _questions    = json['membership_questions'];
       if(AppCollection.isCollectionNotEmpty(_questions)){
-        questions = GroupMembershipQuestion.listFromJson(_questions);
+        questions =  _questions.map((e) => GroupMembershipQuestion.fromString(e.toString())).toList();
       }
     } catch(e) { print(e.toString()); }
   }
@@ -93,7 +92,7 @@ class Group {
     membersCount    = other?.membersCount;
     members         = other?.members;
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
-    questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromOther(e)).toList()  : null;
+    questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
     membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
   }
 
@@ -408,7 +407,6 @@ String groupMemberStatusToDisplayString(GroupMemberStatus value) {
 
 class GroupMembershipQuest {
   List<GroupMembershipStep> steps;
-  List<GroupMembershipQuestion> questions;
 
   GroupMembershipQuest({Map<String, dynamic> json, GroupMembershipQuest other}) {
     if (json != null) {
@@ -421,7 +419,6 @@ class GroupMembershipQuest {
 
   void _initFromJson(Map<String, dynamic> json) {
     try { steps     = GroupMembershipStep.listFromJson(json['steps']); } catch(e) { print(e.toString()); }
-    try { questions = GroupMembershipQuestion.listFromJson(json['questions']); } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(GroupMembershipQuest other) {
@@ -439,7 +436,6 @@ class GroupMembershipQuest {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['steps']     = GroupMembershipStep.listToJson(steps);
-    json['questions'] = GroupMembershipQuestion.listToJson(questions);
     return json;
   }
 }
@@ -528,60 +524,10 @@ class GroupMembershipStep {
 class GroupMembershipQuestion {
 	String       question;
 
-  GroupMembershipQuestion({Map<String, dynamic> json, GroupMembershipQuestion other}) {
-    if (json != null) {
-      _initFromJson(json);
-    }
-    else if (other != null) {
-      _initFromOther(other);
-    }
-  }
+  GroupMembershipQuestion({this.question});
 
-  void _initFromJson(Map<String, dynamic> json) {
-    try { question = json['question'];   } catch(e) { print(e.toString()); }
-  }
-
-  void _initFromOther(GroupMembershipQuestion other) {
-	  question = other?.question;
-  }
-
-  factory GroupMembershipQuestion.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? GroupMembershipQuestion(json: json) : null;
-  }
-
-  factory GroupMembershipQuestion.fromOther(GroupMembershipQuestion other) {
-    return (other != null) ? GroupMembershipQuestion(other: other) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
-    json['question'] = question;
-    return json;
-  }
-
-  static List<GroupMembershipQuestion> listFromJson(List<dynamic> json) {
-    List<GroupMembershipQuestion> values;
-    if (json != null) {
-      values = [];
-      for (dynamic entry in json) {
-          GroupMembershipQuestion value;
-          try { value = GroupMembershipQuestion.fromJson((entry as Map)?.cast<String, dynamic>()); }
-          catch(e) { print(e.toString()); }
-          values.add(value);
-      }
-    }
-    return values;
-  }
-
-  static List<dynamic> listToJson(List<GroupMembershipQuestion> values) {
-    List<dynamic> json;
-    if (values != null) {
-      json = [];
-      for (GroupMembershipQuestion value in values) {
-        json.add(value?.toJson());
-      }
-    }
-    return json;
+  factory GroupMembershipQuestion.fromString(String question) {
+    return (question != null) ? GroupMembershipQuestion(question: question) : null;
   }
 
   static List<GroupMembershipQuestion> listFromOthers(List<GroupMembershipQuestion> others) {
@@ -589,7 +535,7 @@ class GroupMembershipQuestion {
     if (others != null) {
       values = [];
       for (GroupMembershipQuestion other in others) {
-          values.add(GroupMembershipQuestion.fromOther(other));
+        values.add(GroupMembershipQuestion.fromString(other.question));
       }
     }
     return values;
