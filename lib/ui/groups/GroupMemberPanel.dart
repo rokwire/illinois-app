@@ -160,7 +160,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildDetails(BuildContext context){
-    bool canAdmin = ((_member?.status != null) && (_member?.status != GroupMemberStatus.admin));
+    bool canAdmin = widget.group.currentUserIsUserAdmin;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -177,12 +177,11 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       height: null,
                       borderRadius: BorderRadius.circular(4),
                       label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
-                      toggled: !_isAdmin ?? false,
+                      toggled: _isAdmin ?? false,
                       context: context,
                       onTap: () {
                         setState(() {
                           _isAdmin = !(_isAdmin ?? false);
-                          _update();
                         });
                       }
                   ),

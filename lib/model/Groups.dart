@@ -195,6 +195,7 @@ class Group {
         case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
         case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
         case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
+        case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
       }
     }
     return Styles().colors.white;
@@ -207,6 +208,7 @@ class Group {
         case GroupMemberStatus.admin    :  return "ADMIN";
         case GroupMemberStatus.member   :  return "MEMBER";
         case GroupMemberStatus.pending  :  return "PENDING MEMBERSHIP";
+        case GroupMemberStatus.rejected :  return "REJECTED";
       }
     }
     return "";
@@ -328,23 +330,24 @@ class Member {
   bool get isAdmin           => status == GroupMemberStatus.admin;
   bool get isMember          => status == GroupMemberStatus.member;
   bool get isPendingMember   => status == GroupMemberStatus.pending;
+  bool get isRejected        => status == GroupMemberStatus.rejected;
 }
 
 //////////////////////////////
 // GroupMemberStatus
 
-enum GroupMemberStatus { pending, member, admin }
+enum GroupMemberStatus { pending, member, admin, rejected }
 
 GroupMemberStatus groupMemberStatusFromString(String value) {
   if (value != null) {
     if (value == 'pending') {
       return GroupMemberStatus.pending;
-    }
-    else if (value == 'member') {
+    } else if (value == 'member') {
       return GroupMemberStatus.member;
-    }
-    else if (value == 'admin') {
+    } else if (value == 'admin') {
       return GroupMemberStatus.admin;
+    } else if (value == 'rejected') {
+      return GroupMemberStatus.rejected;
     }
   }
   return null;
@@ -354,12 +357,12 @@ String groupMemberStatusToString(GroupMemberStatus value) {
   if (value != null) {
     if (value == GroupMemberStatus.pending) {
       return 'pending';
-    }
-    else if (value == GroupMemberStatus.member) {
+    } else if (value == GroupMemberStatus.member) {
       return 'member';
-    }
-    else if (value == GroupMemberStatus.admin) {
+    } else if (value == GroupMemberStatus.admin) {
       return 'admin';
+    } else if (value == GroupMemberStatus.rejected) {
+      return 'rejected';
     }
   }
   return null;
@@ -369,12 +372,12 @@ String groupMemberStatusToDisplayString(GroupMemberStatus value) {
   if (value != null) {
     if (value == GroupMemberStatus.pending) {
       return Localization().getStringEx('model.groups.member.status.pending', 'Pending');
-    }
-    else if (value == GroupMemberStatus.member) {
+    } else if (value == GroupMemberStatus.member) {
       return Localization().getStringEx('model.groups.member.status.member', 'Member');
-    }
-    else if (value == GroupMemberStatus.admin) {
+    } else if (value == GroupMemberStatus.admin) {
       return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
+    } else if (value == GroupMemberStatus.rejected) {
+      return Localization().getStringEx('model.groups.member.status.rejected', 'Rejected');
     }
   }
   return null;

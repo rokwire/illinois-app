@@ -18,9 +18,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
@@ -41,8 +41,9 @@ class GroupMembersPanel extends StatefulWidget{
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
 }
 
-class _GroupMembersPanelState extends State<GroupMembersPanel>{
+class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener{
 
+  Group _group;
   bool _isMembersLoading = false;
   bool _isPendingMembersLoading = false;
   bool get _isLoading => _isMembersLoading || _isPendingMembersLoading;
@@ -59,14 +60,33 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
   @override
   void initState() {
     super.initState();
-
+    _group = widget.group;
+    
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
     _loadMembers();
+  }
+
+  void _reloadGroup(){
+    setState(() {
+      _isMembersLoading = true;
+    });
+    Groups().loadGroup(_group.id).then((Group group){
+      if (mounted) {
+        setState(() {
+          _isMembersLoading = false;
+          if(group != null) {
+            _group = group;
+            _loadMembers();
+          }
+        });
+      }
+    });
   }
 
   void _loadMembers(){
     setState(() {
       _isMembersLoading = false;
-      _pendingMembers = widget.group.getMembersByStatus(GroupMemberStatus.pending);
+      _pendingMembers = _group.getMembersByStatus(GroupMemberStatus.pending);
 //      TMP: _pendingMembers = [Member(json: {
 //        "name":"Todor Bachvarov",
 //        "photo_url":"https://s3.ivisa.com/website-assets/blog/id-photo2.jpg",
@@ -79,7 +99,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
 //          ]
 //        }
 //        })];
-      _members = AppCollection.isCollectionNotEmpty(widget?.group?.members) ? widget?.group?.members.where((member) => member.status != GroupMemberStatus.pending).toList() : [];
+      _members = AppCollection.isCollectionNotEmpty(_group?.members)
+          ? _group.members.where((member) => (member.status != GroupMemberStatus.pending && member.status != GroupMemberStatus.rejected)).toList()
+              : [];
     _applyMembersFilter();
     });
   }
@@ -98,6 +120,16 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     }
     _membersFilter = membersFilter;
     setState(() {});
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Groups.notifyUserMembershipUpdated) {
+      setState(() {});
+    }
+    else if (param == _group.id && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
+      _reloadGroup();
+    }
   }
 
   @override
@@ -136,7 +168,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
         if(requests.isNotEmpty){
           requests.add(Container(height: 10,));
         }
-        requests.add(_PendingMemberCard(member: member, group: widget.group,));
+        requests.add(_PendingMemberCard(member: member, group: _group,));
       }
 
       if(_pendingMembers.length > 2 && _showAllRequestVisibility){
@@ -174,7 +206,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
         if(members.isNotEmpty){
           members.add(Container(height: 10,));
         }
-        members.add(_GroupMemberCard(member: member, group: widget.group,));
+        members.add(_GroupMemberCard(member: member, group: _group,));
       }
       if(members.isNotEmpty) {
         members.add(Container(height: 10,));

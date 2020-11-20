@@ -37,9 +37,9 @@ class GroupPendingMemberPanel extends StatefulWidget {
 class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   TextEditingController _reasonController = TextEditingController();
-  bool _decision;
   bool _approved = false;
   bool _denied = false;
+  bool _updating = false;
 
   @override
   void dispose() {
@@ -263,9 +263,9 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                   textColor: _canContinue? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
                   fontFamily: Styles().fontFamilies.bold,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                  onTap: () { _processMembership(decision: true); },
+                  onTap: () { _processMembership(); },
                 ),
-                Visibility(visible: _decision == true, child:
+                Visibility(visible: _updating, child:
                   Center(child:
                     Padding(padding: EdgeInsets.only(top: 12), child:
                     Container(width: 24, height: 24, child:
@@ -281,22 +281,24 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
     ));
   }
 
-  void _processMembership({bool decision}) {
-    if (_decision == null) {
-      setState(() {
-        _decision = decision;
-      });
+  void _processMembership() {
+    if(_updating){
+      return;
     }
-    Groups().acceptMembership(widget.group.id, widget.member.id, decision, _reasonController.text).then((bool result) {
+    setState(() {
+      _updating = true;
+    });
+
+    Groups().acceptMembership(widget.group.id, widget.member.id, _approved, _reasonController.text).then((bool result) {
       if (mounted) {
         setState(() {
-          _decision = null;
+          _updating = false;
         });
         if (result) {
           Navigator.pop(context);
         }
         else {
-          AppAlert.showDialogResult(context, 'Failed to' + (decision ? " accept " : " reject ") + "the membership request"); //TBD localize
+          AppAlert.showDialogResult(context, 'Failed to' + (_approved ? " accept " : " reject ") + "the membership request"); //TBD localize
         }
       }
     });
