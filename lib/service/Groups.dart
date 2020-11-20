@@ -230,20 +230,27 @@ class Groups /* with Service */ {
     return false; // fail
   }
 
-
-  // Old
-
-
-
-  Future<Member> updateMember(String groupId, Member groupMember) async {
-    return Future<Member>.delayed(Duration(seconds: 1), (){ return groupMember; });
+  Future<bool> acceptMembership(String groupId, String memberId, bool decision, String reason) async{
+    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId) && decision != null) {
+      Map<String, dynamic> bodyMap = {"approve": decision, "reject_reason": reason};
+      String body = jsonEncode(bodyMap);
+      String url = '${Config().groupsUrl}/memberships/$memberId/approval';
+      try {
+        Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
   }
+  
 
-  Future<bool> acceptMembership(String groupId, String userId, bool decision) {
-    return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
-  }
 
-  // Events
+// Events
 
   Future<List<GroupEvent>> loadEvents(String groupId, {int limit }) async {
     List<GroupEvent> result;

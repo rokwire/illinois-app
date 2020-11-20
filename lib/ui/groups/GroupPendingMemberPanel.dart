@@ -36,14 +36,14 @@ class GroupPendingMemberPanel extends StatefulWidget {
 
 class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
-  TextEditingController _denyReasonController = TextEditingController();
+  TextEditingController _reasonController = TextEditingController();
   bool _decision;
   bool _approved = false;
   bool _denied = false;
 
   @override
   void dispose() {
-    _denyReasonController?.dispose();
+    _reasonController?.dispose();
     super.dispose();
   }
 
@@ -225,7 +225,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                       child:
                       Row(children: [
                         Expanded(child: TextField(
-                          controller: _denyReasonController,
+                          controller: _reasonController,
                           decoration: InputDecoration(
                               border: InputBorder.none),
                           style: TextStyle(
@@ -287,7 +287,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
         _decision = decision;
       });
     }
-    Groups().acceptMembership(widget.group.id, widget.member.id, decision).then((bool result) {
+    Groups().acceptMembership(widget.group.id, widget.member.id, decision, _reasonController.text).then((bool result) {
       if (mounted) {
         setState(() {
           _decision = null;
@@ -296,14 +296,14 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           Navigator.pop(context);
         }
         else {
-          AppAlert.showDialogResult(context, 'Failed to submit decision'); //TBD localize
+          AppAlert.showDialogResult(context, 'Failed to' + (decision ? " accept " : " reject ") + "the membership request"); //TBD localize
         }
       }
     });
   }
 
   bool get _canContinue{
-    return _approved || (_denied && (_denyReasonController?.text?.isNotEmpty ?? false));
+    return _approved || (_denied && (_reasonController?.text?.isNotEmpty ?? false));
   }
 
   String get _continueButtonText{
@@ -312,7 +312,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       }
 
       if(_denied){
-        if(_denyReasonController?.text?.isNotEmpty ?? false) {
+        if(_reasonController?.text?.isNotEmpty ?? false) {
           return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Deny member");
         } else {
           return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Provide deny reason");
