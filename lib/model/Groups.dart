@@ -16,6 +16,7 @@
 
 import 'dart:ui';
 
+import 'package:collection/equality.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
@@ -252,10 +253,13 @@ class Member {
 	String            name;
 	String            email;
 	String            photoURL;
-
   GroupMemberStatus status;
   String            officerTitle;
-  DateTime          dateAdded;
+  
+  DateTime          dateCreated;
+  DateTime          dateUpdated;
+
+  List<GroupMembershipAnswer> answers;
 
   Member({Map<String, dynamic> json, Member other}) {
     if (json != null) {
@@ -267,23 +271,29 @@ class Member {
   }
 
   void _initFromJson(Map<String, dynamic> json) {
+    List<dynamic> _answers = json['member_answers'];
     try { id          = json['id'];      } catch(e) { print(e.toString()); }
     try { name        = json['name'];     } catch(e) { print(e.toString()); }
     try { email       = json['email'];    } catch(e) { print(e.toString()); }
     try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
     try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
     try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
+    try { answers = _answers.map((answerJson) => GroupMembershipAnswer.fromJson(answerJson)).toList(); } catch(e) { print(e.toString()); }
 
+    try { dateCreated    = AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true); } catch(e) { print(e.toString()); }
+    try { dateUpdated    = AppDateTime().dateTimeFromString(json['date_updated'], format: AppDateTime.parkingEventDateFormat, isUtc: true); } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(Member other) {
-    id          = other?.id;
-    name        = other?.name;
-    email       = other?.email;
-    photoURL    = other?.photoURL;
-    status      = other?.status;
-    officerTitle= other?.officerTitle;
-    dateAdded   = other?.dateAdded;
+    id            = other?.id;
+    name          = other?.name;
+    email         = other?.email;
+    photoURL      = other?.photoURL;
+    status        = other?.status;
+    officerTitle  = other?.officerTitle;
+    answers       = other?.answers;
+    dateCreated   = other?.dateCreated;
+    dateUpdated   = other?.dateUpdated;
   }
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -302,7 +312,10 @@ class Member {
     json['photo_url']           = photoURL;
     json['status']              = groupMemberStatusToString(status);
     json['officerTitle']        = officerTitle;
-    json['dateAdded']           = AppDateTime().formatDateTime(dateAdded, format: AppDateTime.iso8601DateTimeFormat);
+    json['answers']             = answers.map((answer) => answer.toJson()).toList();
+    json['date_created']        = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.parkingEventDateFormat);
+    json['date_updated']        = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.parkingEventDateFormat);
+
     return json;
   }
 
@@ -314,7 +327,9 @@ class Member {
            (o.photoURL == photoURL) &&
            (o.status == status) &&
            (o.officerTitle == officerTitle) &&
-           (o.dateAdded == dateAdded);
+           (o.dateCreated == dateCreated) &&
+           (o.dateUpdated == dateUpdated) &&
+            DeepCollectionEquality().equals(o.answers, answers);
   }
 
   int get hashCode {
@@ -324,7 +339,9 @@ class Member {
            (photoURL?.hashCode ?? 0) ^
            (status?.hashCode ?? 0) ^
            (officerTitle?.hashCode ?? 0) ^
-           (dateAdded?.hashCode ?? 0);
+           (dateCreated?.hashCode ?? 0) ^
+           (dateUpdated?.hashCode ?? 0) ^
+           (answers?.hashCode ?? 0);
   }
 
   bool get isAdmin           => status == GroupMemberStatus.admin;
@@ -525,16 +542,16 @@ class GroupMembershipQuestion {
 }
 
 //////////////////////////////
-// GroupMembershipAnswer
+// GroupMembershipQuestionAnswer
 
-class GroupMembershipQuestionAnswer {
+class GroupMembershipAnswer {
   String       question;
   String       answer;
 
-  GroupMembershipQuestionAnswer({this.question, this.answer});
+  GroupMembershipAnswer({this.question, this.answer});
 
-  factory GroupMembershipQuestionAnswer.fromJson(Map<String, dynamic> json){
-    return json != null ? GroupMembershipQuestionAnswer(question: json["question"], answer: json["answer"]) : null;
+  factory GroupMembershipAnswer.fromJson(Map<String, dynamic> json){
+    return json != null ? GroupMembershipAnswer(question: json["question"], answer: json["answer"]) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -545,13 +562,13 @@ class GroupMembershipQuestionAnswer {
   }
 
 
-  static List<GroupMembershipQuestionAnswer> listFromJson(List<dynamic> json) {
-    List<GroupMembershipQuestionAnswer> values;
+  static List<GroupMembershipAnswer> listFromJson(List<dynamic> json) {
+    List<GroupMembershipAnswer> values;
     if (json != null) {
       values = [];
       for (dynamic entry in json) {
-          GroupMembershipQuestionAnswer value;
-          try { value = GroupMembershipQuestionAnswer.fromJson((entry as Map)?.cast<String, dynamic>()); }
+          GroupMembershipAnswer value;
+          try { value = GroupMembershipAnswer.fromJson((entry as Map)?.cast<String, dynamic>()); }
           catch(e) { print(e.toString()); }
           values.add(value);
       }
@@ -559,11 +576,11 @@ class GroupMembershipQuestionAnswer {
     return values;
   }
 
-  static List<dynamic> listToJson(List<GroupMembershipQuestionAnswer> values) {
+  static List<dynamic> listToJson(List<GroupMembershipAnswer> values) {
     List<dynamic> json;
     if (values != null) {
       json = [];
-      for (GroupMembershipQuestionAnswer value in values) {
+      for (GroupMembershipAnswer value in values) {
         json.add(value?.toJson());
       }
     }

@@ -83,7 +83,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
     _loadFilters();
     _loadGroups();
-    Groups().updateUserMemberships();
   }
 
   @override

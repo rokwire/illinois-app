@@ -105,7 +105,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     super.initState();
 
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
-    Groups().updateUserMemberships();
 
     _loadGroup();
 

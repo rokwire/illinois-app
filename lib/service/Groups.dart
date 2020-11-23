@@ -66,22 +66,6 @@ class Groups /* with Service */ {
     return (_userMembership != null) ? _userMembership[groupId] : null;
   }
 
-  Future<void> updateUserMemberships() async {
-    Map<String, Member> userMembership;
-    Map<String, dynamic> json = (await _sampleJson)['userMembership'];
-    if (json != null) {
-      userMembership = Map<String, Member>();
-      json.forEach((String groupId, dynamic memberJson) {
-        userMembership[groupId] = Member.fromJson(memberJson);
-      });
-    }
-
-    if ((_userMembership == null) || !DeepCollectionEquality().equals(_userMembership, userMembership)) {
-      _userMembership = userMembership;
-      NotificationService().notify(notifyUserMembershipUpdated, null);
-    }
-  }
-
   // Enumeration APIs
 
   Future<List<String>> get categories async {
@@ -106,10 +90,6 @@ class Groups /* with Service */ {
 
   Future<List<String>> get tags async {
     return ((await _sampleJson)['tags'] as List)?.cast<String>();
-  }
-
-  Future<List<String>> get officerTitles async {
-    return ((await _sampleJson)['officerTitles'] as List)?.cast<String>();
   }
 
   // Groups APIs
@@ -191,7 +171,7 @@ class Groups /* with Service */ {
 
   // Members APIs
 
-  Future<bool> requestMembership(Group group, List<GroupMembershipQuestionAnswer> answers) async{
+  Future<bool> requestMembership(Group group, List<GroupMembershipAnswer> answers) async{
     if(group != null) {
       String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
       try {

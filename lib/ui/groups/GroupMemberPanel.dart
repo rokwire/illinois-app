@@ -42,20 +42,12 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   bool _updating = false;
   bool _removing = false;
 
-  //String _selectedOfficerTitle = "President";
-  List<String> _officerTitleTypes;
-
   @override
   void initState() {
     super.initState();
     _member = Member.fromOther(widget.member);
 
     _isAdmin = _member.isAdmin;
-    Groups().officerTitles.then((List<String> officerTitles){
-      setState(() {
-        _officerTitleTypes = officerTitles;
-      });
-    });
   }
 
   void _update() {
@@ -127,7 +119,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildHeading(){
-    String memberDateAdded = (_member?.dateAdded != null) ? AppDateTime().formatDateTime(_member?.dateAdded, format: "MMMM dd") : null;
+    String memberDateAdded = (_member?.dateCreated != null) ? AppDateTime().formatDateTime(_member?.dateCreated, format: "MMMM dd") : null;
     String memberSince = (memberDateAdded != null) ? "Member since $memberDateAdded" : '';
 
     return Row(

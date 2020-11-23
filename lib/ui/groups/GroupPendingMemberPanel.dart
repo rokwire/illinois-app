@@ -79,39 +79,43 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
     return
       Container(color: Styles().colors.background,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child:Row(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: Image.network(widget.member.photoURL)),
-          ),
-        ),
-        Container(width: 11,),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(widget.member?.name ?? "",
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.extraBold,
-                    fontSize: 20,
-                    color: Styles().colors.fillColorPrimary
-                ),
+      child:Column(
+        children: [
+          Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(65),
+                child: Container(width: 65, height: 65 ,child: Image.network(widget.member.photoURL)),
               ),
-              Text( "24/12/2021",//Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ${AppDateTime().formatDateTime(widget?.member?.membershipRequest?.dateCreated, format: "MMM dd, yyyy") ?? ""}"),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
-                    fontSize: 14,
-                    color: Styles().colors.textSurface
-                ),
+            ),
+            Container(width: 11,),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(widget.member?.name ?? "",
+                    style: TextStyle(
+                        fontFamily: Styles().fontFamilies.extraBold,
+                        fontSize: 20,
+                        color: Styles().colors.fillColorPrimary
+                    ),
+                  ),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ${AppDateTime().formatDateTime(widget?.member?.dateCreated, format: "MMM dd, yyyy") ?? ""}"),
+                    style: TextStyle(
+                        fontFamily: Styles().fontFamilies.regular,
+                        fontSize: 14,
+                        color: Styles().colors.textSurface
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        )
-      ],
-    ));
+            )
+          ],
+    ),
+        ],
+      ));
   }
 
   Widget _buildDetails(){
@@ -119,6 +123,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _buildQuestions(),
+        Container(height: 1, color: Styles().colors.surfaceAccent,),
         _buildApproval()
       ],
     );
@@ -126,13 +131,11 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildQuestions(){
     List<Widget> list = List<Widget>();
-    /*for (int index = 0; index < widget.member.membershipRequest.answers.length; index++) {
-      GroupMembershipAnswer answer = widget.member.membershipRequest.answers[index];
-      GroupMembershipQuestion question = (index < (widget.group?.membershipQuest?.questions?.length ?? 0)) ? widget.group.membershipQuest.questions[index] : null;
-      TMP: if(question == null){ question = GroupMembershipQuestion(json: {"question":"Is it test ${index+1} ?"});}
-      list.add(_MembershipAnswer(member: widget.member, question: question, answer: answer));
+    for (int index = 0; index < widget.member.answers.length; index++) {
+      GroupMembershipAnswer answer = widget.member.answers[index];
+      list.add(_MembershipAnswer(member: widget.member, answer: answer));
       list.add(Container(height: 16,));
-    }*/
+    }
 
     return
       Container(
@@ -326,16 +329,15 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
 class _MembershipAnswer extends StatelessWidget{
   final Member member;
-  final GroupMembershipQuestionAnswer answer;
-  final GroupMembershipQuestion question;
-  _MembershipAnswer({@required this.member, @required this.answer, @required this.question});
+  final GroupMembershipAnswer answer;
+  _MembershipAnswer({@required this.member, @required this.answer});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(question?.question ?? '',
+        Text(answer?.question ?? '',
           style: TextStyle(
               fontFamily: Styles().fontFamilies.bold,
               fontSize: 14,
