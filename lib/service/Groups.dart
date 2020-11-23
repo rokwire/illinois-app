@@ -230,6 +230,22 @@ class Groups /* with Service */ {
     return false; // fail
   }
 
+  Future<bool> leaveGroup(String groupId) async{
+    if(groupId != null) {
+      String url = '${Config().groupsUrl}/group/$groupId/members';
+      try {
+        Response response = await Network().delete(url, auth: NetworkAuth.User,);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
+  }
+
   Future<bool> acceptMembership(String groupId, String memberId, bool decision, String reason) async{
     if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId) && decision != null) {
       Map<String, dynamic> bodyMap = {"approve": decision, "reject_reason": reason};

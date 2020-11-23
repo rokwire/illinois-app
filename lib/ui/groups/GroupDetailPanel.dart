@@ -63,6 +63,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   Group              _group;
   bool               _loading = false;
   bool               _cancelling = false;
+  bool               _leaving = false;
   List<GroupEvent>   _groupEvents;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
@@ -151,6 +152,20 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       if (mounted) {
         setState(() {
           _cancelling = false;
+        });
+        _loadGroup();
+      }
+    });
+  }
+
+  Future<void> _leaveGroup(Function setStateEx){
+    setStateEx(() {
+      _leaving = true;
+    });
+    return Groups().leaveGroup(widget.groupId).whenComplete((){
+      if (mounted) {
+        setStateEx(() {
+          _leaving = false;
         });
         _loadGroup();
       }
@@ -696,7 +711,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     ],),);
   }
 
-  Widget _buildLogoutDialog(BuildContext context) {
+  Widget _buildCancelRequestDialog(BuildContext context) {
     return Dialog(
       backgroundColor: Styles().colors.fillColorPrimary,
       child: Padding(
@@ -742,6 +757,63 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLeaveGroupDialog(BuildContext context) {
+    return Dialog(
+      backgroundColor: Styles().colors.fillColorPrimary,
+      child: StatefulBuilder(
+          builder: (context, setStateEx){
+            return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(
+                      "Are you sure you want to leave this group?",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      RoundedButton(
+                        label: "Back",
+                        fontFamily: "ProximaNovaRegular",
+                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        onTap: ()=>Navigator.pop(context),
+                      ),
+                      Container(width: 16,),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          RoundedButton(
+                            label: "Leave",
+                            fontFamily: "ProximaNovaBold",
+                            textColor: Styles().colors.fillColorPrimary,
+                            borderColor: Styles().colors.white,
+                            backgroundColor: Styles().colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            onTap: (){
+                              _leaveGroup(setStateEx).then((value) => Navigator.pop(context));
+                            },
+                          ),
+                          _leaving ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ) : Container(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 
@@ -794,22 +866,14 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               children: <Widget>[
                 Container(height: 48,),
                 RibbonButton(
-                  leftIcon: "images/trash.png",
-                  label:"Delete",
+                  leftIcon: "images/icon-leave-group.png",
+                  label:"Leave group",
                   onTap: (){
-                    Navigator.pop(context);
-                    //TBD
+                    showDialog(context: context, builder: (context)=>_buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
                   },
                 ),
-                Container(height: 1, color: Styles().colors.surfaceAccent,),
-                RibbonButton(
-                  leftIcon: "images/icon-edit.png",
-                  label:"Edit",
-                  onTap: (){
-                    //TBD
-                  },
-                ),
-                Container(height: 8,)
+                //Container(height: 1, color: Styles().colors.surfaceAccent,),
+                //Container(height: 8,)
               ],
             ),
           );
@@ -862,7 +926,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onCancelMembershipRequest(){
-    showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
+    showDialog(context: context, builder: (context) => _buildCancelRequestDialog(context));
   }
 
   void _onSwitchFavorite() {
