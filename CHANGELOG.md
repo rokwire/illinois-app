@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.3.20] - 2020-11-23
+### Added
+- Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
+
+
 ## [2.3.19] - 2020-11-17
 ### Added
 - Contributor guidelines (CONTRIBUTING.md). [#126](https://github.com/rokwire/illinois-app/issues/126)
