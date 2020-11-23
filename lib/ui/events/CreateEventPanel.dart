@@ -1379,10 +1379,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   bool _isDataValid() {
-    bool _categoryValidation = _selectedCategory != null;
+    bool _categoryValidation = _selectedCategory != null || widget.group!=null; // Category is not required for group events
     bool _titleValidation =
         AppString.isStringNotEmpty(_eventTitleController.text);
-    bool _locationValidation = _location != null;
+    bool _locationValidation = _location != null || _isOnline;
     bool _startDateValidation = startDate != null;
     bool _startTimeValidation = startTime != null || _allDay;
     bool _endDateValidation = endDate != null;

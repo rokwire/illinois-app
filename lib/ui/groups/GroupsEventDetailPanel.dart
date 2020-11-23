@@ -6,12 +6,14 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -23,8 +25,9 @@ import '../WebPanel.dart';
 class GroupEventDetailPanel extends StatefulWidget{
 
   final Event event;
+  final bool previewMode;
 
-  const GroupEventDetailPanel({Key key, this.event, bool previewMode}) : super(key: key);
+  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -90,6 +93,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                       _eventTimeDetail(),
                       Container(height: 12,),
                       _eventLocationDetail(),
+                      Container(height: 20,),
+                      _buildPreviewButtons(),
                       Container(height: 20,),
                     ],
                   ),
@@ -164,8 +169,22 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
   }
 
   Widget _eventTimeDetail() {
+    Event event = widget.event;
     String displayTime = widget?.event?.displayDateTime;
-    if ((displayTime != null) && displayTime.isNotEmpty) {
+    //Newly created groups pass time in the string
+    if(AppString.isStringEmpty(displayTime.trim())){
+      if(event?.startDateString !=null || event?.endDateString != null){
+        DateTime startDate = AppDateTime().dateTimeFromString(event?.startDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
+        DateTime endDate = AppDateTime().dateTimeFromString(event?.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
+        if(startDate !=null){
+          displayTime = AppDateTime().formatDateTime(startDate, format: "MMM dd, yyyy");
+        } else if(endDate != null){
+          displayTime = AppDateTime().formatDateTime(endDate, format: "MMM dd, yyyy");
+        }
+      }
+    }
+    //
+    if (AppString.isStringNotEmpty(displayTime)) {
       return Semantics(
           label: displayTime,
           excludeSemantics: true,
@@ -187,13 +206,13 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
           )
       );
     } else {
-      return null;
+      return Container();
     }
   }
 
   Widget _eventLocationDetail() {
-    String locationText = ExploreHelper.getLongDisplayLocation(widget.event, null); //TBD decide if we need distance calculation - pass _locationData
-    if (!(widget?.event?.isVirtual ?? false) && widget?.event?.location != null && (locationText != null) && locationText.isNotEmpty) {
+    String locationText =(widget.event?.isVirtual ?? false) ? "Online Event" : ExploreHelper.getLongDisplayLocation(widget.event, null); //TBD decide if we need distance calculation - pass _locationData
+    if ( AppString.isStringNotEmpty(locationText)) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -221,7 +240,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
         ),
       );
     } else {
-      return null;
+      return Container();
     }
   }
 
@@ -282,6 +301,46 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
           ));
   }
 
+  Widget _buildPreviewButtons(){
+    return !widget.previewMode? Container():
+    Container(child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+            RibbonButton(
+              leftIcon: "images/icon-edit.png",
+              label: Localization().getStringEx('panel.group_detail.button.edit.title', 'Edit') ,
+              hint: Localization().getStringEx('panel.group_detail.button.edit.hint', '') ,
+              padding: EdgeInsets.zero,
+              onTap: ()=>_onTapEdit,
+            ),
+        Container(
+          height: 14,
+        ),
+        Container(
+          height: 1,
+          color: Styles().colors.surfaceAccent,
+        ),
+        Container(
+          height: 14,
+        ),
+        RibbonButton(
+          leftIcon: "images/icon-leave-group.png",
+          label: Localization().getStringEx("panel.group_detail.button.delete.title", "Delete Event"),
+          hint: Localization().getStringEx("panel.group_detail.button.delete.hint", "Delete Event"),
+          padding: EdgeInsets.zero,
+          onTap: ()=>_onTapDelete,
+        )
+      ],
+    ));
+  }
+
+  void _onTapEdit(){
+    //TBD
+  }
+
+  void _onTapDelete(){
+    //TBD
+  }
 
   void _onTapWebButton(String url, String analyticsName){
     if(AppString.isStringNotEmpty(url)){
