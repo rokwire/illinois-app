@@ -196,7 +196,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                 icon: Image.asset(
                   'images/groups-more-inactive.png',
                 ),
-                onPressed:_onOptionsTap,
+                onPressed:_onGroupOptionsTap,
               ))
         ],
       ),
@@ -499,7 +499,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
     if (_groupEvents != null) {
       for (GroupEvent groupEvent in _groupEvents) {
-        content.add(_EventCard(groupEvent: groupEvent, groupId: widget.groupId, isAdmin: _isAdmin));
+        content.add(_EventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
     }
 
@@ -847,7 +847,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
   }
 
-  void _onOptionsTap(){
+  void _onGroupOptionsTap(){
     //TBD rest options
     showModalBottomSheet(
         context: context,
@@ -939,10 +939,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
 class _EventCard extends StatefulWidget {
   final GroupEvent groupEvent;
-  final String groupId;
+  final Group group;
   final bool isAdmin;
 
-  _EventCard({this.groupEvent, this.groupId, this.isAdmin = false});
+  _EventCard({this.groupEvent, this.group, this.isAdmin = false});
 
   @override
   createState()=> _EventCardState();
@@ -954,7 +954,7 @@ class _EventCardState extends State<_EventCard>{
   Widget build(BuildContext context) {
     GroupEvent event = widget.groupEvent;
     List<Widget> content = [
-      _EventContent(event: event, isAdmin: widget.isAdmin,),
+      _EventContent(event: event, isAdmin: widget.isAdmin, group: widget.group,),
     ];
     List<Widget> content2 = [];
 
@@ -962,10 +962,10 @@ class _EventCardState extends State<_EventCard>{
       content2.add(
           Container(
               padding: EdgeInsets.symmetric(vertical: 16),
-              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.groupId)?.photoURL,
+              child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
                   onTap: (){
                     Analytics().logPage(name: "Add post");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.groupId,)));
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
                   }))
       );
     }
@@ -1094,10 +1094,11 @@ class _EventCardState extends State<_EventCard>{
 }
 
 class _EventContent extends StatelessWidget {
+  final Group group;
   final Event event;
   final bool isAdmin;
 
-  _EventContent({this.event, this.isAdmin = false});
+  _EventContent({this.event, this.isAdmin = false, this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -1139,7 +1140,7 @@ class _EventContent extends StatelessWidget {
         Container(
           padding: EdgeInsets.only(left: 12),
           child:
-          GestureDetector(onTap: () { /*TBD options*/ },
+          GestureDetector(onTap: () { _onOptionsTap(context);},
               child: Container(
                 child: Image.asset('images/icon-groups-options-orange.png'),
               ),
@@ -1148,6 +1149,125 @@ class _EventContent extends StatelessWidget {
       ],),))
     ],);
 
+  }
+
+  void _onOptionsTap(BuildContext context){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context){
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(height: 48,),
+                RibbonButton(
+                  leftIcon: "images/icon-leave-group.png",
+                  label:"Remove Event",
+                  onTap: (){
+                    showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
+                  },
+                ),
+                RibbonButton(
+                  leftIcon: "images/icon-leave-group.png",
+                  label:"Delete Event",
+                  onTap: (){
+                    showDialog(context: context, builder: (context)=>_buildDeleteEventDialog(context)).then((value) => Navigator.pop(context));
+                  },
+                ),
+                RibbonButton(
+                  leftIcon: "images/icon-edit.png",
+                  label:"Edit Event",
+                  onTap: (){
+                    _onEditEventTap(context);
+                  },
+                ),
+                //Container(height: 1, color: Styles().colors.surfaceAccent,),
+                //Container(height: 8,)
+              ],
+            ),
+          );
+        }
+    );
+  }
+
+  Widget _buildRemoveEventDialog(BuildContext context){
+    return _buildOptionDialog("Remove this event from your group page?", "Remove", _onRemoveEvent);
+  }
+
+  Widget _buildDeleteEventDialog(BuildContext context){
+    return _buildOptionDialog("Delete this event from your groups page?", "Delete", _onDeleteEvent);
+  }
+
+  Widget _buildOptionDialog(String message, String buttonTitle, Function _onConfirmTap){
+    //TBD improve layout
+    return Dialog(
+      backgroundColor: Styles().colors.fillColorPrimary,
+      child: StatefulBuilder(
+          builder: (context, setStateEx){
+            return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(
+                      message,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      RoundedButton(
+                        label: "Back",
+                        fontFamily: "ProximaNovaRegular",
+                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        onTap: ()=>Navigator.pop(context),
+                      ),
+                      Container(width: 16,),
+                      RoundedButton(
+                        label: buttonTitle,
+                        fontFamily: "ProximaNovaBold",
+                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        onTap: (){
+                          _onConfirmTap();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
+    );
+  }
+
+  void _onRemoveEvent(){
+    //TBD
+  }
+
+  void _onDeleteEvent(){
+    //TBD
+  }
+
+  void _onEditEventTap(BuildContext context){
+    Analytics().logPage(name: "Create Event");
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group,)));
   }
 }
 
