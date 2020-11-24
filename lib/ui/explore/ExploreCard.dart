@@ -172,7 +172,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                       ],
                                     ))
                               ],)),
-                        Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._cardHeight,),)
+                        Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
                       ],
                     ),
                   ),
@@ -466,7 +466,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding), child: _divider(),),
-        Container(height: _EventSmallCard._cardHeight, padding: EdgeInsets.symmetric(vertical: 16), child: ListView.separated(
+        Container(height: _EventSmallCard._getScaledCardHeight(context), padding: EdgeInsets.symmetric(vertical: 16), child: ListView.separated(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           separatorBuilder: (context, index) =>
@@ -528,6 +528,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 class _EventSmallCard extends StatelessWidget {
   static final double _cardWidth = 212;
   static final double _cardHeight = 144;
+  static final double _cardTitleHeight = 60; // Two lines title
 
   final Event event;
   final _EventCardType type;
@@ -535,8 +536,13 @@ class _EventSmallCard extends StatelessWidget {
 
   _EventSmallCard({this.event, this.type, this.onTap});
 
+  static double _getScaledCardHeight(BuildContext context){
+      return  (_cardHeight-_cardTitleHeight) + (_cardTitleHeight*MediaQuery.of(context).textScaleFactor);
+  }
+
   @override
   Widget build(BuildContext context) {
+    double scaledHeight = _getScaledCardHeight(context);
     bool isMoreCardType = (type == _EventCardType.more);
     Favorite favorite = event is Favorite ? event : null;
     bool isFavorite = User().isFavorite(favorite);
@@ -545,13 +551,13 @@ class _EventSmallCard extends StatelessWidget {
     double topBorderHeight = 4;
     double internalPadding = 16;
     double internalWidth = _cardWidth - (borderWidth * 2 + internalPadding * 2);
-    double internalHeight = _cardHeight - (borderWidth * 2 + internalPadding * 4 + topBorderHeight);
+    double internalHeight = scaledHeight - (borderWidth * 2 + internalPadding * 4 + topBorderHeight);
     return GestureDetector(onTap: onTap, child: Semantics(
         label: _semanticLabel,
         excludeSemantics: true,
         child: Container(
           width: _cardWidth,
-          height: _cardHeight,
+          height: scaledHeight,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(
               color: Styles().colors.surfaceAccent, width: borderWidth)),
           child: Column(children: <Widget>[
