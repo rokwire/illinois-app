@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -247,4 +248,65 @@ class HeaderBackButton extends StatelessWidget {
           }),
     );
   }
+}
+
+class GroupsConfirmationDialog extends StatelessWidget{
+  final String message;
+  final String buttonTitle;
+  final Function onConfirmTap;
+
+  const GroupsConfirmationDialog({Key key, this.message, this.buttonTitle, this.onConfirmTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Styles().colors.fillColorPrimary,
+      child: StatefulBuilder(
+          builder: (context, setStateEx){
+            return Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 26),
+                    child: Text(
+                      message,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      RoundedButton(
+                        label: "Back",
+                        fontFamily: "ProximaNovaRegular",
+                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors.white,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        onTap: ()=>Navigator.pop(context),
+                      ),
+                      Container(width: 16,),
+                      RoundedButton(
+                        label: buttonTitle,
+                        fontFamily: "ProximaNovaBold",
+                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        onTap: (){
+                          onConfirmTap();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
+    );
+  }
+
 }

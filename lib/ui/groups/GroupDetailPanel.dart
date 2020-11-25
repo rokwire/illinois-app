@@ -1198,63 +1198,17 @@ class _EventContent extends StatelessWidget {
   }
 
   Widget _buildRemoveEventDialog(BuildContext context){
-    return _buildOptionDialog("Remove this event from your group page?", "Remove", _onRemoveEvent);
+    return GroupsConfirmationDialog(
+        message: "Remove this event from your group page?",
+        buttonTitle: "Remove",
+        onConfirmTap:_onRemoveEvent);
   }
 
   Widget _buildDeleteEventDialog(BuildContext context){
-    return _buildOptionDialog("Delete this event from your groups page?", "Delete", _onDeleteEvent);
-  }
-
-  Widget _buildOptionDialog(String message, String buttonTitle, Function _onConfirmTap){
-    //TBD improve layout
-    return Dialog(
-      backgroundColor: Styles().colors.fillColorPrimary,
-      child: StatefulBuilder(
-          builder: (context, setStateEx){
-            return Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 26),
-                    child: Text(
-                      message,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      RoundedButton(
-                        label: "Back",
-                        fontFamily: "ProximaNovaRegular",
-                        textColor: Styles().colors.fillColorPrimary,
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        onTap: ()=>Navigator.pop(context),
-                      ),
-                      Container(width: 16,),
-                      RoundedButton(
-                        label: buttonTitle,
-                        fontFamily: "ProximaNovaBold",
-                        textColor: Styles().colors.fillColorPrimary,
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        onTap: (){
-                          _onConfirmTap();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
-    );
+    return GroupsConfirmationDialog(
+        message: "Delete this event from your groups page?",
+        buttonTitle:  "Delete",
+        onConfirmTap:_onDeleteEvent);
   }
 
   void _onRemoveEvent(){
