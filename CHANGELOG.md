@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
+- Fix Crashlytics and clean old fabric plugins #164(https://github.com/rokwire/illinois-app/issues/164)
 - Fix Large font issue for _EventSmallCard widget [#165](https://github.com/rokwire/illinois-app/issues/165)
 
 ## [2.3.20] - 2020-11-23
