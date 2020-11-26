@@ -213,16 +213,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       child:
       Row(children: [
         Expanded(child:
-            Row(
-              children: <Widget>[
-                _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
-                Container(width: 15,),
-                _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
-                Container(width: 15,),
-                Expanded(child: Container()),
-                _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
-              ],
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+            ConstrainedBox(
+              constraints:BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width - 20/*padding*/,
+              ),
+              child: IntrinsicWidth(child:
+                Row(
+                  children: <Widget>[
+                    _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
+                    Container(width: 15,),
+                    _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
+                    Container(width: 15,),
+                    Flexible(child: Container()),
+                    _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
+
+                  ],
+                ),
+              )
             )
+          )
         ),
       ],)
     );
