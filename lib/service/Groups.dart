@@ -243,7 +243,40 @@ class Groups /* with Service */ {
     }
     return false; // fail
   }
-  
+
+  Future<bool> updateMembership(String groupId, String memberId, GroupMemberStatus status) async{
+    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId)) {
+      Map<String, dynamic> bodyMap = {"status":groupMemberStatusToString(status)};
+      String body = jsonEncode(bodyMap);
+      String url = '${Config().groupsUrl}/memberships/$memberId';
+      try {
+        Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
+  }
+
+  Future<bool> deleteMembership(String groupId, String memberId) async{
+    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId)) {
+      String url = '${Config().groupsUrl}/memberships/$memberId';
+      try {
+        Response response = await Network().delete(url, auth: NetworkAuth.User,);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
+  }
 
 
 // Events

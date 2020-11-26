@@ -87,21 +87,20 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     setState(() {
       _isMembersLoading = false;
       _pendingMembers = _group.getMembersByStatus(GroupMemberStatus.pending);
-//      TMP: _pendingMembers = [Member(json: {
-//        "name":"Todor Bachvarov",
-//        "photo_url":"https://s3.ivisa.com/website-assets/blog/id-photo2.jpg",
-//        "membershipRequest":{
-//          "dateCreated":AppDateTime().formatDateTime(DateTime.now(), format: AppDateTime.iso8601DateTimeFormat),
-//          "answers":[
-//          {"answer":"Test Answer 1"},
-//          {"answer":"Test Answer 2"},
-//          {"answer":"Test Answer 3"}
-//          ]
-//        }
-//        })];
+      _pendingMembers.sort((member1, member2) => member1.name.compareTo(member2.name));
+
       _members = AppCollection.isCollectionNotEmpty(_group?.members)
-          ? _group.members.where((member) => (member.status != GroupMemberStatus.pending && member.status != GroupMemberStatus.rejected)).toList()
-              : [];
+          ? _group.members.where((member) => (member.status != GroupMemberStatus.pending)).toList()
+          : [];
+      _members.sort((member1, member2){
+        if(member1.status == member2.status){
+          return member1.name.compareTo(member2.name);
+        } else {
+          if(member1.isAdmin && !member2.isAdmin) return -1;
+          else if(!member1.isAdmin && member2.isAdmin) return 1;
+          else return 0;
+        }
+      });
     _applyMembersFilter();
     });
   }
@@ -372,17 +371,16 @@ class _GroupMemberCard extends StatelessWidget{
                       ],
                     ),
                     Container(height: 4,),
-                    !_isAdmin? Container():
                     Row(
                       children: <Widget>[
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Styles().colors.fillColorSecondary,
+                            color: groupMemberStatusToColor(member.status),
                             borderRadius: BorderRadius.all(Radius.circular(2)),
                           ),
                           child: Center(
-                            child: Text("ADMIN",
+                            child: Text(groupMemberStatusToDisplayString(member.status).toUpperCase(),
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies.bold,
                                   fontSize: 12,

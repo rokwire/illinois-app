@@ -418,7 +418,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                         child: Center(
-                          child: Text(_group.currentUserStatusText,
+                          child: Text(_group.currentUserStatusText.toUpperCase(),
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.bold,
                                 fontSize: 12,

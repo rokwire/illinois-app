@@ -134,6 +134,17 @@ class Group {
     return [];
   }
 
+  Member getMembersById(String id){
+    if(AppCollection.isCollectionNotEmpty(members) && AppString.isStringNotEmpty(id)){
+      for(Member member in members){
+        if(member.id == id){
+          return member;
+        }
+      }
+    }
+    return null;
+  }
+
   Member get currentUserAsMember{
     if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
       for (Member member in members) {
@@ -191,28 +202,30 @@ class Group {
 
   Color get currentUserStatusColor{
     Member member = currentUserAsMember;
-    if(member != null){
-      switch(member.status){
-        case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
-        case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
-        case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
-        case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
-      }
+    if(member?.status != null){
+      return groupMemberStatusToColor(member.status);
     }
     return Styles().colors.white;
   }
 
   String get currentUserStatusText{
     Member member = currentUserAsMember;
-    if(member != null){
-      switch(member.status){
-        case GroupMemberStatus.admin    :  return "ADMIN";
-        case GroupMemberStatus.member   :  return "MEMBER";
-        case GroupMemberStatus.pending  :  return "PENDING MEMBERSHIP";
-        case GroupMemberStatus.rejected :  return "REJECTED";
-      }
+    if(member?.status != null){
+      return groupMemberStatusToDisplayString(member.status);
     }
     return "";
+  }
+
+  int get adminsCount{
+    int adminsCount = 0;
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.isAdmin){
+          adminsCount++;
+        }
+      }
+    }
+    return adminsCount;
   }
 }
 
@@ -400,6 +413,17 @@ String groupMemberStatusToDisplayString(GroupMemberStatus value) {
   return null;
 }
 
+Color groupMemberStatusToColor(GroupMemberStatus value) {
+  if (value != null) {
+    switch(value){
+      case GroupMemberStatus.admin    :  return Styles().colors.fillColorSecondary;
+      case GroupMemberStatus.member   :  return Styles().colors.fillColorPrimary;
+      case GroupMemberStatus.pending  :  return Styles().colors.mediumGray1;
+      case GroupMemberStatus.rejected :  return Styles().colors.mediumGray1;
+    }
+  }
+  return null;
+}
 
 //////////////////////////////
 // GroupMembershipQuest

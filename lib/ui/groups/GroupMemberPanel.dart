@@ -20,9 +20,11 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -35,9 +37,11 @@ class GroupMemberPanel extends StatefulWidget {
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
 }
 
-class _GroupMemberPanelState extends State<GroupMemberPanel>{
+class _GroupMemberPanelState extends State<GroupMemberPanel> implements NotificationsListener{
 
   Member _member;
+  Group _group;
+  bool _isLoading = false;
   bool _isAdmin = false;
   bool _updating = false;
   bool _removing = false;
@@ -45,48 +49,90 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [Groups.notifyGroupUpdated]);
+
     _member = Member.fromOther(widget.member);
+    _group = Group.fromOther(widget.group);
 
     _isAdmin = _member.isAdmin;
   }
 
-  void _update() {
-    if (_updating != true) {
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  void _reloadGroup(){
+    if(mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+      Groups().loadGroup(_group.id).then((Group group) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            if (group != null) {
+              _group = group;
+              _loadMember();
+            }
+          });
+        }
+      });
+    }
+  }
+
+  void _loadMember(){
+    if(mounted) {
+      if (AppCollection.isCollectionNotEmpty(_group.members)) {
+        setState(() {
+          _member = _group.getMembersById(_member.id);
+        });
+      }
+    }
+  }
+
+  void _updateMemberStatus() {
+    if (!_updating) {
+
+      if(_isAdmin && _group.adminsCount < 2){
+        AppAlert.showDialogResult(context, 'Unable to update. Second Admin is required.');
+        return;
+      }
 
       setState(() {
         _updating = true;
       });
 
-      /*Groups().updateGroupMember(widget.group?.id, _member).then((Member member) {
+      // First invoke api  and then update the UI - if succeeded
+      bool newIsAdmin = !_isAdmin;
+
+      GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
+      Groups().updateMembership(widget.group?.id, _member?.id, status).then((bool succeed) {
         if (mounted) {
           setState(() {
             _updating = false;
           });
-          if (member == null) {
+          if(succeed){
+            setState(() {
+              _isAdmin = newIsAdmin;
+            });
+          } else {
             AppAlert.showDialogResult(context, 'Failed to update member');
           }
         }
-      });*/
+      });
     }
   }
 
-  void _remove() {
-    if (_removing != true) {
+  Future<void> _removeMembership() async{
+    if(_isAdmin && _group.adminsCount < 2){
+      throw 'Unable to remove. Second Admin is required.';
+    }
 
-      setState(() {
-        _removing = true;
-      });
-
-      /*Groups().updateGroupMember(widget.group?.id, _member).then((Member member) {
-        if (mounted) {
-          setState(() {
-            _removing = false;
-          });
-          if (member == null) {
-            AppAlert.showDialogResult(context, 'Failed to update member');
-          }
-        }
-      });*/
+    bool success = await Groups().deleteMembership(widget.group?.id, _member?.id);
+    if(!success){
+      throw "Unable to remove ${_member.name} from this group";
     }
   }
 
@@ -100,17 +146,19 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
       body: Column(
         children: <Widget>[
           Expanded(
-            child: SingleChildScrollView(
-              child:Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: <Widget>[
-                    _buildHeading(),
-                    _buildDetails(context),
-                  ],
+            child: _isLoading
+              ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+              : SingleChildScrollView(
+                child:Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: <Widget>[
+                      _buildHeading(),
+                      _buildDetails(context),
+                    ],
+                  ),
                 ),
               ),
-            ),
           ),
         ],
       ),
@@ -152,7 +200,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildDetails(BuildContext context){
-    bool canAdmin = widget.group.currentUserIsUserAdmin;
+    bool canAdmin = _group.currentUserIsUserAdmin;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -171,11 +219,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
                       toggled: _isAdmin ?? false,
                       context: context,
-                      onTap: () {
-                        setState(() {
-                          _isAdmin = !(_isAdmin ?? false);
-                        });
-                      }
+                      onTap: _updateMemberStatus
                   ),
                   _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ) : Container()
                 ],
@@ -207,17 +251,94 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
           borderColor: Styles().colors.fillColorPrimary,
           borderWidth: 2,
-          onTap:() { _remove();  }
+          onTap: (){
+            showDialog(context: context, builder: _buildRemoveFromGroupDialog);
+          }
         ),
-      Visibility(visible: (_removing == true), child:
-        Center(child:
-          Padding(padding: EdgeInsets.only(top: 10.5), child:
-           Container(width: 21, height:21, child:
-              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), strokeWidth: 2,)
-            ),
-          ),
-        ),
-      ),
     ],);
+  }
+
+  Widget _buildRemoveFromGroupDialog(BuildContext context) {
+    return Dialog(
+      backgroundColor: Styles().colors.fillColorPrimary,
+      child: StatefulBuilder(
+        builder: (context, setStateEx){
+          return Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 26),
+                  child: Text(
+                    "Remove ${_member.name} From this group?",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    RoundedButton(
+                      label: "Back",
+                      fontFamily: "ProximaNovaRegular",
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      onTap: ()=>Navigator.pop(context),
+                    ),
+                    Container(width: 16,),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        RoundedButton(
+                          label: "Remove",
+                          fontFamily: "ProximaNovaBold",
+                          textColor: Styles().colors.fillColorPrimary,
+                          borderColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          onTap: (){
+                            if(!_removing) {
+                              if (mounted) {
+                                setStateEx(() {
+                                  _removing = true;
+                                });
+                              }
+                              _removeMembership().then((_) {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }).whenComplete((){
+                                if (mounted) {
+                                  setStateEx(() {
+                                    _removing = false;
+                                  });
+                                }
+                              }).catchError((error) {
+                                Navigator.pop(context);
+                                AppAlert.showDialogResult(context, error);
+                              });
+                            }
+                          },
+                        ),
+                        _removing ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,) : Container(),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (param == _group.id && (name == Groups.notifyGroupUpdated)){
+      _reloadGroup();
+    }
   }
 }

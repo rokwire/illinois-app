@@ -645,7 +645,7 @@ class _GroupCard extends StatelessWidget{
                 borderRadius: BorderRadius.all(Radius.circular(2)),
               ),
               child: Center(
-                child: Text(group.currentUserStatusText,
+                child: Text(group.currentUserStatusText.toUpperCase(),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       fontSize: 12,
