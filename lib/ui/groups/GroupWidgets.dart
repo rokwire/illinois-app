@@ -19,6 +19,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -273,33 +274,35 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     child: Text(
                       message,
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.white),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      RoundedButton(
-                        label: "Back",
-                        fontFamily: "ProximaNovaRegular",
-                        textColor: Styles().colors.fillColorPrimary,
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        onTap: ()=>Navigator.pop(context),
-                      ),
+                      Expanded(child:
+                        ScalableRoundedButton(
+                          label: "Back",
+                          fontFamily: "ProximaNovaRegular",
+                          textColor: Styles().colors.fillColorPrimary,
+                          borderColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          onTap: ()=>Navigator.pop(context),
+                        )),
                       Container(width: 16,),
-                      RoundedButton(
-                        label: buttonTitle,
-                        fontFamily: "ProximaNovaBold",
-                        textColor: Styles().colors.fillColorPrimary,
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        onTap: (){
-                          onConfirmTap();
-                        },
-                      ),
+                      Expanded(child:
+                        ScalableRoundedButton(
+                          label: buttonTitle,
+                          fontFamily: "ProximaNovaBold",
+                          textColor: Styles().colors.fillColorPrimary,
+                          borderColor: Styles().colors.fillColorSecondary,
+                          backgroundColor: Styles().colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          onTap: (){
+                            onConfirmTap();
+                          },
+                      )),
                     ],
                   ),
                 ],
