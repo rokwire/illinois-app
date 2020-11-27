@@ -30,6 +30,7 @@ import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -181,9 +182,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 child:
                                 Semantics(label:Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                   hint: Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
-                                  SmallRoundedButton(
+                                  ScalableSmallRoundedButton(
                                     label: Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                     onTap: _onTapAddImage,
+                                    backgroundColor: Styles().colors.white,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    borderColor: Styles().colors.fillColorSecondary,
                                     showChevron: false,
                                   )
                                 ),
@@ -432,14 +436,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 child:
                                                 Row(
                                                   children: <Widget>[
-                                                    Text(
-                                                      Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
-                                                      style: TextStyle(
-                                                          color: Styles().colors.fillColorPrimary,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                          Styles().fontFamilies.bold,
-                                                          letterSpacing: 1),
+                                                    Expanded(child:
+                                                      Text(
+                                                        Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                            color: Styles().colors.fillColorPrimary,
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                            Styles().fontFamilies.bold,
+                                                            letterSpacing: 1),
+                                                      )
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
@@ -548,14 +556,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                     child:
                                                     Row(
                                                       children: <Widget>[
-                                                        Text(
-                                                          Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
-                                                          style: TextStyle(
-                                                              color: Styles().colors.fillColorPrimary,
-                                                              fontSize: 14,
-                                                              fontFamily:
-                                                              Styles().fontFamilies.bold,
-                                                              letterSpacing: 1),
+                                                        Expanded(
+                                                          child: Text(
+                                                            Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                                color: Styles().colors.fillColorPrimary,
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                Styles().fontFamilies.bold,
+                                                                letterSpacing: 1),
+                                                          ),
                                                         ),
                                                         Padding(
                                                           padding: EdgeInsets.only(
@@ -598,6 +610,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
                                   ToggleRibbonButton(
+                                    height: null,
                                     label: Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
                                     toggled: _allDay,
                                     onTap: _onAllDayToggled,
@@ -702,7 +715,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                             Row(
                                               children: <Widget>[
                                                 Expanded(
-                                                    child: SmallRoundedButton(
+                                                    child: ScalableRoundedButton(
+                                                      backgroundColor: Styles().colors.white,
+                                                      textColor: Styles().colors.fillColorPrimary,
+                                                      borderColor: Styles().colors.fillColorSecondary,
+                                                      fontSize: 16,
                                                       onTap: _onTapSelectLocation,
                                                       label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
                                                       showChevron: false,
@@ -778,6 +795,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
                                       ToggleRibbonButton(
+                                        height: null,
                                         label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
@@ -803,15 +821,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         children: <Widget>[
                                           Image.asset(
                                               'images/icon-campus-tools.png'),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 3),
-                                            child: Text(
-                                              Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
-                                              style: TextStyle(
-                                                  color: Styles().colors.fillColorPrimary,
-                                                  fontSize: 16,
-                                                  fontFamily: Styles().fontFamilies.bold),
-                                            ),
+                                          Expanded(child:
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 3),
+                                              child: Text(
+                                                Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
+                                                style: TextStyle(
+                                                    color: Styles().colors.fillColorPrimary,
+                                                    fontSize: 16,
+                                                    fontFamily: Styles().fontFamilies.bold),
+                                              ),
+                                            )
                                           )
                                         ],
                                       ),
@@ -1056,7 +1076,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               )),
                               (widget.group==null)? Container():
                               Expanded(
-                                  child: RoundedButton(
+                                  child: ScalableRoundedButton(
                                     label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                     Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
                                     backgroundColor: Colors.white,
