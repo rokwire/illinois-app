@@ -16,7 +16,7 @@
 
 import 'dart:ui';
 
-import 'package:collection/equality.dart';
+import 'package:collection/collection.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
@@ -156,37 +156,21 @@ class Group {
     return null;
   }
 
-  bool get currentUserIsUserAdmin{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
-      for(Member member in members){
-        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.admin){
-          return true;
-        }
-      }
-    }
-    return false;
+  bool get currentUserIsAdmin{
+    return (currentUserAsMember?.isAdmin ?? false);
   }
 
   bool get currentUserIsPendingMember{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
-      for(Member member in members){
-        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.pending){
-          return true;
-        }
-      }
-    }
-    return false;
+    return (currentUserAsMember?.isPendingMember ?? false);
   }
 
-  bool get currentUserIsGenericMember{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
-      for(Member member in members){
-        if(member.email == Auth()?.authInfo?.email){
-          return true;
-        }
-      }
-    }
-    return false;
+  bool get currentUserIsMemberOrAdmin{
+    Member currentUser = currentUserAsMember;
+    return (currentUser?.isMember ?? false) || (currentUser?.isAdmin ?? false);
+  }
+
+  bool get currentUserCanJoin{
+    return currentUserAsMember == null;
   }
 
   bool get currentUserIsUserMember{

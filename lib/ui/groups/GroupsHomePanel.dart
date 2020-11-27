@@ -172,7 +172,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           _buildFilterButtons(),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator(),)
+                ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ),)
                 : Stack(
               alignment: AlignmentDirectional.topCenter,
               children: <Widget>[
@@ -605,43 +605,16 @@ class _GroupCard extends StatelessWidget{
     );
   }
   Widget _buildHeading(){
-    if(displayType == _GroupCardDisplayType.allGroups){
       return
-        group.currentUserIsGenericMember ? _buildMember():
-        Text("CATEGORY",
-        style: TextStyle(
-            fontFamily: Styles().fontFamilies.bold,
-            fontSize: 16,
-            color: Styles().colors.fillColorPrimary
-        ),
-      );
-    } else {
-      return group.currentUserIsUserMember? _buildMember(): _buildMembershipStatus();
-    }
-  }
-
-  Widget _buildMembershipStatus(){
-    return Row(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Styles().colors.mediumGray,
-            borderRadius: BorderRadius.all(Radius.circular(2)),
-          ),
-          child: Center(
-            child: Text(_membershipStatusText,
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold,
-                  fontSize: 12,
-                  color: Styles().colors.white
-              ),
-            ),
-          ),
-        ),
-        Expanded(child: Container(),),
-      ],
-    );
+        group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin
+            ? _buildMember()
+            : Text("CATEGORY",
+                  style: TextStyle(
+                      fontFamily: Styles().fontFamilies.bold,
+                      fontSize: 16,
+                      color: Styles().colors.fillColorPrimary
+                  ),
+            );
   }
 
   Widget _buildMember(){
@@ -685,10 +658,6 @@ class _GroupCard extends StatelessWidget{
   void _onTapCard(BuildContext context) {
     Analytics.instance.logSelect(target: "${group.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPanel(groupId: group.id)));
-  }
-
-  String get _membershipStatusText{
-    return "GROUP PENDING"; //TBD
   }
 
   String get _timeUpdatedText{

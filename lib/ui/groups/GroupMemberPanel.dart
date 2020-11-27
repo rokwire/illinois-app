@@ -31,13 +31,13 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMemberPanel extends StatefulWidget {
-  final Member member;
-  final Group group;
-  GroupMemberPanel({this.member, this.group});
+  final String groupId;
+  final String memberId;
+  GroupMemberPanel({this.groupId, this.memberId});
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
 }
 
-class _GroupMemberPanelState extends State<GroupMemberPanel> implements NotificationsListener{
+class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Member _member;
   Group _group;
@@ -49,18 +49,12 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyGroupUpdated]);
-
-    _member = Member.fromOther(widget.member);
-    _group = Group.fromOther(widget.group);
-
-    _isAdmin = _member.isAdmin;
+    _reloadGroup();
   }
 
   @override
   void dispose() {
     super.dispose();
-    NotificationService().unsubscribe(this);
   }
 
   void _reloadGroup(){
@@ -68,14 +62,14 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
       setState(() {
         _isLoading = true;
       });
-      Groups().loadGroup(_group.id).then((Group group) {
+      Groups().loadGroup(widget.groupId).then((Group group) {
         if (mounted) {
+          if (group != null) {
+            _group = group;
+            _loadMember();
+          }
           setState(() {
             _isLoading = false;
-            if (group != null) {
-              _group = group;
-              _loadMember();
-            }
           });
         }
       });
@@ -86,7 +80,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
     if(mounted) {
       if (AppCollection.isCollectionNotEmpty(_group.members)) {
         setState(() {
-          _member = _group.getMembersById(_member.id);
+          _member = _group.getMembersById(widget.memberId);
+          _isAdmin = _member.isAdmin;
         });
       }
     }
@@ -108,7 +103,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
       bool newIsAdmin = !_isAdmin;
 
       GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
-      Groups().updateMembership(widget.group?.id, _member?.id, status).then((bool succeed) {
+      Groups().updateMembership(widget.groupId, widget.memberId, status).then((bool succeed) {
         if (mounted) {
           setState(() {
             _updating = false;
@@ -126,11 +121,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
   }
 
   Future<void> _removeMembership() async{
-    if(_isAdmin && _group.adminsCount < 2){
-      throw 'Unable to remove. Second Admin is required.';
-    }
-
-    bool success = await Groups().deleteMembership(widget.group?.id, _member?.id);
+    bool success = await Groups().deleteMembership(widget.groupId, widget.memberId);
     if(!success){
       throw "Unable to remove ${_member.name} from this group";
     }
@@ -143,25 +134,25 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
       appBar: SimpleHeaderBarWithBack(
         context: context,
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: _isLoading
-              ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
-              : SingleChildScrollView(
-                child:Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: <Widget>[
-                      _buildHeading(),
-                      _buildDetails(context),
-                    ],
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ))
+          : Column(
+            children: <Widget>[
+              Expanded(
+                child: SingleChildScrollView(
+                    child:Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: <Widget>[
+                          _buildHeading(),
+                          _buildDetails(context),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
               ),
+            ],
           ),
-        ],
-      ),
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -200,7 +191,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
   }
 
   Widget _buildDetails(BuildContext context){
-    bool canAdmin = _group.currentUserIsUserAdmin;
+    bool canAdmin = _group.currentUserIsAdmin;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -210,19 +201,22 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(height: 24,),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  ToggleRibbonButton(
-                      height: null,
-                      borderRadius: BorderRadius.circular(4),
-                      label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
-                      toggled: _isAdmin ?? false,
-                      context: context,
-                      onTap: _updateMemberStatus
-                  ),
-                  _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ) : Container()
-                ],
+              Visibility(
+                visible: !_member.isRejected,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ToggleRibbonButton(
+                        height: null,
+                        borderRadius: BorderRadius.circular(4),
+                        label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
+                        toggled: _isAdmin ?? false,
+                        context: context,
+                        onTap: _updateMemberStatus
+                    ),
+                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ) : Container()
+                  ],
+                ),
               ),
               Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
@@ -333,12 +327,5 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> implements Notifica
         },
       ),
     );
-  }
-
-  @override
-  void onNotification(String name, param) {
-    if (param == _group.id && (name == Groups.notifyGroupUpdated)){
-      _reloadGroup();
-    }
   }
 }

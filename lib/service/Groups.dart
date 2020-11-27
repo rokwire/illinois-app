@@ -84,13 +84,6 @@ class Groups /* with Service */ {
     return [];
   }
 
-  Future<List<String>> get types async {
-    return ((await _sampleJson)['types'] as List)?.cast<String>();
-  }
-
-  Future<List<String>> get tags async {
-    return ((await _sampleJson)['tags'] as List)?.cast<String>();
-  }
 
   // Groups APIs
 

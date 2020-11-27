@@ -207,7 +207,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   void onTapMembers(){
     Analytics().logPage(name: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: widget.group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: widget.group.id)));
   }
 
   void onTapSettings(){

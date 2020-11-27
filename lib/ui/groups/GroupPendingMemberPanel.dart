@@ -131,10 +131,12 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildQuestions(){
     List<Widget> list = List<Widget>();
-    for (int index = 0; index < widget.member.answers.length; index++) {
-      GroupMembershipAnswer answer = widget.member.answers[index];
-      list.add(_MembershipAnswer(member: widget.member, answer: answer));
-      list.add(Container(height: 16,));
+    if(AppCollection.isCollectionNotEmpty(widget?.member?.answers)) {
+      for (int index = 0; index < widget.member.answers.length; index++) {
+        GroupMembershipAnswer answer = widget.member.answers[index];
+        list.add(_MembershipAnswer(member: widget.member, answer: answer));
+        list.add(Container(height: 16,));
+      }
     }
 
     return

@@ -655,9 +655,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildMembershipRequest() {
     return
-      !Auth().isShibbolethLoggedIn || _group.currentUserIsGenericMember
-          ? Container()
-          : Container(color: Colors.white,
+      Auth().isShibbolethLoggedIn && _group.currentUserCanJoin
+          ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
                   child: ScalableRoundedButton(label: 'Request to join',
                     backgroundColor: Styles().colors.white,
@@ -670,7 +669,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     onTap:() { _onMembershipRequest();  }
                   ),
               ),
-            );
+            )
+          : Container();
   }
 
   Widget _buildCancelMembershipRequest() {
@@ -897,7 +897,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void onTapMembers(){
     Analytics().logPage(name: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
   }
 
   void onTapSettings(){

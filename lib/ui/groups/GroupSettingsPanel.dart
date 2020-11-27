@@ -59,7 +59,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     _group = Group.fromOther(widget.group);
     _initPrivacyData();
     _initCategories();
-    _initTags();
     _fillGroups();
     super.initState();
   }
@@ -127,14 +126,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
      setState(() {
        _groupCategories = categories;
      });
-    });
-  }
-
-  void _initTags(){
-    Groups().tags.then((tags){
-      setState(() {
-        _groupTags = tags;
-      });
     });
   }
 

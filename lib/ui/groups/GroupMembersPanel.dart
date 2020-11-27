@@ -34,9 +34,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembersPanel extends StatefulWidget{
-  final Group group;
+  final String groupId;
 
-  GroupMembersPanel({@required this.group});
+  GroupMembersPanel({@required this.groupId});
 
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
 }
@@ -60,24 +60,28 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   @override
   void initState() {
     super.initState();
-    _group = widget.group;
-    
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
-    _loadMembers();
+    _reloadGroup();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
   }
 
   void _reloadGroup(){
     setState(() {
       _isMembersLoading = true;
     });
-    Groups().loadGroup(_group.id).then((Group group){
+    Groups().loadGroup(widget.groupId).then((Group group){
       if (mounted) {
+        if(group != null) {
+          _group = group;
+          _loadMembers();
+        }
         setState(() {
           _isMembersLoading = false;
-          if(group != null) {
-            _group = group;
-            _loadMembers();
-          }
         });
       }
     });
@@ -145,16 +149,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                 letterSpacing: 1.0),
           ),
         ),
-        body: SingleChildScrollView(
-          child:
-          _isLoading
-              ? Center(child: CircularProgressIndicator(),)
-              : Column(
-                children: <Widget>[
-                  _buildRequests(),
-                  _buildMembers()
-                ],
-              ),
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ))
+            : SingleChildScrollView(
+          child:Column(
+            children: <Widget>[
+              _buildRequests(),
+              _buildMembers()
+            ],
+          ),
         ),
         bottomNavigationBar: TabBarWidget(),
     );
@@ -404,7 +407,7 @@ class _GroupMemberCard extends StatelessWidget{
 
   void _onTapMemberCard(BuildContext context)async{
     Analytics().logSelect(target: "Member Detail");
-    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(member: member, group: group,)));
+    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(groupId: group.id, memberId: member.id,)));
   }
 
   bool get _isAdmin{
