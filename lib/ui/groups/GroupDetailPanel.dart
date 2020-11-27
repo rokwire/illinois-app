@@ -865,6 +865,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               children: <Widget>[
                 Container(height: 48,),
                 RibbonButton(
+                  height: null,
                   leftIcon: "images/icon-leave-group.png",
                   label:"Leave group",
                   onTap: (){
@@ -1168,6 +1169,7 @@ class _EventContent extends StatelessWidget {
               children: <Widget>[
                 Container(height: 48,),
                 RibbonButton(
+                  height: null,
                   leftIcon: "images/icon-leave-group.png",
                   label:"Remove Event",
                   onTap: (){
@@ -1175,6 +1177,7 @@ class _EventContent extends StatelessWidget {
                   },
                 ),
                 RibbonButton(
+                  height: null,
                   leftIcon: "images/icon-leave-group.png",
                   label:"Delete Event",
                   onTap: (){
@@ -1182,6 +1185,7 @@ class _EventContent extends StatelessWidget {
                   },
                 ),
                 RibbonButton(
+                  height: null,
                   leftIcon: "images/icon-edit.png",
                   label:"Edit Event",
                   onTap: (){
