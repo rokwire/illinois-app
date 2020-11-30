@@ -418,12 +418,17 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                         child: Center(
-                          child: Text(_group.currentUserStatusText.toUpperCase(),
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 12,
-                                color: Styles().colors.white
-                            ),
+                          child:
+                          Semantics(
+                            label: _group?.currentUserStatusText?.toLowerCase(),
+                            excludeSemantics: true,
+                            child: Text(_group.currentUserStatusText.toUpperCase(),
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontSize: 12,
+                                  color: Styles().colors.white
+                              ),
+                            )
                           ),
                         ),
                       ),
@@ -515,7 +520,9 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
           borderColor: Styles().colors.fillColorSecondary,
           borderWidth: 2,
   //        height: 42,
-          onTap:() {  }
+          onTap:() {
+            //TBD
+          }
     )));
 
     return Column(
@@ -987,9 +994,10 @@ class _EventCardState extends State<_EventCard>{
         content2.add(
             Semantics(
               button: true,
-              label: "See previous posts",
+//              label: "See previous posts",
               child: GestureDetector(
-              onTap: (){setState(() {
+              onTap: (){
+                setState(() {
                 _showAllComments = true;
               });},
               child: Center(child: Row(
@@ -1028,38 +1036,44 @@ class _EventCardState extends State<_EventCard>{
   }
 
   Widget _buildComment(GroupEventComment comment){
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: 4),
-        child: Container(
-          padding: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-              color: Styles().colors.white,
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-              borderRadius: BorderRadius.all(Radius.circular(4))
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Container(height: 32, width: 32,
-                decoration: AppString.isStringNotEmpty(comment?.member?.photoURL)
-                    ? BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover))
-                    : null,
-              ),
-              Expanded(
-                flex: 5,
-                child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Padding(padding: EdgeInsets.only(bottom: 2), child:
-                  Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
-                  ),
-                  Text(AppDateTime.timeAgoSinceDate(comment.dateCreated), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
-                ],),),),
-            ],),
-            Padding(padding: EdgeInsets.only(top:8), child:
-            Text(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
+    String memberName = comment.member.name;
+    String postDate = AppDateTime.timeAgoSinceDate(comment.dateCreated);
+    return
+      Semantics(
+        label: "$memberName posted, $postDate: ${comment.text}",
+        excludeSemantics: true,
+        child:Padding(
+          padding: EdgeInsets.symmetric(vertical: 4),
+          child: Container(
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                color: Styles().colors.white,
+                boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+                borderRadius: BorderRadius.all(Radius.circular(4))
             ),
-          ],),
-        ));
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Container(height: 32, width: 32,
+                  decoration: AppString.isStringNotEmpty(comment?.member?.photoURL)
+                      ? BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(image:NetworkImage(comment.member.photoURL), fit: BoxFit.cover))
+                      : null,
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Padding(padding: EdgeInsets.only(bottom: 2), child:
+                    Text(comment.member.name , style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
+                    ),
+                    Text(postDate, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textBackground),)
+                  ],),),),
+              ],),
+              Padding(padding: EdgeInsets.only(top:8), child:
+              Text(comment.text, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),)
+              ),
+            ],),
+          )));
   }
 
   Widget _buildAddPostButton({String photoUrl,Function onTap}){
@@ -1132,11 +1146,14 @@ class _EventContent extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-        GestureDetector(onTap: () { /*TBD switch favorite */ },
-            child: Container(
-              child: Image.asset('images/icon-star.png'),
-            ),
-          ),
+        Semantics(
+          label: "Favorites",
+          button: true,
+          child: GestureDetector(onTap: () { /*TBD switch favorite */ },
+                child: Container(
+                  child: Image.asset('images/icon-star.png', excludeFromSemantics: true,),
+                ),
+              )),
         !isAdmin? Container() :
         Container(
           padding: EdgeInsets.only(left: 12),

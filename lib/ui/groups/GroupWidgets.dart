@@ -241,6 +241,7 @@ class HeaderBackButton extends StatelessWidget {
       label: Localization().getStringEx('headerbar.back.title', 'Back'),
       hint: Localization().getStringEx('headerbar.back.hint', ''),
       button: true,
+      excludeSemantics: true,
       child: IconButton(
           icon: Image.asset('images/chevron-left-white.png'),
           onPressed: (){
