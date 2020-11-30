@@ -38,7 +38,6 @@ class Group {
   String               description;
   String               imageURL;
   String               webURL;
-  int                  membersCount;
   List<Member>         members;
   List<String>         tags;
   List<GroupMembershipQuestion>  questions;
@@ -65,7 +64,6 @@ class Group {
     try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
     try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
     try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
-    try { membersCount    = json['members_count']; } catch(e) { print(e.toString()); }
     try {
       List<dynamic> _members    = json['members'];
       if(AppCollection.isCollectionNotEmpty(_members)){
@@ -90,7 +88,6 @@ class Group {
     description     = other?.description;
     imageURL        = other?.imageURL;
     webURL          = other?.webURL;
-    membersCount    = other?.membersCount;
     members         = other?.members;
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
     questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
@@ -119,7 +116,6 @@ class Group {
     json['image_url']         = imageURL;
     json['web_url']           = webURL;
     json['tags']              = tags;
-    json['members_count']     = membersCount;
     json['members']           = members;
     json['membership_questions']= AppCollection.isCollectionNotEmpty(questions) ? questions.map((e) => e?.question ?? "").toList() : null;
     json['membershipQuest']   = membershipQuest?.toJson();
@@ -210,6 +206,18 @@ class Group {
       }
     }
     return adminsCount;
+  }
+
+  int get membersCount{
+    int membersCount = 0;
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.isAdmin || member.isMember){
+          membersCount++;
+        }
+      }
+    }
+    return membersCount;
   }
 }
 
