@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [2.3.22] - 2020-11-30
+- Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
+- Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.21] - 2020-11-25
 ### Fixed
