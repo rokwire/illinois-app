@@ -227,7 +227,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     Container(width: 15,),
                     Flexible(child: Container()),
                     _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
-
                   ],
                 ),
               )
@@ -265,18 +264,23 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     },
                   ),
                 Expanded(child: Container()),
-                IconButton(
-                  icon: Image.asset(
-                    'images/icon-search.png',
-                    color: Styles().colors.fillColorSecondary,
-                    width: 25,
-                    height: 25,
+                Semantics(
+                  label: "Search",
+                  child:
+                  IconButton(
+                    icon: Image.asset(
+                      'images/icon-search.png',
+                      color: Styles().colors.fillColorSecondary,
+                      excludeFromSemantics: true,
+                      width: 25,
+                      height: 25,
+                    ),
+                    onPressed: () {
+                      Analytics.instance.logSelect(target: "Search");
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+                    },
                   ),
-                  onPressed: () {
-                    Analytics.instance.logSelect(target: "Search");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-                  },
-                ),
+                )
               ],
             ),
           ),
@@ -621,21 +625,25 @@ class _GroupCard extends StatelessWidget{
     return
         Row(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: group.currentUserStatusColor,
-                borderRadius: BorderRadius.all(Radius.circular(2)),
-              ),
-              child: Center(
-                child: Text(group.currentUserStatusText.toUpperCase(),
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies.bold,
-                      fontSize: 12,
-                      color: Styles().colors.white
+            Semantics(
+              label:"status: " + (group?.currentUserStatusText?.toLowerCase() ?? "" )+ " ,for: ",
+              excludeSemantics: true,
+              child:Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: group.currentUserStatusColor,
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                ),
+                child: Center(
+                  child: Text(group.currentUserStatusText.toUpperCase(),
+                    style: TextStyle(
+                        fontFamily: Styles().fontFamilies.bold,
+                        fontSize: 12,
+                        color: Styles().colors.white
+                    ),
                   ),
                 ),
-              ),
+              )
             ),
             Expanded(child: Container(),),
           ],
