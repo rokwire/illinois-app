@@ -90,11 +90,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   void _updateMemberStatus() {
     if (!_updating) {
 
-      if(_isAdmin && _group.adminsCount < 2){
-        AppAlert.showDialogResult(context, 'Unable to update. Second Admin is required.');
-        return;
-      }
-
       setState(() {
         _updating = true;
       });
