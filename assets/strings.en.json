@@ -1535,7 +1535,7 @@
     "model.explore.time.all_day": "All Day",
 
 	"model.groups.member.status.pending": "Pending",
-	"model.groups.member.status.member": "Memeber",
+	"model.groups.member.status.member": "Member",
 	"model.groups.member.status.admin": "Admin",
     "model.groups.member.status.rejected": "Rejected",
 	"model.groups.member.status.unknown": "Unknown",
