@@ -116,9 +116,8 @@ class Group {
     json['image_url']         = imageURL;
     json['web_url']           = webURL;
     json['tags']              = tags;
-    json['members']           = members;
+    json['members']           = AppCollection.isCollectionNotEmpty(questions) ? members.map((e) => e?.toJson()).toList() : null;
     json['membership_questions']= AppCollection.isCollectionNotEmpty(questions) ? questions.map((e) => e?.question ?? "").toList() : null;
-    json['membershipQuest']   = membershipQuest?.toJson();
 
     return json;
   }

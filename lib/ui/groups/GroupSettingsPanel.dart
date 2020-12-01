@@ -146,47 +146,45 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Image
   Widget _buildImageSection(){
-    final double _imageHeight = 208;
+    final double _imageHeight = 200;
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        Container(
-          color: Styles().colors.lightGray,
-          height: _imageHeight,
-          child: AppString.isStringNotEmpty(_group.imageURL) ? Image.network(_group.imageURL, fit: BoxFit.contain,) : Container(),
-        ),
-        CustomPaint(
-            painter: TrianglePainter(
-                painterColor: Styles().colors.fillColorSecondary,
-                left: false),
+    return Container(
+      height: _imageHeight,
+      color: Styles().colors.background,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
-              height: 48,
-            )),
-        CustomPaint(
-          painter:
-          TrianglePainter(painterColor: Colors.white),
-          child: Container(
-            height: 25,
-          ),
-        ),
-        Container(
-          height: _imageHeight,
-          child: Center(
-            child:
-            Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
-                hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
-                ScalableSmallRoundedButton(
-                  maxLines: 2,
-                  label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
-                  textColor: Styles().colors.fillColorPrimary,
-                  onTap: _onTapAddImage,
-                  showChevron: false,
-                )
+              height: 53,
             ),
           ),
-        )
-      ],
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.white),
+            child: Container(
+              height: 30,
+            ),
+          ),
+          Container(
+            height: _imageHeight,
+            child: Center(
+              child:
+              Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                  hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
+                  ScalableSmallRoundedButton(
+                    maxLines: 2,
+                    label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                    textColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapAddImage,
+                    showChevron: false,
+                  )
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -852,12 +850,6 @@ class _AddImageWidgetState extends State<_AddImageWidget> {
     super.dispose();
   }
 
-  void _setShowProgress(bool value) {
-    setState(() {
-      _showProgress = value;
-    });
-  }
-
   Widget build(BuildContext context) {
     return Dialog(
         child: Column(
@@ -920,15 +912,20 @@ class _AddImageWidgetState extends State<_AddImageWidget> {
                               backgroundColor: Styles().colors.background,
                               textColor: Styles().colors.fillColorPrimary,
                               onTap: _onTapUseUrl)),
-                      Padding(
-                          padding: EdgeInsets.all(10),
-                          child: RoundedButton(
-                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                              borderColor: Styles().colors.fillColorSecondary,
-                              backgroundColor: Styles().colors.background,
-                              textColor: Styles().colors.fillColorPrimary,
-                              onTap: _onTapChooseFromDevice)),
-                      _showProgress ? CircularProgressIndicator() : Container(),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(10),
+                              child: RoundedButton(
+                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                                  borderColor: Styles().colors.fillColorSecondary,
+                                  backgroundColor: Styles().colors.background,
+                                  textColor: Styles().colors.fillColorPrimary,
+                                  onTap: _onTapChooseFromDevice)),
+                          _showProgress ? AppProgressIndicator.create() : Container(),
+                        ],
+                      ),
                     ]))
           ],
         ));
@@ -954,11 +951,17 @@ class _AddImageWidgetState extends State<_AddImageWidget> {
       Navigator.pop(context, url);
     } else {
       //we need to process it
-      _setShowProgress(true);
+      setState(() {
+        _showProgress = true;
+      });
+
       Future<ImagesResult> result =
       ImageService().useUrl(_imageType, url);
       result.then((logicResult) {
-        _setShowProgress(false);
+        setState(() {
+          _showProgress = false;
+        });
+
 
         ImagesResultType resultType = logicResult.resultType;
         switch (resultType) {
@@ -981,12 +984,17 @@ class _AddImageWidgetState extends State<_AddImageWidget> {
   void _onTapChooseFromDevice() {
     Analytics.instance.logSelect(target: "Choose From Device");
 
-    _setShowProgress(true);
+    setState(() {
+      _showProgress = true;
+    });
 
     Future<ImagesResult> result =
     ImageService().chooseFromDevice(_imageType);
     result.then((logicResult) {
-      _setShowProgress(false);
+      setState(() {
+        _showProgress = false;
+      });
+
 
       ImagesResultType resultType = logicResult.resultType;
       switch (resultType) {
