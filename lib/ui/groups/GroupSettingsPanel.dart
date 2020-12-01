@@ -402,7 +402,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
               Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
-            GroupDropDownButton(
+            Semantics(
+            explicitChildNodes: true,
+            child: GroupDropDownButton(
                 emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
                 buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
                 initialSelectedValue: _group?.category,
@@ -414,7 +416,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     Log.d("Selected Category: $value");
                   });
                 }
-            )
+            ))
           ],
         ));
   }
@@ -511,26 +513,33 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   Widget _buildTagButton(String tag){
     return
-      InkWell(
+      Semantics(
+        label: "$tag tag,",
+        hint: "double tab to remove tag",
+        button: true,
+        excludeSemantics: true,
+        child:InkWell(
           child: Container(
               decoration: BoxDecoration(
                   color: Styles().colors.fillColorPrimary,
                   borderRadius: BorderRadius.all(Radius.circular(4))),
               child: Row(children: <Widget>[
-                Container(
-                    padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
-                    child: Text(tag,
-                      style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
-                    )),
+                Semantics(excludeSemantics: true, child:
+                  Container(
+                      padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
+                      child: Text(tag,
+                        style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
+                      )),
+                  ),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Image.asset("images/small-add-orange.png"),
+                  child: Image.asset("images/small-add-orange.png", excludeFromSemantics: true,),
                 )
 
               ],)
           ),
           onTap: () => onTagTap(tag)
-      );
+      ));
   }
 
   void onTagTap(String tag){
@@ -572,7 +581,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               child:  _buildSectionTitle( Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"),"images/icon-privacy.png")),
           Container(
               child:  _buildInfoHeader( Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"),null, topPadding: 12)),
-          Container(
+          Semantics(
+          explicitChildNodes: true,
+          child: Container(
               child:  GroupDropDownButton(
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
@@ -592,13 +603,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     });
                   }
               )
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
-            child:Text(
-              Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
-              style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
-            ),),
+          )),
+          Semantics(
+            explicitChildNodes: true,
+//            excludeSemantics: true,
+//            label:Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
+              child:Text(
+                Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+                style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
+            ),)),
           Container(height: 8,)
       ],));
   }
@@ -622,9 +637,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 //            description: Localization().getStringEx("panel.groups_settings.membership.button.steps.description","Share the steps someone will take to become a member."),
 //            onTap: _onTapMembershipSteps),
 //          Container(height: 10,),
-          _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
+        Semantics(
+          explicitChildNodes: true,
+          child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
             description: questionsDescription,
-            onTap: _onTapMembershipQuestion),
+            onTap: _onTapMembershipQuestion)),
           Container(height: 40,),
     ]),);
   }
@@ -754,12 +771,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(
         padding: EdgeInsets.only(bottom: 8, top:topPadding),
         child:
-        Column(
+        Semantics(
+        container: true,
+        child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Semantics(
               label: title,
-              hint: title,
+//              hint: title,
               header: true,
               excludeSemantics: true,
               child:
@@ -776,7 +795,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
               ),
             )
-          ],)
+          ],))
 
     );
   }
@@ -796,7 +815,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Expanded(child:
               Semantics(
                 label: title,
-                hint: title,
+//                hint: ,
                 header: true,
                 excludeSemantics: true,
                 child:

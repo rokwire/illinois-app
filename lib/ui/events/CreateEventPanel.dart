@@ -792,7 +792,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         ],
                                       ),
                                   Container(height: 18,),
-                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
+                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
                                       ToggleRibbonButton(
                                         height: null,

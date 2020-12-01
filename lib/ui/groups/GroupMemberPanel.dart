@@ -162,7 +162,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: Image.network(_member?.photoURL ?? '')),
+            child: Container(width: 65, height: 65 ,child: Image.network(_member?.photoURL ?? '', excludeFromSemantics: true,)),
           ),
         ),
         Container(width: 16,),
