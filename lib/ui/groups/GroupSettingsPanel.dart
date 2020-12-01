@@ -17,14 +17,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipStepsPanel.dart';
@@ -152,6 +154,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Container(
           color: Styles().colors.lightGray,
           height: _imageHeight,
+          child: AppString.isStringNotEmpty(_group.imageURL) ? Image.network(_group.imageURL, fit: BoxFit.contain,) : Container(),
         ),
         CustomPaint(
             painter: TrianglePainter(
@@ -193,11 +196,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         context: context,
         builder: (_) => Material(
           type: MaterialType.transparency,
-          child: AddImageWidget(),
+          child: _AddImageWidget(),
         )
     );
     if(_imageUrl!=null){
-      _group.imageURL = _imageUrl;
+      setState(() {
+        _group.imageURL = _imageUrl;
+      });
     }
     Log.d("Image Url: $_imageUrl");
   }
@@ -818,6 +823,185 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     List<String> takenNames = ["test","test1"];
     setState(() {
       _nameIsValid = !(takenNames?.contains(name)??false);
+    });
+  }
+}
+
+class _AddImageWidget extends StatefulWidget {
+
+  @override
+  _AddImageWidgetState createState() => _AddImageWidgetState();
+}
+
+class _AddImageWidgetState extends State<_AddImageWidget> {
+  var _imageUrlController = TextEditingController();
+
+  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
+  bool _showProgress = false;
+
+  _AddImageWidgetState();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _imageUrlController.dispose();
+    super.dispose();
+  }
+
+  void _setShowProgress(bool value) {
+    setState(() {
+      _showProgress = value;
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Styles().colors.fillColorPrimary,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 10),
+                    child: Text(
+                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: Styles().fontFamilies.medium,
+                          fontSize: 24),
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: _onTapCloseImageSelection,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10, top: 10),
+                      child: Text(
+                        '\u00D7',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 50),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: TextFormField(
+                              controller: _imageUrlController,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
+                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                              ))),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
+                              textColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapUseUrl)),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
+                              textColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapChooseFromDevice)),
+                      _showProgress ? CircularProgressIndicator() : Container(),
+                    ]))
+          ],
+        ));
+  }
+
+  void _onTapCloseImageSelection() {
+    Analytics.instance.logSelect(target: "Close image selection");
+    Navigator.pop(context, "");
+  }
+
+  void _onTapUseUrl() {
+    Analytics.instance.logSelect(target: "Use Url");
+    String url = _imageUrlController.value.text;
+    if (url == "") {
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
+      return;
+    }
+
+    bool isReadyUrl = url.endsWith(".webp");
+    if (isReadyUrl) {
+      //ready
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      Navigator.pop(context, url);
+    } else {
+      //we need to process it
+      _setShowProgress(true);
+      Future<ImagesResult> result =
+      ImageService().useUrl(_imageType, url);
+      result.then((logicResult) {
+        _setShowProgress(false);
+
+        ImagesResultType resultType = logicResult.resultType;
+        switch (resultType) {
+          case ImagesResultType.CANCELLED:
+          //do nothing
+            break;
+          case ImagesResultType.ERROR_OCCURRED:
+            AppToast.show(logicResult.errorMessage);
+            break;
+          case ImagesResultType.SUCCEEDED:
+          //ready
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+            Navigator.pop(context, logicResult.data);
+            break;
+        }
+      });
+    }
+  }
+
+  void _onTapChooseFromDevice() {
+    Analytics.instance.logSelect(target: "Choose From Device");
+
+    _setShowProgress(true);
+
+    Future<ImagesResult> result =
+    ImageService().chooseFromDevice(_imageType);
+    result.then((logicResult) {
+      _setShowProgress(false);
+
+      ImagesResultType resultType = logicResult.resultType;
+      switch (resultType) {
+        case ImagesResultType.CANCELLED:
+        //do nothing
+          break;
+        case ImagesResultType.ERROR_OCCURRED:
+          AppToast.show(logicResult.errorMessage);
+          break;
+        case ImagesResultType.SUCCEEDED:
+        //ready
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+          Navigator.pop(context, logicResult.data);
+          break;
+      }
     });
   }
 }
