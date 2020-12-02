@@ -76,7 +76,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                         button: true,
                         excludeSemantics: true,
                         child: IconButton(
-                            icon: Image.asset('images/icon-circle-close.png'),
+                            icon: Image.asset('images/icon-circle-close.png', excludeFromSemantics: true,),
                             onPressed: _onTapBack)),
                     title: Text(
                       Localization().getStringEx('panel.group_create_post.label.title', 'New Post'),
@@ -111,12 +111,14 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate([
-                      Column(
-                        children: [
-                          _buildEventInfo(),
-                          _buildPostField()
-                        ],
-                      )
+                      Semantics(
+                        explicitChildNodes: true,
+                        child: Column(
+                          children: [
+                            _buildEventInfo(),
+                            _buildPostField()
+                          ],
+                        ))
                     ]),
                   )
                 ],
@@ -143,7 +145,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
               Text(widget.groupEvent?.title??"",  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
             ),
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
+              Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true,),),
               Expanded(
                 child: Text(widget.groupEvent?.timeDisplayString??"",  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
               )
@@ -172,7 +174,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
           ),
           Row(children: <Widget>[
             Padding(padding: EdgeInsets.only(right: 2), child:
-            Image.asset('images/icon-badge.png'),
+            Image.asset('images/icon-badge.png', excludeFromSemantics: true,),
             ),
             Text(officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
           ],)
