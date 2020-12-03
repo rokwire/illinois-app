@@ -1290,7 +1290,15 @@
     "panel.groups_admin.button.find_existing.hint": "",
     "panel.groups_admin.button.create_event.title": "Create",
     "panel.groups_admin.button.create_event.hint": "",
-
+    "panel.groups_admin.members.count.empty": "No Current Members",
+    "panel.groups_admin.members.count.one": "1 Current Member",
+    "panel.groups_admin.members.count.format": "%s Current Members",
+    "panel.groups_admin.button.post.text": "Post about this event...",
+    "panel.groups_admin.button.delete.title": "Delete",
+    "panel.groups_admin.button.edit.title": "Edit",
+    "panel.groups_admin.button.cancel.title": "Cancel",
+    "panel.groups_admin.button.remove.title": "Remove event",
+    
     "panel.find_event.header.title": "Find event",
     "panel.find_event.error.please_select.title": "Please select at least one event",
     "panel.find_event.label.all_categories": "All categories",

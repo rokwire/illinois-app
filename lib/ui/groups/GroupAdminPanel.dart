@@ -34,6 +34,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 import 'GroupFindEventPanel.dart';
 
@@ -98,13 +99,13 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
     String members;
     int membersCount = widget.group?.membersCount ?? 0;
     if (membersCount == 0) {
-      members = 'No Current Members';
+      members = Localization().getStringEx("panel.groups_admin.members.count.empty", "No Current Members");
     }
     else if (membersCount == 1) {
-      members = '1 Current Member';
+      members = Localization().getStringEx("panel.groups_admin.members.count.one", "1 Current Member");
     }
     else {
-      members = '$membersCount Current Members';
+      members = sprintf(Localization().getStringEx("panel.groups_admin.members.count.format", "%s Current Members"),[membersCount]);
     }
 
     return Container(
@@ -425,7 +426,7 @@ class _EventCard extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(8))
               ),
               child:
-                Text("Post about this event...",style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors.textBackground),)
+                Text(Localization().getStringEx("panel.groups_admin.button.post.text","Post about this event..."),style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors.textBackground),)
             ))
           ],),
       ));
@@ -447,7 +448,7 @@ class _EventCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child: Container()),
                         ScalableRoundedButton(
-                          label:"Delete",
+                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete"),
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorPrimary,
                           textColor: Styles().colors.fillColorPrimary,
@@ -462,7 +463,7 @@ class _EventCard extends StatelessWidget {
                         ),
                         Container(height: 8,),
                         ScalableRoundedButton(
-                          label:"Edit",
+                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit"),
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorPrimary,
                           textColor: Styles().colors.fillColorPrimary,
@@ -480,7 +481,7 @@ class _EventCard extends StatelessWidget {
                         ),
                         Container(height: 8,),
                         ScalableRoundedButton(
-                          label:"Cancel",
+                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorSecondary,
                           textColor: Styles().colors.fillColorPrimary,
@@ -520,7 +521,7 @@ class _EventCard extends StatelessWidget {
                           Expanded(child: Container()),
                           Container(height: 8,),
                           RoundedButton(
-                            label:"Remove event",
+                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event"),
                             backgroundColor: Styles().colors.white,
                             borderColor: Styles().colors.fillColorPrimary,
                             textColor: Styles().colors.fillColorPrimary,
@@ -534,7 +535,7 @@ class _EventCard extends StatelessWidget {
                           ),
                           Container(height: 8,),
                           RoundedButton(
-                            label:"Cancel",
+                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                             backgroundColor: Styles().colors.white,
                             borderColor: Styles().colors.fillColorSecondary,
                             textColor: Styles().colors.fillColorPrimary,
