@@ -330,7 +330,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   child:
                   ScalableRoundedButton(
                     label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
-                    hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", "Add"),
+                    hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", ""),
                     backgroundColor: Styles().colors.white,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorSecondary,

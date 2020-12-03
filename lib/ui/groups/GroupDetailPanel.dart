@@ -40,6 +40,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'GroupAdminPanel.dart';
@@ -189,7 +190,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         leading: HeaderBackButton(),
         actions: [
           Semantics(
-              label:  'Options',
+              label:  Localization().getStringEx("panel.group_detail.label.options", 'Options'),
               button: true,
               excludeSemantics: true,
               child: IconButton(
@@ -241,7 +242,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text('Failed to load group data.',  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 20, color: Styles().colors.fillColorPrimary),)
+              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 20, color: Styles().colors.fillColorPrimary),)
             ),
           ),
         ),
@@ -321,21 +322,21 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     String members;
     int membersCount = _group?.membersCount ?? 0;
     if (membersCount == 0) {
-      members = 'No Members';
+      members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
     }
     else if (membersCount == 1) {
-      members = '1 Member';
+      members = Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
     }
     else {
-      members = '$membersCount Members';
+      members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"),[membersCount]);
     }
 
     if(_isMember){
       if(_isAdmin){
         commands.add(RibbonButton(
           height: null,
-          label: Localization().getStringEx("panel.groups_admin.button.manage_members.title", "Manage Members"),
-          hint: Localization().getStringEx("panel.groups_admin.button.manage_members.hint", ""),
+          label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
+          hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
           leftIcon: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: onTapMembers,
@@ -343,8 +344,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
         commands.add(RibbonButton(
           height: null,
-          label: Localization().getStringEx("panel.groups_admin.button.group_settings.title", "Group Settings"),
-          hint: Localization().getStringEx("panel.groups_admin.button.group_settings.hint", ""),
+          label: Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
+          hint: Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIcon: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: onTapSettings,
@@ -361,7 +362,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       }
 
       commands.add(
-        RibbonButton(label: 'Website',
+        RibbonButton(label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
           icon: 'images/external-link.png',
           leftIcon: 'images/globe.png',
           padding: EdgeInsets.symmetric(horizontal: 0),
@@ -379,7 +380,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                       fontFamily: Styles().fontFamilies.bold,
                       fontSize: 12),
                   children: <TextSpan>[
-                    new TextSpan(text: "Group Tags: "),
+                    new TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
                     new TextSpan(
                         text: tags,
                         style: TextStyle(
@@ -456,8 +457,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     for (_DetailTab tab in _DetailTab.values) {
       String title;
       switch(tab) {
-        case _DetailTab.Events: title = 'Events'; break;
-        case _DetailTab.About: title = 'About'; break;
+        case _DetailTab.Events: title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events'); break;
+        case _DetailTab.About: title = Localization().getStringEx("panel.group_detail.button.about.title", 'About'); break;
       }
       bool selected = (_currentTab == tab);
 
@@ -510,7 +511,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
     content.add(Padding(padding: EdgeInsets.only(top: 16), child:
       ScalableSmallRoundedButton(
-          label: 'See all events',
+          label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
           widthCoeficient: 2,
           backgroundColor: Styles().colors.white,
           textColor: Styles().colors.fillColorPrimary,
@@ -527,7 +528,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
     return Column(
       children: <Widget>[
-        SectionTitlePrimary(title: 'Upcoming Events (${_groupEvents?.length ?? 0})',
+        SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') +' (${_groupEvents?.length ?? 0})',
           iconPath: 'images/icon-calendar.png',
           children: content,),
       ]);
@@ -550,16 +551,16 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text("No upcoming events", style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.textBackground, ), textAlign: TextAlign.left,),
+                Text(Localization().getStringEx("panel.group_detail.label.upcoming_events.empty", "No upcoming events"), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.textBackground, ), textAlign: TextAlign.left,),
                 Container(height: 8,),
-                Text("Create a new event or share an existing event with your members. ", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, )),
+                Text(Localization().getStringEx("panel.group_detail.label.upcoming_events.hint", "Create a new event or share an existing event with your members. "), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, )),
                 Container(height: 16,),
               ],),
           Row(
             children: [
               Expanded(child:
                 ScalableRoundedButton(
-                    label: "Browse",
+                    label: Localization().getStringEx("panel.group_detail.button.browse.title",  "Browse"),
                     backgroundColor: Styles().colors.white,
                     textColor: Styles().colors.fillColorPrimary,
                     fontFamily: Styles().fontFamilies.bold,
@@ -573,7 +574,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               Container(width: 16,),
               Expanded(child:
                 ScalableRoundedButton(
-                  label: "Create event",
+                  label:  Localization().getStringEx("panel.group_detail.button.create_event.title",  "Create event"),
                   backgroundColor: Styles().colors.white,
                   textColor: Styles().colors.fillColorPrimary,
                   fontFamily: Styles().fontFamilies.bold,
@@ -596,7 +597,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
-          Text('About us', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
+          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
         ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), trimLines: 4, iconColor: Styles().colors.fillColorPrimary,),
       ],),);
@@ -634,7 +635,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Text('Admins', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
+            Text( Localization().getStringEx("panel.group_detail.label.admins",  'Admins'), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
           ),
           SingleChildScrollView(scrollDirection: Axis.horizontal, child:
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -654,7 +655,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
     return Column(
       children: <Widget>[
-        SectionTitlePrimary(title: 'Become a member',
+        SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.become_member", 'Become a member'),
           iconPath: 'images/member.png',
           children: content,),
       ]);
@@ -665,7 +666,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       Auth().isShibbolethLoggedIn && _group.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
-                  child: ScalableRoundedButton(label: 'Request to join',
+                  child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
                     backgroundColor: Styles().colors.white,
                     textColor: Styles().colors.fillColorPrimary,
                     fontFamily: Styles().fontFamilies.bold,
@@ -688,7 +689,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
             children: [
               Container(color: Colors.white,
                   child: Padding(padding: EdgeInsets.all(16),
-                    child: ScalableRoundedButton(label: 'Cancel Request',
+                    child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
                         backgroundColor: Styles().colors.white,
                         textColor: Styles().colors.fillColorPrimary,
                         fontFamily: Styles().fontFamilies.bold,
@@ -728,7 +729,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                "Are you sure you want to cancel your request to join this group?",
+                Localization().getStringEx("panel.group_detail.label.confirm.cancel",  "Are you sure you want to cancel your request to join this group?"),
                 textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
               ),
@@ -737,7 +738,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 RoundedButton(
-                  label: "Back",
+                  label: Localization().getStringEx("panel.group_detail.button.back.title",   "Back"),
                   fontFamily: "ProximaNovaRegular",
                   textColor: Styles().colors.fillColorPrimary,
                   borderColor: Styles().colors.white,
@@ -747,7 +748,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                 ),
                 Container(width: 16,),
                 RoundedButton(
-                  label: "Cancel request",
+                  label:  Localization().getStringEx("panel.group_detail.button.cancel_request.title",   "Cancel request"),
                   fontFamily: "ProximaNovaBold",
                   textColor: Styles().colors.fillColorPrimary,
                   borderColor: Styles().colors.white,
@@ -779,7 +780,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
-                      "Are you sure you want to leave this group?",
+                      Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
                       textAlign: TextAlign.left,
                       style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
                     ),
@@ -788,7 +789,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       RoundedButton(
-                        label: "Back",
+                        label: Localization().getStringEx("panel.group_detail.button.back.title", "Back"),
                         fontFamily: "ProximaNovaRegular",
                         textColor: Styles().colors.fillColorPrimary,
                         borderColor: Styles().colors.white,
@@ -801,7 +802,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                         alignment: Alignment.center,
                         children: [
                           RoundedButton(
-                            label: "Leave",
+                            label:Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
                             fontFamily: "ProximaNovaBold",
                             textColor: Styles().colors.fillColorPrimary,
                             borderColor: Styles().colors.white,
@@ -874,7 +875,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                 RibbonButton(
                   height: null,
                   leftIcon: "images/icon-leave-group.png",
-                  label:"Leave group",
+                  label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                   onTap: (){
                     showDialog(context: context, builder: (context)=>_buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
                   },
@@ -1004,7 +1005,7 @@ class _EventCardState extends State<_EventCard>{
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("See previous posts", style: TextStyle(fontSize: 16,
+                  Text(Localization().getStringEx("panel.group_detail.button.previous_post.title", "See previous posts"), style: TextStyle(fontSize: 16,
                     fontFamily: Styles().fontFamilies.bold,
                     color: Styles().colors.fillColorPrimary),),
                   Padding(
@@ -1101,7 +1102,7 @@ class _EventCardState extends State<_EventCard>{
                       borderRadius: BorderRadius.all(Radius.circular(8))
                   ),
                   child:
-                  Text("Add a public post ...",style: TextStyle(fontSize: 16, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular),)
+                  Text(Localization().getStringEx("panel.group_detail.button.add_post.title", "Add a public post ..."),style: TextStyle(fontSize: 16, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular),)
               ))
             ],),
           ));
@@ -1147,7 +1148,7 @@ class _EventContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
         Semantics(
-          label: "Favorites",
+          label: Localization().getStringEx("panel.group_detail.button.favorites.title", "Favorites"),
           button: true,
           child: GestureDetector(onTap: () { /*TBD switch favorite */ },
                 child: Container(
@@ -1188,7 +1189,7 @@ class _EventContent extends StatelessWidget {
                 RibbonButton(
                   height: null,
                   leftIcon: "images/icon-leave-group.png",
-                  label:"Remove Event",
+                  label:Localization().getStringEx("panel.group_detail.button.remove_event.title", "Remove Event"),
                   onTap: (){
                     showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
                   },
@@ -1196,7 +1197,7 @@ class _EventContent extends StatelessWidget {
                 RibbonButton(
                   height: null,
                   leftIcon: "images/icon-leave-group.png",
-                  label:"Delete Event",
+                  label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete Event"),
                   onTap: (){
                     showDialog(context: context, builder: (context)=>_buildDeleteEventDialog(context)).then((value) => Navigator.pop(context));
                   },
@@ -1204,7 +1205,7 @@ class _EventContent extends StatelessWidget {
                 RibbonButton(
                   height: null,
                   leftIcon: "images/icon-edit.png",
-                  label:"Edit Event",
+                  label:Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
                   onTap: (){
                     _onEditEventTap(context);
                   },
@@ -1220,15 +1221,15 @@ class _EventContent extends StatelessWidget {
 
   Widget _buildRemoveEventDialog(BuildContext context){
     return GroupsConfirmationDialog(
-        message: "Remove this event from your group page?",
-        buttonTitle: "Remove",
+        message: Localization().getStringEx("panel.group_detail.button.remove_event.title",  "Remove this event from your group page?"),
+        buttonTitle:Localization().getStringEx("panel.group_detail.button.remove.title", "Remove"),
         onConfirmTap:_onRemoveEvent);
   }
 
   Widget _buildDeleteEventDialog(BuildContext context){
     return GroupsConfirmationDialog(
-        message: "Delete this event from your groups page?",
-        buttonTitle:  "Delete",
+        message: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete this event from your groups page?"),
+        buttonTitle:  Localization().getStringEx("panel.group_detail.button.delete.title","Delete"),
         onConfirmTap:_onDeleteEvent);
   }
 

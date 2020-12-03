@@ -75,17 +75,17 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   String _selectedEventCategory;
 
   // Tags Filter
-  final String _tagFilterAllTags = Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags');
-  final String _tagFilterMyTags = Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags');
+  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags');
+  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags');
   List<String> _tags;
   String _selectedTag;
 
   // Time Filter
-  final String _timeFilterUpcoming = Localization().getStringEx("panel.explore.filter.time.upcoming","Upcoming");
-  final String _timeFilterToday = Localization().getStringEx("panel.explore.filter.time.today","Today");
-  final String _timeFilterNextSevenDays = Localization().getStringEx("panel.explore.filter.time.next_7_days","Next 7 days");
-  final String _timeFilterThisWeekend = Localization().getStringEx("panel.explore.filter.time.this_weekend","This Weekend");
-  final String _timeFilterNextMonth = Localization().getStringEx("panel.explore.filter.time.next_30_days","Next 30 days");
+  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming");
+  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today");
+  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days");
+  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend");
+  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days");
   List<String> _time;
   String __selectedTime;
   String get _selectedTime => __selectedTime;
@@ -251,8 +251,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
           Flexible(
               child:
               Semantics(
-                label: Localization().getStringEx('panel.search.field.search.title', 'Search'),
-                hint: Localization().getStringEx('panel.search.field.search.hint', ''),
+                label: Localization().getStringEx('panel.find_event.field.search.title', 'Search'),
+                hint: Localization().getStringEx('panel.find_event.field.search.hint', ''),
                 textField: true,
                 excludeSemantics: true,
                 child: TextField(
@@ -274,8 +274,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               )
           ),
           Semantics(
-              label: Localization().getStringEx('panel.search.button.clear.title', 'Clear'),
-              hint: Localization().getStringEx('panel.search.button.clear.hint', ''),
+              label: Localization().getStringEx('panel.find_event.button.clear.title', 'Clear'),
+              hint: Localization().getStringEx('panel.find_event.button.clear.hint', ''),
               button: true,
               excludeSemantics: true,
               child: Padding(
@@ -291,8 +291,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               )
           ),
           Semantics(
-            label: Localization().getStringEx('panel.search.button.search.title', 'Search'),
-            hint: Localization().getStringEx('panel.search.button.search.hint', ''),
+            label: Localization().getStringEx('panel.find_event.button.search.title', 'Search'),
+            hint: Localization().getStringEx('panel.find_event.button.search.hint', ''),
             button: true,
             excludeSemantics: true,
             child: Padding(
@@ -473,7 +473,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             ),
             itemCount: _filteredEvents .length)
         :  Container(
-            child: Center(child: Text("Unable to find events"),),
+            child: Center(child: Text(Localization().getStringEx('panel.find_event.label.search.empty',  "Unable to find events")),),
         );
     }
     else{

@@ -219,7 +219,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
         if(success){
           Navigator.pop(context);
         } else {
-          AppAlert.showDialogResult(context, "Unable to create post"); //TBD localize
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.group_create_post.post.field.empty",  "Unable to create post"));
         }
       });
 
