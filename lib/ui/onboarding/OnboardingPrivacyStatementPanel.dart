@@ -25,15 +25,53 @@ import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
 
-class OnboardingPrivacyStatementPanel extends StatelessWidget with OnboardingPanel {
+class OnboardingPrivacyStatementPanel extends StatefulWidget with OnboardingPanel {
 
   final Map<String, dynamic> onboardingContext;
   OnboardingPrivacyStatementPanel({this.onboardingContext});
+  _OnboardingPrivacyStatementPanelState createState() => _OnboardingPrivacyStatementPanelState();
+}
+
+class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyStatementPanel> {
+
+  GlobalKey _headingKey = GlobalKey();
+  double _headingHeight;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _evalHeadingSize() {
+    try {
+      final RenderObject renderBox = _headingKey?.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        setState(() { _headingHeight = renderBox.size?.height; });
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy');
     String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.');
+
+    double headingWidth = MediaQuery.of(context).size.width;
+    double headingHeight = _headingHeight ?? 0;
+    double lockSize = headingHeight * 0.5;
+    if (headingHeight == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _evalHeadingSize();
+      });
+    }
+    
     return Scaffold(
         backgroundColor: Styles().colors.background,
         body: SwipeDetector(
@@ -45,21 +83,15 @@ class OnboardingPrivacyStatementPanel extends StatelessWidget with OnboardingPan
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Stack(children: <Widget>[
-                    Image.asset(
-                      "images/privacy-header.png",
-                      fit: BoxFit.fitWidth,
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      excludeFromSemantics: true,
+                    Image.asset("images/privacy-header.png", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true, ),
+                    Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
+                      Image.asset("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),                        
                     ),
-                    OnboardingBackButton(
-                        padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                        onTap:() {
-                          Analytics.instance.logSelect(target: "Back");
-                          _goBack(context);
-                        }),
+                    OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                    onTap:() {
+                      Analytics.instance.logSelect(target: "Back");
+                      _goBack(context);
+                    }),
                   ],),
                   Semantics(
                     label: titleText,
@@ -122,7 +154,7 @@ class OnboardingPrivacyStatementPanel extends StatelessWidget with OnboardingPan
 
 
   void _goNext(BuildContext context) {
-    return Onboarding().next(context, this);
+    return Onboarding().next(context, widget);
   }
 
   void _goBack(BuildContext context) {
