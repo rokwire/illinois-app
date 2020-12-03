@@ -1254,19 +1254,20 @@ class _OfficerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Container(height: 144, width: 128,
-        decoration: BoxDecoration(
-          //color: Styles().colors.fillColorPrimary,
-          image: AppString.isStringNotEmpty(groupMember?.photoURL)
-            ? DecorationImage(image: NetworkImage(groupMember?.photoURL), fit: BoxFit.cover)
-            : null,
-            borderRadius: BorderRadius.all(Radius.circular(4))),
-        ),
-      Padding(padding: EdgeInsets.only(top: 4),
-        child: Text(groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),),
-      Text(groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),),
-    ],);
+    return Container(
+      width: 128,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(height: 144, width: 128,
+          decoration: BoxDecoration(
+            //color: Styles().colors.fillColorPrimary,
+            image: DecorationImage(image: AppString.isStringNotEmpty(groupMember?.photoURL) ? NetworkImage(groupMember?.photoURL) : AssetImage('images/missing-photo-placeholder.png'), fit: BoxFit.contain),
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          ),
+        Padding(padding: EdgeInsets.only(top: 4),
+          child: Text(groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),),
+        Text(groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),),
+      ],),
+    );
   }
 }
 

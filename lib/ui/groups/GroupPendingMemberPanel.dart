@@ -87,7 +87,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(width: 65, height: 65 ,child: Image.network(widget.member.photoURL)),
+                child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(widget.member?.photoURL) ? Image.network(widget.member.photoURL) : Image.asset('images/missing-photo-placeholder.png')),
               ),
             ),
             Container(width: 11,),
