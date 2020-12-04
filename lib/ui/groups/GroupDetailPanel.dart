@@ -748,7 +748,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                 ),
                 Container(width: 16,),
                 RoundedButton(
-                  label:  Localization().getStringEx("panel.group_detail.button.cancel_request.title",   "Cancel request"),
+                  label:  Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title",   "Cancel request"),
                   fontFamily: "ProximaNovaBold",
                   textColor: Styles().colors.fillColorPrimary,
                   borderColor: Styles().colors.white,

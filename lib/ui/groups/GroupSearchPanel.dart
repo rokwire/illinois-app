@@ -41,7 +41,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups.search.header.title", "Search"),
+        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search"),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -71,8 +71,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
                 Flexible(
                     child:
                     Semantics(
-                      label: Localization().getStringEx('panel.groups.search.field.search.title', 'Search'),
-                      hint: Localization().getStringEx('panel.groups.search.field.search.hint', ''),
+                      label: Localization().getStringEx('panel.groups_search.field.search.title', 'Search'),
+                      hint: Localization().getStringEx('panel.groups_search.field.search.hint', ''),
                       textField: true,
                       excludeSemantics: true,
                       child: TextField(
@@ -93,8 +93,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
                     )
                 ),
                 Semantics(
-                    label: Localization().getStringEx('panel.groups.search.button.clear.title', 'Clear'),
-                    hint: Localization().getStringEx('panel.groups.search.button.clear.hint', ''),
+                    label: Localization().getStringEx('panel.groups_search.button.clear.title', 'Clear'),
+                    hint: Localization().getStringEx('panel.groups_search.button.clear.hint', ''),
                     button: true,
                     excludeSemantics: true,
                     child: Padding(
@@ -110,8 +110,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
                     )
                 ),
                 Semantics(
-                  label: Localization().getStringEx('panel.groups.search.button.search.title', 'Search'),
-                  hint: Localization().getStringEx('panel.groups.search.button.search.hint', ''),
+                  label: Localization().getStringEx('panel.groups_search.button.search.title', 'Search'),
+                  hint: Localization().getStringEx('panel.groups_search.button.search.hint', ''),
                   button: true,
                   excludeSemantics: true,
                   child: Padding(

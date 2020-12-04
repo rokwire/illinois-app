@@ -221,12 +221,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               child: IntrinsicWidth(child:
                 Row(
                   children: <Widget>[
-                    _GroupTabButton(title: 'All groups', hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All groups'), hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
                     Container(width: 15,),
-                    _GroupTabButton(title: 'My groups', hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My groups'), hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
                     Container(width: 15,),
                     Flexible(child: Container()),
-                    _GroupTabButton(title: 'Create', hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
                   ],
                 ),
               )
@@ -265,7 +265,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   ),
                 Expanded(child: Container()),
                 Semantics(
-                  label: "Search",
+                  label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"),
                   child:
                   IconButton(
                     icon: Image.asset(
@@ -354,8 +354,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Text(
-          Localization().getStringEx("panel.groups_home.label.no_results",
-              "There are no groups for the desired filter"),
+          Localization().getStringEx("panel.groups_home.label.no_results", "There are no groups for the desired filter"),
           style: TextStyle(
               fontFamily: Styles().fontFamilies.regular,
               fontSize: 16,
@@ -387,7 +386,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       widgets.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text("Pending",
+          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies.bold,
                 fontSize: 20,
@@ -403,7 +402,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup,),
         ));
       }
-
       return
         Stack(children: [
           Container(
@@ -425,9 +423,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           crossAxisAlignment: CrossAxisAlignment.start,
           children: widgets,)
         ],);
-
     }
-
     return Container();
   }
 
@@ -612,7 +608,7 @@ class _GroupCard extends StatelessWidget{
       return
         group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin
             ? _buildMember()
-            : Text("CATEGORY",
+            : Text(Localization().getStringEx("panel.groups_home.label.category", "CATEGORY"),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
                       fontSize: 16,

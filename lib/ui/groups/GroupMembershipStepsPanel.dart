@@ -21,6 +21,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/groups/GroupFindEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -114,7 +115,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text('Membership Steps',
+        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.title", 'Membership Steps'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -150,10 +151,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           children:<Widget>[
             Row(children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
-              Text('Add Steps', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+              Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text('Share the steps someone will need to take to become a member of your group.', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(Localization().getStringEx("panel.membership_request.label.steps.description", 'Share the steps someone will need to take to become a member of your group.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
             ),
           ]),
       ),
@@ -168,7 +169,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     if (_steps.length == 0) {
       content.add(Row(children: <Widget>[
         Expanded(child: Container(),),
-        GroupMembershipAddButton(title: 'Add step', onTap: () { _addStep();  },),
+        GroupMembershipAddButton(title: Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add step'), onTap: () { _addStep();  },),
       ],),);
     }
 
@@ -180,7 +181,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget _buildStep({int index}) {
     List<Widget> stepContent = [
       Padding(padding: EdgeInsets.only(bottom: 4),
-        child: Text('STEP ${index+1}', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
+        child: Text(Localization().getStringEx("panel.membership_request.button.add_steps.step", 'STEP ') +(index+1).toString(), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
       ),
       Stack(children: <Widget>[
         Container(color: Styles().colors.white,
@@ -217,12 +218,12 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
     }
 
     List<Widget> commands = [
-      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: 'Connect event', onTap: () { _addEvent(stepIndex: index);  },),
+      GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title:Localization().getStringEx("panel.membership_request.label.contact_event", 'Connect event'), onTap: () { _addEvent(stepIndex: index);  },),
 //      Expanded(child: Container(),),
       Container(width: 10,)
     ];
     if ((index + 1) == _steps.length) {
-      commands.add(GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: 'Add step', onTap: () { _addStep();  },),);
+      commands.add(GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title: Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add step'), onTap: () { _addStep();  },),);
     }
 
     stepContent.add(Padding(padding: EdgeInsets.only(top: 8), child: SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children: commands,),),));
@@ -236,7 +237,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       child: Padding(padding: EdgeInsets.all(16),
         child: Row(children: <Widget>[
           Expanded(child: Container(),),
-          RoundedButton(label: 'Save steps',
+          RoundedButton(label:Localization().getStringEx("panel.membership_request.button.save.title", 'Save steps'),
             backgroundColor: Styles().colors.white,
             textColor: Styles().colors.fillColorPrimary,
             fontFamily: Styles().fontFamilies.bold,
@@ -309,7 +310,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         step.description = text;
       }
       else {
-        AppAlert.showDialogResult(context, 'Please input step #${index+1}').then((_){
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.button.add_steps.alert", 'Please input step #')+(index+1).toString()).then((_){
           _focusNodes[index].requestFocus();
         });
         return;

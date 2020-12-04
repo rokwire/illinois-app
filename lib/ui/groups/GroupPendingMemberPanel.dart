@@ -25,6 +25,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupPendingMemberPanel extends StatefulWidget {
   final Member member;
@@ -102,7 +103,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                         color: Styles().colors.fillColorPrimary
                     ),
                   ),
-                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ${AppDateTime().formatDateTime(widget?.member?.dateCreated, format: "MMM dd, yyyy") ?? ""}"),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget?.member?.dateCreated, format: "MMM dd, yyyy")??""),
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: 14,
@@ -303,7 +304,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
           Navigator.pop(context);
         }
         else {
-          AppAlert.showDialogResult(context, 'Failed to' + (_approved ? " accept " : " reject ") + "the membership request"); //TBD localize
+          AppAlert.showDialogResult(context, sprintf(Localization().getStringEx("panel.pending_member_detail.label.failed.hint", 'Failed to %s the membership request'),[(_approved ? " accept " : " reject ")])); //TBD localize
         }
       }
     });
@@ -320,9 +321,9 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
       if(_denied){
         if(_reasonController?.text?.isNotEmpty ?? false) {
-          return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Deny member");
+          return Localization().getStringEx("panel.pending_member_detail.button.deny_member.title", "Deny member");
         } else {
-          return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Provide deny reason");
+          return Localization().getStringEx("panel.pending_member_detail.button.deny_reason.title", "Provide deny reason");
         }
       }
       return Localization().getStringEx("panel.pending_member_detail.button.selection.title", "Make selection above");

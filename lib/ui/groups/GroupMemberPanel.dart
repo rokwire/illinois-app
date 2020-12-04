@@ -29,6 +29,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupMemberPanel extends StatefulWidget {
   final String groupId;
@@ -108,7 +109,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
               _isAdmin = newIsAdmin;
             });
           } else {
-            AppAlert.showDialogResult(context, 'Failed to update member');
+            AppAlert.showDialogResult(context, Localization().getStringEx("panel.member_detail.label.empty", 'Failed to update member'));
           }
         }
       });
@@ -118,7 +119,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   Future<void> _removeMembership() async{
     bool success = await Groups().deleteMembership(widget.groupId, widget.memberId);
     if(!success){
-      throw "Unable to remove ${_member.name} from this group";
+      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.name ?? ""]);
     }
   }
 
@@ -154,7 +155,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Widget _buildHeading(){
     String memberDateAdded = (_member?.dateCreated != null) ? AppDateTime().formatDateTime(_member?.dateCreated, format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? "Member since $memberDateAdded" : '';
+    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since") + memberDateAdded) : '';
 
     return Row(
       children: <Widget>[
@@ -235,7 +236,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
 
   Widget _buildRemoveFromGroup() {
     return Stack(children: <Widget>[
-        ScalableRoundedButton(label: 'Remove from Group',
+        ScalableRoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
           backgroundColor: Styles().colors.white,
           textColor: Styles().colors.fillColorPrimary,
           fontFamily: Styles().fontFamilies.bold,
@@ -263,7 +264,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 26),
                   child: Text(
-                    "Remove ${_member.name} From this group?",
+                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),[_member?.name]),
                     textAlign: TextAlign.left,
                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
                   ),
@@ -272,7 +273,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     RoundedButton(
-                      label: "Back",
+                      label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.white,
@@ -285,7 +286,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       alignment: Alignment.center,
                       children: [
                         RoundedButton(
-                          label: "Remove",
+                          label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
                           fontFamily: "ProximaNovaBold",
                           textColor: Styles().colors.fillColorPrimary,
                           borderColor: Styles().colors.white,

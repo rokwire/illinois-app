@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -76,7 +77,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text('Request to join',
+        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Request to join'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -108,10 +109,10 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       children:<Widget>[
         Row(children: <Widget>[
           Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
-          Text('Answer questions', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          Text(Localization().getStringEx("panel.membership_request.label.answer_questions", 'Answer questions'), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ],),
         Padding(padding: EdgeInsets.only(top: 8), child:
-          Text('Only admins of the group will see your answers.', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
+          Text(Localization().getStringEx("panel.membership_request.label.description", 'Only admins of the group will see your answers.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
         ),
       ]);
   }
@@ -147,7 +148,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         child: Stack(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child: Container(),),
-            RoundedButton(label: 'Submit request',
+            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
               backgroundColor: Styles().colors.white,
               textColor: Styles().colors.fillColorPrimary,
               fontFamily: Styles().fontFamilies.bold,
@@ -186,7 +187,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           answers.add(GroupMembershipAnswer(question: question, answer: answer));
         }
         else {
-          AppAlert.showDialogResult(context, 'Please answer \'$question\'').then((_){
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')+ question).then((_){
             focusNode.requestFocus();
           });
           return;
@@ -205,7 +206,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           Navigator.pop(context);
         }
       }).catchError((){
-        AppAlert.showDialogResult(context, 'Failed to submit request');
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.label.fail", 'Failed to submit request'));
       });
     }
   }

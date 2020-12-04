@@ -283,7 +283,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     children: <Widget>[
                       Expanded(child:
                         ScalableRoundedButton(
-                          label: "Back",
+                          label: Localization().getStringEx('headerbar.back.title', "Back"),
                           fontFamily: "ProximaNovaRegular",
                           textColor: Styles().colors.fillColorPrimary,
                           borderColor: Styles().colors.white,

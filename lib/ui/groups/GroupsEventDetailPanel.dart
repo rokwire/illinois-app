@@ -62,7 +62,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
         actions: [
           _buildFavoritesButton(),
           Semantics(
-              label:  'Options',
+              label: Localization().getStringEx('panel.groups_event_detail.button.options.title', 'Options'),
               button: true,
               excludeSemantics: true,
               child: IconButton(
@@ -211,13 +211,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
   }
 
   Widget _eventLocationDetail() {
-    String locationText =(widget.event?.isVirtual ?? false) ? "Online Event" : ExploreHelper.getLongDisplayLocation(widget.event, null); //TBD decide if we need distance calculation - pass _locationData
+    String locationText =(widget.event?.isVirtual ?? false) ? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online Event") :
+          ExploreHelper.getLongDisplayLocation(widget.event, null); //TBD decide if we need distance calculation - pass _locationData
     if ( AppString.isStringNotEmpty(locationText)) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
             label: locationText,
-            hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+            hint: Localization().getStringEx('panel.groups_event_detail.label.location.hint', ''),
             button: true,
             excludeSemantics: true,
             child:Padding(
@@ -265,8 +266,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
       children: <Widget>[
 //        AppString.isStringEmpty(titleUrl)? Container():
         RoundedButton(
-          label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
-          hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
+          label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+          hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
           backgroundColor: Colors.white,
           borderColor: Styles().colors.fillColorSecondary,
           textColor: Styles().colors.fillColorPrimary,
@@ -308,8 +309,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
       children: <Widget>[
             RibbonButton(
               leftIcon: "images/icon-edit.png",
-              label: Localization().getStringEx('panel.group_detail.button.edit.title', 'Edit') ,
-              hint: Localization().getStringEx('panel.group_detail.button.edit.hint', '') ,
+              label: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
+              hint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
               padding: EdgeInsets.zero,
               onTap: ()=>_onTapEdit,
             ),
@@ -325,8 +326,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
         ),
         RibbonButton(
           leftIcon: "images/icon-leave-group.png",
-          label: Localization().getStringEx("panel.group_detail.button.delete.title", "Delete Event"),
-          hint: Localization().getStringEx("panel.group_detail.button.delete.hint", "Delete Event"),
+          label: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
+          hint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
           padding: EdgeInsets.zero,
           onTap: ()=>_onTapDelete,
         )
@@ -359,8 +360,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
   }
 
   void _onOptionsTap(){
-    String title = "ADD EVENT";
-    String description="Choose a group you’re an admin form";
+    String title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
+    String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin form");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -404,8 +405,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                       ],)
                   ),
                   GroupDropDownButton(
-                    emptySelectionText: Localization().getStringEx("panel.groups_event.group.default_text", "Select a group.."),
-                    buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
+                    emptySelectionText: Localization().getStringEx('panel.groups_event_detail.button.select_group.title', "Select a group.."),
+                    buttonHint: Localization().getStringEx('panel.groups_event_detail.button.select_group.hint', "Double tap to show categories options"),
                     items: _adminGroups,
                     constructTitle: (item) {
                       Group group = item as Group;
@@ -419,7 +420,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                 ),
                 Container(height: 27,),
                 ScalableRoundedButton(
-                  label:"ADD ",
+                  label: Localization().getStringEx('panel.groups_event_detail.button.add.title', "ADD "),
                   backgroundColor: Colors.white,
                   borderColor: Styles().colors.fillColorSecondary,
                   textColor: Styles().colors.fillColorPrimary,
@@ -430,7 +431,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                         _linkedGroups.add(_currentlySelectedGroup);
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
-                            "Event has been linked to ${_currentlySelectedGroup.title}");
+                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")+ _currentlySelectedGroup?.title??"");
                       }
                     });
                   },

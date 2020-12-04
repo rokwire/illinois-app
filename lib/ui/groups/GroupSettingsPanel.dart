@@ -514,8 +514,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildTagButton(String tag){
     return
       Semantics(
-        label: "$tag tag,",
-        hint: "double tab to remove tag",
+        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, "),
+        hint: Localization().getStringEx("panel.groups_create.tags.label.tag.hint", "double tab to remove tag"),
         button: true,
         excludeSemantics: true,
         child:InkWell(
@@ -623,7 +623,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      "$questionsCount Questions" :
+      (questionsCount.toString() + Localization().getStringEx("panel.groups_create.tags.label.question","Questions")) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
@@ -757,7 +757,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
       Navigator.pop(context);
     }).catchError((e){
-      AppAlert.showDialogResult(context, "Unable to update the group"); //TBD localize
+      AppAlert.showDialogResult(context, Localization().getStringEx("panel.groups_create.tags.label.update_error", "Unable to update the group"));
       //error
       setState(() {
         _loading = false;
