@@ -16,15 +16,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/style.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
-
-import 'GroupAdminPanel.dart';
 
 class GroupCreatePostPanel extends StatefulWidget{
   
@@ -153,36 +150,6 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
       ]));
   }
 
-  Widget _buildUserInfo(){
-    String imageUrl = _member?.photoURL ?? "";
-    String name = _member?.name ?? "";
-    String officerTitle = _member?.officerTitle ?? "";
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        imageUrl==null? Container():
-        Container(height: 32, width: 32,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(image:NetworkImage(imageUrl), fit: BoxFit.cover),
-          ),
-        ),
-        Expanded(child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Padding(padding: EdgeInsets.only(bottom: 2), child:
-          Text(name??"", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
-          ),
-          Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 2), child:
-            Image.asset('images/icon-badge.png', excludeFromSemantics: true,),
-            ),
-            Text(officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
-          ],)
-        ],),),),
-      ],),
-    );
-  }
-
   Widget _buildPostField(){
     String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "Write a comment");
     String fieldHint = Localization().getStringEx("panel.group_create_post.post.field.hint", "");
@@ -226,7 +193,6 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     } else {
       //Invalid post
     }
-
   }
 
   void _onTapBack() {

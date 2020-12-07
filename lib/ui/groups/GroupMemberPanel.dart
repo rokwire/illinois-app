@@ -20,8 +20,6 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -34,12 +32,13 @@ import 'package:sprintf/sprintf.dart';
 class GroupMemberPanel extends StatefulWidget {
   final String groupId;
   final String memberId;
+
   GroupMemberPanel({this.groupId, this.memberId});
+
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
 }
 
 class _GroupMemberPanelState extends State<GroupMemberPanel>{
-
   Member _member;
   Group _group;
   bool _isLoading = false;

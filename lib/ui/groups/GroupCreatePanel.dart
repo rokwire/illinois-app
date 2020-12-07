@@ -83,7 +83,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     });
     Groups().categories.then((categories){
       setState(() {
-//        TMP: categories = ["Long Test1","Very Long Test2","Very very long Test3","Test4",];
         _groupCategories = categories;
       });
     }).whenComplete((){
@@ -92,7 +91,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       });
     });
   }
-
   //
 
   @override
@@ -267,7 +265,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
   //
-
   //Category
   Widget _buildCategoryDropDown() {
     return Container(
@@ -552,7 +549,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               ),
             )
       ],)
-
     );
   }
 

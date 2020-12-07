@@ -35,7 +35,6 @@ class GroupMembershipRequestPanel extends StatefulWidget {
 }
 
 class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPanel> {
-
   List<GroupMembershipQuestion> _questions;
   List<FocusNode> _focusNodes;
   List<TextEditingController> _controllers;
@@ -66,7 +65,6 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   @override
   Widget build(BuildContext context) {
-
     List<Widget> content = [
       _buildHeading()
     ];

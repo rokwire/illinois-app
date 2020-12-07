@@ -312,5 +312,4 @@ class GroupsConfirmationDialog extends StatelessWidget{
           }),
     );
   }
-
 }

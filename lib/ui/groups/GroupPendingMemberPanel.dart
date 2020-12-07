@@ -36,7 +36,6 @@ class GroupPendingMemberPanel extends StatefulWidget {
 
 
 class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
-
   TextEditingController _reasonController = TextEditingController();
   bool _approved = false;
   bool _denied = false;
@@ -114,7 +113,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               ),
             )
           ],
-    ),
+          ),
         ],
       ));
   }

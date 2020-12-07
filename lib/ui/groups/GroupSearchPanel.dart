@@ -130,16 +130,13 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
               ],
             ),
           ),
-          Visibility(
-            visible: true,
-            child: Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-              child: Text("TBD",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: Styles().fontFamilies.regular,
-                    color: Styles().colors.textBackground),
-              ),
+          Padding(
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+            child: Text("TBD",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: Styles().fontFamilies.regular,
+                  color: Styles().colors.textBackground),
             ),
           ),
           _buildListViewWidget()

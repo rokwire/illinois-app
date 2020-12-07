@@ -31,7 +31,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
-  
   final List<GroupMembershipStep> steps;
 
   GroupMembershipStepsPanel({this.steps});
@@ -46,7 +45,6 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   List<FocusNode> _focusNodes;
   List<TextEditingController> _controllers;
   Map<String, Event> _events = Map<String, Event>();
-
 
   @override
   void initState() {
@@ -110,7 +108,6 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
@@ -219,7 +216,6 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
 
     List<Widget> commands = [
       GroupMembershipAddButton(height: 26 + 16*MediaQuery.of(context).textScaleFactor, title:Localization().getStringEx("panel.membership_request.label.contact_event", 'Connect event'), onTap: () { _addEvent(stepIndex: index);  },),
-//      Expanded(child: Container(),),
       Container(width: 10,)
     ];
     if ((index + 1) == _steps.length) {
@@ -301,7 +297,6 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   }
 
   void _onSubmit() {
-
     for (int index = 0; index < _steps.length; index++) {
       GroupMembershipStep step = _steps[index];
 
@@ -316,12 +311,10 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         return;
       }
     }
-    
-    widget.steps.replaceRange(0, widget.steps.length, _steps);
 
+    widget.steps.replaceRange(0, widget.steps.length, _steps);
     Navigator.pop(context);
   }
-
 }
 
 class _EventCard extends StatelessWidget {
@@ -332,7 +325,6 @@ class _EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
@@ -362,7 +354,6 @@ class _EventCard extends StatelessWidget {
               ),
             ),
           ),
-
         ],)
       ),
     );

@@ -419,7 +419,6 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   Widget _buildFilterContentEx({@required int itemCount, @required IndexedWidgetBuilder itemBuilder}){
-
     return Semantics(child:Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40),
         child: Semantics(child:Container(

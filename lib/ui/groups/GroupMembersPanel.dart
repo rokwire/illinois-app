@@ -42,7 +42,6 @@ class GroupMembersPanel extends StatefulWidget{
 }
 
 class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener{
-
   Group _group;
   bool _isMembersLoading = false;
   bool _isPendingMembersLoading = false;
@@ -311,7 +310,6 @@ class _PendingMemberCard extends StatelessWidget {
                         textColor: Styles().colors.fillColorPrimary,
                         backgroundColor: Styles().colors.white,
                         fontSize: 16,
-//                        height: 32,
                         showChevron: true,
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
@@ -319,7 +317,6 @@ class _PendingMemberCard extends StatelessWidget {
                           Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, group: group,)));
                         },
                       ),
-//                      Expanded(child: Container(),),
                 ],
               ),
             ),
@@ -408,9 +405,5 @@ class _GroupMemberCard extends StatelessWidget{
   void _onTapMemberCard(BuildContext context)async{
     Analytics().logSelect(target: "Member Detail");
     await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(groupId: group.id, memberId: member.id,)));
-  }
-
-  bool get _isAdmin{
-    return member?.isAdmin ?? true;
   }
 }

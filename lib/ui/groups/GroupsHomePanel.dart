@@ -38,7 +38,6 @@ class GroupsHomePanel extends StatefulWidget{
 enum FilterType {none, category, type}
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-
   bool _isFilterLoading = false;
   bool _isAllGroupsLoading = false;
   bool _isMyGroupsLoading = false;
@@ -428,7 +427,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-
     if(AppCollection.isCollectionNotEmpty(_allFilteredGroups)){
       List<Widget> widgets = List<Widget>();
       widgets.add(Container(height: 8,));
@@ -558,6 +556,7 @@ class _GroupTabButton extends StatelessWidget{
 }
 
 enum _GroupCardDisplayType {myGroup, allGroups}
+
 class _GroupCard extends StatelessWidget{
   final Group group;
   final _GroupCardDisplayType displayType;
@@ -604,6 +603,7 @@ class _GroupCard extends StatelessWidget{
       ),
     );
   }
+
   Widget _buildHeading(){
       return
         group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin

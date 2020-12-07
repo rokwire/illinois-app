@@ -43,7 +43,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'GroupAdminPanel.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
@@ -497,7 +496,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   Widget _buildEvents() {
-    
     List<Widget> content = [];
     if(_isAdmin){
       content.add(_buildAdminEventOptions());
@@ -520,7 +518,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           borderColor: Styles().colors.fillColorSecondary,
           borderWidth: 2,
-  //        height: 42,
           onTap:() {
             //TBD
           }
@@ -567,7 +564,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     fontSize: 16,
                     borderColor: Styles().colors.fillColorSecondary,
                     borderWidth: 2,
-                    //        height: 42,
                     onTap:() { /*TBD browse events*/ }
                 ),
               ),
@@ -581,7 +577,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                   fontSize: 16,
                   borderColor: Styles().colors.fillColorSecondary,
                   borderWidth: 2,
-                  //        height: 42,
                   onTap: _onTapCreateEvent,
                   showAdd: true,),
               )
@@ -645,22 +640,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       ],);
   }
 
-  Widget _buildMembershipRules() {
-    List<Widget> content = [];
-    List<GroupMembershipStep> steps = _group?.membershipQuest?.steps;
-    if (steps != null) {
-      for (int index = 0; index < steps.length; index++) {
-        content.add(_MembershipStepCard(membershipStep: steps[index], stepsEvents:_stepsEvents, stepIndex: index,));
-      }
-    }
-    return Column(
-      children: <Widget>[
-        SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.become_member", 'Become a member'),
-          iconPath: 'images/member.png',
-          children: content,),
-      ]);
-  }
-
   Widget _buildMembershipRequest() {
     return
       Auth().isShibbolethLoggedIn && _group.currentUserCanJoin
@@ -704,18 +683,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
             ],
           )
           : Container();
-  }
-
-  Widget _buildSocial() {
-    return Padding(padding: EdgeInsets.all(16), child: Row(children: <Widget>[
-      Expanded(child: Container(),),
-      _SocialButton(imageAsset:'images/fb-12x24.png', onTap: () { _onSocialFacebook(); }),
-      Padding(padding: EdgeInsets.only(left: 8),),
-      _SocialButton(imageAsset:'images/twitter-24x22.png', onTap: () { _onSocialTwitter(); }),
-      Padding(padding: EdgeInsets.only(left: 8),),
-      _SocialButton(imageAsset:'images/ig-24x24.png', onTap: () { _onSocialInstagram(); }),
-      Expanded(child: Container(),),
-    ],),);
   }
 
   Widget _buildCancelRequestDialog(BuildContext context) {
@@ -856,7 +823,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onGroupOptionsTap(){
-    //TBD rest options
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -880,8 +846,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     showDialog(context: context, builder: (context)=>_buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
                   },
                 ),
-                //Container(height: 1, color: Styles().colors.surfaceAccent,),
-                //Container(height: 8,)
               ],
             ),
           );
@@ -902,7 +866,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
   }
 
-
   void onTapMembers(){
     Analytics().logPage(name: "Group Members");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
@@ -913,31 +876,12 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
-  void _onAdminView() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdminPanel(group: _group, groupEvents: _groupEvents,)));
-  }
-
-  void _onSocialFacebook() {
-    launch('https://www.facebook.com');
-  }
-
-  void _onSocialTwitter() {
-    launch('https://www.twitter.com');
-  }
-
-  void _onSocialInstagram() {
-    launch('https://www.instagram.com');
-  }
-
   void _onMembershipRequest() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
   }
 
   void _onCancelMembershipRequest(){
     showDialog(context: context, builder: (context) => _buildCancelRequestDialog(context));
-  }
-
-  void _onSwitchFavorite() {
   }
 
   void _onTapCreateEvent(){
@@ -995,7 +939,6 @@ class _EventCardState extends State<_EventCard>{
         content2.add(
             Semantics(
               button: true,
-//              label: "See previous posts",
               child: GestureDetector(
               onTap: (){
                 setState(() {
@@ -1167,7 +1110,6 @@ class _EventContent extends StatelessWidget {
           )
       ],),))
     ],);
-
   }
 
   void _onOptionsTap(BuildContext context){
@@ -1210,8 +1152,6 @@ class _EventContent extends StatelessWidget {
                     _onEditEventTap(context);
                   },
                 ),
-                //Container(height: 1, color: Styles().colors.surfaceAccent,),
-                //Container(height: 8,)
               ],
             ),
           );
@@ -1260,7 +1200,6 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128,
           decoration: BoxDecoration(
-            //color: Styles().colors.fillColorPrimary,
             image: DecorationImage(image: AppString.isStringNotEmpty(groupMember?.photoURL) ? NetworkImage(groupMember?.photoURL) : AssetImage('images/missing-photo-placeholder.png'), fit: BoxFit.contain),
               borderRadius: BorderRadius.all(Radius.circular(4))),
           ),
@@ -1268,76 +1207,6 @@ class _OfficerCard extends StatelessWidget {
           child: Text(groupMember?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),),
         Text(groupMember?.officerTitle ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),),
       ],),
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
-  final double width;
-  final double height;
-  final String imageAsset;
-  final GestureTapCallback onTap;
-  
-  _SocialButton({this.width = 48, this.height = 48, this.imageAsset, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: Styles().colors.fillColorPrimary,
-          borderRadius:BorderRadius.circular(3),
-          boxShadow: [BoxShadow(color: Color(0x30002855), spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-        ),
-        child: Align(alignment: Alignment.center, child: Image.asset(imageAsset),),
-      ),
-    );
-  }
-}
-
-class _MembershipStepCard extends StatelessWidget {
-  
-  final GroupMembershipStep membershipStep;
-  final Map<String, Event> stepsEvents;
-  final int stepIndex;
-  
-  _MembershipStepCard({this.membershipStep, this.stepsEvents, this.stepIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    
-    List<Widget> content = [];
-
-    content.add(Padding(padding: EdgeInsets.all(16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 8), child: Text('Step ${(stepIndex ?? 0) + 1}',  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),),
-        Padding(padding: EdgeInsets.only(bottom: 8), child: Text(membershipStep.description ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),),),
-      ]),
-    ));
-
-    if ((stepsEvents != null) && (membershipStep?.eventIds != null)) {
-      for (String eventId in membershipStep.eventIds) {
-        Event event = stepsEvents[eventId];
-        if (event != null) {
-          content.add(Container(color: Styles().colors.surfaceAccent, height: 1,));
-          content.add(_EventContent(event: event,),);
-        }
-      }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Styles().colors.white,
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-          borderRadius: BorderRadius.all(Radius.circular(8))
-        ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
-      ),
     );
   }
 }

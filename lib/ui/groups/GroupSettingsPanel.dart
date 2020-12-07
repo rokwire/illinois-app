@@ -29,7 +29,6 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
-import 'package:illinois/ui/groups/GroupMembershipStepsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -49,7 +48,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _linkController = TextEditingController();
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
-  List<String> _groupTags;
 
   bool _nameIsValid = true;
   bool _loading = false;
@@ -105,7 +103,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
                           ],),)
-
                       ]),
                     ),
                   ],
@@ -205,7 +202,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     Log.d("Image Url: $_imageUrl");
   }
   //
-
   //Name
   Widget _buildNameField() {
     String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
@@ -307,11 +303,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           ),
         ],
       ),
-
     );
   }
   //
-
   //Link
   Widget _buildLinkField(){
     return
@@ -392,7 +386,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             builder: (context) => WebPanel(url: _linkController.text)));
   }
   //
-
   //Category
   Widget _buildCategoryDropDown() {
     return Container(
@@ -420,7 +413,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           ],
         ));
   }
-  //
 
   //Tags
   Widget _buildTagsLayout(){
@@ -570,7 +562,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {});
   }
   //
-
   //Privacy
   Widget _buildPrivacyDropDown() {
     return Container(
@@ -606,8 +597,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           )),
           Semantics(
             explicitChildNodes: true,
-//            excludeSemantics: true,
-//            label:Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
               child:Text(
@@ -618,7 +607,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       ],));
   }
   //
-
   //Membership
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
@@ -633,15 +621,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child: Column( children: <Widget>[
           _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
           Container(height: 12,),
-//          _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.steps.title","Membership steps"),
-//            description: Localization().getStringEx("panel.groups_settings.membership.button.steps.description","Share the steps someone will take to become a member."),
-//            onTap: _onTapMembershipSteps),
-//          Container(height: 10,),
-        Semantics(
-          explicitChildNodes: true,
-          child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
-            description: questionsDescription,
-            onTap: _onTapMembershipQuestion)),
+          Semantics(
+            explicitChildNodes: true,
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
+              description: questionsDescription,
+              onTap: _onTapMembershipQuestion)),
           Container(height: 40,),
     ]),);
   }
@@ -692,17 +676,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  void _onTapMembershipSteps(){
-    Analytics.instance.logSelect(target: "Membership Steps");
-    if (_group.membershipQuest == null) {
-      _group.membershipQuest = GroupMembershipQuest();
-    }
-    if (_group.membershipQuest.steps == null) {
-      _group.membershipQuest.steps = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipStepsPanel(steps: _group.membershipQuest.steps,)));
-  }
-
   void _onTapMembershipQuestion(){
     Analytics.instance.logSelect(target: "Membership Question");
     if (_group.questions == null) {
@@ -729,7 +702,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             borderColor: Styles().colors.fillColorSecondary,
             textColor: Styles().colors.fillColorPrimary,
             onTap: _onUpdateTap,
-//            height: 48,
           ),
           Visibility(visible: _loading,
             child: Container(
@@ -765,7 +737,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
   //
-
   // Common
   Widget _buildInfoHeader(String title, String description,{double topPadding = 24}){
     return Container(
@@ -778,7 +749,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             Semantics(
               label: title,
-//              hint: title,
               header: true,
               excludeSemantics: true,
               child:
@@ -796,7 +766,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               ),
             )
           ],))
-
     );
   }
 
@@ -815,7 +784,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Expanded(child:
               Semantics(
                 label: title,
-//                hint: ,
                 header: true,
                 excludeSemantics: true,
                 child:
@@ -826,7 +794,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               ),
             )
           ],)
-
     );
   }
 
@@ -836,7 +803,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void validateName(String name){
-    //TBD
+    //TBD name validation hook
     List<String> takenNames = ["test","test1"];
     setState(() {
       _nameIsValid = !(takenNames?.contains(name)??false);
@@ -845,7 +812,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 }
 
 class _AddImageWidget extends StatefulWidget {
-
   @override
   _AddImageWidgetState createState() => _AddImageWidgetState();
 }
@@ -1013,7 +979,6 @@ class _AddImageWidgetState extends State<_AddImageWidget> {
       setState(() {
         _showProgress = false;
       });
-
 
       ImagesResultType resultType = logicResult.resultType;
       switch (resultType) {

@@ -23,7 +23,6 @@ import 'package:illinois/utils/Utils.dart';
 import '../WebPanel.dart';
 
 class GroupEventDetailPanel extends StatefulWidget{
-
   final Event event;
   final bool previewMode;
 
@@ -33,11 +32,9 @@ class GroupEventDetailPanel extends StatefulWidget{
   State<StatefulWidget> createState() {
     return _GroupEventDetailsPanelState();
   }
-
 }
 
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
-
   List<Group> _adminGroups;
 
   Group _currentlySelectedGroup;
@@ -183,7 +180,6 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
         }
       }
     }
-    //
     if (AppString.isStringNotEmpty(displayTime)) {
       return Semantics(
           label: displayTime,
@@ -264,7 +260,6 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
     return Container(child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-//        AppString.isStringEmpty(titleUrl)? Container():
         RoundedButton(
           label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
           hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),

@@ -27,7 +27,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {
-  
   final List<GroupMembershipQuestion> questions;
 
   GroupMembershipQuestionsPanel({this.questions});
@@ -38,12 +37,9 @@ class GroupMembershipQuestionsPanel extends StatefulWidget {
 }
 
 class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestionsPanel> {
-
   List<GroupMembershipQuestion> _questions;
   List<FocusNode> _focusNodes;
   List<TextEditingController> _controllers;
-
-
 
   bool get _addButtonEnabled{
     for(TextEditingController textEditingController in _controllers){
@@ -87,7 +83,6 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
@@ -206,7 +201,6 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
             padding: EdgeInsets.symmetric(horizontal: 32, ),
             borderColor: Styles().colors.fillColorSecondary,
             borderWidth: 2,
-//            height: 42,
             onTap:() { _onSubmit();  }
             )
           ),
@@ -236,7 +230,6 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   void _onSubmit() {
-
     for (int index = 0; index < _questions.length; index++) {
       String question = _controllers[index].text;
       if ((question != null) && (0 < question.length)) {
