@@ -516,6 +516,7 @@
     "panel.explore_detail.button.visit_website.title":"Visit website",
     "panel.explore_detail.button.visit_website.hint":"Tap to Visit website.",
     "panel.explore_detail.button.modify.title":"Modify",
+    "panel.explore_detail.button.add_to_group.title": "Add Event To Group",
     "panel.explore_detail.button.modify.hint":"Tap to Modify",
     "panel.explore_detail.button.publish.title":"Publish",
     "panel.explore_detail.button.publish.hint":"Tap to Publish",

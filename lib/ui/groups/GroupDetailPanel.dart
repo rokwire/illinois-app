@@ -26,6 +26,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
+import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -562,7 +563,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     fontSize: 16,
                     borderColor: Styles().colors.fillColorSecondary,
                     borderWidth: 2,
-                    onTap:() { /*TBD browse events*/ }
+                    onTap:_onTapBrowseEvents
                 ),
               ),
               Container(width: 16,),
@@ -884,6 +885,11 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   void _onTapCreateEvent(){
     Analytics().logPage(name: "Create Event");
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
+  }
+
+  void _onTapBrowseEvents(){
+    Analytics().logPage(name: "Browse Events");
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id,)));
   }
 }
 

@@ -27,8 +27,9 @@ import 'package:location/location.dart';
 class ExploreDetailPanel extends StatelessWidget {
   final Explore explore;
   final LocationData initialLocationData;
+  final String browseGroupId;
 
-  ExploreDetailPanel({this.explore, this.initialLocationData});
+  ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,8 @@ class ExploreDetailPanel extends StatelessWidget {
     else if(explore is Event) {
       return ExploreEventDetailPanel(
           event: explore,
-          initialLocationData: initialLocationData
+          initialLocationData: initialLocationData,
+          browseGroupId: browseGroupId,
       );
     }
     else{ // Default for unexpected type

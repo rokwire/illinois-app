@@ -26,6 +26,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/RecentItems.dart';
@@ -46,8 +47,9 @@ class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAtt
   final bool previewMode;
   final Core.LocationData initialLocationData;
   final String superEventTitle;
+  final String browseGroupId;
 
-  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle});
+  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroupId});
 
   @override
   _EventDetailPanelState createState() =>
@@ -144,6 +146,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                                       _exploreDescription(),
                                                       _buildUrlButtons(),
                                                       _buildPreviewButtons(),
+                                                      _buildGroupButtons(),
                                                     ]
                                                 )),
                                           ],
@@ -593,6 +596,20 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       ));
   }
 
+  Widget _buildGroupButtons(){
+    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: ScalableRoundedButton(
+            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
+            hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors.fillColorPrimary,
+            textColor: Styles().colors.fillColorPrimary,
+            onTap: _onTapAddToGroup,
+        ));
+  }
+
   void _addRecentItem(){
     if(!widget.previewMode)
       RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.event));
@@ -631,6 +648,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapModify() {
     Analytics.instance.logSelect(target: "Modify");
+    Navigator.pop(context);
+  }
+
+  void _onTapAddToGroup() {
+    Analytics.instance.logSelect(target: "Add To Group");
+    //TBD implement add to group
     Navigator.pop(context);
   }
 
