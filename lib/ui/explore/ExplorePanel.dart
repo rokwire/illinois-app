@@ -1100,7 +1100,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     if (event?.isComposite ?? false) {
       Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, initialLocationData: _locationData,)));
+          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)));
     }
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>

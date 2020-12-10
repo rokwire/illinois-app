@@ -27,6 +27,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:location/location.dart' as Core;
 
@@ -48,8 +49,9 @@ class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPage
 
   final Event parentEvent;
   final Core.LocationData initialLocationData;
+  final String browseGroupId;
 
-  CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData});
+  CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
 
   @override
   _CompositeEventsDetailPanelState createState() =>
@@ -151,6 +153,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                                           ),
                                           _exploreDescription(),
                                           _buildEventsList(),
+                                          _buildGroupButtons()
                                         ],
                                       ),
                                     ],
@@ -566,6 +569,26 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     } else {
       User().switchFavorite(event);
     }
+  }
+
+  Widget _buildGroupButtons(){
+    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+    Container(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        child: ScalableRoundedButton(
+          label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
+          hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+          backgroundColor: Colors.white,
+          borderColor: Styles().colors.fillColorPrimary,
+          textColor: Styles().colors.fillColorPrimary,
+          onTap: _onTapAddToGroup,
+        ));
+  }
+
+  void _onTapAddToGroup() {
+    Analytics.instance.logSelect(target: "Add To Group");
+    //TBD implement add to group
+    Navigator.pop(context);
   }
 
   // NotificationsListener
