@@ -889,7 +889,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void _onTapBrowseEvents(){
     Analytics().logPage(name: "Browse Events");
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 }
 
