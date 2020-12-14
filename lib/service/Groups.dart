@@ -275,23 +275,64 @@ class Groups /* with Service */ {
 // Events
 
   Future<List<GroupEvent>> loadEvents(String groupId, {int limit }) async {
+    //TBD implement load group events
     List<GroupEvent> result;
-    List<dynamic> json = (await _sampleJson)['events'];
-    if (json != null) {
-      result = [];
-      for (dynamic jsonEntry in json) {
-        GroupEvent event = GroupEvent.fromJson(jsonEntry);
-        if ((event != null) &&
-            ((limit == null) || (result.length < limit)))
-        {
-          result.add(event);
-        }
-      }
-    }
+//    List<dynamic> json = (await _sampleJson)['events'];
+//    if (json != null) {
+//      result = [];
+//      for (dynamic jsonEntry in json) {
+//        GroupEvent event = GroupEvent.fromJson(jsonEntry);
+//        if ((event != null) &&
+//            ((limit == null) || (result.length < limit)))
+//        {
+//          result.add(event);
+//        }
+//      }
+//    }
     return result;
   }
 
+  Future<bool> linkEventToGroup({String groupId, String eventId}) async {
+    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(eventId)) {
+      String url = '${Config().groupsUrl}/group/$groupId/events';
+      try {
+        Map<String, dynamic> bodyMap = {"event_id":eventId};
+        String body = jsonEncode(bodyMap);
+        Response response = await Network().post(url, auth: NetworkAuth.User,body: body);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false; // fail
+  }
+
+  Future<bool> removeEventFromGroup({String groupId, String eventId}) async {
+    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(eventId)) {
+      String url = '${Config().groupsUrl}/group/$groupId/event/$eventId';
+      try {
+        Response response = await Network().delete(url, auth: NetworkAuth.User);
+        if((response?.statusCode ?? -1) == 200){
+          NotificationService().notify(notifyGroupUpdated, groupId);
+          return true;
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return false;
+  }
+
+  Future<bool> deleteEventFromGroup({String groupId, String eventId}) async {
+    //TBD
+    return false;
+  }
+
   Future<Event> createGroupEvent(String groupId, Event event) async {
+    //TBD
     return Future<Event>.delayed(Duration(seconds: 1), (){ return event; });
   }
 

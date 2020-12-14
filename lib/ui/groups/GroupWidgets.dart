@@ -610,12 +610,16 @@ class _EventContent extends StatelessWidget {
         onConfirmTap:_onDeleteEvent);
   }
 
-  void _onRemoveEvent(){
-    //TBD
+  void _onRemoveEvent(BuildContext context){
+    Groups().removeEventFromGroup(eventId: event.eventId, groupId: group.id).then((value){
+      Navigator.of(context).pop();
+    });
   }
 
-  void _onDeleteEvent(){
-    //TBD
+  void _onDeleteEvent(BuildContext context){
+    Groups().deleteEventFromGroup(eventId: event.eventId, groupId: group.id).then((value){
+      Navigator.of(context).pop();
+    });
   }
 
   void _onEditEventTap(BuildContext context){

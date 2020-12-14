@@ -22,6 +22,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
@@ -1266,15 +1267,23 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     Analytics.instance.logSelect(target: "Create");
     if (_isDataValid()) {
       Event event = _constructEventFromData();
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) => GroupEventDetailPanel(
-                  event: event, previewMode: true))).then((dynamic data) {
-        if (data != null) {
-          Navigator.pop(context);
+      //post event
+      ExploreService().postNewEvent(event).then((bool success){
+        if(success){
+          Groups().linkEventToGroup(groupId: widget?.group?.id).then((value){
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => GroupEventDetailPanel(
+                        event: event, previewMode: true))).then((dynamic data) {
+              Navigator.pop(context);
+            });
+          });
+        }else {
+          AppToast.show("Unable to create Event");
         }
       });
+
     }
   }
   
@@ -1297,6 +1306,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.registrationUrl = _eventPurchaseUrlController.text;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
+    event.recurringFlag = false;
 
     return event;
   }

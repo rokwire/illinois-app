@@ -19,6 +19,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
@@ -653,8 +654,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapAddToGroup() {
     Analytics.instance.logSelect(target: "Add To Group");
-    //TBD implement add to group
-    Navigator.pop(context);
+    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget?.event?.id).then((value){
+      Navigator.pop(context);
+    });
   }
 
   void _onTapPublish() async{

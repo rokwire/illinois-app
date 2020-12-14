@@ -331,11 +331,13 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
   }
 
   void _onTapEdit(){
-    //TBD
+    //TBD edit
   }
 
   void _onTapDelete(){
-    //TBD
+    Groups().deleteEventFromGroup(eventId: widget.event.eventId).then((value){
+      Navigator.of(context).pop();
+    });
   }
 
   void _onTapWebButton(String url, String analyticsName){
