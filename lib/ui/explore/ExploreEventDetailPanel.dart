@@ -69,6 +69,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   //Maps
   Core.LocationData _locationData;
+  bool _addToGroupInProgress = false;
 
   @override
   void initState() {
@@ -601,14 +602,30 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return AppString.isStringEmpty(widget.browseGroupId)? Container():
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
-          child: ScalableRoundedButton(
-            label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
-            hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
-            backgroundColor: Colors.white,
-            borderColor: Styles().colors.fillColorPrimary,
-            textColor: Styles().colors.fillColorPrimary,
-            onTap: _onTapAddToGroup,
-        ));
+          child:
+          Stack(
+            children: [
+              ScalableRoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
+                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors.fillColorPrimary,
+                textColor: Styles().colors.fillColorPrimary,
+                onTap: _onTapAddToGroup,
+              ),
+              Visibility(visible: _addToGroupInProgress,
+                child: Container(
+                  height: 48,
+                  child: Align(alignment: Alignment.center,
+                    child: SizedBox(height: 24, width: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        );
   }
 
   void _addRecentItem(){
@@ -654,7 +671,13 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapAddToGroup() {
     Analytics.instance.logSelect(target: "Add To Group");
+    setState(() {
+      _addToGroupInProgress = true;
+    });
     Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget?.event?.id).then((value){
+      setState(() {
+        _addToGroupInProgress = true;
+      });
       Navigator.pop(context);
     });
   }

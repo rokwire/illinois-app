@@ -348,7 +348,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
     ];
     List<Widget> content2 = [];
 
-    if(widget.isAdmin){
+    if(_canPostComment){
       content2.add(
           Container(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -487,6 +487,10 @@ class _GroupEventCardState extends State<GroupEventCard>{
             ],),
           ));
   }
+
+  bool get _canPostComment{
+    return widget.isAdmin && false; //TBD for now hide all comment options. Determine who can add comment
+  }
 }
 
 class _EventContent extends StatelessWidget {
@@ -600,24 +604,24 @@ class _EventContent extends StatelessWidget {
     return GroupsConfirmationDialog(
         message: Localization().getStringEx("panel.group_detail.button.remove_event.title",  "Remove this event from your group page?"),
         buttonTitle:Localization().getStringEx("panel.group_detail.button.remove.title", "Remove"),
-        onConfirmTap:_onRemoveEvent);
+        onConfirmTap:(){_onRemoveEvent(context);});
   }
 
   Widget _buildDeleteEventDialog(BuildContext context){
     return GroupsConfirmationDialog(
         message: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete this event from your groups page?"),
         buttonTitle:  Localization().getStringEx("panel.group_detail.button.delete.title","Delete"),
-        onConfirmTap:_onDeleteEvent);
+        onConfirmTap:(){_onDeleteEvent(context);});
   }
 
   void _onRemoveEvent(BuildContext context){
-    Groups().removeEventFromGroup(eventId: event.eventId, groupId: group.id).then((value){
+    Groups().removeEventFromGroup(eventId: event.id, groupId: group.id).then((value){
       Navigator.of(context).pop();
     });
   }
 
   void _onDeleteEvent(BuildContext context){
-    Groups().deleteEventFromGroup(eventId: event.eventId, groupId: group.id).then((value){
+    Groups().deleteEventFromGroup(eventId: event.id, groupId: group.id).then((value){
       Navigator.of(context).pop();
     });
   }

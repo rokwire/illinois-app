@@ -106,15 +106,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
 
     _loadGroup();
-
-    Groups().loadEvents(widget.groupId, limit: 3).then((List<GroupEvent> events) { 
-      if (mounted) {
-        setState(() {
-          _groupEvents = events;
-          _applyStepEvents(events);
-        });
-      }
-    });
+    _loadEvents();
   }
 
   @override
@@ -137,6 +129,17 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
             _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
             _loadMembershipStepEvents();
           }
+        });
+      }
+    });
+  }
+
+  void _loadEvents(){
+    Groups().loadEvents(widget.groupId, limit: 3).then((List<GroupEvent> events) {
+      if (mounted) {
+        setState(() {
+          _groupEvents = events;
+          _applyStepEvents(events);
         });
       }
     });
@@ -214,6 +217,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
       _loadGroup();
+      _loadEvents();
     }
   }
 
@@ -532,7 +536,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildAdminEventOptions(){
     bool haveEvents = _groupEvents?.isNotEmpty ?? false;
-    haveEvents = false;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(

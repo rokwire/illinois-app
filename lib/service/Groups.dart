@@ -25,6 +25,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -273,23 +274,32 @@ class Groups /* with Service */ {
 
 
 // Events
+  Future<List<dynamic>> loadEventIds(String groupId, {int limit}) async{
+    if(AppString.isStringNotEmpty(groupId)) {
+      String url = '${Config().groupsUrl}/group/$groupId/events';
+      try {
+        Response response = await Network().get(url, auth: NetworkAuth.User);
+        if((response?.statusCode ?? -1) == 200){
+          //Successfully loaded ids
+          String responseBody = response?.body;
+          List<dynamic> eventIdsJson = (response != null) ? jsonDecode(responseBody) : null;
+          if(AppCollection.isCollectionNotEmpty(eventIdsJson)){
+            //limit the result count
+            List visibleIds = limit<eventIdsJson.length? eventIdsJson.sublist(0,limit) : eventIdsJson;
+            return visibleIds;
+          }
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+    return null; // fail
+  }
 
-  Future<List<GroupEvent>> loadEvents(String groupId, {int limit }) async {
-    //TBD implement load group events
-    List<GroupEvent> result;
-//    List<dynamic> json = (await _sampleJson)['events'];
-//    if (json != null) {
-//      result = [];
-//      for (dynamic jsonEntry in json) {
-//        GroupEvent event = GroupEvent.fromJson(jsonEntry);
-//        if ((event != null) &&
-//            ((limit == null) || (result.length < limit)))
-//        {
-//          result.add(event);
-//        }
-//      }
-//    }
-    return result;
+  Future<List<GroupEvent>> loadEvents(String groupId, {int limit}) async {
+    List<dynamic> eventIds = await loadEventIds(groupId, limit: limit);
+    List<Event> events = AppCollection.isCollectionNotEmpty(eventIds)? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
+    return events?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
   }
 
   Future<bool> linkEventToGroup({String groupId, String eventId}) async {
