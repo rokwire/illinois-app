@@ -759,7 +759,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                                 width: 1)),
                                                         height: 48,
                                                         child: TextField(
-                                                          controller: _eventPurchaseUrlController,
+                                                          controller: _eventCallUrlController,
                                                           decoration: InputDecoration(
                                                               border: InputBorder.none),
                                                           style: TextStyle(
@@ -1303,10 +1303,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.allDay = _allDay;
     event.location = _location;
     event.longDescription = _eventDescriptionController.text;
-    event.registrationUrl = _eventPurchaseUrlController.text;
+    event.registrationUrl = AppString.isStringNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
-    event.recurringFlag = false;
 
     return event;
   }
