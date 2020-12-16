@@ -124,11 +124,8 @@ class ImageService /* with Service */ {
     if (responseUrl != null) {
 
       //hack the double quotes!! ""https://....""
-      if ((1 < responseUrl.length) && responseUrl.startsWith("\"") && responseUrl.endsWith("\"")) {
-        responseUrl = responseUrl.substring(1, responseUrl.length - 2);
-      }
+      responseUrl = responseUrl.trim().replaceAll("\"", "").trim();
 
-      //return success
       return ImagesResult.succeed(responseUrl);
     } else {
       //return error

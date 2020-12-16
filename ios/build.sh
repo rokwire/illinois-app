@@ -16,8 +16,8 @@ GOOGLE_SERVICE_DEST="${CODESIGNING_FOLDER_PATH}/GoogleService-Info.plist"
 cp "${GOOGLE_SERVICE_SRC}" "${GOOGLE_SERVICE_DEST}"
 
 # Upload app DSYM for FirebaseCrashlytics
-#if [[ "${CONFIGURATION}" == *"Release"* ]]; then
+if [[ "${CONFIGURATION}" == *"Release"* ]]; then
   echo "Uploading app DSYM for FirebaseCrashlytics"
   "${PODS_ROOT}/FirebaseCrashlytics/run"
   "${PODS_ROOT}/FirebaseCrashlytics/upload-symbols" -gsp "${GOOGLE_SERVICE_SRC}" -p ios "${DWARF_DSYM_FOLDER_PATH}"
-#fi
+fi

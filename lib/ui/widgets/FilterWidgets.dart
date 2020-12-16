@@ -23,8 +23,11 @@ class FilterListItemWidget extends StatelessWidget {
   final String subLabel;
   final GestureTapCallback onTap;
   final bool selected;
+  final String selectedIconRes;
+  final String unselectedIconRes;
 
-  FilterListItemWidget({@required this.label, this.subLabel, @required this.onTap, this.selected = false});
+  FilterListItemWidget({@required this.label, this.subLabel, @required this.onTap, this.selected = false,
+    this.selectedIconRes = 'images/icon-selected.png', this.unselectedIconRes = 'images/icon-unselected.png', });
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class FilterListItemWidget extends StatelessWidget {
                         : Container(),
                     Padding(
                       padding: EdgeInsets.only(left: 10),
-                      child: Image.asset((selected ? 'images/icon-selected.png' : 'images/icon-unselected.png')),
+                      child: Image.asset((selected ? selectedIconRes:unselectedIconRes)),
                     )
                   ],
                 ),

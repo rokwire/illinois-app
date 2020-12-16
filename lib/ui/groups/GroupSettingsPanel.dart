@@ -17,25 +17,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
-import 'package:illinois/ui/groups/GroupMembershipStepsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupSettingsPanel extends StatefulWidget {
-  final GroupDetail groupDetail;
+  final Group group;
   
-  GroupSettingsPanel({this.groupDetail});
+  GroupSettingsPanel({this.group});
 
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
 }
@@ -43,23 +44,22 @@ class GroupSettingsPanel extends StatefulWidget {
 class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
+  final _groupTagsController = TextEditingController();
   final _linkController = TextEditingController();
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
-  List<String> _groupTags;
 
   bool _nameIsValid = true;
   bool _loading = false;
 
-  GroupDetail _groupDetail; // edit settings here until submit
+  Group _group; // edit settings here until submit
 
   @override
   void initState() {
-    _groupDetail = GroupDetail.fromOther(widget.groupDetail);
+    _group = Group.fromOther(widget.group);
     _initPrivacyData();
     _initCategories();
-    _initTags();
-    _fillGroupDetails();
+    _fillGroups();
     super.initState();
   }
 
@@ -103,7 +103,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
                           ],),)
-
                       ]),
                     ),
                   ],
@@ -129,68 +128,60 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
-  void _initTags(){
-    Groups().tags.then((tags){
-      setState(() {
-        _groupTags = tags;
-      });
-    });
-  }
-
-  void _fillGroupDetails(){
-    if(_groupDetail!=null){
+  void _fillGroups(){
+    if(_group!=null){
       //textFields
-      if(_groupDetail.title!=null)
-        _eventTitleController.text=_groupDetail.title;
-      if(_groupDetail.description!=null)
-        _eventDescriptionController.text=_groupDetail.description;
-      if(_groupDetail.webURL!=null)
-        _linkController.text = _groupDetail.webURL;
+      if(_group.title!=null)
+        _eventTitleController.text=_group.title;
+      if(_group.description!=null)
+        _eventDescriptionController.text=_group.description;
+      if(_group.webURL!=null)
+        _linkController.text = _group.webURL;
     }
   }
 
   //
   //Image
   Widget _buildImageSection(){
-    final double _imageHeight = 208;
+    final double _imageHeight = 200;
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        Container(
-          color: Styles().colors.lightGray,
-          height: _imageHeight,
-        ),
-        CustomPaint(
-            painter: TrianglePainter(
-                painterColor: Styles().colors.fillColorSecondary,
-                left: false),
+    return Container(
+      height: _imageHeight,
+      color: Styles().colors.background,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
-              height: 48,
-            )),
-        CustomPaint(
-          painter:
-          TrianglePainter(painterColor: Colors.white),
-          child: Container(
-            height: 25,
-          ),
-        ),
-        Container(
-          height: _imageHeight,
-          child: Center(
-            child:
-            Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
-                hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
-                ScalableSmallRoundedButton(
-                  maxLines: 2,
-                  label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
-                  onTap: _onTapAddImage,
-                  showChevron: false,
-                )
+              height: 53,
             ),
           ),
-        )
-      ],
+          CustomPaint(
+            painter: TrianglePainter(painterColor: Styles().colors.white),
+            child: Container(
+              height: 30,
+            ),
+          ),
+          Container(
+            height: _imageHeight,
+            child: Center(
+              child:
+              Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                  hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
+                  ScalableSmallRoundedButton(
+                    maxLines: 2,
+                    label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                    textColor: Styles().colors.fillColorPrimary,
+                    onTap: _onTapAddImage,
+                    showChevron: false,
+                  )
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -200,16 +191,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         context: context,
         builder: (_) => Material(
           type: MaterialType.transparency,
-          child: AddImageWidget(),
+          child: _AddImageWidget(),
         )
     );
     if(_imageUrl!=null){
-      _groupDetail.imageURL = _imageUrl;
+      setState(() {
+        _group.imageURL = _imageUrl;
+      });
     }
     Log.d("Image Url: $_imageUrl");
   }
   //
-
   //Name
   Widget _buildNameField() {
     String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
@@ -281,7 +273,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Description
   Widget _buildDescriptionField() {
     String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
-    String fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "Tell people what this gtoup is about");
+    String fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
 
     return Container(
@@ -289,33 +281,31 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildInfoHeader(title,null),
+          _buildInfoHeader(title,fieldTitle),
           Container(
             height: 230,
             padding: EdgeInsets.only(left: 8,right: 8, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
-                label: fieldTitle,
+                label: title,
                 hint: fieldHint,
                 textField: true,
                 excludeSemantics: true,
                 child: TextField(
                   controller: _eventDescriptionController,
-                  onChanged: (description){ _groupDetail.description = description;},
+                  onChanged: (description){ _group.description = description;},
                   maxLines: 64,
                   decoration: InputDecoration(
-                    hintText: fieldTitle,
+                    hintText: fieldHint,
                     border: InputBorder.none,),
                   style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 )),
           ),
         ],
       ),
-
     );
   }
   //
-
   //Link
   Widget _buildLinkField(){
     return
@@ -360,7 +350,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             color: Styles().colors.textBackground,
                             fontSize: 16,
                             fontFamily: Styles().fontFamilies.regular),
-                        onChanged: (link){ _groupDetail.webURL = link;},
+                        onChanged: (link){ _group.webURL = link;},
                       ),
                     ),
                   ),
@@ -396,7 +386,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             builder: (context) => WebPanel(url: _linkController.text)));
   }
   //
-
   //Category
   Widget _buildCategoryDropDown() {
     return Container(
@@ -406,40 +395,79 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
               Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
-            GroupDropDownButton(
+            Semantics(
+            explicitChildNodes: true,
+            child: GroupDropDownButton(
                 emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
                 buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
-                initialSelectedValue: _groupDetail?.category,
+                initialSelectedValue: _group?.category,
                 items: _groupCategories,
                 constructTitle: (item) => item,
                 onValueChanged: (value) {
                   setState(() {
-                    _groupDetail?.category = value;
+                    _group?.category = value;
                     Log.d("Selected Category: $value");
                   });
                 }
-            )
+            ))
           ],
         ));
   }
-  //
 
-  //Types
-  Widget _buildTagsLayout() {
+  //Tags
+  Widget _buildTagsLayout(){
+    String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
+    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildInfoHeader(Localization().getStringEx("panel.groups_settings.tags.title", "TAGS"),
-              Localization().getStringEx("panel.groups_settings.tags.description", "Tags help people understand more about your group. Select all that apply to your group."),),
-            Container(height: 8,),
-            _constructTagsContent()
+            _buildSectionTitle(fieldTitle,
+              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
+            Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    height: 48,
+                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+                    child: Semantics(
+                        label: fieldTitle,
+                        hint: fieldHint,
+                        textField: true,
+                        excludeSemantics: true,
+                        child: TextField(
+                          controller: _groupTagsController,
+                          decoration: InputDecoration(border: InputBorder.none,),
+                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                        )),
+                  ),
+                ),
+                Container(width: 8,),
+                Expanded(
+                    flex: 2,
+                    child:
+                    ScalableRoundedButton(
+                      label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
+                      hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", "Add"),
+                      backgroundColor: Styles().colors.white,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      onTap: _onTapAddTag,
+                    )
+                )
+              ],
+            ),
+            Container(height: 10,),
+            _constructTagButtonsContent()
           ],
         ));
   }
 
-  Widget _constructTagsContent(){
+  Widget _constructTagButtonsContent(){
     List<Widget> buttons = _buildTagsButtons();
     if(buttons?.isEmpty??true)
       return Container();
@@ -459,62 +487,81 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     rows.add(Container(height: 24,));
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: rows,
     );
   }
 
   List<Widget> _buildTagsButtons(){
-      List<String> tags = _groupTags;
-      List<Widget> result = new List();
-      if (AppCollection.isCollectionNotEmpty(tags)) {
-        tags.forEach((String tag) {
-          result.add(_buildTagButton(tag));
-        });
-      }
-      return result;
+    List<String> tags = _group?.tags;
+    List<Widget> result = new List();
+    if (AppCollection.isCollectionNotEmpty(tags)) {
+      tags.forEach((String tag) {
+        result.add(_buildTagButton(tag));
+      });
+    }
+    return result;
   }
 
   Widget _buildTagButton(String tag){
-    bool isSelected = _groupDetail?.tags?.contains(tag)??false;
     return
-      InkWell(
-      child: Container(
-          decoration: BoxDecoration(
-              color: isSelected? Styles().colors.fillColorPrimary: Styles().colors.lightGray,
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Row(children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
-              child: Text(tag,
-                style: TextStyle(color: isSelected? Styles().colors.white : Styles().colors.textBackground , fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
-              )),
-            Container (
-              padding: EdgeInsets.only(top:8,bottom: 8,right: 8),
-              child: Image.asset(isSelected?"images/small-add-orange.png" : "images/small-add.png"),
-            )
+      Semantics(
+        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, "),
+        hint: Localization().getStringEx("panel.groups_create.tags.label.tag.hint", "double tab to remove tag"),
+        button: true,
+        excludeSemantics: true,
+        child:InkWell(
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors.fillColorPrimary,
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Row(children: <Widget>[
+                Semantics(excludeSemantics: true, child:
+                  Container(
+                      padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
+                      child: Text(tag,
+                        style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
+                      )),
+                  ),
+                Container (
+                  padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
+                  child: Image.asset("images/small-add-orange.png", excludeFromSemantics: true,),
+                )
 
-          ],)
-        ),
-      onTap: () => onTagTap(tag)
-      );
+              ],)
+          ),
+          onTap: () => onTagTap(tag)
+      ));
   }
 
   void onTagTap(String tag){
-    if(_groupDetail!=null) {
-      if (_groupDetail.tags == null) {
-        _groupDetail.tags = new List();
+    if(_group!=null) {
+      if (_group.tags == null) {
+        _group.tags = new List();
       }
 
-      if (_groupDetail.tags.contains(tag)) {
-        _groupDetail.tags.remove(tag);
+      if (_group.tags.contains(tag)) {
+        _group.tags.remove(tag);
       } else {
-        _groupDetail.tags.add(tag);
+        _group.tags.add(tag);
       }
     }
-      setState(() {});
+    setState(() {});
+  }
+
+  void _onTapAddTag(){
+    String tag = _groupTagsController.text?.toString();
+    if(_group!=null) {
+      if (_group.tags == null) {
+        _group.tags = new List<String>();
+      }
+      _group.tags.add(tag);
+      _groupTagsController.clear();
+    }
+
+    setState(() {});
   }
   //
-
   //Privacy
   Widget _buildPrivacyDropDown() {
     return Container(
@@ -525,12 +572,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               child:  _buildSectionTitle( Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"),"images/icon-privacy.png")),
           Container(
               child:  _buildInfoHeader( Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"),null, topPadding: 12)),
-          Container(
+          Semantics(
+          explicitChildNodes: true,
+          child: Container(
               child:  GroupDropDownButton(
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
-                  initialSelectedValue: _groupDetail?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
+                  initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
                   constructDescription:
                       (item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
@@ -541,27 +590,28 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         Localization().getStringEx("panel.common.privacy_title.public",  "Public"),
                   onValueChanged: (value) {
                     setState(() {
-                      _groupDetail?.privacy = value;
+                      _group?.privacy = value;
                     });
                   }
               )
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
-            child:Text(
-              Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
-              style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
-            ),),
+          )),
+          Semantics(
+            explicitChildNodes: true,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
+              child:Text(
+                Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+                style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
+            ),)),
           Container(height: 8,)
       ],));
   }
   //
-
   //Membership
   Widget _buildMembershipLayout(){
-    int questionsCount = _groupDetail?.membershipQuest?.questions?.length ?? 0;
+    int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      "$questionsCount Questions" :
+      (questionsCount.toString() + Localization().getStringEx("panel.groups_create.tags.label.question","Questions")) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
@@ -571,13 +621,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         child: Column( children: <Widget>[
           _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
           Container(height: 12,),
-          _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.steps.title","Membership steps"),
-            description: Localization().getStringEx("panel.groups_settings.membership.button.steps.description","Share the steps someone will take to become a member."),
-            onTap: _onTapMembershipSteps),
-          Container(height: 10,),
-          _buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
-            description: questionsDescription,
-            onTap: _onTapMembershipQuestion),
+          Semantics(
+            explicitChildNodes: true,
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
+              description: questionsDescription,
+              onTap: _onTapMembershipQuestion)),
           Container(height: 40,),
     ]),);
   }
@@ -628,28 +676,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  void _onTapMembershipSteps(){
-    Analytics.instance.logSelect(target: "Membership Steps");
-    if (_groupDetail.membershipQuest == null) {
-      _groupDetail.membershipQuest = GroupMembershipQuest();
-    }
-    if (_groupDetail.membershipQuest.steps == null) {
-      _groupDetail.membershipQuest.steps = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipStepsPanel(steps: _groupDetail.membershipQuest.steps,)));
-  }
-
   void _onTapMembershipQuestion(){
     Analytics.instance.logSelect(target: "Membership Question");
-    if (_groupDetail.membershipQuest == null) {
-      _groupDetail.membershipQuest = GroupMembershipQuest();
+    if (_group.questions == null) {
+      _group.questions = [];
     }
-    if (_groupDetail.membershipQuest.questions == null) {
-      _groupDetail.membershipQuest.questions = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _groupDetail.membershipQuest.questions,))).then((_){
-      setState(() {
-      });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.questions,))).then((dynamic questions){
+      if(questions is List<GroupMembershipQuestion>){
+        _group.questions = questions;
+      }
+      setState(() {});
     });
   }
 
@@ -660,13 +696,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-          ScalableSmallRoundedButton(
+          ScalableRoundedButton(
             label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
             backgroundColor: Colors.white,
             borderColor: Styles().colors.fillColorSecondary,
             textColor: Styles().colors.fillColorPrimary,
             onTap: _onUpdateTap,
-//            height: 48,
           ),
           Visibility(visible: _loading,
             child: Container(
@@ -687,18 +722,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _loading = true;
     });
-    Groups().updateGroup(_groupDetail).then((detail){
-      if(detail!=null){
-        //ok
-        setState(() {
-          _loading = false;
-        });
+    Groups().updateGroup(_group).then((_){
+      setState(() {
+        _loading = false;
+      });
 
-        Navigator.pop(context);
-      } else {
-        AppAlert.showDialogResult(context, "Unable to update group"); //TBD localize
-      }
+      Navigator.pop(context);
     }).catchError((e){
+      AppAlert.showDialogResult(context, Localization().getStringEx("panel.groups_create.tags.label.update_error", "Unable to update the group"));
       //error
       setState(() {
         _loading = false;
@@ -706,18 +737,18 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
   //
-
   // Common
   Widget _buildInfoHeader(String title, String description,{double topPadding = 24}){
     return Container(
         padding: EdgeInsets.only(bottom: 8, top:topPadding),
         child:
-        Column(
+        Semantics(
+        container: true,
+        child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Semantics(
               label: title,
-              hint: title,
               header: true,
               excludeSemantics: true,
               child:
@@ -734,8 +765,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
               ),
             )
-          ],)
-
+          ],))
     );
   }
 
@@ -754,7 +784,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Expanded(child:
               Semantics(
                 label: title,
-                hint: title,
                 header: true,
                 excludeSemantics: true,
                 child:
@@ -765,20 +794,206 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               ),
             )
           ],)
-
     );
   }
 
   void onNameChanged(String name){
-    _groupDetail.title = name;
+    _group.title = name;
     validateName(name);
   }
 
   void validateName(String name){
-    //TBD
+    //TBD name validation hook
     List<String> takenNames = ["test","test1"];
     setState(() {
       _nameIsValid = !(takenNames?.contains(name)??false);
+    });
+  }
+}
+
+class _AddImageWidget extends StatefulWidget {
+  @override
+  _AddImageWidgetState createState() => _AddImageWidgetState();
+}
+
+class _AddImageWidgetState extends State<_AddImageWidget> {
+  var _imageUrlController = TextEditingController();
+
+  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
+  bool _showProgress = false;
+
+  _AddImageWidgetState();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _imageUrlController.dispose();
+    super.dispose();
+  }
+
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Styles().colors.fillColorPrimary,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 10),
+                    child: Text(
+                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: Styles().fontFamilies.medium,
+                          fontSize: 24),
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: _onTapCloseImageSelection,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10, top: 10),
+                      child: Text(
+                        '\u00D7',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 50),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: TextFormField(
+                              controller: _imageUrlController,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
+                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                              ))),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
+                              textColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapUseUrl)),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(10),
+                              child: RoundedButton(
+                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                                  borderColor: Styles().colors.fillColorSecondary,
+                                  backgroundColor: Styles().colors.background,
+                                  textColor: Styles().colors.fillColorPrimary,
+                                  onTap: _onTapChooseFromDevice)),
+                          _showProgress ? AppProgressIndicator.create() : Container(),
+                        ],
+                      ),
+                    ]))
+          ],
+        ));
+  }
+
+  void _onTapCloseImageSelection() {
+    Analytics.instance.logSelect(target: "Close image selection");
+    Navigator.pop(context, "");
+  }
+
+  void _onTapUseUrl() {
+    Analytics.instance.logSelect(target: "Use Url");
+    String url = _imageUrlController.value.text;
+    if (url == "") {
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
+      return;
+    }
+
+    bool isReadyUrl = url.endsWith(".webp");
+    if (isReadyUrl) {
+      //ready
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      Navigator.pop(context, url);
+    } else {
+      //we need to process it
+      setState(() {
+        _showProgress = true;
+      });
+
+      Future<ImagesResult> result =
+      ImageService().useUrl(_imageType, url);
+      result.then((logicResult) {
+        setState(() {
+          _showProgress = false;
+        });
+
+
+        ImagesResultType resultType = logicResult.resultType;
+        switch (resultType) {
+          case ImagesResultType.CANCELLED:
+          //do nothing
+            break;
+          case ImagesResultType.ERROR_OCCURRED:
+            AppToast.show(logicResult.errorMessage);
+            break;
+          case ImagesResultType.SUCCEEDED:
+          //ready
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+            Navigator.pop(context, logicResult.data);
+            break;
+        }
+      });
+    }
+  }
+
+  void _onTapChooseFromDevice() {
+    Analytics.instance.logSelect(target: "Choose From Device");
+
+    setState(() {
+      _showProgress = true;
+    });
+
+    Future<ImagesResult> result =
+    ImageService().chooseFromDevice(_imageType);
+    result.then((logicResult) {
+      setState(() {
+        _showProgress = false;
+      });
+
+      ImagesResultType resultType = logicResult.resultType;
+      switch (resultType) {
+        case ImagesResultType.CANCELLED:
+        //do nothing
+          break;
+        case ImagesResultType.ERROR_OCCURRED:
+          AppToast.show(logicResult.errorMessage);
+          break;
+        case ImagesResultType.SUCCEEDED:
+        //ready
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+          Navigator.pop(context, logicResult.data);
+          break;
+      }
     });
   }
 }

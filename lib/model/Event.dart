@@ -243,6 +243,168 @@ class Event with Explore implements Favorite {
     };
   }
 
+  //add only not null values
+  Map<String, dynamic> toNotNullJson(){
+    Map<String, dynamic> result = Map();
+    if(id!=null) {
+      result["id"]= id;
+    }
+    if(title!=null) {
+      result["title"] = title;
+    }
+    if(subTitle!=null) {
+      result["subTitle"] = subTitle;
+    }
+    if(shortDescription!=null) {
+      result["shortDescription"] = shortDescription;
+    }
+    if(longDescription!=null) {
+      result["longDescription"] = longDescription;
+    }
+    if(imageURL!=null) {
+      result["imageURL"] = imageURL;
+    }
+    if(placeID!=null) {
+      result["placeID"] = placeID;
+    }
+    if(location!=null) {
+      Map<String, dynamic> locationJson = Map();
+      if(location.locationId!=null) {
+        locationJson["locationId"] = location.locationId;
+      }
+      if(location.name!=null) {
+        locationJson["name"] = location.name;
+      }
+      if(location.building!=null) {
+        locationJson["building"] = location.building;
+      }
+      if(location.address!=null) {
+        locationJson["address"] = location.address;
+      }
+      if(location.city!=null) {
+        locationJson[ "city"] = location.city;
+      }
+      if(location.state!=null){
+      locationJson["state"]= location.state;
+      }
+      if(location.zip!=null){
+      locationJson[ "zip"]= location.zip;
+      }
+      if(location.latitude!=null){
+      locationJson["latitude"]= location.latitude;
+      }
+      if(location.longitude!=null){
+      locationJson["longitude"]= location.longitude;
+      }
+      if(location.floor!=null){
+      locationJson["floor"]= location.floor;
+      }
+      if(location.description!=null){
+      locationJson["description"]= location.description;
+      }
+
+      result["location"] = locationJson;
+    }
+
+    if(eventId!=null) {
+      result["eventId"] = eventId;
+    }
+    if(startDateString!=null) {
+      result["startDate"] = startDateString;
+    }
+    if(startDateLocal!=null) {
+      result["startDateLocal"] = AppDateTime().formatDateTime(
+          startDateLocal, format: AppDateTime.iso8601DateTimeFormat,
+          ignoreTimeZone: true);
+    }
+    if(endDateString!=null) {
+      result["endDate"] = endDateString;
+    }
+    if(endDateLocal!=null) {
+      result["endDateLocal"] = AppDateTime().formatDateTime(
+          endDateLocal, format: AppDateTime.iso8601DateTimeFormat,
+          ignoreTimeZone: true);
+    }
+    if(category!=null) {
+      result["category"] = category;
+    }
+    if(subCategory!=null) {
+      result["subCategory"] = subCategory;
+    }
+    if(sponsor!=null) {
+      result["sponsor"] = sponsor;
+    }
+    // Required for CreateEvent
+    if(titleUrl!=null) {
+      result["titleURL"]= titleUrl;
+    }
+    if(targetAudience!=null) {
+      result["targetAudience"] = targetAudience;
+    }
+    if(icalUrl!=null) {
+      result["icalUrl"] = icalUrl;
+    }
+    if(outlookUrl!=null) {
+      result["outlookUrl"] = outlookUrl;
+    }
+    if(speaker!=null) {
+      result["speaker"] = speaker;
+    }
+    if(registrationLabel!=null) {
+      result["registrationLabel"] = registrationLabel;
+    }
+    if(registrationUrl!=null) {
+      result["registrationUrl"] = registrationUrl;
+    }
+    if(cost!=null) {
+      result["cost"] = cost;
+    }
+    if(contacts!=null && contacts.isNotEmpty) {
+      result["contacts"] = _encodeContacts();
+    }
+    if(tags!=null) {
+      result["tags"] = tags;
+    }
+    if(modifiedDate!=null) {
+      result["modifiedDate"] = AppDateTime().formatDateTime(modifiedDate, ignoreTimeZone: true);
+    }
+    if(submissionResult!=null) {
+      result["submissionResult"] = submissionResult;
+    }
+    if(allDay!=null) {
+      result["allDay"] = allDay;
+    }
+    if(recurringFlag!=null) {
+      result["recurringFlag"] = recurringFlag;
+    }
+    if(recurrenceId!=null) {
+      result["recurrenceId"] = recurrenceId;
+    }
+    if(isRecurring && AppCollection.isCollectionNotEmpty(recurringEvents)) {
+      result["recurringEvents"] = _encodeRecurringEvents();
+    }
+    if(convergeScore!=null) {
+      result["converge_score"] = convergeScore;
+    }
+    if(convergeUrl!=null) {
+      result["converge_url"] = convergeUrl;
+    }
+    if(isSuperEvent!=null) {
+      result["isSuperEvent"] = isSuperEvent;
+    }
+    if(subEventsMap!=null) {
+      result["subEvents"] = subEventsMap;
+    }
+    if(track!=null) {
+      result["track"] = track;
+    }
+    if(isVirtual!=null) {
+      result['isVirtual']= isVirtual;
+    }
+
+    return result;
+  }
+
   static bool canJson(Map<String, dynamic> json) {
     return (json != null) && (json['eventId'] != null);
   }

@@ -23,8 +23,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
 
-import 'GroupAdminPanel.dart';
-
 class GroupCreatePostPanel extends StatefulWidget{
   
   final String groupId;
@@ -37,7 +35,7 @@ class GroupCreatePostPanel extends StatefulWidget{
 }
 
 class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
-  GroupMember _member;
+  Member _member;
   
   TextEditingController _postController = new TextEditingController();
 
@@ -75,7 +73,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                         button: true,
                         excludeSemantics: true,
                         child: IconButton(
-                            icon: Image.asset('images/icon-circle-close.png'),
+                            icon: Image.asset('images/icon-circle-close.png', excludeFromSemantics: true,),
                             onPressed: _onTapBack)),
                     title: Text(
                       Localization().getStringEx('panel.group_create_post.label.title', 'New Post'),
@@ -96,20 +94,28 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                                 alignment: Alignment.center,
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 child: Text(Localization().getStringEx('panel.group_create_post.label.post', 'Post'),
-                                  style: TextStyle(color: _postEnabled?Styles().colors.white : Styles().colors.disabledTextColorTwo, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold,),)),
+                                  style: TextStyle(
+                                    color: _postEnabled?Styles().colors.white : Styles().colors.disabledTextColorTwo,
+                                      fontSize: 16,
+                                      fontFamily: Styles().fontFamilies.semiBold,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Styles().colors.fillColorSecondary,
+                                      decorationThickness: 1,
+                                      decorationStyle: TextDecorationStyle.solid
+                                  ),)),
                               onTap: _onTapPost))
                     ],
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate([
-                      Column(
-                        children: [
-                          Container(height: 12,),
-                          _buildEventInfo(),
-                          _buildUserInfo(),
-                          _buildPostField()
-                        ],
-                      )
+                      Semantics(
+                        explicitChildNodes: true,
+                        child: Column(
+                          children: [
+                            _buildEventInfo(),
+                            _buildPostField()
+                          ],
+                        ))
                     ]),
                   )
                 ],
@@ -122,41 +128,30 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
   }
 
   Widget _buildEventInfo(){
-    return EventContent(event: widget.groupEvent);
-  }
-
-  Widget _buildUserInfo(){
-    String imageUrl = _member?.photoURL ?? "";
-    String name = _member?.name ?? "";
-    String officerTitle = _member?.officerTitle ?? "";
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        imageUrl==null? Container():
-        Container(height: 32, width: 32,
+    return
+      Container(
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(image:NetworkImage(imageUrl), fit: BoxFit.cover),
+            color: Styles().colors.white,
+            boxShadow: [
+              BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2)),
+            ],
           ),
-        ),
-        Expanded(child: Padding(padding:EdgeInsets.only(left: 8) , child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Padding(padding: EdgeInsets.only(bottom: 2), child:
-          Text(name??"", style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary),),
-          ),
-          Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 2), child:
-            Image.asset('images/icon-badge.png'),
+          padding: EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.only(bottom: 8,right: 25), child:
+              Text(widget.groupEvent?.title??"",  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
             ),
-            Text(officerTitle, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 10, color: Styles().colors.fillColorPrimary),),
-          ],)
-        ],),),),
-      ],),
-    );
+            Row(children: <Widget>[
+              Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true,),),
+              Expanded(
+                child: Text(widget.groupEvent?.timeDisplayString??"",  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
+              )
+            ],)
+      ]));
   }
 
   Widget _buildPostField(){
-    String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "");
+    String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "Write a comment");
     String fieldHint = Localization().getStringEx("panel.group_create_post.post.field.hint", "");
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -191,14 +186,13 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
         if(success){
           Navigator.pop(context);
         } else {
-          AppAlert.showDialogResult(context, "Unable to create post"); //TBD localize
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.group_create_post.post.field.empty",  "Unable to create post"));
         }
       });
 
     } else {
       //Invalid post
     }
-
   }
 
   void _onTapBack() {

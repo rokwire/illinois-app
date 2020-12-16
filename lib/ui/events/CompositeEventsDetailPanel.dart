@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
@@ -27,6 +28,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:location/location.dart' as Core;
 
@@ -48,8 +50,9 @@ class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPage
 
   final Event parentEvent;
   final Core.LocationData initialLocationData;
+  final String browseGroupId;
 
-  CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData});
+  CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
 
   @override
   _CompositeEventsDetailPanelState createState() =>
@@ -67,6 +70,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   static final double _horizontalPadding = 24;
 
   Core.LocationData _locationData;
+  bool              _addToGroupInProgress = false;
 
   @override
   void initState() {
@@ -151,6 +155,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                                           ),
                                           _exploreDescription(),
                                           _buildEventsList(),
+                                          _buildGroupButtons()
                                         ],
                                       ),
                                     ],
@@ -566,6 +571,49 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     } else {
       User().switchFavorite(event);
     }
+  }
+
+  Widget _buildGroupButtons(){
+    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+    Container(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child:
+        Stack(
+          children: [
+            ScalableRoundedButton(
+              label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
+              hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+              backgroundColor: Colors.white,
+              borderColor: Styles().colors.fillColorPrimary,
+              textColor: Styles().colors.fillColorPrimary,
+              onTap: _onTapAddToGroup,
+            ),
+            Visibility(visible: _addToGroupInProgress,
+              child: Container(
+                height: 48,
+                child: Align(alignment: Alignment.center,
+                  child: SizedBox(height: 24, width: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                  ),
+                ),
+              ),
+            ),
+          ],
+        )
+    );
+  }
+
+  void _onTapAddToGroup() {
+    Analytics.instance.logSelect(target: "Add To Group");
+    setState(() {
+      _addToGroupInProgress = true;
+    });
+    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget?.parentEvent?.id).then((value){
+      setState(() {
+        _addToGroupInProgress = true;
+      });
+      Navigator.pop(context);
+    });
   }
 
   // NotificationsListener

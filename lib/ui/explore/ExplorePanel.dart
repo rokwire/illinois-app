@@ -72,8 +72,9 @@ class _ExploreSortKey extends OrdinalSortKey {
 class ExplorePanel extends StatefulWidget {
 
   final _PanelData _data = _PanelData();
+  final String browseGroupId;
 
-  ExplorePanel({ExploreTab initialTab = ExploreTab.Events, ExploreFilter initialFilter, bool showHeaderBack = true, bool showTabBar = true }){
+  ExplorePanel({ExploreTab initialTab = ExploreTab.Events, ExploreFilter initialFilter, bool showHeaderBack = true, bool showTabBar = true,  this.browseGroupId }){
     _data._selectedTab = initialTab;
     _data._showHeaderBack = showHeaderBack;
     _data._selectedFilter = initialFilter;
@@ -1099,7 +1100,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     if (event?.isComposite ?? false) {
       Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, initialLocationData: _locationData,)));
+          context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event, initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)));
     }
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1107,7 +1108,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
+          ExploreDetailPanel(explore: explore,initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)));
     }
   }
 
