@@ -274,7 +274,7 @@ class Groups /* with Service */ {
 
 
 // Events
-  Future<List<dynamic>> loadEventIds(String groupId, {int limit = -1}) async{
+  Future<List<dynamic>> loadEventIds(String groupId) async{
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/group/$groupId/events';
       try {
@@ -283,11 +283,7 @@ class Groups /* with Service */ {
           //Successfully loaded ids
           String responseBody = response?.body;
           List<dynamic> eventIdsJson = (response != null) ? jsonDecode(responseBody) : null;
-          if(AppCollection.isCollectionNotEmpty(eventIdsJson)){
-            //limit the result count
-            List visibleIds = (limit>0 && eventIdsJson.length>limit)? eventIdsJson.sublist(0,limit) : eventIdsJson;
-            return visibleIds;
-          }
+          return eventIdsJson;
         }
       } catch (e) {
         print(e);
@@ -297,9 +293,14 @@ class Groups /* with Service */ {
   }
 
   Future<List<GroupEvent>> loadEvents(String groupId, {int limit = -1}) async {
-    List<dynamic> eventIds = await loadEventIds(groupId, limit: limit);
+    List<dynamic> eventIds = await loadEventIds(groupId);
     List<Event> events = AppCollection.isCollectionNotEmpty(eventIds)? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
-    return events?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
+    if(AppCollection.isCollectionNotEmpty(events)){
+      //limit the result count // limit available events
+      List<Event> visibleEvents = (limit>0 && events.length>limit)? events.sublist(0,limit) : events;
+      return visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
+    }
+    return null;
   }
 
   Future<bool> linkEventToGroup({String groupId, String eventId}) async {

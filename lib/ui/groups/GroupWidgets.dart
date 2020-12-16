@@ -577,22 +577,24 @@ class _EventContent extends StatelessWidget {
                     showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
                   },
                 ),
-                RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-leave-group.png",
-                  label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete Event"),
-                  onTap: (){
-                    showDialog(context: context, builder: (context)=>_buildDeleteEventDialog(context)).then((value) => Navigator.pop(context));
-                  },
-                ),
-                RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-edit.png",
-                  label:Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
-                  onTap: (){
-                    _onEditEventTap(context);
-                  },
-                ),
+                !_canDelete? Container():
+                  RibbonButton(
+                    height: null,
+                    leftIcon: "images/icon-leave-group.png",
+                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete Event"),
+                    onTap: (){
+                      showDialog(context: context, builder: (context)=>_buildDeleteEventDialog(context)).then((value) => Navigator.pop(context));
+                    },
+                  ),
+                !_canEdit? Container():
+                  RibbonButton(
+                    height: null,
+                    leftIcon: "images/icon-edit.png",
+                    label:Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+                    onTap: (){
+                      _onEditEventTap(context);
+                    },
+                  ),
               ],
             ),
           );
@@ -629,5 +631,13 @@ class _EventContent extends StatelessWidget {
   void _onEditEventTap(BuildContext context){
     Analytics().logPage(name: "Create Event");
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group,)));
+  }
+
+  bool get _canEdit{
+    return false; //TBD
+  }
+
+  bool get _canDelete{
+    return false; //TBD
   }
 }

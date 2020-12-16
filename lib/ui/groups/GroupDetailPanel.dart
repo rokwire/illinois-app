@@ -63,6 +63,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   bool               _loading = false;
   bool               _cancelling = false;
   bool               _leaving = false;
+  bool               _updatingEvents = false;
   List<GroupEvent>   _groupEvents;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
@@ -102,9 +103,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   @override
   void initState() {
     super.initState();
-
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
-
     _loadGroup();
     _loadEvents();
   }
@@ -135,11 +134,15 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _loadEvents(){
+    setState(() {
+      _updatingEvents = true;
+    });
     Groups().loadEvents(widget.groupId, limit: 3).then((List<GroupEvent> events) {
       if (mounted) {
         setState(() {
           _groupEvents = events;
           _applyStepEvents(events);
+          _updatingEvents = false;
         });
       }
     });
@@ -500,19 +503,22 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildEvents() {
     List<Widget> content = [];
-    if(_isAdmin){
-      content.add(_buildAdminEventOptions());
-    }
 
-    if (_groupEvents != null) {
-      for (GroupEvent groupEvent in _groupEvents) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
+      if (_isAdmin) {
+        content.add(_buildAdminEventOptions());
       }
-    }
 
-    content.add(Padding(padding: EdgeInsets.only(top: 16), child:
+      if (_groupEvents != null) {
+        for (GroupEvent groupEvent in _groupEvents) {
+          content.add(GroupEventCard(
+              groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
+        }
+      }
+
+      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
       ScalableSmallRoundedButton(
-          label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+          label: Localization().getStringEx(
+              "panel.group_detail.button.all_events.title", 'See all events'),
           widthCoeficient: 2,
           backgroundColor: Styles().colors.white,
           textColor: Styles().colors.fillColorPrimary,
@@ -521,17 +527,26 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           borderColor: Styles().colors.fillColorSecondary,
           borderWidth: 2,
-          onTap:() {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group,)));
+          onTap: () {
+            Navigator.push(context, CupertinoPageRoute(
+                builder: (context) => GroupAllEventsPanel(group: _group,)));
           }
-    )));
+      )));
 
-    return Column(
-      children: <Widget>[
-        SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') +' (${_groupEvents?.length ?? 0})',
-          iconPath: 'images/icon-calendar.png',
-          children: content,),
-      ]);
+      return
+        Stack(children: [
+          Column(
+            children: <Widget>[
+             SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') +' (${_groupEvents?.length ?? 0})',
+               iconPath: 'images/icon-calendar.png',
+                children: content,),
+           ]),
+          _updatingEvents?
+            Center(child:
+              Container(padding: EdgeInsets.symmetric(vertical: 50),
+                child:CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ),)) :
+            Container(),
+        ],);
   }
 
   Widget _buildAdminEventOptions(){
@@ -569,18 +584,23 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     onTap:_onTapBrowseEvents
                 ),
               ),
-              Container(width: 16,),
-              Expanded(child:
-                ScalableRoundedButton(
-                  label:  Localization().getStringEx("panel.group_detail.button.create_event.title",  "Create event"),
-                  backgroundColor: Styles().colors.white,
-                  textColor: Styles().colors.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies.bold,
-                  fontSize: 16,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  borderWidth: 2,
-                  onTap: _onTapCreateEvent,
-                  showAdd: true,),
+              Visibility(
+                visible: _canCreateEvent,
+                child: Container(width: 16,)),
+              Visibility(
+                visible: _canCreateEvent,
+                child: Expanded(child:
+                  ScalableRoundedButton(
+                    label:  Localization().getStringEx("panel.group_detail.button.create_event.title",  "Create event"),
+                    backgroundColor: Styles().colors.white,
+                    textColor: Styles().colors.fillColorPrimary,
+                    fontFamily: Styles().fontFamilies.bold,
+                    fontSize: 16,
+                    borderColor: Styles().colors.fillColorSecondary,
+                    borderWidth: 2,
+                    onTap: _onTapCreateEvent,
+                    showAdd: true,),
+                )
               )
             ],
           ),
@@ -893,6 +913,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   void _onTapBrowseEvents(){
     Analytics().logPage(name: "Browse Events");
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+  }
+
+  bool get _canCreateEvent{
+    return false; //TBD
   }
 }
 
