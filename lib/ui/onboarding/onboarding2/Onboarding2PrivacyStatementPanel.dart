@@ -153,7 +153,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
 
   void _goNext(BuildContext context) {
-    //TBD
+    Onboarding().finish(context);
   }
 
   void _goBack(BuildContext context) {
