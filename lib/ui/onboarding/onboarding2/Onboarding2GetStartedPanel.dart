@@ -16,96 +16,93 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboadring2RolesPanel.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 
 class Onboarding2GetStartedPanel extends StatelessWidget {
-  
-  final Map<String, dynamic> onboardingContext;
-  Onboarding2GetStartedPanel({this.onboardingContext});
+  Onboarding2GetStartedPanel();
 
   @override
   Widget build(BuildContext context) {
     
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
-    String strWelcome = Localization().getStringEx(
-        'panel.onboarding2.get_started.image.welcome.title',
-        'Welcome to Illinois');
-    String strPersonalizedRecommendations = Localization().getStringEx(
-        'panel.onboarding2.get_started.label.personalized_recommendations',
-        'Get personalized recommendations for the');
-    String strUniversityofIllinois = Localization().getStringEx(
-        'panel.onboarding2.get_started.label.university_of_illinois',
-        'University of Illinois');
-
-    return Scaffold(body: SwipeDetector(
-        onSwipeLeft: () => _goNext(context),
-        child: Column(children: <Widget>[
-          Expanded(child:
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: <Widget>[
-              Image.asset('images/splash_image.png', fit: BoxFit.cover, semanticLabel: strWelcome,
-                height: double.infinity,
-                width: double.infinity,),
-              Column(children: <Widget>[
-                Expanded(child: Container(),),
-                Padding(
-                padding: EdgeInsets.all(24),
-                        child: Column(
-                          children: <Widget>[
-                            Semantics(
-                                label:
-                                "$strPersonalizedRecommendations $strUniversityofIllinois",
-                                excludeSemantics: true,
-                                child: Column(children: <Widget>[
-                                  Text(
-                                    strPersonalizedRecommendations,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontFamily: Styles().fontFamilies.medium,
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    strUniversityofIllinois,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ])
+    return Scaffold(body: SafeArea(child:
+            Container(
+              color: Styles().colors.background,
+              child:ScalableScrollView(
+              scrollableChild: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Onboarding2TitleWidget(title: "A smart campus in your pocket.",),
+                  Container(height: 14,),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text("From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontFamily: Styles().fontFamilies.regular,
+                            fontSize: 16,
+                            color: Styles().colors.fillColorPrimary,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: ScalableRoundedButton(
-                                label: Localization().getStringEx(
-                                    'panel.onboarding2.get_started.button.get_started.title',
-                                    'Get Started'),
-                                hint: Localization().getStringEx(
-                                    'panel.onboarding2.get_started.button.get_started.hint',
-                                    ''),
-                                backgroundColor: Styles().colors.fillColorPrimary,
-                                textColor: Styles().colors.white,
-                                onTap: () => _goNext(context),
-                                borderColor: Styles().colors.fillColorPrimary,
-                                secondaryBorderColor: Styles().colors.white,
-                              ),
-                            )
-                          ],
-              ))
-              ],)
-            ]))],) ));
+                    ),
+                  ),
+              ]),
+              bottomNotScrollableWidget:
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ScalableRoundedButton(
+                      label: 'Continue',
+                      hint: '',
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.white,
+                      textColor: Styles().colors.fillColorPrimary,
+                      onTap: () => _onGoNext(context),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Analytics.instance.logSelect(target: 'Returning User') ;
+                        _onReturningUser(context);
+                      },
+                      child: Semantics(
+                          label: "Returning user?",
+                          hint: '',
+                          button: true,
+                          excludeSemantics: true,
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                "Returning user?",
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontSize: 16,
+                                    color: Styles().colors.fillColorPrimary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Styles().colors.fillColorSecondary,
+                                    decorationThickness: 1,
+                                    decorationStyle:
+                                    TextDecorationStyle.solid),
+                              ))),
+                    )
+                  ],
+                ),
+              ),
+            )))
+    );
   }
 
-  void _goNext(BuildContext context) {
+  void _onReturningUser(BuildContext context){
+
+  }
+
+  void _onGoNext(BuildContext context) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
   }
 }

@@ -27,6 +27,8 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
+import 'Onboarding2Widgets.dart';
+
 class Onboarding2RolesPanel extends StatefulWidget{
   Onboarding2RolesPanel();
 
@@ -51,16 +53,21 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   Widget build(BuildContext context) {
     final double gridSpacing = 5;
     return Scaffold(
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors.background,
       body: SafeArea(child: Column( children: <Widget>[
-        Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
+        Container(
+          color: Styles().colors.white,
+          padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Row(children: <Widget>[
-            OnboardingBackButton(padding: const EdgeInsets.only(left: 10,),
+            Onboarding2BackButton(padding: const EdgeInsets.only(left: 10,),
                 onTap:() {
                   Analytics.instance.logSelect(target: "Back");
                   Navigator.pop(context);
                 }),
-            Expanded(child: Column(children: <Widget>[
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
               Semantics(
                 label: Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who are you?').toLowerCase(),
                 hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
@@ -69,16 +76,15 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                   style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
                 ),
               ),
-              Padding(padding: EdgeInsets.only(top: 8),
-                child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
-                ),
-              )
             ],),),
             Padding(padding: EdgeInsets.only(left: 42),),
           ],),
         ),
-
+        Padding(padding: EdgeInsets.symmetric(horizontal: 36, vertical: 6),
+          child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.'),
+            style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
+          ),
+        ),
         Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child: Column(children: <Widget>[
@@ -176,17 +182,17 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
          Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20),
           child: Stack(children:<Widget>[
             ScalableRoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Explore Illinois'),
+                label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
                 enabled: _allowNext,
-                backgroundColor: (Styles().colors.background),
+                backgroundColor: (Styles().colors.white),
                 borderColor: (_allowNext
                     ? Styles().colors.fillColorSecondary
                     : Styles().colors.fillColorPrimaryTransparent03),
                 textColor: (_allowNext
                     ? Styles().colors.fillColorPrimary
                     : Styles().colors.fillColorPrimaryTransparent03),
-                onTap: () => _onExploreClicked()),
+                onTap: () => _onGoNext()),
             Visibility(
               visible: _updating,
               child: Container(
@@ -225,7 +231,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     }
   }
 
-  void _onExploreClicked() {
+  void _onGoNext() {
     Analytics.instance.logSelect(target:"Continue");
     if (_selectedRoles != null && _selectedRoles.isNotEmpty && !_updating) {
       User().roles = _selectedRoles;

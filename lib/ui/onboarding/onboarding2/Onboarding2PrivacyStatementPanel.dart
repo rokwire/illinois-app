@@ -22,8 +22,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+
+import 'Onboarding2Widgets.dart';
 
 class Onboarding2PrivacyStatementPanel extends StatefulWidget{
 
@@ -59,12 +60,13 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy');
-    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.');
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy.label.title', 'Privacy in your hands. Not ours.');
+    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy.label.title2', ' Not ours.');
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy.label.description', 'Tell us how custom you want your experience to be.');
 
     double headingWidth = MediaQuery.of(context).size.width;
     double headingHeight = _headingHeight ?? 0;
-    double lockSize = headingHeight * 0.5;
+    double lockSize = headingHeight * 0.7;
     if (headingHeight == 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _evalHeadingSize();
@@ -82,32 +84,32 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Stack(children: <Widget>[
-                      Image.asset("images/privacy-header.png", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true, ),
                       Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
                       Image.asset("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),
                       ),
-                      OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                      Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 37, right: 20, bottom: 20),
                           onTap:() {
                             Analytics.instance.logSelect(target: "Back");
                             _goBack(context);
                           }),
                     ],),
                     Semantics(
-                      label: titleText,
-                      hint: Localization().getStringEx('panel.onboarding.privacy.label.title.hint', ''),
+                      label: titleText + titleText2,
+                      hint: Localization().getStringEx('panel.onboarding2.privacy.label.title.hint', ''),
                       excludeSemantics: true,
                       child: Padding(
                           padding: EdgeInsets.only(
-                              left: 40, right: 40, top: 21, bottom: 12),
+                              left: 40, right: 40, top: 12, bottom: 12),
                           child: Align(
                             alignment: Alignment.center,
-                            child: Text(
-                              titleText,
+                            child: RichText(
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.bold,
-                                  fontSize: 32,
-                                  color: Styles().colors.fillColorPrimary),
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(text:titleText , style: TextStyle(color: Styles().colors.textSurface, fontSize: 32, fontWeight: FontWeight.w700,)),
+                                  TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.textSurface, fontSize: 32, fontWeight: FontWeight.w400,)),
+                                ]
+                              )
                             ),
                           )),
                     ),
@@ -123,7 +125,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies.regular,
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     color: Styles().colors.fillColorPrimary),
                               )),
                         )),
@@ -134,12 +136,21 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Container(height: 16,),
+                    Text(
+                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "The more you customize—like events you save, teams you follow—the more tailored your experience."),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies.regular,
+                          fontSize: 16,
+                          color: Styles().colors.fillColorPrimary),
+                    ),
                     Padding(
                       padding: EdgeInsets.only(
-                          bottom: 24),
+                          bottom: 24, top: 16),
                       child: ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
-                        hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
+                        label: Localization().getStringEx('panel.onboarding2.privacy.button.continue.title', 'Set Your Privacy Level'),
+                        hint: Localization().getStringEx('panel.onboarding2.privacy.button.continue.hint', ''),
                         backgroundColor: Styles().colors.background,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         textColor: Styles().colors.fillColorPrimary,
