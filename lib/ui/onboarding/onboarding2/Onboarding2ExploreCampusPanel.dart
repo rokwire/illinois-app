@@ -27,6 +27,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:path/path.dart';
 
+import 'Onboarding2PersonalizePanel.dart';
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2ExploreCampusPanel extends StatefulWidget{
@@ -109,10 +110,13 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               left: 17, right: 17, top: 0, bottom: 12),
                           child: Align(
                               alignment: Alignment.center,
-                              child: Text(titleText, style: TextStyle(
-                                color: Styles().colors.textSurface,
-                                fontSize: 32,
-                                fontWeight: FontWeight.w700,))
+                              child: Text(
+                                titleText,
+                                style: TextStyle(
+                                    color: Styles().colors.textSurface,
+                                    fontSize: 28,
+                                    fontFamily: Styles().fontFamilies.bold
+                              ))
                           ),
                         )),
                     Semantics(
@@ -225,7 +229,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   }
 
   void _goNext(BuildContext context) {
-    Onboarding().finish(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PersonalizePanel()));
   }
 
   void _goBack(BuildContext context) {
