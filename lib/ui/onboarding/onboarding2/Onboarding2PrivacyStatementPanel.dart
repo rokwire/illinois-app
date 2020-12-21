@@ -19,7 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2ExploreCampusPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
@@ -34,23 +34,9 @@ class Onboarding2PrivacyStatementPanel extends StatefulWidget{
 
 class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacyStatementPanel> {
 
-  GlobalKey _headingKey = GlobalKey();
-  double _headingHeight;
-
   @override
   void initState() {
     super.initState();
-  }
-
-  void _evalHeadingSize() {
-    try {
-      final RenderObject renderBox = _headingKey?.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
-        setState(() { _headingHeight = renderBox.size?.height; });
-      }
-    } on Exception catch (e) {
-      print(e.toString());
-    }
   }
 
   @override
@@ -64,15 +50,6 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
     String titleText2 = Localization().getStringEx('panel.onboarding2.privacy.label.title2', ' Not ours.');
     String descriptionText = Localization().getStringEx('panel.onboarding2.privacy.label.description', 'Tell us how custom you want your experience to be.');
 
-    double headingWidth = MediaQuery.of(context).size.width;
-    double headingHeight = _headingHeight ?? 0;
-    double lockSize = headingHeight * 0.7;
-    if (headingHeight == 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _evalHeadingSize();
-      });
-    }
-
     return Scaffold(
         backgroundColor: Styles().colors.background,
         body: SwipeDetector(
@@ -83,16 +60,14 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
               scrollableChild:Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Stack(children: <Widget>[
-                      Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
-                      Image.asset("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),
-                      ),
-                      Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 37, right: 20, bottom: 20),
+                    Row(children: [
+                      Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 37, right: 20, bottom: 8),
                           onTap:() {
                             Analytics.instance.logSelect(target: "Back");
                             _goBack(context);
                           }),
                     ],),
+                    Image.asset("images/lock_illustration.png", excludeFromSemantics: true, ),
                     Semantics(
                       label: titleText + titleText2,
                       hint: Localization().getStringEx('panel.onboarding2.privacy.label.title.hint', ''),
@@ -164,7 +139,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
 
   void _goNext(BuildContext context) {
-    Onboarding().finish(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ExploreCampusPanel()));
   }
 
   void _goBack(BuildContext context) {
