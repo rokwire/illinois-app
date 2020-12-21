@@ -46,7 +46,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding2.privacy.label.title', 'Privacy in your hands. Not ours.');
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy.label.title', 'Privacy in your hands.');
     String titleText2 = Localization().getStringEx('panel.onboarding2.privacy.label.title2', ' Not ours.');
     String descriptionText = Localization().getStringEx('panel.onboarding2.privacy.label.description', 'Tell us how custom you want your experience to be.');
 
