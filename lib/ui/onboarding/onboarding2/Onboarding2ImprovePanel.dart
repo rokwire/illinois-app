@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2PrivacyPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -241,7 +242,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
   }
 
   void _goNext(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyPanel()));
   }
 
   void _goBack(BuildContext context) {

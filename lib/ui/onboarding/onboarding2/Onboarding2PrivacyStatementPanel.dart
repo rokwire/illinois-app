@@ -46,9 +46,9 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding2.privacy.label.title', 'Privacy in your hands.');
-    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy.label.title2', ' Not ours.');
-    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy.label.description', 'Tell us how custom you want your experience to be.');
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Privacy in your hands.');
+    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', ' Not ours.');
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Tell us how custom you want your experience to be.');
 
     return Scaffold(
         backgroundColor: Styles().colors.background,
@@ -70,7 +70,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                     Image.asset("images/lock_illustration.png", excludeFromSemantics: true, ),
                     Semantics(
                       label: titleText + titleText2,
-                      hint: Localization().getStringEx('panel.onboarding2.privacy.label.title.hint', ''),
+                      hint: Localization().getStringEx('panel.onboarding2.privacy_statement.label.title.hint', ''),
                       excludeSemantics: true,
                       child: Padding(
                           padding: EdgeInsets.only(
@@ -113,7 +113,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   children: <Widget>[
                     Container(height: 16,),
                     Text(
-                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "The more you customize—like events you save, teams you follow—the more tailored your experience."),
+                      Localization().getStringEx("panel.onboarding2.privacy_statement.label.continue.description", "The more you customize—like events you save, teams you follow—the more tailored your experience."),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
@@ -124,8 +124,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                       padding: EdgeInsets.only(
                           bottom: 24, top: 16),
                       child: ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding2.privacy.button.continue.title', 'Set Your Privacy Level'),
-                        hint: Localization().getStringEx('panel.onboarding2.privacy.button.continue.hint', ''),
+                        label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Set Your Privacy Level'),
+                        hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         backgroundColor: Styles().colors.background,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         textColor: Styles().colors.fillColorPrimary,
