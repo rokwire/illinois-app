@@ -199,10 +199,11 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                     ScalableRoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
+                      fontSize: 16,
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       backgroundColor: Styles().colors.white,
                       borderColor: Styles().colors.fillColorSecondaryVariant,
                       textColor: Styles().colors.fillColorPrimary,
-                      padding: EdgeInsets.symmetric(vertical: 13),
                       onTap: () => _goNext(context),
                     )
                   ],

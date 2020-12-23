@@ -126,6 +126,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                       child: ScalableRoundedButton(
                         label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Set Your Privacy Level'),
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         backgroundColor: Styles().colors.background,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         textColor: Styles().colors.fillColorPrimary,

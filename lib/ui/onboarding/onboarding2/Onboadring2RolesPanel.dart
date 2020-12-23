@@ -23,7 +23,6 @@ import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2PrivacyStatementPanel.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
@@ -184,6 +183,8 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             ScalableRoundedButton(
                 label: Localization().getStringEx('panel.onboarding2.roles.button.continue.title', 'Continue'),
                 hint: Localization().getStringEx('panel.onboarding2.roles.button.continue.hint', ''),
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(vertical: 12),
                 enabled: _allowNext,
                 backgroundColor: (Styles().colors.white),
                 borderColor: (_allowNext

@@ -68,8 +68,9 @@ class Onboarding2BackButton extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final GestureTapCallback onTap;
   final String image;
+  final Color color;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left-gray.png'});
+  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left-gray.png', this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +86,7 @@ class Onboarding2BackButton extends StatelessWidget {
             child: Container(
                 height: 32,
                 width: 32,
-                child: Image.asset(image, color: Styles().colors.fillColorSecondary,)
+                child: Image.asset(image, color: this.color ?? Styles().colors.fillColorSecondary,)
             ),
           ),
         )

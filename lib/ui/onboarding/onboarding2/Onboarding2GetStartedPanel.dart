@@ -62,6 +62,8 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                     ScalableRoundedButton(
                       label: 'Continue',
                       hint: '',
+                      fontSize: 16,
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       borderColor: Styles().colors.fillColorSecondary,
                       backgroundColor: Styles().colors.white,
                       textColor: Styles().colors.fillColorPrimary,

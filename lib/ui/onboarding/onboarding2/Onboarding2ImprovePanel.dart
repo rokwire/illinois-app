@@ -215,7 +215,8 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                             backgroundColor: Styles().colors.white,
                             borderColor: Styles().colors.fillColorSecondaryVariant,
                             textColor: Styles().colors.fillColorPrimary,
-                            padding: EdgeInsets.symmetric(vertical: 13),
+                            fontSize: 16,
+                            padding: EdgeInsets.symmetric(vertical: 12),
                             onTap: () => _goNext(context),
                           )
                         ],
