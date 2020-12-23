@@ -17,9 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2PermissionsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -423,6 +426,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }
 
   void _goNext(BuildContext context) {
+    User().privacyLevel = _privacyLevel;
+    Storage().privacyUpdateVersion = Config().appVersion;
+
     if(Onboarding2().getExploreCampusChoice) {
       Navigator.push(context, CupertinoPageRoute(
           builder: (context) => Onboarding2PermissionsPanel()));
