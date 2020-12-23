@@ -20,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
@@ -35,8 +34,6 @@ class Onboarding2PrivacyPanel extends StatefulWidget{
 }
 
 class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
-
-  bool _toggled = false;
 
   @override
   void initState() {
@@ -69,14 +66,46 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Row(children: [
+
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 18),
+                            child: Row(children: [
                             Onboarding2BackButton(padding: const EdgeInsets.only(
-                                left: 17, top: 19, right: 20, bottom: 27),
+                                left: 17, right: 20),
+                                color: Styles().colors.white,
                                 onTap: () {
                                   Analytics.instance.logSelect(target: "Back");
                                   _goBack(context);
                                 }),
-                          ],),
+                            Expanded(child: Container()),
+
+                            GestureDetector(
+                              onTap: () {
+                                Analytics.instance.logSelect(target: 'Skip') ;
+                                _goSkip(context);
+                              },
+                              child: Semantics(
+                                  label: "Skip",
+                                  hint: '',
+                                  button: true,
+                                  excludeSemantics: true,
+                                  child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 0),
+                                      child: Text(
+                                        "Skip",
+                                        style: TextStyle(
+                                            fontFamily: Styles().fontFamilies.regular,
+                                            fontSize: 16,
+                                            color: Styles().colors.white,
+                                            decoration: TextDecoration.underline,
+                                            decorationColor: Styles().colors.fillColorSecondary,
+                                            decorationThickness: 1,
+                                            decorationStyle:
+                                            TextDecorationStyle.solid),
+                                      ))),
+                            ),
+                            Container(width: 16,)
+                          ],)),
                           Semantics(
                               label: titleText,
                               hint: Localization().getStringEx(
@@ -164,23 +193,26 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                     Container(height: 16,),
                     Padding(
                       padding: EdgeInsets.only(
-                          bottom: 24, top: 16),
+                          bottom: 13, top: 8),
                       child: ScalableRoundedButton(
                         label: _continueButtonLabel,
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         backgroundColor: Styles().colors.background,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         textColor: Styles().colors.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                     Text(
-                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "The more you customize—like events you save, teams you follow—the more tailored your experience."),
+                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust your privacy level at any time in the Privacy Center."),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
-                          fontSize: 16,
-                          color: Styles().colors.fillColorPrimary),
+                          fontSize: 14,
+                          color: Styles().colors.textSurface),
                     ),
+                    Container(height: 16,)
                   ],
                 ),
               ),
@@ -375,10 +407,15 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
 
   void _goNext(BuildContext context) {
     //TBD do Login for certain privacy level
+
     Onboarding2().finish(context);
   }
 
   void _goBack(BuildContext context) {
     Navigator.of(context).pop();
+  }
+
+  void _goSkip(BuildContext context){
+    Onboarding2().finish(context);
   }
 }
