@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2PermissionsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
@@ -392,23 +393,43 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }
 
   String get _privacyDescription{
-    //TBD
-    return "Privacy is your highest concern.";
+    String description = "Unknown privacy level";
+    int privacyLevel = _privacyLevel ?? -1;
+    switch(privacyLevel){
+      case 1 : return "Privacy is your highest concern.";
+      case 2 : return "Explore anonymously.";
+      case 3 : return "Explore anonymously."; //TBD 3
+      case 4 : return "Personalization without the smarts.";
+      case 5 : return "You get the full Illinois experience.";
+    }
+    return description;
   }
 
   String get _privacyLongDescription{
-    //TBD
-    return "You are completely anonymous and can browse content. You won't be connected to the Illinois ecosystem";
+    String description = "Unknown privacy level";
+    int privacyLevel = _privacyLevel ?? -1;
+    switch(privacyLevel){
+      case 1 : return "You are completely anonymous and can browse content. You won't be connected to the Illinois ecosystem";
+      case 2 : return "You can explore campus and find things near by. Your can't personalize your experience.";
+      case 3 : return "You can explore campus and find things near by. Your can't personalize your experience."; //TBD 3
+      case 4 : return "You can explore, browse, and save. You will not contribute to the larger Illinois community.﻿";
+      case 5 : return "You now have access to all app features. You can explore Illinois knowing we will never sell any information you provide.";
+    }
+    return description;
   }
 
   String get _continueButtonLabel{
-    return "Continue"; // tbd
+    return _privacyLevel==1? "Start browsing Illinois" : "Save preferences";
   }
 
   void _goNext(BuildContext context) {
-    //TBD do Login for certain privacy level
-
-    Onboarding2().finish(context);
+    if(Onboarding2().getExploreCampusChoice) {
+      Navigator.push(context, CupertinoPageRoute(
+          builder: (context) => Onboarding2PermissionsPanel()));
+    } else {
+      //TBD do Login for certain privacy level
+      Onboarding2().finish(context);
+    }
   }
 
   void _goBack(BuildContext context) {
