@@ -19,6 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -355,8 +356,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }
 
   int get _privacyLevel{
-    //TBD
-    return 3;
+    return Onboarding2().getPrivacyLevel;
   }
 
   String get _privacyDescription{
@@ -374,7 +374,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }
 
   void _goNext(BuildContext context) {
-    //TBD
+    //TBD do Login for certain privacy level
+    Onboarding2().finish(context);
   }
 
   void _goBack(BuildContext context) {

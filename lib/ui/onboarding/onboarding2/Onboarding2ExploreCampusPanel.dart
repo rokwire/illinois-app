@@ -19,13 +19,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
-import 'package:path/path.dart';
 
 import 'Onboarding2PersonalizePanel.dart';
 import 'Onboarding2Widgets.dart';
@@ -37,11 +36,11 @@ class Onboarding2ExploreCampusPanel extends StatefulWidget{
 }
 
 class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampusPanel> {
-
   bool _toggled = false;
 
   @override
   void initState() {
+    _toggled = Onboarding2().getExploreCampusChoice;
     super.initState();
   }
 
@@ -224,11 +223,11 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   void _onToggleTap(){
     setState(() {
       _toggled = !_toggled;
-      //TBD store choice
     });
   }
 
   void _goNext(BuildContext context) {
+    Onboarding2().storeExploreCampusChoice(_toggled);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PersonalizePanel()));
   }
 

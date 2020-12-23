@@ -19,7 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2ImprovePanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -36,11 +36,11 @@ class Onboarding2PersonalizePanel extends StatefulWidget{
 }
 
 class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePanel> {
-
   bool _toggled = false;
 
   @override
   void initState() {
+    _toggled = Onboarding2().getPersonalizeChoice;
     super.initState();
   }
 
@@ -223,11 +223,11 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   void _onToggleTap(){
     setState(() {
       _toggled = !_toggled;
-      //TBD store choice
     });
   }
 
   void _goNext(BuildContext context) {
+    Onboarding2().storePersonalizeChoice(_toggled);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
   }
 
