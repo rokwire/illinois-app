@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 
+import 'Storage.dart';
+
 class Onboarding2 with Service{
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
@@ -24,34 +26,59 @@ class Onboarding2 with Service{
   }
 
   void storeExploreCampusChoice(bool choice){
-    //TBD
+    Storage().onBoardingExploreCampus = choice;
   }
 
   void storePersonalizeChoice(bool choice){
-    //TBD
+    Storage().onBoardingPersonalizeChoice = choice;
   }
 
   void storeImproveChoice(bool choice){
-    //TBD
+    Storage().onBoardingImproveChoice = choice;
   }
 
   bool get getExploreCampusChoice{
-    //TBD
-    return true;
+    return Storage().onBoardingExploreCampus;
   }
 
   bool get getPersonalizeChoice{
-    //TBD
-    return true;
+    return Storage().onBoardingPersonalizeChoice;
   }
 
   bool get getImproveChoice{
-    //TBD
-    return true;
+    return Storage().onBoardingImproveChoice;
   }
 
   int get getPrivacyLevel{
-    //TBD
-    return 3;
+    //TBD refactoring
+    int privacyLevel = -1;
+    if(getExploreCampusChoice){
+      if(getPersonalizeChoice){
+        if(getImproveChoice){
+          privacyLevel = 5;
+        } else {
+          //!getImproveChoice
+          privacyLevel = 4;
+        }
+      }else {
+        //!getPersonalizeChoice
+        privacyLevel = 2;
+      }
+    } else {
+      //!getExploreCampusChoice
+      if(getPersonalizeChoice){
+        if(getImproveChoice){
+          privacyLevel = 5;
+        } else {
+          //!getImproveChoice
+          privacyLevel = 4;
+        }
+      }else {
+        //!getPersonalizeChoice
+        privacyLevel = 1;
+      }
+    }
+
+    return privacyLevel;
   }
 }

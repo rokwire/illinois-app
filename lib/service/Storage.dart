@@ -221,6 +221,9 @@ class Storage with Service {
   // On Boarding
 
   static const String onBoardingPassedKey  = 'on_boarding_passed';
+  static const String onBoardingExploreChoiceKey  = 'on_boarding_explore_campus';
+  static const String onBoardingPersonalizeChoiceKey  = 'on_boarding_personalize';
+  static const String onBoardingImproveChoiceKey  = 'on_boarding_improve';
 
   bool get onBoardingPassed {
     return _getBoolWithName(onBoardingPassedKey, defaultValue: false);
@@ -228,6 +231,30 @@ class Storage with Service {
 
   set onBoardingPassed(bool showOnBoarding) {
     _setBoolWithName(onBoardingPassedKey, showOnBoarding);
+  }
+
+  set onBoardingExploreCampus(bool exploreCampus) {
+    _setBoolWithName(onBoardingExploreChoiceKey, exploreCampus);
+  }
+
+  bool get onBoardingExploreCampus {
+    return _getBoolWithName(onBoardingExploreChoiceKey, defaultValue: false);
+  }
+
+  set onBoardingPersonalizeChoice(bool personalize) {
+    _setBoolWithName(onBoardingPersonalizeChoiceKey, personalize);
+  }
+
+  bool get onBoardingPersonalizeChoice {
+    return _getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: false);
+  }
+
+  set onBoardingImproveChoice(bool personalize) {
+    _setBoolWithName(onBoardingImproveChoiceKey, personalize);
+  }
+
+  bool get onBoardingImproveChoice {
+    return _getBoolWithName(onBoardingImproveChoiceKey, defaultValue: false);
   }
 
   ////////////////
