@@ -255,7 +255,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                     Align(
                       child: Container(
                         width:50,
-                        child: Image.asset(_privacyLevel==2?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
+                        child: Image.asset(_privacyLevel==1?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
                       )
                     ),
                     Center(
@@ -336,7 +336,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                     Align(
                         child: Container(
                           width:50,
-                          child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
+                          child: Image.asset(_privacyLevel==4?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
                         )
                     ),
                     Center(
