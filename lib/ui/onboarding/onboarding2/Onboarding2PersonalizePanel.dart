@@ -27,6 +27,7 @@ import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 
+import 'Onboarding2PrivacyPanel.dart';
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2PersonalizePanel extends StatefulWidget{
@@ -229,7 +230,12 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   void _goNext(BuildContext context) {
     Onboarding2().storePersonalizeChoice(_toggled);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
+    if (Onboarding2().getPersonalizeChoice) {
+      Navigator.push(context,
+          CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
+    } else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyPanel()));
+    }
   }
 
   void _goBack(BuildContext context) {
