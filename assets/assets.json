@@ -109,6 +109,7 @@
 	"reminders": {
 		"content":[
 			{"id":"KC20210115","date":"2021-01-15","label":"Student health insurance change/waiver begins for coverage period Jan 15, 2021 - May 14, 2021"},
+			{"id":"KC20210118","date":"2021-01-18","label":"Martin Luther King, Jr. Day (all-campus holiday)"},
 			{"id":"KC20210125","date":"2021-01-25","label":"First day of instruction (Spring 2021)"},
             {"id":"KC20210205","date":"2021-02-05","label":"10th day add/drop deadline (Spring 2021)"},
 			{"id":"KC20210217","date":"2021-02-17","label":"Break – Non-instructional day"},
