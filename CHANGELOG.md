@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Updated Campus Reminders for Spring 2021 [#206](https://github.com/rokwire/illinois-app/issues/206)
+
 ## [2.3.27] - 2020-12-23
 - Various improvements related to the new Onboarding UI [#176](https://github.com/rokwire/illinois-app/issues/176)
 
