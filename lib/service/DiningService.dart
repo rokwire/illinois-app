@@ -88,8 +88,13 @@ class DiningService  with Service {
         _sortExploresByName(dinings);
       }
 
+      // Filter by payment type
+      List<Dining> diningsLimited = paymentType != null ? dinings?.where((Dining dining){
+        return (dining?.paymentTypes?.contains(paymentType) ?? false);
+      })?.toList() : dinings;
+
       //Filter only opened
-      return onlyOpened ? dinings?.where((Dining dining) => dining.isOpen)?.toList() : dinings;
+      return onlyOpened ? diningsLimited?.where((Dining dining) => dining.isOpen)?.toList() : diningsLimited;
     }
     return null;
   }
