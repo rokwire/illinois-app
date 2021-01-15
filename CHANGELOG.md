@@ -5,33 +5,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [2.3.29] - 2021-1-15
+### Changed
 - Updated Campus Reminders for Spring 2021 [#206](https://github.com/rokwire/illinois-app/issues/206)
 
+### Fixed
+- Dining Payment Types Not Filtering Correctly[#205](https://github.com/rokwire/illinois-app/issues/205)
+
 ## [2.3.27] - 2020-12-23
+### Changed
 - Various improvements related to the new Onboarding UI [#176](https://github.com/rokwire/illinois-app/issues/176)
 
 ## [2.3.26] - 2020-12-16
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 - Updated URL for moved wellness tool [#172](https://github.com/rokwire/illinois-app/issues/172)
 
 ## [2.3.26] - 2020-12-15
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.25] - 2020-12-11
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.24] - 2020-12-09
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.23] - 2020-12-07
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.22] - 2020-11-30
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
