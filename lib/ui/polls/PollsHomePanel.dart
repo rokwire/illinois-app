@@ -857,7 +857,7 @@ class _PollCardState extends State<_PollCard>{
                     Row(children: <Widget>[
                       Expanded( child:
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: Expanded(child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors.white:Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),),)),
+                        child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors.white:Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),)),
                         Visibility( visible: didVote,
                         child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
                       ),
