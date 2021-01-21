@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Crashes with FCM notifications in Android [#213](https://github.com/rokwire/illinois-app/issues/213)
 
 ## [2.3.30] - 2021-1-18
 ### Changed
