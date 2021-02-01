@@ -8,16 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Include background location usage disclosure in Onboarding / Location Services Panel [#218](https://github.com/rokwire/illinois-app/issues/218)
 
-## [2.3.31] - 2021-1-21
+## [2.3.31] - 2021-01-21
 ### Fixed
 - Crashes with FCM notifications in Android [#213](https://github.com/rokwire/illinois-app/issues/213)
 - Quick Polls freeze [#174](https://github.com/rokwire/illinois-app/issues/174)
 
-## [2.3.30] - 2021-1-18
+## [2.3.30] - 2021-01-18
 ### Changed
 - Update text on Dining menu items [#171](https://github.com/rokwire/illinois-app/issues/171)
 
-## [2.3.29] - 2021-1-15
+## [2.3.29] - 2021-01-15
 ### Changed
 - Updated Campus Reminders for Spring 2021 [#206](https://github.com/rokwire/illinois-app/issues/206)
 
@@ -190,22 +190,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update es and zh strings.[#55](https://github.com/rokwire/illinois-app/issues/55)
 
 ## [2.2.16] - 2020-09-02
-### Removed Save buttons from Profile Informations panels
+### Changed
+- Removed Save buttons from Profile Informations panels
 
 ## [2.2.15] - 2020-09-01
-### Exposed Strings for localisation
+### Changed
+- Exposed Strings for localisation
 
 ## [2.2.14] - 2020-08-31
-
-### Improved VO features [#24]
+### Changed
+- Improved VO features [#24](https://github.com/rokwire/illinois-app/issues/24)
 
 ## [2.2.13] - 2020-08-28
-
 ### Fixed
 Removed COVID references from code. [#20](https://github.com/rokwire/illinois-app/issues/20)
 
 ## [2.2.12] - 2020-08-27
-
 ### Fixed
 Fix Mobile Order deep link handling [#11](https://github.com/rokwire/illinois-app/issues/11)
 
