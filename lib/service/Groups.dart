@@ -18,11 +18,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:flutter/services.dart' show rootBundle;
+//import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -49,7 +48,7 @@ class Groups /* with Service */ {
 
   // Emulation
 
-  Future<Map<String, dynamic>> get _sampleJson async {
+  /*Future<Map<String, dynamic>> get _sampleJson async {
       Map<String, dynamic> result;
       try {
         String sampleSource = await rootBundle.loadString('assets/sample.groups.json');
@@ -59,7 +58,7 @@ class Groups /* with Service */ {
         print(e.toString());
       }
       return result ?? {};
-  }
+  }*/
 
   // Current User Membership
 
