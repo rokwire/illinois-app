@@ -338,7 +338,7 @@
 
     "panel.onboarding.location.label.title":"Lo que hay cerca",
     "panel.onboarding.location.label.hint":"Encabezado 1",
-    "panel.onboarding.location.label.description":"Comparta su ubicación para saber qué está más cerca de usted mientras está en el campus.",
+    "panel.onboarding.location.label.description":"Comparta su ubicación para saber qué está más cerca de usted mientras está en el campus. Las funciones habilitadas para Bluetooth, como las encuestas rápidas, requieren permiso para acceder a su ubicación en segundo plano.",
     "panel.onboarding.location.button.allow.title":"Compartir mi Ubicación",
     "panel.onboarding.location.button.allow.hint":"",
     "panel.onboarding.location.button.dont_allow.title":"No en este momento",
