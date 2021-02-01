@@ -50,8 +50,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
 
-    await Auth().deleteUserPiiData();
-    await User().deleteUser();
+    bool piiDeleted = await Auth().deleteUserPiiData();
+    if(piiDeleted) {
+      await User().deleteUser();
+    }
     Auth().logout();
   }
 
