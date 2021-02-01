@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.4.0] - 2021-02-01
 ### Changed
+- Explore Shibboleth login failure due to deleted UUID [#221](https://github.com/rokwire/illinois-app/issues/221)
 - Include background location usage disclosure in Onboarding / Location Services Panel [#218](https://github.com/rokwire/illinois-app/issues/218)
 
 ## [2.3.31] - 2021-01-21
