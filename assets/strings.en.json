@@ -338,7 +338,7 @@
 
     "panel.onboarding.location.label.title":"Know what's nearby",
     "panel.onboarding.location.label.title.hint":"Header 1",
-    "panel.onboarding.location.label.description":"Share your location to know what's nearest to you while on campus.",
+    "panel.onboarding.location.label.description":"Share your location to know what's nearest to you while on campus. Bluetooth-enabled features such as Quick Polls require permission to access your location in the background.",
     "panel.onboarding.location.button.allow.title":"Share my Location",
     "panel.onboarding.location.button.allow.hint":"",
     "panel.onboarding.location.button.dont_allow.title":"Not right now",

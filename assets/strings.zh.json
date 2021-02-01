@@ -338,7 +338,7 @@
 
 	"panel.onboarding.location.label.title":"知道附近有什么",
 	"panel.onboarding.location.label.title.hint":"标题1",
-	"panel.onboarding.location.label.description":"分享位置以了解我附近有什么。",
+	"panel.onboarding.location.label.description":"分享位置以了解我附近有什么。具有藍牙功能的功能（例如快速輪詢）需要獲得權限才能在後台訪問您的位置。",
 	"panel.onboarding.location.button.allow.title":"分享我的位置",
 	"panel.onboarding.location.button.allow.hint":"",
 	"panel.onboarding.location.button.dont_allow.title":"暂时不",
