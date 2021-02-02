@@ -758,23 +758,22 @@ class Auth with Service implements NotificationsListener {
         .then((tokenResponse){
       _refreshTokenFuture = null;
       try {
-        String tokenResponseBody = ((tokenResponse != null) && (tokenResponse.statusCode == 200)) ? tokenResponse.body : null;
-        var bodyMap = (tokenResponseBody != null) ? AppJson.decode(tokenResponseBody) : null;
-        _authToken = ShibbolethToken.fromJson(bodyMap);
-        _saveAuthToken();
-        if (authToken?.idToken == null) { // Why we need this if ?
-          _authInfo = null;
-          _saveAuthInfo();
-          _clearAuthCard();
-          _notifyAuthCardChanged();
-          _notifyAuthInfoChanged();
+        if((tokenResponse != null) && (tokenResponse.statusCode == 200)){
+          String tokenResponseBody = ((tokenResponse != null) && (tokenResponse.statusCode == 200)) ? tokenResponse.body : null;
+          var bodyMap = (tokenResponseBody != null) ? AppJson.decode(tokenResponseBody) : null;
+          _authToken = ShibbolethToken.fromJson(bodyMap);
+          if(authToken?.idToken != null) {
+            Log.d("Auth: did refresh token: ${authToken?.idToken}");
+            _saveAuthToken();
+            _notifyAuthTokenChanged();
+          }
         }
-        Log.d("Auth: did refresh token: ${authToken?.idToken}");
-        _notifyAuthTokenChanged();
+        else if(tokenResponse.statusCode == 401 || tokenResponse.statusCode == 403){
+          logout(); // Logout only on 401 or 403. Do not do anything else for the rest of scenarios
+        }
       }
       catch(e) {
         print(e.toString());
-        logout();
       }
 
       return;
