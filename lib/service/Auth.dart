@@ -758,8 +758,8 @@ class Auth with Service implements NotificationsListener {
         .then((tokenResponse){
       _refreshTokenFuture = null;
       try {
-        if((tokenResponse != null) && (tokenResponse.statusCode == 200)){
-          String tokenResponseBody = ((tokenResponse != null) && (tokenResponse.statusCode == 200)) ? tokenResponse.body : null;
+        if((tokenResponse?.body != null) && (tokenResponse.statusCode == 200)){
+          String tokenResponseBody =  tokenResponse.body;
           var bodyMap = (tokenResponseBody != null) ? AppJson.decode(tokenResponseBody) : null;
           _authToken = ShibbolethToken.fromJson(bodyMap);
           if(authToken?.idToken != null) {
