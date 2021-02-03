@@ -31,6 +31,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+import io.flutter.view.FlutterMain;
 
 public class App extends Application implements LifecycleObserver {
 
@@ -41,6 +42,7 @@ public class App extends Application implements LifecycleObserver {
     @Override
     public void onCreate() {
         super.onCreate();
+        FlutterMain.startInitialization(this);
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         createNotificationChannel(this);

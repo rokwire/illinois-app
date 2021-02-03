@@ -20,38 +20,106 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupMemberPanel extends StatefulWidget {
-  final GroupMember member;
-  final GroupDetail groupDetail;
-  GroupMemberPanel({this.member, this.groupDetail});
+  final String groupId;
+  final String memberId;
+
+  GroupMemberPanel({this.groupId, this.memberId});
+
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
 }
 
 class _GroupMemberPanelState extends State<GroupMemberPanel>{
-
-  GroupMember _member;
-  bool _submitting;
-
-  //String _selectedOfficerTitle = "President";
-  List<String> _officerTitleTypes;
+  Member _member;
+  Group _group;
+  bool _isLoading = false;
+  bool _isAdmin = false;
+  bool _updating = false;
+  bool _removing = false;
 
   @override
   void initState() {
     super.initState();
-    _member = GroupMember.fromOther(widget.member);
-    Groups().officerTitles.then((List<String> officerTitles){
+    _reloadGroup();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _reloadGroup(){
+    if(mounted) {
       setState(() {
-        _officerTitleTypes = officerTitles;
+        _isLoading = true;
       });
-    });
+      Groups().loadGroup(widget.groupId).then((Group group) {
+        if (mounted) {
+          if (group != null) {
+            _group = group;
+            _loadMember();
+          }
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _loadMember(){
+    if(mounted) {
+      if (AppCollection.isCollectionNotEmpty(_group.members)) {
+        setState(() {
+          _member = _group.getMembersById(widget.memberId);
+          _isAdmin = _member.isAdmin;
+        });
+      }
+    }
+  }
+
+  void _updateMemberStatus() {
+    if (!_updating) {
+
+      setState(() {
+        _updating = true;
+      });
+
+      // First invoke api  and then update the UI - if succeeded
+      bool newIsAdmin = !_isAdmin;
+
+      GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
+      Groups().updateMembership(widget.groupId, widget.memberId, status).then((bool succeed) {
+        if (mounted) {
+          setState(() {
+            _updating = false;
+          });
+          if(succeed){
+            setState(() {
+              _isAdmin = newIsAdmin;
+            });
+          } else {
+            AppAlert.showDialogResult(context, Localization().getStringEx("panel.member_detail.label.empty", 'Failed to update member'));
+          }
+        }
+      });
+    }
+  }
+
+  Future<void> _removeMembership() async{
+    bool success = await Groups().deleteMembership(widget.groupId, widget.memberId);
+    if(!success){
+      throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.name ?? ""]);
+    }
   }
 
   @override
@@ -61,49 +129,32 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
       appBar: SimpleHeaderBarWithBack(
         context: context,
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child:Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: <Widget>[
-                    _buildHeading(),
-                    _buildDetails(context),
-                  ],
-                ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ))
+          : Column(
+            children: <Widget>[
+              Expanded(
+                child: SingleChildScrollView(
+                    child:Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: <Widget>[
+                          _buildHeading(),
+                          _buildDetails(context),
+                        ],
+                      ),
+                    ),
+                  ),
               ),
-            ),
+            ],
           ),
-          _buildSubmit(),
-        ],
-      ),
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
   Widget _buildHeading(){
-    bool badgeVisible = _member?.status == GroupMemberStatus.officer;
-    String memberStatus;
-    if (_member?.status == GroupMemberStatus.officer) {
-      memberStatus = _member?.officerTitle;
-      if ((memberStatus == null) || (memberStatus.length == 0)) {
-        memberStatus = groupMemberStatusToDisplayString(GroupMemberStatus.officer);
-      }
-    }
-    else {
-      memberStatus = groupMemberStatusToDisplayString(_member?.status);
-      if ((memberStatus != null) && (0 < memberStatus.length)) {
-        memberStatus = "${memberStatus.toUpperCase()} MEMBER";
-      }
-    }
-    if ((memberStatus == null) || (memberStatus.length == 0)) {
-      memberStatus = "MEMBER";
-    }
-
-    String memberDateAdded = (_member?.dateAdded != null) ? AppDateTime().formatDateTime(_member?.dateAdded, format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? "Member since $memberDateAdded" : '';
+    String memberDateAdded = (_member?.dateCreated != null) ? AppDateTime().formatDateTime(_member?.dateCreated, format: "MMMM dd") : null;
+    String memberSince = (memberDateAdded != null) ? (Localization().getStringEx("panel.member_detail.label.member_since", "Member since") + memberDateAdded) : '';
 
     return Row(
       children: <Widget>[
@@ -111,7 +162,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: Image.network(_member?.photoURL ?? '')),
+            child: Container(
+                width: 65, height: 65 ,
+                child: AppString.isStringNotEmpty(_member?.photoURL) ? Image.network(_member.photoURL, excludeFromSemantics: true,) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true,)
+            ),
           ),
         ),
         Container(width: 16,),
@@ -119,22 +173,6 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Visibility(
-                    visible: badgeVisible,
-                    child: Container(width: 16, height: 16,
-                      margin: EdgeInsets.only(right: 6),
-                      decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(16)) ),
-                      child: Image.asset('images/icon-saved-white.png'),
-                    )
-                  ),
-                  Text(memberStatus.toUpperCase(),
-                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),
-                  ),
-                ],
-              ),
-              Container(height: 8,),
               Text(_member?.name ?? "",
                 style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary
                 ),
@@ -151,77 +189,34 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Widget _buildDetails(BuildContext context){
-    bool canOfficerTitle = (_member?.status == GroupMemberStatus.officer);
-    bool canAdmin = ((_member?.status != null) && (_member?.status != GroupMemberStatus.inactive));
+    bool canAdmin = _group.currentUserIsAdmin;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(height: 32,),
-        Text(Localization().getStringEx("panel.member_detail.label.status", "STATUS"),
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies.bold,
-              fontSize: 12,
-              color: Styles().colors.fillColorPrimary
-          ),
-        ),
-        Container(height: 8,),
-        GroupDropDownButton<GroupMemberStatus>(
-          emptySelectionText: 'Select member status.',
-          initialSelectedValue: _member.status ?? GroupMemberStatus.values.first,
-          items: GroupMemberStatus.values,
-          constructTitle: (dynamic status) => groupMemberStatusToDisplayString(status),
-          onValueChanged: (value) {
-            setState(() {
-              _member.status = value;
-            });
-          },
-        ),
-        Visibility(
-          visible: canOfficerTitle,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(height: 24,),
-              Text(Localization().getStringEx("panel.member_detail.label.officer_title", "OFFICER TITLE"),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 12,
-                    color: Styles().colors.fillColorPrimary
-                ),
-              ),
-              Container(height: 8,),
-              GroupDropDownButton<String>(
-                emptySelectionText: 'Select officer title.',
-                initialSelectedValue: _member?.officerTitle,
-                items: _officerTitleTypes ?? [],
-                constructTitle: (dynamic title) => title,
-                onValueChanged: (value){
-                  setState(() {
-                    _member.officerTitle = value;
-                  });
-                },
-              ),
-            ]
-          ),
-        ),
         Visibility(
           visible: canAdmin,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(height: 24,),
-              ToggleRibbonButton(
-                  height: null,
-                  borderRadius: BorderRadius.circular(4),
-                  label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
-                  toggled: _member?.admin ?? false,
-                  context: context,
-                  onTap: () {
-                    setState(() {
-                      _member.admin = !(_member?.admin ?? false);
-                    });
-                  }
+              Visibility(
+                visible: !_member.isRejected,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ToggleRibbonButton(
+                        height: null,
+                        borderRadius: BorderRadius.circular(4),
+                        label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
+                        toggled: _isAdmin ?? false,
+                        context: context,
+                        onTap: _updateMemberStatus
+                    ),
+                    _updating ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ) : Container()
+                  ],
+                ),
               ),
+              Container(height: 8,),
               Text(Localization().getStringEx("panel.member_detail.label.admin_description", "Admins can manage settings, members, and events."),
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies.regular,
@@ -232,63 +227,103 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
             ]
           ),
         ),
+        Container(height: 22,),
+        _buildRemoveFromGroup(),
       ],
     );
   }
 
-  Widget _buildSubmit() {
-    return Container(color: Colors.white,
-      child: Padding(padding: EdgeInsets.all(16),
-        child: Stack(children: <Widget>[
-//          Row(children: <Widget>[
-//            Expanded(child: Container(),),
-            ScalableSmallRoundedButton(label: 'Update member',
-              backgroundColor: Styles().colors.white,
-              textColor: Styles().colors.fillColorPrimary,
-              fontFamily: Styles().fontFamilies.bold,
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 32, ),
-              borderColor: Styles().colors.fillColorSecondary,
-              borderWidth: 2,
-//              height: 42,
-              onTap:() { _onSubmit();  }
-            ),
-//            Expanded(child: Container(),),
-//          ],),
-          Visibility(visible: (_submitting == true), child:
-            Center(child:
-              Padding(padding: EdgeInsets.only(top: 10.5), child:
-               Container(width: 21, height:21, child:
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,)
-                ),
-              ),
-            ),
-          ),
-        ],),
-      ),
-    );
+  Widget _buildRemoveFromGroup() {
+    return Stack(children: <Widget>[
+        ScalableRoundedButton(label: Localization().getStringEx("panel.member_detail.button.remove.title", 'Remove from Group'),
+          backgroundColor: Styles().colors.white,
+          textColor: Styles().colors.fillColorPrimary,
+          fontFamily: Styles().fontFamilies.bold,
+          fontSize: 16,
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+          borderColor: Styles().colors.fillColorPrimary,
+          borderWidth: 2,
+          onTap: (){
+            showDialog(context: context, builder: _buildRemoveFromGroupDialog);
+          }
+        ),
+    ],);
   }
 
-  void _onSubmit() {
-    if (_submitting != true) {
-
-      setState(() {
-        _submitting = true;
-      });
-
-      Groups().updateGroupMember(widget.groupDetail?.id, _member).then((GroupMember member) {
-        if (mounted) {
-          setState(() {
-            _submitting = false;
-          });
-          if (member != null) {
-            Navigator.pop(context);
-          }
-          else {
-            AppAlert.showDialogResult(context, 'Failed to update member');
-          }
-        }
-      });
-    }
+  Widget _buildRemoveFromGroupDialog(BuildContext context) {
+    return Dialog(
+      backgroundColor: Styles().colors.fillColorPrimary,
+      child: StatefulBuilder(
+        builder: (context, setStateEx){
+          return Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 26),
+                  child: Text(
+                    sprintf(Localization().getStringEx("panel.member_detail.label.confirm_remove.format", "Remove %s From this group?"),[_member?.name]),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    RoundedButton(
+                      label: Localization().getStringEx("panel.member_detail.button.back.title", "Back"),
+                      fontFamily: "ProximaNovaRegular",
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      onTap: ()=>Navigator.pop(context),
+                    ),
+                    Container(width: 16,),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        RoundedButton(
+                          label: Localization().getStringEx("panel.member_detail.dialog.button.remove.title", "Remove"),
+                          fontFamily: "ProximaNovaBold",
+                          textColor: Styles().colors.fillColorPrimary,
+                          borderColor: Styles().colors.white,
+                          backgroundColor: Styles().colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          onTap: (){
+                            if(!_removing) {
+                              if (mounted) {
+                                setStateEx(() {
+                                  _removing = true;
+                                });
+                              }
+                              _removeMembership().then((_) {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }).whenComplete((){
+                                if (mounted) {
+                                  setStateEx(() {
+                                    _removing = false;
+                                  });
+                                }
+                              }).catchError((error) {
+                                Navigator.pop(context);
+                                AppAlert.showDialogResult(context, error);
+                              });
+                            }
+                          },
+                        ),
+                        _removing ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,) : Container(),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }

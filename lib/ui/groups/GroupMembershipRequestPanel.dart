@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -24,9 +25,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipRequestPanel extends StatefulWidget {
-  final GroupDetail groupDetail;
+  final Group group;
 
-  GroupMembershipRequestPanel({this.groupDetail});
+  GroupMembershipRequestPanel({this.group});
 
   @override
   _GroupMembershipRequestPanelState createState() =>
@@ -34,7 +35,6 @@ class GroupMembershipRequestPanel extends StatefulWidget {
 }
 
 class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPanel> {
-
   List<GroupMembershipQuestion> _questions;
   List<FocusNode> _focusNodes;
   List<TextEditingController> _controllers;
@@ -44,7 +44,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   void initState() {
     _focusNodes = List();
     _controllers = List();
-    _questions = widget.groupDetail?.membershipQuest?.questions ?? [];
+    _questions = widget.group?.questions ?? [];
     for (int index = 0; index < _questions.length; index++) {
       _controllers.add(TextEditingController());
       _focusNodes.add(FocusNode());
@@ -65,7 +65,6 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   @override
   Widget build(BuildContext context) {
-
     List<Widget> content = [
       _buildHeading()
     ];
@@ -76,7 +75,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text('Request to join',
+        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Request to join'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -108,10 +107,10 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       children:<Widget>[
         Row(children: <Widget>[
           Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
-          Text('Answer questions', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+          Text(Localization().getStringEx("panel.membership_request.label.answer_questions", 'Answer questions'), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
         ],),
         Padding(padding: EdgeInsets.only(top: 8), child:
-          Text('Only admins of the group will see your answers.', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
+          Text(Localization().getStringEx("panel.membership_request.label.description", 'Only admins of the group will see your answers.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
         ),
       ]);
   }
@@ -147,7 +146,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         child: Stack(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child: Container(),),
-            RoundedButton(label: 'Submit request',
+            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
               backgroundColor: Styles().colors.white,
               textColor: Styles().colors.fillColorPrimary,
               fontFamily: Styles().fontFamilies.bold,
@@ -176,17 +175,17 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
   void _onSubmit() {
     if (_submitting != true) {
-      GroupMembershipRequest membershipRequest = GroupMembershipRequest(answers: [], dateCreated: DateTime.now());
+      List<GroupMembershipAnswer> answers = List<GroupMembershipAnswer>();
       for (int index = 0; index < _questions.length; index++) {
         String question = _questions[index].question;
         TextEditingController controller = _controllers[index];
         FocusNode focusNode = _focusNodes[index];
         String answer = controller.text;
         if ((answer != null) && (0 < answer.length)) {
-          membershipRequest.answers.add(GroupMembershipAnswer(answer: answer));
+          answers.add(GroupMembershipAnswer(question: question, answer: answer));
         }
         else {
-          AppAlert.showDialogResult(context, 'Please answer \'$question\'').then((_){
+          AppAlert.showDialogResult(context,Localization().getStringEx("panel.membership_request.label.alert",  'Please answer ')+ question).then((_){
             focusNode.requestFocus();
           });
           return;
@@ -197,18 +196,15 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         _submitting = true;
       });
 
-      Groups().requestMembership(widget.groupDetail?.id, membershipRequest).then((bool result){
+      Groups().requestMembership(widget.group, answers).then((_){
         if (mounted) {
           setState(() {
             _submitting = false;
           });
-          if (result) {
-            Navigator.pop(context);
-          }
-          else {
-            AppAlert.showDialogResult(context, 'Failed to submit request');
-          }
+          Navigator.pop(context);
         }
+      }).catchError((){
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.label.fail", 'Failed to submit request'));
       });
     }
   }

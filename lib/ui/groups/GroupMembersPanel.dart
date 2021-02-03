@@ -20,6 +20,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/groups/GroupMemberPanel.dart';
 import 'package:illinois/ui/groups/GroupPendingMemberPanel.dart';
@@ -33,23 +34,23 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembersPanel extends StatefulWidget{
-  final GroupDetail groupDetail;
+  final String groupId;
 
-  GroupMembersPanel({@required this.groupDetail});
+  GroupMembersPanel({@required this.groupId});
 
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
 }
 
-class _GroupMembersPanelState extends State<GroupMembersPanel>{
-
+class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener{
+  Group _group;
   bool _isMembersLoading = false;
   bool _isPendingMembersLoading = false;
   bool get _isLoading => _isMembersLoading || _isPendingMembersLoading;
 
   bool _showAllRequestVisibility = true;
 
-  List<GroupPendingMember> _pendingMembers;
-  List<GroupMember> _members;
+  List<Member> _pendingMembers;
+  List<Member> _members;
 
   String _allMembersFilter;
   String _selectedMembersFilter;
@@ -58,35 +59,52 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
+    _reloadGroup();
+  }
 
-    _loadMembers();
-    _loadPendingMembers();
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  void _reloadGroup(){
+    setState(() {
+      _isMembersLoading = true;
+    });
+    Groups().loadGroup(widget.groupId).then((Group group){
+      if (mounted) {
+        if(group != null) {
+          _group = group;
+          _loadMembers();
+        }
+        setState(() {
+          _isMembersLoading = false;
+        });
+      }
+    });
   }
 
   void _loadMembers(){
     setState(() {
-      _isMembersLoading = true;
-    });
-    Groups().loadGroupMembers(widget.groupDetail?.id).then((List<GroupMember> members){
-      _members = members;
-      _applyMembersFilter();
-    }).whenComplete((){
-      setState(() {
-        _isMembersLoading = false;
-      });
-    });
-  }
+      _isMembersLoading = false;
+      _pendingMembers = _group.getMembersByStatus(GroupMemberStatus.pending);
+      _pendingMembers.sort((member1, member2) => member1.name.compareTo(member2.name));
 
-  void _loadPendingMembers(){
-    setState(() {
-      _isPendingMembersLoading = true;
-    });
-    Groups().loadPendingMembers(widget.groupDetail?.id).then((List<GroupPendingMember> members){
-      _pendingMembers = members;
-    }).whenComplete((){
-      setState(() {
-        _isPendingMembersLoading = false;
+      _members = AppCollection.isCollectionNotEmpty(_group?.members)
+          ? _group.members.where((member) => (member.status != GroupMemberStatus.pending)).toList()
+          : [];
+      _members.sort((member1, member2){
+        if(member1.status == member2.status){
+          return member1.name.compareTo(member2.name);
+        } else {
+          if(member1.isAdmin && !member2.isAdmin) return -1;
+          else if(!member1.isAdmin && member2.isAdmin) return 1;
+          else return 0;
+        }
       });
+    _applyMembersFilter();
     });
   }
 
@@ -96,7 +114,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     _selectedMembersFilter = _allMembersFilter;
     membersFilter.add(_allMembersFilter);
     if(AppCollection.isCollectionNotEmpty(_members)){
-      for(GroupMember member in _members){
+      for(Member member in _members){
         if(AppString.isStringNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
           membersFilter.add(member.officerTitle);
         }
@@ -104,6 +122,16 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
     }
     _membersFilter = membersFilter;
     setState(() {});
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Groups.notifyUserMembershipUpdated) {
+      setState(() {});
+    }
+    else if (param == _group.id && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
+      _reloadGroup();
+    }
   }
 
   @override
@@ -120,16 +148,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
                 letterSpacing: 1.0),
           ),
         ),
-        body: SingleChildScrollView(
-          child:
-          _isLoading
-              ? Center(child: CircularProgressIndicator(),)
-              : Column(
-                children: <Widget>[
-                  _buildRequests(),
-                  _buildMembers()
-                ],
-              ),
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ))
+            : SingleChildScrollView(
+          child:Column(
+            children: <Widget>[
+              _buildRequests(),
+              _buildMembers()
+            ],
+          ),
         ),
         bottomNavigationBar: TabBarWidget(),
     );
@@ -138,11 +165,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
   Widget _buildRequests(){
     if((_pendingMembers?.length ?? 0) > 0) {
       List<Widget> requests = List<Widget>();
-      for (GroupPendingMember member in (_pendingMembers.length > 2 && _showAllRequestVisibility) ? _pendingMembers.sublist(0, 1) : _pendingMembers) {
+      for (Member member in (_pendingMembers.length > 2 && _showAllRequestVisibility) ? _pendingMembers.sublist(0, 1) : _pendingMembers) {
         if(requests.isNotEmpty){
           requests.add(Container(height: 10,));
         }
-        requests.add(_PendingMemberCard(member: member, groupDetail: widget.groupDetail,));
+        requests.add(_PendingMemberCard(member: member, group: _group,));
       }
 
       if(_pendingMembers.length > 2 && _showAllRequestVisibility){
@@ -173,14 +200,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
   Widget _buildMembers(){
     if((_members?.length ?? 0) > 0) {
       List<Widget> members = List<Widget>();
-      for (GroupMember member in _members) {
+      for (Member member in _members) {
         if(_selectedMembersFilter != _allMembersFilter && _selectedMembersFilter != member.officerTitle){
           continue;
         }
         if(members.isNotEmpty){
           members.add(Container(height: 10,));
         }
-        members.add(_GroupMemberCard(member: member, groupDetail: widget.groupDetail,));
+        members.add(_GroupMemberCard(member: member, group: _group,));
       }
       if(members.isNotEmpty) {
         members.add(Container(height: 10,));
@@ -217,15 +244,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
         color: Styles().colors.white,
         child: Row(
           children: <Widget>[
-            Text(
-              Localization().getStringEx("panel.manage_members.label.filter_by", "Filter by"),
-              style: TextStyle(
-                fontFamily: Styles().fontFamilies.regular,
-                fontSize: 16,
-                color: Styles().colors.textBackground,
-              ),
-            ),
-            Container(width: 10,),
             Expanded(
               child: Container(
                 child: GroupDropDownButton<String>(
@@ -251,9 +269,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel>{
 }
 
 class _PendingMemberCard extends StatelessWidget {
-  final GroupPendingMember member;
-  final GroupDetail groupDetail;
-  _PendingMemberCard({@required this.member, this.groupDetail});
+  final Member member;
+  final Group group;
+  _PendingMemberCard({@required this.member, this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -263,12 +281,12 @@ class _PendingMemberCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
       ),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: Image.network(member.photoURL)),
+            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member.photoURL) : Image.asset('images/missing-photo-placeholder.png')),
           ),
           Expanded(
             child: Padding(
@@ -280,11 +298,11 @@ class _PendingMemberCard extends StatelessWidget {
                     member?.name ?? "",
                     style: TextStyle(
                       fontFamily: Styles().fontFamilies.bold,
-                      fontSize: 16,
+                      fontSize: 20,
                       color: Styles().colors.fillColorPrimary
                     ),
                   ),
-                  Container(height: 12,),
+                  Container(height: 4,),
                       ScalableRoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
@@ -292,18 +310,18 @@ class _PendingMemberCard extends StatelessWidget {
                         textColor: Styles().colors.fillColorPrimary,
                         backgroundColor: Styles().colors.white,
                         fontSize: 16,
-//                        height: 32,
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        showChevron: true,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         onTap: (){
                           Analytics().logSelect(target:"Review request");
-                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, groupDetail: groupDetail,)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupPendingMemberPanel(member: member, group: group,)));
                         },
                       ),
-//                      Expanded(child: Container(),),
                 ],
               ),
             ),
           ),
+          Container(width: 8,)
         ],
       ),
     );
@@ -311,9 +329,9 @@ class _PendingMemberCard extends StatelessWidget {
 }
 
 class _GroupMemberCard extends StatelessWidget{
-  final GroupMember member;
-  final GroupDetail groupDetail;
-  _GroupMemberCard({@required this.member, @required this.groupDetail});
+  final Member member;
+  final Group group;
+  _GroupMemberCard({@required this.member, @required this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -325,12 +343,12 @@ class _GroupMemberCard extends StatelessWidget{
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: Image.network(member.photoURL)),
+              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member.photoURL) : Image.asset('images/missing-photo-placeholder.png')),
             ),
             Expanded(
               child: Padding(
@@ -340,32 +358,38 @@ class _GroupMemberCard extends StatelessWidget{
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            member?.officerTitle ?? "",
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 16,
-                                color: Styles().colors.fillColorPrimary
-                            ),
-                          ),
-                        ),
-                        Image.asset('images/chevron-blue-right.png'),
-                      ],
-                    ),
-                    Container(height: 12,),
-                    Row(
-                      children: <Widget>[
                         Expanded(child:
                           Text(
                             member?.name ?? "",
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 16,
+                                fontSize: 20,
                                 color: Styles().colors.fillColorPrimary
                             ),
                           )
                         )
+                      ],
+                    ),
+                    Container(height: 4,),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: groupMemberStatusToColor(member.status),
+                            borderRadius: BorderRadius.all(Radius.circular(2)),
+                          ),
+                          child: Center(
+                            child: Text(groupMemberStatusToDisplayString(member.status).toUpperCase(),
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontSize: 12,
+                                  color: Styles().colors.white
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Container(),),
                       ],
                     )
                   ],
@@ -380,6 +404,6 @@ class _GroupMemberCard extends StatelessWidget{
 
   void _onTapMemberCard(BuildContext context)async{
     Analytics().logSelect(target: "Member Detail");
-    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(member: member, groupDetail: groupDetail,)));
+    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(groupId: group.id, memberId: member.id,)));
   }
 }

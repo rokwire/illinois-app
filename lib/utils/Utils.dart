@@ -630,3 +630,9 @@ class AppGeometry {
     return Size(fitW, fitH);
   }
 }
+
+class AppProgressIndicator{
+  static CircularProgressIndicator create([Color color]){
+    return CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(color != null ? color : Styles().colors.fillColorPrimary));
+  }
+}

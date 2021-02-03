@@ -19,6 +19,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
@@ -26,6 +27,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/RecentItems.dart';
@@ -46,8 +48,9 @@ class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAtt
   final bool previewMode;
   final Core.LocationData initialLocationData;
   final String superEventTitle;
+  final String browseGroupId;
 
-  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle});
+  ExploreEventDetailPanel({this.event, this.previewMode = false, this.initialLocationData, this.superEventTitle, this.browseGroupId});
 
   @override
   _EventDetailPanelState createState() =>
@@ -66,6 +69,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   //Maps
   Core.LocationData _locationData;
+  bool _addToGroupInProgress = false;
 
   @override
   void initState() {
@@ -144,6 +148,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                                       _exploreDescription(),
                                                       _buildUrlButtons(),
                                                       _buildPreviewButtons(),
+                                                      _buildGroupButtons(),
                                                     ]
                                                 )),
                                           ],
@@ -593,6 +598,36 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       ));
   }
 
+  Widget _buildGroupButtons(){
+    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child:
+          Stack(
+            children: [
+              ScalableRoundedButton(
+                label: Localization().getStringEx('panel.explore_detail.button.add_to_group.title', 'Add Event To Group') ,
+                hint: Localization().getStringEx('panel.explore_detail.button.add_to_group.hint', '') ,
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors.fillColorPrimary,
+                textColor: Styles().colors.fillColorPrimary,
+                onTap: _onTapAddToGroup,
+              ),
+              Visibility(visible: _addToGroupInProgress,
+                child: Container(
+                  height: 48,
+                  child: Align(alignment: Alignment.center,
+                    child: SizedBox(height: 24, width: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        );
+  }
+
   void _addRecentItem(){
     if(!widget.previewMode)
       RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.event));
@@ -632,6 +667,19 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   void _onTapModify() {
     Analytics.instance.logSelect(target: "Modify");
     Navigator.pop(context);
+  }
+
+  void _onTapAddToGroup() {
+    Analytics.instance.logSelect(target: "Add To Group");
+    setState(() {
+      _addToGroupInProgress = true;
+    });
+    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget?.event?.id).then((value){
+      setState(() {
+        _addToGroupInProgress = true;
+      });
+      Navigator.pop(context);
+    });
   }
 
   void _onTapPublish() async{

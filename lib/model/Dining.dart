@@ -330,38 +330,38 @@ enum PaymentType { ClassicMeal, CafeCredits, IlliniCash, CreditCard, Cash, Googl
 class PaymentTypeHelper {
   static String paymentTypeToString(PaymentType paymentType) {
     switch(paymentType) {
-      case PaymentType.ClassicMeal: return 'Classic Meal';
-      case PaymentType.CafeCredits: return 'Café Credits';
-      case PaymentType.IlliniCash:  return 'Illini Cash';
-      case PaymentType.CreditCard:  return 'Credit Card';
+      case PaymentType.ClassicMeal: return 'ClassicMeal';
+      case PaymentType.CafeCredits: return 'CaféCredits';
+      case PaymentType.IlliniCash:  return 'IlliniCash';
+      case PaymentType.CreditCard:  return 'CreditCard';
       case PaymentType.Cash:        return 'Cash';
-      case PaymentType.GooglePay:   return 'Google Pay';
-      case PaymentType.ApplePay:    return 'Apple Pay';
+      case PaymentType.GooglePay:   return 'GooglePay';
+      case PaymentType.ApplePay:    return 'ApplePay';
       default:                      return null;
     }
   }
 
   static PaymentType paymentTypeFromString(String paymentTypeString) {
     if (paymentTypeString != null) {
-      if (paymentTypeString == 'Classic Meal') {
+      if (paymentTypeString == 'ClassicMeal') {
         return PaymentType.ClassicMeal;
       }
-      else if (paymentTypeString == 'Café Credits') {
+      else if (paymentTypeString == 'CafeCredits') {
         return PaymentType.CafeCredits;
       }
-      else if (paymentTypeString == 'Illini Cash') {
+      else if (paymentTypeString == 'IlliniCash') {
         return PaymentType.IlliniCash;
       }
-      else if (paymentTypeString == 'Credit Card') {
+      else if (paymentTypeString == 'CreditCard') {
         return PaymentType.CreditCard;
       }
       else if (paymentTypeString == 'Cash') {
         return PaymentType.Cash;
       }
-      else if (paymentTypeString == 'Google Pay') {
+      else if (paymentTypeString == 'GooglePay') {
         return PaymentType.GooglePay;
       }
-      else if (paymentTypeString == 'Apple Pay') {
+      else if (paymentTypeString == 'ApplePay') {
         return PaymentType.ApplePay;
       }
     }

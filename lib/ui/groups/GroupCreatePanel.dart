@@ -26,40 +26,91 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class GroupCreatePanel extends StatefulWidget {
   _GroupCreatePanelState createState() => _GroupCreatePanelState();
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
-  final _eventTitleController = TextEditingController();
+  final _groupTitleController = TextEditingController();
+  final _groupDescriptionController = TextEditingController();
+  final _groupTagsController = TextEditingController();
 
-  GroupDetail _groupDetail;
+  Group _group;
 
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
-  List<String> _groupTypes;
   LinkedHashSet<String> _groupsNames;
 
   bool _nameIsValid = true;
-  bool _loading = false;
+  bool _groupNamesLoading = false;
+  bool _groupCategoeriesLoading = false;
+  bool _creating = false;
+  bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
 
   @override
   void initState() {
-    _groupDetail = GroupDetail();
+    _group = Group();
     _initGroupNames();
     _initPrivacyData();
     _initCategories();
-    _initTypes();
     super.initState();
   }
+
+  //Init
+  void _initGroupNames(){
+    _groupNamesLoading = true;
+    Groups().loadGroups().then((groups){
+      _groupsNames = groups?.map((group) => group?.title?.toLowerCase()?.trim())?.toSet();
+    }).catchError((error){
+      print(error);
+    }).whenComplete((){
+      setState(() {
+        _groupNamesLoading = false;
+      });
+    });
+  }
+
+  void _initPrivacyData(){
+    _groupPrivacyOptions = GroupPrivacy.values;
+    _group.privacy = _groupPrivacyOptions[0]; //default value Private
+  }
+
+  void _initCategories(){
+    setState(() {
+      _groupCategoeriesLoading = true;
+    });
+    Groups().categories.then((categories){
+      setState(() {
+        _groupCategories = categories;
+      });
+    }).whenComplete((){
+      setState(() {
+        _groupCategoeriesLoading = false;
+      });
+    });
+  }
+  //
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(
           children: <Widget>[
-            Expanded(
+            _loading
+            ? Expanded(child:
+                Center(child:
+                  Container(
+                    child: Align(alignment: Alignment.center,
+                      child: SizedBox(height: 24, width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+                      ),
+                    ),
+                  ),
+                )
+              )
+            : Expanded(
               child: Container(
                 color: Colors.white,
                 child: CustomScrollView(
@@ -69,7 +120,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       context: context,
                       backIconRes: "images/close-white.png",
                       titleWidget: Text(
-                        Localization().getStringEx("panel.groups_create.label.heading", "Create new group"),
+                        Localization().getStringEx("panel.groups_create.label.heading", "Create a group"),
                         style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
                       ),
                     ),
@@ -80,8 +131,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           child: Column(children: <Widget>[
                             _buildNameField(),
                             _buildNameError(),
+                            _buildDescriptionField(),
+                            Container(height: 24,),
+                            Container(height: 1, color: Styles().colors.surfaceAccent,),
+                            Container(height: 24,),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
                             _buildCategoryDropDown(),
-                            _buildTypeDropDown(),
+                            _buildTagsLayout(),
+                            Container(height: 24,),
+                            Container(height: 1, color: Styles().colors.surfaceAccent,),
+                            Container(height: 24,),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             _buildPrivacyDropDown(),
                         ],),)
 
@@ -96,44 +156,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ),
         backgroundColor: Styles().colors.background);
   }
-
-  //Init
-  void _initGroupNames(){
-    _loading = true;
-    Groups().loadGroups().then((groups){
-      _groupsNames = groups?.map((group) => group?.title?.toLowerCase()?.trim())?.toSet();
-      setState(() {
-        _loading = false;
-      });
-    }).catchError((error){
-      setState(() {
-        _loading = false;
-      });
-      print(error);
-    });
-  }
-
-  void _initPrivacyData(){
-    _groupPrivacyOptions = GroupPrivacy.values;
-    _groupDetail.privacy = _groupPrivacyOptions[0]; //default value Private
-  }
-
-  void _initCategories(){
-    Groups().categories.then((categories){
-      setState(() {
-        _groupCategories = categories;
-      });
-    });
-  }
-
-  void _initTypes(){
-    Groups().types.then((types){
-      setState(() {
-        _groupTypes = types;
-      });
-    });
-  }
-  //
 
   //Name
   Widget _buildNameField() {
@@ -157,7 +179,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 textField: true,
                 excludeSemantics: true,
                 child: TextField(
-                  controller: _eventTitleController,
+                  controller: _groupTitleController,
                   onChanged: onNameChanged,
                   decoration: InputDecoration(border: InputBorder.none,),
                   style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
@@ -198,7 +220,51 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     ));
   }
   //
+  //Description
+  //Name
+  Widget _buildDescriptionField() {
+    String title = Localization().getStringEx("panel.groups_create.description.title", "DESCRIPTION");
+    String description = Localization().getStringEx("panel.groups_create.description.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String fieldTitle = Localization().getStringEx("panel.groups_create.description.field", "DESCRIPTION FIELD");
+    String fieldHint = Localization().getStringEx("panel.groups_create.description.field.hint", "");
 
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _buildSectionTitle(title,description),
+          Container(height: 5,),
+          Container(
+            height: 114,
+            padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+            child:
+            Row(children: [
+              Expanded(child:
+                Semantics(
+                    label: fieldTitle,
+                    hint: fieldHint,
+                    textField: true,
+                    excludeSemantics: true,
+                    child: TextField(
+                      onChanged: (text){
+                        if(_group!=null)
+                          _group.description = text;
+                      },
+                      controller: _groupDescriptionController,
+                      maxLines: 100,
+                      decoration: InputDecoration(border: InputBorder.none,),
+                      style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                    )),
+            )],)
+          ),
+        ],
+      ),
+
+    );
+  }
+  //
   //Category
   Widget _buildCategoryDropDown() {
     return Container(
@@ -215,7 +281,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               constructTitle: (item) => item,
               onValueChanged: (value) {
                 setState(() {
-                  _groupDetail.category = value;
+                  _group.category = value;
                   Log.d("Selected Category: $value");
                 });
               }
@@ -224,29 +290,145 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ));
   }
   //
-
-  //Types
-  Widget _buildTypeDropDown() {
+  //Tags
+  Widget _buildTagsLayout(){
+    String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
+    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSectionTitle(Localization().getStringEx("panel.groups_create.type.title", "GROUP TYPE"),
-              Localization().getStringEx("panel.groups_create.type.description", "Which type best represents your group?"),),
-            GroupDropDownButton(
-                emptySelectionText: Localization().getStringEx("panel.groups_create.type.default_text", "Select type.."),
-                buttonHint: Localization().getStringEx("panel.groups_create.type.hint", "Double tap to show types options"),
-                items: _groupTypes,
-                onValueChanged: (value) {
-                  setState(() {
-                    _groupDetail.type = value;
-                  Log.d("Selected Type: $value");
-                  });
-                }
-            )
+            _buildSectionTitle(fieldTitle,
+              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
+            Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    height: 48,
+                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
+                    child: Semantics(
+                        label: fieldTitle,
+                        hint: fieldHint,
+                        textField: true,
+                        excludeSemantics: true,
+                        child: TextField(
+                          controller: _groupTagsController,
+                          decoration: InputDecoration(border: InputBorder.none,),
+                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                        )),
+                  ),
+                ),
+                Container(width: 8,),
+                Expanded(
+                  flex: 2,
+                  child:
+                  ScalableRoundedButton(
+                    label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
+                    hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", ""),
+                    backgroundColor: Styles().colors.white,
+                    textColor: Styles().colors.fillColorPrimary,
+                    borderColor: Styles().colors.fillColorSecondary,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    onTap: _onTapAddTag,
+                  )
+                )
+              ],
+            ),
+            Container(height: 10,),
+            _constructTagButtonsContent()
           ],
         ));
+  }
+
+  Widget _constructTagButtonsContent(){
+    List<Widget> buttons = _buildTagsButtons();
+    if(buttons?.isEmpty??true)
+      return Container();
+
+    List<Widget> rows = List();
+    List<Widget> lastRowChildren;
+    for(int i=0; i<buttons.length;i++){
+      if(i%2==0){
+        lastRowChildren = new List();
+        rows.add(SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children:lastRowChildren,)));
+        rows.add(Container(height: 8,));
+      } else {
+        lastRowChildren?.add(Container(width: 13,));
+      }
+      lastRowChildren.add(buttons[i]);
+    }
+    rows.add(Container(height: 24,));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: rows,
+    );
+  }
+
+  List<Widget> _buildTagsButtons(){
+    List<String> tags = _group?.tags;
+    List<Widget> result = new List();
+    if (AppCollection.isCollectionNotEmpty(tags)) {
+      tags.forEach((String tag) {
+        result.add(_buildTagButton(tag));
+      });
+    }
+    return result;
+  }
+
+  Widget _buildTagButton(String tag){
+    return
+      InkWell(
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors.fillColorPrimary,
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Row(children: <Widget>[
+                Container(
+                    padding: EdgeInsets.only(top:4,bottom: 4,left: 8),
+                    child: Text(tag,
+                      style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 12,),
+                    )),
+                Container (
+                  padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
+                  child: Image.asset("images/small-add-orange.png"),
+                )
+
+              ],)
+          ),
+          onTap: () => onTagTap(tag)
+      );
+  }
+
+  void onTagTap(String tag){
+    if(_group!=null) {
+      if (_group.tags == null) {
+        _group.tags = new List();
+      }
+
+      if (_group.tags.contains(tag)) {
+        _group.tags.remove(tag);
+      } else {
+        _group.tags.add(tag);
+      }
+    }
+    setState(() {});
+  }
+
+  void _onTapAddTag(){
+    String tag = _groupTagsController.text?.toString();
+    if(_group!=null) {
+      if (_group.tags == null) {
+        _group.tags = new List<String>();
+      }
+      _group.tags.add(tag);
+      _groupTagsController.clear();
+    }
+
+    setState(() {});
   }
   //
 
@@ -256,14 +438,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       Column(children: <Widget>[
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child:  _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY SETTINGS"),null)),
+          child:  _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY"),null)),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:  GroupDropDownButton(
               emptySelectionText: Localization().getStringEx("panel.groups_create.privacy.hint.default","Select privacy setting.."),
-              buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy oprions"),
+              buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy options"),
               items: _groupPrivacyOptions,
-              initialSelectedValue: _groupDetail.privacy,
+              initialSelectedValue: _group.privacy,
               constructDescription:
                   (item) => item == GroupPrivacy.private?
               Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
@@ -275,7 +457,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
               onValueChanged: (value) {
                 setState(() {
-                  _groupDetail.privacy = value;
+                  _group.privacy = value;
                 });
               }
           )
@@ -293,23 +475,21 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Buttons
   Widget _buildButtonsLayout() {
     return
-      Stack(children: <Widget>[
+      Stack(alignment: Alignment.center, children: <Widget>[
         Container( color: Styles().colors.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.create.title", "Create group"),
+              label: Localization().getStringEx("panel.groups_create.button.create.title", "Request Group Approval"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors.fillColorSecondary,
               textColor: Styles().colors.fillColorPrimary,
               onTap: _onCreateTap,
-//              height: 48,
             ),
           )
           ,),
-        Visibility(visible: _loading,
+        Visibility(visible: _creating,
           child: Container(
-//            height: 48,
             child: Align(alignment: Alignment.center,
               child: SizedBox(height: 24, width: 24,
                   child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
@@ -322,13 +502,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onCreateTap(){
     setState(() {
-      _loading = true;
+      _creating = true;
     });
-    Groups().createGroup(_groupDetail).then((detail){
+    Groups().createGroup(_group).then((detail){
       if(detail!=null){
         //ok
         setState(() {
-          _loading = false;
+          _creating = false;
         });
 
         Navigator.pop(context);
@@ -336,7 +516,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }).catchError((e){
       //error
       setState(() {
-        _loading = false;
+        _creating = false;
       });
     });
   }
@@ -344,7 +524,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   // Common
   Widget _buildSectionTitle(String title, String description){
     return Container(
-      padding: EdgeInsets.only(bottom: 8, top:24),
+      padding: EdgeInsets.only(bottom: 8, top:16),
       child:
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,11 +549,37 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               ),
             )
       ],)
-
     );
   }
+
+  Widget _buildTitle(String title, String iconRes){
+    return
+      Container(
+        padding: EdgeInsets.only(left: 16),
+        child:
+          Semantics(
+            label: title,
+            hint: title,
+            header: true,
+            excludeSemantics: true,
+            child:
+            Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.asset(iconRes, color: Styles().colors.fillColorSecondary,),
+              Expanded(child:
+              Container(
+                  padding: EdgeInsets.only(left: 14, right: 4),
+                  child:Text(
+                    title,
+                    style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold,),
+                  )
+              ))
+      ],)));
+  }
+
   void onNameChanged(String name){
-    _groupDetail.title = name;
+    _group.title = name;
      validateName(name);
   }
 

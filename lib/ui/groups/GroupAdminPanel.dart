@@ -34,14 +34,15 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 import 'GroupFindEventPanel.dart';
 
 class GroupAdminPanel extends StatefulWidget {
-  final GroupDetail groupDetail;
+  final Group group;
   final List<GroupEvent>   groupEvents;
   
-  GroupAdminPanel({this.groupDetail, this.groupEvents});
+  GroupAdminPanel({this.group, this.groupEvents});
 
   _GroupAdminPanelState createState() => _GroupAdminPanelState();
 }
@@ -96,15 +97,15 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   Widget _buildHeading(){
     String members;
-    int membersCount = widget.groupDetail?.membersCount ?? 0;
+    int membersCount = widget.group?.membersCount ?? 0;
     if (membersCount == 0) {
-      members = 'No Current Members';
+      members = Localization().getStringEx("panel.groups_admin.members.count.empty", "No Current Members");
     }
     else if (membersCount == 1) {
-      members = '1 Current Member';
+      members = Localization().getStringEx("panel.groups_admin.members.count.one", "1 Current Member");
     }
     else {
-      members = '$membersCount Current Members';
+      members = sprintf(Localization().getStringEx("panel.groups_admin.members.count.format", "%s Current Members"),[membersCount]);
     }
 
     return Container(
@@ -116,7 +117,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
           Row(
             children: <Widget>[
               Expanded(
-                child: Text(widget.groupDetail?.category?.toUpperCase() ?? '',
+                child: Text(widget.group?.category?.toUpperCase() ?? '',
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies.bold,
                     fontSize: 12,
@@ -133,7 +134,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
             ],
           ),
           Container(height: 12,),
-          Text(widget.groupDetail?.title,
+          Text(widget.group?.title,
             style: TextStyle(
               fontFamily: Styles().fontFamilies.extraBold,
               fontSize: 32,
@@ -178,10 +179,10 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
         children: widget.groupEvents.map((event){
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: _EventCard(groupEvent: event,groupId: widget?.groupDetail?.id, onDeleteTap: (GroupEvent event){
+            child: _EventCard(groupEvent: event,groupId: widget?.group?.id, onDeleteTap: (GroupEvent event){
               if(event!=null){
                 widget.groupEvents.remove(event);
-//                Groups().updateGroupEvents(widget?.groupDetail?.id, widget.groupEvents);//TBD Consider how to notify service for the update
+//                Groups().updateGroupEvents(widget?.group?.id, widget.groupEvents);//TBD Consider how to notify service for the update
                 setState(() {});
               }
             },),
@@ -207,12 +208,12 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   void onTapMembers(){
     Analytics().logPage(name: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupDetail: widget.groupDetail)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: widget.group.id)));
   }
 
   void onTapSettings(){
     Analytics().logPage(name: "Group Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(groupDetail: widget.groupDetail,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: widget.group,)));
   }
 }
 
@@ -425,7 +426,7 @@ class _EventCard extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(8))
               ),
               child:
-                Text("Post about this event...",style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors.textBackground),)
+                Text(Localization().getStringEx("panel.groups_admin.button.post.text","Post about this event..."),style: TextStyle(fontFamily: 'ProximaNovaExtraRegular', fontSize: 14, color: Styles().colors.textBackground),)
             ))
           ],),
       ));
@@ -447,7 +448,7 @@ class _EventCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child: Container()),
                         ScalableRoundedButton(
-                          label:"Delete",
+                          label:Localization().getStringEx("panel.groups_admin.button.delete.title", "Delete"),
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorPrimary,
                           textColor: Styles().colors.fillColorPrimary,
@@ -462,7 +463,7 @@ class _EventCard extends StatelessWidget {
                         ),
                         Container(height: 8,),
                         ScalableRoundedButton(
-                          label:"Edit",
+                          label:Localization().getStringEx("panel.groups_admin.button.edit.title", "Edit"),
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorPrimary,
                           textColor: Styles().colors.fillColorPrimary,
@@ -480,7 +481,7 @@ class _EventCard extends StatelessWidget {
                         ),
                         Container(height: 8,),
                         ScalableRoundedButton(
-                          label:"Cancel",
+                          label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                           backgroundColor: Styles().colors.white,
                           borderColor: Styles().colors.fillColorSecondary,
                           textColor: Styles().colors.fillColorPrimary,
@@ -520,7 +521,7 @@ class _EventCard extends StatelessWidget {
                           Expanded(child: Container()),
                           Container(height: 8,),
                           RoundedButton(
-                            label:"Remove event",
+                            label: Localization().getStringEx("panel.groups_admin.button.remove.title", "Remove event"),
                             backgroundColor: Styles().colors.white,
                             borderColor: Styles().colors.fillColorPrimary,
                             textColor: Styles().colors.fillColorPrimary,
@@ -534,7 +535,7 @@ class _EventCard extends StatelessWidget {
                           ),
                           Container(height: 8,),
                           RoundedButton(
-                            label:"Cancel",
+                            label: Localization().getStringEx("panel.groups_admin.button.cancel.title", "Cancel"),
                             backgroundColor: Styles().colors.white,
                             borderColor: Styles().colors.fillColorSecondary,
                             textColor: Styles().colors.fillColorPrimary,

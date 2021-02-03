@@ -108,7 +108,8 @@ class ExploreService /* with Service */ {
       Event event = explore is Event ? explore : null;
       http.Response response;
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().post(Config().eventsOrConvergeUrl, body: json.encode(event.toJson()),
+        dynamic body = json.encode(event.toNotNullJson());
+        response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.User) : null;
         return ((response != null) && (response.statusCode == 200 || response.statusCode == 201));
