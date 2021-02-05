@@ -768,8 +768,8 @@ class Auth with Service implements NotificationsListener {
             _notifyAuthTokenChanged();
           }
         }
-        else if(tokenResponse.statusCode == 401 || tokenResponse.statusCode == 403){
-          logout(); // Logout only on 401 or 403. Do not do anything else for the rest of scenarios
+        else if(tokenResponse.statusCode == 400 || tokenResponse.statusCode == 401 || tokenResponse.statusCode == 403){
+          logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
         }
       }
       catch(e) {
