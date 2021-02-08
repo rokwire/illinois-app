@@ -99,7 +99,7 @@ class Config with Service implements NotificationsListener {
   String get myIlliniUrl            { return otherUniversityServices['myillini_url']; }               // "https://myillini.illinois.edu/Dashboard"
   String get feedbackUrl            { return otherUniversityServices['feedback_url']; }               // "https://forms.illinois.edu/sec/1971889"
   String get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
-  String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://www.vpaa.uillinois.edu/resources/web_privacy"
+  String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
 
   String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
   String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
