@@ -42,7 +42,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
   @override
   void initState() {
     NotificationService().subscribe(this, User.notifyRolesUpdated);
-    _selectedRoles = User().roles ?? Set<UserRole>();
+    _selectedRoles = (User().roles != null) ? Set.from(User().roles): Set<UserRole>();
     super.initState();
   }
 
