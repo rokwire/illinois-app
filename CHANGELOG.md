@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.4.4] - 2021-02-09
+
 ## [2.4.3] - 2021-02-08
 ### Changed
 - Do not edit straightly roles from user data [#229](https://github.com/rokwire/illinois-app/issues/229).
