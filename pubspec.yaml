@@ -68,9 +68,9 @@ dependencies:
   barcode_flutter: ^1.1.0
   webview_flutter: ^0.3.24
   dotted_border: ^1.0.5
-  flutter_image_compress: ^0.7.0
+# flutter_image_compress: ^0.7.0
   notification_permissions: ^0.4.6
-#  system_setting: ^0.1.4
+# system_setting: ^0.1.4
   app_settings: ^4.0.4
 
 dev_dependencies:
