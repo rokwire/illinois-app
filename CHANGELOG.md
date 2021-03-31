@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - YouTube videos plays when screen locked [#235](https://github.com/rokwire/illinois-app/issues/235).
+- Android: Prevent crash when FCM is received and the app is in killed state [#236](https://github.com/rokwire/illinois-app/issues/236).
 
 ### Deleted
 - Removed linkage to flutter_image_compress plugin that is unused.
