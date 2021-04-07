@@ -83,6 +83,8 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
       cp $APK_BUILD_PATH $APK_OUT_PATH
       echo "Copy to $APK_OUT_PATH"
   fi
+
+  aws s3 cp $APK_OUT_PATH s3://rokwire-ios-beta/Installs/
 fi
 
 if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
@@ -104,7 +106,11 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
   xcodebuild -exportArchive -archivePath ../build/_output/tmp/Runner.xcarchive -exportPath ../build/_output/tmp/ -exportOptionsPlist ../build/_output/$BRAND-$VERSION-$ENV.plist
   cd ..
   cp ./build/_output/tmp/Runner.ipa ./build/_output/$BRAND-$VERSION-$ENV.ipa
-  rm -rf ./build/_output/tmp/
+  #rm -rf ./build/_output/tmp/
+
+  aws s3 cp $QR_BUILD_PATH s3://rokwire-ios-beta/Installs/
+  aws s3 cp $PLIST_BUILD_PATH s3://rokwire-ios-beta/Installs/
+  aws s3 cp ./build/_output/$BRAND-$VERSION-$ENV.ipa s3://rokwire-ios-beta/Installs/
 fi
 
 

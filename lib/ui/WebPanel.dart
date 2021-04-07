@@ -16,8 +16,10 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes {
+class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes{
   final String url;
   final String analyticsName;
   final String title;
@@ -47,20 +49,24 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
   }
 }
 
-class _WebPanelState extends State<WebPanel> {
+class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   _OnlineStatus _onlineStatus;
   bool _pageLoaded = false;
+
+  bool _isForeground = true;
 
   @override
   void initState() {
     super.initState();
     _checkOnlineStatus();
+    NotificationService().subscribe(this, AppLivecycle.notifyStateChanged);
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -84,16 +90,19 @@ class _WebPanelState extends State<WebPanel> {
 
   List<Widget> _buildWebView() {
     List<Widget> list = List<Widget>();
-    list.add(WebView(
-      initialUrl: widget.url,
-      javascriptMode: JavascriptMode.unrestricted,
-      navigationDelegate: _processNavigation,
-      onPageFinished: (url) {
-        setState(() {
-          _pageLoaded = true;
-        });
-      },
-      ));
+    list.add(Visibility(
+      visible: _isForeground,
+      child: WebView(
+        initialUrl: widget.url,
+        javascriptMode: JavascriptMode.unrestricted,
+        navigationDelegate: _processNavigation,
+        onPageFinished: (url) {
+          setState(() {
+            _pageLoaded = true;
+          });
+        },
+        ),
+    ));
 
     if (!_pageLoaded) {
       list.add(Center(child: CircularProgressIndicator()));
@@ -149,6 +158,14 @@ class _WebPanelState extends State<WebPanel> {
   Widget _getHeaderBar() {
     return SimpleHeaderBarWithBack(context: context,
       titleWidget: Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  void onNotification(String name, dynamic param){
+    if(name == AppLivecycle.notifyStateChanged) {
+      setState(() {
+        _isForeground = (param == AppLifecycleState.resumed);
+      });
+    }
   }
 
 }
