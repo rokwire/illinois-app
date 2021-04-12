@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Wellness - PDF links is not loading in web view [#240](https://github.com/rokwire/illinois-app/issues/240).
 
+### Changed
+- Athletics - All Staff tile link is displayed along with Coaching Staff tile list [#239](https://github.com/rokwire/illinois-app/issues/239).
+
 ## [2.4.5] - 2021-03-31
 ### Fixed
 - YouTube videos plays when screen locked [#235](https://github.com/rokwire/illinois-app/issues/235).
