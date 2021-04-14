@@ -905,7 +905,7 @@ class _RosterItem extends StatelessWidget {
   }
 }
 
-class _RosterMoreItem extends StatelessWidget {
+/*class _RosterMoreItem extends StatelessWidget {
   final String label;
   final GestureTapCallback onTap;
 
@@ -957,7 +957,7 @@ class _RosterMoreItem extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 class _TeamSocialCell extends StatelessWidget {
   final String name;
