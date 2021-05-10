@@ -17,7 +17,11 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:eventsource/eventsource.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:w3c_event_source/event_source.dart';
+
+//import 'package:eventsource/eventsource.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Poll.dart';
@@ -546,10 +550,10 @@ class Polls with Service implements NotificationsListener {
     }
   }
 
-  void _onPollEvent(String pollId, Event event) {
-    Log.d('Polls: received event \'${event.event}\' from EventStream for poll #$pollId');
+  void _onPollEvent(String pollId, MessageEvent event) {
+    Log.d('Polls: received event \'${event.name}\' from EventStream for poll #$pollId');
     try {
-      if (event.event == 'status') {
+      if (event.name == 'status') {
         List<dynamic> jsonList = AppJson.decode(event.data);
         String statusString = ((jsonList != null) && jsonList.isNotEmpty) ? jsonList.first : null;
         PollStatus pollStatus = Poll.pollStatusFromString(statusString);
@@ -557,7 +561,7 @@ class Polls with Service implements NotificationsListener {
           _updatePollStatus(pollId, pollStatus);
         }
       }
-      else if (event.event == 'results') {
+      else if (event.name == 'results') {
         List<dynamic> jsonList = AppJson.decode(event.data);
         List<int> results = (jsonList != null) ? jsonList.cast<int>() : null;
         PollVote pollResults = (results != null) ? PollVote.fromJson(results: results) : null;
@@ -592,11 +596,17 @@ class Polls with Service implements NotificationsListener {
       try {
         String url = '${Config().quickPollsUrl}/events/$pollId';
         pollChunk.eventClient = Client();
-        pollChunk.eventSource = await EventSource.connect(url, client: pollChunk.eventClient, lastEventId: pollChunk.lastEventId, headers: {
-          Network.RokwireApiKey: Config().rokwireApiKey,
-        });
+        pollChunk.eventSource = EventSource(Uri.parse(url),
+            clientFactory: (){
+
+          //Network.RokwireApiKey: Config().rokwireApiKey,
+              HttpClient client = HttpClient();
+              return client;
+            },
+        );
+
         if (pollChunk.eventSource != null) {
-          pollChunk.eventListener = pollChunk.eventSource.listen((Event event) {
+          pollChunk.eventListener = pollChunk.eventSource.events.listen((MessageEvent event) {
               _logLastEvent(pollId, event);
               _setEventListenerTimer(pollId);
               _onPollEvent(pollId, event);
@@ -663,11 +673,11 @@ class Polls with Service implements NotificationsListener {
     }
   }
 
-  void _logLastEvent(String pollId, Event event) {
+  void _logLastEvent(String pollId, MessageEvent event) {
     _PollChunk pollChunk = _pollChunks[pollId];
-    if (pollChunk != null) {
-      pollChunk.lastEventId = event?.id;
-    }
+    //if (pollChunk != null) {
+    //  pollChunk.lastEventId = event?.id;
+    //}
   }
 
   void _removePollChunk(_PollChunk pollChunk) {
@@ -798,7 +808,7 @@ class _PollChunk {
   
   Client eventClient;
   EventSource eventSource;
-  StreamSubscription<Event> eventListener;
+  StreamSubscription<MessageEvent> eventListener;
   Timer eventListenerTimer;
   String lastEventId;
 

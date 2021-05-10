@@ -19,8 +19,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' as FirebaseMessagingPlugin;
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -38,6 +40,8 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/utils/Utils.dart';
 
+const String _channelId = "Notifications_Channel_ID";
+
 class FirebaseMessaging with Service implements NotificationsListener {
 
   static const String notifyToken                 = "edu.illinois.rokwire.firebase.messaging.token";
@@ -54,6 +58,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "config_update",
     "popup_message",
     "polls",
+    "mladen_test"
   ];
 
   // Settings entry : topic name
@@ -62,6 +67,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     'athletic_updates' : 'athletic_updates',
     'dining_specials'  : 'dinning_specials',
   };
+
+  final AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    _channelId, // id
+    "Illinois",
+    "Receive notifications",
+    importance: Importance.high,
+  );
 
 
   String   _token;
@@ -74,7 +86,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   FirebaseMessaging._internal();
   static final FirebaseMessaging _firebase = FirebaseMessaging._internal();
-  FirebaseMessagingPlugin.FirebaseMessaging _firebaseMessaging = FirebaseMessagingPlugin.FirebaseMessaging();
+  final FlutterLocalNotificationsPlugin _firebaseMessaging = FlutterLocalNotificationsPlugin();
 
   factory FirebaseMessaging() {
     return _firebase;
@@ -112,18 +124,32 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    
     // Cache messages until UI is displayed
     _messagesCache = List<Map<String, dynamic>>();
 
-    _firebaseMessaging.configure(
-      onMessage: _onFirebaseMessage,
-      onBackgroundMessage: null, // causes exception in FirebaseMessaging plugin 
-      onLaunch: _onFirebaseLaunch,
-      onResume: _onFirebaseResume,
+    //firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_channel);
+
+    await firebase_messaging.FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
     );
-    
-    _firebaseMessaging.getToken().then((String token) {
+
+    firebase_messaging.FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _onFirebaseMessage(message.data);
+    });
+
+    firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      _onFirebaseMessage(message.data);
+    });
+
+
+
+
+    firebase_messaging.FirebaseMessaging.instance.getToken().then((String token) {
       _token = token;
       Log.d('FCM: token: $token');
       NotificationService().notify(notifyToken, null);
@@ -473,6 +499,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void _updateSubscriptions() {
     if (hasToken) {
       Set<String> subscribedTopis = Storage().firebaseSubscriptionTopis;
+      subscribedTopis.add("mladen_test");
       _processPermanentSubscriptions(subscribedTopis: subscribedTopis);
       _processRolesSubscriptions(subscribedTopis: subscribedTopis);
       _processNotifySettingsSubscriptions(subscribedTopis: subscribedTopis);

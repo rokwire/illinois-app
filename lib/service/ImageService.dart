@@ -61,7 +61,7 @@ class ImageService /* with Service */ {
 
   Future<ImagesResult> useUrl(ImageType imageType, String url) async {
     // 1. first check if the url gives an image
-    Response headersResponse = await head(url);
+    Response headersResponse = await head(Uri.parse(url));
     if ((headersResponse != null) && (headersResponse.statusCode == 200)) {
       //check content type
       Map<String, String> headers = headersResponse.headers;
@@ -69,7 +69,7 @@ class ImageService /* with Service */ {
       bool isImage = _isValidImage(contentType);
       if (isImage) {
         // 2. download the image
-        Response response = await get(url);
+        Response response = await get(Uri.parse(url));
         Uint8List imageContent = response.bodyBytes;
 
         // 3. call the image service api
@@ -92,7 +92,7 @@ class ImageService /* with Service */ {
 
   Future<ImagesResult> chooseFromDevice(ImageType imageType) async {
     // 1. choose the image from the gallery
-    PickedFile image = await ImagePicker().getImage(source: ImageSource.gallery);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) {
       //return cancel
       Log.d("Cancel picker image");
@@ -100,10 +100,13 @@ class ImageService /* with Service */ {
     }
 
     // 2. call the image service api
-    List<int> bytesFile = File(image.path).readAsBytesSync();
-    var fName = basename(image.path);
-    var contentType = mime(fName);
-    return _callImageService(imageType, bytesFile, fName, contentType);
+    if(image != null && await image.exists()) {
+      List<int> bytesFile = image.readAsBytesSync();
+      var fName = basename(image.path);
+      var contentType = mime(fName);
+      return _callImageService(imageType, bytesFile, fName, contentType);
+    }
+    return null;
   }
 
   bool _isValidImage(String contentType) {
