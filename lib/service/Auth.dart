@@ -522,15 +522,21 @@ class Auth with Service implements NotificationsListener {
     return null;
   }
 
-  Future<void> deleteUserPiiData() async{
-    String url = (Config().userProfileUrl != null) ? '${Config().userProfileUrl}/pii/${Storage().userPid}' : null;
+  Future<bool> deleteUserPiiData() async {
+    if (Config().userProfileUrl != null) {
+      String url = '${Config().userProfileUrl}/pii/${Storage().userPid}';
 
-    await Network().delete(url,
-        headers: {'Content-Type':'application/json'},
-        auth: NetworkAuth.User
-    ).whenComplete((){
-      _applyUserPiiData(null, null);
-    });
+      try {
+        Response response = await Network().delete(url, headers: {'Content-Type': 'application/json'}, auth: NetworkAuth.User);
+        if(response?.statusCode == 200) {
+          _applyUserPiiData(null, null);
+          return true;
+        }
+      } catch(error){
+        Log.e(error);
+      }
+    }
+    return false;
   }
 
   void _applyUserPiiData(UserPiiData userPiiData, String userPiiDataString, [bool notify = true]) {
@@ -752,23 +758,22 @@ class Auth with Service implements NotificationsListener {
         .then((tokenResponse){
       _refreshTokenFuture = null;
       try {
-        String tokenResponseBody = ((tokenResponse != null) && (tokenResponse.statusCode == 200)) ? tokenResponse.body : null;
-        var bodyMap = (tokenResponseBody != null) ? AppJson.decode(tokenResponseBody) : null;
-        _authToken = ShibbolethToken.fromJson(bodyMap);
-        _saveAuthToken();
-        if (authToken?.idToken == null) { // Why we need this if ?
-          _authInfo = null;
-          _saveAuthInfo();
-          _clearAuthCard();
-          _notifyAuthCardChanged();
-          _notifyAuthInfoChanged();
+        if((tokenResponse?.body != null) && (tokenResponse.statusCode == 200)){
+          String tokenResponseBody =  tokenResponse.body;
+          var bodyMap = (tokenResponseBody != null) ? AppJson.decode(tokenResponseBody) : null;
+          _authToken = ShibbolethToken.fromJson(bodyMap);
+          if(authToken?.idToken != null) {
+            Log.d("Auth: did refresh token: ${authToken?.idToken}");
+            _saveAuthToken();
+            _notifyAuthTokenChanged();
+          }
         }
-        Log.d("Auth: did refresh token: ${authToken?.idToken}");
-        _notifyAuthTokenChanged();
+        else if(tokenResponse.statusCode == 400 || tokenResponse.statusCode == 401 || tokenResponse.statusCode == 403){
+          logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
+        }
       }
       catch(e) {
         print(e.toString());
-        logout();
       }
 
       return;

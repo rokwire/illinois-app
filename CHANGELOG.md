@@ -5,31 +5,91 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/safer-illinois-app/issues/243).
+
+## [2.4.6] - 2021-04-12
+### Fixed
+- Wellness - PDF links is not loading in web view [#240](https://github.com/rokwire/illinois-app/issues/240).
+
+### Changed
+- Athletics - All Staff tile link is displayed along with Coaching Staff tile list [#239](https://github.com/rokwire/illinois-app/issues/239).
+
+## [2.4.5] - 2021-03-31
+### Fixed
+- YouTube videos plays when screen locked [#235](https://github.com/rokwire/illinois-app/issues/235).
+- Android: Prevent crash when FCM is received and the app is in killed state [#236](https://github.com/rokwire/illinois-app/issues/236).
+
+### Deleted
+- Removed linkage to flutter_image_compress plugin that is unused.
+
+## [2.4.4] - 2021-02-09
+
+## [2.4.3] - 2021-02-08
+### Changed
+- Do not edit straightly roles from user data [#229](https://github.com/rokwire/illinois-app/issues/229).
+
+## [2.4.2] - 2021-02-05
+### Fixed
+- iOS distribution build error related to MinimumOSVersion in ios/Flutter/AppFrameworkInfo.plist. [#226](https://github.com/rokwire/illinois-app/issues/226)
+- Additional handling on refresh oauth token and logout on 400, 401 & 403 status codes [#221](https://github.com/rokwire/illinois-app/issues/221)
+
+## [2.4.1] - 2021-02-03
+- Additional handling on refresh oauth token and logout on 401,403 status codes [#221](https://github.com/rokwire/illinois-app/issues/221)
+
+## [2.4.0] - 2021-02-01
+### Changed
+- Explore Shibboleth login failure due to deleted UUID [#221](https://github.com/rokwire/illinois-app/issues/221)
+- Include background location usage disclosure in Onboarding / Location Services Panel [#218](https://github.com/rokwire/illinois-app/issues/218)
+
+## [2.3.31] - 2021-01-21
+### Fixed
+- Crashes with FCM notifications in Android [#213](https://github.com/rokwire/illinois-app/issues/213)
+- Quick Polls freeze [#174](https://github.com/rokwire/illinois-app/issues/174)
+
+## [2.3.30] - 2021-01-18
+### Changed
+- Update text on Dining menu items [#171](https://github.com/rokwire/illinois-app/issues/171)
+
+## [2.3.29] - 2021-01-15
+### Changed
+- Updated Campus Reminders for Spring 2021 [#206](https://github.com/rokwire/illinois-app/issues/206)
+
+### Fixed
+- Dining Payment Types Not Filtering Correctly[#205](https://github.com/rokwire/illinois-app/issues/205)
+
 ## [2.3.27] - 2020-12-23
+### Changed
 - Various improvements related to the new Onboarding UI [#176](https://github.com/rokwire/illinois-app/issues/176)
 
 ## [2.3.26] - 2020-12-16
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 - Updated URL for moved wellness tool [#172](https://github.com/rokwire/illinois-app/issues/172)
 
 ## [2.3.26] - 2020-12-15
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.25] - 2020-12-11
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.24] - 2020-12-09
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.23] - 2020-12-07
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
 ## [2.3.22] - 2020-11-30
+### Added
 - Various improvements related to the Groups UI [#134](https://github.com/rokwire/illinois-app/issues/134)
 - Various improvements related to the Groups API [#143](https://github.com/rokwire/illinois-app/issues/143)
 
@@ -164,22 +224,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update es and zh strings.[#55](https://github.com/rokwire/illinois-app/issues/55)
 
 ## [2.2.16] - 2020-09-02
-### Removed Save buttons from Profile Informations panels
+### Changed
+- Removed Save buttons from Profile Informations panels
 
 ## [2.2.15] - 2020-09-01
-### Exposed Strings for localisation
+### Changed
+- Exposed Strings for localisation
 
 ## [2.2.14] - 2020-08-31
-
-### Improved VO features [#24]
+### Changed
+- Improved VO features [#24](https://github.com/rokwire/illinois-app/issues/24)
 
 ## [2.2.13] - 2020-08-28
-
 ### Fixed
 Removed COVID references from code. [#20](https://github.com/rokwire/illinois-app/issues/20)
 
 ## [2.2.12] - 2020-08-27
-
 ### Fixed
 Fix Mobile Order deep link handling [#11](https://github.com/rokwire/illinois-app/issues/11)
 

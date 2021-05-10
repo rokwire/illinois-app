@@ -26,6 +26,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WellnessPanel extends StatefulWidget {
   final Map<String, dynamic> content;
@@ -412,7 +413,12 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
     String url = AppMapPathKey.entry(ribbonButton, 'url');
     if (AppString.isStringNotEmpty(url)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      if(AppUrl.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else{
+        launch(url);
+      }
     }
   }
 

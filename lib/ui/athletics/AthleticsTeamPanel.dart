@@ -443,102 +443,52 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                 )
               ],
             ),
-            Stack(
-              alignment: Alignment.topCenter,
-              children: <Widget>[
-                Container(
-                  color: Styles().colors.backgroundVariant,
-                  height: 112,
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16, top: 16),
-                    child: Text(
-                      Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
-                      style: TextStyle(
-                          color: Styles().colors.fillColorPrimary, fontSize: 20),
+            Visibility(
+              visible: AppCollection.isCollectionNotEmpty(_allRosters),
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  Container(
+                    color: Styles().colors.backgroundVariant,
+                    height: 112,
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 16, top: 16),
+                      child: Text(
+                        Localization().getStringEx("panel.athletics_team.label.team_roster.title", 'Team Roster'),
+                        style: TextStyle(
+                            color: Styles().colors.fillColorPrimary, fontSize: 20),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16, top: 52, bottom: 32),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _buildTeamRoster(),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16, top: 52, bottom: 32),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildTeamRoster(),
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 32, left: 10, right: 10),
-              child:
-              Row(children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Container(),),
-                Expanded(
-                  flex: 5,
-                  child: ScalableRoundedButton(
-                    label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
-                    hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
-                    onTap: _showRosterListPanel(),
-                    textColor: Styles().colors.fillColorPrimary,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    backgroundColor: Styles().colors.background,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(),),
-              ],)
-
-            ),
-            Stack(
-              alignment: Alignment.topCenter,
-              children: <Widget>[
-                Container(
-                  color: Styles().colors.backgroundVariant,
-                  height: 112,
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16, top: 16),
-                    child: Text(
-                      Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
-                      style: TextStyle(
-                          color: Styles().colors.fillColorPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 16, top: 52, bottom: 32),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _buildCoachingStaff(),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
-              child:
+            Visibility(
+              visible: AppCollection.isCollectionNotEmpty(_allRosters),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 32, left: 10, right: 10),
+                child:
                 Row(children: <Widget>[
                   Expanded(
                     flex: 1,
-                    child: Container(),
-                  ),
+                    child: Container(),),
                   Expanded(
                     flex: 5,
                     child: ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
-                      hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
-                      onTap:_showCoachListPanel(),
+                      label: Localization().getStringEx("panel.athletics_team.button.full_roster.title", 'Full Roster'),
+                      hint: Localization().getStringEx("panel.athletics_team.button.full_roster.hint", ''),
+                      onTap: _showRosterListPanel(),
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorSecondary,
                       backgroundColor: Styles().colors.background,
@@ -548,6 +498,68 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     flex: 1,
                     child: Container(),),
                 ],)
+
+              ),
+            ),
+            Visibility(
+              visible: AppCollection.isCollectionNotEmpty(_allCoaches),
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  Container(
+                    color: Styles().colors.backgroundVariant,
+                    height: 112,
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 16, top: 16),
+                      child: Text(
+                        Localization().getStringEx("panel.athletics_team.label.coaching_staff.title", 'Coaching Staff'),
+                        style: TextStyle(
+                            color: Styles().colors.fillColorPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16, top: 52, bottom: 32),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildCoachingStaff(),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Visibility(
+              visible: AppCollection.isCollectionNotEmpty(_allCoaches),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 48, left: 10, right: 10),
+                child:
+                  Row(children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Container(),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: ScalableRoundedButton(
+                        label: Localization().getStringEx("panel.athletics_team.button.all_staff.title", 'All Staff'),
+                        hint: Localization().getStringEx("panel.athletics_team.button.all_staff.hint", ''),
+                        onTap:_showCoachListPanel(),
+                        textColor: Styles().colors.fillColorPrimary,
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.background,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(),),
+                  ],)
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 32),
@@ -755,10 +767,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
           imageUrl: roster.rosterPhotoUrl,
           onTap: () => _onTapRosterItem(context, roster),));
       }
-      rosterWidgets.add(_RosterMoreItem(
-        label: 'Full Roster',
-        onTap: _showRosterListPanel(),
-      ));
     }
     return rosterWidgets;
   }
@@ -776,8 +784,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
           imageUrl: coach.photoUrl,
           onTap: () => _onTapCoachItem(context, coach),));
       }
-      coachingWidgets.add(
-          _RosterMoreItem(label: 'All Staff', onTap: _showCoachListPanel(),));
     }
     return coachingWidgets;
   }
@@ -899,7 +905,7 @@ class _RosterItem extends StatelessWidget {
   }
 }
 
-class _RosterMoreItem extends StatelessWidget {
+/*class _RosterMoreItem extends StatelessWidget {
   final String label;
   final GestureTapCallback onTap;
 
@@ -951,7 +957,7 @@ class _RosterMoreItem extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
 class _TeamSocialCell extends StatelessWidget {
   final String name;

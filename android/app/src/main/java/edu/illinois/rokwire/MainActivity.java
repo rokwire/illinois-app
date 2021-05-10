@@ -65,13 +65,8 @@ import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.StandardMessageCodec;
-import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;
-import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService;
-import io.flutter.view.FlutterMain;
 
-public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler, PluginRegistry.PluginRegistrantCallback {
+public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
 
     private static final String TAG = "MainActivity";
 
@@ -98,10 +93,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
         instance = this;
         initScreenOrientation();
-
-        // TODO: Check do we need the next two lines at all?
-        FlutterFirebaseMessagingService.setPluginRegistrant(this);
-        FlutterMain.startInitialization(this);
     }
 
     @Override
@@ -637,14 +628,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Log.e(TAG, errorMsg);
             exception.printStackTrace();
         }
-    }
-
-    @Override
-    public void registerWith(PluginRegistry registry) {
-        if (registry != null && registry.hasPlugin("io.flutter.plugins.firebasemessaging")) {
-            FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
-        }
-
     }
 
     // RequestLocationCallback

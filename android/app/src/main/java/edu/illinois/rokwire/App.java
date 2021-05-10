@@ -31,8 +31,12 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
+import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;
+import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService;
+import io.flutter.view.FlutterMain;
 
-public class App extends Application implements LifecycleObserver {
+public class App extends Application implements LifecycleObserver, PluginRegistry.PluginRegistrantCallback {
 
     private static final String CHANNEL_ID = "Polls_Channel_ID";
 
@@ -41,6 +45,8 @@ public class App extends Application implements LifecycleObserver {
     @Override
     public void onCreate() {
         super.onCreate();
+        FlutterMain.startInitialization(this);
+        FlutterFirebaseMessagingService.setPluginRegistrant(this);
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         createNotificationChannel(this);
@@ -95,5 +101,10 @@ public class App extends Application implements LifecycleObserver {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(4, notification);
+    }
+
+    @Override
+    public void registerWith(PluginRegistry registry) {
+        FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
     }
 }
