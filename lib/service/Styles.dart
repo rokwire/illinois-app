@@ -24,9 +24,11 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
+
 
 class Styles extends Service implements NotificationsListener{
   static const String notifyChanged    = "edu.illinois.rokwire.styles.changed";
@@ -35,6 +37,7 @@ class Styles extends Service implements NotificationsListener{
   File      _cacheFile;
   DateTime  _pausedDateTime;
 
+  StylesContentMode _contentMode;
   Map<String, dynamic> _stylesData;
   
   UiColors _colors;
@@ -70,19 +73,86 @@ class Styles extends Service implements NotificationsListener{
   @override
   Future<void> initService() async {
     await _getCacheFile();
-    await _loadFromCache();
-    if (_stylesData == null) {
+    
+    _contentMode = stylesContentModeFromString(Storage().stylesContentMode) ?? StylesContentMode.auto;
+    if (_contentMode == StylesContentMode.auto) {
+      await _loadFromCache();
+      if (_stylesData == null) {
+        await _loadFromAssets();
+      }
+      _loadFromNet();
+    }
+    else if (_contentMode == StylesContentMode.assets) {
       await _loadFromAssets();
     }
-    _loadFromNet();
+    else if (_contentMode == StylesContentMode.debug) {
+      await _loadFromCache();
+      if (_stylesData == null) {
+        await _loadFromAssets();
+      }
+    }
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return Set.from([Storage(), Config()]);
+  }
+
+  // ContentMode
+
+  StylesContentMode get contentMode {
+    return _contentMode;
+  }
+
+  set contentMode(StylesContentMode contentMode) {
+    setContentMode(contentMode);
+  }
+
+  Future<void> setContentMode(StylesContentMode contentMode, [String stylesContent]) async {
+    if (_contentMode != contentMode) {
+      _contentMode = contentMode;
+      Storage().stylesContentMode = stylesContentModeToString(contentMode);
+
+      _stylesData = null;
+      _clearCache();
+
+      if (_contentMode == StylesContentMode.auto) {
+        await _loadFromAssets();
+        await _loadFromNet(notifyUpdate: false);
+      }
+      else if (_contentMode == StylesContentMode.assets) {
+        await _loadFromAssets();
+      }
+      else if (_contentMode == StylesContentMode.debug) {
+        if (stylesContent != null) {
+          _applyContent(stylesContent, cacheContent: true);
+        }
+        else {
+          await _loadFromAssets();
+        }
+      }
+
+      NotificationService().notify(notifyChanged, null);
+    }
+    else if (contentMode == StylesContentMode.debug) {
+      if (stylesContent != null) {
+        _applyContent(stylesContent, cacheContent: true);
+      }
+      else {
+        _stylesData = null;
+        _clearCache();
+        await _loadFromAssets();
+      }
+      NotificationService().notify(notifyChanged, null);
+    }
+  }
+
+  Map<String, dynamic> get content {
+    return _stylesData;
   }
 
   // Public
+
 
   TextStyle getTextStyle(String key){
     dynamic style = _textStylesMap[key];
@@ -109,6 +179,13 @@ class Styles extends Service implements NotificationsListener{
     }
   }
 
+  Future<void> _clearCache() async {
+    if ((_cacheFile != null) && await _cacheFile.exists()) {
+      try { await _cacheFile.delete(); }
+      catch (e) { print(e.toString()); }
+    }
+  }
+
   Future<void> _loadFromAssets() async {
     try {
       String stylesContent = await rootBundle.loadString('assets/$_assetsName');
@@ -118,12 +195,12 @@ class Styles extends Service implements NotificationsListener{
     }
   }
 
-  Future<void> _loadFromNet() async {
+  Future<void> _loadFromNet({bool cacheContent = true, bool notifyUpdate = true}) async {
     try {
       http.Response response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
       String stylesContent =  ((response != null) && (response.statusCode == 200)) ? response.body : null;
       if(stylesContent != null) {
-        await _applyContent(stylesContent, cacheContent: true, notifyUpdate: true);
+        await _applyContent(stylesContent, cacheContent: cacheContent, notifyUpdate: notifyUpdate);
       }
     } catch (e) {
       print(e.toString());
@@ -133,17 +210,15 @@ class Styles extends Service implements NotificationsListener{
   Future<void> _applyContent(String stylesContent, {bool cacheContent = false, bool notifyUpdate = false}) async {
     try {
       Map<String, dynamic> styles = (stylesContent != null) ? AppJson.decode(stylesContent) : null;
-      if ((styles != null) && styles.isNotEmpty) {
-        if ((_stylesData == null) || !DeepCollectionEquality().equals(_stylesData, styles)) {
-          _stylesData = styles;
-          if ((_cacheFile != null) && cacheContent) {
-            await _cacheFile.writeAsString(stylesContent, flush: true);
-          }
+      if ((styles != null) && styles.isNotEmpty && ((_stylesData == null) || !DeepCollectionEquality().equals(_stylesData, styles))) {
+        _stylesData = styles;
+        _buildData();
+        if ((_cacheFile != null) && cacheContent) {
+          await _cacheFile.writeAsString(stylesContent, flush: true);
         }
-      }
-      _buildData();
-      if (notifyUpdate) {
-        NotificationService().notify(notifyChanged, null);
+        if (notifyUpdate) {
+          NotificationService().notify(notifyChanged, null);
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -221,11 +296,43 @@ class Styles extends Service implements NotificationsListener{
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+        if ((Config().refreshTimeout < pausedDuration.inSeconds) && (_contentMode == StylesContentMode.auto)) {
           _loadFromNet();
         }
       }
     }
+  }
+}
+
+enum StylesContentMode { auto, assets, debug }
+
+String stylesContentModeToString(StylesContentMode contentMode) {
+  if (contentMode == StylesContentMode.auto) {
+    return 'auto';
+  }
+  else if (contentMode == StylesContentMode.assets) {
+    return 'assets';
+  }
+  else if (contentMode == StylesContentMode.debug) {
+    return 'debug';
+  }
+  else {
+    return null;
+  }
+}
+
+StylesContentMode stylesContentModeFromString(String value) {
+  if (value == 'auto') {
+    return StylesContentMode.auto;
+  }
+  else if (value == 'assets') {
+    return StylesContentMode.assets;
+  }
+  else if (value == 'debug') {
+    return StylesContentMode.debug;
+  }
+  else {
+    return null;
   }
 }
 
