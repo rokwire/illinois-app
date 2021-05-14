@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/safer-illinois-app/issues/246)
 
+## [2.4.7] - 2021-05-13
 ### Fixed
 - Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/safer-illinois-app/issues/243).
 
