@@ -590,6 +590,19 @@ class Storage with Service {
   }
 
   /////////////
+  // Styles
+
+  static const String _stylesContentModeKey = 'styles_content_mode';
+
+  String get stylesContentMode {
+    return _getStringWithName(_stylesContentModeKey);
+  }
+
+  set stylesContentMode(String value) {
+    _setStringWithName(_stylesContentModeKey, value);
+  }
+
+  /////////////
   // Voter
 
   static const String _voterHiddenForPeriodKey = 'voter_hidden_for_period';

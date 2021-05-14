@@ -67,6 +67,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       User.notifyUserUpdated,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
+      Styles.notifyChanged
     ]);
     _loadVersionInfo();
 
@@ -90,6 +91,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
       _updateState();
     } else if (name == FlexUI.notifyChanged) {
+      _updateState();
+    } else if (name == Styles.notifyChanged) {
       _updateState();
     }
   }

@@ -98,6 +98,7 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
       User.notifyFavoritesUpdated,
       User.notifyPrivacyLevelEmpty,
       FlexUI.notifyChanged,
+      Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
     ]);
@@ -154,6 +155,9 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContent();
+    }
+    else if (name == Styles.notifyChanged) {
+      setState(() { });
     }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
