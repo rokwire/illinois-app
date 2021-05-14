@@ -31,6 +31,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
+import 'package:illinois/ui/settings/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/settings/debug/HttpProxySettingsPanel.dart';
 import 'package:illinois/ui/settings/debug/MessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -60,6 +61,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
     
     NotificationService().subscribe(this, [
       Config.notifyEnvironmentChanged,
+      Styles.notifyChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
     ]);
@@ -284,6 +286,19 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
+                              label: "Styles...",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapStyles)),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
+                    Visibility(
+                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
                               label: "Http Proxy",
                               backgroundColor: Styles().colors.background,
                               fontSize: 16.0,
@@ -326,6 +341,9 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
       setState(() {});
     }
     else if(name == Config.notifyEnvironmentChanged){
+      setState(() {});
+    }
+    else if(name == Styles.notifyChanged){
       setState(() {});
     }
   }
@@ -576,6 +594,10 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
     if(Config().configEnvironment == ConfigEnvironment.dev) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => HttpProxySettingsPanel()));
     }
+  }
+
+  void _onTapStyles() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStylesPanel()));
   }
 
   void _onTapCrash(){
