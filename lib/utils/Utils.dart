@@ -298,11 +298,16 @@ class AppJson {
     return result;
   }
 
-  static String encode(dynamic value) {
+  static String encode(dynamic value, { bool prettify }) {
     String result;
     if (value != null) {
       try {
-        result = json.encode(value);
+        if (prettify == true) {
+          result = JsonEncoder.withIndent("  ").convert(value);
+        }
+        else {
+          result = json.encode(value);
+        }
       } catch (e) {
         Log.e(e?.toString());
       }

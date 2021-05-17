@@ -26,6 +26,7 @@ class RoundedButton extends StatelessWidget {
   final TextAlign textAlign;
   final String fontFamily;
   final double fontSize;
+  final TextStyle textStyle;
   final Color borderColor;
   final double borderWidth;
   final Color secondaryBorderColor;
@@ -44,6 +45,7 @@ class RoundedButton extends StatelessWidget {
       this.textAlign = TextAlign.center,
       this.fontFamily,
       this.fontSize = 20.0,
+      this.textStyle,
       this.padding = const EdgeInsets.all(0),
       this.enabled = true,
       this.borderColor,
@@ -93,7 +95,7 @@ class RoundedButton extends StatelessWidget {
                     Text(
                       label,
                       textAlign: textAlign,
-                      style: TextStyle(
+                      style: textStyle ?? TextStyle(
                         fontFamily: fontFamily ?? Styles().fontFamilies.bold,
                         fontSize: fontSize,
                         color: textColor,
