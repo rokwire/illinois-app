@@ -22,7 +22,6 @@ import 'dart:ui';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -58,7 +57,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "config_update",
     "popup_message",
     "polls",
-    "mladen_test"
   ];
 
   // Settings entry : topic name
@@ -137,11 +135,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
       sound: true,
     );
 
-    firebase_messaging.FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    firebase_messaging.FirebaseMessaging.onMessage.listen((firebase_messaging.RemoteMessage message) {
       _onFirebaseMessage(message.data);
     });
 
-    firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((firebase_messaging.RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
       _onFirebaseMessage(message.data);
     });
@@ -489,7 +487,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void _updateSubscriptions() {
     if (hasToken) {
       Set<String> subscribedTopis = Storage().firebaseSubscriptionTopis;
-      subscribedTopis.add("mladen_test");
       _processPermanentSubscriptions(subscribedTopis: subscribedTopis);
       _processRolesSubscriptions(subscribedTopis: subscribedTopis);
       _processNotifySettingsSubscriptions(subscribedTopis: subscribedTopis);
