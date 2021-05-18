@@ -174,7 +174,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
   }
 
   List<Widget> _buildContentWidgets(BuildContext context) {
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     if (!AppString.isStringEmpty(article.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),

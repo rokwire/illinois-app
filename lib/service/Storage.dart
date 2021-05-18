@@ -441,7 +441,7 @@ class Storage with Service {
 
   List<Object> get favorites{
     List<String> storedValue = _sharedPreferences.getStringList(favoritesKey);
-    return storedValue?? List<String>();
+    return storedValue?? [];
   }
 
   set favorites(List<Object> favorites){

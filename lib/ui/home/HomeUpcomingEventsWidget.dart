@@ -179,7 +179,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     if ((events != null) && (limit < events.length)) {
 
       // Generate random indexes
-      List<int> positions = List();
+      List<int> positions = [];
       for (int position = 0; position < limit; position++) {
         int eventsIndex = Random().nextInt(events.length);
 
@@ -199,7 +199,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       }
 
       // Build random events
-      List<Explore> randomEvents = List();
+      List<Explore> randomEvents = [];
       for (int position in positions) {
         randomEvents.add(events[position]);
       }
@@ -258,7 +258,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   }
 
   List<Widget> _buildListItems(BuildContext context) {
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     if (_events?.isNotEmpty ?? false) {
       for (int i = 0; i < _events.length; i++) {
         Explore event = _events[i];

@@ -395,10 +395,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     String locationHeader = Localization().getStringEx('panel.settings.illini_cash.label.location', 'Location');
     String descriptionHeader = Localization().getStringEx('panel.settings.illini_cash.label.description', 'Description');
     String amountHeader = Localization().getStringEx('panel.settings.illini_cash.label.amount', 'Amount');
-    List<Widget> dateWidgets        = new List();
-    List<Widget> locationWidgets    = new List();
-    List<Widget> descriptionWidgets = new List();
-    List<Widget> amountViewWidgets  = new List();
+    List<Widget> dateWidgets        =  [];
+    List<Widget> locationWidgets    =  [];
+    List<Widget> descriptionWidgets =  [];
+    List<Widget> amountViewWidgets  =  [];
     //Headers
     dateWidgets.add(_buildBalanceTableHeaderItem(dateHeader));
     locationWidgets.add(_buildBalanceTableHeaderItem(locationHeader));
@@ -545,7 +545,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text:text, selection: "Ok");
                       Navigator.pop(context);

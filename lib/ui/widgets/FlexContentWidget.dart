@@ -126,7 +126,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
     if (AppCollection.isCollectionEmpty(buttonsJsonContent)) {
       return Container();
     }
-    List<Widget> buttons = List();
+    List<Widget> buttons = [];
     for (Map<String, dynamic> buttonContent in buttonsJsonContent) {
       String title = buttonContent['title'];
       buttons.add(Row(

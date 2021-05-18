@@ -125,7 +125,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     // Cache messages until UI is displayed
-    _messagesCache = List<Map<String, dynamic>>();
+    _messagesCache = [];
 
     //firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -301,16 +301,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   Future<dynamic> _onFirebaseMessage(Map<String, dynamic> message) async {
     Log.d("FCM: onFirebaseMessage");
-    _onMessageProcess(message);
-  }
-
-  Future<dynamic> _onFirebaseLaunch(Map<String, dynamic> message) async {
-    Log.d("FCM: onFirebaseLaunch");
-    _onMessageProcess(message);
-  }
-
-  Future<dynamic> _onFirebaseResume(Map<String, dynamic> message) async {
-    Log.d("FCM: onFirebaseResume");
     _onMessageProcess(message);
   }
 

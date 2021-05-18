@@ -43,7 +43,7 @@ class ImageService /* with Service */ {
     String url = (Config().imagesServiceUrl != null) ? "${Config().imagesServiceUrl}/api/v1/image-types" : null;
     Response response = await Network().get(url);
     if ((response != null) && (response.statusCode == 200)) {
-      List<ImageType> imageTypes = List<ImageType>();
+      List<ImageType> imageTypes = [];
       String responseBody = response.body;
       List<dynamic> jsonList = AppJson.decode(responseBody);
       if ((jsonList != null) && jsonList.isNotEmpty) {

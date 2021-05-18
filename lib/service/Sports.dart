@@ -117,9 +117,9 @@ class Sports with Service implements NotificationsListener {
 
     if (jsonData != null) {
 
-      _sports = List();
-      _menSports = List();
-      _womenSports = List();
+      _sports = [];
+      _menSports = [];
+      _womenSports = [];
 
       jsonData.forEach((value) {
         SportDefinition sport = SportDefinition.fromJson(value);
@@ -226,7 +226,7 @@ class Sports with Service implements NotificationsListener {
       final response = await Network().get(rostersUrl);
       String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        rosters = List<Roster>();
+        rosters = [];
         Map<String, dynamic> jsonData = AppJson.decode(responseBody);
         if (jsonData != null) {
           List<dynamic> rosterList = jsonData["roster"];
@@ -252,7 +252,7 @@ class Sports with Service implements NotificationsListener {
       final response = await Network().get(rostersUrl);
       String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        coaches = List<Coach>();
+        coaches = [];
         Map<String, dynamic> jsonData = AppJson.decode(responseBody);
         if (jsonData != null) {
           List<dynamic> rosterList = jsonData["roster"];
@@ -314,10 +314,10 @@ class Sports with Service implements NotificationsListener {
 
       // Step 1: Group games by sport
       Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
-      List<Game> preferedGames = List<Game>();
+      List<Game> preferedGames = [];
       for (Game game in gamesList) {
         if (!gamesMap.containsKey(game.sport.shortName)) {
-          gamesMap[game.sport.shortName] = List<Game>();
+          gamesMap[game.sport.shortName] = [];
         }
         gamesMap[game.sport.shortName].add(game);
       }
@@ -336,7 +336,7 @@ class Sports with Service implements NotificationsListener {
       Set<String> limitedSports = Set<String>();
       if (preferedGames.isNotEmpty) {
         preferedGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-        List<Game> limitedGames = List<Game>();
+        List<Game> limitedGames = [];
         for (Game game in preferedGames) {
           if (!limitedSports.contains(game.sport.shortName)) {
             limitedGames.add(game);
@@ -391,7 +391,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<List<Game>> loadAllScheduleGames() async {
-    List<Game> gamesList = List<Game>();
+    List<Game> gamesList = [];
     if(_enabled) {
       String scheduleUrl = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/schedule" : null;
       DateTime now = AppDateTime().now;
@@ -532,7 +532,7 @@ class Sports with Service implements NotificationsListener {
       if ((response != null) && (response.statusCode == 200)) {
         Map<String, dynamic> jsonData = AppJson.decode(responseBody);
         if (jsonData != null) {
-          List<News> newsList = List<News>();
+          List<News> newsList = [];
           List<dynamic> storiesList = jsonData["stories"];
           for (Map<String, dynamic> jsonEntry in storiesList) {
             News news = News.fromJson(jsonEntry);
@@ -567,7 +567,7 @@ class Sports with Service implements NotificationsListener {
       if (AppCollection.isCollectionEmpty(games)) {
         return null;
       }
-      List<Game> todayGames = List();
+      List<Game> todayGames = [];
       for (Game game in games) {
         if (game.isGameDay) {
           todayGames.add(game);
@@ -633,7 +633,7 @@ class Sports with Service implements NotificationsListener {
       if (allSports == null || allSports.isEmpty) {
         return;
       }
-      List<String> sportsToUpdate = List();
+      List<String> sportsToUpdate = [];
       for (SportDefinition sport in allSports) {
         String sportShortName = sport.shortName;
         bool preferredSport = (preferredSports?.contains(sportShortName) ??

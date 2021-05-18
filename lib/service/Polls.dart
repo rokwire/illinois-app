@@ -550,7 +550,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   void _onPollEvent(String pollId, String eventName, String eventData) {
-    Log.d('Polls: received event \'${eventName}\' from EventStream for poll #$pollId');
+    Log.d('Polls: received event \'$eventName\' from EventStream for poll #$pollId');
     try {
       if (eventName == 'status') {
         List<dynamic> jsonList = AppJson.decode(eventData);

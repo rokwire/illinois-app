@@ -65,7 +65,7 @@ class SettingsDialog extends StatefulWidget{
 }
 
 class _SettingsDialogState extends State<SettingsDialog>{
-  List<String> selectedOptions = List<String>();
+  List<String> selectedOptions = [];
   bool _loading = false;
 
   @override
@@ -135,7 +135,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
 
   Widget _buildOptions(){
     if(widget.options?.isNotEmpty??false){
-      List<Widget> options = List();
+      List<Widget> options = [];
       widget.options.forEach((option){
         Widget optionWidget = _buildOptionButton(option);
         if(optionWidget!=null)

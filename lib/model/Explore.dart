@@ -60,7 +60,7 @@ abstract class Explore {
   }
 
   static List<Explore> listFromJson(List<dynamic> jsonList) {
-    List<Explore> explores = List<Explore>();
+    List<Explore> explores = [];
     if (jsonList is List) {
       for (dynamic jsonEntry in jsonList) {
         Explore explore = Explore.fromJson(jsonEntry);
@@ -75,7 +75,7 @@ abstract class Explore {
   static List<dynamic> listToJson(List<Explore> explores) {
     List<dynamic> result;
     if (explores != null) {
-      result = List();
+      result = [];
       for (Explore explore in explores) {
         result.add(explore.toJson());
       }
@@ -97,7 +97,7 @@ class ExploreCategory {
 
   factory ExploreCategory.fromJson(Map<String, dynamic> json) {
     List<dynamic> subCategoriesData = json['subcategories'];
-    List<String> subCategoriesList = AppCollection.isCollectionNotEmpty(subCategoriesData) ? subCategoriesData.cast() : List<String>();
+    List<String> subCategoriesList = AppCollection.isCollectionNotEmpty(subCategoriesData) ? subCategoriesData.cast() : [];
     return ExploreCategory(
       name: json['category'],
       subCategories: subCategoriesList

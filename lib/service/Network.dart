@@ -422,7 +422,7 @@ class Network  {
     if (cookiesData == null || cookiesData.length == 0)
       return;
 
-    List<Cookie> cookies = List();
+    List<Cookie> cookies = [];
     for (String cookieData in cookiesData) {
       Cookie cookie = Cookie.fromSetCookieValue(cookieData);
       cookies.add(cookie);

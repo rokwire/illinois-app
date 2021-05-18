@@ -406,7 +406,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   List<Widget> _buildHeaderWidgets() {
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     if(widget.showImageTout) {
       if (!AppString.isStringEmpty(widget.game.imageUrl)) {
         widgets.add(Positioned(

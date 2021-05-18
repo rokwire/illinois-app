@@ -348,11 +348,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     if(buttons?.isEmpty??true)
       return Container();
 
-    List<Widget> rows = List();
+    List<Widget> rows = [];
     List<Widget> lastRowChildren;
     for(int i=0; i<buttons.length;i++){
       if(i%2==0){
-        lastRowChildren = new List();
+        lastRowChildren =  [];
         rows.add(SingleChildScrollView(scrollDirection: Axis.horizontal, child:Row(children:lastRowChildren,)));
         rows.add(Container(height: 8,));
       } else {
@@ -370,7 +370,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   List<Widget> _buildTagsButtons(){
     List<String> tags = _group?.tags;
-    List<Widget> result = new List();
+    List<Widget> result =  [];
     if (AppCollection.isCollectionNotEmpty(tags)) {
       tags.forEach((String tag) {
         result.add(_buildTagButton(tag));
@@ -406,7 +406,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void onTagTap(String tag){
     if(_group!=null) {
       if (_group.tags == null) {
-        _group.tags = new List();
+        _group.tags =  [];
       }
 
       if (_group.tags.contains(tag)) {
@@ -422,7 +422,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     String tag = _groupTagsController.text?.toString();
     if(_group!=null) {
       if (_group.tags == null) {
-        _group.tags = new List<String>();
+        _group.tags = [];
       }
       _group.tags.add(tag);
       _groupTagsController.clear();

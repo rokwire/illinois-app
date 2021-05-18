@@ -31,7 +31,7 @@ class DeepLink with Service {
 
   @override
   void createService() {
-    getUriLinksStream().listen((Uri uri) async {
+    uriLinkStream.listen((Uri uri) async {
       NotificationService().notify(notifyUri, uri);
     });
   }

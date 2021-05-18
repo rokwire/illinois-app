@@ -68,7 +68,7 @@ class _AthleticsCoachListPanelState extends State<AthleticsCoachListPanel> imple
   }
 
   List<Widget> _constructCoachList(BuildContext context){
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
     if(widget.allCoaches != null) {
       widget.allCoaches.forEach((coach) =>
       {

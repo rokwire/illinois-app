@@ -307,7 +307,7 @@ class _GenericMessageWidgetState extends State<_GenericMessageWidget> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.
@@ -335,7 +335,7 @@ class _GenericMessageWidgetState extends State<_GenericMessageWidget> {
               "Please use the Firebase console."),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
+            new TextButton(
               child: new Text("Close"),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -476,7 +476,7 @@ class _ScoreMessageWidgetState extends State<_ScoreMessageWidget> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.

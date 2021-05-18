@@ -169,7 +169,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   }
 
   Widget _buildNutritionFacts(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     if(_nutritionItem!=null) {
       list.add(_FactItem(label: Localization().getStringEx('com.illinois.nutrition_type.entry.Serving', 'Serving'), value: _nutritionItem.serving));
 
@@ -184,7 +184,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   }
 
   Widget _buildIncludedIngedients(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     List<String> ingredients = widget.productItem.ingredients;
     if(ingredients != null && ingredients.isNotEmpty) {
       list.add(Container(height: 20,));
@@ -236,7 +236,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   }
 
   Widget _buildDietaryPreference(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     List<String> preferences = widget.productItem.dietaryPreferences;
     if(preferences != null && preferences.isNotEmpty) {
       list.add(Container(height: 20,));
