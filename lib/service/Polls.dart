@@ -17,10 +17,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-
-import 'package:w3c_event_source/event_source.dart';
-
-//import 'package:eventsource/eventsource.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Poll.dart';
@@ -608,18 +604,14 @@ class Polls with Service implements NotificationsListener {
         request.headers["Accept"] = "text/event-stream";
         request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
 
-        //StreamedResponse response = await pollChunk.eventClient.send(request);
-
         Future<StreamedResponse> response = pollChunk.eventClient.send(request);
         print("Subscribed!");
 
-        response.asStream().listen((streamedResponse) {
+        pollChunk.eventListener = response.asStream().listen((streamedResponse) {
           print("Received streamedResponse.statusCode:${streamedResponse.statusCode}");
           streamedResponse.stream.listen((data) {
             // Data example: "event:results\ndata:[5,4]\n\n"
             String dataString = utf8.decode(data).trim();
-            print("Received data:$dataString");
-            //_logLastEvent(pollId, dataString);
             _setEventListenerTimer(pollId);
             
             if(dataString?.isNotEmpty ?? false){
@@ -678,13 +670,6 @@ class Polls with Service implements NotificationsListener {
         _resetEventStream(pollId);
       }  );
     }
-  }
-
-  void _logLastEvent(String pollId, MessageEvent event) {
-    _PollChunk pollChunk = _pollChunks[pollId];
-    //if (pollChunk != null) {
-    //  pollChunk.lastEventId = event?.id;
-    //}
   }
 
   void _removePollChunk(_PollChunk pollChunk) {
@@ -814,8 +799,7 @@ class _PollChunk {
   _PollUIStatus status;
   
   Client eventClient;
-  //EventSource eventSource;
-  StreamSubscription<MessageEvent> eventListener;
+  StreamSubscription eventListener;
   Timer eventListenerTimer;
   String lastEventId;
 
@@ -847,9 +831,6 @@ class _PollChunk {
       eventListenerTimer.cancel();
       eventListenerTimer = null;
     }
-    //if (eventSource != null) {
-    //  eventSource = null;
-    //}
     if (eventClient != null) {
       eventClient.close();
       eventClient = null;
