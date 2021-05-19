@@ -128,7 +128,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     int widgetsMod = (widgetsCount % widgetsPerRow);
     int rowsWholePart = widgetsCount ~/ widgetsPerRow;
     int rowsCount = (widgetsMod == 0) ? rowsWholePart : rowsWholePart + 1;
-    List<Widget> rows = List();
+    List<Widget> rows = [];
     for (int i = 0; i < rowsCount; i++) {
       int startRowIndex = i * widgetsPerRow;
       int endIndex = min((startRowIndex + widgetsPerRow), widgetsCount);

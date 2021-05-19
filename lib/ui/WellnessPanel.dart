@@ -163,7 +163,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   Widget _buildActivities() {
-    List<Widget> widgetList = List();
+    List<Widget> widgetList = [];
     List<dynamic> activities = AppMapPathKey.entry(_jsonContent, 'activities');
     if (AppCollection.isCollectionNotEmpty(activities)) {
       activities.forEach((dynamic activitiesContent) {
@@ -237,8 +237,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   List<Widget> _buildActivitiesColumns(List<dynamic> itemsJson) {
-    List<Widget> columnOneChildren = List();
-    List<Widget> columnTwoChildren = List();
+    List<Widget> columnOneChildren = [];
+    List<Widget> columnTwoChildren = [];
     if (AppCollection.isCollectionNotEmpty(itemsJson)) {
       for (int i = 0; i < itemsJson.length; i++) {
         Map<String, dynamic> item = itemsJson[i];
@@ -265,7 +265,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
         }
       }
     }
-    List<Column> columns = List();
+    List<Column> columns = [];
     columns.add(Column(
       children: columnOneChildren,
     ));
@@ -307,7 +307,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   Widget _buildResources() {
-    List<Widget> resourceSections = List();
+    List<Widget> resourceSections = [];
     List<dynamic> resources = AppMapPathKey.entry(_jsonContent, 'resources');
     if (AppCollection.isCollectionNotEmpty(resources)) {
       for (Map<String, dynamic> resourceItem in resources) {
@@ -376,7 +376,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   List<Widget> _buildResourceRibbonButtons(Map<String, dynamic> resourceItem) {
-    List<Widget> ribbonButtons = List();
+    List<Widget> ribbonButtons = [];
     List<dynamic> ribbonButtonsContent = AppMapPathKey.entry(resourceItem, 'ribbon_buttons');
     if (AppCollection.isCollectionNotEmpty(ribbonButtonsContent)) {
       for (Map<String, dynamic> ribbonButtonSource in ribbonButtonsContent) {
@@ -449,7 +449,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   List<Widget> _buildSocialMediaButtons(List<dynamic> socialItems) {
-    List<Widget> socialWidgets = List();
+    List<Widget> socialWidgets = [];
     if (AppCollection.isCollectionNotEmpty(socialItems)) {
       for (Map<String, dynamic> socialItem in socialItems) {
         String type = AppMapPathKey.entry(socialItem, 'type');

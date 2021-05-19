@@ -420,7 +420,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     if (_todayGames == null || _todayGames.isEmpty) {
       return Container();
     }
-    List<Widget> gameDayWidgets = List();
+    List<Widget> gameDayWidgets = [];
 
     for (Game todayGame in _todayGames) {
       gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame));
@@ -807,7 +807,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   Widget _athleticsDetails() {
-    List<Widget> details = List<Widget>();
+    List<Widget> details = [];
 
     Widget time = _athleticsTimeDetail();
     if (time != null) {

@@ -292,7 +292,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _exploreDetails() {
-    List<Widget> details = new List<Widget>();
+    List<Widget> details = [];
 
     Widget time = _exploreTimeDetail();
     if (time != null) {
@@ -401,7 +401,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     Dining dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
     List<PaymentType> paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
-      details = new List<Widget>();
+      details = [];
       for (PaymentType paymentType in paymentTypes) {
         Image image = PaymentTypeHelper.paymentTypeIcon(paymentType);
         if (image != null) {

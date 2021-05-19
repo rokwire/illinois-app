@@ -378,7 +378,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   Widget _buildPrivacyFeature2DialogEntries() {
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     if (_data?.features2 != null) {
       for (PrivacyFeature2 feature2 in _data.features2) {
         if (feature2.maxLevel.round() >= _sliderValue.round()) {
@@ -531,7 +531,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   List<Widget> _buildTypeTabs() {
-    List<Widget> tabs = new List();
+    List<Widget> tabs =  [];
     if (_data != null && AppCollection.isCollectionNotEmpty(_data.types)) {
       _data.types.forEach((PrivacyType type) {
         tabs.add(Expanded(
@@ -567,7 +567,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
   }
 
   List<Widget> _buildCategories() {
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
     PrivacyData data = widget.data;
     if (data != null && AppCollection.isCollectionNotEmpty(data.categories)) {
       data.categories.forEach((PrivacyCategory category) {
@@ -593,7 +593,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
   }
 
   List<Widget> _buildCategoryEntries(PrivacyCategory category) {
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
     List<PrivacyEntry> entries = category?.entries;
     widgets.add(_buildCategoryDescriptionWidget(category));
     if (AppCollection.isCollectionNotEmpty(entries)) {

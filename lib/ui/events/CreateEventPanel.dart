@@ -18,6 +18,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -319,7 +320,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     decoration:
                                         InputDecoration(border: InputBorder.none),
                                     maxLength: 64,
-                                    maxLengthEnforced: true,
+                                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                     style: TextStyle(
                                         color: Styles().colors.fillColorPrimary,
                                         fontSize: 32,
@@ -702,7 +703,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                   controller: _eventLocationController,
                                                   decoration: InputDecoration(
                                                       border: InputBorder.none),
-                                                  maxLengthEnforced: true,
+                                                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                                   style: TextStyle(
                                                       color: Styles().colors.fillColorPrimary,
                                                       fontSize: 20,
@@ -1619,7 +1620,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
   List<DropdownMenuItem<ImageType>> _buildImageTypesItems() {
     if (_imageTypes == null) return null;
-    List<DropdownMenuItem<ImageType>> result = List();
+    List<DropdownMenuItem<ImageType>> result = [];
     for (ImageType imageType in _imageTypes) {
       DropdownMenuItem ddmi = DropdownMenuItem<ImageType>(
         value: imageType,

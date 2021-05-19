@@ -224,7 +224,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   Widget _buildMealPlanSection() {
     bool isSignedIn = Auth().isLoggedIn;
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     widgets.add(Padding(padding: EdgeInsets.only(top: 16)));
     if (!isSignedIn) {
       widgets.add(Padding(
@@ -383,10 +383,10 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
           'panel.settings.meal_plan.label.description', 'Description');
       String amountHeader = Localization().getStringEx(
           'panel.settings.meal_plan.label.amount', 'Amount');
-      List<Widget> dateWidgets = new List();
-      List<Widget> locationWidgets = new List();
-      List<Widget> descriptionWidgets = new List();
-      List<Widget> amountViewWidgets = new List();
+      List<Widget> dateWidgets =  [];
+      List<Widget> locationWidgets =  [];
+      List<Widget> descriptionWidgets =  [];
+      List<Widget> amountViewWidgets =  [];
       //Headers
       dateWidgets.add(_buildBalanceTableHeaderItem(dateHeader));
       locationWidgets.add(_buildBalanceTableHeaderItem(locationHeader));
@@ -551,7 +551,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text:text, selection: "Ok");
                       Navigator.pop(context);

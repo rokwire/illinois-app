@@ -140,7 +140,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         laundry = LaundryRoom.fromJson(laundryJson);
       }
       else if (laundryJson is List) {
-        laundry = List<LaundryRoom>();
+        laundry = [];
         for (dynamic jsonEntry in laundryJson) {
           LaundryRoom laundryEntry = LaundryRoom.fromJson(jsonEntry);
           if (laundryEntry != null) {
@@ -301,7 +301,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       description = _selectedMapLaundry.first?.campusName ?? '';
     }
 
-    return Stack(overflow: Overflow.clip, children: <Widget>[
+    return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled": _userLocationEnabled()},

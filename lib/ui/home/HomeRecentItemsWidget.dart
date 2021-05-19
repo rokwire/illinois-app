@@ -152,7 +152,7 @@ class _RecentItemsList extends StatelessWidget{
   }
 
   List<Widget> _buildListItems(BuildContext context){
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
     if(items?.isNotEmpty??false){
       int visibleCount = items.length<limit?items.length:limit;
       for(int i = 0 ; i<visibleCount; i++) {
@@ -331,7 +331,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   List<Widget> _buildDetails() {
-    List<Widget> details = new List();
+    List<Widget> details =  [];
     if(AppString.isStringNotEmpty(widget.item.recentTime)) {
       if (widget.showDate) {
         details.add(_dateDetail());

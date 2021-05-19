@@ -241,7 +241,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   List<Widget> _getButtonOptions(bool voterWidgetVisible) {
-    List<Widget> optionWidgets = List();
+    List<Widget> optionWidgets = [];
     if (voterWidgetVisible) {
       List<RuleOption> voterOptions;
       if (_nrvPlaceVisible) {

@@ -278,7 +278,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildPolls(List<Poll> polls1, List<Poll> polls2, bool pollsLoading) {
 
-    List<Widget> content = List();
+    List<Widget> content = [];
 
     int pols1Len = (polls1 != null) ? polls1.length : 0;
     int pols2Len = (polls2 != null) ? polls2.length : 0;

@@ -113,8 +113,8 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   List<RoundedTab> _constructTabWidgets() {
-    _tabStrings = List<String>();
-    List<RoundedTab> tabs = new List<RoundedTab>();
+    _tabStrings = [];
+    List<RoundedTab> tabs = [];
 
     if(widget.sport != null) {
       _tabStrings.add(_tabFilterByName);
@@ -150,14 +150,14 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
         return _constructRostersByNumberList();
       }
       else {
-        return List();
+        return [];
       }
     }
-    return List();
+    return [];
   }
 
   List<Widget> _constructRostersByNameList(){
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
     if(allRosters != null) {
       List<Roster> clonedRosters = allRosters.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.name.compareTo(r2.name));
@@ -171,11 +171,11 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   List<Widget> _constructRostersByPositionList(){
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
     Map<String,List<Roster>> categoryMap = Map<String,List<Roster>>();
     for (Roster roster in allRosters){
       if(!categoryMap.containsKey(roster.position)){
-        categoryMap[roster.position] = List<Roster>();
+        categoryMap[roster.position] = [];
       }
       categoryMap[roster.position].add(roster);
     }
@@ -195,7 +195,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   List<Widget> _constructRostersByNumberList(){
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
     if(allRosters != null) {
       List<Roster> clonedRosters = allRosters.map((r) => r).toList();
       clonedRosters.sort((r1, r2) => r1.number >= r2.number ? 1 : -1);
@@ -407,7 +407,7 @@ class _RosterItem extends StatelessWidget{
   }
 
   List<Widget> _buildRosterInfoWidgets(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     if(sportConfig != null) {
       if (sportConfig.hasPosition) {
         list.add(_RosterInfoLine(Localization().getStringEx("panel.athletics_roster_list.label.position.title", 'Position'), roster.position));

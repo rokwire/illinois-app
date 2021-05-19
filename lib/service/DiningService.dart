@@ -60,7 +60,7 @@ class DiningService  with Service {
 
   Future<List<Dining>> loadBackendDinings(bool onlyOpened, PaymentType paymentType, LocationData locationData) async {
     if(_enabled) {
-      List<Dining> dinings = List<Dining>();
+      List<Dining> dinings = [];
 
       // 1.2 Load Dining locations only if need
       if (!_useCachedDiningLoacations) {
@@ -137,7 +137,7 @@ class DiningService  with Service {
         final response = await Network().get(url);
         if ((response != null) && (response.statusCode == 200)) {
           List<dynamic> jsonList = AppJson.decode(response.body);
-          List<DiningProductItem> productList = new List<DiningProductItem>();
+          List<DiningProductItem> productList = [];
           if (AppCollection.isCollectionNotEmpty(jsonList)) {
             for (Map<String, dynamic> jsonEntry in jsonList) {
               DiningProductItem item = DiningProductItem.fromJson(jsonEntry);
@@ -207,7 +207,7 @@ class DiningService  with Service {
       if (responseBody != null) {
         List<dynamic> jsonList = AppJson.decode(responseBody);
         if (AppCollection.isCollectionNotEmpty(jsonList)) {
-          List<DiningSpecial> list = List<DiningSpecial>();
+          List<DiningSpecial> list = [];
 
           for (Map<String, dynamic> jsonEntry in jsonList) {
             list.add(DiningSpecial.fromJson(jsonEntry));
@@ -324,7 +324,7 @@ class DiningUtils{
             );
       }).toList();
     }
-    return List();
+    return [];
   }
 
   static Map<String,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem> allProducts){
@@ -333,7 +333,7 @@ class DiningUtils{
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
         if(!mapping.containsKey(item.servingUnit)){
-          mapping[item.servingUnit] = List<DiningProductItem>();
+          mapping[item.servingUnit] = [];
         }
         mapping[item.servingUnit].add(item);
       }
@@ -347,7 +347,7 @@ class DiningUtils{
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
         if(!mapping.containsKey(item.course)){
-          mapping[item.course] = List<DiningProductItem>();
+          mapping[item.course] = [];
         }
         mapping[item.course].add(item);
       }
@@ -361,7 +361,7 @@ class DiningUtils{
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
         if(!mapping.containsKey(item.category)){
-          mapping[item.category] = List<DiningProductItem>();
+          mapping[item.category] = [];
         }
         mapping[item.category].add(item);
       }

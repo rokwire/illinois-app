@@ -89,7 +89,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   _initDefaultOptionsControllers() {
-    _optionsControllers = List();
+    _optionsControllers = [];
 
     if (_defaultOptionsCount > 0) {
       for (int i = 0; i < _defaultOptionsCount; i++) {
@@ -206,7 +206,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   List<Widget> _constructOptionsWidgets() {
-    List<Widget> options = List();
+    List<Widget> options = [];
     if (_optionsControllers?.isNotEmpty ?? false) {
       for (int i = 0; i < _optionsControllers.length; i++) {
         TextEditingController controller = _optionsControllers[i];
@@ -306,7 +306,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   List<Widget> _buildSettingsButtons() {
     TextStyle _textStyle = TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.medium);
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
 
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_stadium_poll.setting.multy_choice", "Allow selecting more than one choice"),
@@ -450,13 +450,13 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      FlatButton(
+                      TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
                           child: Text(Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.button.yes", "Yes"))),
-                      FlatButton(
+                      TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -479,7 +479,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     }
     else if (_progressPollStatus == null) {
       //Options
-      List<String> options = List();
+      List<String> options = [];
       if(_optionsControllers?.isNotEmpty??false){
         for(TextEditingController optionController in _optionsControllers){
           options.add(optionController?.text?.toString());

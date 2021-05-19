@@ -130,7 +130,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
   }
 
   Widget _buildLots(){
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
     if(AppCollection.isCollectionNotEmpty(_eventLots)){
       for(ParkingLot inventory in _eventLots ){
         if(inventory != null && inventory.totalSpots > 0){

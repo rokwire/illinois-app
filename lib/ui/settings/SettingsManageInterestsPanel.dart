@@ -178,17 +178,17 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   void _loadCategories() {
     ExploreService().loadEventCategories().then((List<dynamic> categories) {
       setState(() {
-        _categories = categories != null ? categories : List();
+        _categories = categories != null ? categories : [];
       });
     });
   }
 
   void _loadPreferences() {
-//    _preferredCategories = List<String>();
+//    _preferredCategories = [];
 //    if(User().getInterestsCategories()?.isNotEmpty??false){
 //      _preferredCategories.addAll(User().getInterestsCategories());
 //    }
-    _preferredCategories = User().getInterestsCategories() ?? new List();
+    _preferredCategories = User().getInterestsCategories() ??  [];
     setState(() {});
   }
 
@@ -213,7 +213,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   List<Widget> _buildCategories() {
-    List<Widget> categoryWidgets = List<Widget>();
+    List<Widget> categoryWidgets = [];
 
     if (_categories != null && _preferredCategories != null) {
       for (var category in _categories) {
@@ -260,7 +260,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Tags
   void _initTags() {
-//    _followingTags = List<String>();
+//    _followingTags = [];
 //    if(User()?.getTags()?.isNotEmpty?? false) {
 //      _followingTags.addAll(User()?.getTags());
 //    }
@@ -370,7 +370,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   List<String> _filterTags(String key) {
-    List<String> result = new List();
+    List<String> result =  [];
     if (AppString.isStringEmpty(key)) {
       return _tags;
     } else if (AppCollection.isCollectionNotEmpty(_tags)) {
@@ -407,7 +407,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   List<Widget> _buildTagsItems(List<String> tags) {
-    List<Widget> tagsWidgets = List<Widget>();
+    List<Widget> tagsWidgets = [];
 
     if (tags != null) {
       for (String tag in tags) {
@@ -453,7 +453,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Athletics
 /*  void _loadPreferredSports() {
-    _preferredSports = List<String>();
+    _preferredSports = [];
     if(User()?.getSportsInterestSubCategories()?.isNotEmpty ?? false) {
       _preferredSports.addAll(User()?.getSportsInterestSubCategories());
     }
@@ -486,7 +486,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Tabs
   List<RoundedTab> _buildTabWidgets() {
-    List<RoundedTab> tabs = new List<RoundedTab>();
+    List<RoundedTab> tabs = [];
     for (_InterestTab tab in _tabs) {
       tabs.add(RoundedTab(title: _interestTabName(tab), tabIndex: _tabs.indexOf(tab), listener: this, selected: (_selectedTab == tab)));
     }

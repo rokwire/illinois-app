@@ -251,7 +251,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget _exploreDetails() {
-    List<Widget> details = List<Widget>();
+    List<Widget> details = [];
 
     Widget time = _exploreTimeDetail();
     if (time != null) {
@@ -662,7 +662,7 @@ class _EventsListState extends State<_EventsList>{
   }
 
   List<Widget> _buildListItems() {
-    List<Widget> listItems = List<Widget>();
+    List<Widget> listItems = [];
     bool isParentSuper = widget.parentEvent.isSuperEvent;
     if (AppCollection.isCollectionNotEmpty(widget.events)) {
       for (Event event in widget.events) {

@@ -156,7 +156,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   Widget _buildFoodTypes(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     for(String foodType in DiningService().foodTypes){
       bool selected = _selectedTypesPrefs.contains(foodType);
       String foodLabel = DiningService().getLocalizedString(foodType);
@@ -176,7 +176,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   Widget _buildFoodIngredients(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     for(String foodIngredient in DiningService().foodIngredients){
       bool selected = (_selectedIngredientsPrefs == null) || _selectedIngredientsPrefs.contains(foodIngredient);
       String ingredientLabel = DiningService().getLocalizedString(foodIngredient);

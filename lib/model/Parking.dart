@@ -49,7 +49,7 @@ class ParkingEvent {
     List<dynamic> lotsJson = json.containsKey('lots') ? json['lots'] : null;
     List<ParkingLot> lots;
     if (AppCollection.isCollectionNotEmpty(lotsJson)) {
-      lots = List<ParkingLot>();
+      lots = [];
       for (Map<String, dynamic> lotEntry in lotsJson) {
         lots.add(ParkingLot.fromJson(lotEntry));
       }
@@ -76,7 +76,7 @@ class ParkingEvent {
   Map<String, dynamic> toJson() {
     List<dynamic> lotsJsonList;
     if (AppCollection.isCollectionNotEmpty(lots)) {
-      lotsJsonList = List();
+      lotsJsonList = [];
       for (ParkingLot lot in lots) {
         lotsJsonList.add(lot.toJson());
       }

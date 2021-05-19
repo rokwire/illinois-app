@@ -416,7 +416,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
   }
 
   Widget _buildPrivacyFeature2DialogEntries() {
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     if (_data?.features2 != null) {
       for (PrivacyFeature2 feature2 in _data.features2) {
         if (feature2.maxLevel.round() >= _sliderValue.round()) {
@@ -623,7 +623,7 @@ class _PrivacyEntriesListWidget extends StatefulWidget {
 }
 
 class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with TickerProviderStateMixin{
-  List<AnimationController> _animationControllers = List();
+  List<AnimationController> _animationControllers = [];
   Map<String, bool> expansionState = Map();
   Key expansionTileKey = new Key(new Random().nextInt(10000).toString());
 
@@ -690,7 +690,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
   }
 
   List<Widget> _buildCategories() {
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
     PrivacyData data = widget.data;
     if (data != null && AppCollection.isCollectionNotEmpty(data.categories)) {
       data.categories.forEach((PrivacyCategory category) {
@@ -748,7 +748,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
   }
 
   List<Widget> _buildCategoryEntries(PrivacyCategory category){
-    List<Widget> entries = List();
+    List<Widget> entries = [];
     if(category?.entries2?.isNotEmpty??false){
       category.entries2.forEach((entry) {
         entries.add(_PrivacyEntry(data: entry, currentPrivacyLevel: widget.selectedPrivacyLevel?.round()??0,));

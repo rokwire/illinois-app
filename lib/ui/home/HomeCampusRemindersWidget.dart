@@ -86,7 +86,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   List<Widget> _buildReminders() {
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
     if (_reminders?.isNotEmpty ?? false) {
       _reminders.forEach((Reminder reminder) {
         widgets.add(_reminders.last != reminder

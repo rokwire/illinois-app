@@ -67,7 +67,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
   }
 
   List<Widget> _createOffers() {
-    List<Widget> offers = List<Widget>();
+    List<Widget> offers = [];
 
     List<DiningSpecial> limitedOffers = specials;
     if (AppString.isStringNotEmpty(locationId) && AppCollection.isCollectionNotEmpty(specials)) {

@@ -165,7 +165,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   }
 
   List<Widget> _buildExploreCards(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
 
     if(_hasLocations) {
       for (Dining dining in _locationList) {

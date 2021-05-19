@@ -335,7 +335,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (AppCollection.isCollectionEmpty(items) || AppCollection.isCollectionEmpty(ids)) {
       return null;
     }
-    List<Favorite> result = List();
+    List<Favorite> result = [];
     items.forEach((Favorite item) {
       String id = item.favoriteId;
       if (AppString.isStringNotEmpty(id) && ids.contains(id)) {
@@ -370,7 +370,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
                       setState(() {
@@ -578,7 +578,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
   }
 
   List<Widget> _buildListItems(BuildContext context) {
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     if (AppCollection.isCollectionNotEmpty(widget.items)) {
       int itemsCount = widget.items.length;
       int visibleCount = (_showAll ? itemsCount : min(widget.limit, itemsCount));

@@ -124,17 +124,17 @@ class UserData {
       if(interests.containsKey(categoryName)){
         interests.remove(categoryName);
       } else {
-        interests[categoryName] = new List(); //Empty list of subcategories represent that the whole category is selected
+        interests[categoryName] = []; //Empty list of subcategories represent that the whole category is selected
       }
     }
   }
 
   void updateCategories(List<String> newCategoriesSelection){
-    List<String> categoriesToBeRemoved = List<String>();
+    List<String> categoriesToBeRemoved = [];
     if(newCategoriesSelection!=null){
       newCategoriesSelection.forEach((element) {
         if(!interests.containsKey(element)){
-          interests[element] = List();
+          interests[element] = [];
         }
       });
       if(interests?.isNotEmpty??false){
@@ -156,7 +156,7 @@ class UserData {
   switchInterestSubCategory(String interestCategory, String subCategory){
     List<String> subCategories = interests[interestCategory];
     if(subCategories==null){
-      subCategories = new List<String>();
+      subCategories = [];
       interests[interestCategory] = subCategories;
     }
 
@@ -184,8 +184,8 @@ class UserData {
 
   void deleteInterests(){
     interests = Map<String, List<String>>();
-    positiveTags = List<String>();
-    negativeTags = List<String>();
+    positiveTags = [];
+    negativeTags = [];
   }
 
   //Interest Serialization
@@ -202,7 +202,7 @@ class UserData {
   }
 
   static List<dynamic> deserializeInterests(Map<String,List<String>> interests){
-    List<dynamic> result = new List();
+    List<dynamic> result = [];
     if(interests!=null){
       interests.forEach((categoryName, subCategories){
         result.add({"category": categoryName, "subcategories": subCategories});
@@ -300,14 +300,14 @@ class UserData {
   //Tags
   addPositiveTag(String tag){
     if(positiveTags==null) {
-      positiveTags = new List<String>();
+      positiveTags = [];
     }
     positiveTags.add(tag);
   }
 
   addNegativeTag(String tag){
     if(negativeTags!=null) {
-      negativeTags = new List();
+      negativeTags = [];
     }
     negativeTags.add(tag);
   }
@@ -382,7 +382,7 @@ class UserRole{
   static List<dynamic> userRolesToList(Set<UserRole> userRoles) {
     List<String> userRolesList;
     if (userRoles != null) {
-      userRolesList = new List<String>();
+      userRolesList = [];
       for (UserRole userRole in userRoles) {
         userRolesList.add(userRole.toString());
       }

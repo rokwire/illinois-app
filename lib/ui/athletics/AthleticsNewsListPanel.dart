@@ -124,7 +124,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   _initFilter() async{
-    _filters = List();
+    _filters = [];
    _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News"));
     List<SportDefinition> sportTypes = Sports().getSports();
    sportTypes.forEach((SportDefinition type){
@@ -296,7 +296,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
       }
 
       default: {
-          _displayNews = new List();
+          _displayNews = [];
           _loading = true;
           _displayNews = await Sports().loadNews(getSPortTypeByIndex(_selectedFilterIndex)?.shortName ?? null,0);
           setState(() {

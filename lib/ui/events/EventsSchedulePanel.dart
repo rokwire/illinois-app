@@ -225,7 +225,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<Widget> _constructListContent() {
-    List<Widget> content = List();
+    List<Widget> content = [];
     content.add(Container(height: 12));
     if (_sortedEvents != null && _sortedEvents.isNotEmpty) {
       for (String date in _sortedEvents.keys) {
@@ -481,7 +481,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     if (AppCollection.isCollectionEmpty(_eventCategories)) {
       return null;
     }
-    List<String> categoriesValues = List();
+    List<String> categoriesValues = [];
     categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
     for (var category in _eventCategories) {
       categoriesValues.add(category);
@@ -490,7 +490,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<String> _getFilterTagsValues() {
-    List<String> tagsValues = List();
+    List<String> tagsValues = [];
     tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
 
     if (_visibleTags != null) {
@@ -502,7 +502,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<Widget> _buildFilterWidgets() {
-    List<Widget> filterTypeWidgets = List<Widget>();
+    List<Widget> filterTypeWidgets = [];
     if (AppCollection.isCollectionEmpty(_tabFilters) || _eventCategories == null) {
       filterTypeWidgets.add(Container());
       return filterTypeWidgets;
@@ -550,7 +550,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<Widget> _buildTabWidgets() {
-    List<Widget> tabs = new List();
+    List<Widget> tabs =  [];
     _eventTabs.forEach((_EventTab tab) {
       tabs.add(Expanded(
           child: _EventTabView(
@@ -614,7 +614,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
-    return Stack(overflow: Overflow.clip, children: <Widget>[
+    return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled" : _userLocationEnabled()},
@@ -776,7 +776,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   List<Explore> _exploresFromMapExplores(List<Explore> mapExplores) {
-    List<Explore> explores = List();
+    List<Explore> explores = [];
     if (mapExplores != null) {
       for (Explore mapExplore in mapExplores) {
         explores.add(_exploreFromMapExplore(mapExplore) ?? mapExplore);
@@ -825,7 +825,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         if(eventsForDate.containsKey(category))
           eventsForCategory = eventsForDate[category];
         else {
-          eventsForCategory = List();
+          eventsForCategory = [];
           eventsForDate[category] = eventsForCategory;
         }
         eventsForCategory.add(event);
@@ -855,7 +855,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _initEventsCategories() {
-    _eventCategories = List();
+    _eventCategories = [];
     if (AppCollection.isCollectionNotEmpty(_events)) {
       for (Event event in _events) {
         String track = event.track;
@@ -866,7 +866,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   _initEventTags(){
-    _eventTags = List();
+    _eventTags = [];
     if(_events!=null && _events.isNotEmpty){
       for (Event event in _events){
         List<String> eventTags = event.tags;

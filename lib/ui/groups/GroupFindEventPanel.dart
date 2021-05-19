@@ -99,7 +99,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   // Events
   List<Event> _events;
   List<Event> _filteredEvents;
-  final List<Event> _selectedEvents = List<Event>();
+  final List<Event> _selectedEvents = [];
   final Set<String> _selectedEventIds = Set<String>();
 
   FilterType __activeFilterType = FilterType.none;
@@ -142,7 +142,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     if (Connectivity().isNotOffline) {
       setState(() {_isCategoryLoading = true;});
       ExploreService().loadEventCategoriesEx().then((List<ExploreCategory> result) {
-        _eventCategories = List<String>();
+        _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
         if(AppCollection.isCollectionNotEmpty(result)){
           _eventCategories.addAll(result.map((category)=>category.name));

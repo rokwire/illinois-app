@@ -273,7 +273,7 @@ class UserPiiData {
     if (list != null) {
       
       if (uuidList == null) {
-        uuidList = List();
+        uuidList = [];
       }
 
       if (uuidRegExp == null) {

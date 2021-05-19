@@ -30,6 +30,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:share/share.dart';
+import 'package:html/dom.dart' as dom;
 
 class AthleticsNewsArticlePanel extends StatelessWidget {
   final News article;
@@ -173,7 +174,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
   }
 
   List<Widget> _buildContentWidgets(BuildContext context) {
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     if (!AppString.isStringEmpty(article.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
@@ -196,7 +197,10 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
           data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
           child: Html(
             data:fullText,
-              onLinkTap: (url){
+              onLinkTap: (String url,
+                  RenderContext context1,
+                  Map<String, String> attributes,
+                  dom.Element element){
                 Navigator.push(context, CupertinoPageRoute(
                   builder: (context) => WebPanel(url: url,)
                 ));

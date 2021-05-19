@@ -229,7 +229,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget _exploreDetails() {
-    List<Widget> details = new List<Widget>();
+    List<Widget> details = [];
 
     Widget location = _exploreLocationDetail();
     if (location != null) {
@@ -265,7 +265,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     List<Widget> details;
     List<PaymentType> paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
-      details = new List<Widget>();
+      details = [];
       for (PaymentType paymentType in paymentTypes) {
         Image image = PaymentTypeHelper.paymentTypeIcon(paymentType);
         if (image != null) {
@@ -468,7 +468,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   Widget _exploreWorktimeFullDetail() {
     if(dining?.diningSchedules != null && dining.diningSchedules.isNotEmpty && _diningWorktimeExpanded){
 
-      List<Widget> widgets = List<Widget>();
+      List<Widget> widgets = [];
       List<DiningSchedule> schedules = dining.firstOpeningDateSchedules;
       if(schedules != null && schedules.isNotEmpty){
 
@@ -653,7 +653,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
     bool hasDisplayDates = (_displayDates != null && _displayDates.isNotEmpty);
     String currentDate = hasDisplayDates ? _displayDates[_selectedDateFilterIndex] : null;
-    _schedules = (hasDisplayDates && (currentDate != null)) ? widget.dining.displayDateScheduleMapping[currentDate] : List();
+    _schedules = (hasDisplayDates && (currentDate != null)) ? widget.dining.displayDateScheduleMapping[currentDate] : [];
 
     _loadProductItems();
     _loadOffers();
@@ -946,7 +946,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
 
   List<RoundedTab> _buildScheduleTabs() {
-    List<RoundedTab> tabs = new List<RoundedTab>();
+    List<RoundedTab> tabs = [];
     for (int i = 0; i < _schedules.length; i++) {
       DiningSchedule schedule = _schedules[i];
 
@@ -960,7 +960,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   List<Widget> _buildStations(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     if(_productItems != null && _productItems.isNotEmpty && _selectedScheduleIndex > -1) {
       List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
           _productItems,
@@ -1135,7 +1135,7 @@ class _StationItemState extends State<_StationItem>{
   }
 
   List<Widget> _createExpandedItems(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     list.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
     for(DiningProductItem productItem in widget.productItems){
       list.add(_ProductItem(

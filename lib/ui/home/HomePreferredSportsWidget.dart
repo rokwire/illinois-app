@@ -234,7 +234,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   }
 
   List<Widget> _createSportItemsForSection(List<SportDefinition> sports) {
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
 
     if(sports != null) {
       for (SportDefinition sport in sports) {
