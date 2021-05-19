@@ -407,7 +407,8 @@ class Network  {
   }
 
   void _saveCookiesFromResponse(String url, Http.Response response) {
-    if (AppString.isStringEmpty(url) || response == null)
+    Uri uri = _uriFromUrlString(url);
+    if ((uri == null) || response == null)
       return;
 
     Map<String, String> responseHeaders = response.headers;
@@ -430,7 +431,7 @@ class Network  {
     }
 
     var cj = new CookieJar();
-    cj.saveFromResponse(Uri.parse(url), cookies);
+    cj.saveFromResponse(uri, cookies);
   }
 
   Future<String> _loadCookiesForRequest(Uri uri) async{
