@@ -49,7 +49,7 @@
     "toggle_button.status.checkbox": "checkbox",
 
     "payment_type.text.classic_meal":"Classic Meal",
-    "payment_type.text.cafe_credits":"Café Credits",
+    "payment_type.text.dining_dollars":"Dining Dollars",
     "payment_type.text.illini_cash":"Illini Cash",
     "payment_type.text.credit_card":"Credit Card",
     "payment_type.text.cash":"Cash",
@@ -680,7 +680,7 @@
     "panel.settings.meal_plan.label.meal_plan_unknown.text": "Unknown",
     "panel.settings.meal_plan.label.meal_plan_type.text": "Meal Plan Type",
     "panel.settings.meal_plan.label.meals_remaining.text": "Meals Remaining",
-    "panel.settings.meal_plan.label.cafe_credits.text": "Café Credits",
+    "panel.settings.meal_plan.label.dining_dollars.text": "Dining Dollars",
     "panel.settings.meal_plan.button.view_history.title": "View History",
     "panel.settings.meal_plan.button.view_history.hint": "",
     "panel.settings.meal_plan.button.this_week.title": "This Week",

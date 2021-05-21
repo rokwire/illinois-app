@@ -375,7 +375,7 @@ class PaymentTypeHelper {
         case PaymentType.ClassicMeal:
           return Localization().getStringEx('payment_type.text.classic_meal', 'Classic Meal');
         case PaymentType.CafeCredits:
-          return Localization().getStringEx('payment_type.text.cafe_credits', 'Cafe Credits');
+          return Localization().getStringEx('payment_type.text.dining_dollars', 'Dining Dollars');
        case PaymentType.IlliniCash:
           return Localization().getStringEx('payment_type.text.illini_cash', 'Illini Cash');
         case PaymentType.CreditCard:
