@@ -111,8 +111,6 @@
 	"panel.wallet.button.connect.netid.hint": "",
 	"panel.wallet.button.connect.phone.title": "驗證電話號碼",
 	"panel.wallet.button.connect.phone.hint": "",
-	"panel.wallet.button.add_illini_cash.title": "Add Illini Cash",
-	"panel.wallet.button.add_illini_cash.hint": "",
 
 	"panel.browse.label.title":"浏览",
 	"panel.browse.button.events.title":"活动",

@@ -168,9 +168,6 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       else if (code == 'phone') {
         widget = _buildLoginPhoneButton();
       }
-      else if(code == 'add_illini_cash'){
-        widget = _buildAddIlliniCashButton();
-      }
       if (widget != null) {
         if (0 < contentList.length) {
           contentList.add(Container(height: 20,));
@@ -213,22 +210,6 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: _didPhoneVer)));
         },
       );
-  }
-
-  Widget _buildAddIlliniCashButton(){
-    return RoundedButton(
-      label: Localization().getStringEx("panel.wallet.button.add_illini_cash.title", "Add Illini Cash"),
-      hint: Localization().getStringEx('panel.wallet.button.add_illini_cash.hint', ''),
-      backgroundColor: Styles().colors.surface,
-      fontSize: 16.0,
-      textColor: Styles().colors.fillColorPrimary,
-      textAlign: TextAlign.center,
-      borderColor: Styles().colors.fillColorSecondary,
-      onTap: () {
-        Analytics.instance.logSelect(target: "Add Illini Cash");
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
-      },
-    );
   }
 
   void _didPhoneVer(_) {
