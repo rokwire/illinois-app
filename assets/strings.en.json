@@ -159,6 +159,8 @@
     "panel.browse.button.groups.hint":"",
     "panel.browse.button.safer.title":"Safer Illinois",
     "panel.browse.button.safer.hint":"",
+    "panel.browse.button.add_illini_cash.title": "Add Illini Cash",
+    "panel.browse.button.add_illini_cash.hint": "",
     "panel.browse.button.privacy_center.title": "Privacy Center",
     
     "panel.browse.label.browse_all": "Browse all",
