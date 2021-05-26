@@ -6,7 +6,7 @@
 		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini"],
 
 		"wallet": ["wallet.connect", "wallet.content", "wallet.cards"],
-		"wallet.connect":["netid", "phone"],
+		"wallet.connect":["netid", "phone", "add_illini_cash"],
 		"wallet.content": ["illini_cash", "meal_plan"],
 		"wallet.cards":["mtd", "id", "library"],
 
