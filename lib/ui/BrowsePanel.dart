@@ -36,6 +36,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomePanel.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
@@ -315,6 +316,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         hint: Localization().getStringEx('panel.browse.button.illini_cash.hint', ''),
         padding: _ribbonButtonPadding,
         onTap: () =>  _navigateIlliniCash(),
+      );
+    }
+    else if (code == 'add_illini_cash') {
+      return _RibbonButton(
+        title: Localization().getStringEx('panel.browse.button.add_illini_cash.title', 'Add Illini Cash'),
+        hint: Localization().getStringEx('panel.browse.button.add_illini_cash.hint', ''),
+        icon: Image.asset('images/icon-illini-cash.png'),
+        padding: _ribbonButtonPadding,
+        onTap: () => _navigateToAddIlliniCash(),
       );
     }
     else if (code == 'meal_plan') {
@@ -613,6 +623,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     catch(e) {
       print(e);
     }
+  }
+
+  void _navigateToAddIlliniCash(){
+    Analytics.instance.logSelect(target: "Add Illini Cash");
+    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsAddIlliniCashPanel()));
   }
 
   // NotificationsListener
