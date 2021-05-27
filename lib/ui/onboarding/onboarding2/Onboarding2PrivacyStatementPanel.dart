@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/ui/onboarding/onboarding2/Onboarding2ExploreCampusPanel
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -46,9 +48,13 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Privacy in your hands.');
-    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', ' Not ours.');
-    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Tell us how custom you want your experience to be.');
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control Your Data Privacy');
+    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '');
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Choose what information you want to store and share to get a recommended privacy level.');
+
+    String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ');
+    String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy Policy ');
+    String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.');
 
     return Scaffold(
         backgroundColor: Styles().colors.background,
@@ -67,7 +73,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                             _goBack(context);
                           }),
                     ],),
-                    Image.asset("images/lock_illustration.png", excludeFromSemantics: true, ),
+                    Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
                     Semantics(
                       label: titleText + titleText2,
                       hint: Localization().getStringEx('panel.onboarding2.privacy_statement.label.title.hint', ''),
@@ -81,28 +87,28 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                               textAlign: TextAlign.center,
                               text: TextSpan(
                                 children: <TextSpan>[
-                                  TextSpan(text:titleText , style: TextStyle(color: Styles().colors.textSurface, fontSize: 32, fontWeight: FontWeight.w700,)),
-                                  TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.textSurface, fontSize: 32, fontWeight: FontWeight.w400,)),
+                                  TextSpan(text:titleText , style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies.bold, fontWeight: FontWeight.w700, height: 1.5)),
+                                  TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
                                 ]
                               )
                             ),
                           )),
                     ),
                     Semantics(
-                        label: descriptionText,
+                        label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
                         excludeSemantics: true,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Align(
                               alignment: Alignment.topCenter,
                               child: Text(
-                                descriptionText,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.regular,
-                                    fontSize: 16,
-                                    color: Styles().colors.fillColorPrimary),
-                              )),
+                            descriptionText,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies.regular,
+                                fontSize: 16,
+                                color: Styles().colors.fillColorPrimary),
+                          )),
                         )),
                   ]),
               bottomNotScrollableWidget:
@@ -112,23 +118,41 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(height: 16,),
-                    Text(
-                      Localization().getStringEx("panel.onboarding2.privacy_statement.label.continue.description", "The more you customize—like events you save, teams you follow—the more tailored your experience."),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies.regular,
-                          fontSize: 16,
-                          color: Styles().colors.fillColorPrimary),
-                    ),
+                    Semantics(
+                        label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
+                        excludeSemantics: true,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: RichText(
+                                textAlign: TextAlign.center,
+
+                                text: TextSpan(
+                                    style: TextStyle(
+                                        fontFamily: Styles().fontFamilies.regular,
+                                        fontSize: 14,
+                                        color: Styles().colors.textSurface),
+                                    children: <TextSpan>[
+                                      TextSpan(text:descriptionText1),
+                                      TextSpan(text:descriptionText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                                          recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
+                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png")))
+                                          ]),
+                                      TextSpan(text:descriptionText3),
+                                    ]
+                                )
+                            ),),
+                        )),
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 24, top: 16),
                       child: ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Set Your Privacy Level'),
+                        label: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.title', 'Begin'),
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         fontSize: 16,
                         padding: EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Styles().colors.background,
+                        backgroundColor: Styles().colors.white,
                         borderColor: Styles().colors.fillColorSecondaryVariant,
                         textColor: Styles().colors.fillColorPrimary,
                         onTap: () => _goNext(context),
@@ -139,6 +163,9 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
             )));
   }
 
+  void _openPrivacyPolicy(){
+    AppToast.show("External Link TBD");
+  }
 
   void _goNext(BuildContext context) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ExploreCampusPanel()));
