@@ -18,8 +18,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2ExploreCampusPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -164,7 +166,10 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
   }
 
   void _openPrivacyPolicy(){
-    AppToast.show("External Link TBD");
+    Analytics.instance.logSelect(target: "Privacy Statement");
+    if (Config().privacyPolicyUrl != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
+    }
   }
 
   void _goNext(BuildContext context) {
