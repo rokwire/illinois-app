@@ -218,6 +218,10 @@
 - (void)onMeridianTimeout {
 	NSLog(@"Meridian Timeout");
 	_mrLocationTimeoutsCount++;
+	if ((0 < _mrLocationTimeoutsCount) && (_mrLocationError == nil)) {
+		_mrLocationError = [NSError errorWithDomain:@"com.illinois.rokwire" code:1 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Failed to detect current location.", nil) }];
+		[self notifyLocationFail];
+	}
 	[self restartMeridian];
 }
 
@@ -383,9 +387,11 @@
 	else {
 		NSLog(@"Meridian: did update location, map not loaded yet");
 	}
+	
 
 	_mrLocationError = nil;
 	_mrLocation = location;
+	_mrLocationTimeoutsCount = 0;
 
 	[self setupMeridianTimeoutTimer];
 	
@@ -403,6 +409,7 @@
 		NSLog(@"Meridian: Failed to retrieve location: %@", error.localizedDescription);
 		_mrLocation = nil;
 		_mrLocationError = error;
+		_mrLocationTimeoutsCount = 0;
 		[self notifyLocationFail];
 		
 		[self restartMeridian];

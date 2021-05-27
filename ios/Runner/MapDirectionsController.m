@@ -818,7 +818,6 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 }
 
 - (void)notifyLocationFail {
-	[super notifyLocationFail];
 
 	if ((self.mrLocationError != nil) && (self.clLocationError != nil)) {
 		if ((_mpPositionResult == nil) && !_navDidFirstLocationUpdate) {
@@ -826,6 +825,8 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 			[self didFirstLocationUpdate];
 		}
 	}
+
+	[super notifyLocationFail];
 }
 
 #pragma mark Utils
