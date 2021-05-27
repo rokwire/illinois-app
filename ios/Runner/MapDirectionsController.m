@@ -320,6 +320,8 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 			CLLocationCoordinate2D exploreLocationCoord = CLLocationCoordinate2DMake([_exploreLocation inaDoubleForKey:@"latitude"], [_exploreLocation inaDoubleForKey:@"longitude"]);
 			GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate setTarget:exploreLocationCoord];
 			[self.gmsMapView moveCamera:cameraUpdate];
+			
+			[self updateNav];
 
 			// Alert error
 			NSString *message = nil;
@@ -505,13 +507,15 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 #pragma mark Navigation
 
 - (void)updateNav {
-	_navRefreshButton.hidden = NO;
+	bool errorState = (self.mrLocationError != nil) && (self.clLocationError != nil) && (_mpPositionResult == nil);
+	
+	_navRefreshButton.hidden = errorState;
 	_navRefreshButton.enabled = (_mpRouteService == nil);
 
-	_navTravelModesCtrl.hidden = (_navStatus != NavStatus_Unknown) && (_navStatus != NavStatus_Start);
+	_navTravelModesCtrl.hidden = ((_navStatus != NavStatus_Unknown) && (_navStatus != NavStatus_Start)) || errorState;
 	_navTravelModesCtrl.enabled = (_mpRouteService == nil);
 
-	_navAutoUpdateButton.hidden = (_navStatus != NavStatus_Progress) || _navAutoUpdate;
+	_navAutoUpdateButton.hidden = (_navStatus != NavStatus_Progress) || _navAutoUpdate || errorState;
 	_navPrevButton.hidden = _navNextButton.hidden = _navStepLabel.hidden = (_navStatus == NavStatus_Unknown);
 
 	if (_navStatus == NavStatus_Start) {
@@ -813,16 +817,21 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 		if ((_navStatus == NavStatus_Progress) && _navAutoUpdate) {
 			[self updateNavByCurrentLocation];
 		}
+		else {
+			[self updateNav];
+		}
 	}
-	
 }
 
 - (void)notifyLocationFail {
 
-	if ((self.mrLocationError != nil) && (self.clLocationError != nil)) {
-		if ((_mpPositionResult == nil) && !_navDidFirstLocationUpdate) {
+	if ((self.mrLocationError != nil) && (self.clLocationError != nil) && (_mpPositionResult == nil)) {
+		if (!_navDidFirstLocationUpdate) {
 			_navDidFirstLocationUpdate = true;
 			[self didFirstLocationUpdate];
+		}
+		else {
+			[self updateNav];
 		}
 	}
 
