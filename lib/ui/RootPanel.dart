@@ -98,6 +98,7 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
       User.notifyFavoritesUpdated,
       User.notifyPrivacyLevelEmpty,
       FlexUI.notifyChanged,
+      Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
     ]);
@@ -155,6 +156,9 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
     else if (name == FlexUI.notifyChanged) {
       _updateContent();
     }
+    else if (name == Styles.notifyChanged) {
+      setState(() { });
+    }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
     }
@@ -167,7 +171,7 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
-    List<Widget> panels = List();
+    List<Widget> panels = [];
     for (RootTab rootTab in _tabs) {
       panels.add(_panels[rootTab] ?? Container());
     }
@@ -405,7 +409,7 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
   }
 
   static List<RootTab> _getTabs() {
-    List<RootTab> tabs = List();
+    List<RootTab> tabs = [];
     List<String> codes = _getTabbarCodes();
     if (codes != null) {
       for (String code in codes) {

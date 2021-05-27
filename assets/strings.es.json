@@ -49,7 +49,7 @@
     "toggle_button.status.checkbox": "casilla de verificación",
 
     "payment_type.text.classic_meal":"Comida Classic",
-    "payment_type.text.cafe_credits":"Créditos de café",
+    "payment_type.text.dining_dollars":"Dining Dollars",
     "payment_type.text.illini_cash":"Illini Cash",
     "payment_type.text.credit_card":"Tarjeta de crédito",
     "payment_type.text.cash":"Efectivo",
@@ -159,6 +159,8 @@
     "panel.browse.button.groups.hint":"",
     "panel.browse.button.safer.title":"Safer Illinois",
     "panel.browse.button.safer.hint":"",
+    "panel.browse.button.add_illini_cash.title": "Add Illini Cash",
+    "panel.browse.button.add_illini_cash.hint": "",
     "panel.browse.button.privacy_center.title": "Centro de privacidad",
 
     "panel.browse.label.browse_all": "Explorar todo",
@@ -680,7 +682,7 @@
     "panel.settings.meal_plan.label.meal_plan_unknown.text": "Desconocido",
     "panel.settings.meal_plan.label.meal_plan_type.text": "Tipo de plan de comidas",
     "panel.settings.meal_plan.label.meals_remaining.text": "Comidas restantes",
-    "panel.settings.meal_plan.label.cafe_credits.text": "Créditos Café",
+    "panel.settings.meal_plan.label.dining_dollars.text": "Dining Dollars",
     "panel.settings.meal_plan.button.view_history.title": "Ver historial",
     "panel.settings.meal_plan.button.view_history.hint": "",
     "panel.settings.meal_plan.button.this_week.title": "Esta semana",

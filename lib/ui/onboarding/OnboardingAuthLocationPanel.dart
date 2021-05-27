@@ -192,7 +192,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: message, selection:okTitle);
                       if (pushNext) {

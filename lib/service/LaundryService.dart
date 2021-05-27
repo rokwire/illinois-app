@@ -46,7 +46,7 @@ class LaundryService /* with Service */ {
       xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
       if (laundryRoomsXml != null) {
-        rooms = List();
+        rooms = [];
         laundryRoomsXml.map((xml.XmlElement item) {
           String location = _getValueFromXmlItem(item.findElements("location"));
           String campusName =
@@ -125,7 +125,7 @@ class LaundryService /* with Service */ {
       xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
       var appliancesXml = roomsXmlResponse.findAllElements('appliance');
       if (appliancesXml != null) {
-        laundryRoomAppliances = List();
+        laundryRoomAppliances = [];
         appliancesXml.map((xml.XmlElement item) {
           String applianceDescKey =
               _getValueFromXmlItem(item.findElements("appliance_desc_key"));

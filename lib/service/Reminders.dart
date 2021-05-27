@@ -93,7 +93,7 @@ class Reminders with Service implements NotificationsListener {
     List<Reminder> reminders;
     List<dynamic> jsonList = Assets()['reminders.content'];
     if (jsonList != null) {
-      reminders = new List();
+      reminders = [];
       for (dynamic jsonEntry in jsonList) {
         Reminder reminder = Reminder.fromJson(jsonEntry);
         if (reminder != null) {
@@ -108,7 +108,7 @@ class Reminders with Service implements NotificationsListener {
     if (_reminders == null || _reminders.length == 0) {
       return null;
     }
-    List<Reminder> visibleReminders = List();
+    List<Reminder> visibleReminders = [];
     DateTime nowUtc = DateTime.now().toUtc();
     for (Reminder reminder in _reminders) {
       bool showReminder = _reminderVisible(reminder.dateUtc, nowUtc);

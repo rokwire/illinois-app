@@ -111,7 +111,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   List<Widget> buildSportList(List<SportDefinition> sports) {
-    List<Widget> widgetList = List<Widget>();
+    List<Widget> widgetList = [];
     if (sports != null && sports.isNotEmpty) {
       for (SportDefinition sport in sports) {
         if (widgetList.isNotEmpty) {

@@ -28,14 +28,5 @@
       <FileRef
          location = "group:MemorialStadium.gpx">
       </FileRef>
-      <FileRef
-         location = "group:Novato.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:PaloAlto.gpx">
-      </FileRef>
-      <FileRef
-         location = "group:Ruse.gpx">
-      </FileRef>
    </Group>
 </Workspace>

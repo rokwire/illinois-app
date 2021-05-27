@@ -42,7 +42,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
 
   @override
   void initState() {
-    _linkedGroups = List(); //TBD preload if necessary
+    _linkedGroups = []; //TBD preload if necessary
     Groups().loadGroups(myGroups: true).then((groups) {
       setState(() {
         _adminGroups = groups;

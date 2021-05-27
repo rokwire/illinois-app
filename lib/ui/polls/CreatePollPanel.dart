@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
@@ -85,7 +86,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   void _initDefaultOptionsControllers() {
-    _optionsControllers = List();
+    _optionsControllers = [];
 
     if (_defaultOptionsCount > 0) {
       for (int i = 0; i < _defaultOptionsCount; i++) {
@@ -165,7 +166,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   List<Widget> _constructOptionsWidgets() {
-    List<Widget> options = List();
+    List<Widget> options = [];
     if (_optionsControllers?.isNotEmpty ?? false) {
       for (int i = 0; i < _optionsControllers.length; i++) {
         TextEditingController controller = _optionsControllers[i];
@@ -267,7 +268,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   List<Widget> _buildSettingsButtons() {
     TextStyle _textStyle = TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.medium);
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
-    List<Widget> widgets = new List();
+    List<Widget> widgets =  [];
 
     widgets.add(ToggleRibbonButton(
         label: Localization().getStringEx("panel.create_poll.setting.multy_choice", "Allow selecting more than one choice"),
@@ -412,13 +413,13 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      FlatButton(
+                      TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           },
                           child: Text(Localization().getStringEx("panel.create_poll.cancel_dialog.button.yes", "Yes"))),
-                      FlatButton(
+                      TextButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -439,7 +440,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     }
     else if (_progressPollStatus == null) {
       //Options
-      List<String> options = List();
+      List<String> options = [];
       if(_optionsControllers?.isNotEmpty??false){
         for(TextEditingController optionController in _optionsControllers){
           options.add(optionController?.text?.toString());
@@ -544,7 +545,7 @@ class _PollOptionViewState extends State<PollOptionView> {
                 maxLines: 10,
                 decoration: InputDecoration(hintText: widget.hint, border: InputBorder.none, counterText: ""),
                 maxLength: widget.maxLength,
-                maxLengthEnforced: true,
+                maxLengthEnforcement: MaxLengthEnforcement.enforced,
                 style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 enabled: widget.enabled,
                 textCapitalization: TextCapitalization.sentences,

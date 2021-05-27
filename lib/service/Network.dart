@@ -51,13 +51,7 @@ class Network  {
   Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, int timeout, Http.Client client }) async {
     try {
       
-      Uri uri;
-      if (url is Uri) {
-        uri = url;
-      }
-      else if (url is String) {
-        uri = Uri.parse(url);
-      }
+      Uri uri = _uriFromUrlString(url);
 
       if (uri != null) {
         
@@ -105,19 +99,20 @@ class Network  {
   Future<Http.Response> _get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client} ) async {
     if (Connectivity().isNotOffline) {
       try {
-        if (url != null) {
+        Uri uri = _uriFromUrlString(url);
+        if (uri != null) {
 
-          Map<String, String> requestHeaders = _prepareHeaders(headers, auth, url);
-          
+          Map<String, String> requestHeaders = await _prepareHeaders(headers, auth, uri);
+
           Future<Http.Response> response;
           if (body != null) {
-            response = _get2(url, headers: requestHeaders, body: body, encoding: encoding, timeout: timeout, client: client);
+            response = _get2(uri, headers: requestHeaders, body: body, encoding: encoding, timeout: timeout, client: client);
           }
           else if (client != null) {
-            response = client.get(url, headers: requestHeaders);
+            response = client.get(uri, headers: requestHeaders);
           }
           else {
-            response = Http.get(url, headers: requestHeaders);
+            response = Http.get(uri, headers: requestHeaders);
           }
           
           if ((response != null) && (timeout != null)) {
@@ -161,7 +156,8 @@ class Network  {
   Future<Http.Response> _post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout}) async{
     if (Connectivity().isNotOffline) {
       try {
-        Future<Http.Response> response = (url != null) ? Http.post(url, headers: _prepareHeaders(headers, auth, url), body: body, encoding: encoding) : null;
+        Uri uri = _uriFromUrlString(url);
+        Future<Http.Response> response = (uri != null) ? Http.post(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.d(e?.toString());
@@ -198,10 +194,11 @@ class Network  {
   Future<Http.Response> _put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Future<Http.Response> response = (url != null) ?
+        Uri uri = _uriFromUrlString(url);
+        Future<Http.Response> response = (uri != null) ?
           ((client != null) ?
-            client.put(url, headers: _prepareHeaders(headers, auth, url), body: body, encoding: encoding) :
-              Http.put(url, headers: _prepareHeaders(headers, auth, url), body: body, encoding: encoding)) :
+            client.put(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) :
+              Http.put(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding)) :
             null;
 
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
@@ -241,7 +238,8 @@ class Network  {
   Future<Http.Response> _patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Future<Http.Response> response = (url != null) ? Http.patch(url, headers: _prepareHeaders(headers, auth, url), body: body, encoding: encoding) : null;
+        Uri uri = _uriFromUrlString(url);
+        Future<Http.Response> response = (uri != null) ? Http.patch(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.d(e?.toString());
@@ -278,7 +276,8 @@ class Network  {
   Future<Http.Response> _delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Future<Http.Response> response = (url != null) ? Http.delete(url, headers: _prepareHeaders(headers, auth, url)) : null;
+        Uri uri = _uriFromUrlString(url);
+        Future<Http.Response> response = (uri != null) ? Http.delete(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.d(e?.toString());
@@ -314,7 +313,8 @@ class Network  {
   Future<String> _read(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60 }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Future<String> response = (url != null) ? Http.read(url, headers: _prepareHeaders(headers, auth, url)) : null;
+        Uri uri = _uriFromUrlString(url);
+        Future<String> response = (uri != null) ? Http.read(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout)) : response;
       } catch (e) {
         Log.d(e?.toString());
@@ -338,7 +338,8 @@ class Network  {
   Future<Uint8List> _readBytes(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60 }) async{
     if (Connectivity().isNotOffline) {
       try {
-        Future<Uint8List> response = (url != null) ? Http.readBytes(url, headers: _prepareHeaders(headers, auth, url)) : null;
+        Uri uri = _uriFromUrlString(url);
+        Future<Uint8List> response = (uri != null) ? Http.readBytes(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseBytesHandler) : response;
       } catch (e) {
         Log.d(e?.toString());
@@ -352,7 +353,7 @@ class Network  {
     return _readBytes(url, headers: headers, auth: auth, timeout: timeout);
   }
 
-  Map<String, String> _prepareHeaders(Map<String, String> headers, NetworkAuth auth, String url) {
+  Future<Map<String, String>> _prepareHeaders(Map<String, String> headers, NetworkAuth auth, Uri uri) async{
 
     if (auth == NetworkAuth.App) {
       String rokwireApiKey = Config().rokwireApiKey;
@@ -384,7 +385,7 @@ class Network  {
     }
 
     //cookies
-    String cookies = _loadCookiesForRequest(url);
+    String cookies = await _loadCookiesForRequest(uri);
     if (AppString.isStringNotEmpty(cookies)) {
       if (headers == null) {
         headers = new Map();
@@ -406,7 +407,8 @@ class Network  {
   }
 
   void _saveCookiesFromResponse(String url, Http.Response response) {
-    if (AppString.isStringEmpty(url) || response == null)
+    Uri uri = _uriFromUrlString(url);
+    if ((uri == null) || response == null)
       return;
 
     Map<String, String> responseHeaders = response.headers;
@@ -422,19 +424,19 @@ class Network  {
     if (cookiesData == null || cookiesData.length == 0)
       return;
 
-    List<Cookie> cookies = List();
+    List<Cookie> cookies = [];
     for (String cookieData in cookiesData) {
       Cookie cookie = Cookie.fromSetCookieValue(cookieData);
       cookies.add(cookie);
     }
 
     var cj = new CookieJar();
-    cj.saveFromResponse(Uri.parse(url), cookies);
+    cj.saveFromResponse(uri, cookies);
   }
 
-  String _loadCookiesForRequest(String url) {
+  Future<String> _loadCookiesForRequest(Uri uri) async{
     var cj = new CookieJar();
-    List<Cookie> cookies = cj.loadForRequest(Uri.parse(url));
+    List<Cookie> cookies = await cj.loadForRequest(uri);
     if (cookies == null || cookies.length == 0)
       return null;
 
@@ -455,6 +457,20 @@ class Network  {
 
   Uint8List _responseBytesHandler() {
     return null;
+  }
+
+  Uri _uriFromUrlString(dynamic url){
+    Uri uri;
+    if (url is Uri) {
+      uri = url;
+    }
+    else if (url is String) {
+      uri = Uri.tryParse(url);
+    }
+    else if (url != null) {
+      uri = Uri.tryParse(url.toString());
+    }
+    return uri;
   }
 }
 

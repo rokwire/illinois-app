@@ -123,7 +123,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   }
 
   List _buildDisplayList() {
-    List displayList = List();
+    List displayList = [];
     if (_schedule.games != null && _schedule.games.isNotEmpty) {
       DateTime now = DateTime.now();
       for (Game game in _schedule.games) {

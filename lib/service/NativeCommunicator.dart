@@ -79,7 +79,7 @@ class NativeCommunicator with Service {
     try {
       if (target != null) {
         if (target is List) {
-          jsonData = List<dynamic>();
+          jsonData = [];
           for (dynamic entry in target) {
             jsonData.add(entry.toJson());
           }

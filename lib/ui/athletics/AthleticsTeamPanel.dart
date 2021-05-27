@@ -754,7 +754,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   List<Widget> _buildTeamRoster() {
-    List<Widget> rosterWidgets = List();
+    List<Widget> rosterWidgets = [];
     if(_allRosters != null) {
       for (Roster roster in _allRosters) {
         if(rosterWidgets.length >= 5){
@@ -772,7 +772,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   List<Widget> _buildCoachingStaff() {
-    List<Widget> coachingWidgets = List();
+    List<Widget> coachingWidgets = [];
     if(_allCoaches != null) {
       for (Coach coach in _allCoaches) {
         if(coachingWidgets.length >= 5){

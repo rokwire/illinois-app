@@ -23,8 +23,6 @@ class LinkTileWideButton extends StatelessWidget {
   final String hint;
   final GestureTapCallback onTap;
 
-  static final Color defaultTextColor = Styles().colors.fillColorPrimary;
-
   LinkTileWideButton({this.iconPath, this.label, this.hint = '', this.onTap});
 
   @override
@@ -54,7 +52,7 @@ class LinkTileWideButton extends StatelessWidget {
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.bold,
                           fontSize: 20,
-                          color: LinkTileWideButton.defaultTextColor),
+                          color: Styles().colors.fillColorPrimary),
                     ),
                     Image.asset((iconPath)),
                   ],
@@ -75,7 +73,6 @@ class LinkTileSmallButton extends StatelessWidget {
   final GestureTapCallback onTap;
   final TextStyle textStyle;
 
-  static final Color defaultTextColor = Styles().colors.fillColorPrimary;
   static const Color _boxShadowColor = Color.fromRGBO(19, 41, 75, 0.3);
 
   final double width;
@@ -88,7 +85,7 @@ class LinkTileSmallButton extends StatelessWidget {
         TextStyle(
           fontFamily: Styles().fontFamilies.bold,
           fontSize: 20,
-          color: LinkTileSmallButton.defaultTextColor
+          color: Styles().colors.fillColorPrimary
         );
 
     return GestureDetector(

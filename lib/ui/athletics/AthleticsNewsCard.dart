@@ -158,7 +158,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   Widget _newsDetails() {
-    List<Widget> details = new List<Widget>();
+    List<Widget> details = [];
 
     Widget time = _newsTimeDetail();
     if (time != null) {

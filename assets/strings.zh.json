@@ -49,7 +49,7 @@
 	"toggle_button.status.checkbox":"复选框",
 
 	"payment_type.text.classic_meal":"经典套餐",
-	"payment_type.text.cafe_credits":"Café Credits",
+	"payment_type.text.dining_dollars":"Dining Dollars",
 	"payment_type.text.illini_cash":"Illini现金",
 	"payment_type.text.credit_card":"信用卡",
 	"payment_type.text.cash":"现金",
@@ -159,6 +159,8 @@
 	"panel.browse.button.groups.hint":"",
 	"panel.browse.button.safer.title":"Safer Illinois",
 	"panel.browse.button.safer.hint":"",
+	"panel.browse.button.add_illini_cash.title": "Add Illini Cash",
+	"panel.browse.button.add_illini_cash.hint": "",
 	"panel.browse.button.privacy_center.title": "Privacy Center",
 
 	"panel.browse.label.browse_all": "浏览全部",
@@ -680,7 +682,7 @@
 	"panel.settings.meal_plan.label.meal_plan_unknown.text":"未知",
 	"panel.settings.meal_plan.label.meal_plan_type.text":"膳食计划类型",
 	"panel.settings.meal_plan.label.meals_remaining.text":"剩余餐食",
-	"panel.settings.meal_plan.label.cafe_credits.text":"Caf\u00E9食堂信用金额",
+	"panel.settings.meal_plan.label.dining_dollars.text":"Dining Dollars",
 	"panel.settings.meal_plan.button.view_history.title":"查看历史记录",
 	"panel.settings.meal_plan.button.view_history.hint":"",
 	"panel.settings.meal_plan.button.this_week.title":"本周",

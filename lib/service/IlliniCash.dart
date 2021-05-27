@@ -198,7 +198,7 @@ class IlliniCash with Service implements NotificationsListener {
       String responseBody = response?.body;
       List<dynamic> jsonListData = AppJson.decode(responseBody);
       if (jsonListData != null) {
-        List<IlliniCashTransaction> transactions = List();
+        List<IlliniCashTransaction> transactions = [];
         for (var jsonData in jsonListData) {
           IlliniCashTransaction transaction = IlliniCashTransaction.fromJson(
               jsonData);
@@ -228,7 +228,7 @@ class IlliniCash with Service implements NotificationsListener {
       String responseBody = response?.body;
       List<dynamic> jsonListData = AppJson.decode(responseBody);
       if (jsonListData != null) {
-        List<MealPlanTransaction> transactions = List();
+        List<MealPlanTransaction> transactions = [];
         for (var jsonData in jsonListData) {
           MealPlanTransaction transaction = MealPlanTransaction.fromJson(
               jsonData);
@@ -260,7 +260,7 @@ class IlliniCash with Service implements NotificationsListener {
       String responseBody = response?.body;
       List<dynamic> jsonListData = AppJson.decode(responseBody);
       if (jsonListData != null) {
-        List<CafeCreditTransaction> transactions = List();
+        List<CafeCreditTransaction> transactions = [];
         for (var jsonData in jsonListData) {
           CafeCreditTransaction transaction = CafeCreditTransaction.fromJson(jsonData);
           transactions.add(transaction);

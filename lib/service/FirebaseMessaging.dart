@@ -19,8 +19,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart';
-import 'package:firebase_messaging/firebase_messaging.dart' as FirebaseMessagingPlugin;
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -37,6 +38,8 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/utils/Utils.dart';
+
+const String _channelId = "Notifications_Channel_ID";
 
 class FirebaseMessaging with Service implements NotificationsListener {
 
@@ -63,6 +66,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     'dining_specials'  : 'dinning_specials',
   };
 
+  final AndroidNotificationChannel _channel = AndroidNotificationChannel(
+    _channelId, // id
+    "Illinois",
+    "Receive notifications",
+    importance: Importance.high,
+  );
+
 
   String   _token;
   String   _projectID;
@@ -74,7 +84,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   FirebaseMessaging._internal();
   static final FirebaseMessaging _firebase = FirebaseMessaging._internal();
-  FirebaseMessagingPlugin.FirebaseMessaging _firebaseMessaging = FirebaseMessagingPlugin.FirebaseMessaging();
+  final FlutterLocalNotificationsPlugin _firebaseMessaging = FlutterLocalNotificationsPlugin();
 
   factory FirebaseMessaging() {
     return _firebase;
@@ -112,18 +122,32 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    
     // Cache messages until UI is displayed
-    _messagesCache = List<Map<String, dynamic>>();
+    _messagesCache = [];
 
-    _firebaseMessaging.configure(
-      onMessage: _onFirebaseMessage,
-      onBackgroundMessage: null, // causes exception in FirebaseMessaging plugin 
-      onLaunch: _onFirebaseLaunch,
-      onResume: _onFirebaseResume,
+    //firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_channel);
+
+    await firebase_messaging.FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
     );
-    
-    _firebaseMessaging.getToken().then((String token) {
+
+    firebase_messaging.FirebaseMessaging.onMessage.listen((firebase_messaging.RemoteMessage message) {
+      _onFirebaseMessage(message.data);
+    });
+
+    firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((firebase_messaging.RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      _onFirebaseMessage(message.data);
+    });
+
+
+
+
+    firebase_messaging.FirebaseMessaging.instance.getToken().then((String token) {
       _token = token;
       Log.d('FCM: token: $token');
       NotificationService().notify(notifyToken, null);
@@ -275,16 +299,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   Future<dynamic> _onFirebaseMessage(Map<String, dynamic> message) async {
     Log.d("FCM: onFirebaseMessage");
-    _onMessageProcess(message);
-  }
-
-  Future<dynamic> _onFirebaseLaunch(Map<String, dynamic> message) async {
-    Log.d("FCM: onFirebaseLaunch");
-    _onMessageProcess(message);
-  }
-
-  Future<dynamic> _onFirebaseResume(Map<String, dynamic> message) async {
-    Log.d("FCM: onFirebaseResume");
     _onMessageProcess(message);
   }
 

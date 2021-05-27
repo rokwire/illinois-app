@@ -314,7 +314,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             Expanded(
               child: VerticalTitleContentSection(
                 title: Localization().getStringEx(
-                    "panel.settings.meal_plan.label.cafe_credits.text", "Café Credits"),
+                    "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
                 content: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
               ),
             )

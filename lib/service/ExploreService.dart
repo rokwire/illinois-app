@@ -352,7 +352,7 @@ class ExploreService /* with Service */ {
     if (AppCollection.isCollectionEmpty(eventsJsonList)) {
       return null;
     }
-    List<Event> events = List<Event>();
+    List<Event> events = [];
     Map<int, int> recurringIdToIndexMap = HashMap();
     for (dynamic jsonEntry in eventsJsonList) {
       Event event = Event.fromJson(jsonEntry);

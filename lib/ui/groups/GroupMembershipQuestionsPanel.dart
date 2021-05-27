@@ -55,8 +55,8 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     if (_questions.isEmpty) {
       _questions.add(GroupMembershipQuestion());
     }
-    _focusNodes = List();
-    _controllers = List();
+    _focusNodes = [];
+    _controllers = [];
     for (GroupMembershipQuestion question in _questions) {
       _controllers.add(TextEditingController(text: question.question ?? ''));
       _focusNodes.add(FocusNode());

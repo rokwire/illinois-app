@@ -40,7 +40,7 @@ class TransportationService /* with Service */ {
     String responseBody = response?.body;
     if ((response != null) && (response.statusCode == 200)) {
       if (AppString.isStringNotEmpty(responseBody)) {
-        List<ParkingEvent> events = List<ParkingEvent>();
+        List<ParkingEvent> events = [];
         List<dynamic> jsonData = AppJson.decode(responseBody);
         if (jsonData != null) {
           for (Map<String, dynamic> eventEntry in jsonData) {
@@ -72,7 +72,7 @@ class TransportationService /* with Service */ {
           if (jsonData != null) {
             List<dynamic> lotsData = jsonData['items'];
             if (AppCollection.isCollectionNotEmpty(lotsData)) {
-              List<ParkingLot> lots = List<ParkingLot>();
+              List<ParkingLot> lots = [];
               for (dynamic lotEntry in lotsData) {
                 ParkingLot lot = ParkingLot.fromJson(lotEntry);
                 lots.add(lot);
