@@ -236,7 +236,7 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 #pragma mark Navigation
 
 - (void)prepare {
-    if (_exploreLocation != nil) {
+	if (_exploreLocation != nil) {
 		self.gmsMapView.hidden = true;
 		[_activityIndicator startAnimating];
 		[_activityStatus setText:NSLocalizedString(@"Detecting current location...",nil)];
@@ -380,7 +380,6 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 
 	if (_mpRoute != nil) {
 		[self buildRoutePolyline];
-		
 		
 		_mpDirectionsRenderer = [[MPDirectionsRenderer alloc] init];
 		_mpDirectionsRenderer.map = self.gmsMapView;
