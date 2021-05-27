@@ -7,17 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [2.4.11] - 2021-05-26
-- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/safer-illinois-app/issues/252)
+### Fixed
+- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/safer-illinois-app/issues/252).
 
 ## [2.4.10] - 2021-05-21
-- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/safer-illinois-app/issues/250)
+### Changed
+- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/safer-illinois-app/issues/250).
 
 ## [2.4.9] - 2021-05-18
-- Flutter 2.0 integration [#245](https://github.com/rokwire/safer-illinois-app/issues/245)
+### Changed
+- Flutter 2.0 integration [#245](https://github.com/rokwire/safer-illinois-app/issues/245).
 
 ## [2.4.8] - 2021-05-14
 ### Added
-- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/safer-illinois-app/issues/246)
+- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/safer-illinois-app/issues/246).
 
 ## [2.4.7] - 2021-05-13
 ### Fixed
