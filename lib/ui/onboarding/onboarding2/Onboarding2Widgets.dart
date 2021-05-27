@@ -1,8 +1,10 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String title;
@@ -91,5 +93,54 @@ class Onboarding2BackButton extends StatelessWidget {
           ),
         )
     );
+  }
+}
+
+class Onboarding2ToggleButton extends StatelessWidget{
+  final String toggledTitle;
+  final String unToggledTitle;
+  final bool toggled;
+  final Function onTap;
+  final BuildContext context;//Required in order to announce the VO status change
+  final EdgeInsets padding;
+
+  const Onboarding2ToggleButton({Key key, this.toggledTitle, this.unToggledTitle, this.toggled, this.onTap, this.context, this.padding = const EdgeInsets.all(0)}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () { onTap(); anaunceChange(); },
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
+          child: Container(
+            padding: padding,
+            decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent)),),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child:  Row(
+                children: <Widget>[
+                  Expanded(child:
+                  Text(_label,
+                    style: TextStyle(color: Styles().colors.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
+                  )
+                  ),
+                  (_image != null) ? Padding(padding: EdgeInsets.only(left: 7), child: _image) : Container(),
+                ],
+              ),
+            ),
+          )
+      ),],),
+    );
+  }
+
+  void anaunceChange() {
+    AppSemantics.announceCheckBoxStateChange(context, !toggled, _label); // !toggled because we announce before the state got updated
+  }
+
+  String get _label{
+    return toggled? toggledTitle : unToggledTitle;
+  }
+
+  Widget get _image{
+    return Image.asset( toggled ? 'images/toggle-yes.png' : 'images/toggle-no.png');
   }
 }

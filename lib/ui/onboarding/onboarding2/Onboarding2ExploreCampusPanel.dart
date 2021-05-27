@@ -25,6 +25,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'Onboarding2PersonalizePanel.dart';
 import 'Onboarding2Widgets.dart';
@@ -53,10 +54,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   Widget build(BuildContext context) {
     String titleText = Localization().getStringEx(
         'panel.onboarding2.explore_campus.label.title',
-        'Explore Campus');
+        'Enable location specific services?');
     String descriptionText = Localization().getStringEx(
         'panel.onboarding2.explore_campus.label.description',
-        'Do you want to find events and navigate campus buildings?.');
+        'Easily find events on campus and connect to nearby users.');
 
     return Scaffold(
         backgroundColor: Styles().colors.background,
@@ -111,10 +112,12 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               alignment: Alignment.center,
                               child: Text(
                                 titleText,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Styles().colors.textSurface,
-                                    fontSize: 28,
-                                    fontFamily: Styles().fontFamilies.bold
+                                    color: Styles().colors.fillColorPrimary,
+                                    fontSize: 24,
+                                    fontFamily: Styles().fontFamilies.bold,
+                                    height: 1.4
                               ))
                           ),
                         )),
@@ -134,6 +137,14 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                     color: Styles().colors.fillColorPrimary),
                               )),
                         )),
+                    Container(height: 10,),
+                    GestureDetector(
+                      onTap: _onTapLearnMore,
+                      child:  Text(
+                          Localization().getStringEx('panel.onboarding2.explore_campus.button.title.learn_more', 'Learn More'),
+                          style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
+                      ),
+                    ),
                     Container(height: 24,),
                     Container(
                       height: 180,
@@ -158,7 +169,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                           Align(
                             alignment: Alignment.center,
                             child:Container(
-                              child: Image.asset("images/explore_illustration.png", excludeFromSemantics: true,),
+                              child: Image.asset("images/explore_illustration.png", excludeFromSemantics: true,width: 250, fit: BoxFit.fitWidth,),
                             )
                           )
                         ],
@@ -168,34 +179,20 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
               bottomNotScrollableWidget:
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Styles().colors.white,
-                    borderRadius: BorderRadius.circular(6),
-                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-                  ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ToggleRibbonButton(
-                      label: _toggleButtonLabel,
-                      toggled: _toggled,
-                      padding: EdgeInsets.all(0),
-                      onTap: _onToggleTap,
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child:
+                      Onboarding2ToggleButton(
+                        toggledTitle: Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Enable location services.'),
+                        unToggledTitle: Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Do not enable location services.'),
+                        toggled: _toggled,
+                        onTap: _onToggleTap,
+                      ),
                     ),
-                    Container(height: 16,),
-                    Text(
-                      _toggleButtonDescription,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies.regular,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          color: Styles().colors.textSurface),
-                    ),
-                    Container(height: 12,),
                     ScalableRoundedButton(
                       label: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.title', 'Continue'),
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
@@ -208,17 +205,12 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                     )
                   ],
                 ),
-                )
               ),
             ))));
   }
 
   String get _toggleButtonLabel{
     return _toggled? "Yes." : "Not now.";
-  }
-
-  String get _toggleButtonDescription{
-    return _toggled? "Help me explore campus." : "Don’t help me explore campus.";
   }
 
   void _onToggleTap(){
@@ -234,5 +226,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   void _goBack(BuildContext context) {
     Navigator.of(context).pop();
+  }
+
+  void _onTapLearnMore(){
+    //TBD implement learn more
+    AppToast.show("TBD");
   }
 }
