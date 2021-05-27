@@ -53,13 +53,6 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx(
-        'panel.onboarding2.personalize.label.title',
-        'Store your app activity and personal information?');
-    String descriptionText = Localization().getStringEx(
-        'panel.onboarding2.personalize.label.description',
-        'This includes content you view, teams you follow, and sign-in information. ');
-
     return Scaffold(
         backgroundColor: Styles().colors.background,
         body: SafeArea(child:SwipeDetector(
@@ -95,14 +88,14 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                         ),
                         Row(children:[
                           Onboarding2BackButton(padding: const EdgeInsets.only(
-                              left: 17, top: 19, right: 20, bottom: 27),
+                              left: 17, top: 19, right: 20, bottom: 15),
                               onTap: () {
                                 Analytics.instance.logSelect(target: "Back");
                                 _goBack(context);
                               }),
                         ],),
                         Semantics(
-                            label: titleText,
+                            label: _title,
                             hint: Localization().getStringEx(
                                 'panel.onboarding2.personalize.label.title.hint', ''),
                             excludeSemantics: true,
@@ -112,7 +105,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    titleText,
+                                    _title,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Styles().colors.fillColorPrimary,
@@ -123,14 +116,14 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                               ),
                             )),
                         Semantics(
-                            label: descriptionText,
+                            label: _description,
                             excludeSemantics: true,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16),
                               child: Align(
                                   alignment: Alignment.topCenter,
                                   child: Text(
-                                    descriptionText,
+                                    _description,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontFamily: Styles().fontFamilies.regular,
@@ -188,8 +181,8 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child:
                       Onboarding2ToggleButton(
-                        toggledTitle: Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and information I share.'),
-                        unToggledTitle: Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Do not store my app activity or information.'),
+                        toggledTitle: _toggledButtonTitle,
+                        unToggledTitle: _unToggledButtonTitle,
                         toggled: _toggled,
                         onTap: _onToggleTap,
                       ),
@@ -208,14 +201,6 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                 ),
               ),
             ))));
-  }
-
-  String get _toggleButtonLabel{
-    return _toggled? "Yes." : "Not now.";
-  }
-
-  String get _toggleButtonDescription{
-    return _toggled? "Save my preferences." : "Don’t save events or follow athletic teams.";
   }
 
   void _onToggleTap(){
@@ -241,5 +226,21 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   void _onTapLearnMore(){
     //TBD implement learn more
     AppToast.show("TBD");
+  }
+
+  String get _title{
+    return Localization().getStringEx('panel.onboarding2.personalize.label.title', 'Store your app activity and personal information?');
+  }
+
+  String get _description{
+    return Localization().getStringEx('panel.onboarding2.personalize.label.description', 'This includes content you view, teams you follow, and sign-in information. ');
+  }
+
+  String get _toggledButtonTitle{
+    return Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and information I share.');
+  }
+
+  String get _unToggledButtonTitle{
+    return Localization().getStringEx('panel.onboarding2.personalize.button.untoggle.title', 'Do not store my app activity or information.');
   }
 }

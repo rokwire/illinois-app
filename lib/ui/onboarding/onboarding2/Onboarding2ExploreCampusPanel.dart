@@ -52,13 +52,6 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx(
-        'panel.onboarding2.explore_campus.label.title',
-        'Enable location specific services?');
-    String descriptionText = Localization().getStringEx(
-        'panel.onboarding2.explore_campus.label.description',
-        'Easily find events on campus and connect to nearby users.');
-
     return Scaffold(
         backgroundColor: Styles().colors.background,
         body: SafeArea(child:SwipeDetector(
@@ -101,7 +94,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                           }),
                     ],),
                     Semantics(
-                        label: titleText,
+                        label: _title,
                         hint: Localization().getStringEx(
                             'panel.onboarding2.explore_campus.label.title.hint', ''),
                         excludeSemantics: true,
@@ -111,7 +104,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                           child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                titleText,
+                                _title,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Styles().colors.fillColorPrimary,
@@ -122,14 +115,14 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                           ),
                         )),
                     Semantics(
-                        label: descriptionText,
+                        label: _description,
                         excludeSemantics: true,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: Align(
                               alignment: Alignment.topCenter,
                               child: Text(
-                                descriptionText,
+                                _description,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies.regular,
@@ -187,8 +180,8 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child:
                       Onboarding2ToggleButton(
-                        toggledTitle: Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Enable location services.'),
-                        unToggledTitle: Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Do not enable location services.'),
+                        toggledTitle: _toggledButtonTitle,
+                        unToggledTitle: _unToggledButtonTitle,
                         toggled: _toggled,
                         onTap: _onToggleTap,
                       ),
@@ -231,5 +224,21 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   void _onTapLearnMore(){
     //TBD implement learn more
     AppToast.show("TBD");
+  }
+
+  String get _title{
+    return Localization().getStringEx('panel.onboarding2.explore_campus.label.title', 'Enable location specific services?');
+  }
+
+  String get _description{
+    return Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Easily find events on campus and connect to nearby users.');
+  }
+
+  String get _toggledButtonTitle{
+    return Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Enable location services.');
+  }
+
+  String get _unToggledButtonTitle{
+    return Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Do not enable location services.');
   }
 }
