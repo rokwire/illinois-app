@@ -26,6 +26,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'Onboarding2PrivacyPanel.dart';
 import 'Onboarding2Widgets.dart';
@@ -54,10 +55,10 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   Widget build(BuildContext context) {
     String titleText = Localization().getStringEx(
         'panel.onboarding2.personalize.label.title',
-        'Personalize');
+        'Store your app activity and personal information?');
     String descriptionText = Localization().getStringEx(
         'panel.onboarding2.personalize.label.description',
-        'Do you want to save events and follow your favorite athletics teams?');
+        'This includes content you view, teams you follow, and sign-in information. ');
 
     return Scaffold(
         backgroundColor: Styles().colors.background,
@@ -111,11 +112,13 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    titleText, 
+                                    titleText,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: Styles().colors.textSurface,
-                                      fontSize: 28,
-                                      fontFamily: Styles().fontFamilies.bold
+                                      color: Styles().colors.fillColorPrimary,
+                                      fontSize: 24,
+                                      fontFamily: Styles().fontFamilies.bold,
+                                      height: 1.2
                                   ))
                               ),
                             )),
@@ -135,7 +138,15 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                         color: Styles().colors.fillColorPrimary),
                                   )),
                             )),
-                        Container(height: 24,),
+                        Container(height: 10,),
+                        GestureDetector(
+                          onTap: _onTapLearnMore,
+                          child:  Text(
+                              Localization().getStringEx('panel.onboarding2.personalize.button.title.learn_more', 'Learn More'),
+                              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
+                          ),
+                        ),
+                        Container(height: 12,),
                         Container(
                             height: 200,
                             child: Stack(
@@ -143,7 +154,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                 Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Container(
-                                    height: 120,
+                                    height: 160,
                                     child:Column(
                                         children:[
                                           CustomPaint(
@@ -152,14 +163,14 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                               height: 100,
                                             ),
                                           ),
-                                          Container(height: 20, color: Styles().colors.background,)
+                                          Container(height: 60, color: Styles().colors.background,)
                                         ]),
                                   ),
                                 ),
                                 Align(
                                     alignment: Alignment.center,
                                     child:Container(
-                                      child: Image.asset("images/group_138.png", excludeFromSemantics: true,fit: BoxFit.fitHeight,),
+                                      child: Image.asset("images/group_138.png", excludeFromSemantics: true,fit: BoxFit.fitWidth, width: 300,),
                                     )
                                 )
                               ],
@@ -168,48 +179,33 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                       ])),
               bottomNotScrollableWidget:
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Styles().colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child:
+                      Onboarding2ToggleButton(
+                        toggledTitle: Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and information I share.'),
+                        unToggledTitle: Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Do not store my app activity or information.'),
+                        toggled: _toggled,
+                        onTap: _onToggleTap,
+                      ),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ToggleRibbonButton(
-                          label: _toggleButtonLabel,
-                          toggled: _toggled,
-                          padding: EdgeInsets.all(0),
-                          onTap: _onToggleTap,
-                        ),
-                        Container(height: 16,),
-                        Text(
-                          _toggleButtonDescription,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: Styles().colors.textSurface),
-                        ),
-                        Container(height: 12,),
-                        ScalableRoundedButton(
-                          label: Localization().getStringEx('panel.onboarding2.personalize.button.continue.title', 'Continue'),
-                          hint: Localization().getStringEx('panel.onboarding2.personalize.button.continue.hint', ''),
-                          fontSize: 16,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: Styles().colors.white,
-                          borderColor: Styles().colors.fillColorSecondaryVariant,
-                          textColor: Styles().colors.fillColorPrimary,
-                          onTap: () => _goNext(context),
-                        )
-                      ],
-                    ),
-                  )
+                    ScalableRoundedButton(
+                      label: Localization().getStringEx('panel.onboarding2.personalize.button.continue.title', 'Continue'),
+                      hint: Localization().getStringEx('panel.onboarding2.personalize.button.continue.hint', ''),
+                      fontSize: 16,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Styles().colors.white,
+                      borderColor: Styles().colors.fillColorSecondaryVariant,
+                      textColor: Styles().colors.fillColorPrimary,
+                      onTap: () => _goNext(context),
+                    )
+                  ],
+                ),
               ),
             ))));
   }
@@ -240,5 +236,10 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   void _goBack(BuildContext context) {
     Navigator.of(context).pop();
+  }
+
+  void _onTapLearnMore(){
+    //TBD implement learn more
+    AppToast.show("TBD");
   }
 }
