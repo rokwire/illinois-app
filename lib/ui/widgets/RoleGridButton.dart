@@ -76,7 +76,7 @@ class RoleGridButton extends StatelessWidget {
                 boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, offset: Offset(2, 2), blurRadius: 6),],
                 ),
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 28, vertical: 18), child: Column(children: <Widget>[
-              Image.asset((this.selected ? this.selectedIconPath : this.iconPath)),
+              Image.asset((this.selected ? this.selectedIconPath : this.iconPath), width: 38, fit: BoxFit.fitWidth,),
               Container(height: 18,),
               Text(title,
                     textAlign: TextAlign.center,

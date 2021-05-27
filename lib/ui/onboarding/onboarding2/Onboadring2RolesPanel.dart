@@ -81,7 +81,13 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 36, vertical: 6),
           child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.'),
-            style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: Styles().fontFamilies.regular,
+                fontSize: 16,
+                color: Styles().colors.fillColorPrimary,
+                height: 1.5
+            ),
           ),
         ),
         Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
