@@ -38,7 +38,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
               scrollableChild: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Onboarding2TitleWidget(title: "A smart campus in your pocket.",),
+                  Onboarding2TitleWidget(title: "A Smart Campus in Your Pocket",),
                   Container(height: 14,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16),
@@ -81,18 +81,23 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                           excludeSemantics: true,
                           child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Text(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                                ),
+                                padding: EdgeInsets.only(bottom: 2),
+                                child: Text(
                                 "Returning user?",
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies.medium,
                                     fontSize: 16,
                                     color: Styles().colors.fillColorPrimary,
-                                    decoration: TextDecoration.underline,
+//                                    decoration: TextDecoration.underline,
                                     decorationColor: Styles().colors.fillColorSecondary,
                                     decorationThickness: 1,
                                     decorationStyle:
                                     TextDecorationStyle.solid),
-                              ))),
+                              )))),
                     )
                   ],
                 ),
