@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2PermissionsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -93,44 +95,48 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                                   hint: '',
                                   button: true,
                                   excludeSemantics: true,
-                                  child: Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 0),
-                                      child: Text(
-                                        "Skip",
-                                        style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.regular,
-                                            fontSize: 16,
-                                            color: Styles().colors.white,
-                                            decoration: TextDecoration.underline,
-                                            decorationColor: Styles().colors.fillColorSecondary,
-                                            decorationThickness: 1,
-                                            decorationStyle:
-                                            TextDecorationStyle.solid),
-                                      ))),
+                                  child:
+//                                  Padding(
+//                                      padding: EdgeInsets.symmetric(vertical: 0),
+//                                      child: Text(
+//                                        "Skip",
+//                                        style: TextStyle(
+//                                            fontFamily: Styles().fontFamilies.regular,
+//                                            fontSize: 16,
+//                                            color: Styles().colors.white,
+//                                            decoration: TextDecoration.underline,
+//                                            decorationColor: Styles().colors.fillColorSecondary,
+//                                            decorationThickness: 1,
+//                                            decorationStyle:
+//                                            TextDecorationStyle.solid),
+//                                      ))
+                                _buildPrivacyPolicyButton()
+                              ),
                             ),
                             Container(width: 16,)
                           ],)),
-                          Semantics(
-                              label: titleText,
-                              hint: Localization().getStringEx(
-                                  'panel.onboarding2.privacy.label.title.hint',
-                                  ''),
-                              excludeSemantics: true,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 17, right: 17, top: 0, bottom: 12),
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                        titleText,
-                                        style: TextStyle(
-                                            color: Styles().colors.white,
-                                            fontSize: 24,
-                                            fontFamily: Styles().fontFamilies.bold
-                                        ))
-                                ),
-                              )),
-                          _buildPrivacySlider(),
+//                          Semantics(
+//                              label: titleText,
+//                              hint: Localization().getStringEx(
+//                                  'panel.onboarding2.privacy.label.title.hint',
+//                                  ''),
+//                              excludeSemantics: true,
+//                              child: Padding(
+//                                padding: EdgeInsets.only(
+//                                    left: 17, right: 17, top: 0, bottom: 12),
+//                                child: Align(
+//                                    alignment: Alignment.center,
+//                                    child: Text(
+//                                        titleText,
+//                                        style: TextStyle(
+//                                            color: Styles().colors.white,
+//                                            fontSize: 24,
+//                                            fontFamily: Styles().fontFamilies.bold
+//                                        ))
+//                                ),
+//                              )),
+//                          _buildPrivacySlider(),
+                          Container(height: 18,),
                           Semantics(
                               label: _privacyDescription,
                               excludeSemantics: true,
@@ -147,7 +153,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                                           color: Styles().colors.white),
                                     )),
                               )),
-                          Container(height: 24,),
+                          Container(height: 35,),
                           Container(
                               height: 90,
                               child: Stack(
@@ -163,10 +169,10 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                                                 painterColor: Styles().colors
                                                     .background,),
                                               child: Container(
-                                                height: 70,
+                                                height: 60,
                                               ),
                                             ),
-                                            Container(height: 20,
+                                            Container(height: 30,
                                               color: Styles().colors.background,)
                                           ]),
                                     ),
@@ -195,27 +201,27 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(height: 16,),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 13, top: 8),
-                      child: ScalableRoundedButton(
-                        label: _continueButtonLabel,
-                        hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
-                        fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Styles().colors.background,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: () => _goNext(context),
-                      ),),
                     Text(
-                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust your privacy level at any time in the Privacy Center."),
+                      Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 14,
                           color: Styles().colors.textSurface),
                     ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: 20, top: 16),
+                      child: ScalableRoundedButton(
+                        label: _continueButtonLabel,
+                        hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors.fillColorSecondaryVariant,
+                        textColor: Styles().colors.fillColorPrimary,
+                        onTap: () => _goNext(context),
+                      ),),
                     Container(height: 16,)
                   ],
                 ),
@@ -391,6 +397,33 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     );
   }
 
+  Widget _buildPrivacyPolicyButton(){
+    return
+      GestureDetector(
+        onTap: _openPrivacyPolicy,
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+          ),
+          padding: EdgeInsets.only(bottom: 2),
+          child:
+          Row(children: [
+            Text(
+              "Privacy Policy ",
+              style: TextStyle(
+                  fontFamily: Styles().fontFamilies.regular,
+                  fontSize: 14,
+                  color: Styles().colors.white),
+
+            ),
+            Container(padding: EdgeInsets.only(bottom: 3),
+                child: Image.asset("images/icon-external-link-white.png")
+            ),
+          ],)
+        )
+      );
+  }
+
   int get _privacyLevel{
     return Onboarding2().getPrivacyLevel;
   }
@@ -399,11 +432,11 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     String description = "Unknown privacy level";
     int privacyLevel = _privacyLevel ?? -1;
     switch(privacyLevel){
-      case 1 : return "Privacy is your highest concern.";
-      case 2 : return "Explore anonymously.";
-      case 3 : return "Explore anonymously."; //TBD 3
-      case 4 : return "Personalization without the smarts.";
-      case 5 : return "You get the full Illinois experience.";
+      case 1 : return "Browse Privately";
+      case 2 : return "Explore Privately ";
+      case 3 : return "Explore Privately "; //TBD 3
+      case 4 : return "Personalized  for You";
+      case 5 : return "Full Access";
     }
     return description;
   }
@@ -412,17 +445,17 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     String description = "Unknown privacy level";
     int privacyLevel = _privacyLevel ?? -1;
     switch(privacyLevel){
-      case 1 : return "You are completely anonymous and can browse content. You won't be connected to the Illinois ecosystem";
-      case 2 : return "You can explore campus and find things near by. Your can't personalize your experience.";
-      case 3 : return "You can explore campus and find things near by. Your can't personalize your experience."; //TBD 3
-      case 4 : return "You can explore, browse, and save. You will not contribute to the larger Illinois community.﻿";
-      case 5 : return "You now have access to all app features. You can explore Illinois knowing we will never sell any information you provide.";
+      case 1 : return "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.";
+      case 2 : return "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.";
+      case 3 : return "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared."; //TBD 3
+      case 4 : return "Based on your answers, your data will be securely stored for you to access.";
+      case 5 : return "Based on your answers, your data will be securely stored and shared to enable the full smarts of the Illinois app.";
     }
     return description;
   }
 
   String get _continueButtonLabel{
-    return _privacyLevel==1? "Start browsing Illinois" : "Save preferences";
+    return _privacyLevel==1? "Start browsing Illinois" : "Save Privacy Level";
   }
 
   void _goNext(BuildContext context) {
@@ -444,5 +477,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
 
   void _goSkip(BuildContext context){
     Onboarding2().finish(context);
+  }
+
+  void _openPrivacyPolicy(){
+    Analytics.instance.logSelect(target: "Privacy Statement");
+    if (Config().privacyPolicyUrl != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
+    }
   }
 }
