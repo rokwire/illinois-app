@@ -97,7 +97,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                           )),
                     ),
                     Semantics(
-                        label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
+                        label: descriptionText,
                         excludeSemantics: true,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
