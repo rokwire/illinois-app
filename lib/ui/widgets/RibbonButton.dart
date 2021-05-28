@@ -102,6 +102,7 @@ class ToggleRibbonButton extends RibbonButton {
   final BuildContext context; //Required in order to announce the VO status change
   final TextStyle style;
   final double height;
+  final EdgeInsets padding;
 
   ToggleRibbonButton ({
     @required this.label,
@@ -111,7 +112,8 @@ class ToggleRibbonButton extends RibbonButton {
     this.border,
     this.context,
     this.height = 48.0,
-    this.style
+    this.style,
+    this.padding,
   });
 
   @override

@@ -32,8 +32,9 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
   final String url;
   final String analyticsName;
   final String title;
+  final bool hideToolBar;
 
-  WebPanel({@required this.url, this.analyticsName, this.title = ""});
+  WebPanel({@required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
 
   @override
   _WebPanelState createState() => _WebPanelState();
@@ -83,7 +84,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
                     children: _buildWebView(),
                   )
               ),
-              TabBarWidget()
+              widget.hideToolBar? Container() :TabBarWidget()
             ],
           ));
   }
