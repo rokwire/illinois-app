@@ -224,8 +224,46 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   }
 
   void _onTapLearnMore(){
-    //TBD implement learn more
-    AppToast.show("TBD");
+    Onboarding2InfoDialog.show(
+        context: context,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title1',"App Activity"),
+              style: Onboarding2InfoDialog.titleStyle,),
+            Container(height: 8,),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content1',"Storing your app activity means that the app collects and remembers data about how you interact with it. The app stores your food preferences, your favorite teams, events you have starred, and other filters. Storing this information helps you use the app more efficiently."),
+              style: Onboarding2InfoDialog.contentStyle,
+            ),
+            Container(height: 24,),
+            Text(
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal Information"),
+              style: Onboarding2InfoDialog.titleStyle,),
+            Container(height: 8,),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and i-card information."),
+              style: Onboarding2InfoDialog.contentStyle,
+            ),
+            Container(height: 24,),
+            Text(
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title3',"Storage"),
+              style: Onboarding2InfoDialog.titleStyle,),
+            Container(height: 8,),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content3',"Your data is stored safely on your mobile device and on our secure servers. Your stored information is not given or sold to any third parties. The app activity information is associated with your personal information only when you are signed in."),
+              style: Onboarding2InfoDialog.contentStyle,
+            ),
+            Container(height: 24,),
+            Text(
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title4',"Opting Out"),
+              style: Onboarding2InfoDialog.titleStyle,),
+            Container(height: 8,),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content4',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data."),
+              style: Onboarding2InfoDialog.contentStyle,
+            ),
+          ]
+        )
+    );
   }
 
   String get _title{

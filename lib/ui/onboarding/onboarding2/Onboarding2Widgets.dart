@@ -1,10 +1,15 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:path/path.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String title;
@@ -150,6 +155,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
   static final TextStyle contentStyle = TextStyle(fontSize: 16.0, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular);
 
   final Widget content;
+  final BuildContext context;
 
   static void show({BuildContext context, Widget content}){
     showDialog(
@@ -157,12 +163,12 @@ class Onboarding2InfoDialog extends StatelessWidget{
         builder: (_) => Material(
           type: MaterialType.transparency,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-          child: Onboarding2InfoDialog(content: content,),
+          child: Onboarding2InfoDialog(content: content, context: context),
         )
     );
   }
 
-  const Onboarding2InfoDialog({Key key, this.content}) : super(key: key);
+  const Onboarding2InfoDialog({Key key, this.content, this.context}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +201,19 @@ class Onboarding2InfoDialog extends StatelessWidget{
                           ))),
                         Container(height: 12,),
                         content ?? Container(),
+                        Container(height:10),
+                        RichText(
+                            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                            text: new TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.explore_campus.learn_more.location_services.content3", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
+                                  TextSpan(text:"Privacy Policy ", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                                      recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
+                                        WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png")))
+                                      ]),
+                                ]
+                            )
+                        )
                       ],
                     )
                   )
@@ -205,4 +224,10 @@ class Onboarding2InfoDialog extends StatelessWidget{
     );
   }
 
+  void _openPrivacyPolicy(){
+    Analytics.instance.logSelect(target: "Privacy Policy");
+    if (Config().privacyPolicyUrl != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Policy"),)));
+    }
+  }
 }

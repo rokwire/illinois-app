@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
+import '../../WebPanel.dart';
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2ImprovePanel extends StatefulWidget{
@@ -218,8 +220,30 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
   }
 
   void _onTapLearnMore(){
-    //TBD implement learn more
-    AppToast.show("TBD");
+    Onboarding2InfoDialog.show(
+        context: context,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing Activity"),
+              style: Onboarding2InfoDialog.titleStyle,),
+            Container(height: 8,),
+            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests."),
+              style: Onboarding2InfoDialog.contentStyle,
+            ),
+            Container(height: 24,),
+            Text(
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting Out"),
+              style: Onboarding2InfoDialog.titleStyle,),
+            Container(height: 8,),
+            Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "),
+              style: Onboarding2InfoDialog.contentStyle,
+            ),
+          ]
+        )
+    );
   }
 
   String get _title{
