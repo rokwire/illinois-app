@@ -144,3 +144,65 @@ class Onboarding2ToggleButton extends StatelessWidget{
     return Image.asset( toggled ? 'images/toggle-yes.png' : 'images/toggle-no.png');
   }
 }
+
+class Onboarding2InfoDialog extends StatelessWidget{
+  static final TextStyle titleStyle = TextStyle(fontSize: 20.0, color: Styles().colors.fillColorPrimary,fontFamily: Styles().fontFamilies.bold);
+  static final TextStyle contentStyle = TextStyle(fontSize: 16.0, color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular);
+
+  final Widget content;
+
+  static void show({BuildContext context, Widget content}){
+    showDialog(
+        context: context,
+        builder: (_) => Material(
+          type: MaterialType.transparency,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+          child: Onboarding2InfoDialog(content: content,),
+        )
+    );
+  }
+
+  const Onboarding2InfoDialog({Key key, this.content}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StatefulBuilder(
+        builder: (context, setState) {
+          return ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              child: Dialog(
+                backgroundColor: Styles().colors.surface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Semantics(label: Localization().getStringEx(
+                              "dialog.close.title", "Close"), button: true, child:
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(child: Image.asset(
+                              "images/close-orange.png",
+                              excludeFromSemantics: true,)),
+                          ))),
+                        Container(height: 12,),
+                        content ?? Container(),
+                      ],
+                    )
+                  )
+                ),
+              )
+          );
+        }
+    );
+  }
+
+}

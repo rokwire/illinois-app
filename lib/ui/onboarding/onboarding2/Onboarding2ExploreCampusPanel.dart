@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
@@ -27,6 +29,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
+import '../../WebPanel.dart';
 import 'Onboarding2PersonalizePanel.dart';
 import 'Onboarding2Widgets.dart';
 
@@ -202,10 +205,6 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
             ))));
   }
 
-  String get _toggleButtonLabel{
-    return _toggled? "Yes." : "Not now.";
-  }
-
   void _onToggleTap(){
     setState(() {
       _toggled = !_toggled;
@@ -222,8 +221,46 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   }
 
   void _onTapLearnMore(){
-    //TBD implement learn more
-    AppToast.show("TBD");
+    Onboarding2InfoDialog.show(
+      context: context,
+      content:
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+          Text(
+            Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.title',"Location Specific Services "),
+            style: Onboarding2InfoDialog.titleStyle,),
+          Container(height: 8,),
+          Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. "),
+            style: Onboarding2InfoDialog.contentStyle,
+          ),
+          Container(height: 10,),
+          Text(
+            Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass, and Quick Polls. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."),
+            style: Onboarding2InfoDialog.contentStyle,),
+          Container(height:10),
+          RichText(
+              textScaleFactor: MediaQuery.textScaleFactorOf(context),
+              text: new TextSpan(
+//                  style: Onboarding2InfoDialog.contentStyle,
+                  children: <TextSpan>[
+                    TextSpan(text: Localization().getStringEx("panel.onboarding2.explore_campus.learn_more.location_services.content3", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
+                    TextSpan(text:"Privacy Policy ", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                        recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
+                          WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png")))
+                        ]),
+                  ]
+              )
+        )])
+    );
+  }
+
+  void _openPrivacyPolicy(){
+    Analytics.instance.logSelect(target: "Privacy Policy");
+    if (Config().privacyPolicyUrl != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Policy"),)));
+    }
   }
 
   String get _title{
