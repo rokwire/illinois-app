@@ -113,7 +113,7 @@ class ToggleRibbonButton extends RibbonButton {
     this.context,
     this.height = 48.0,
     this.style,
-    this.padding,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16),
   });
 
   @override
