@@ -28,6 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
@@ -278,7 +279,15 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             textColor: Styles().colors.fillColorPrimary,
                             borderColor: Styles().colors.fillColorPrimary,
                             onTap: _onTapClearVoting)),
-                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Students Guide...",
+                            backgroundColor: Styles().colors.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors.fillColorPrimary,
+                            borderColor: Styles().colors.fillColorPrimary,
+                            onTap: _onTapStudentsGuide)),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
@@ -291,7 +300,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors.fillColorPrimary,
                               onTap: _onTapStyles)),
                     ),
-                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
@@ -304,7 +312,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               borderColor: Styles().colors.fillColorPrimary,
                               onTap: _onTapHttpProxy)),
                     ),
-                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
                     Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         child: RoundedButton(
@@ -567,6 +574,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     User().updateVotePlace(votePlace: null);
     User().updateVoterRegistration(registeredVoter: null);
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
+  }
+
+  void _onTapStudentsGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuidePanel()));
   }
 
   void _onConfigChanged(dynamic env) {
