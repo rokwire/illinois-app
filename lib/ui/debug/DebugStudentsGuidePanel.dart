@@ -98,8 +98,117 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
 
   String get _sampleJson {
     return '''[
-  {"title":"ABC"},
-  {}
+  {
+    "id": "campus.recreation",
+    "category": "Involvement",
+    "section": "Socializing",
+    
+    "list_title": "Participate in campus recreation",
+    "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
+
+    "detail_title": "Participate in campus recreation",
+    "detail_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members. Campus Recreation is a place for everyone!",
+    "links":[
+      { "text": "(217) 333-1900", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-phone.png", "href": "tel:+1-217-333-1900" },
+      { "text": "campusrec@illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "href": "mailto:campusrec@illinois.edu" },
+      { "text": "campusrec.illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "href": "https://campusrec.illinois.edu/"}
+    ],
+
+    "buttons":[
+      { "text": "Visit website", "href": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "href": "https://campusrec.illinois.edu/" }
+    ],
+
+    "sub_details_title": null,
+    "sub_details_description": "Campus Recreation has a variety of facilities and programs. Visit the website to view a complete list.",
+    "sub_details": [
+      {
+        "section": "State of the Art Facilities",
+        "entries": [
+          {
+            "heading": "Our indoor facilities include:",
+            "entries": [
+              "Activities and Recreation Center (ARC)",
+              "Campus Recreation Center East (CRCE)",
+              "Campus Bike Center",
+              "Ice Arena"
+          ]},
+          {
+            "heading": "Our outdoor facilities include:",
+            "entries": [
+              "Activities and Recreation Center (ARC)",
+              "Campus Recreation Center East (CRCE)",
+              "Campus Bike Center",
+              "Ice Arena"
+          ]}
+      ]},
+      {
+        "section": "Programs for All",
+        "entries": [
+          {
+            "heading": "Campus Recreation also offers unique programs designed for patrons of diverse interests, including:",
+            "entries": [
+              "A variety of group fitness and personal training offerings",
+              "Dozens of intramural activities",
+              "Instructional cooking demonstrations",
+              "Wellness workshops",
+              "Rock climbing clinics",
+              "Swimming programs",
+              "Bicycle demonstrations",
+              "Ice skating classes",
+              "A variety of club sports."
+          ]}
+      ]}
+    ],
+    "related": [ "fraternity", "students.club", "civic.engagement" ]
+  },
+  {
+    "id": "intramural.sports",
+    "category": "Involvement",
+    "section": "Socializing",
+
+    "list_title": "Join an intramural sports team",
+    "list_description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities."
+  },
+  {
+    "id": "students.club",
+    "category": "Involvement",
+    "section": "Socializing",
+
+    "list_title": "Join a student club or organization",
+    "list_description": "Illinois is home to many student clubs and organizations. Get involved today!"
+  },
+  {
+    "id": "fraternity",
+    "category": "Involvement",
+    "section": "Socializing",
+
+    "list_title": "Join a fraternity or sorority",
+    "list_description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus."
+  },
+  {
+    "id": "civic.engagement",
+    "category": "Involvement",
+    "section": "Community engagement",
+
+    "list_title": "Participate in civic engagement",
+    "list_description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
+  },
+  {
+    "id": "union.board",
+    "category": "Involvement",
+    "section": "Community engagement",
+
+    "list_title": "Join the Illini Union Board",
+    "list_description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
+  },
+  {
+    "id": "volunteer",
+    "category": "Involvement",
+    "section": "Community engagement",
+
+    "list_title": "Volunteer",
+    "list_description": "The Office of Volunteer Programs provides students with opportunities to give back to their community."
+  }
 ]''';
   }
 
