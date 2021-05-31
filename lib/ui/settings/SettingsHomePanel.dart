@@ -42,7 +42,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:package_info/package_info.dart';
 
-import 'SettingsDebugPanel.dart';
+import 'DebugHomePanel.dart';
 import 'SettingsManageInterestsPanel.dart';
 import 'SettingsPersonalInfoPanel.dart';
 import 'SettingsPrivacyPanel.dart';
@@ -778,7 +778,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Function _onDebugClicked() {
     return () {
       Analytics.instance.logSelect(target: "Debug");
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     };
   }
 
@@ -890,7 +890,7 @@ class _DebugContainerState extends State<_DebugContainer> {
 
         if (_clickedCount == 7) {
           if (Auth().isDebugManager) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;
         }

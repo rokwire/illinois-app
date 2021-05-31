@@ -31,9 +31,9 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/settings/debug/DebugStylesPanel.dart';
-import 'package:illinois/ui/settings/debug/HttpProxySettingsPanel.dart';
-import 'package:illinois/ui/settings/debug/MessagingPanel.dart';
+import 'package:illinois/ui/debug/DebugStylesPanel.dart';
+import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
+import 'package:illinois/ui/debug/DebugFirebaseMessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -42,12 +42,12 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-class SettingsDebugPanel extends StatefulWidget {
+class DebugHomePanel extends StatefulWidget {
   @override
-  _SettingsDebugPanelState createState() => _SettingsDebugPanelState();
+  _DebugHomePanelState createState() => _DebugHomePanelState();
 }
 
-class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements NotificationsListener {
+class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
 
   DateTime _offsetDate;
   ConfigEnvironment _selectedEnv;
@@ -488,7 +488,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
 
   Function _onMessagingClicked() {
     return () {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagingPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugFirebaseMessagingPanel()));
     };
   }
 
@@ -592,7 +592,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
 
   void _onTapHttpProxy() {
     if(Config().configEnvironment == ConfigEnvironment.dev) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => HttpProxySettingsPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
   }
 
