@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class DebugStudentsGuidePanel extends StatefulWidget {
   DebugStudentsGuidePanel();
@@ -93,7 +96,17 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
   }
 
   void _onPreview() {
-
+    List<dynamic> jsonList = AppJson.decodeList(_jsonController.text);
+    List<Map<String, dynamic>> entries;
+    try {entries = jsonList?.cast<Map<String, dynamic>>(); }
+    catch(e) {}
+    if (entries != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSectionsPanel(entries: entries, category: "Involvement",)));
+    }
+    else {
+      AppAlert.showDialogResult(context, "Failed to parse JSON");
+    }
+    
   }
 
   String get _sampleJson {
