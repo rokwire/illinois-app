@@ -30,6 +30,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
@@ -42,7 +43,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:package_info/package_info.dart';
 
-import 'DebugHomePanel.dart';
 import 'SettingsManageInterestsPanel.dart';
 import 'SettingsPersonalInfoPanel.dart';
 import 'SettingsPrivacyPanel.dart';
