@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,9 +52,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx(
+    /*String titleText = Localization().getStringEx(
         'panel.onboarding2.privacy.label.title',
-        'YOUR PRIVACY LEVEL IS');
+        'YOUR PRIVACY LEVEL IS');*/
 
     return Scaffold(
         backgroundColor: Styles().colors.background,
@@ -229,7 +228,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
             ))));
   }
 
-  Widget _buildPrivacySlider(){
+  /*Widget _buildPrivacySlider(){
     double selectedItemWidth = 50;
     double deselectedItemWidth = 40;
     double selectedTextSize = 28;
@@ -395,7 +394,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
         ]
       )
     );
-  }
+  }*/
 
   Widget _buildPrivacyPolicyButton(){
     return
@@ -435,7 +434,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
       case 1 : return "Browse Privately";
       case 2 : return "Explore Privately ";
       case 3 : return "Explore Privately "; //TBD 3
-      case 4 : return "Personalized  for You";
+      case 4 : return "Personalized for You";
       case 5 : return "Full Access";
     }
     return description;

@@ -26,7 +26,6 @@ import 'package:illinois/ui/onboarding/onboarding2/Onboarding2ExploreCampusPanel
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
 
 import 'Onboarding2Widgets.dart';
 

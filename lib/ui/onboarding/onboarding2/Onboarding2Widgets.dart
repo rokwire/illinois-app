@@ -9,7 +9,6 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:path/path.dart';
 
 class Onboarding2TitleWidget extends StatelessWidget{
   final String title;
