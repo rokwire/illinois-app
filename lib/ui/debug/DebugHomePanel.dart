@@ -108,8 +108,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   String get _userDebugData{
-    String userDataText = prettyPrintJson((User()?.data?.toJson()));
-    String authInfoText = prettyPrintJson(Auth()?.authInfo?.toJson());
+    String userDataText = AppJson.encode(User()?.data?.toJson(), prettify: true);
+    String authInfoText = AppJson.encode(Auth()?.authInfo?.toJson(), prettify: true);
     String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
         "AuthInfo: " + (authInfoText ?? "unknown");
     return userData;
@@ -569,16 +569,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     User().updateVotePlace(votePlace: null);
     User().updateVoterRegistration(registeredVoter: null);
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
-  }
-
-  String prettyPrintJson(var input){
-    if(input == null)
-      return input;
-
-    JsonEncoder encoder = JsonEncoder.withIndent('  ');
-    var prettyString = encoder.convert(input);
-
-    return prettyString;
   }
 
   void _onConfigChanged(dynamic env) {
