@@ -164,7 +164,10 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
 
   void _onSkipTapped() {
     Analytics.instance.logSelect(target: 'Not right now');
-    if (widget.onboardingContext != null) {
+    Function onSuccess = widget.onboardingContext!=null? widget.onboardingContext["onContinueAction"] : null; // Hook this panels to Onboarding2
+    if(onSuccess!=null){
+      onSuccess();
+    } else if (widget.onboardingContext != null) {
       widget.onboardingContext['shouldVerifyPhone'] = false;
       Onboarding().next(context, widget);
     }
