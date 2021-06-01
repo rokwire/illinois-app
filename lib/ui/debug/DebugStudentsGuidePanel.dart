@@ -120,15 +120,16 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
 
     "detail_title": "Participate in campus recreation",
-    "detail_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members. Campus Recreation is a place for everyone!",
+    "detail_description": "<b><span style='color: #008000'>Campus Recreation</span></b> offers active <u><span style='color: #008000'>learning</span></u> and self-discovery <i><span style='color: #008000'>opportunities</span></i> to students, faculty, staff, and community members. <a href='https://illinois.edu'>Campus Recreation</a> is a place for everyone!",
+
     "links":[
-      { "text": "(217) 333-1900", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-phone.png", "href": "tel:+1-217-333-1900" },
-      { "text": "campusrec@illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "href": "mailto:campusrec@illinois.edu" },
-      { "text": "campusrec.illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "href": "https://campusrec.illinois.edu/"}
+      { "text": "(217) 333-1900", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-phone.png", "url": "tel:+1-217-333-1900" },
+      { "text": "campusrec@illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "url": "mailto:campusrec@illinois.edu" },
+      { "text": "campusrec.illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "url": "https://campusrec.illinois.edu/"}
     ],
 
     "buttons":[
-      { "text": "Visit website", "href": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "href": "https://campusrec.illinois.edu/" }
+      { "text": "Visit website", "url": "https://campusrec.illinois.edu/" }
     ],
 
     "sub_details_title": null,

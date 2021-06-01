@@ -1,6 +1,8 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
 class DebugStudentsGuideSectionsPanel extends StatefulWidget {
@@ -74,7 +76,7 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
         for (Map<String, dynamic> entry in sectionEntries) {
           contentList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-              _EntryCard(entry)
+              _EntryCard(entry, entries: widget.entries,)
             )
           );
         }
@@ -98,8 +100,9 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
 }
 
 class _EntryCard extends StatefulWidget {
+  final List<Map<String, dynamic>> entries;
   final Map<String, dynamic> entry;
-  _EntryCard(this.entry);
+  _EntryCard(this.entry, {this.entries});
 
   _EntryCardState createState() => _EntryCardState();
 }
@@ -127,13 +130,14 @@ class _EntryCardState extends State<_EntryCard> {
           borderRadius: BorderRadius.all(Radius.circular(4))
       ),
       child: Stack(children: [
-        Padding(padding: EdgeInsets.all(16), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(widget.entry['list_title'] ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
-            Container(height: 8,),
-            Text(widget.entry['list_description'] ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
-          ],),
-        ),
+        GestureDetector(onTap: _onTapEntry, child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(widget.entry['list_title'] ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+              Container(height: 8,),
+              Text(widget.entry['list_description'] ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
+            ],),
+        ),),
         Align(alignment: Alignment.topRight, child:
           GestureDetector(onTap: _onTapFavorite, child:
             Container(padding: EdgeInsets.all(9), child: 
@@ -148,5 +152,9 @@ class _EntryCardState extends State<_EntryCard> {
     setState(() {
       _isFavorite = !_isFavorite;
     });
+  }
+
+  void _onTapEntry() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideDetailPanel(entries: widget.entries, entry: widget.entry,)));
   }
 }
