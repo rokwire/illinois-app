@@ -107,7 +107,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
   }
 
   void _onReturningUser(BuildContext context){
-    Onboarding2().finish(context);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel(returningUser: true,)));
   }
 
   void _onGoNext(BuildContext context) {

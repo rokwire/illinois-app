@@ -158,7 +158,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                               child: Stack(
                                 children: [
                                   Align(
-                                    alignment: Alignment.bottomCenter,
+                                    alignment: Alignment.topCenter,
                                     child: Container(
                                       height: 90,
                                       child: Column(
@@ -168,14 +168,18 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                                                 painterColor: Styles().colors
                                                     .background,),
                                               child: Container(
-                                                height: 60,
+                                                height: 90,
                                               ),
                                             ),
-                                            Container(height: 30,
+                                            Container(height: 0,
                                               color: Styles().colors.background,)
                                           ]),
                                     ),
                                   ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: _buildPrivacyBadge(),
+                                  )
                                 ],
                               )
                           )
@@ -396,6 +400,48 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     );
   }*/
 
+  Widget _buildPrivacyBadge(){
+    return Container(
+      height: 60,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: Container()),
+          Container(
+            width: 50 ,
+            child: Stack(
+              children: [
+                Align(
+                    child: Container(
+                      width:50,
+                      child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
+                    )
+                ),
+                Align(
+                    alignment: Alignment.center,
+                    child:Container(
+                      alignment: Alignment.center,
+                      height: 50,
+                      child:
+                    Text(
+                      _privacyLevel?.toString()??"",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 26,
+                          color: Styles().colors.white
+                      ),
+                    ))
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPrivacyPolicyButton(){
     return
       GestureDetector(
@@ -433,8 +479,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     switch(privacyLevel){
       case 1 : return "Browse Privately";
       case 2 : return "Explore Privately ";
-      case 3 : return "Explore Privately "; //TBD 3
-      case 4 : return "Personalized for You";
+      case 3 : return "Personalized for You";
+      case 4 : return "Personalized for You";//TBD 4
       case 5 : return "Full Access";
     }
     return description;
@@ -446,27 +492,35 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     switch(privacyLevel){
       case 1 : return "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.";
       case 2 : return "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.";
-      case 3 : return "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared."; //TBD 3
-      case 4 : return "Based on your answers, your data will be securely stored for you to access.";
+      case 3 : return "Based on your answers, your data will be securely stored for you to access.";
+      case 4 : return "Based on your answers, your data will be securely stored for you to access.";//TBD 4
       case 5 : return "Based on your answers, your data will be securely stored and shared to enable the full smarts of the Illinois app.";
     }
     return description;
   }
 
   String get _continueButtonLabel{
-    return _privacyLevel==1? "Start browsing Illinois" : "Save Privacy Level";
+    switch(_privacyLevel){
+      case 1 : return "Start Browsing";
+          break;
+      case 2 : return "Start Exploring";
+          break;
+    }
+    return "Save Privacy Level";
   }
 
   void _goNext(BuildContext context) {
+// TBD decide if we need to call permissions
+//    if(Onboarding2().getExploreCampusChoice) {
+//      Navigator.push(context, CupertinoPageRoute(
+//          builder: (context) => Onboarding2PermissionsPanel()));
+//    }
     User().privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
-
-    if(Onboarding2().getExploreCampusChoice) {
-      Navigator.push(context, CupertinoPageRoute(
-          builder: (context) => Onboarding2PermissionsPanel()));
-    } else {
-      //TBD do Login for certain privacy level
+    if(_privacyLevel<=2){
       Onboarding2().finish(context);
+    } else {
+      Onboarding2().proceedToLogin(context);
     }
   }
 
