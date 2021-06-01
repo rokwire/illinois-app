@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';

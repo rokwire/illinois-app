@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
