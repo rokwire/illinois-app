@@ -1,10 +1,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentsGuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DebugStudentsGuideSectionsPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
@@ -122,10 +125,20 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
     super.dispose();
   }
   
+  void _onTapLink(String url) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (AppUrl.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String title = AppJson.stringValue(widget.entry['list_title']) ?? AppJson.stringValue(widget.entry['title']) ?? '';
-    String description = AppJson.stringValue(widget.entry['list_description']) ?? AppJson.stringValue(widget.entry['description']) ?? '';
+    String titleHtml = AppJson.stringValue(widget.entry['list_title']) ?? AppJson.stringValue(widget.entry['title']) ?? '';
+    String descriptionHtml = AppJson.stringValue(widget.entry['list_description']) ?? AppJson.stringValue(widget.entry['description']) ?? '';
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -136,9 +149,13 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
         GestureDetector(onTap: _onTapEntry, child:
           Padding(padding: EdgeInsets.all(16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+              Html(data: titleHtml,
+                onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
               Container(height: 8,),
-              Text(description ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
+              Html(data: descriptionHtml,
+                onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+                style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
             ],),
         ),),
         Align(alignment: Alignment.topRight, child:

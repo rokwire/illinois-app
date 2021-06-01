@@ -79,11 +79,13 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),),
     ),);
 
-    String title = AppJson.stringValue(widget.entry['detail_title']) ?? AppJson.stringValue(widget.entry['title']);
-    if (AppString.isStringNotEmpty(title)) {
+    String titleHtml = AppJson.stringValue(widget.entry['detail_title']) ?? AppJson.stringValue(widget.entry['title']);
+    if (AppString.isStringNotEmpty(titleHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Text(title ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 36, fontFamily: Styles().fontFamilies.bold),),
+          Html(data: titleHtml,
+            onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       ),);
     }
     
@@ -93,7 +95,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: descriptionHtml,
             onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+            style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
       ),),);
     }
 
@@ -146,7 +148,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: descriptionHtml,
             onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+            style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
       ),),);
     }
 
@@ -160,7 +162,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
               Padding(padding: EdgeInsets.only(top: 16), child:
                 Html(data: sectionHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(fontFamily: Styles().fontFamilies.semiBold, color: Styles().colors.fillColorPrimary, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.semiBold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
             ),),);
           }
 
@@ -174,7 +176,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
                     Padding(padding: EdgeInsets.only(top: 12, bottom: 8), child:
                       Html(data: headingHtml,
                         onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                        style: { "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                        style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                   ),),);
                 }
 
@@ -190,7 +192,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
                             Expanded(child:
                               Html(data: bulletHtml,
                               onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                                style: { "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                                style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                             ),),
                           ],)
                         ),
