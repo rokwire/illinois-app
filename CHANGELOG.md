@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.4.13] - 2021-06-01
 ### Added
 - Added Students Guide POC in Debug panel [#257](https://github.com/rokwire/illinois-app/issues/257)
 
-## [ 2.4.12] - 2021-05-28
+## [2.4.12] - 2021-05-28
 ### Changed
 - Using Onboarding2 [#176](https://github.com/rokwire/illinois-app/issues/176)
 ### Fixed
