@@ -1,7 +1,12 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
+import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
 
 import 'Storage.dart';
 
@@ -23,6 +28,14 @@ class Onboarding2 with Service{
 
   void finish(BuildContext context) {
     NotificationService().notify(notifyFinished, context);
+  }
+  
+  void proceedToLogin(BuildContext context){
+    if(User().rolesMatch([UserRole.employee, UserRole.student])){ //Roles that requires NetId Login
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel()));
+    } else { //Phone Login
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhonePanel()));
+    }
   }
 
   void storeExploreCampusChoice(bool choice){
@@ -58,7 +71,7 @@ class Onboarding2 with Service{
           privacyLevel = 5;
         } else {
           //!getImproveChoice
-          privacyLevel = 4;
+          privacyLevel = 3;
         }
       }else {
         //!getPersonalizeChoice
@@ -71,7 +84,7 @@ class Onboarding2 with Service{
           privacyLevel = 5;
         } else {
           //!getImproveChoice
-          privacyLevel = 4;
+          privacyLevel = 3;
         }
       }else {
         //!getPersonalizeChoice
