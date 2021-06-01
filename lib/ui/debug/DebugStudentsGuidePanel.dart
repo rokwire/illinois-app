@@ -182,48 +182,48 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "category": "Involvement",
     "section": "Socializing",
 
-    "list_title": "Join an intramural sports team",
-    "list_description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities."
+    "title": "Join an intramural sports team",
+    "description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities."
   },
   {
     "id": "students.club",
     "category": "Involvement",
     "section": "Socializing",
 
-    "list_title": "Join a student club or organization",
-    "list_description": "Illinois is home to many student clubs and organizations. Get involved today!"
+    "title": "Join a student club or organization",
+    "description": "Illinois is home to many student clubs and organizations. Get involved today!"
   },
   {
     "id": "fraternity",
     "category": "Involvement",
     "section": "Socializing",
 
-    "list_title": "Join a fraternity or sorority",
-    "list_description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus."
+    "title": "Join a fraternity or sorority",
+    "description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus."
   },
   {
     "id": "civic.engagement",
     "category": "Involvement",
     "section": "Community engagement",
 
-    "list_title": "Participate in civic engagement",
-    "list_description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
+    "title": "Participate in civic engagement",
+    "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
   {
     "id": "union.board",
     "category": "Involvement",
     "section": "Community engagement",
 
-    "list_title": "Join the Illini Union Board",
-    "list_description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
+    "title": "Join the Illini Union Board",
+    "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
   {
     "id": "volunteer",
     "category": "Involvement",
     "section": "Community engagement",
 
-    "list_title": "Volunteer",
-    "list_description": "The Office of Volunteer Programs provides students with opportunities to give back to their community."
+    "title": "Volunteer",
+    "description": "The Office of Volunteer Programs provides students with opportunities to give back to their community."
   }
 ]''';
   }

@@ -79,7 +79,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),),
     ),);
 
-    String title = AppJson.stringValue(widget.entry['detail_title']);
+    String title = AppJson.stringValue(widget.entry['detail_title']) ?? AppJson.stringValue(widget.entry['title']);
     if (AppString.isStringNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -87,7 +87,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
       ),);
     }
     
-    String descriptionHtml = AppJson.stringValue(widget.entry['detail_description']);
+    String descriptionHtml = AppJson.stringValue(widget.entry['detail_description']) ?? AppJson.stringValue(widget.entry['description']);
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -270,12 +270,12 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         }
       }
 
-      return 
+      return Container(padding: EdgeInsets.symmetric(vertical: 16), child:
         Row(children: [
           Expanded(child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
           ),
-        ],);
+        ],),);
     }
     else {
       return Container();

@@ -124,6 +124,8 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
   
   @override
   Widget build(BuildContext context) {
+    String title = AppJson.stringValue(widget.entry['list_title']) ?? AppJson.stringValue(widget.entry['title']) ?? '';
+    String description = AppJson.stringValue(widget.entry['list_description']) ?? AppJson.stringValue(widget.entry['description']) ?? '';
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -134,9 +136,9 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
         GestureDetector(onTap: _onTapEntry, child:
           Padding(padding: EdgeInsets.all(16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(AppJson.stringValue(widget.entry['list_title']) ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+              Text(title, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
               Container(height: 8,),
-              Text(AppJson.stringValue(widget.entry['list_description']) ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
+              Text(description ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
             ],),
         ),),
         Align(alignment: Alignment.topRight, child:
