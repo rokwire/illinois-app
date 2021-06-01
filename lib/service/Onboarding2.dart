@@ -7,7 +7,6 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
-import 'package:illinois/utils/Utils.dart';
 
 import 'Storage.dart';
 

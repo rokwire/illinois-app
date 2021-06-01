@@ -24,7 +24,6 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/onboarding/onboarding2/Onboarding2PermissionsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
