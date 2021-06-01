@@ -7,6 +7,7 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'Storage.dart';
 
@@ -31,10 +32,25 @@ class Onboarding2 with Service{
   }
   
   void proceedToLogin(BuildContext context){
+    final UserData storedUserData = User().data;
     if(User().rolesMatch([UserRole.employee, UserRole.student])){ //Roles that requires NetId Login
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(
+        onboardingContext: {"onContinueAction": (){
+          if(storedUserData?.privacyLevel!=null && storedUserData.privacyLevel>0) {
+            User().privacyLevel = storedUserData.privacyLevel;
+          }
+          finish(context);
+          }
+        },
+      )));
     } else { //Phone Login
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhonePanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhonePanel(onboardingContext: {"onContinueAction": (){
+        if(storedUserData?.privacyLevel!=null && storedUserData.privacyLevel>0) {
+          User().privacyLevel = storedUserData.privacyLevel;
+        }
+        finish(context);
+      }
+      },)));
     }
   }
 

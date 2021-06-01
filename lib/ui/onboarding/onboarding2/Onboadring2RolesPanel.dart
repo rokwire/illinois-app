@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/UserData.dart';
@@ -29,7 +30,9 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'Onboarding2Widgets.dart';
 
 class Onboarding2RolesPanel extends StatefulWidget{
-  Onboarding2RolesPanel();
+  final bool returningUser;
+
+  Onboarding2RolesPanel({this.returningUser = false});
 
   @override
   _Onboarding2RoleSelectionPanelState createState() =>
@@ -243,12 +246,13 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
     if (_selectedRoles != null && _selectedRoles.isNotEmpty && !_updating) {
       User().roles = _selectedRoles;
       setState(() { _updating = true; });
-      FlexUI().update().then((_){
-        if (mounted) {
-          setState(() { _updating = false; });
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStatementPanel()));
-        }
-      });
+      setState(() { _updating = false; });
+      if(widget.returningUser){
+        Onboarding2().proceedToLogin(context);
+      } else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStatementPanel()));
+      }
+
     }
   }
 }
