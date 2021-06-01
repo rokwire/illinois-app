@@ -106,6 +106,8 @@ class _EntryCard extends StatefulWidget {
 
 class _EntryCardState extends State<_EntryCard> {
 
+  bool _isFavorite = false;
+
   @override
   void initState() {
     super.initState();
@@ -119,17 +121,32 @@ class _EntryCardState extends State<_EntryCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: Styles().colors.white,
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.all(Radius.circular(4))
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(widget.entry['list_title'] ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
-        Container(height: 8,),
-        Text(widget.entry['list_description'] ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
+      child: Stack(children: [
+        Padding(padding: EdgeInsets.all(16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(widget.entry['list_title'] ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+            Container(height: 8,),
+            Text(widget.entry['list_description'] ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
+          ],),
+        ),
+        Align(alignment: Alignment.topRight, child:
+          GestureDetector(onTap: _onTapFavorite, child:
+            Container(padding: EdgeInsets.all(9), child: 
+              Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+        ),),),
       ],),
+      
     );
+  }
+
+  void _onTapFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
   }
 }
