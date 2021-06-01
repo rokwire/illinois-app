@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
@@ -64,6 +65,7 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
   List<Widget> _buildContent() {
     List<Widget> contentList = <Widget>[
       _buildHeading(),
+      _buildImage(),
       _buildDetails(),
       _buildRelated(),
     ];
@@ -107,13 +109,17 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
           String url = AppJson.stringValue(link['url']);
           String text = AppJson.stringValue(link['text']);
           String icon = AppJson.stringValue(link['icon']);
-          if ((text != null) && (url != null)) {
-            contentList.add(GestureDetector(onTap: () => _onTapLink(url), child:
+          Map<String, dynamic> location = AppJson.mapValue(link['location']);
+          if ((text != null) && ((url != null) || (location != null))) {
+
+            contentList.add(GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
               Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-                Row(children: [
+                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   (icon != null) ? Image.network(icon, width: 24, height: 24) : Container(width: 24, height: 24),
-                  Padding(padding: EdgeInsets.only(left: 4), child:
-                    Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
+                  Expanded(child:
+                    Padding(padding: EdgeInsets.only(left: 4), child:
+                      Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
+                    ),
                   ),
                 ],)
             ),));
@@ -129,6 +135,18 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         ),
       ],)
     );
+  }
+
+  Widget _buildImage() {
+    String imageUrl = AppJson.stringValue(widget.entry['image']);
+    if (AppString.isStringNotEmpty(imageUrl)) {
+      return Padding(padding: EdgeInsets.zero, child:
+        Image.network(imageUrl)
+      );
+    }
+    else {
+      return Container();
+    }
   }
 
   Widget _buildDetails() {
@@ -311,5 +329,9 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         launch(url);
       }
     }
+  }
+
+  void _onTapLocation(Map<String, dynamic> location) {
+    NativeCommunicator().launchMapDirections(jsonData: location);
   }
 }

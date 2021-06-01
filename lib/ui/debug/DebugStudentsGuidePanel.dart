@@ -124,6 +124,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
 
     "links":[
       { "text": "(217) 333-1900", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-phone.png", "url": "tel:+1-217-333-1900" },
+      { "text": "251 Undergraduate Library\\n 1402 W Gregory Dr\\n Urbana, IL 61801", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-location.png", "location": { "location": { "latitude": 40.104736462133886, "longitude": -88.22751314035212}, "title": "251 Undergraduate Library" } },
       { "text": "campusrec@illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "url": "mailto:campusrec@illinois.edu" },
       { "text": "campusrec.illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "url": "https://campusrec.illinois.edu/"}
     ],
@@ -133,6 +134,8 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
       { "text": "Visit website2", "url": "https://campusrec.illinois.edu/" },
       { "text": "Visit website3", "url": "https://campusrec.illinois.edu/" }
     ],
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-placeholder.png",
 
     "sub_details_title": null,
     "sub_details_description": "<b><span style='color: #008000'>Campus Recreation</span></b> has a variety of <u><span style='color: #008000'>facilities</span></u> and <i><span style='color: #008000'>programs</span></i>. Visit the <a href='https://illinois.edu'>website</a> to view a complete list.",
