@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/debug/DebugStudentsGuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class DebugStudentsGuideSectionsPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
@@ -55,7 +56,7 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
       Map<String, List<Map<String, dynamic>>> sectionsMap = Map<String, List<Map<String, dynamic>>>();
       for (Map<String, dynamic> entry in widget.entries) {
         if (entry['category'] == widget.category) {
-          String entrySection = entry['section'];
+          String entrySection = AppJson.stringValue(entry['section']) ?? '';
           List<Map<String, dynamic>> sectionEntries = sectionsMap[entrySection];
           if (sectionEntries == null) {
             sectionsMap[entrySection] = sectionEntries = <Map<String, dynamic>>[];
@@ -76,7 +77,7 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
         for (Map<String, dynamic> entry in sectionEntries) {
           contentList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-              _EntryCard(entry, entries: widget.entries,)
+              StudentsGuideEntryCard(entry, entries: widget.entries,)
             )
           );
         }
@@ -99,15 +100,15 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
   }
 }
 
-class _EntryCard extends StatefulWidget {
+class StudentsGuideEntryCard extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
   final Map<String, dynamic> entry;
-  _EntryCard(this.entry, {this.entries});
+  StudentsGuideEntryCard(this.entry, {this.entries});
 
-  _EntryCardState createState() => _EntryCardState();
+  _StudentsGuideEntryCardState createState() => _StudentsGuideEntryCardState();
 }
 
-class _EntryCardState extends State<_EntryCard> {
+class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
 
   bool _isFavorite = false;
 
@@ -133,9 +134,9 @@ class _EntryCardState extends State<_EntryCard> {
         GestureDetector(onTap: _onTapEntry, child:
           Padding(padding: EdgeInsets.all(16), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(widget.entry['list_title'] ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+              Text(AppJson.stringValue(widget.entry['list_title']) ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
               Container(height: 8,),
-              Text(widget.entry['list_description'] ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
+              Text(AppJson.stringValue(widget.entry['list_description']) ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),
             ],),
         ),),
         Align(alignment: Alignment.topRight, child:

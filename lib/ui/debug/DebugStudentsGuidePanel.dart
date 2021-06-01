@@ -129,26 +129,28 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     ],
 
     "buttons":[
-      { "text": "Visit website", "url": "https://campusrec.illinois.edu/" }
+      { "text": "Visit website", "url": "https://campusrec.illinois.edu/" },
+      { "text": "Visit website2", "url": "https://campusrec.illinois.edu/" },
+      { "text": "Visit website3", "url": "https://campusrec.illinois.edu/" }
     ],
 
     "sub_details_title": null,
-    "sub_details_description": "Campus Recreation has a variety of facilities and programs. Visit the website to view a complete list.",
+    "sub_details_description": "<b><span style='color: #008000'>Campus Recreation</span></b> has a variety of <u><span style='color: #008000'>facilities</span></u> and <i><span style='color: #008000'>programs</span></i>. Visit the <a href='https://illinois.edu'>website</a> to view a complete list.",
     "sub_details": [
       {
-        "section": "State of the Art Facilities",
+        "section": "State of the <u>Art Facilities</u>",
         "entries": [
           {
-            "heading": "Our indoor facilities include:",
-            "entries": [
-              "Activities and Recreation Center (ARC)",
-              "Campus Recreation Center East (CRCE)",
+            "heading": "Our <b><u>indoor</u></b> facilities include:",
+            "bullets": [
+              "Activities and Recreation Center (<b>ARC</b>)",
+              "Campus Recreation Center East (<a href='https://illinois.edu'>CRCE</a>)",
               "Campus Bike Center",
               "Ice Arena"
           ]},
           {
-            "heading": "Our outdoor facilities include:",
-            "entries": [
+            "heading": "Our <b><u>outdoor</u></b> facilities include:",
+            "bullets": [
               "Activities and Recreation Center (ARC)",
               "Campus Recreation Center East (CRCE)",
               "Campus Bike Center",
@@ -156,11 +158,11 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
           ]}
       ]},
       {
-        "section": "Programs for All",
+        "section": "Programs for </u>All</u>",
         "entries": [
           {
-            "heading": "Campus Recreation also offers unique programs designed for patrons of diverse interests, including:",
-            "entries": [
+            "heading": "Campus Recreation also offers <span style='color: #008000'><b>unique programs</b></span> designed for patrons of diverse interests, including:",
+            "bullets": [
               "A variety of group fitness and personal training offerings",
               "Dozens of intramural activities",
               "Instructional cooking demonstrations",
@@ -226,4 +228,15 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
 ]''';
   }
 
+}
+
+Map<String, dynamic> studentGuideEntryById(String id, {List<Map<String, dynamic>> entries}) {
+  if (entries != null) {
+    for (dynamic entry in entries) {
+      if ((entry is Map) && (AppJson.stringValue(entry['id']) == id)) {
+        return entry;  
+      }
+    }
+  }
+  return null;
 }
