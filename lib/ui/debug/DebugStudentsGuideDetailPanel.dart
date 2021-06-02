@@ -320,18 +320,6 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
 
   }
 
-  Widget _buildSectionHeading(String section) {
-    return Container(color: Styles().colors.fillColorPrimary, child:
-      Row(children: [
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-          ),
-        )
-      ],),
-    );
-  }
-
   void _onTapFavorite() {
     setState(() {
       _isFavorite = !_isFavorite;
