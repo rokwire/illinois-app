@@ -58,7 +58,7 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
       List<String> sectionsList = <String>[];
       Map<String, List<Map<String, dynamic>>> sectionsMap = Map<String, List<Map<String, dynamic>>>();
       for (Map<String, dynamic> entry in widget.entries) {
-        if (entry['category'] == widget.category) {
+        if ((widget.category == null) || (entry['category'] == widget.category)) {
           String entrySection = AppJson.stringValue(entry['section']) ?? '';
           List<Map<String, dynamic>> sectionEntries = sectionsMap[entrySection];
           if (sectionEntries == null) {
