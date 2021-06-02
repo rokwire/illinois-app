@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.4.14] - 2021-06-02
+### Changed
+- Updated Students Guide POC, added involvements. [#257](https://github.com/rokwire/illinois-app/issues/257)
+
 ## [2.4.13] - 2021-06-01
 ### Added
 - Added Students Guide POC in Debug panel [#257](https://github.com/rokwire/illinois-app/issues/257)
