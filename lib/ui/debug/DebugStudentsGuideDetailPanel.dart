@@ -8,6 +8,7 @@ import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
 import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -140,9 +141,27 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
   Widget _buildImage() {
     String imageUrl = AppJson.stringValue(widget.entry['image']);
     if (AppString.isStringNotEmpty(imageUrl)) {
-      return Padding(padding: EdgeInsets.zero, child:
-        Image.network(imageUrl)
-      );
+      return Stack(alignment: Alignment.bottomCenter, children: [
+        Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
+          Row(children: [
+            Expanded(child:
+              Column(children: [
+                Image.network(imageUrl),
+              ]),
+            ),
+          ],)
+        ),
+        Container(color: Styles().colors.background, height: 48, width: MediaQuery.of(context).size.width),
+        Container(padding: EdgeInsets.all(16), child:
+          Row(children: [
+            Expanded(child:
+              Column(children: [
+                Image.network(imageUrl),
+              ]),
+            ),
+          ],)
+        ),
+      ],);
     }
     else {
       return Container();
@@ -218,7 +237,6 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
                     }
                   }
                 }
-
               }
             }
           }
@@ -273,7 +291,6 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
     List<dynamic> related = AppJson.listValue(widget.entry['related']);
     if (related != null) {
       List<Widget> contentList = <Widget>[];
-      contentList.add(_buildSectionHeading('Related'));
       for (dynamic relatedEntry in related) {
         Map<String, dynamic> guideEntry;
         if (relatedEntry is Map) {
@@ -284,35 +301,23 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
         }
         if (guideEntry != null) {
           contentList.add(
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+            Padding(padding: EdgeInsets.only(bottom: 8), child:
               StudentsGuideEntryCard(guideEntry, entries: widget.entries,)
           ),);
         }
       }
 
       return Container(padding: EdgeInsets.symmetric(vertical: 16), child:
-        Row(children: [
-          Expanded(child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
-          ),
-        ],),);
+        SectionTitlePrimary(title: "Related",
+          iconPath: 'images/icon-related.png',
+          children: contentList,
+        ),
+      );
     }
     else {
       return Container();
     }
 
-  }
-
-  Widget _buildSectionHeading(String section) {
-    return Container(color: Styles().colors.fillColorPrimary, child:
-      Row(children: [
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-          ),
-        )
-      ],),
-    );
   }
 
   void _onTapFavorite() {
