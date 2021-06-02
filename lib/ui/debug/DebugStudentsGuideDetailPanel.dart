@@ -140,9 +140,27 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
   Widget _buildImage() {
     String imageUrl = AppJson.stringValue(widget.entry['image']);
     if (AppString.isStringNotEmpty(imageUrl)) {
-      return Padding(padding: EdgeInsets.zero, child:
-        Image.network(imageUrl)
-      );
+      return Stack(alignment: Alignment.bottomCenter, children: [
+        Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
+          Row(children: [
+            Expanded(child:
+              Column(children: [
+                Image.network(imageUrl),
+              ]),
+            ),
+          ],)
+        ),
+        Container(color: Styles().colors.background, height: 48, width: MediaQuery.of(context).size.width),
+        Container(padding: EdgeInsets.all(16), child:
+          Row(children: [
+            Expanded(child:
+              Column(children: [
+                Image.network(imageUrl),
+              ]),
+            ),
+          ],)
+        ),
+      ],);
     }
     else {
       return Container();
@@ -218,7 +236,6 @@ class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetail
                     }
                   }
                 }
-
               }
             }
           }
