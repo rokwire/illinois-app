@@ -115,6 +115,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "id": "campus.recreation",
     "category": "Involvement",
     "section": "Socializing",
+    "involvements": ["events", "dining"],
     
     "list_title": "Participate in campus recreation",
     "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
@@ -191,6 +192,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "id": "students.club",
     "category": "Involvement",
     "section": "Socializing",
+    "involvements": ["groups"],
 
     "title": "Join a student club or organization",
     "description": "Illinois is home to many student clubs and organizations. Get involved today!"
@@ -231,6 +233,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "id": "call.safewalk",
     "category": "Safety",
     "section": "Safety",
+    "involvements": ["athletics"],
 
     "title": "Call for a SafeWalk",
     "description": "You don’t have to walk alone. By traveling together, we significantly reduce our chances of being targeted.",
@@ -256,6 +259,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "id": "call.saferide",
     "category": "Safety",
     "section": "Safety",
+    "involvements": ["athletics"],
 
     "title": "Call for a SafeRide",
     "description": "Limited SafeRides are offered at night for individuals traveling alone when there are no other safe means of transportation."
@@ -280,6 +284,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     "id": "write.workshop",
     "category": "Academic support",
     "section": "Academic support",
+    "involvements": ["saved"],
 
     "title": "Take advantage of the Writer’s Workshop",
     "description": "The Writers Workshop supports all writers in the campus community across all forms of academic and professional writing, at any stage of the writing process.",
