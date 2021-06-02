@@ -36,6 +36,7 @@ import 'package:illinois/ui/home/HomeCampusToolsWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeInterestsSelectionWidget.dart';
+import 'package:illinois/ui/home/HomeLoginWidget.dart';
 import 'package:illinois/ui/home/HomePreferredSportsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeUpgradeVersionWidget.dart';
@@ -151,6 +152,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'upgrade_version_message') {
         widget = HomeUpgradeVersionWidget();
+      }
+      else if (code == 'connect') {
+        widget = HomeLoginWidget();
       }
       else {
         dynamic data = Assets()[code];
