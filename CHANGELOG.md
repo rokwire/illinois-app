@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.4.15] - 2021-06-03
 ### Changed
 - Added more panels to Students Guide POC, sample content moved to assets or net. [#257](https://github.com/rokwire/illinois-app/issues/257)
+- Updated styling for the On Boarding panels [#258](https://github.com/rokwire/illinois-app/issues/258)
 
 ## [2.4.14] - 2021-06-02
 ### Changed
