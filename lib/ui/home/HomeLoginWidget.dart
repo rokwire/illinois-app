@@ -57,7 +57,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
       }
 
       return SectionTitlePrimary(
-        title: Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Connect to Illinois"),
+        title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
         iconPath: 'images/icon-member.png',
         children: content,);
     }
@@ -84,17 +84,17 @@ class HomeLoginNetIdWidget extends StatelessWidget{
           Padding(padding: EdgeInsets.zero, child:
           RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
           TextSpan(style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16), children: <TextSpan>[
-            TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-            TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "student"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
-            TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
-            TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "faculty member"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
-            TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5", "? Log in with your NetID."))
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "student"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "faculty member"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Log in with your NetID."))
           ],),
           )),
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
           Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
+            label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
             hint: '',
             borderColor: Styles().colors.fillColorSecondary,
             backgroundColor: Styles().colors.surface,
@@ -135,8 +135,8 @@ class HomeLoginPhoneWidget extends StatelessWidget{
             Padding(padding: EdgeInsets.zero, child:
             RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
             TextSpan(style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
-              TextSpan( text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.description.part_2", "Verify your phone number.")),
+              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+              TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone.description.part_2", "Verify your phone number.")),
             ],),
             )),
 
@@ -144,7 +144,7 @@ class HomeLoginPhoneWidget extends StatelessWidget{
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.title", "Verify Your Phone Number"),
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone.title", "Verify Your Phone Number"),
               hint: '',
               borderColor: Styles().colors.fillColorSecondary,
               backgroundColor: Styles().colors.surface,
@@ -164,7 +164,7 @@ class HomeLoginPhoneWidget extends StatelessWidget{
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: 'Phone Verification'), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: (_){_didConnectPhone(context);},)));
     } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_ver', 'Verify Your Phone Number is not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.label.offline.phone_ver', 'Verify Your Phone Number is not available while offline.'));
     }
   }
 

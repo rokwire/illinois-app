@@ -88,7 +88,17 @@
     "panel.home.label.near_you":"Near You",
     "panel.home.label.near_you.sub_title":"Discover what’s around you now.",
     "panel.home.label.recently_viewed":"Recently Viewed",
-
+    "panel.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
+    "panel.home.connect.not_logged_in.netid.description.part_2": "student",
+    "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
+    "panel.home.connect.not_logged_in.netid.description.part_4": "faculty member",
+    "panel.home.connect.not_logged_in.netid.description.part_5": "? Log in with your NetID.",
+    "panel.home.connect.not_logged_in.netid.title": "Connect your NetID",
+    "panel.home.connect.not_logged_in.phone.description.part_1": "Don't have a NetID? ",
+    "panel.home.connect.not_logged_in.phone.description.part_2": "Verify your phone number.",
+    "panel.home.connect.not_logged_in.phone.title": "Verify Your Phone Number",
+    "panel.label.offline.phone_ver": "Verify Your Phone Number is not available while offline.",
+    
     "panel.wallet.label.title": "Wallet",
     "panel.wallet.label.illini_cash.title":"ILLINI CASH",
     "panel.wallet.label.meal_plan.title":"MEAL PLAN",
