@@ -93,8 +93,8 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                     ],),
                     Semantics(
                         label: _title,
-                        hint: Localization().getStringEx(
-                            'panel.onboarding2.explore_campus.label.title.hint', ''),
+                        hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                        header: true,
                         excludeSemantics: true,
                         child: Padding(
                           padding: EdgeInsets.only(
@@ -129,11 +129,14 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               )),
                         )),
                     Container(height: 10,),
-                    GestureDetector(
-                      onTap: _onTapLearnMore,
-                      child:  Text(
-                          Localization().getStringEx('panel.onboarding2.explore_campus.button.title.learn_more', 'Learn More'),
-                          style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
+                    Semantics(
+                      button: true,
+                      child: GestureDetector(
+                        onTap: _onTapLearnMore,
+                        child:  Text(
+                            Localization().getStringEx('panel.onboarding2.explore_campus.button.title.learn_more', 'Learn More'),
+                            style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
+                        ),
                       ),
                     ),
                     Container(height: 24,),
@@ -182,6 +185,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                         unToggledTitle: _unToggledButtonTitle,
                         toggled: _toggled,
                         onTap: _onToggleTap,
+                        context: context,
                       ),
                     ),
                     ScalableRoundedButton(

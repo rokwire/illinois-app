@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -37,7 +38,11 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
               scrollableChild: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Onboarding2TitleWidget(title: "A Smart Campus in Your Pocket",),
+                  Semantics(
+                    hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                    header: true,
+                    child: Onboarding2TitleWidget(title: "A Smart Campus in Your Pocket",),
+                  ),
                   Container(height: 14,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16),

@@ -89,7 +89,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                                 _goSkip(context);
                               },
                               child: Semantics(
-                                  label: "Skip",
+                                  label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
                                   hint: '',
                                   button: true,
                                   excludeSemantics: true,
@@ -137,6 +137,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                           Container(height: 18,),
                           Semantics(
                               label: _privacyDescription,
+                              hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                              header: true,
                               excludeSemantics: true,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -400,45 +402,49 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }*/
 
   Widget _buildPrivacyBadge(){
-    return Container(
-      height: 60,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(child: Container()),
-          Container(
-            width: 50 ,
-            child: Stack(
-              children: [
-                Align(
-                    child: Container(
-                      width:50,
-                      child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
+    return
+      Semantics(
+        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ") + _privacyLevel?.toString(),
+        excludeSemantics: true,
+        child:Container(
+          height: 60,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: Container()),
+              Container(
+                width: 50 ,
+                child: Stack(
+                  children: [
+                    Align(
+                        child: Container(
+                          width:50,
+                          child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth, excludeFromSemantics: true,),
+                        )
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child:Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          child:
+                        Text(
+                          _privacyLevel?.toString()??"",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 26,
+                              color: Styles().colors.white
+                          ),
+                        ))
                     )
+                  ],
                 ),
-                Align(
-                    alignment: Alignment.center,
-                    child:Container(
-                      alignment: Alignment.center,
-                      height: 50,
-                      child:
-                    Text(
-                      _privacyLevel?.toString()??"",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 26,
-                          color: Styles().colors.white
-                      ),
-                    ))
-                )
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buildPrivacyPolicyButton(){
@@ -453,7 +459,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
           child:
           Row(children: [
             Text(
-              "Privacy Policy ",
+              Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
               style: TextStyle(
                   fontFamily: Styles().fontFamilies.regular,
                   fontSize: 14,

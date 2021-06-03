@@ -77,7 +77,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                     Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
                     Semantics(
                       label: titleText + titleText2,
-                      hint: Localization().getStringEx('panel.onboarding2.privacy_statement.label.title.hint', ''),
+                      hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                      header: true,
                       excludeSemantics: true,
                       child: Padding(
                           padding: EdgeInsets.only(
@@ -120,8 +121,9 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   children: <Widget>[
                     Container(height: 16,),
                     Semantics(
+                      container: true,
                         label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
-                        excludeSemantics: true,
+//                        excludeSemantics: true,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Align(
@@ -135,12 +137,12 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                         fontSize: 14,
                                         color: Styles().colors.textSurface),
                                     children: <TextSpan>[
-                                      TextSpan(text:descriptionText1),
-                                      TextSpan(text:descriptionText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                                      TextSpan(text:descriptionText1, semanticsLabel: "",),
+                                      TextSpan(text:descriptionText2, semanticsLabel: Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy Policy '),style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
                                           recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
-                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png")))
+                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                           ]),
-                                      TextSpan(text:descriptionText3),
+                                      TextSpan(text:descriptionText3, semanticsLabel: ""),
                                     ]
                                 )
                             ),),

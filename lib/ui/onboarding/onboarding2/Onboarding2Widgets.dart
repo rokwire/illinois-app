@@ -112,32 +112,43 @@ class Onboarding2ToggleButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () { onTap(); anaunceChange(); },
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent)),),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child:  Row(
-                children: <Widget>[
-                  Expanded(child:
-                  Text(_label,
-                    style: TextStyle(color: Styles().colors.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
-                  )
+    return
+      Semantics(
+          label: _label,
+          value: (toggled
+              ? Localization().getStringEx(
+            "toggle_button.status.checked",
+            "checked",)
+              : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
+              ", " +
+              Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
+          excludeSemantics: true,
+          child: GestureDetector(
+            onTap: () { onTap(); anaunceChange(); },
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
+                child: Container(
+                  padding: padding,
+                  decoration: BoxDecoration(color: Styles().colors.background, border:Border(top: BorderSide(width: 2, color: Styles().colors.surfaceAccent)),),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child:  Row(
+                      children: <Widget>[
+                        Expanded(child:
+                        Text(_label,
+                          style: TextStyle(color: Styles().colors.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
+                        )
+                        ),
+                        (_image != null) ? Padding(padding: EdgeInsets.only(left: 7), child: _image) : Container(),
+                      ],
+                    ),
                   ),
-                  (_image != null) ? Padding(padding: EdgeInsets.only(left: 7), child: _image) : Container(),
-                ],
-              ),
-            ),
-          )
-      ),],),
-    );
+                )
+            ),],),
+          ));
   }
 
   void anaunceChange() {
-    AppSemantics.announceCheckBoxStateChange(context, !toggled, _label); // !toggled because we announce before the state got updated
+    AppSemantics.announceCheckBoxStateChange(context, !toggled, !toggled? toggledTitle: unToggledTitle); // !toggled because we announce before the state got updated
   }
 
   String get _label{
@@ -208,7 +219,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.explore_campus.learn_more.location_services.content3", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
                                   TextSpan(text:"Privacy Policy ", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
                                       recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
-                                        WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png")))
+                                        WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                       ]),
                                 ]
                             )
