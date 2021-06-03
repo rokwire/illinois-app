@@ -258,7 +258,7 @@ class Storage with Service {
   }
 
   bool get onBoardingExploreCampus {
-    return _getBoolWithName(onBoardingExploreChoiceKey, defaultValue: false);
+    return _getBoolWithName(onBoardingExploreChoiceKey, defaultValue: true);
   }
 
   set onBoardingPersonalizeChoice(bool personalize) {
@@ -266,7 +266,7 @@ class Storage with Service {
   }
 
   bool get onBoardingPersonalizeChoice {
-    return _getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: false);
+    return _getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: true);
   }
 
   set onBoardingImproveChoice(bool personalize) {
@@ -274,7 +274,7 @@ class Storage with Service {
   }
 
   bool get onBoardingImproveChoice {
-    return _getBoolWithName(onBoardingImproveChoiceKey, defaultValue: false);
+    return _getBoolWithName(onBoardingImproveChoiceKey, defaultValue: true);
   }
 
   ////////////////

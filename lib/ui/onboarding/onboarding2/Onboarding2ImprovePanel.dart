@@ -79,7 +79,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                               Container(width: 2,),
                               Expanded(
                                   flex:1,
-                                  child: Container(color: Styles().colors.backgroundVariant,)
+                                  child: Container(color: Styles().colors.fillColorPrimary,)
                               ),
                             ],)
                         ),
@@ -93,8 +93,8 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                         ],),
                         Semantics(
                             label: _title,
-                            hint: Localization().getStringEx(
-                                'panel.onboarding2.improve.label.title.hint', ''),
+                            hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                            header: true,
                             excludeSemantics: true,
                             child: Padding(
                               padding: EdgeInsets.only(
@@ -129,11 +129,14 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                   )),
                             )),
                         Container(height: 10,),
-                        GestureDetector(
-                          onTap: _onTapLearnMore,
-                          child:  Text(
-                              Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
+                        Semantics(
+                          button: true,
+                          child: GestureDetector(
+                            onTap: _onTapLearnMore,
+                            child:  Text(
+                                Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
+                            ),
                           ),
                         ),
                         Container(height: 18,),
@@ -182,6 +185,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                         unToggledTitle: _unToggledButtonTitle,
                         toggled: _toggled,
                         onTap: _onToggleTap,
+                        context: context,
                       ),
                     ),
                     ScalableRoundedButton(

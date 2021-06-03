@@ -85,12 +85,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
 
                             GestureDetector(
                               onTap: () {
-                                Analytics.instance.logSelect(target: 'Skip') ;
-                                _goSkip(context);
+                                Analytics.instance.logSelect(target: 'Privacy Policy') ;
+                                _onTapPrivacyPolicy(context);
                               },
                               child: Semantics(
-                                  label: "Skip",
-                                  hint: '',
+                                  label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
+                                  hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
                                   button: true,
                                   excludeSemantics: true,
                                   child:
@@ -137,6 +137,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                           Container(height: 18,),
                           Semantics(
                               label: _privacyDescription,
+                              hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                              header: true,
                               excludeSemantics: true,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -231,7 +233,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
             ))));
   }
 
-  /*Widget _buildPrivacySlider(){
+  Widget _buildPrivacySlider(){
     double selectedItemWidth = 50;
     double deselectedItemWidth = 40;
     double selectedTextSize = 28;
@@ -397,48 +399,52 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
         ]
       )
     );
-  }*/
+  }
 
   Widget _buildPrivacyBadge(){
-    return Container(
-      height: 60,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(child: Container()),
-          Container(
-            width: 50 ,
-            child: Stack(
-              children: [
-                Align(
-                    child: Container(
-                      width:50,
-                      child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth,),
+    return
+      Semantics(
+        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ") + _privacyLevel?.toString(),
+        excludeSemantics: true,
+        child:Container(
+          height: 60,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: Container()),
+              Container(
+                width: 50 ,
+                child: Stack(
+                  children: [
+                    Align(
+                        child: Container(
+                          width:50,
+                          child: Image.asset(_privacyLevel==5?"images/privacy_box_selected.png" :"images/privacy_box_deselected.png", fit: BoxFit.fitWidth, excludeFromSemantics: true,),
+                        )
+                    ),
+                    Align(
+                        alignment: Alignment.center,
+                        child:Container(
+                          alignment: Alignment.center,
+                          height: 50,
+                          child:
+                        Text(
+                          _privacyLevel?.toString()??"",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 26,
+                              color: Styles().colors.white
+                          ),
+                        ))
                     )
+                  ],
                 ),
-                Align(
-                    alignment: Alignment.center,
-                    child:Container(
-                      alignment: Alignment.center,
-                      height: 50,
-                      child:
-                    Text(
-                      _privacyLevel?.toString()??"",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 26,
-                          color: Styles().colors.white
-                      ),
-                    ))
-                )
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buildPrivacyPolicyButton(){
@@ -453,7 +459,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
           child:
           Row(children: [
             Text(
-              "Privacy Policy ",
+              Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
               style: TextStyle(
                   fontFamily: Styles().fontFamilies.regular,
                   fontSize: 14,
@@ -473,39 +479,39 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }
 
   String get _privacyDescription{
-    String description = "Unknown privacy level";
+    String description = Localization().getStringEx('panel.onboarding2.privacy.description_short.unknown.title', "Unknown privacy level");
     int privacyLevel = _privacyLevel ?? -1;
     switch(privacyLevel){
-      case 1 : return "Browse Privately";
-      case 2 : return "Explore Privately ";
-      case 3 : return "Personalized for You";
-      case 4 : return "Personalized for You";//TBD 4
-      case 5 : return "Full Access";
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.1.title', "Browse Privately");
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore Privately ");
+      case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.3.title', "Personalized for You");
+      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.4.title', "Personalized for You");//TBD 4
+      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.5.title', "Full Access");
     }
     return description;
   }
 
   String get _privacyLongDescription{
-    String description = "Unknown privacy level";
+    String description = Localization().getStringEx('panel.onboarding2.privacy.description_long.unknown.title', "Unknown privacy level");
     int privacyLevel = _privacyLevel ?? -1;
     switch(privacyLevel){
-      case 1 : return "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.";
-      case 2 : return "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.";
-      case 3 : return "Based on your answers, your data will be securely stored for you to access.";
-      case 4 : return "Based on your answers, your data will be securely stored for you to access.";//TBD 4
-      case 5 : return "Based on your answers, your data will be securely stored and shared to enable the full smarts of the Illinois app.";
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.1.title', "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.");
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.2.title', "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.");
+      case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.3.title', "Based on your answers, your data will be securely stored for you to access.");
+      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.4.title', "Based on your answers, your data will be securely stored for you to access.");//TBD 4
+      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.5.title', "Based on your answers, your data will be securely stored and shared to enable the full smarts of the Illinois app.");
     }
     return description;
   }
 
   String get _continueButtonLabel{
     switch(_privacyLevel){
-      case 1 : return "Start Browsing";
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start Browsing");
           break;
-      case 2 : return "Start Exploring";
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start Exploring");
           break;
     }
-    return "Save Privacy Level";
+    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save Privacy Level");
   }
 
   void _goNext(BuildContext context) {
@@ -527,7 +533,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
     Navigator.of(context).pop();
   }
 
-  void _goSkip(BuildContext context){
+  void _onTapPrivacyPolicy(BuildContext context){
     Onboarding2().finish(context);
   }
 
