@@ -41,12 +41,12 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   Semantics(
                     hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
                     header: true,
-                    child: Onboarding2TitleWidget(title: "A Smart Campus in Your Pocket",),
+                    child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus in Your Pocket",)),
                   ),
                   Container(height: 14,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text("From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem.",
+                    child: Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                             fontWeight: FontWeight.w500,
@@ -64,8 +64,8 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ScalableRoundedButton(
-                      label: 'Continue',
-                      hint: '',
+                      label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
+                      hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
                       fontSize: 16,
                       padding: EdgeInsets.symmetric(vertical: 12),
                       borderColor: Styles().colors.fillColorSecondary,
@@ -79,8 +79,8 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                         _onReturningUser(context);
                       },
                       child: Semantics(
-                          label: "Returning user?",
-                          hint: '',
+                          label: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
+                          hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
                           button: true,
                           excludeSemantics: true,
                           child: Padding(
@@ -91,7 +91,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                                 ),
                                 padding: EdgeInsets.only(bottom: 2),
                                 child: Text(
-                                "Returning user?",
+                                  Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies.medium,
                                     fontSize: 16,

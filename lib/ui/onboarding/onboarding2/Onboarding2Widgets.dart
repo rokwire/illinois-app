@@ -216,8 +216,8 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             textScaleFactor: MediaQuery.textScaleFactorOf(context),
                             text: new TextSpan(
                                 children: <TextSpan>[
-                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.explore_campus.learn_more.location_services.content3", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-                                  TextSpan(text:"Privacy Policy ", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
+                                  TextSpan(text:Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy Policy "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
                                       recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
                                         WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                       ]),

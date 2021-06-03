@@ -51,7 +51,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
   Widget build(BuildContext context) {
     String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control Your Data Privacy');
     String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '');
-    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Choose what information you want to store and share to get a recommended privacy level.');
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Choose what information you want to store and share to get a recommended privacy level.');
 
     String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ');
     String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy Policy ');
