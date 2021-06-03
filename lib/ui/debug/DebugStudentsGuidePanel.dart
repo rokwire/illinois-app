@@ -329,6 +329,34 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
 
     "title": "The Illini Union Bookstore",
     "description": "The premiere place for students to rent or purchase textbooks."
+  },
+  {
+    "id": "reflection.rooms",
+    "category": "Spirituality",
+    "section": "Spirituality",
+    "involvements": ["library"],
+
+    "title": "Reflection rooms",
+    "description": "The Undergraduate Library has two reflection rooms located on the lower level.  While reflection rooms are commonly used for prayer, meditation, and yoga, they can also be used as sensory safe spaces.",
+
+    "links":[
+      { "text": "1402 West Gregory Drive\\nUrbana, IL 61801", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-location.png", "location": { "location": { "latitude": 40.10432020340045, "longitude": -88.22881784683443}, "title": "1402 West Gregory Drive" } },
+      { "text": "undergrad@library.illinois.edu", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "url": "mailto:undergrad@library.illinois.edu" }
+    ],
+
+    "buttons":[
+      { "text": "More information", "url": "https://writersworkshop.illinois.edu/" }
+    ],
+  
+    "sub_details_title": null,
+    "sub_details_description": "For people who have autism, anxiety disorders or attention deficit hyperactivity disorder, a reflection room can be a much needed oasis of calm in an otherwise over stimulating environment.",
+    "sub_details": [ {
+      "section": "What to expect",
+      "entries": [{ "heading": "The Undergraduate Library reflection rooms are outfitted to best cater to a wide variety of needs. The rooms are painted blue because it is a calming color. One of the rooms is equipped with a rocking chair and a voice-activated light source that can be customized to provide light across the entire spectrum of colors depending on one’s needs. The other room contains a yoga mat and a white noise machine to encourage meditative movement." }]
+    },{
+      "section": "Availability",
+      "entries": [{ "heading": "Both rooms are available during the hours that the library is open with no reservation needed. You can also book a room in advance if you want to schedule a break ahead of time." }]
+    }]
   }
 ]''';
   }
