@@ -279,15 +279,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             textColor: Styles().colors.fillColorPrimary,
                             borderColor: Styles().colors.fillColorPrimary,
                             onTap: _onTapClearVoting)),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Students Guide...",
-                            backgroundColor: Styles().colors.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors.fillColorPrimary,
-                            borderColor: Styles().colors.fillColorPrimary,
-                            onTap: _onTapStudentsGuide)),
+                    Visibility(
+                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Students Guide...",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapStudentsGuide))
+                    ),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
