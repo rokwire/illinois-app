@@ -233,7 +233,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
             ))));
   }
 
-  Widget _buildPrivacySlider(){
+  /*Widget _buildPrivacySlider(){
     double selectedItemWidth = 50;
     double deselectedItemWidth = 40;
     double selectedTextSize = 28;
@@ -399,7 +399,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
         ]
       )
     );
-  }
+  }*/
 
   Widget _buildPrivacyBadge(){
     return
