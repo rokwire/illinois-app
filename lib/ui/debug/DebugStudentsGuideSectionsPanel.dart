@@ -1,4 +1,6 @@
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -23,7 +25,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DebugStudentsGuideSectionsPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
-  DebugStudentsGuideSectionsPanel({ this.entries });
+  final String audience;
+  final String category;
+  final String subCategory;
+  DebugStudentsGuideSectionsPanel({ this.entries, this.audience, this.category, this.subCategory});
 
   _DebugStudentsGuideSectionsPanelState createState() => _DebugStudentsGuideSectionsPanelState();
 }
@@ -44,7 +49,7 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text('Involvement', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(widget.category ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -66,40 +71,47 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     if (widget.entries != null) {
       
       // construct sections & involvements
-      List<String> sectionsList = <String>[];
-      Map<String, List<Map<String, dynamic>>> sectionsMap = Map<String, List<Map<String, dynamic>>>();
-      
-      List<String> involvementsList = <String>[];
-      Set<String> involvementsSet = Set<String>();
+      LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
+      LinkedHashSet<String> involvementsSet = LinkedHashSet<String>();
 
       for (Map<String, dynamic> entry in widget.entries) {
-        
-        String entrySection = AppJson.stringValue(entry['section']) ?? '';
-        List<Map<String, dynamic>> sectionEntries = sectionsMap[entrySection];
-        if (sectionEntries == null) {
-          sectionsMap[entrySection] = sectionEntries = <Map<String, dynamic>>[];
-          sectionsList.add(entrySection);
-        }
-        sectionEntries.add(entry);
+        List<dynamic> categories = AppJson.listValue(entry['categories']);
+        if (categories != null) {
+          for (dynamic categoryEntry in categories) {
+            if (categoryEntry is Map) {
+              String audience = AppJson.stringValue(categoryEntry['audience']);
+              String category = AppJson.stringValue(categoryEntry['category']);
+              String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
+              if ((widget.audience == audience) && (widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
-        List<dynamic> involvements = AppJson.listValue(entry['involvements']);
-        if (involvements != null) {
-          for (dynamic involvement in involvements) {
-            if ((involvement is String) && !involvementsSet.contains(involvement)) {
-              involvementsSet.add(involvement);
-              involvementsList.add(involvement);
+                List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
+                
+                if (subCategoryEntries == null) {
+                  subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
+                }
+                subCategoryEntries.add(entry);
+
+                List<dynamic> involvements = AppJson.listValue(categoryEntry['involvements']);
+                if (involvements != null) {
+                  for (dynamic involvement in involvements) {
+                    if ((involvement is String) && !involvementsSet.contains(involvement)) {
+                      involvementsSet.add(involvement);
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
       
       // build involvements
-      if (involvementsList.isNotEmpty) {
-        contentList.add(_buildInvolvements(involvementsList: involvementsList));
+      if (involvementsSet.isNotEmpty) {
+        contentList.add(_buildInvolvements(involvementsSet: involvementsSet));
       }
 
       // build sections
-      contentList.addAll(_buildSections(sectionsList: sectionsList, sectionsMap: sectionsMap));
+      contentList.addAll(_buildSubCategories(subCategoriesMap: subCategoriesMap));
     }
     return contentList;
   }
@@ -116,10 +128,10 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     );
   }
 
-  Widget _buildInvolvements({ List<String> involvementsList }) {
+  Widget _buildInvolvements({ LinkedHashSet<String> involvementsSet }) {
     List<Widget> rowWidgets = <Widget>[];
     List<Widget> colWidgets = <Widget>[];
-    for (String involvement in involvementsList) {
+    for (String involvement in involvementsSet) {
       StudentsGuideInvolvementButton involvementButton = _buildInvolvementButton(involvement);
       if (involvementButton != null) {
         if (rowWidgets.isNotEmpty) {
@@ -222,23 +234,24 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     }
   }
 
-  List<Widget> _buildSections({ List<String> sectionsList, Map<String, List<Map<String, dynamic>>> sectionsMap }) {
-    List<Widget> sectionsWidgets = <Widget>[];
-    for (String section in sectionsList) {
-      if (sectionsWidgets.isNotEmpty) {
-        sectionsWidgets.add(Container(height: 16,));
+  List<Widget> _buildSubCategories({ LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap }) {
+    List<Widget> contentList = <Widget>[];
+    subCategoriesMap.forEach((String subCategory, List<Map<String, dynamic>> entries) {
+      if (contentList.isNotEmpty) {
+        contentList.add(Container(height: 16,));
       }
-      sectionsWidgets.add(_buildSectionHeading(section));
-      List<Map<String, dynamic>> sectionEntries = sectionsMap[section];
-      for (Map<String, dynamic> entry in sectionEntries) {
-        sectionsWidgets.add(
+      contentList.add(_buildSectionHeading(subCategory));
+
+      for (Map<String, dynamic> entry in entries) {
+        contentList.add(
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
             StudentsGuideEntryCard(entry, entries: widget.entries,)
           )
         );
       }
-    }
-    return sectionsWidgets;
+    });
+    
+    return contentList;
   }
 
   void _navigateAthletics() {
