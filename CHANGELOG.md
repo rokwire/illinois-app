@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [2.4.17] - 2021-06-07
+### Changed
+- Fix not responding Browse tab bar button [#266](https://github.com/rokwire/illinois-app/issues/266) 
 ### Added
 - Added audience, categories and sub categories hierarchy [#269](https://github.com/rokwire/illinois-app/issues/269).
 
