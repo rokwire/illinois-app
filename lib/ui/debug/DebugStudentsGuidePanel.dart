@@ -1,10 +1,12 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:http/http.dart';
-import 'package:illinois/service/Network.dart';
+//import 'package:http/http.dart';
+//import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuideCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -134,7 +136,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     try {entries = jsonList?.cast<Map<String, dynamic>>(); }
     catch(e) {}
     if (entries != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSectionsPanel(entries: entries,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideCategoriesPanel(entries: entries,)));
     }
     else {
       AppAlert.showDialogResult(context, "Failed to parse JSON");
@@ -143,11 +145,11 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
   }
 
   Future<String> _loadJsonContent() async {
-    Response response = await Network().get("https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/students_guide.json");
-    String jsonContent = (response?.statusCode == 200) ? response?.body : null;
-    if (jsonContent == null) {
-      jsonContent = await rootBundle.loadString('assets/sudents_guide.json');
-    }
+    //Response response = await Network().get("https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/students_guide.json");
+    //String jsonContent = (response?.statusCode == 200) ? response?.body : null;
+    String jsonContent;
+    try { jsonContent = await rootBundle.loadString('assets/students_guide.json'); }
+    catch (e) { print(e?.toString()); }
     return jsonContent;
   }
 }
@@ -161,4 +163,33 @@ Map<String, dynamic> studentGuideEntryById(String id, {List<Map<String, dynamic>
     }
   }
   return null;
+}
+
+LinkedHashMap<String, List<Map<String, dynamic>>> studentGuideEntrySubCateories({String audience, String category, List<Map<String, dynamic>> entries}) {
+  LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
+
+  if (entries != null) {
+    for (Map<String, dynamic> entry in entries) {
+      List<dynamic> categories = AppJson.listValue(entry['categories']);
+      if (categories != null) {
+        for (dynamic categoryEntry in categories) {
+          if (categoryEntry is Map) {
+            String entryAudience = AppJson.stringValue(categoryEntry['audience']);
+            String entryCategory = AppJson.stringValue(categoryEntry['category']);
+            String entrySubCategory = AppJson.stringValue(categoryEntry['sub_category']);
+            if ((audience == entryAudience) && (category == entryCategory) && (entrySubCategory != null)) {
+
+              List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[entrySubCategory];
+              
+              if (subCategoryEntries == null) {
+                subCategoriesMap[entrySubCategory] = subCategoryEntries = <Map<String, dynamic>>[];
+              }
+              subCategoryEntries.add(entry);
+            }
+          }
+        }
+      }
+    }
+  }
+  return subCategoriesMap;
 }

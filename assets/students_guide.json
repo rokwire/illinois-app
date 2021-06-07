@@ -1,9 +1,16 @@
 [
   {
     "id": "campus.recreation",
-    "category": "Involvement",
-    "section": "Socializing",
-    "involvements": ["events", "dining"],
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Socializing",
+      "involvements": ["events", "dining"]
+      },{
+      "audience": "For Visitors",
+      "category": "Involvement",
+      "sub_category": "Socializing"
+    }],
     
     "list_title": "Participate in campus recreation",
     "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
@@ -70,58 +77,88 @@
   },
   {
     "id": "intramural.sports",
-    "category": "Involvement",
-    "section": "Socializing",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Socializing"
+    }],
 
     "title": "Join an intramural sports team",
     "description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities."
   },
   {
     "id": "students.club",
-    "category": "Involvement",
-    "section": "Socializing",
-    "involvements": ["groups"],
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Socializing",
+      "involvements": ["groups"]
+    }],
 
     "title": "Join a student club or organization",
     "description": "Illinois is home to many student clubs and organizations. Get involved today!"
   },
   {
     "id": "fraternity",
-    "category": "Involvement",
-    "section": "Socializing",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Socializing"
+    }],
 
     "title": "Join a fraternity or sorority",
     "description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus."
   },
   {
     "id": "civic.engagement",
-    "category": "Involvement",
-    "section": "Community engagement",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Community engagement"
+    },{
+      "audience": "For Visitors",
+      "category": "Involvement",
+      "sub_category": "Community engagement"
+    }],
 
     "title": "Participate in civic engagement",
     "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
   {
     "id": "union.board",
-    "category": "Involvement",
-    "section": "Community engagement",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Community engagement"
+    }],
 
     "title": "Join the Illini Union Board",
     "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
   {
     "id": "volunteer",
-    "category": "Involvement",
-    "section": "Community engagement",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Involvement",
+      "sub_category": "Community engagement"
+    }],
 
     "title": "Volunteer",
     "description": "The Office of Volunteer Programs provides students with opportunities to give back to their community."
   },
   {
     "id": "call.safewalk",
-    "category": "Safety",
-    "section": "Safety",
-    "involvements": ["athletics"],
+
+    "categories":[{
+      "audience": "For Students",
+      "category": "Security",
+      "sub_category": "Safety",
+      "involvements": ["athletics"]
+    },{
+      "audience": "For Visitors",
+      "category": "Security",
+      "sub_category": "Safety"
+    }],
 
     "title": "Call for a SafeWalk",
     "description": "You don’t have to walk alone. By traveling together, we significantly reduce our chances of being targeted.",
@@ -145,34 +182,66 @@
   },
   {
     "id": "call.saferide",
-    "category": "Safety",
-    "section": "Safety",
-    "involvements": ["athletics"],
+    "categories":[{
+      "audience": "For Students",
+      "category": "Security",
+      "sub_category": "Safety",
+      "involvements": ["athletics"]
+    }],
 
     "title": "Call for a SafeRide",
     "description": "Limited SafeRides are offered at night for individuals traveling alone when there are no other safe means of transportation."
   },
   {
     "id": "sexual.assault",
-    "category": "Safety",
-    "section": "Safety",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Security",
+      "sub_category": "Safety",
+      "involvements": ["athletics"]
+    }],
 
     "title": "Find resources for sexual assault or abuse",
     "description": "The University of Illinois at Urbana-Champaign provides prevention and awareness education, resources and reporting options."
   },
   {
     "id": "prepared.emergency",
-    "category": "Safety",
-    "section": "Safety",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Security",
+      "sub_category": "Emergency"
+    },{
+      "audience": "For Everyone",
+      "category": "Security",
+      "sub_category": "Emergency"
+    }],
 
     "title": "Be prepared for an emergency",
     "description": "Take a moment to think about what you should do in a situation where your ability to react quickly may save your life."
   },
   {
+    "id": "lorem.ipsum.1",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Security",
+      "sub_category": "Emergency"
+    },{
+      "audience": "For Everyone",
+      "category": "Security",
+      "sub_category": "Emergency"
+    }],
+
+    "title": "In case of emergency",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in arcu sed leo lacinia elementum quis quis mi. Nulla et lobortis eros. Donec vel rhoncus ipsum. Aliquam erat volutpat."
+  },
+  {
     "id": "write.workshop",
-    "category": "Academic support",
-    "section": "Academic support",
-    "involvements": ["saved"],
+    "categories":[{
+      "audience": "For Students",
+      "category": "Living on campus",
+      "sub_category": "Academic support",
+      "involvements": ["saved"]
+    }],
 
     "title": "Take advantage of the Writer’s Workshop",
     "description": "The Writers Workshop supports all writers in the campus community across all forms of academic and professional writing, at any stage of the writing process.",
@@ -196,33 +265,61 @@
   },
   {
     "id": "online.classses",
-    "category": "Academic support",
-    "section": "Academic support",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Living on campus",
+      "sub_category": "Academic support"
+    }],
 
     "title": "Take online classes",
     "description": "Illinois Online offers online classes for students who need to be away from campus or want to get ahead for graduation."
   },
   {
     "id": "assistent.center",
-    "category": "Academic support",
-    "section": "Academic support",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Living on campus",
+      "sub_category": "Academic support"
+    }],
 
     "title": "Get help from the Student Assistance Center",
     "description": "The Student Assistance Center promotes the holistic growth and development of Illinois students."
   },
   {
     "id": "union.bookstore",
-    "category": "Academic support",
-    "section": "Academic support",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Living on campus",
+      "sub_category": "Library access"
+    }],
 
     "title": "The Illini Union Bookstore",
     "description": "The premiere place for students to rent or purchase textbooks."
   },
   {
+    "id": "lorem.ipsum.2",
+    "categories":[{
+      "audience": "For Students",
+      "category": "Living on campus",
+      "sub_category": "Library access"
+    }],
+
+    "title": "The Illini Union Bookstore",
+    "description": "The premiere place for students to rent or purchase textbooks."
+  },
+
+  {
     "id": "reflection.rooms",
-    "category": "Spirituality",
-    "section": "Spirituality",
-    "involvements": ["library"],
+    "categories":[{
+      "audience": "For Students",
+      "category": "Spirituality",
+      "sub_category": "Reflections",
+      "involvements": ["library"]
+      },{
+      "audience": "For Everyone",
+      "category": "Spirituality",
+      "sub_category": "Reflections"
+    }],
 
     "title": "Reflection rooms",
     "description": "The Undergraduate Library has two reflection rooms located on the lower level.  While reflection rooms are commonly used for prayer, meditation, and yoga, they can also be used as sensory safe spaces.",
