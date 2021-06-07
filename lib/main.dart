@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -127,7 +128,7 @@ class _AppState extends State<App> implements NotificationsListener {
     Log.d("App init");
 
     NotificationService().subscribe(this, [
-      Onboarding.notifyFinished,
+      Onboarding2.notifyFinished,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Storage.notifySettingChanged,
@@ -214,13 +215,14 @@ class _AppState extends State<App> implements NotificationsListener {
     Storage().onBoardingPassed = true;
     Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel);
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
+    rootPanel?.panelState?.initState();
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Onboarding.notifyFinished) {
+    if (name == Onboarding2.notifyFinished) {
       _finishOnboarding(param);
     }
     else if (name == Config.notifyUpgradeRequired) {
@@ -238,7 +240,9 @@ class _AppState extends State<App> implements NotificationsListener {
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.privacyUpdateVersionKey) {
-        setState(() { });
+        if (Storage().onBoardingPassed) {//Fix broken BrowsePanel after Onboarding
+          setState(() {});
+        }
       }
     }
     else if (name == User.notifyPrivacyLevelChanged) {

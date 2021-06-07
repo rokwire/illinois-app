@@ -27,30 +27,41 @@ class Onboarding2 with Service{
   }
 
   void finish(BuildContext context) {
+
     NotificationService().notify(notifyFinished, context);
   }
   
   void proceedToLogin(BuildContext context){
     final UserData storedUserData = User().data;
-    if(User().rolesMatch([UserRole.employee, UserRole.student])){ //Roles that requires NetId Login
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(
-        onboardingContext: {"onContinueAction": (){
-          if(storedUserData?.privacyLevel!=null && storedUserData.privacyLevel>0) {
-            User().privacyLevel = storedUserData.privacyLevel;
-          }
-          finish(context);
-          }
-        },
-      )));
-    } else { //Phone Login
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhonePanel(onboardingContext: {"onContinueAction": (){
-        if(storedUserData?.privacyLevel!=null && storedUserData.privacyLevel>0) {
-          User().privacyLevel = storedUserData.privacyLevel;
-        }
-        finish(context);
+    if(getPrivacyLevel>=3) {
+      if (User().rolesMatch([UserRole.employee, UserRole.student])) { //Roles that requires NetId Login
+        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+            OnboardingLoginNetIdPanel(
+              onboardingContext: {"onContinueAction": () {
+                _proceedAfterLogin(storedUserData, context);
+              }},
+            )));
+      } else { //Phone Login
+        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+            OnboardingLoginPhonePanel(
+              onboardingContext: {"onContinueAction": () {
+                _proceedAfterLogin(storedUserData, context);
+              }
+              },)));
       }
-      },)));
+    } else { //Proceed without login
+      _proceedAfterLogin(storedUserData, context);
     }
+  }
+
+  _proceedAfterLogin(UserData storedUserData, context){
+    if(storedUserData?.privacyLevel!=null && storedUserData.privacyLevel>0) {
+      User().privacyLevel = storedUserData.privacyLevel;
+    }
+//      Navigator.push(context, CupertinoPageRoute(
+//          builder: (context) => Onboarding2PermissionsPanel()));
+
+    finish(context);
   }
 
   void storeExploreCampusChoice(bool choice){
