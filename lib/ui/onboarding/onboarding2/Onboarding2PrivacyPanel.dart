@@ -37,7 +37,7 @@ class Onboarding2PrivacyPanel extends StatefulWidget{
   _Onboarding2PrivacyPanelState createState() => _Onboarding2PrivacyPanelState();
 }
 
-class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
+class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   @override
   void initState() {
@@ -83,12 +83,13 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
                                 }),
                             Expanded(child: Container()),
 
-                            GestureDetector(
-                              onTap: () {
-                                Analytics.instance.logSelect(target: 'Privacy Policy') ;
-                                _onTapPrivacyPolicy(context);
-                              },
-                              child: Semantics(
+//                            GestureDetector(
+//                              onTap: () {
+//                                Analytics.instance.logSelect(target: 'Privacy Policy') ;
+//                                _onTapPrivacyPolicy(context);
+//                              },
+//                              child:
+                              Semantics(
                                   label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
                                   hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
                                   button: true,
@@ -110,7 +111,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
 //                                      ))
                                 _buildPrivacyPolicyButton()
                               ),
-                            ),
+//                            ),
                             Container(width: 16,)
                           ],)),
 //                          Semantics(
@@ -515,26 +516,14 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel> {
   }
 
   void _goNext(BuildContext context) {
-// TBD decide if we need to call permissions
-//    if(Onboarding2().getExploreCampusChoice) {
-//      Navigator.push(context, CupertinoPageRoute(
-//          builder: (context) => Onboarding2PermissionsPanel()));
-//    }
     User().privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
-    if(_privacyLevel<=2){
-      Onboarding2().finish(context);
-    } else {
-      Onboarding2().proceedToLogin(context);
-    }
+    Onboarding2().proceedToLogin(context);
+
   }
 
   void _goBack(BuildContext context) {
     Navigator.of(context).pop();
-  }
-
-  void _onTapPrivacyPolicy(BuildContext context){
-    Onboarding2().finish(context);
   }
 
   void _openPrivacyPolicy(){
