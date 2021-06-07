@@ -4,6 +4,8 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentsGuideSubCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -120,7 +122,13 @@ class _DebugStudentsGuideCategoriesPanelState extends State<DebugStudentsGuideCa
   }
 
   void _onTapCategory(String category, {String audience}) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSubCategoriesPanel(entries: widget.entries, audience: audience, category: category,)));
+    LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = studentGuideEntrySubCateories(entries: widget.entries, audience: audience, category: category);
+    if (1 < subCategoriesMap.length) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSubCategoriesPanel(entries: widget.entries, audience: audience, category: category,)));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSectionsPanel(entries: widget.entries, audience: audience, category: category, subCategory: subCategoriesMap.keys.first,)));
+    }
   }
 }
 
