@@ -2,14 +2,9 @@
   {
     "id": "campus.recreation",
     "categories":[{
-      "audience": "For Students",
       "category": "Involvement",
       "sub_category": "Socializing",
-      "involvements": ["events", "dining"]
-      },{
-      "audience": "For Visitors",
-      "category": "Involvement",
-      "sub_category": "Socializing"
+      "features": ["events", "dining"]
     }],
     
     "list_title": "Participate in campus recreation",
@@ -78,7 +73,6 @@
   {
     "id": "intramural.sports",
     "categories":[{
-      "audience": "For Students",
       "category": "Involvement",
       "sub_category": "Socializing"
     }],
@@ -89,10 +83,9 @@
   {
     "id": "students.club",
     "categories":[{
-      "audience": "For Students",
       "category": "Involvement",
       "sub_category": "Socializing",
-      "involvements": ["groups"]
+      "features": ["groups"]
     }],
 
     "title": "Join a student club or organization",
@@ -101,7 +94,6 @@
   {
     "id": "fraternity",
     "categories":[{
-      "audience": "For Students",
       "category": "Involvement",
       "sub_category": "Socializing"
     }],
@@ -112,11 +104,6 @@
   {
     "id": "civic.engagement",
     "categories":[{
-      "audience": "For Students",
-      "category": "Involvement",
-      "sub_category": "Community engagement"
-    },{
-      "audience": "For Visitors",
       "category": "Involvement",
       "sub_category": "Community engagement"
     }],
@@ -127,7 +114,6 @@
   {
     "id": "union.board",
     "categories":[{
-      "audience": "For Students",
       "category": "Involvement",
       "sub_category": "Community engagement"
     }],
@@ -138,7 +124,6 @@
   {
     "id": "volunteer",
     "categories":[{
-      "audience": "For Students",
       "category": "Involvement",
       "sub_category": "Community engagement"
     }],
@@ -150,14 +135,9 @@
     "id": "call.safewalk",
 
     "categories":[{
-      "audience": "For Students",
       "category": "Security",
       "sub_category": "Safety",
-      "involvements": ["athletics"]
-    },{
-      "audience": "For Visitors",
-      "category": "Security",
-      "sub_category": "Safety"
+      "features": ["athletics"]
     }],
 
     "title": "Call for a SafeWalk",
@@ -183,10 +163,9 @@
   {
     "id": "call.saferide",
     "categories":[{
-      "audience": "For Students",
       "category": "Security",
       "sub_category": "Safety",
-      "involvements": ["athletics"]
+      "features": ["athletics"]
     }],
 
     "title": "Call for a SafeRide",
@@ -195,10 +174,9 @@
   {
     "id": "sexual.assault",
     "categories":[{
-      "audience": "For Students",
       "category": "Security",
       "sub_category": "Safety",
-      "involvements": ["athletics"]
+      "features": ["athletics"]
     }],
 
     "title": "Find resources for sexual assault or abuse",
@@ -207,11 +185,6 @@
   {
     "id": "prepared.emergency",
     "categories":[{
-      "audience": "For Students",
-      "category": "Security",
-      "sub_category": "Emergency"
-    },{
-      "audience": "For Everyone",
       "category": "Security",
       "sub_category": "Emergency"
     }],
@@ -222,11 +195,6 @@
   {
     "id": "lorem.ipsum.1",
     "categories":[{
-      "audience": "For Students",
-      "category": "Security",
-      "sub_category": "Emergency"
-    },{
-      "audience": "For Everyone",
       "category": "Security",
       "sub_category": "Emergency"
     }],
@@ -237,10 +205,9 @@
   {
     "id": "write.workshop",
     "categories":[{
-      "audience": "For Students",
       "category": "Living on campus",
       "sub_category": "Academic support",
-      "involvements": ["saved"]
+      "features": ["saved"]
     }],
 
     "title": "Take advantage of the Writer’s Workshop",
@@ -266,7 +233,6 @@
   {
     "id": "online.classses",
     "categories":[{
-      "audience": "For Students",
       "category": "Living on campus",
       "sub_category": "Academic support"
     }],
@@ -277,7 +243,6 @@
   {
     "id": "assistent.center",
     "categories":[{
-      "audience": "For Students",
       "category": "Living on campus",
       "sub_category": "Academic support"
     }],
@@ -288,7 +253,6 @@
   {
     "id": "union.bookstore",
     "categories":[{
-      "audience": "For Students",
       "category": "Living on campus",
       "sub_category": "Library access"
     }],
@@ -299,7 +263,6 @@
   {
     "id": "lorem.ipsum.2",
     "categories":[{
-      "audience": "For Students",
       "category": "Living on campus",
       "sub_category": "Library access"
     }],
@@ -311,14 +274,9 @@
   {
     "id": "reflection.rooms",
     "categories":[{
-      "audience": "For Students",
       "category": "Spirituality",
       "sub_category": "Reflections",
-      "involvements": ["library"]
-      },{
-      "audience": "For Everyone",
-      "category": "Spirituality",
-      "sub_category": "Reflections"
+      "features": ["library"]
     }],
 
     "title": "Reflection rooms",

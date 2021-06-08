@@ -25,10 +25,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DebugStudentsGuideSectionsPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
-  final String audience;
   final String category;
   final String subCategory;
-  DebugStudentsGuideSectionsPanel({ this.entries, this.audience, this.category, this.subCategory});
+  DebugStudentsGuideSectionsPanel({ this.entries, this.category, this.subCategory});
 
   _DebugStudentsGuideSectionsPanelState createState() => _DebugStudentsGuideSectionsPanelState();
 }
@@ -70,19 +69,18 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     List<Widget> contentList = <Widget>[];
     if (widget.entries != null) {
       
-      // construct sections & involvements
+      // construct sections & features
       LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
-      LinkedHashSet<String> involvementsSet = LinkedHashSet<String>();
+      LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
       for (Map<String, dynamic> entry in widget.entries) {
         List<dynamic> categories = AppJson.listValue(entry['categories']);
         if (categories != null) {
           for (dynamic categoryEntry in categories) {
             if (categoryEntry is Map) {
-              String audience = AppJson.stringValue(categoryEntry['audience']);
               String category = AppJson.stringValue(categoryEntry['category']);
               String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
-              if ((widget.audience == audience) && (widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
+              if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
                 List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
                 
@@ -91,11 +89,11 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
                 }
                 subCategoryEntries.add(entry);
 
-                List<dynamic> involvements = AppJson.listValue(categoryEntry['involvements']);
-                if (involvements != null) {
-                  for (dynamic involvement in involvements) {
-                    if ((involvement is String) && !involvementsSet.contains(involvement)) {
-                      involvementsSet.add(involvement);
+                List<dynamic> features = AppJson.listValue(categoryEntry['features']);
+                if (features != null) {
+                  for (dynamic feature in features) {
+                    if ((feature is String) && !featuresSet.contains(feature)) {
+                      featuresSet.add(feature);
                     }
                   }
                 }
@@ -105,9 +103,9 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
         }
       }
       
-      // build involvements
-      if (involvementsSet.isNotEmpty) {
-        contentList.add(_buildInvolvements(involvementsSet: involvementsSet));
+      // build features
+      if (featuresSet.isNotEmpty) {
+        contentList.add(_buildFeatures(featuresSet: featuresSet));
       }
 
       // build sections
@@ -128,16 +126,16 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     );
   }
 
-  Widget _buildInvolvements({ LinkedHashSet<String> involvementsSet }) {
+  Widget _buildFeatures({ LinkedHashSet<String> featuresSet }) {
     List<Widget> rowWidgets = <Widget>[];
     List<Widget> colWidgets = <Widget>[];
-    for (String involvement in involvementsSet) {
-      StudentsGuideInvolvementButton involvementButton = _buildInvolvementButton(involvement);
-      if (involvementButton != null) {
+    for (String feature in featuresSet) {
+      StudentsGuideFeatureButton featureButton = _buildFeatureButton(feature);
+      if (featureButton != null) {
         if (rowWidgets.isNotEmpty) {
           rowWidgets.add(Container(width: 6),);
         }
-        rowWidgets.add(Expanded(child: involvementButton));
+        rowWidgets.add(Expanded(child: featureButton));
         
         if (rowWidgets.length >= 5) {
           if (colWidgets.isNotEmpty) {
@@ -167,17 +165,17 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
     /*return Padding(padding: EdgeInsets.all(16), child:
         Column(children: [
           Row(children: [
-            Expanded(child: StudentsGuideInvolvementButton.fromInvolvement('athletics')),
+            Expanded(child: StudentsGuideFeatureButton.fromFeature('athletics')),
             Container(width: 6),
-            Expanded(child: StudentsGuideInvolvementButton.fromInvolvement('events')),
+            Expanded(child: StudentsGuideFeatureButton.fromFeature('events')),
             Container(width: 6),
-            Expanded(child: StudentsGuideInvolvementButton.fromInvolvement('dining')),
+            Expanded(child: StudentsGuideFeatureButton.fromFeature('dining')),
           ],),
           Container(height: 6),
           Row(children: [
-            Expanded(child: StudentsGuideInvolvementButton.fromInvolvement('laundry')),
+            Expanded(child: StudentsGuideFeatureButton.fromFeature('laundry')),
             Container(width: 6),
-            Expanded(child: StudentsGuideInvolvementButton.fromInvolvement('quick-polls')),
+            Expanded(child: StudentsGuideFeatureButton.fromFeature('quick-polls')),
             Container(width: 6),
             Expanded(child: Container()),
           ],),
@@ -185,49 +183,49 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
       );*/
   }
 
-  StudentsGuideInvolvementButton _buildInvolvementButton(String involvement) {
+  StudentsGuideFeatureButton _buildFeatureButton(String feature) {
     
-    if (involvement == 'athletics') {
-      return StudentsGuideInvolvementButton(title: "Athletics", icon: "images/icon-students-guide-athletics.png", onTap: _navigateAthletics,);
+    if (feature == 'athletics') {
+      return StudentsGuideFeatureButton(title: "Athletics", icon: "images/icon-students-guide-athletics.png", onTap: _navigateAthletics,);
     }
-    else if (involvement == 'buss-pass') {
-      return StudentsGuideInvolvementButton(title: "Buss Pass", icon: "images/icon-students-guide-buss-pass.png");
+    else if (feature == 'buss-pass') {
+      return StudentsGuideFeatureButton(title: "Buss Pass", icon: "images/icon-students-guide-buss-pass.png");
     }
-    else if (involvement == 'dining') {
-      return StudentsGuideInvolvementButton(title: "Dining", icon: "images/icon-students-guide-dining.png", onTap: _navigateDining);
+    else if (feature == 'dining') {
+      return StudentsGuideFeatureButton(title: "Dining", icon: "images/icon-students-guide-dining.png", onTap: _navigateDining);
     }
-    else if (involvement == 'events') {
-      return StudentsGuideInvolvementButton(title: "Events", icon: "images/icon-students-guide-events.png", onTap: _navigateEvents);
+    else if (feature == 'events') {
+      return StudentsGuideFeatureButton(title: "Events", icon: "images/icon-students-guide-events.png", onTap: _navigateEvents);
     }
-    else if (involvement == 'groups') {
-      return StudentsGuideInvolvementButton(title: "Groups", icon: "images/icon-students-guide-groups.png", onTap: _navigateGroups);
+    else if (feature == 'groups') {
+      return StudentsGuideFeatureButton(title: "Groups", icon: "images/icon-students-guide-groups.png", onTap: _navigateGroups);
     }
-    else if (involvement == 'illini-cash') {
-      return StudentsGuideInvolvementButton(title: "Illini Cash", icon: "images/icon-students-guide-illini-cash.png", onTap: _navigateIlliniCash);
+    else if (feature == 'illini-cash') {
+      return StudentsGuideFeatureButton(title: "Illini Cash", icon: "images/icon-students-guide-illini-cash.png", onTap: _navigateIlliniCash);
     }
-    else if (involvement == 'illini-id') {
-      return StudentsGuideInvolvementButton(title: "Illini ID", icon: "images/icon-students-guide-illini-id.png");
+    else if (feature == 'illini-id') {
+      return StudentsGuideFeatureButton(title: "Illini ID", icon: "images/icon-students-guide-illini-id.png");
     }
-    else if (involvement == 'laundry') {
-      return StudentsGuideInvolvementButton(title: "Laundry", icon: "images/icon-students-guide-laundry.png", onTap: _navigateLaundry,);
+    else if (feature == 'laundry') {
+      return StudentsGuideFeatureButton(title: "Laundry", icon: "images/icon-students-guide-laundry.png", onTap: _navigateLaundry,);
     }
-    else if (involvement == 'library') {
-      return StudentsGuideInvolvementButton(title: "Library", icon: "images/icon-students-guide-library-card.png");
+    else if (feature == 'library') {
+      return StudentsGuideFeatureButton(title: "Library", icon: "images/icon-students-guide-library-card.png");
     }
-    else if (involvement == 'meal-plan') {
-      return StudentsGuideInvolvementButton(title: "Meal Plan", icon: "images/icon-students-guide-meal-plan.png", onTap: _navigateMealPlan,);
+    else if (feature == 'meal-plan') {
+      return StudentsGuideFeatureButton(title: "Meal Plan", icon: "images/icon-students-guide-meal-plan.png", onTap: _navigateMealPlan,);
     }
-    else if (involvement == 'my-illini') {
-      return StudentsGuideInvolvementButton(title: "My Illini", icon: "images/icon-students-guide-my-illini.png", onTap: _navigateMyIllini);
+    else if (feature == 'my-illini') {
+      return StudentsGuideFeatureButton(title: "My Illini", icon: "images/icon-students-guide-my-illini.png", onTap: _navigateMyIllini);
     }
-    else if (involvement == 'parking') {
-      return StudentsGuideInvolvementButton(title: "Parking", icon: "images/icon-students-guide-parking.png", onTap: _navigateParking);
+    else if (feature == 'parking') {
+      return StudentsGuideFeatureButton(title: "Parking", icon: "images/icon-students-guide-parking.png", onTap: _navigateParking);
     }
-    else if (involvement == 'quick-polls') {
-      return StudentsGuideInvolvementButton(title: "Quick Polls", icon: "images/icon-students-guide-quick-polls.png", onTap: _navigateQuickPolls);
+    else if (feature == 'quick-polls') {
+      return StudentsGuideFeatureButton(title: "Quick Polls", icon: "images/icon-students-guide-quick-polls.png", onTap: _navigateQuickPolls);
     }
-    else if (involvement == 'saved') {
-      return StudentsGuideInvolvementButton(title: "Saved", icon: "images/icon-students-guide-saved.png", onTap: _navigateSaved);
+    else if (feature == 'saved') {
+      return StudentsGuideFeatureButton(title: "Saved", icon: "images/icon-students-guide-saved.png", onTap: _navigateSaved);
     }
     else {
       return null;
@@ -396,16 +394,16 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
   }
 }
 
-class StudentsGuideInvolvementButton extends StatefulWidget {
+class StudentsGuideFeatureButton extends StatefulWidget {
   final String title;
   final String icon;
   final Function onTap;
-  StudentsGuideInvolvementButton({this.title, this.icon, this.onTap});
+  StudentsGuideFeatureButton({this.title, this.icon, this.onTap});
 
-  _StudentsGuideInvolvementButtonState createState() => _StudentsGuideInvolvementButtonState();
+  _StudentsGuideFeatureButtonState createState() => _StudentsGuideFeatureButtonState();
 }
 
-class _StudentsGuideInvolvementButtonState extends State<StudentsGuideInvolvementButton> {
+class _StudentsGuideFeatureButtonState extends State<StudentsGuideFeatureButton> {
 
   @override
   void initState() {
