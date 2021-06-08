@@ -4,7 +4,7 @@
     "categories":[{
       "category": "Involvement",
       "sub_category": "Socializing",
-      "involvements": ["events", "dining"]
+      "features": ["events", "dining"]
     }],
     
     "list_title": "Participate in campus recreation",
@@ -85,7 +85,7 @@
     "categories":[{
       "category": "Involvement",
       "sub_category": "Socializing",
-      "involvements": ["groups"]
+      "features": ["groups"]
     }],
 
     "title": "Join a student club or organization",
@@ -137,7 +137,7 @@
     "categories":[{
       "category": "Security",
       "sub_category": "Safety",
-      "involvements": ["athletics"]
+      "features": ["athletics"]
     }],
 
     "title": "Call for a SafeWalk",
@@ -165,7 +165,7 @@
     "categories":[{
       "category": "Security",
       "sub_category": "Safety",
-      "involvements": ["athletics"]
+      "features": ["athletics"]
     }],
 
     "title": "Call for a SafeRide",
@@ -176,7 +176,7 @@
     "categories":[{
       "category": "Security",
       "sub_category": "Safety",
-      "involvements": ["athletics"]
+      "features": ["athletics"]
     }],
 
     "title": "Find resources for sexual assault or abuse",
@@ -207,7 +207,7 @@
     "categories":[{
       "category": "Living on campus",
       "sub_category": "Academic support",
-      "involvements": ["saved"]
+      "features": ["saved"]
     }],
 
     "title": "Take advantage of the Writer’s Workshop",
@@ -276,7 +276,7 @@
     "categories":[{
       "category": "Spirituality",
       "sub_category": "Reflections",
-      "involvements": ["library"]
+      "features": ["library"]
     }],
 
     "title": "Reflection rooms",

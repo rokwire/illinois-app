@@ -53,7 +53,6 @@ class _DebugStudentsGuideCategoriesPanelState extends State<DebugStudentsGuideCa
     List<Widget> contentList = <Widget>[];
     if (widget.entries != null) {
       
-      // construct sections & involvements
       LinkedHashMap<String, LinkedHashSet<String>> categoriesMap = LinkedHashMap<String, LinkedHashSet<String>>();
       
       for (Map<String, dynamic> entry in widget.entries) {
