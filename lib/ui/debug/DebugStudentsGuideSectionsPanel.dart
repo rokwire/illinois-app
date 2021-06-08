@@ -25,10 +25,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DebugStudentsGuideSectionsPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
-  final String audience;
   final String category;
   final String subCategory;
-  DebugStudentsGuideSectionsPanel({ this.entries, this.audience, this.category, this.subCategory});
+  DebugStudentsGuideSectionsPanel({ this.entries, this.category, this.subCategory});
 
   _DebugStudentsGuideSectionsPanelState createState() => _DebugStudentsGuideSectionsPanelState();
 }
@@ -79,10 +78,9 @@ class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSect
         if (categories != null) {
           for (dynamic categoryEntry in categories) {
             if (categoryEntry is Map) {
-              String audience = AppJson.stringValue(categoryEntry['audience']);
               String category = AppJson.stringValue(categoryEntry['category']);
               String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
-              if ((widget.audience == audience) && (widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
+              if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
                 List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
                 

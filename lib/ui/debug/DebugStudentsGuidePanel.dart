@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -165,31 +163,3 @@ Map<String, dynamic> studentGuideEntryById(String id, {List<Map<String, dynamic>
   return null;
 }
 
-LinkedHashMap<String, List<Map<String, dynamic>>> studentGuideEntrySubCateories({String audience, String category, List<Map<String, dynamic>> entries}) {
-  LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
-
-  if (entries != null) {
-    for (Map<String, dynamic> entry in entries) {
-      List<dynamic> categories = AppJson.listValue(entry['categories']);
-      if (categories != null) {
-        for (dynamic categoryEntry in categories) {
-          if (categoryEntry is Map) {
-            String entryAudience = AppJson.stringValue(categoryEntry['audience']);
-            String entryCategory = AppJson.stringValue(categoryEntry['category']);
-            String entrySubCategory = AppJson.stringValue(categoryEntry['sub_category']);
-            if ((audience == entryAudience) && (category == entryCategory) && (entrySubCategory != null)) {
-
-              List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[entrySubCategory];
-              
-              if (subCategoryEntries == null) {
-                subCategoriesMap[entrySubCategory] = subCategoryEntries = <Map<String, dynamic>>[];
-              }
-              subCategoryEntries.add(entry);
-            }
-          }
-        }
-      }
-    }
-  }
-  return subCategoriesMap;
-}
