@@ -240,7 +240,7 @@ class _AppState extends State<App> implements NotificationsListener {
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.privacyUpdateVersionKey) {
-          setState(() {});
+        setState(() {});
       }
     }
     else if (name == User.notifyPrivacyLevelChanged) {
