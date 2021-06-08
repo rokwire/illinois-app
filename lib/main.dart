@@ -33,7 +33,6 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2GetStartedPanel.dart';
@@ -215,7 +214,6 @@ class _AppState extends State<App> implements NotificationsListener {
     Storage().onBoardingPassed = true;
     Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel);
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
-    rootPanel?.panelState?.initState();
   }
 
   // NotificationsListener
@@ -223,7 +221,9 @@ class _AppState extends State<App> implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == Onboarding2.notifyFinished) {
-      _finishOnboarding(param);
+      Future.delayed(Duration(milliseconds: 100), () {
+        _finishOnboarding(param);
+      });
     }
     else if (name == Config.notifyUpgradeRequired) {
       setState(() {
@@ -240,9 +240,7 @@ class _AppState extends State<App> implements NotificationsListener {
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.privacyUpdateVersionKey) {
-        if (Storage().onBoardingPassed) {//Fix broken BrowsePanel after Onboarding
-          setState(() {});
-        }
+        setState(() {});
       }
     }
     else if (name == User.notifyPrivacyLevelChanged) {
