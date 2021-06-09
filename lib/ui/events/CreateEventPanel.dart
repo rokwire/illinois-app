@@ -69,6 +69,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _allDay = false;
   Location _location;
   bool _isOnline = false;
+  bool _isAttendanceRequired = false;
 
   bool _loading = false;
 
@@ -197,140 +198,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             )
                           ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 24, right: 24, top: 16, bottom: 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                          Semantics(label:Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
-                          hint: Localization().getStringEx("panel.create_event.category.title.hint","Choose the category your event may be filtered by."), header: true, excludeSemantics: true, child:
-                              Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Text(
-                                      Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
-                                      style: TextStyle(
-                                          color: Styles().colors.fillColorPrimary,
-                                          fontSize: 14,
-                                          fontFamily: Styles().fontFamilies.bold,
-                                          letterSpacing: 1),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 2),
-                                      child: Text(
-                                        '*',
-                                        style: TextStyle(
-                                            color: Styles().colors.fillColorSecondary,
-                                            fontSize: 14,
-                                            fontFamily: Styles().fontFamilies.bold),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 2, bottom: 8),
-                                child: Text(
-                                  Localization().getStringEx("panel.create_event.category.description",'Choose the category your event may be filtered by.'),
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                      color: Styles().colors.textBackground,
-                                      fontSize: 14,
-                                      fontFamily: Styles().fontFamilies.regular),
-                                ),
-                              ),
-                              ])),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 24),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Styles().colors.surfaceAccent,
-                                          width: 1),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(4))),
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 12, right: 8),
-                                    child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                            icon: Image.asset(
-                                                'images/icon-down-orange.png'),
-                                            isExpanded: true,
-                                            style: TextStyle(
-                                                color: Styles().colors.mediumGray,
-                                                fontSize: 16,
-                                                fontFamily:
-                                                    Styles().fontFamilies.regular),
-                                            hint: Text(
-                                              (_selectedCategory != null)
-                                                  ? _selectedCategory[
-                                                      'category']
-                                                  : Localization().getStringEx("panel.create_event.category.default","Category"),
-                                            ),
-                                            items: _buildDropDownItems(),
-                                            onChanged:
-                                                _onDropDownValueChanged)),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 8),
-                                child:
-                                Semantics(label:Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
-                                  hint: Localization().getStringEx("panel.create_event.title.title.hint",""), header: true, excludeSemantics: true, child:
-                                  Row(
-                                    children: <Widget>[
-                                      Text(
-                                      Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
-                                        style: TextStyle(
-                                            color: Styles().colors.fillColorPrimary,
-                                            fontSize: 14,
-                                            fontFamily: Styles().fontFamilies.bold,
-                                            letterSpacing: 1),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 2),
-                                        child: Text(
-                                          '*',
-                                          style: TextStyle(
-                                              color: Styles().colors.fillColorSecondary,
-                                              fontSize: 14,
-                                              fontFamily: Styles().fontFamilies.bold),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Styles().colors.fillColorPrimary,
-                                        width: 1)),
-                                height: 90,
-                                child:
-                                Semantics(label:Localization().getStringEx("panel.create_event.title.field","EVENT TITLE FIELD"),
-                                  hint: Localization().getStringEx("panel.create_event.title.title.hint",""), textField: true, excludeSemantics: true, child:
-                                  TextField(
-                                    controller: _eventTitleController,
-                                    decoration:
-                                        InputDecoration(border: InputBorder.none),
-                                    maxLength: 64,
-                                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorPrimary,
-                                        fontSize: 32,
-                                        fontFamily: Styles().fontFamilies.extraBold),
-                                  )
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        !_isGroupEvent? _buildCategorySection() : Container(),
+                        _buildTitleSection(),
+                        _isGroupEvent? _buildAttendanceSwitch() : Container(),
                         Padding(
                           padding: EdgeInsets.only(bottom: 24),
                           child: Container(
@@ -613,12 +483,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
                                   ToggleRibbonButton(
                                     height: null,
+                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                     label: Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
                                     toggled: _allDay,
                                     onTap: _onAllDayToggled,
                                     context: context,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4)),
+                                    border: Border.all(color: Styles().colors.fillColorPrimary),
                                   ))
                                 ])),
                         Padding(
@@ -731,13 +603,16 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       ]),
                                       (!_isOnline) ? Container():
                                       Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
                                           Semantics(label:Localization().getStringEx("panel.create_event.additional_info.call_url.title","LINK TO VIDEO CALL"),
                                               hint: Localization().getStringEx("panel.create_event.additional_info.call_url.hint",""), textField: true, excludeSemantics: true, child:
                                               Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                   children: <Widget>[
-                                                    Padding(
+                                                    Container(
                                                       padding: EdgeInsets.only(bottom: 8),
                                                       child: Text(
                                                         Localization().getStringEx("panel.create_event.additional_info.call_url.title","LINK TO VIDEO CALL"),
@@ -798,6 +673,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
                                       ToggleRibbonButton(
                                         height: null,
+                                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                         label: Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
@@ -1033,7 +909,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Container(
                                     padding: EdgeInsets.only(top: 20),
                                     child: Text(
-                                      Localization().getStringEx("panel.create_event.additional_info.group.description","This event will only show up on your group's page. Only members can see it"),
+                                      Localization().getStringEx("panel.create_event.additional_info.group.description","This event will only show up on your group's page."),
                                       style: TextStyle(
                                           color: Styles().colors.textSurface,
                                           fontSize: 16,
@@ -1096,6 +972,177 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   ),
           ),
         ]);
+  }
+
+  Widget _buildCategorySection(){
+    return
+      Padding(
+        padding: EdgeInsets.only(
+            left: 16, right: 24, top: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Semantics(label:Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
+                hint: Localization().getStringEx("panel.create_event.category.title.hint","Choose the category your event may be filtered by."), header: true, excludeSemantics: true, child:
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
+                            style: TextStyle(
+                                color: Styles().colors.fillColorPrimary,
+                                fontSize: 14,
+                                fontFamily: Styles().fontFamilies.bold,
+                                letterSpacing: 1),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 2),
+                            child: Text(
+                              '*',
+                              style: TextStyle(
+                                  color: Styles().colors.fillColorSecondary,
+                                  fontSize: 14,
+                                  fontFamily: Styles().fontFamilies.bold),
+                            ),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 2, bottom: 8),
+                        child: Text(
+                          Localization().getStringEx("panel.create_event.category.description",'Choose the category your event may be filtered by.'),
+                          maxLines: 2,
+                          style: TextStyle(
+                              color: Styles().colors.textBackground,
+                              fontSize: 14,
+                              fontFamily: Styles().fontFamilies.regular),
+                        ),
+                      ),
+                    ])),
+            Padding(
+              padding: EdgeInsets.only(bottom: 24),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Styles().colors.surfaceAccent,
+                        width: 1),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(4))),
+                child: Padding(
+                  padding:
+                  EdgeInsets.only(left: 12, right: 8),
+                  child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                          icon: Image.asset(
+                              'images/icon-down-orange.png'),
+                          isExpanded: true,
+                          style: TextStyle(
+                              color: Styles().colors.mediumGray,
+                              fontSize: 16,
+                              fontFamily:
+                              Styles().fontFamilies.regular),
+                          hint: Text(
+                            (_selectedCategory != null)
+                                ? _selectedCategory[
+                            'category']
+                                : Localization().getStringEx("panel.create_event.category.default","Category"),
+                          ),
+                          items: _buildDropDownItems(),
+                          onChanged:
+                          _onDropDownValueChanged)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+  }
+
+  Widget _buildTitleSection(){
+    return Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+      child:Column(
+        children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child:
+                    Semantics(label:Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
+                      hint: Localization().getStringEx("panel.create_event.title.title.hint",""), header: true, excludeSemantics: true, child:
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
+                            style: TextStyle(
+                                color: Styles().colors.fillColorPrimary,
+                                fontSize: 14,
+                                fontFamily: Styles().fontFamilies.bold,
+                                letterSpacing: 1),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 2),
+                            child: Text(
+                              '*',
+                              style: TextStyle(
+                                  color: Styles().colors.fillColorSecondary,
+                                  fontSize: 14,
+                                  fontFamily: Styles().fontFamilies.bold),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                          color: Styles().colors.fillColorPrimary,
+                          width: 1)),
+                  height: 90,
+                  child:
+                  Semantics(label:Localization().getStringEx("panel.create_event.title.field","EVENT TITLE FIELD"),
+                      hint: Localization().getStringEx("panel.create_event.title.title.hint",""), textField: true, excludeSemantics: true, child:
+                      TextField(
+                        controller: _eventTitleController,
+                        decoration:
+                        InputDecoration(border: InputBorder.none),
+                        maxLength: 64,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                        style: TextStyle(
+                            color: Styles().colors.fillColorPrimary,
+                            fontSize: 32,
+                            fontFamily: Styles().fontFamilies.extraBold),
+                      )
+                  ),
+                )
+              ],
+            ),
+        ],
+      )
+    );
+  }
+
+  Widget _buildAttendanceSwitch(){
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Semantics(label:Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),//TBD localize
+        hint: Localization().getStringEx("panel.create_event.button.attendance..hint",""), toggled: true, excludeSemantics: true, child:
+        ToggleRibbonButton(
+          height: null,
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          label: Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),
+          toggled: _isAttendanceRequired,
+          onTap: _onAttendanceRequiredToggled,
+          context: context,
+          border: Border.all(color: Styles().colors.fillColorPrimary),
+          borderRadius:
+          BorderRadius.all(Radius.circular(4)),
+        )));
   }
 
   void _prepopulateWithUpdateEvent(){
@@ -1170,6 +1217,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onOnlineToggled() {
     _isOnline = !_isOnline;
+    setState(() {});
+  }
+
+  void _onAttendanceRequiredToggled() {
+    _isAttendanceRequired = !_isAttendanceRequired;
     setState(() {});
   }
 
@@ -1307,6 +1359,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.registrationUrl = AppString.isStringNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
+    event.recurringFlag = false;//decide do we need it
 
     return event;
   }
@@ -1409,7 +1462,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   bool _isDataValid() {
-    bool _categoryValidation = _selectedCategory != null || widget.group!=null; // Category is not required for group events
+    bool _categoryValidation = _selectedCategory != null || _isGroupEvent; // Category is not required for group events
     bool _titleValidation =
         AppString.isStringNotEmpty(_eventTitleController.text);
     bool _locationValidation = _location != null || _isOnline;
@@ -1447,6 +1500,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       return false;
     }
     return true;
+  }
+
+  bool get _isGroupEvent{
+    return widget.group!=null;
   }
 }
 
