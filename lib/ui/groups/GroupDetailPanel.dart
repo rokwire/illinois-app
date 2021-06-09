@@ -916,7 +916,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   bool get _canCreateEvent{
-    return false; //TBD
+    return true; //TBD
   }
 }
 
