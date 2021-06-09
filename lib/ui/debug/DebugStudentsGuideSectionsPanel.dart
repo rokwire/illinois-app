@@ -348,8 +348,9 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
       decoration: BoxDecoration(
           color: Styles().colors.white,
           boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-          borderRadius: BorderRadius.all(Radius.circular(4))
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
+      clipBehavior: Clip.none,
       child: Stack(children: [
         GestureDetector(onTap: _onTapEntry, child:
           Padding(padding: EdgeInsets.all(16), child:
@@ -363,6 +364,7 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
                 style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
             ],),
         ),),
+        Container(color: Styles().colors.accentColor3, height: 4),
         Align(alignment: Alignment.topRight, child:
           GestureDetector(onTap: _onTapFavorite, child:
             Container(padding: EdgeInsets.all(9), child: 
