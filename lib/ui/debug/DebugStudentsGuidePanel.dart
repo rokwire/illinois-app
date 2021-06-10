@@ -143,10 +143,10 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
   }
 
   Future<String> _loadJsonContent() async {
-    //Response response = await Network().get("https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/students_guide.json");
+    //Response response = await Network().get("https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/student.guide.json");
     //String jsonContent = (response?.statusCode == 200) ? response?.body : null;
     String jsonContent;
-    try { jsonContent = await rootBundle.loadString('assets/students_guide.json'); }
+    try { jsonContent = await rootBundle.loadString('assets/student.guide.json'); }
     catch (e) { print(e?.toString()); }
     return jsonContent;
   }
