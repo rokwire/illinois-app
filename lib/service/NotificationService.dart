@@ -86,7 +86,7 @@ class NotificationService {
     }
   }
 
-  void notify(String name, dynamic param) {
+  void notify(String name, [dynamic param]) {
     Set<NotificationsListener> listenersForName = _listeners[name];
     if (listenersForName != null) {
       for (NotificationsListener listener in listenersForName) {
