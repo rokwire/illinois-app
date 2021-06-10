@@ -818,7 +818,7 @@ class _SettingsAddIlliniCashPanelState
           contentWidget: Text(
               Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
                 child: Text(Localization().getStringEx("dialog.ok.title", "Ok")),
                 onPressed: _onDismissAlert)
           ]
@@ -869,7 +869,7 @@ class _SettingsAddIlliniCashPanelState
               context: context,
               contentWidget: Text(e.message),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                     child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
                     onPressed: () {
                       Analytics.instance.logAlert(text: e.message, selection: "Ok");

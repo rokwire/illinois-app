@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,9 +28,11 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/settings/debug/HttpProxySettingsPanel.dart';
-import 'package:illinois/ui/settings/debug/MessagingPanel.dart';
+import 'package:illinois/ui/debug/DebugStylesPanel.dart';
+import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
+import 'package:illinois/ui/debug/DebugFirebaseMessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -41,12 +41,12 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-class SettingsDebugPanel extends StatefulWidget {
+class DebugHomePanel extends StatefulWidget {
   @override
-  _SettingsDebugPanelState createState() => _SettingsDebugPanelState();
+  _DebugHomePanelState createState() => _DebugHomePanelState();
 }
 
-class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements NotificationsListener {
+class _DebugHomePanelState extends State<DebugHomePanel> implements NotificationsListener {
 
   DateTime _offsetDate;
   ConfigEnvironment _selectedEnv;
@@ -60,6 +60,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
     
     NotificationService().subscribe(this, [
       Config.notifyEnvironmentChanged,
+      Styles.notifyChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
     ]);
@@ -106,8 +107,8 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
   }
 
   String get _userDebugData{
-    String userDataText = prettyPrintJson((User()?.data?.toJson()));
-    String authInfoText = prettyPrintJson(Auth()?.authInfo?.toJson());
+    String userDataText = AppJson.encode(User()?.data?.toJson(), prettify: true);
+    String authInfoText = AppJson.encode(Auth()?.authInfo?.toJson(), prettify: true);
     String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
         "AuthInfo: " + (authInfoText ?? "unknown");
     return userData;
@@ -278,7 +279,30 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
                             textColor: Styles().colors.fillColorPrimary,
                             borderColor: Styles().colors.fillColorPrimary,
                             onTap: _onTapClearVoting)),
-                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
+                    Visibility(
+                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Students Guide...",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapStudentsGuide))
+                    ),
+                    Visibility(
+                      visible: Config().configEnvironment == ConfigEnvironment.dev,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Styles...",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapStyles)),
+                    ),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
@@ -291,7 +315,6 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
                               borderColor: Styles().colors.fillColorPrimary,
                               onTap: _onTapHttpProxy)),
                     ),
-                    Padding(padding: EdgeInsets.only(top: 5), child: Container()),
                     Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                         child: RoundedButton(
@@ -326,6 +349,9 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
       setState(() {});
     }
     else if(name == Config.notifyEnvironmentChanged){
+      setState(() {});
+    }
+    else if(name == Styles.notifyChanged){
       setState(() {});
     }
   }
@@ -470,7 +496,7 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
 
   Function _onMessagingClicked() {
     return () {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MessagingPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugFirebaseMessagingPanel()));
     };
   }
 
@@ -553,14 +579,8 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 
-  String prettyPrintJson(var input){
-    if(input == null)
-      return input;
-
-    JsonEncoder encoder = JsonEncoder.withIndent('  ');
-    var prettyString = encoder.convert(input);
-
-    return prettyString;
+  void _onTapStudentsGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuidePanel()));
   }
 
   void _onConfigChanged(dynamic env) {
@@ -574,8 +594,12 @@ class _SettingsDebugPanelState extends State<SettingsDebugPanel> implements Noti
 
   void _onTapHttpProxy() {
     if(Config().configEnvironment == ConfigEnvironment.dev) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => HttpProxySettingsPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHttpProxyPanel()));
     }
+  }
+
+  void _onTapStyles() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStylesPanel()));
   }
 
   void _onTapCrash(){

@@ -179,7 +179,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Unable to login", selection: "Ok");
                       Navigator.pop(context);
@@ -201,7 +201,12 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
 
   void _onSkipTapped() {
     Analytics.instance.logSelect(target: 'Not right now');
-    Onboarding().next(context, widget);
+    Function onSuccess = widget.onboardingContext!=null? widget.onboardingContext["onContinueAction"] : null; // Hook this panels to Onboarding2
+    if(onSuccess!=null){
+      onSuccess();
+    } else {
+      Onboarding().next(context, widget);
+    }
   }
 
   // NotificationsListener
@@ -225,7 +230,12 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
       if (success) {
         FlexUI().update().then((_){
           setState(() { _progress = false; });
-          Onboarding().next(context, widget);
+          Function onSuccess = widget.onboardingContext!=null? widget.onboardingContext["onContinueAction"] : null; // Hook this panels to Onboarding2
+          if(onSuccess!=null){
+            onSuccess();
+          } else {
+            Onboarding().next(context, widget);
+          }
         });
       } else {
         setState(() { _progress = false; });

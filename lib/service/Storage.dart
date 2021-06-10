@@ -58,7 +58,11 @@ class Storage with Service {
   }
 
   void _setStringWithName(String name, String value) {
-    _sharedPreferences.setString(name, value);
+    if(value != null) {
+      _sharedPreferences.setString(name, value);
+    } else {
+      _sharedPreferences.remove(name);
+    }
     NotificationService().notify(notifySettingChanged, name);
   }
 
@@ -67,7 +71,11 @@ class Storage with Service {
   }
 
   void _setStringListWithName(String name, List<String> value) {
-    _sharedPreferences.setStringList(name, value);
+    if(value != null) {
+      _sharedPreferences.setStringList(name, value);
+    } else {
+      _sharedPreferences.remove(name);
+    }
     NotificationService().notify(notifySettingChanged, name);
   }
 
@@ -76,7 +84,11 @@ class Storage with Service {
   }
 
   void _setBoolWithName(String name, bool value) {
-    _sharedPreferences.setBool(name, value);
+    if(value != null) {
+      _sharedPreferences.setBool(name, value);
+    } else {
+      _sharedPreferences.remove(name);
+    }
     NotificationService().notify(notifySettingChanged, name);
   }
 
@@ -85,7 +97,11 @@ class Storage with Service {
   }
 
   void _setIntWithName(String name, int value) {
-    _sharedPreferences.setInt(name, value);
+    if(value != null) {
+      _sharedPreferences.setInt(name, value);
+    } else {
+      _sharedPreferences.remove(name);
+    }
     NotificationService().notify(notifySettingChanged, name);
   }
 
@@ -94,7 +110,11 @@ class Storage with Service {
   }
 
   void _setDoubleWithName(String name, double value) {
-    _sharedPreferences.setDouble(name, value);
+    if(value != null) {
+      _sharedPreferences.setDouble(name, value);
+    } else {
+      _sharedPreferences.remove(name);
+    }
     NotificationService().notify(notifySettingChanged, name);
   }
 
@@ -221,6 +241,9 @@ class Storage with Service {
   // On Boarding
 
   static const String onBoardingPassedKey  = 'on_boarding_passed';
+  static const String onBoardingExploreChoiceKey  = 'on_boarding_explore_campus';
+  static const String onBoardingPersonalizeChoiceKey  = 'on_boarding_personalize';
+  static const String onBoardingImproveChoiceKey  = 'on_boarding_improve';
 
   bool get onBoardingPassed {
     return _getBoolWithName(onBoardingPassedKey, defaultValue: false);
@@ -228,6 +251,30 @@ class Storage with Service {
 
   set onBoardingPassed(bool showOnBoarding) {
     _setBoolWithName(onBoardingPassedKey, showOnBoarding);
+  }
+
+  set onBoardingExploreCampus(bool exploreCampus) {
+    _setBoolWithName(onBoardingExploreChoiceKey, exploreCampus);
+  }
+
+  bool get onBoardingExploreCampus {
+    return _getBoolWithName(onBoardingExploreChoiceKey, defaultValue: true);
+  }
+
+  set onBoardingPersonalizeChoice(bool personalize) {
+    _setBoolWithName(onBoardingPersonalizeChoiceKey, personalize);
+  }
+
+  bool get onBoardingPersonalizeChoice {
+    return _getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: true);
+  }
+
+  set onBoardingImproveChoice(bool personalize) {
+    _setBoolWithName(onBoardingImproveChoiceKey, personalize);
+  }
+
+  bool get onBoardingImproveChoice {
+    return _getBoolWithName(onBoardingImproveChoiceKey, defaultValue: true);
   }
 
   ////////////////
@@ -421,7 +468,7 @@ class Storage with Service {
 
   List<Object> get favorites{
     List<String> storedValue = _sharedPreferences.getStringList(favoritesKey);
-    return storedValue?? List<String>();
+    return storedValue?? [];
   }
 
   set favorites(List<Object> favorites){
@@ -587,6 +634,19 @@ class Storage with Service {
 
   set configEnvironment(String value) {
     _setStringWithName(_configEnvKey, value);
+  }
+
+  /////////////
+  // Styles
+
+  static const String _stylesContentModeKey = 'styles_content_mode';
+
+  String get stylesContentMode {
+    return _getStringWithName(_stylesContentModeKey);
+  }
+
+  set stylesContentMode(String value) {
+    _setStringWithName(_stylesContentModeKey, value);
   }
 
   /////////////

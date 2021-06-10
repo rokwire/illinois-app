@@ -23,12 +23,12 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/service/Styles.dart';
 
-class MessagingPanel extends StatefulWidget {
+class DebugFirebaseMessagingPanel extends StatefulWidget {
   @override
-  _DropDownButtonState createState() => _DropDownButtonState();
+  _DebugFirebaseMessagingPanelState createState() => _DebugFirebaseMessagingPanelState();
 }
 
-class _DropDownButtonState extends State<MessagingPanel> {
+class _DebugFirebaseMessagingPanelState extends State<DebugFirebaseMessagingPanel> {
   var _topic = "event_reminders";
 
   DropdownButton _itemDown() => DropdownButton<String>(
@@ -307,7 +307,7 @@ class _GenericMessageWidgetState extends State<_GenericMessageWidget> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.
@@ -335,7 +335,7 @@ class _GenericMessageWidgetState extends State<_GenericMessageWidget> {
               "Please use the Firebase console."),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
+            new TextButton(
               child: new Text("Close"),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -476,7 +476,7 @@ class _ScoreMessageWidgetState extends State<_ScoreMessageWidget> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.

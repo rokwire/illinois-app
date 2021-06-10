@@ -62,7 +62,7 @@ class Dining with Explore implements Favorite {
   factory Dining.fromJson(Map<String, dynamic> json) {
     String id = json['DiningOptionID'].toString();
     String addressInfo = json["Address"];
-    List<DiningSchedule> diningSchedules = List<DiningSchedule>();
+    List<DiningSchedule> diningSchedules = [];
 
     if(json['DiningSchedules'] != null) {
       List<dynamic> menuSchedules = json['DiningSchedules'];
@@ -238,7 +238,7 @@ class Dining with Explore implements Favorite {
 
     if(json['DiningSchedules'] != null) {
 
-      diningSchedules = List();
+      diningSchedules = [];
 
       List<dynamic> menuSchedules = json['DiningSchedules'];
       for (Map<String, dynamic> menuScheduleData in menuSchedules) {
@@ -282,7 +282,7 @@ class Dining with Explore implements Favorite {
       for(DiningSchedule schedule in diningSchedules){
         String displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
         if(!displayDateScheduleMapping.containsKey(displayDate)){
-          displayDateScheduleMapping[displayDate] = List<DiningSchedule>();
+          displayDateScheduleMapping[displayDate] = [];
         }
 
         displayDateScheduleMapping[displayDate].add(schedule);
@@ -293,7 +293,7 @@ class Dining with Explore implements Favorite {
   }
 
   List<DiningSchedule> get firstOpeningDateSchedules{
-    List<DiningSchedule> firstOpeningDateSchedules = List<DiningSchedule>();
+    List<DiningSchedule> firstOpeningDateSchedules = [];
     List<String> displayDates = displayScheduleDates;
 
     if(displayDates != null && displayDates.isNotEmpty){
@@ -375,7 +375,7 @@ class PaymentTypeHelper {
         case PaymentType.ClassicMeal:
           return Localization().getStringEx('payment_type.text.classic_meal', 'Classic Meal');
         case PaymentType.CafeCredits:
-          return Localization().getStringEx('payment_type.text.cafe_credits', 'Cafe Credits');
+          return Localization().getStringEx('payment_type.text.dining_dollars', 'Dining Dollars');
        case PaymentType.IlliniCash:
           return Localization().getStringEx('payment_type.text.illini_cash', 'Illini Cash');
         case PaymentType.CreditCard:
@@ -424,7 +424,7 @@ class PaymentTypeHelper {
       return null;
     }
     else {
-      List<PaymentType> paymentTypes = new List<PaymentType>();
+      List<PaymentType> paymentTypes = [];
       for (String paymentType in paymentTypesList) {
         paymentTypes.add(PaymentTypeHelper.paymentTypeFromString(paymentType));
       }
@@ -437,7 +437,7 @@ class PaymentTypeHelper {
       return null;
     }
     else {
-      List<String> paymentTypesList = new List<String>();
+      List<String> paymentTypesList = [];
       for (PaymentType paymentType in paymentTypes) {
         paymentTypesList.add(PaymentTypeHelper.paymentTypeToString(paymentType));
       }
@@ -462,7 +462,7 @@ class DiningNutritionItem {
     if (json == null) {
       return null;
     }
-    List<NutritionNameValuePair> nutritionsList = List<NutritionNameValuePair>();
+    List<NutritionNameValuePair> nutritionsList = [];
     if(json.containsKey("NutritionList")) {
       for (Map<String, dynamic> nutritionEntry in json["NutritionList"]) {
         nutritionsList.add(NutritionNameValuePair.fromJson(nutritionEntry));
@@ -515,7 +515,7 @@ class DiningProductItem {
   String meal;
 
   List<String> get traitList{
-    List<String> traitList = List<String>();
+    List<String> traitList = [];
     for (String entry in (traits ?? "").split(',')) {
       entry = entry.trim();
       if(entry != null && entry.isNotEmpty) {
@@ -699,7 +699,7 @@ class DiningSchedule {
   static List<DiningSchedule> listFromJson(dynamic json) {
     List<DiningSchedule> diningSchedules;
     if (json is List) {
-      diningSchedules = List();
+      diningSchedules = [];
       for (dynamic jsonEntry in json) {
         if (jsonEntry is Map) {
           DiningSchedule diningSchedule = DiningSchedule.fromJson(jsonEntry);
@@ -715,7 +715,7 @@ class DiningSchedule {
   static List<dynamic> listToJson(List<DiningSchedule> diningSchedules) {
     List<dynamic> jsonList;
     if (diningSchedules != null) {
-      jsonList = List();
+      jsonList = [];
       for (DiningSchedule diningSchedule in diningSchedules) {
         Map<String, dynamic> jsonEntry = diningSchedule.toJson();
         if (jsonEntry != null) {

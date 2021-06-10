@@ -445,7 +445,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<String> _getFilterCategoriesValues() {
-    List<String> categoriesValues = List();
+    List<String> categoriesValues = [];
     categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories'));
     categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories'));
     if (_eventCategories != null) {
@@ -457,7 +457,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<String> _getFilterTagsValues() {
-    List<String> tagsValues = List();
+    List<String> tagsValues = [];
     tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags'));
     tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags'));
     return tagsValues;
@@ -800,7 +800,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
-    return Stack(overflow: Overflow.clip, children: <Widget>[
+    return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled" : _userLocationEnabled()},
@@ -1047,7 +1047,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<Widget> _buildFilterWidgets() {
-    List<Widget> filterTypeWidgets = List<Widget>();
+    List<Widget> filterTypeWidgets = [];
     List<ExploreFilter> visibleFilters = (_tabToFilterMap != null) ? _tabToFilterMap[_selectedTab] : null;
     if (visibleFilters == null ||
         visibleFilters.isEmpty ||
@@ -1084,7 +1084,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<RoundedTab> _buildTabWidgets() {
 
-    List<RoundedTab> tabs = new List<RoundedTab>();
+    List<RoundedTab> tabs = [];
     for (ExploreTab exploreTab in _exploreTabs) {
       tabs.add(RoundedTab(title: exploreTabName(exploreTab), hint: exploreTabHint(exploreTab), tabIndex: ExploreTab.values.indexOf(exploreTab), listener: this, selected: (_selectedTab == exploreTab)));
     }
@@ -1266,7 +1266,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   List<Explore> _exploresFromMapExplores(List<Explore> mapExplores) {
-    List<Explore> explores = List();
+    List<Explore> explores = [];
     if (mapExplores != null) {
       for (Explore mapExplore in mapExplores) {
         explores.add(_exploreFromMapExplore(mapExplore) ?? mapExplore);

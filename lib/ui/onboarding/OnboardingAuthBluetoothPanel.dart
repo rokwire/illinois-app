@@ -203,7 +203,7 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: message, selection:okTitle);
                       if (pushNext) {

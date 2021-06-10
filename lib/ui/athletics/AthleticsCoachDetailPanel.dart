@@ -117,7 +117,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
   }
 
   List<Widget> _createDetailList(){
-    List<Widget> list = List<Widget>();
+    List<Widget> list = [];
     list.add(Container(
       child: HtmlWidget(
         widget.coach.htmlBio,

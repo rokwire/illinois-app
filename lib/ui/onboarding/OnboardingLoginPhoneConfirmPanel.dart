@@ -228,7 +228,13 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
       });
     }
     else if (widget.onboardingContext != null) {
-      Onboarding().next(context, widget);
+      Function onSuccess = widget.onboardingContext["onContinueAction"]; // Hook this panels to Onboarding2
+      if(onSuccess!=null){
+        onSuccess();
+      } else {
+        Onboarding().next(context, widget);
+      }
+
     }
     else if (widget.onFinish != null) {
       widget.onFinish(widget);

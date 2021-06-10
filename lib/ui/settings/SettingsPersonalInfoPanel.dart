@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/model/UserPiiData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth.dart';
@@ -160,7 +161,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
                     onChanged: (text){ setState(() {});},
                     decoration: InputDecoration(
                         border: InputBorder.none),
-                    maxLengthEnforced: true,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     style: TextStyle(
                         color: Styles().colors.textSurface,
                         fontSize: 16,
@@ -200,7 +201,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
                   onChanged: (text){ setState(() {});},
                   decoration: InputDecoration(
                       border: InputBorder.none),
-                  maxLengthEnforced: true,
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   style: TextStyle(
                       color: Styles().colors.textSurface,
                       fontSize: 16,
@@ -308,14 +309,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
                       Auth().logout();
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes"))),
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);

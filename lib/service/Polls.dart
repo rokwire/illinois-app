@@ -17,7 +17,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:eventsource/eventsource.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Poll.dart';
@@ -546,19 +545,19 @@ class Polls with Service implements NotificationsListener {
     }
   }
 
-  void _onPollEvent(String pollId, Event event) {
-    Log.d('Polls: received event \'${event.event}\' from EventStream for poll #$pollId');
+  void _onPollEvent(String pollId, String eventName, String eventData) {
+    Log.d('Polls: received event \'$eventName\' from EventStream for poll #$pollId');
     try {
-      if (event.event == 'status') {
-        List<dynamic> jsonList = AppJson.decode(event.data);
+      if (eventName == 'status') {
+        List<dynamic> jsonList = AppJson.decode(eventData);
         String statusString = ((jsonList != null) && jsonList.isNotEmpty) ? jsonList.first : null;
         PollStatus pollStatus = Poll.pollStatusFromString(statusString);
         if (pollStatus != null) {
           _updatePollStatus(pollId, pollStatus);
         }
       }
-      else if (event.event == 'results') {
-        List<dynamic> jsonList = AppJson.decode(event.data);
+      else if (eventName == 'results') {
+        List<dynamic> jsonList = AppJson.decode(eventData);
         List<int> results = (jsonList != null) ? jsonList.cast<int>() : null;
         PollVote pollResults = (results != null) ? PollVote.fromJson(results: results) : null;
         if (pollResults != null) {
@@ -588,36 +587,46 @@ class Polls with Service implements NotificationsListener {
 
   void _openEventStream(String pollId) async {
     _PollChunk pollChunk = _pollChunks[pollId];
-    if ((pollChunk != null) && (pollChunk.eventClient == null) && (pollChunk.eventSource == null) && (pollChunk.eventListener == null)) {
+    if ((pollChunk != null) && (pollChunk.eventClient == null) && (pollChunk.eventListener == null)) {
       try {
         String url = '${Config().quickPollsUrl}/events/$pollId';
         pollChunk.eventClient = Client();
-        pollChunk.eventSource = await EventSource.connect(url, client: pollChunk.eventClient, lastEventId: pollChunk.lastEventId, headers: {
-          Network.RokwireApiKey: Config().rokwireApiKey,
+        /*pollChunk.eventSource = EventSource(Uri.parse(url),
+            clientFactory: (){
+          //Network.RokwireApiKey: Config().rokwireApiKey,
+              HttpClient client = HttpClient();
+              return client;
+            },
+        );*/
+
+        var request = new Request("GET", Uri.parse(url));
+        request.headers["Cache-Control"] = "no-cache";
+        request.headers["Accept"] = "text/event-stream";
+        request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
+
+        Future<StreamedResponse> response = pollChunk.eventClient.send(request);
+        print("Subscribed!");
+
+        pollChunk.eventListener = response.asStream().listen((streamedResponse) {
+          print("Received streamedResponse.statusCode:${streamedResponse.statusCode}");
+          streamedResponse.stream.listen((data) {
+            // Data example: "event:results\ndata:[5,4]\n\n"
+            String dataString = utf8.decode(data).trim();
+            _setEventListenerTimer(pollId);
+            
+            if(dataString?.isNotEmpty ?? false){
+              String eventName = dataString.substring(dataString.indexOf(":")+1, dataString.indexOf("\n"));
+              String eventData = dataString.substring(dataString.lastIndexOf(":")+1);
+              _onPollEvent(pollId, eventName, eventData);
+            }
+
+          }, onError: (e){
+            Log.e(e.toString());
+            _resetEventStream(pollId, timeout: Duration(seconds: 3));
+          }, onDone: (){
+            _resetEventStream(pollId, timeout: Duration(seconds: 3));
+          });
         });
-        if (pollChunk.eventSource != null) {
-          pollChunk.eventListener = pollChunk.eventSource.listen((Event event) {
-              _logLastEvent(pollId, event);
-              _setEventListenerTimer(pollId);
-              _onPollEvent(pollId, event);
-            },
-            onError: (e) {
-              print(e.toString());
-              _resetEventStream(pollId, timeout: Duration(seconds: 3));
-            },
-            onDone: () {
-              _resetEventStream(pollId, timeout: Duration(seconds: 3));
-            },
-            cancelOnError: true,
-          );
-          _setEventListenerTimer(pollId);
-          Log.d('Polls: opened EventStream for poll #$pollId');
-          return;
-        }
-        else {
-          pollChunk.eventClient = null;
-          Log.d('Polls: failed to opened EventStream for poll #$pollId');
-        }
       }
       on Exception catch(e) {
         Log.d('Polls: failed to opened EventStream for poll #$pollId');
@@ -660,13 +669,6 @@ class Polls with Service implements NotificationsListener {
         Log.d('Polls: reopenning EventStream for poll #$pollId');
         _resetEventStream(pollId);
       }  );
-    }
-  }
-
-  void _logLastEvent(String pollId, Event event) {
-    _PollChunk pollChunk = _pollChunks[pollId];
-    if (pollChunk != null) {
-      pollChunk.lastEventId = event?.id;
     }
   }
 
@@ -797,8 +799,7 @@ class _PollChunk {
   _PollUIStatus status;
   
   Client eventClient;
-  EventSource eventSource;
-  StreamSubscription<Event> eventListener;
+  StreamSubscription eventListener;
   Timer eventListenerTimer;
   String lastEventId;
 
@@ -829,9 +830,6 @@ class _PollChunk {
     if (eventListenerTimer != null) {
       eventListenerTimer.cancel();
       eventListenerTimer = null;
-    }
-    if (eventSource != null) {
-      eventSource = null;
     }
     if (eventClient != null) {
       eventClient.close();

@@ -58,7 +58,7 @@ class _HomeGameDayState extends State<HomeGameDayWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     if ((_todayGames != null) && (0 < _todayGames.length)) {
-      List<Widget> gameDayWidgets = List();
+      List<Widget> gameDayWidgets = [];
       for (Game todayGame in _todayGames) {
         gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame));
       }

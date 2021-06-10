@@ -274,7 +274,7 @@ class AppLocation {
 class AppJson {
 
   static List<dynamic> encodeList(List items) {
-    List<dynamic> result = new List();
+    List<dynamic> result =  [];
     if (items != null && items.isNotEmpty) {
       items.forEach((item) {
         result.add(item.toJson());
@@ -288,7 +288,7 @@ class AppJson {
     if (items == null)
       return null;
 
-    List<String> result = new List();
+    List<String> result =  [];
     if (items != null && items.isNotEmpty) {
       items.forEach((item) {
         result.add(item is String ? item : item.toString());
@@ -298,11 +298,16 @@ class AppJson {
     return result;
   }
 
-  static String encode(dynamic value) {
+  static String encode(dynamic value, { bool prettify }) {
     String result;
     if (value != null) {
       try {
-        result = json.encode(value);
+        if (prettify == true) {
+          result = JsonEncoder.withIndent("  ").convert(value);
+        }
+        else {
+          result = json.encode(value);
+        }
       } catch (e) {
         Log.e(e?.toString());
       }
@@ -352,6 +357,10 @@ class AppJson {
     return null;
   }
 
+  static int intValue(dynamic value) {
+    return (value is int) ? value : null;
+  }
+
   static bool boolValue(dynamic value) {
     return (value is bool) ? value : null;
   }
@@ -369,6 +378,18 @@ class AppJson {
     else {
       return null;
     }
+  }
+
+  static Map<String, dynamic> mapValue(dynamic value) {
+    try { return (value is Map) ? value.cast<String, dynamic>() : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
+  }
+
+  static List<dynamic> listValue(dynamic value) {
+    try { return (value is List) ? value.cast<dynamic>() : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
   }
 }
 
@@ -395,7 +416,7 @@ class AppAlert {
           return AlertDialog(
             content: Text(message),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
                   onPressed: () {
                     Analytics.instance.logAlert(text: message, selection: "Ok");
@@ -431,7 +452,7 @@ class AppAlert {
           Text(message, textAlign: TextAlign.center,),
         ],),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
               child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
               onPressed: (){
                 Analytics.instance.logAlert(text: message, selection: "OK");
@@ -574,7 +595,7 @@ class AppDeviceOrientation {
     
     List<DeviceOrientation> orientationsList;
     if (stringsList != null) {
-      orientationsList = List();
+      orientationsList = [];
       for (dynamic string in stringsList) {
         if (string is String) {
           DeviceOrientation orientation = fromStr(string);
@@ -591,7 +612,7 @@ class AppDeviceOrientation {
     
     List<String> stringsList;
     if (orientationsList != null) {
-      stringsList = List();
+      stringsList = [];
       for (DeviceOrientation orientation in orientationsList) {
         String orientationString = toStr(orientation);
         if (orientationString != null) {

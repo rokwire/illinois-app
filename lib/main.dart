@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -32,9 +33,9 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -126,7 +127,7 @@ class _AppState extends State<App> implements NotificationsListener {
     Log.d("App init");
 
     NotificationService().subscribe(this, [
-      Onboarding.notifyFinished,
+      Onboarding2.notifyFinished,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
       Storage.notifySettingChanged,
@@ -189,7 +190,7 @@ class _AppState extends State<App> implements NotificationsListener {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
     else if (!Storage().onBoardingPassed) {
-      return Onboarding().startPanel;
+      return Onboarding2GetStartedPanel();
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
@@ -219,8 +220,10 @@ class _AppState extends State<App> implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Onboarding.notifyFinished) {
-      _finishOnboarding(param);
+    if (name == Onboarding2.notifyFinished) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        _finishOnboarding(param);
+      });
     }
     else if (name == Config.notifyUpgradeRequired) {
       setState(() {
@@ -237,7 +240,7 @@ class _AppState extends State<App> implements NotificationsListener {
     }
     else if (name == Storage.notifySettingChanged) {
       if (param == Storage.privacyUpdateVersionKey) {
-        setState(() { });
+        setState(() {});
       }
     }
     else if (name == User.notifyPrivacyLevelChanged) {

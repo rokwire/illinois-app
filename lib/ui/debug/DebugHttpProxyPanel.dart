@@ -22,11 +22,11 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 
-class HttpProxySettingsPanel extends StatefulWidget{
-  _HttpProxySettingsPanelState createState() => _HttpProxySettingsPanelState();
+class DebugHttpProxyPanel extends StatefulWidget{
+  _DebugHttpProxyPanelState createState() => _DebugHttpProxyPanelState();
 }
 
-class _HttpProxySettingsPanelState extends State<HttpProxySettingsPanel>{
+class _DebugHttpProxyPanelState extends State<DebugHttpProxyPanel>{
 
   bool _proxyEnabled;
 

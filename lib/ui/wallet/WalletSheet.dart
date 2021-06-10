@@ -121,7 +121,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
   }
 
   List<Widget> _buildTabs() {
-    List<Widget> tabs = List();
+    List<Widget> tabs = [];
     int tabsCount = (_contentListCodes != null) ? _contentListCodes.length : 0;
     for (int tabIndex = 0; tabIndex < tabsCount; tabIndex++) {
       String code = _contentListCodes[tabIndex];

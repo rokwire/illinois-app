@@ -30,6 +30,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
@@ -42,7 +43,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:package_info/package_info.dart';
 
-import 'SettingsDebugPanel.dart';
 import 'SettingsManageInterestsPanel.dart';
 import 'SettingsPersonalInfoPanel.dart';
 import 'SettingsPrivacyPanel.dart';
@@ -67,6 +67,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       User.notifyUserUpdated,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
+      Styles.notifyChanged
     ]);
     _loadVersionInfo();
 
@@ -90,6 +91,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
       _updateState();
     } else if (name == FlexUI.notifyChanged) {
+      _updateState();
+    } else if (name == Styles.notifyChanged) {
       _updateState();
     }
   }
@@ -243,7 +246,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // Connect
 
   Widget _buildConnect() {
-    List<Widget> contentList = new List();
+    List<Widget> contentList =  [];
     contentList.add(Padding(
         padding: EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 2),
         child: Text(
@@ -339,7 +342,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // Customizations
 
   Widget _buildCustomizations() {
-    List<Widget> customizationOptions = new List();
+    List<Widget> customizationOptions =  [];
     List<dynamic> codes = FlexUI()['settings.customizations'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
@@ -397,7 +400,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // Connected
 
   Widget _buildConnected() {
-    List<Widget> contentList = new List();
+    List<Widget> contentList =  [];
 
     List<dynamic> codes = FlexUI()['settings.connected'] ?? [];
     for (String code in codes) {
@@ -417,7 +420,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   List<Widget> _buildConnectedNetIdLayout() {
-    List<Widget> contentList = List();
+    List<Widget> contentList = [];
 
     List<dynamic> codes = FlexUI()['settings.connected.netid'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -458,7 +461,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   List<Widget> _buildConnectedPhoneLayout() {
-    List<Widget> contentList = List();
+    List<Widget> contentList = [];
 
     String fullName = Auth()?.userPiiData?.fullName ?? "";
     bool hasFullName = AppString.isStringNotEmpty(fullName);
@@ -531,14 +534,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
                       Auth().logout();
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
@@ -555,7 +558,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // NotificationsOptions
 
   Widget _buildNotifications() {
-    List<Widget> contentList = new List();
+    List<Widget> contentList =  [];
 
     List<dynamic> codes = FlexUI()['settings.notifications'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -610,7 +613,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // Privacy
 
   Widget _buildPrivacy() {
-    List<Widget> contentList = new List();
+    List<Widget> contentList =  [];
 
     List<dynamic> codes = FlexUI()['settings.privacy'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -656,7 +659,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // Account
 
   Widget _buildAccount() {
-    List<Widget> contentList = new List();
+    List<Widget> contentList =  [];
 
     List<dynamic> codes = FlexUI()['settings.account'] ?? [];
     for (int index = 0; index < codes.length; index++) {
@@ -775,7 +778,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Function _onDebugClicked() {
     return () {
       Analytics.instance.logSelect(target: "Debug");
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     };
   }
 
@@ -887,7 +890,7 @@ class _DebugContainerState extends State<_DebugContainer> {
 
         if (_clickedCount == 7) {
           if (Auth().isDebugManager) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsDebugPanel()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;
         }

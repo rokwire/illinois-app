@@ -410,7 +410,7 @@ class Event with Explore implements Favorite {
   }
 
   List<dynamic> _encodeContacts(){
-    List<dynamic> result = new List();
+    List<dynamic> result = [];
     if(contacts!=null && contacts.isNotEmpty) {
       contacts.forEach((Contact contact) {
         result.add(contact.toJson());
@@ -424,7 +424,7 @@ class Event with Explore implements Favorite {
     if (!isRecurring) {
       return null;
     }
-    List<dynamic> eventsList = List();
+    List<dynamic> eventsList = [];
     recurringEvents.forEach((Event event) {
       eventsList.add(event.toJson());
     });
@@ -448,7 +448,7 @@ class Event with Explore implements Favorite {
 
   void addRecurrentEvent(Event event) {
     if (recurringEvents == null) {
-      recurringEvents = List();
+      recurringEvents = [];
     }
     recurringEvents.add(event);
   }
@@ -480,7 +480,7 @@ class Event with Explore implements Favorite {
       return;
     }
     if (_subEvents == null) {
-      _subEvents = List();
+      _subEvents = [];
     }
     _subEvents.add(event);
   }
@@ -494,7 +494,7 @@ class Event with Explore implements Favorite {
       return;
     }
     if (_featuredEvents == null) {
-      _featuredEvents = List();
+      _featuredEvents = [];
     }
     _featuredEvents.add(event);
   }
@@ -503,7 +503,7 @@ class Event with Explore implements Favorite {
     if (subEventsJson == null || subEventsJson.isEmpty) {
       return null;
     }
-    List<Map<String, dynamic>> subEvents = List();
+    List<Map<String, dynamic>> subEvents = [];
     for (dynamic eventDynamic in subEventsJson) {
       if (eventDynamic is Map<String, dynamic>) {
         subEvents.add(eventDynamic);

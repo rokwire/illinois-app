@@ -105,7 +105,7 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
   xcodebuild -workspace Runner.xcworkspace -scheme Runner  -archivePath ../build/_output/tmp/Runner.xcarchive archive
   xcodebuild -exportArchive -archivePath ../build/_output/tmp/Runner.xcarchive -exportPath ../build/_output/tmp/ -exportOptionsPlist ../build/_output/$BRAND-$VERSION-$ENV.plist
   cd ..
-  cp ./build/_output/tmp/Runner.ipa ./build/_output/$BRAND-$VERSION-$ENV.ipa
+  cp ./build/_output/tmp/Illinois.ipa ./build/_output/$BRAND-$VERSION-$ENV.ipa
   #rm -rf ./build/_output/tmp/
 
   aws s3 cp $QR_BUILD_PATH s3://rokwire-ios-beta/Installs/

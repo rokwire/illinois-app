@@ -173,7 +173,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Unable to login", selection: "Ok");
                       Navigator.pop(context);

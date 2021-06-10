@@ -154,7 +154,7 @@ class AESCrypt {
 
       Uint8List encryptedJson = encrypter.encrypt(dataString, iv: iv).bytes;
 
-      List<int> list = List<int>();
+      List<int> list = [];
       list.addAll(keyString2.codeUnits);
       list.addAll(encryptedJson);
       Uint8List data = Uint8List.fromList(list);
@@ -404,12 +404,12 @@ class RsaKeyHelper {
     var version = ASN1Integer(BigInt.from(0));
     var modulus = ASN1Integer(privateKey.n);
     var publicExponent = ASN1Integer(privateKey.exponent);
-    var privateExponent = ASN1Integer(privateKey.d);
+    var privateExponent = ASN1Integer(privateKey.privateExponent);
     var p = ASN1Integer(privateKey.p);
     var q = ASN1Integer(privateKey.q);
-    var dP = privateKey.d % (privateKey.p - BigInt.from(1));
+    var dP = privateKey.privateExponent % (privateKey.p - BigInt.from(1));
     var exp1 = ASN1Integer(dP);
-    var dQ = privateKey.d % (privateKey.q - BigInt.from(1));
+    var dQ = privateKey.privateExponent % (privateKey.q - BigInt.from(1));
     var exp2 = ASN1Integer(dQ);
     var iQ = privateKey.q.modInverse(privateKey.p);
     var co = ASN1Integer(iQ);

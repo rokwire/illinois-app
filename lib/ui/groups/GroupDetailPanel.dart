@@ -322,7 +322,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   Widget _buildGroupInfo() {
-    List<Widget> commands = List<Widget>();
+    List<Widget> commands = [];
 
     String members;
     int membersCount = _group?.membersCount ?? 0;
@@ -916,7 +916,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   bool get _canCreateEvent{
-    return false; //TBD
+    return true; //TBD
   }
 }
 

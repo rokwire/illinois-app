@@ -252,7 +252,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreDetails() {
-    List<Widget> details = List<Widget>();
+    List<Widget> details = [];
 
     Widget time = _exploreTimeDetail();
     if (time != null) {

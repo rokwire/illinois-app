@@ -53,8 +53,8 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       _steps.add(GroupMembershipStep());
     }
     
-    _focusNodes = List();
-    _controllers = List();
+    _focusNodes = [];
+    _controllers = [];
     Set<String> eventIds = Set<String>();
     for (GroupMembershipStep step in _steps) {
       _controllers.add(TextEditingController(text: step.description ?? ''));

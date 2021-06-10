@@ -6,6 +6,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.4.19] - 2021-06-08
+### Changed 
+- Improved styling for Groups CreateEvent panel [276](https://github.com/rokwire/illinois-app/issues/276).
+- Improved fix for not responding Browse tab bar button [#266](https://github.com/rokwire/illinois-app/issues/266) 
+
+## [2.4.18] - 2021-06-08
+### Changed
+- Removed audience, rework UI for categories and sub categories hierarchy [#273](https://github.com/rokwire/illinois-app/issues/273).
+
+## [2.4.17] - 2021-06-07
+### Changed
+- Fix not responding Browse tab bar button [#266](https://github.com/rokwire/illinois-app/issues/266) 
+### Added
+- Added audience, categories and sub categories hierarchy [#269](https://github.com/rokwire/illinois-app/issues/269).
+
+## [2.4.16] - 2021-06-04
+### Changed
+- Hide Debug/Student Guide for prod [#264](https://github.com/rokwire/illinois-app/issues/264)
+
+## [2.4.15] - 2021-06-03
+### Changed
+- Added more panels to Students Guide POC, sample content moved to assets or net. [#257](https://github.com/rokwire/illinois-app/issues/257)
+- Updated styling for the On Boarding panels [#258](https://github.com/rokwire/illinois-app/issues/258)
+
+## [2.4.14] - 2021-06-02
+### Changed
+- Updated Students Guide POC, added involvements. [#257](https://github.com/rokwire/illinois-app/issues/257)
+
+## [2.4.13] - 2021-06-01
+### Added
+- Added Students Guide POC in Debug panel [#257](https://github.com/rokwire/illinois-app/issues/257)
+
+## [2.4.12] - 2021-05-28
+### Changed
+- Using Onboarding2 [#176](https://github.com/rokwire/illinois-app/issues/176)
+### Fixed
+- Handled location error in iOS Directions controller [#254](https://github.com/rokwire/safer-illinois-app/issues/254).
+
+## [2.4.11] - 2021-05-26
+### Fixed
+- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/safer-illinois-app/issues/252).
+
+## [2.4.10] - 2021-05-21
+### Changed
+- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/safer-illinois-app/issues/250).
+
+## [2.4.9] - 2021-05-18
+### Changed
+- Flutter 2.0 integration [#245](https://github.com/rokwire/safer-illinois-app/issues/245).
+
+## [2.4.8] - 2021-05-14
+### Added
+- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/safer-illinois-app/issues/246).
+
+## [2.4.7] - 2021-05-13
+### Fixed
+- Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/safer-illinois-app/issues/243).
+
+## [2.4.6] - 2021-04-12
+### Fixed
+- Wellness - PDF links is not loading in web view [#240](https://github.com/rokwire/illinois-app/issues/240).
+
+### Changed
+- Athletics - All Staff tile link is displayed along with Coaching Staff tile list [#239](https://github.com/rokwire/illinois-app/issues/239).
+
 ## [2.4.5] - 2021-03-31
 ### Fixed
 - YouTube videos plays when screen locked [#235](https://github.com/rokwire/illinois-app/issues/235).

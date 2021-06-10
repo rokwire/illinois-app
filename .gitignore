@@ -36,6 +36,7 @@ xcuserdata
 /ios/Pods
 /ios/Podfile.lock
 /ios/Flutter/App.framework
+/ios/Flutter/Flutter.podspec
 /ios/Flutter/Flutter.framework
 /ios/Flutter/Generated.xcconfig
 /ios/Flutter/.last_build_id

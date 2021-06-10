@@ -272,7 +272,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   }
 
   List<Widget> _buildNewsWidgets() {
-    List<Widget> widgets = List();
+    List<Widget> widgets = [];
     if (!AppString.isStringEmpty(game.newsImageUrl)) {
       widgets.add(Container(
         height: 200,
