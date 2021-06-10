@@ -28,7 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
@@ -289,7 +289,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onTapStudentsGuide))
+                              onTap: _onTapStudentGuide))
                     ),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
@@ -579,8 +579,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 
-  void _onTapStudentsGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuidePanel()));
+  void _onTapStudentGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentGuidePanel()));
   }
 
   void _onConfigChanged(dynamic env) {
