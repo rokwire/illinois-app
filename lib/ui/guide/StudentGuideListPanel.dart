@@ -184,46 +184,46 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   StudentsGuideFeatureButton _buildFeatureButton(String feature) {
     
     if (feature == 'athletics') {
-      return StudentsGuideFeatureButton(title: "Athletics", icon: "images/icon-students-guide-athletics.png", onTap: _navigateAthletics,);
+      return StudentsGuideFeatureButton(title: "Athletics", icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
     }
     else if (feature == 'buss-pass') {
-      return StudentsGuideFeatureButton(title: "Buss Pass", icon: "images/icon-students-guide-buss-pass.png");
+      return StudentsGuideFeatureButton(title: "Buss Pass", icon: "images/icon-student-guide-buss-pass.png");
     }
     else if (feature == 'dining') {
-      return StudentsGuideFeatureButton(title: "Dining", icon: "images/icon-students-guide-dining.png", onTap: _navigateDining);
+      return StudentsGuideFeatureButton(title: "Dining", icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
     }
     else if (feature == 'events') {
-      return StudentsGuideFeatureButton(title: "Events", icon: "images/icon-students-guide-events.png", onTap: _navigateEvents);
+      return StudentsGuideFeatureButton(title: "Events", icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
     }
     else if (feature == 'groups') {
-      return StudentsGuideFeatureButton(title: "Groups", icon: "images/icon-students-guide-groups.png", onTap: _navigateGroups);
+      return StudentsGuideFeatureButton(title: "Groups", icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
     }
     else if (feature == 'illini-cash') {
-      return StudentsGuideFeatureButton(title: "Illini Cash", icon: "images/icon-students-guide-illini-cash.png", onTap: _navigateIlliniCash);
+      return StudentsGuideFeatureButton(title: "Illini Cash", icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
     }
     else if (feature == 'illini-id') {
-      return StudentsGuideFeatureButton(title: "Illini ID", icon: "images/icon-students-guide-illini-id.png");
+      return StudentsGuideFeatureButton(title: "Illini ID", icon: "images/icon-student-guide-illini-id.png");
     }
     else if (feature == 'laundry') {
-      return StudentsGuideFeatureButton(title: "Laundry", icon: "images/icon-students-guide-laundry.png", onTap: _navigateLaundry,);
+      return StudentsGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
     }
     else if (feature == 'library') {
-      return StudentsGuideFeatureButton(title: "Library", icon: "images/icon-students-guide-library-card.png");
+      return StudentsGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
     }
     else if (feature == 'meal-plan') {
-      return StudentsGuideFeatureButton(title: "Meal Plan", icon: "images/icon-students-guide-meal-plan.png", onTap: _navigateMealPlan,);
+      return StudentsGuideFeatureButton(title: "Meal Plan", icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
     }
     else if (feature == 'my-illini') {
-      return StudentsGuideFeatureButton(title: "My Illini", icon: "images/icon-students-guide-my-illini.png", onTap: _navigateMyIllini);
+      return StudentsGuideFeatureButton(title: "My Illini", icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
     }
     else if (feature == 'parking') {
-      return StudentsGuideFeatureButton(title: "Parking", icon: "images/icon-students-guide-parking.png", onTap: _navigateParking);
+      return StudentsGuideFeatureButton(title: "Parking", icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
     }
     else if (feature == 'quick-polls') {
-      return StudentsGuideFeatureButton(title: "Quick Polls", icon: "images/icon-students-guide-quick-polls.png", onTap: _navigateQuickPolls);
+      return StudentsGuideFeatureButton(title: "Quick Polls", icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
     }
     else if (feature == 'saved') {
-      return StudentsGuideFeatureButton(title: "Saved", icon: "images/icon-students-guide-saved.png", onTap: _navigateSaved);
+      return StudentsGuideFeatureButton(title: "Saved", icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
     }
     else {
       return null;
