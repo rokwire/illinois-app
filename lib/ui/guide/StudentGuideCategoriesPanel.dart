@@ -3,14 +3,14 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class StudentGuideCategoriesPanel extends StatefulWidget {
-  final List<Map<String, dynamic>> entries;
-  StudentGuideCategoriesPanel({ this.entries });
+  StudentGuideCategoriesPanel();
 
   _StudentGuideCategoriesPanelState createState() => _StudentGuideCategoriesPanelState();
 }
@@ -51,24 +51,26 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
 
   List<Widget> _buildContent() {
     List<Widget> contentList = <Widget>[];
-    if (widget.entries != null) {
+    if (StudentGuide().contentList != null) {
       
       LinkedHashMap<String, LinkedHashSet<String>> categoriesMap = LinkedHashMap<String, LinkedHashSet<String>>();
       
-      for (Map<String, dynamic> entry in widget.entries) {
-        List<dynamic> categories = AppJson.listValue(entry['categories']);
-        if (categories != null) {
-          for (dynamic categoryEntry in categories) {
-            if (categoryEntry is Map) {
-              String category = AppJson.stringValue(categoryEntry['category']);
-              String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
-              if ((category != null) && (subCategory != null)) {
-                LinkedHashSet<String> categoryEntries = categoriesMap[category];
-                if (categoryEntries == null) {
-                  categoriesMap[category] = categoryEntries = LinkedHashSet<String>();
-                }
-                if (!categoryEntries.contains(subCategory)) {
-                  categoryEntries.add(subCategory);
+      for (dynamic guideEntry in StudentGuide().contentList) {
+        if (guideEntry is Map) {
+          List<dynamic> categories = AppJson.listValue(guideEntry['categories']);
+          if (categories != null) {
+            for (dynamic categoryEntry in categories) {
+              if (categoryEntry is Map) {
+                String category = AppJson.stringValue(categoryEntry['category']);
+                String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
+                if ((category != null) && (subCategory != null)) {
+                  LinkedHashSet<String> categoryEntries = categoriesMap[category];
+                  if (categoryEntries == null) {
+                    categoriesMap[category] = categoryEntries = LinkedHashSet<String>();
+                  }
+                  if (!categoryEntries.contains(subCategory)) {
+                    categoryEntries.add(subCategory);
+                  }
                 }
               }
             }
@@ -118,11 +120,11 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
   }
 
   void _onTapCategory(String category) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSectionsPanel(entries: widget.entries, category: category,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category,)));
   }
 
   void _onTapSubCategory(String subCategory, {String category}) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideSectionsPanel(entries: widget.entries, category: category, subCategory: subCategory,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category, subCategory: subCategory,)));
   }
 }
 

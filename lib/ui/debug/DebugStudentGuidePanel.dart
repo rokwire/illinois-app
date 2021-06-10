@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:illinois/service/StudentGuide.dart';
 //import 'package:http/http.dart';
 //import 'package:illinois/service/Network.dart';
+//import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -130,11 +131,9 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
 
   void _onPreview() {
     List<dynamic> jsonList = AppJson.decodeList(_jsonController.text);
-    List<Map<String, dynamic>> entries;
-    try {entries = jsonList?.cast<Map<String, dynamic>>(); }
-    catch(e) {}
-    if (entries != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel(entries: entries,)));
+    if (jsonList != null) {
+      StudentGuide().contentList = jsonList;
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
     }
     else {
       AppAlert.showDialogResult(context, "Failed to parse JSON");
@@ -145,21 +144,13 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   Future<String> _loadJsonContent() async {
     //Response response = await Network().get("https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/student.guide.json");
     //String jsonContent = (response?.statusCode == 200) ? response?.body : null;
-    String jsonContent;
-    try { jsonContent = await rootBundle.loadString('assets/student.guide.json'); }
-    catch (e) { print(e?.toString()); }
-    return jsonContent;
-  }
-}
+    
+    //String jsonContent;
+    //try { jsonContent = await rootBundle.loadString('assets/student.guide.json'); }
+    //catch (e) { print(e?.toString()); }
+    //return jsonContent;
 
-Map<String, dynamic> studentGuideEntryById(String id, {List<Map<String, dynamic>> entries}) {
-  if (entries != null) {
-    for (dynamic entry in entries) {
-      if ((entry is Map) && (AppJson.stringValue(entry['id']) == id)) {
-        return entry;  
-      }
-    }
+    return AppJson.encode(StudentGuide().contentList, prettify: true);
   }
-  return null;
 }
 

@@ -7,6 +7,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -24,10 +25,9 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StudentGuideListPanel extends StatefulWidget {
-  final List<Map<String, dynamic>> entries;
   final String category;
   final String subCategory;
-  StudentGuideListPanel({ this.entries, this.category, this.subCategory});
+  StudentGuideListPanel({ this.category, this.subCategory});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
@@ -67,33 +67,37 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 
   List<Widget> _buildContent() {
     List<Widget> contentList = <Widget>[];
-    if (widget.entries != null) {
+    if (StudentGuide().contentList != null) {
       
       // construct sections & features
       LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
       LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
-      for (Map<String, dynamic> entry in widget.entries) {
-        List<dynamic> categories = AppJson.listValue(entry['categories']);
-        if (categories != null) {
-          for (dynamic categoryEntry in categories) {
-            if (categoryEntry is Map) {
-              String category = AppJson.stringValue(categoryEntry['category']);
-              String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
-              if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
+      for (dynamic guideEntry in StudentGuide().contentList) {
+        if (guideEntry is Map) {
+          List<dynamic> categories = AppJson.listValue(guideEntry['categories']);
+          if (categories != null) {
+            for (dynamic categoryEntry in categories) {
+              if (categoryEntry is Map) {
+                String category = AppJson.stringValue(categoryEntry['category']);
+                String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
+                if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
-                List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
-                
-                if (subCategoryEntries == null) {
-                  subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
-                }
-                subCategoryEntries.add(entry);
+                  List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
+                  
+                  if (subCategoryEntries == null) {
+                    subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
+                  }
+                  
+                  try { subCategoryEntries.add(guideEntry.cast<String, dynamic>()); }
+                  catch(e) { print(e?.toString()); }
 
-                List<dynamic> features = AppJson.listValue(categoryEntry['features']);
-                if (features != null) {
-                  for (dynamic feature in features) {
-                    if ((feature is String) && !featuresSet.contains(feature)) {
-                      featuresSet.add(feature);
+                  List<dynamic> features = AppJson.listValue(categoryEntry['features']);
+                  if (features != null) {
+                    for (dynamic feature in features) {
+                      if ((feature is String) && !featuresSet.contains(feature)) {
+                        featuresSet.add(feature);
+                      }
                     }
                   }
                 }
@@ -243,7 +247,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       for (Map<String, dynamic> entry in entries) {
         contentList.add(
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-            StudentsGuideEntryCard(entry, entries: widget.entries,)
+            StudentsGuideEntryCard(entry)
           )
         );
       }
@@ -319,9 +323,8 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 
 
 class StudentsGuideEntryCard extends StatefulWidget {
-  final List<Map<String, dynamic>> entries;
-  final Map<String, dynamic> entry;
-  StudentsGuideEntryCard(this.entry, {this.entries});
+  final Map<String, dynamic> guideEntry;
+  StudentsGuideEntryCard(this.guideEntry);
 
   _StudentsGuideEntryCardState createState() => _StudentsGuideEntryCardState();
 }
@@ -342,8 +345,8 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
   
   @override
   Widget build(BuildContext context) {
-    String titleHtml = AppJson.stringValue(widget.entry['list_title']) ?? AppJson.stringValue(widget.entry['title']) ?? '';
-    String descriptionHtml = AppJson.stringValue(widget.entry['list_description']) ?? AppJson.stringValue(widget.entry['description']) ?? '';
+    String titleHtml = AppJson.stringValue(widget.guideEntry['list_title']) ?? AppJson.stringValue(widget.guideEntry['title']) ?? '';
+    String descriptionHtml = AppJson.stringValue(widget.guideEntry['list_description']) ?? AppJson.stringValue(widget.guideEntry['description']) ?? '';
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -392,7 +395,7 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
   }
 
   void _onTapEntry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(entries: widget.entries, entry: widget.entry,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntry: widget.guideEntry,)));
   }
 }
 

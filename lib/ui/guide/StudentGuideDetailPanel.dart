@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
@@ -13,9 +13,8 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StudentGuideDetailPanel extends StatefulWidget {
-  final List<Map<String, dynamic>> entries;
-  final Map<String, dynamic> entry;
-  StudentGuideDetailPanel({ this.entries, this.entry });
+  final Map<String, dynamic> guideEntry;
+  StudentGuideDetailPanel({ this.guideEntry });
 
   _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
 }
@@ -76,13 +75,13 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   Widget _buildHeading() {
     List<Widget> contentList = <Widget>[];
 
-    String category = AppJson.stringValue(widget.entry['category']);
+    String category = AppJson.stringValue(widget.guideEntry['category']);
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
         Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),),
     ),);
 
-    String titleHtml = AppJson.stringValue(widget.entry['detail_title']) ?? AppJson.stringValue(widget.entry['title']);
+    String titleHtml = AppJson.stringValue(widget.guideEntry['detail_title']) ?? AppJson.stringValue(widget.guideEntry['title']);
     if (AppString.isStringNotEmpty(titleHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -92,7 +91,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),);
     }
     
-    String descriptionHtml = AppJson.stringValue(widget.entry['detail_description']) ?? AppJson.stringValue(widget.entry['description']);
+    String descriptionHtml = AppJson.stringValue(widget.guideEntry['detail_description']) ?? AppJson.stringValue(widget.guideEntry['description']);
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -103,7 +102,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
     }
 
 
-    List<dynamic> links = AppJson.listValue(widget.entry['links']);
+    List<dynamic> links = AppJson.listValue(widget.guideEntry['links']);
     if (links != null) {
       for (dynamic link in links) {
         if (link is Map) {
@@ -139,7 +138,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   }
 
   Widget _buildImage() {
-    String imageUrl = AppJson.stringValue(widget.entry['image']);
+    String imageUrl = AppJson.stringValue(widget.guideEntry['image']);
     if (AppString.isStringNotEmpty(imageUrl)) {
       return Stack(alignment: Alignment.bottomCenter, children: [
         Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
@@ -171,7 +170,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   Widget _buildDetails() {
     List<Widget> contentList = <Widget>[];
 
-    String title = AppJson.stringValue(widget.entry['sub_details_title']);
+    String title = AppJson.stringValue(widget.guideEntry['sub_details_title']);
     if (AppString.isStringNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -179,7 +178,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),);
     }
 
-    String descriptionHtml = AppJson.stringValue(widget.entry['sub_details_description']);
+    String descriptionHtml = AppJson.stringValue(widget.guideEntry['sub_details_description']);
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -189,7 +188,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),),);
     }
 
-    List<dynamic> subDetails = AppJson.listValue(widget.entry['sub_details']);
+    List<dynamic> subDetails = AppJson.listValue(widget.guideEntry['sub_details']);
     if (subDetails != null) {
       for (dynamic subDetail in subDetails) {
         if (subDetail is Map) {
@@ -244,7 +243,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       }
     }
 
-    List<dynamic> buttons = AppJson.listValue(widget.entry['buttons']);
+    List<dynamic> buttons = AppJson.listValue(widget.guideEntry['buttons']);
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
@@ -288,7 +287,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   }
 
   Widget _buildRelated() {
-    List<dynamic> related = AppJson.listValue(widget.entry['related']);
+    List<dynamic> related = AppJson.listValue(widget.guideEntry['related']);
     if (related != null) {
       List<Widget> contentList = <Widget>[];
       for (dynamic relatedEntry in related) {
@@ -297,12 +296,12 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
           guideEntry = relatedEntry;
         }
         else if (relatedEntry is String) {
-          guideEntry = studentGuideEntryById(relatedEntry, entries: widget.entries);
+          guideEntry = StudentGuide().entryById(relatedEntry);
         }
         if (guideEntry != null) {
           contentList.add(
             Padding(padding: EdgeInsets.only(bottom: 8), child:
-              StudentsGuideEntryCard(guideEntry, entries: widget.entries,)
+              StudentsGuideEntryCard(guideEntry)
           ),);
         }
       }
