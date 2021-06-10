@@ -78,7 +78,9 @@
     }],
 
     "title": "Join an intramural sports team",
-    "description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities."
+    "description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities.",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-profile-glass.jpg"
   },
   {
     "id": "students.club",
@@ -89,7 +91,9 @@
     }],
 
     "title": "Join a student club or organization",
-    "description": "Illinois is home to many student clubs and organizations. Get involved today!"
+    "description": "Illinois is home to many student clubs and organizations. Get involved today!",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-vote-sign.jpg"
   },
   {
     "id": "fraternity",
@@ -99,7 +103,9 @@
     }],
 
     "title": "Join a fraternity or sorority",
-    "description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus."
+    "description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus.",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-welcome-foellinger.jpg"
   },
   {
     "id": "civic.engagement",
