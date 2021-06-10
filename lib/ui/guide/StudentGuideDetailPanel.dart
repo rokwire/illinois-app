@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
 import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -12,15 +12,15 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DebugStudentsGuideDetailPanel extends StatefulWidget {
+class StudentGuideDetailPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
   final Map<String, dynamic> entry;
-  DebugStudentsGuideDetailPanel({ this.entries, this.entry });
+  StudentGuideDetailPanel({ this.entries, this.entry });
 
-  _DebugStudentsGuideDetailPanelState createState() => _DebugStudentsGuideDetailPanelState();
+  _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
 }
 
-class _DebugStudentsGuideDetailPanelState extends State<DebugStudentsGuideDetailPanel> {
+class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
 
   bool _isFavorite = false;
 

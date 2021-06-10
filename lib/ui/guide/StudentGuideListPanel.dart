@@ -11,7 +11,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuideDetailPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -23,16 +23,16 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DebugStudentsGuideSectionsPanel extends StatefulWidget {
+class StudentGuideListPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
   final String category;
   final String subCategory;
-  DebugStudentsGuideSectionsPanel({ this.entries, this.category, this.subCategory});
+  StudentGuideListPanel({ this.entries, this.category, this.subCategory});
 
-  _DebugStudentsGuideSectionsPanelState createState() => _DebugStudentsGuideSectionsPanelState();
+  _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
 
-class _DebugStudentsGuideSectionsPanelState extends State<DebugStudentsGuideSectionsPanel> {
+class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 
   @override
   void initState() {
@@ -392,7 +392,7 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
   }
 
   void _onTapEntry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideDetailPanel(entries: widget.entries, entry: widget.entry,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(entries: widget.entries, entry: widget.entry,)));
   }
 }
 

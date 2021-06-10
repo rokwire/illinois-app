@@ -4,18 +4,18 @@ import 'package:flutter/services.dart' show rootBundle;
 //import 'package:http/http.dart';
 //import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class DebugStudentsGuidePanel extends StatefulWidget {
-  DebugStudentsGuidePanel();
+class DebugStudentGuidePanel extends StatefulWidget {
+  DebugStudentGuidePanel();
 
-  _DebugStudentsGuidePanelState createState() => _DebugStudentsGuidePanelState();
+  _DebugStudentGuidePanelState createState() => _DebugStudentGuidePanelState();
 }
 
-class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
+class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
 
   TextEditingController _jsonController;
   bool _loadingJsonContent;
@@ -134,7 +134,7 @@ class _DebugStudentsGuidePanelState extends State<DebugStudentsGuidePanel> {
     try {entries = jsonList?.cast<Map<String, dynamic>>(); }
     catch(e) {}
     if (entries != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuideCategoriesPanel(entries: entries,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel(entries: entries,)));
     }
     else {
       AppAlert.showDialogResult(context, "Failed to parse JSON");

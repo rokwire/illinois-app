@@ -8,14 +8,14 @@ import 'package:illinois/ui/debug/DebugStudentsGuideSectionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class DebugStudentsGuideCategoriesPanel extends StatefulWidget {
+class StudentGuideCategoriesPanel extends StatefulWidget {
   final List<Map<String, dynamic>> entries;
-  DebugStudentsGuideCategoriesPanel({ this.entries });
+  StudentGuideCategoriesPanel({ this.entries });
 
-  _DebugStudentsGuideCategoriesPanelState createState() => _DebugStudentsGuideCategoriesPanelState();
+  _StudentGuideCategoriesPanelState createState() => _StudentGuideCategoriesPanelState();
 }
 
-class _DebugStudentsGuideCategoriesPanelState extends State<DebugStudentsGuideCategoriesPanel> {
+class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPanel> {
 
   @override
   void initState() {
