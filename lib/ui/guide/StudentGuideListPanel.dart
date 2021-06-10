@@ -75,31 +75,25 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 
       for (dynamic guideEntry in StudentGuide().contentList) {
         if (guideEntry is Map) {
-          List<dynamic> categories = AppJson.listValue(guideEntry['categories']);
-          if (categories != null) {
-            for (dynamic categoryEntry in categories) {
-              if (categoryEntry is Map) {
-                String category = AppJson.stringValue(categoryEntry['category']);
-                String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
-                if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
-                  List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
-                  
-                  if (subCategoryEntries == null) {
-                    subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
-                  }
-                  
-                  try { subCategoryEntries.add(guideEntry.cast<String, dynamic>()); }
-                  catch(e) { print(e?.toString()); }
+          String category = AppJson.stringValue(guideEntry['category']);
+          String subCategory = AppJson.stringValue(guideEntry['sub_category']);
+          if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
-                  List<dynamic> features = AppJson.listValue(categoryEntry['features']);
-                  if (features != null) {
-                    for (dynamic feature in features) {
-                      if ((feature is String) && !featuresSet.contains(feature)) {
-                        featuresSet.add(feature);
-                      }
-                    }
-                  }
+            List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
+            
+            if (subCategoryEntries == null) {
+              subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
+            }
+            
+            try { subCategoryEntries.add(guideEntry.cast<String, dynamic>()); }
+            catch(e) { print(e?.toString()); }
+
+            List<dynamic> features = AppJson.listValue(guideEntry['features']);
+            if (features != null) {
+              for (dynamic feature in features) {
+                if ((feature is String) && !featuresSet.contains(feature)) {
+                  featuresSet.add(feature);
                 }
               }
             }

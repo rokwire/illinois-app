@@ -57,22 +57,15 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       
       for (dynamic guideEntry in StudentGuide().contentList) {
         if (guideEntry is Map) {
-          List<dynamic> categories = AppJson.listValue(guideEntry['categories']);
-          if (categories != null) {
-            for (dynamic categoryEntry in categories) {
-              if (categoryEntry is Map) {
-                String category = AppJson.stringValue(categoryEntry['category']);
-                String subCategory = AppJson.stringValue(categoryEntry['sub_category']);
-                if ((category != null) && (subCategory != null)) {
-                  LinkedHashSet<String> categoryEntries = categoriesMap[category];
-                  if (categoryEntries == null) {
-                    categoriesMap[category] = categoryEntries = LinkedHashSet<String>();
-                  }
-                  if (!categoryEntries.contains(subCategory)) {
-                    categoryEntries.add(subCategory);
-                  }
-                }
-              }
+          String category = AppJson.stringValue(guideEntry['category']);
+          String subCategory = AppJson.stringValue(guideEntry['sub_category']);
+          if ((category != null) && (subCategory != null)) {
+            LinkedHashSet<String> categoryEntries = categoriesMap[category];
+            if (categoryEntries == null) {
+              categoriesMap[category] = categoryEntries = LinkedHashSet<String>();
+            }
+            if (!categoryEntries.contains(subCategory)) {
+              categoryEntries.add(subCategory);
             }
           }
         }
