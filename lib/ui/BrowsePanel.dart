@@ -32,6 +32,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
+import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -266,6 +267,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         icon: 'images/safer-illinois-logo.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
+      );
+    }
+    else if (code == 'student_guide') {
+      return _GridSquareButton(
+        title: 'Student Guide',
+        hint: '',
+        icon: 'images/icon-browse-quick-polls.png',
+        color: Styles().colors.accentColor2,
+        onTap: () => _navigateStudentGuide(),
       );
     }
     else {
@@ -564,6 +574,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateGroups() {
     Analytics.instance.logSelect(target: "Groups");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _navigateStudentGuide() {
+    Analytics.instance.logSelect(target: "Student Guide");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
   }
 
   void _onFeedbackTap() {
