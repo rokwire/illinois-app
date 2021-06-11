@@ -5,6 +5,9 @@
     "sub_category": "Socializing",
     "features": ["events", "dining"],
     
+    "promotion": {
+    },
+    
     "list_title": "Participate in campus recreation",
     "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
 
@@ -73,6 +76,10 @@
     "category": "Involvement",
     "sub_category": "Socializing",
 
+    "promotion": {
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
+    },
+
     "title": "Join an intramural sports team",
     "description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities.",
 
@@ -84,6 +91,11 @@
     "sub_category": "Socializing",
     "features": ["groups"],
 
+    "promotion": {
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+      "roles": [ "student", "employee" ]
+    },
+
     "title": "Join a student club or organization",
     "description": "Illinois is home to many student clubs and organizations. Get involved today!",
 
@@ -93,6 +105,12 @@
     "id": "fraternity",
     "category": "Involvement",
     "sub_category": "Socializing",
+
+    "promotion": {
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+      "roles": "student",
+      "card": { "role": "Undergraduate", "student_level": "1U" }
+    },
 
     "title": "Join a fraternity or sorority",
     "description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus.",
