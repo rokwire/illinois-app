@@ -28,7 +28,7 @@ class HomeStudentGuidePromoWidget extends StatefulWidget {
 
 class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidget> implements NotificationsListener {
 
-  static const int _maxItems = 5;
+  static const int _maxItems = 3;
 
   List<dynamic> _promotedItems;
 
