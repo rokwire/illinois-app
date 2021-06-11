@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -6,12 +8,18 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class StudentGuide with Service implements NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
 
+  static const String _cacheFileName = "student.guide.json";
+
   List<dynamic> _contentList;
+
+  File          _cacheFile;
   DateTime      _pausedDateTime;
 
   static final StudentGuide _service = StudentGuide._internal();
@@ -37,7 +45,8 @@ class StudentGuide with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    _contentList = await _loadContentJsonFromAssets();
+    _cacheFile = await _getCacheFile();
+    _contentList = await _loadContentJsonFromCache() ?? await _loadContentJsonFromAssets();
   }
 
   @override
@@ -62,9 +71,7 @@ class StudentGuide with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadContentJsonFromAssets().then((List<dynamic> result) {
-            contentList = result;
-          });
+          //TBD: refresh
         }
       }
     }
@@ -72,11 +79,40 @@ class StudentGuide with Service implements NotificationsListener {
 
   // Implementation
 
-  Future<List<dynamic>> _loadContentJsonFromAssets() async {
-    String jsonContent;
-    try { jsonContent = await rootBundle.loadString('assets/student.guide.json'); }
+  Future<File> _getCacheFile() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, _cacheFileName);
+    return File(cacheFilePath);
+  }
+
+  Future<String> _loadContentStringFromCache() async {
+    return (await _cacheFile?.exists() == true) ? await _cacheFile.readAsString() : null;
+  }
+
+  Future<void> _saveContentStringToCache(String value) async {
+    try {
+      if (value != null) {
+        await _cacheFile?.writeAsString(value, flush: true);
+      }
+      else {
+        await _cacheFile?.delete();
+      }
+    }
+    catch(e) { print(e?.toString()); }
+  }
+
+  Future<List<dynamic>> _loadContentJsonFromCache() async {
+    return AppJson.decodeList(await _loadContentStringFromCache());
+  }
+
+  Future<String> _loadContentStringFromAssets() async {
+    try { return await rootBundle.loadString('assets/student.guide.json'); }
     catch (e) { print(e?.toString()); }
-    return AppJson.decodeList(jsonContent);
+    return null;
+  }
+
+  Future<List<dynamic>> _loadContentJsonFromAssets() async {
+    return AppJson.decodeList(await _loadContentStringFromAssets());
   }
 
   // Content
@@ -85,12 +121,13 @@ class StudentGuide with Service implements NotificationsListener {
     return _contentList;
   }
 
-  set contentList(List<dynamic> value) {
-    if (!DeepCollectionEquality().equals(_contentList, value)) {
+  void _applyContentList(List<dynamic> value) {
+    if ((value != null) && !DeepCollectionEquality().equals(_contentList, value)) {
       _contentList = value;
       NotificationService().notify(notifyChanged);
     }
   }
+
 
   Map<String, dynamic> entryById(String id) {
     if (_contentList != null) {
@@ -104,4 +141,29 @@ class StudentGuide with Service implements NotificationsListener {
     return null;
   }
 
+  // Debug
+
+  Future<String> getContentString() async {
+    return await _loadContentStringFromCache() ?? await _loadContentStringFromAssets();
+  }
+
+  Future<String> setContentString(String value) async {
+    if (value != null) {
+      List<dynamic> contentList = AppJson.decodeList(value);
+      if (contentList != null) {
+        await _saveContentStringToCache(value);
+        _applyContentList(contentList);
+        return value;
+      }
+      else {
+        return null;
+      }
+    }
+    else {
+      await _saveContentStringToCache(null);
+      value = await _loadContentStringFromAssets();
+      _applyContentList(AppJson.decodeList(value));
+      return value;
+    }
+  }
 }
