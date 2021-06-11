@@ -80,10 +80,10 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
             ),
           ),
           Align(alignment: Alignment.topRight,
-            child: GestureDetector(onTap: _onRefresh,
+            child: GestureDetector(onTap: _onClear,
               child: Container(width: 36, height: 36,
                 child: Align(alignment: Alignment.center,
-                  child: Image.asset('images/icon-refresh.png'),
+                  child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
                 ),
               ),
             ),
@@ -126,7 +126,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
     );
   }
 
-  void _onRefresh() {
+  void _onClear() {
     if (_loadingJsonContent != true) {
       setState(() {
         _loadingJsonContent = true;
