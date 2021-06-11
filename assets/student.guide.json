@@ -26,7 +26,7 @@
       { "text": "Visit website3", "url": "https://campusrec.illinois.edu/" }
     ],
 
-    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-placeholder-1.png",
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-placeholder-1.webp",
 
     "sub_details_title": null,
     "sub_details_description": "<b><span style='color: #008000'>Campus Recreation</span></b> has a variety of <u><span style='color: #008000'>facilities</span></u> and <i><span style='color: #008000'>programs</span></i>. Visit the <a href='https://illinois.edu'>website</a> to view a complete list.",
@@ -83,7 +83,7 @@
     "title": "Join an intramural sports team",
     "description": "Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities.",
 
-    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-profile-glass.jpg"
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-profile-glass.webp"
   },
   {
     "id": "students.club",
@@ -99,7 +99,7 @@
     "title": "Join a student club or organization",
     "description": "Illinois is home to many student clubs and organizations. Get involved today!",
 
-    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-vote-sign.jpg"
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-vote-sign.webp"
   },
   {
     "id": "fraternity",
@@ -115,7 +115,7 @@
     "title": "Join a fraternity or sorority",
     "description": "Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus.",
 
-    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-welcome-foellinger.jpg"
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-welcome-foellinger.webp"
   },
   {
     "id": "civic.engagement",
@@ -227,7 +227,7 @@
       { "text": "Visit website", "url": "https://writersworkshop.illinois.edu/" }
     ],
   
-    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-placeholder-2.png",
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-placeholder-2.webp",
 
     "sub_details_title": null,
     "sub_details_description": "<p>The Writer’s Workshop provides support for all types of writing. There are multiple options for students to receive feedback, such as in-person consultations by appointment, drop-in consultations, or written feedback appointments.</p><p>The Workshop also hosts presentations about common academic writing concerns like citing sources, avoiding plagiarism, and polishing final drafts.</p><p>Visit the website for more information and instruction on how to sign up.</p>",
@@ -239,7 +239,9 @@
     "sub_category": "Academic support",
 
     "title": "Take online classes",
-    "description": "Illinois Online offers online classes for students who need to be away from campus or want to get ahead for graduation."
+    "description": "Illinois Online offers online classes for students who need to be away from campus or want to get ahead for graduation.",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-firstyear-aceit.webp"
   },
   {
     "id": "assistent.center",
@@ -247,7 +249,9 @@
     "sub_category": "Academic support",
 
     "title": "Get help from the Student Assistance Center",
-    "description": "The Student Assistance Center promotes the holistic growth and development of Illinois students."
+    "description": "The Student Assistance Center promotes the holistic growth and development of Illinois students.",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-involvement-squad.webp"
   },
   {
     "id": "union.bookstore",
@@ -255,7 +259,9 @@
     "sub_category": "Library access",
 
     "title": "The Illini Union Bookstore",
-    "description": "The premiere place for students to rent or purchase textbooks."
+    "description": "The premiere place for students to rent or purchase textbooks.",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-living-guitar.webp"
   },
   {
     "id": "lorem.ipsum.2",
@@ -263,9 +269,10 @@
     "sub_category": "Library access",
 
     "title": "The Illini Union Bookstore",
-    "description": "The premiere place for students to rent or purchase textbooks."
-  },
+    "description": "The premiere place for students to rent or purchase textbooks.",
 
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-money-frisbee.webp"
+  },
   {
     "id": "reflection.rooms",
     "category": "Spirituality",
@@ -274,6 +281,8 @@
 
     "title": "Reflection rooms",
     "description": "The Undergraduate Library has two reflection rooms located on the lower level.  While reflection rooms are commonly used for prayer, meditation, and yoga, they can also be used as sensory safe spaces.",
+
+    "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-traditions-chimes.webp",
 
     "links":[
       { "text": "1402 West Gregory Drive\nUrbana, IL 61801", "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-location.png", "location": { "location": { "latitude": 40.10432020340045, "longitude": -88.22881784683443}, "title": "1402 West Gregory Drive" } },
