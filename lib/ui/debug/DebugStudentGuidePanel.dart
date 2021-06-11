@@ -26,7 +26,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
     super.initState();
     _jsonController = TextEditingController();
     _loadingJsonContent = true;
-    _loadJsonContent().then((String jsonContent) {
+    StudentGuide().getContentString().then((String jsonContent) {
       setState(() {
         _loadingJsonContent = false;
       });
@@ -80,24 +80,36 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
             ),
           ),
           Align(alignment: Alignment.topRight,
-            child: GestureDetector(onTap: _onRefresh,
+            child: GestureDetector(onTap: _onClear,
               child: Container(width: 36, height: 36,
                 child: Align(alignment: Alignment.center,
-                  child: Image.asset('images/icon-refresh.png'),
+                  child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),), // Image.asset('images/icon-refresh.png'),
                 ),
               ),
             ),
           ),
         ]),
       ),
-      _buildPreview(),
+      _buildButtons(),
     ],);
   }
 
-  Widget _buildPreview() {
+  Widget _buildButtons() {
     return Padding(padding: EdgeInsets.only(top: 16), child: 
       Row(children: <Widget>[
-        Expanded(child: Container(),),
+        Expanded(child: Container()),
+        RoundedButton(label: "Apply",
+          textColor: Styles().colors.fillColorPrimary,
+          borderColor: Styles().colors.fillColorSecondary,
+          backgroundColor: Styles().colors.white,
+          fontFamily: Styles().fontFamilies.bold,
+          fontSize: 16,
+          padding: EdgeInsets.symmetric(horizontal: 32, ),
+          borderWidth: 2,
+          height: 42,
+          onTap:() { _onApply();  }
+        ),
+        Container(width: 8,),
         RoundedButton(label: "Preview",
           textColor: Styles().colors.fillColorPrimary,
           borderColor: Styles().colors.fillColorSecondary,
@@ -109,18 +121,19 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
           height: 42,
           onTap:() { _onPreview();  }
         ),
-        Expanded(child: Container(),),
+        Expanded(child: Container()),
       ],),
     );
   }
 
-  void _onRefresh() {
+  void _onClear() {
     if (_loadingJsonContent != true) {
       setState(() {
         _loadingJsonContent = true;
       });
       _jsonController.text = '';
-      _loadJsonContent().then((String jsonContent) {
+      
+      StudentGuide().setContentString(null).then((String jsonContent) {
         setState(() {
           _loadingJsonContent = false;
         });
@@ -129,28 +142,26 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
     }
   }
 
-  void _onPreview() {
-    List<dynamic> jsonList = AppJson.decodeList(_jsonController.text);
-    if (jsonList != null) {
-      StudentGuide().contentList = jsonList;
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
-    }
-    else {
-      AppAlert.showDialogResult(context, "Failed to parse JSON");
-    }
-    
+  void _onApply() {
+    StudentGuide().setContentString(_jsonController.text).then((String jsonContent) {
+      if (jsonContent != null) {
+        AppAlert.showDialogResult(context, "JSON conent applied.");
+      }
+      else {
+        AppAlert.showDialogResult(context, "Invalid JSON content.");
+      }
+    });
   }
 
-  Future<String> _loadJsonContent() async {
-    //Response response = await Network().get("https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/student.guide.json");
-    //String jsonContent = (response?.statusCode == 200) ? response?.body : null;
-    
-    //String jsonContent;
-    //try { jsonContent = await rootBundle.loadString('assets/student.guide.json'); }
-    //catch (e) { print(e?.toString()); }
-    //return jsonContent;
-
-    return AppJson.encode(StudentGuide().contentList, prettify: true);
+  void _onPreview() {
+    StudentGuide().setContentString(_jsonController.text).then((String jsonContent) {
+      if (jsonContent != null) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+      }
+      else {
+        AppAlert.showDialogResult(context, "Invalid JSON content.");
+      }
+    });
   }
 }
 

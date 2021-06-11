@@ -301,7 +301,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
         if (guideEntry != null) {
           contentList.add(
             Padding(padding: EdgeInsets.only(bottom: 8), child:
-              StudentsGuideEntryCard(guideEntry)
+              StudentGuideEntryCard(guideEntry)
           ),);
         }
       }
