@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created promoted student guide items widget in Home panel [#282](https://github.com/rokwire/illinois-app/issues/282).
 
 ## [2.4.20] - 2021-06-10
 ### Added
-- Introduced Student Guide service [#282](https://github.com/rokwire/illinois-app/issues/282) 
+- Introduced Student Guide service [#282](https://github.com/rokwire/illinois-app/issues/282).
 ### Changed 
 - Updated Student Guide UI as defined in Figma. 
 
