@@ -128,7 +128,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     List<Widget> rowWidgets = <Widget>[];
     List<Widget> colWidgets = <Widget>[];
     for (String feature in featuresSet) {
-      StudentsGuideFeatureButton featureButton = _buildFeatureButton(feature);
+      StudentGuideFeatureButton featureButton = _buildFeatureButton(feature);
       if (featureButton != null) {
         if (rowWidgets.isNotEmpty) {
           rowWidgets.add(Container(width: 6),);
@@ -163,17 +163,17 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     /*return Padding(padding: EdgeInsets.all(16), child:
         Column(children: [
           Row(children: [
-            Expanded(child: StudentsGuideFeatureButton.fromFeature('athletics')),
+            Expanded(child: StudentGuideFeatureButton.fromFeature('athletics')),
             Container(width: 6),
-            Expanded(child: StudentsGuideFeatureButton.fromFeature('events')),
+            Expanded(child: StudentGuideFeatureButton.fromFeature('events')),
             Container(width: 6),
-            Expanded(child: StudentsGuideFeatureButton.fromFeature('dining')),
+            Expanded(child: StudentGuideFeatureButton.fromFeature('dining')),
           ],),
           Container(height: 6),
           Row(children: [
-            Expanded(child: StudentsGuideFeatureButton.fromFeature('laundry')),
+            Expanded(child: StudentGuideFeatureButton.fromFeature('laundry')),
             Container(width: 6),
-            Expanded(child: StudentsGuideFeatureButton.fromFeature('quick-polls')),
+            Expanded(child: StudentGuideFeatureButton.fromFeature('quick-polls')),
             Container(width: 6),
             Expanded(child: Container()),
           ],),
@@ -181,49 +181,49 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       );*/
   }
 
-  StudentsGuideFeatureButton _buildFeatureButton(String feature) {
+  StudentGuideFeatureButton _buildFeatureButton(String feature) {
     
     if (feature == 'athletics') {
-      return StudentsGuideFeatureButton(title: "Athletics", icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
+      return StudentGuideFeatureButton(title: "Athletics", icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
     }
     else if (feature == 'buss-pass') {
-      return StudentsGuideFeatureButton(title: "Buss Pass", icon: "images/icon-student-guide-buss-pass.png");
+      return StudentGuideFeatureButton(title: "Buss Pass", icon: "images/icon-student-guide-buss-pass.png");
     }
     else if (feature == 'dining') {
-      return StudentsGuideFeatureButton(title: "Dining", icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
+      return StudentGuideFeatureButton(title: "Dining", icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
     }
     else if (feature == 'events') {
-      return StudentsGuideFeatureButton(title: "Events", icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
+      return StudentGuideFeatureButton(title: "Events", icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
     }
     else if (feature == 'groups') {
-      return StudentsGuideFeatureButton(title: "Groups", icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
+      return StudentGuideFeatureButton(title: "Groups", icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
     }
     else if (feature == 'illini-cash') {
-      return StudentsGuideFeatureButton(title: "Illini Cash", icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
+      return StudentGuideFeatureButton(title: "Illini Cash", icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
     }
     else if (feature == 'illini-id') {
-      return StudentsGuideFeatureButton(title: "Illini ID", icon: "images/icon-student-guide-illini-id.png");
+      return StudentGuideFeatureButton(title: "Illini ID", icon: "images/icon-student-guide-illini-id.png");
     }
     else if (feature == 'laundry') {
-      return StudentsGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
+      return StudentGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
     }
     else if (feature == 'library') {
-      return StudentsGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
+      return StudentGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
     }
     else if (feature == 'meal-plan') {
-      return StudentsGuideFeatureButton(title: "Meal Plan", icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
+      return StudentGuideFeatureButton(title: "Meal Plan", icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
     }
     else if (feature == 'my-illini') {
-      return StudentsGuideFeatureButton(title: "My Illini", icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
+      return StudentGuideFeatureButton(title: "My Illini", icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
     }
     else if (feature == 'parking') {
-      return StudentsGuideFeatureButton(title: "Parking", icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
+      return StudentGuideFeatureButton(title: "Parking", icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
     }
     else if (feature == 'quick-polls') {
-      return StudentsGuideFeatureButton(title: "Quick Polls", icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
+      return StudentGuideFeatureButton(title: "Quick Polls", icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
     }
     else if (feature == 'saved') {
-      return StudentsGuideFeatureButton(title: "Saved", icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
+      return StudentGuideFeatureButton(title: "Saved", icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
     }
     else {
       return null;
@@ -241,7 +241,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       for (Map<String, dynamic> entry in entries) {
         contentList.add(
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-            StudentsGuideEntryCard(entry)
+            StudentGuideEntryCard(entry)
           )
         );
       }
@@ -316,14 +316,14 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 }
 
 
-class StudentsGuideEntryCard extends StatefulWidget {
+class StudentGuideEntryCard extends StatefulWidget {
   final Map<String, dynamic> guideEntry;
-  StudentsGuideEntryCard(this.guideEntry);
+  StudentGuideEntryCard(this.guideEntry);
 
-  _StudentsGuideEntryCardState createState() => _StudentsGuideEntryCardState();
+  _StudentGuideEntryCardState createState() => _StudentGuideEntryCardState();
 }
 
-class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
+class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
 
   bool _isFavorite = false;
 
@@ -393,16 +393,16 @@ class _StudentsGuideEntryCardState extends State<StudentsGuideEntryCard> {
   }
 }
 
-class StudentsGuideFeatureButton extends StatefulWidget {
+class StudentGuideFeatureButton extends StatefulWidget {
   final String title;
   final String icon;
   final Function onTap;
-  StudentsGuideFeatureButton({this.title, this.icon, this.onTap});
+  StudentGuideFeatureButton({this.title, this.icon, this.onTap});
 
-  _StudentsGuideFeatureButtonState createState() => _StudentsGuideFeatureButtonState();
+  _StudentGuideFeatureButtonState createState() => _StudentGuideFeatureButtonState();
 }
 
-class _StudentsGuideFeatureButtonState extends State<StudentsGuideFeatureButton> {
+class _StudentGuideFeatureButtonState extends State<StudentGuideFeatureButton> {
 
   @override
   void initState() {
