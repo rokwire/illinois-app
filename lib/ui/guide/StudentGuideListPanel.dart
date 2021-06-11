@@ -27,7 +27,8 @@ import 'package:url_launcher/url_launcher.dart';
 class StudentGuideListPanel extends StatefulWidget {
   final String category;
   final String subCategory;
-  StudentGuideListPanel({ this.category, this.subCategory});
+  final List<dynamic> promotedList;
+  StudentGuideListPanel({ this.category, this.subCategory, this.promotedList});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
@@ -45,10 +46,18 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   }
   @override
   Widget build(BuildContext context) {
+    String title;
+    if (widget.category != null) {
+      title = widget.category;
+    }
+    else if (widget.promotedList != null) {
+      title = 'Promoted';
+    }
+
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(widget.category ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -66,6 +75,10 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   }
 
   List<Widget> _buildContent() {
+    return (widget.category != null) ? _buildCategoryContent() : _buildPromoContent();
+  }
+
+  List<Widget> _buildCategoryContent() {
     List<Widget> contentList = <Widget>[];
     if (StudentGuide().contentList != null) {
       
@@ -108,6 +121,45 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 
       // build sections
       contentList.addAll(_buildSubCategories(subCategoriesMap: subCategoriesMap));
+    }
+    return contentList;
+  }
+
+  List<Widget> _buildPromoContent() {
+    List<Widget> contentList = <Widget>[];
+    if (widget.promotedList != null) {
+      
+      // construct sections & features
+      List<Widget> cardsList = <Widget>[];
+      LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
+
+      for (dynamic guideEntry in widget.promotedList) {
+        if (guideEntry is Map) {
+
+          cardsList.add(
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+              StudentGuideEntryCard(guideEntry)
+            )
+          );
+
+          List<dynamic> features = AppJson.listValue(guideEntry['features']);
+          if (features != null) {
+            for (dynamic feature in features) {
+              if ((feature is String) && !featuresSet.contains(feature)) {
+                featuresSet.add(feature);
+              }
+            }
+          }
+        }
+      }
+      
+      // build features
+      if (featuresSet.isNotEmpty) {
+        contentList.add(_buildFeatures(featuresSet: featuresSet));
+      }
+
+      // build sections
+      contentList.addAll(cardsList);
     }
     return contentList;
   }

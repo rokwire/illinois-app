@@ -122,6 +122,8 @@
     "category": "Involvement",
     "sub_category": "Community engagement",
 
+    "promotion": {},
+
     "title": "Participate in civic engagement",
     "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
@@ -130,6 +132,8 @@
     "category": "Involvement",
     "sub_category": "Community engagement",
 
+    "promotion": {},
+
     "title": "Join the Illini Union Board",
     "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
@@ -137,6 +141,8 @@
     "id": "volunteer",
     "category": "Involvement",
     "sub_category": "Community engagement",
+
+    "promotion": {},
 
     "title": "Volunteer",
     "description": "The Office of Volunteer Programs provides students with opportunities to give back to their community."
