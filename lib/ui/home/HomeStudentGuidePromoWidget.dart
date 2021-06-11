@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
@@ -33,16 +37,19 @@ class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidge
     super.initState();
 
     NotificationService().subscribe(this, [
-      StudentGuide.notifyChanged
+      StudentGuide.notifyChanged,
+      User.notifyRolesUpdated,
+      AppLivecycle.notifyStateChanged,
+      Auth.notifyCardChanged,
     ]);
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        _loadPromotedItems();
+        _updatePromotedItems();
       });
     }
 
-    _loadPromotedItems();
+    _promotedItems = StudentGuide().promotedList;
   }
 
   @override
@@ -56,7 +63,18 @@ class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidge
   @override
   void onNotification(String name, dynamic param) {
     if (name == StudentGuide.notifyChanged) {
-      _loadPromotedItems();
+      _updatePromotedItems();
+    }
+    else if (name == User.notifyRolesUpdated) {
+      _updatePromotedItems();
+    }
+    else if (name == Auth.notifyCardChanged) {
+      _updatePromotedItems();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      if (param == AppLifecycleState.resumed) {
+        _updatePromotedItems(); // update on each resume for time interval filtering
+      }
     }
   }
 
@@ -73,10 +91,13 @@ class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidge
     );
   }
 
-  void _loadPromotedItems() {
-    setState(() {
-      _promotedItems = StudentGuide().promotedList;
-    });
+  void _updatePromotedItems() {
+    List<dynamic> promotedItems = StudentGuide().promotedList;
+    if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
+      setState(() {
+        _promotedItems = promotedItems;
+      });
+    }
   }
 
   List<Widget> _buildPromotedList() {
