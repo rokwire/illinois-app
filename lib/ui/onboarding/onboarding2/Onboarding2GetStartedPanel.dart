@@ -41,7 +41,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   Semantics(
                     hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
                     header: true,
-                    child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus in Your Pocket",)),
+                    child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A smart campus in your pocket",)),
                   ),
                   Container(height: 14,),
                   Container(

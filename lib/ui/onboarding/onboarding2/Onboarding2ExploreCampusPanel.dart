@@ -129,7 +129,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                         )),
                     Container(height: 10,),
                     Onboarding2UnderlinedButton(
-                      title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                      title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
                       fontSize: 14,
                       onTap: _onTapLearnMore,
                     ),
@@ -249,6 +249,6 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   }
 
   String get _unToggledButtonTitle{
-    return Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Do not enable location services.');
+    return Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Don\'t enable location services.');
   }
 }

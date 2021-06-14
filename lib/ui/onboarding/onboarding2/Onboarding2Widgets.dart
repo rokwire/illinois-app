@@ -230,7 +230,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             text: new TextSpan(
                                 children:[
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy Policy "), onTap: _openPrivacyPolicy, padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies.regular,fontSize: 14,)),
+                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: _openPrivacyPolicy, padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies.regular,fontSize: 14,)),
                                   WidgetSpan(child: Container(
                                       decoration: BoxDecoration(
                                           border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)

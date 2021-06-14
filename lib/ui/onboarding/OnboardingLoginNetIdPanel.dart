@@ -109,7 +109,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Log in with NetID'),
+                        label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
                         hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
                         fontSize: 16,
                         padding: EdgeInsets.symmetric(vertical: 12),

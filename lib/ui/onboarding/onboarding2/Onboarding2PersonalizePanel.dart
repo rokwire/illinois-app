@@ -130,7 +130,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                             )),
                         Container(height: 10,),
                         Onboarding2UnderlinedButton(
-                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
                           fontSize: 14,
                           onTap: _onTapLearnMore,
                         ),
@@ -227,7 +227,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title1',"App Activity"),
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title1',"App activity"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
             Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content1',"Storing your app activity means that the app collects and remembers data about how you interact with it. The app stores your food preferences, your favorite teams, events you have starred, and other filters. Storing this information helps you use the app more efficiently."),
@@ -235,7 +235,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal Information"),
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal information"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
             Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and i-card information."),
@@ -275,6 +275,6 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   }
 
   String get _unToggledButtonTitle{
-    return Localization().getStringEx('panel.onboarding2.personalize.button.untoggle.title', 'Do not store my app activity or information.');
+    return Localization().getStringEx('panel.onboarding2.personalize.button.untoggle.title', 'Don\'t store my app activity or information.');
   }
 }
