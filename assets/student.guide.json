@@ -6,6 +6,7 @@
     "features": ["events", "dining"],
     
     "promotion": {
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
     },
     
     "list_title": "Participate in campus recreation",
@@ -77,7 +78,8 @@
     "sub_category": "Socializing",
 
     "promotion": {
-      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+      "roles": ["NOT", [ "student", "OR", "employee" ]]
     },
 
     "title": "Join an intramural sports team",
@@ -93,7 +95,8 @@
 
     "promotion": {
       "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
-      "roles": [ "student", "employee" ]
+      "roles": "student",
+      "card": { "role": "Undergraduate", "student_level": "1U" }
     },
 
     "title": "Join a student club or organization",
@@ -109,7 +112,7 @@
     "promotion": {
       "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
       "roles": "student",
-      "card": { "role": "Undergraduate", "student_level": "1U" }
+      "card": { "role": ["NOT", "Undergraduate"] }
     },
 
     "title": "Join a fraternity or sorority",
