@@ -29,7 +29,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/Network.dart';
 
 class AppString {
 
@@ -541,18 +540,6 @@ class AppSemantics {
       ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
       child: child );
     }
-}
-
-class AppImage {
-  static Map<String, String> getAuthImageHeaders() {
-    Map<String, String> headers;
-      String rokwireApiKey = Config().rokwireApiKey;
-      if (AppString.isStringNotEmpty(rokwireApiKey)) {
-        headers = Map();
-        headers[Network.RokwireApiKey] = rokwireApiKey;
-      }
-    return headers;
-  }
 }
 
 class AppDeviceOrientation {

@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -130,7 +131,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                   width: _smallImageSize,
                                   height: _smallImageSize,
                                   child: Image.network(
-                                    imageUrl, fit: BoxFit.fill, headers: AppImage.getAuthImageHeaders(),),),)),
+                                    imageUrl, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
                         ],),
                         _explorePaymentTypes(),
                         _buildConvergeButton(),
