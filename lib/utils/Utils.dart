@@ -16,7 +16,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:math';
 import 'package:illinois/service/Styles.dart';
@@ -553,13 +552,6 @@ class AppImage {
         headers[Network.RokwireApiKey] = rokwireApiKey;
       }
     return headers;
-  }
-
-  static MemoryImage memoryImageWithBytes( Uint8List bytes){
-    if(AppCollection.isCollectionNotEmpty(bytes)) {
-      return MemoryImage(bytes);
-    }
-    return null;
   }
 }
 

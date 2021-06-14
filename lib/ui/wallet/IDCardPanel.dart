@@ -17,7 +17,6 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
@@ -85,10 +84,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
     Uint8List photoBytes = await  Auth().authCard.photoBytes;
-    if(AppCollection.isCollectionNotEmpty(photoBytes)){
-      return await compute(AppImage.memoryImageWithBytes, photoBytes);
-    }
-    return null;
+    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
   Future<Color> _loadActiveColor() async{
