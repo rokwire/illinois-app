@@ -58,9 +58,9 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
       body: SafeArea(child: Column( children: <Widget>[
         Container(
           color: Styles().colors.white,
-          padding: EdgeInsets.only(top: 10, bottom: 10),
+          padding: EdgeInsets.only(top: 19, bottom: 19),
           child: Row(children: <Widget>[
-            Onboarding2BackButton(padding: const EdgeInsets.only(left: 10,),
+            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
                 onTap:() {
                   Analytics.instance.logSelect(target: "Back");
                   Navigator.pop(context);

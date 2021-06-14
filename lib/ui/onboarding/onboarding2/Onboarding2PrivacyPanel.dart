@@ -72,10 +72,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         children: <Widget>[
 
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 18),
+                            padding: EdgeInsets.symmetric(vertical: 19),
                             child: Row(children: [
-                            Onboarding2BackButton(padding: const EdgeInsets.only(
-                                left: 17, right: 20),
+                            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, right: 20),
                                 color: Styles().colors.white,
                                 onTap: () {
                                   Analytics.instance.logSelect(target: "Back");

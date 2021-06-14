@@ -59,7 +59,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
     return Scaffold(
         backgroundColor: Styles().colors.background,
-        body: SwipeDetector(
+        body: SafeArea(child: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
             child:
@@ -68,7 +68,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Row(children: [
-                      Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 37, right: 20, bottom: 8),
+                      Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 19, right: 20, bottom: 8),
                           onTap:() {
                             Analytics.instance.logSelect(target: "Back");
                             _goBack(context);
@@ -163,7 +163,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   ],
                 ),
               ),
-            )));
+            ))));
   }
 
   void _openPrivacyPolicy(){
