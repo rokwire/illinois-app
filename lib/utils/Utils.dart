@@ -32,12 +32,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 
-class AppBytes{
-  static Uint8List decodeBase64Bytes(String base64String){
-    return base64Decode(base64String);
-  }
-}
-
 class AppString {
 
   static bool isStringEmpty(String stringToCheck) {
