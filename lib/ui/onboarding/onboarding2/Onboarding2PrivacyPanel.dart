@@ -28,6 +28,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -72,9 +73,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         children: <Widget>[
 
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 19),
+//                            padding: EdgeInsets.symmetric(vertical: 19),
                             child: Row(children: [
-                            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, right: 20),
+                            Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
                                 color: Styles().colors.white,
                                 onTap: () {
                                   Analytics.instance.logSelect(target: "Back");
@@ -451,25 +452,29 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return
       GestureDetector(
         onTap: _openPrivacyPolicy,
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
-          ),
-          padding: EdgeInsets.only(bottom: 2),
-          child:
-          Row(children: [
-            Text(
-              Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies.regular,
-                  fontSize: 14,
-                  color: Styles().colors.white),
+        child:
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 19),
+          child:Container(
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+            ),
+            padding: EdgeInsets.only(bottom: 2),
+            child:
+            Row(children: [
+              Text(
+                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
+                style: TextStyle(
+                    fontFamily: Styles().fontFamilies.regular,
+                    fontSize: 14,
+                    color: Styles().colors.white),
 
-            ),
-            Container(padding: EdgeInsets.only(bottom: 3),
-                child: Image.asset("images/icon-external-link-white.png")
-            ),
-          ],)
+              ),
+              Container(padding: EdgeInsets.only(bottom: 3),
+                  child: Image.asset("images/icon-external-link-white.png")
+              ),
+            ],)
+          )
         )
       );
   }

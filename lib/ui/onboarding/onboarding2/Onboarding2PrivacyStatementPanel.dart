@@ -26,6 +26,7 @@ import 'package:illinois/ui/onboarding/onboarding2/Onboarding2ExploreCampusPanel
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'Onboarding2Widgets.dart';
 
@@ -124,13 +125,15 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                       container: true,
                         label: descriptionText1 + ", "+ descriptionText2+","+descriptionText3,
 //                        excludeSemantics: true,
-                        child: Padding(
+                        button: true,
+                        child: GestureDetector(
+                          onTap: _openPrivacyPolicy,
+                          child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: RichText(
                                 textAlign: TextAlign.center,
-
                                 text: TextSpan(
                                     style: TextStyle(
                                         fontFamily: Styles().fontFamilies.regular,
@@ -138,15 +141,15 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                         color: Styles().colors.textSurface),
                                     children: <TextSpan>[
                                       TextSpan(text:descriptionText1, semanticsLabel: "",),
-                                      TextSpan(text:descriptionText2, semanticsLabel: Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy Policy '),style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
-                                          recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
+                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                                          children: [
                                             WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                           ]),
                                       TextSpan(text:descriptionText3, semanticsLabel: ""),
                                     ]
                                 )
                             ),),
-                        )),
+                        ))),
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: 24, top: 16),
