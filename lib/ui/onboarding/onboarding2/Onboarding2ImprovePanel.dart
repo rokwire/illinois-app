@@ -128,15 +128,10 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                   )),
                             )),
                         Container(height: 10,),
-                        Semantics(
-                          button: true,
-                          child: GestureDetector(
-                            onTap: _onTapLearnMore,
-                            child:  Text(
-                                Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
-                            ),
-                          ),
+                        Onboarding2UnderlinedButton(
+                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
+                          fontSize: 14,
+                          onTap: _onTapLearnMore,
                         ),
                         Container(height: 18,),
                         Container(

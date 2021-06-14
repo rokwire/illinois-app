@@ -241,3 +241,46 @@ class Onboarding2InfoDialog extends StatelessWidget{
     }
   }
 }
+
+class Onboarding2UnderlinedButton extends StatelessWidget{
+  final Function onTap;
+  final String title;
+  final String hint;
+  final double fontSize;
+  final EdgeInsets padding;
+
+  const Onboarding2UnderlinedButton({Key key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets.symmetric(vertical: 20)}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return  GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Semantics(
+          label: title,
+          hint: hint,
+          button: true,
+          excludeSemantics: true,
+          child: Padding(
+              padding: padding,
+              child: Container(
+                  decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                  ),
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                        fontFamily: Styles().fontFamilies.medium,
+                        fontSize: fontSize,
+                        color: Styles().colors.fillColorPrimary,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1,
+                        decorationStyle:
+                        TextDecorationStyle.solid),
+                  )))),
+    );
+  }
+
+}
