@@ -187,66 +187,26 @@ class StudentGuide with Service implements NotificationsListener {
 
   static bool _checkPromotionRoles(Map<String, dynamic> promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
-    if (roles is List) {
-      for (dynamic role in roles) {
-        if (_checkPromotionRole(role)) {
-          return true;
-        }
-      }
-      return roles.isEmpty;
-    }
-    else {
-      return _checkPromotionRole(roles);
-    }
-  }
-
-  static bool _checkPromotionRole(dynamic role) {
-    if (role is String) {
-      UserRole userRole = UserRole.fromString(role);
-      if ((userRole != null) && (User().roles?.contains(userRole) != true)) {
-        return false;
-      }
-    }
-    return true;
+    return (roles != null) ? AppBoolExpr.eval(roles, (String argument) {
+      UserRole userRole = UserRole.fromString(argument);
+      return (userRole != null) ? (User().roles?.contains(userRole) ?? false) : null;
+    }) : true; 
   }
 
   static bool _checkPromotionCard(Map<String, dynamic> promotion) {
     Map<String, dynamic> card = (promotion != null) ? AppJson.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !_matchStringTarget(source: cardRole, target: Auth().authCard.role)) {
+      if ((cardRole != null) && !AppBoolExpr.eval(cardRole, (String role) { return Auth().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !_matchStringTarget(source: cardStudentLevel, target: Auth().authCard.studentLevel)) {
+      if ((cardStudentLevel != null) && !AppBoolExpr.eval(cardStudentLevel, (String studentLevel) { return Auth().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
         return false;
       }
     }
     return true;
-  }
-
-  static bool _matchStringTarget({dynamic source, dynamic target}) {
-    if (target is String) {
-      if (source is String) {
-        return source.toLowerCase() == target.toLowerCase();
-      }
-      else if (source is Iterable) {
-        for (dynamic sourceEntry in source) {
-          if (_matchStringTarget(source: sourceEntry, target: target)) {
-            return true;
-          }
-        }
-      }
-    }
-    else if (target is Iterable) {
-      for (dynamic targetEntry in target) {
-        if (_matchStringTarget(source: source, target: targetEntry)) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   // Debug
