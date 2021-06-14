@@ -908,7 +908,7 @@ class _AddImageWidgetState extends State<_AddImageWidget> {
                                   backgroundColor: Styles().colors.background,
                                   textColor: Styles().colors.fillColorPrimary,
                                   onTap: _onTapChooseFromDevice)),
-                          _showProgress ? AppProgressIndicator.create() : Container(),
+                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary)) : Container(),
                         ],
                       ),
                     ]))
