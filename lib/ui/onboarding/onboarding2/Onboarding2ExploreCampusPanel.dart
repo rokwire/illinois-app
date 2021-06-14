@@ -84,8 +84,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                       ],)
                     ),
                     Row(children:[
-                      Onboarding2BackButton(padding: const EdgeInsets.only(
-                          left: 17, top: 19, right: 20, bottom: 27),
+                      Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27),
                           onTap: () {
                             Analytics.instance.logSelect(target: "Back");
                             _goBack(context);
@@ -129,15 +128,10 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               )),
                         )),
                     Container(height: 10,),
-                    Semantics(
-                      button: true,
-                      child: GestureDetector(
-                        onTap: _onTapLearnMore,
-                        child:  Text(
-                            Localization().getStringEx('panel.onboarding2.explore_campus.button.title.learn_more', 'Learn More'),
-                            style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
-                        ),
-                      ),
+                    Onboarding2UnderlinedButton(
+                      title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
+                      fontSize: 14,
+                      onTap: _onTapLearnMore,
                     ),
                     Container(height: 24,),
                     Container(
@@ -255,6 +249,6 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   }
 
   String get _unToggledButtonTitle{
-    return Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Do not enable location services.');
+    return Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Don\'t enable location services.');
   }
 }
