@@ -625,3 +625,57 @@ class AppGeometry {
   }
 }
 
+class AppBoolExpr {
+  
+  static bool eval(dynamic expr, bool Function(String) evalArg) {
+    
+    if (expr is String) {
+
+      if (expr == 'TRUE') {
+        return true;
+      }
+      if (expr == 'FALSE') {
+        return false;
+      }
+
+      bool argValue = (evalArg != null) ? evalArg(expr) : null;
+      return argValue ?? true; // allow everything that is not defined or we do not understand
+    }
+    
+    else if (expr is List) {
+      
+      if (expr.length == 1) {
+        return eval(expr[0], evalArg);
+      }
+      
+      if (expr.length == 2) {
+        dynamic operation = expr[0];
+        dynamic argument = expr[1];
+        if (operation is String) {
+          if (operation == 'NOT') {
+            return !eval(argument, evalArg);
+          }
+        }
+      }
+
+      if (expr.length > 2) {
+        bool result = eval(expr[0], evalArg);
+        for (int index = 1; (index + 1) < expr.length; index += 2) {
+          dynamic operation = expr[index];
+          dynamic argument = expr[index + 1];
+          if (operation is String) {
+            if (operation == 'AND') {
+              result = result && eval(argument, evalArg);
+            }
+            else if (operation == 'OR') {
+              result = result || eval(argument, evalArg);
+            }
+          }
+        }
+        return result;
+      }
+    }
+    
+    return true; // allow everything that is not defined or we do not understand
+  }
+}
