@@ -533,7 +533,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   void _openPrivacyPolicy(){
     Analytics.instance.logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy.label.title", "Privacy Policy"),)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
     }
   }
 }
