@@ -22,6 +22,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingLoginPhonePanel extends StatefulWidget with OnboardingPanel {
@@ -101,46 +102,30 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                 ),
                 ]),
                 bottomNotScrollableWidget:
-                  Column(children: <Widget>[
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: EdgeInsets.all(24),
-                        child: ScalableRoundedButton(
-                            label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
-                            hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
-                            borderColor: Styles().colors.fillColorSecondary,
-                            backgroundColor: Styles().colors.background,
-                            textColor: Styles().colors.fillColorPrimary,
-                            onTap: () => _onLoginTapped()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ScalableRoundedButton(
+                        label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
+                        hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
+                        textColor: Styles().colors.fillColorPrimary,
+                        onTap: _onLoginTapped,
                       ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                            child: GestureDetector(
-                          onTap: () => _onSkipTapped(),
-                          child: Semantics(
-                              label: skipTitle,
-                              hint: Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.hint', 'Skip verification'),
-                              button: true,
-                              excludeSemantics: true,
-                              child: Padding(
-                                padding: EdgeInsets.only(bottom: 24),
-                                child: Text(
-                                  skipTitle,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Styles().colors.fillColorPrimary,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
-                                    fontFamily: Styles().fontFamilies.medium,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              )),
-                        )),
-                    ])])   ),
+                      Onboarding2UnderlinedButton(
+                        title: skipTitle,
+                        hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
+                        onTap: (){_onSkipTapped();},
+                      )
+                    ],
+                  ),
+                )
+            ),
                     _progress
                     ? Container(
                     alignment: Alignment.center,

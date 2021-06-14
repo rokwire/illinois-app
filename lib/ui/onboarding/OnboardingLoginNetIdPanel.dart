@@ -24,6 +24,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/onboarding/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingLoginNetIdPanel extends StatefulWidget with OnboardingPanel {
@@ -102,7 +103,30 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                 ),
                 ]),
                 bottomNotScrollableWidget:
-                Column(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ScalableRoundedButton(
+                        label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Log in with NetID'),
+                        hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.white,
+                        textColor: Styles().colors.fillColorPrimary,
+                        onTap: _onLoginTapped,
+                      ),
+                      Onboarding2UnderlinedButton(
+                        title: skipTitle,
+                        hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
+                        onTap: (){_onSkipTapped();},
+                      )
+                    ],
+                  ),
+                )
+/*                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Align(
@@ -145,7 +169,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                         )),
                       ],
                     )
-                ]),
+                ]),*/
             ),
             _progress
             ? Container(
