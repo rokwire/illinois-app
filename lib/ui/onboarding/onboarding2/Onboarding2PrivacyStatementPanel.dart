@@ -90,7 +90,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                               textAlign: TextAlign.center,
                               text: TextSpan(
                                 children: <TextSpan>[
-                                  TextSpan(text:titleText , style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies.bold, fontWeight: FontWeight.w700, height: 1.5)),
+                                  TextSpan(text:titleText , style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies.bold, fontWeight: FontWeight.w700, height: 1.25)),
                                   TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
                                 ]
                               )
@@ -108,6 +108,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                             descriptionText,
                             textAlign: TextAlign.center,
                             style: TextStyle(
+                                height: 1.4,
                                 fontFamily: Styles().fontFamilies.regular,
                                 fontSize: 16,
                                 color: Styles().colors.fillColorPrimary),
