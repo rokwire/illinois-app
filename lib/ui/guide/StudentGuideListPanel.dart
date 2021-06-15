@@ -260,7 +260,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     else if (feature == 'laundry') {
       return StudentGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
     }
-    else if (feature == 'library') {
+    else if (feature == 'library-card') {
       return StudentGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
     }
     else if (feature == 'meal-plan') {
