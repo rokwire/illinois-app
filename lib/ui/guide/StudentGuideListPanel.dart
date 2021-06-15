@@ -26,9 +26,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class StudentGuideListPanel extends StatefulWidget {
   final String category;
-  final String subCategory;
+  final String section;
   final List<dynamic> promotedList;
-  StudentGuideListPanel({ this.category, this.subCategory, this.promotedList});
+  StudentGuideListPanel({ this.category, this.section, this.promotedList});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
@@ -83,26 +83,26 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     if (StudentGuide().contentList != null) {
       
       // construct sections & features
-      LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
+      LinkedHashMap<String, List<Map<String, dynamic>>> sectionsMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
       LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
-      for (dynamic guideEntry in StudentGuide().contentList) {
-        if (guideEntry is Map) {
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
 
-          String category = AppJson.stringValue(guideEntry['category']);
-          String subCategory = AppJson.stringValue(guideEntry['sub_category']);
-          if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          if ((widget.category == category) && (section != null) && ((widget.section == null) || (widget.section == section))) {
 
-            List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
+            List<Map<String, dynamic>> sectionEntries = sectionsMap[section];
             
-            if (subCategoryEntries == null) {
-              subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
+            if (sectionEntries == null) {
+              sectionsMap[section] = sectionEntries = <Map<String, dynamic>>[];
             }
             
-            try { subCategoryEntries.add(guideEntry.cast<String, dynamic>()); }
-            catch(e) { print(e?.toString()); }
+            sectionEntries.add(guideEntry);
 
-            List<dynamic> features = AppJson.listValue(guideEntry['features']);
+            List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
             if (features != null) {
               for (dynamic feature in features) {
                 if ((feature is String) && !featuresSet.contains(feature)) {
@@ -120,7 +120,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       }
 
       // build sections
-      contentList.addAll(_buildSubCategories(subCategoriesMap: subCategoriesMap));
+      contentList.addAll(_buildSections(sectionsMap: sectionsMap));
     }
     return contentList;
   }
@@ -133,8 +133,9 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       List<Widget> cardsList = <Widget>[];
       LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
-      for (dynamic guideEntry in widget.promotedList) {
-        if (guideEntry is Map) {
+      for (dynamic promotedEntry in widget.promotedList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
+        if (guideEntry != null) {
 
           cardsList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
@@ -142,7 +143,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
             )
           );
 
-          List<dynamic> features = AppJson.listValue(guideEntry['features']);
+          List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
           if (features != null) {
             for (dynamic feature in features) {
               if ((feature is String) && !featuresSet.contains(feature)) {
@@ -259,7 +260,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     else if (feature == 'laundry') {
       return StudentGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
     }
-    else if (feature == 'library') {
+    else if (feature == 'library-card') {
       return StudentGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
     }
     else if (feature == 'meal-plan') {
@@ -282,13 +283,13 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     }
   }
 
-  List<Widget> _buildSubCategories({ LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap }) {
+  List<Widget> _buildSections({ LinkedHashMap<String, List<Map<String, dynamic>>> sectionsMap }) {
     List<Widget> contentList = <Widget>[];
-    subCategoriesMap.forEach((String subCategory, List<Map<String, dynamic>> entries) {
+    sectionsMap.forEach((String section, List<Map<String, dynamic>> entries) {
       if (contentList.isNotEmpty) {
         contentList.add(Container(height: 16,));
       }
-      contentList.add(_buildSectionHeading(subCategory));
+      contentList.add(_buildSectionHeading(section));
 
       for (Map<String, dynamic> entry in entries) {
         contentList.add(
@@ -391,8 +392,8 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   
   @override
   Widget build(BuildContext context) {
-    String titleHtml = AppJson.stringValue(widget.guideEntry['list_title']) ?? AppJson.stringValue(widget.guideEntry['title']) ?? '';
-    String descriptionHtml = AppJson.stringValue(widget.guideEntry['list_description']) ?? AppJson.stringValue(widget.guideEntry['description']) ?? '';
+    String titleHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'title')) ?? '';
+    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_description')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'description')) ?? '';
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,

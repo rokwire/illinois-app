@@ -55,26 +55,27 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       
       LinkedHashMap<String, LinkedHashSet<String>> categoriesMap = LinkedHashMap<String, LinkedHashSet<String>>();
       
-      for (dynamic guideEntry in StudentGuide().contentList) {
-        if (guideEntry is Map) {
-          String category = AppJson.stringValue(guideEntry['category']);
-          String subCategory = AppJson.stringValue(guideEntry['sub_category']);
-          if ((category != null) && (subCategory != null)) {
-            LinkedHashSet<String> categoryEntries = categoriesMap[category];
-            if (categoryEntries == null) {
-              categoriesMap[category] = categoryEntries = LinkedHashSet<String>();
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          if ((category != null) && (section != null)) {
+            LinkedHashSet<String> categorySections = categoriesMap[category];
+            if (categorySections == null) {
+              categoriesMap[category] = categorySections = LinkedHashSet<String>();
             }
-            if (!categoryEntries.contains(subCategory)) {
-              categoryEntries.add(subCategory);
+            if (!categorySections.contains(section)) {
+              categorySections.add(section);
             }
           }
         }
       }
 
-      categoriesMap.forEach((String category, LinkedHashSet<String> subCategories) {
+      categoriesMap.forEach((String category, LinkedHashSet<String> sections) {
         contentList.add(_buildHeading(category));
-        for (String subCategory in subCategories) {
-          contentList.add(_buildEntry(subCategory, category: category));
+        for (String section in sections) {
+          contentList.add(_buildEntry(section, category: category));
         }
       });
         
@@ -95,14 +96,14 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     );
   }
 
-  Widget _buildEntry(String subCategory, { String category }) {
-    return GestureDetector(onTap: () => _onTapSubCategory(subCategory, category: category), child:
+  Widget _buildEntry(String section, { String category }) {
+    return GestureDetector(onTap: () => _onTapSection(section, category: category), child:
       Padding(padding: EdgeInsets.only(left:16, right: 16, top: 4), child:
         Container(color: Styles().colors.fillColorPrimary, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Row(children: [
               Expanded(child:
-                Text(subCategory, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+                Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
               ),
               Image.asset("images/chevron-right-white.png")
             ],),
@@ -116,8 +117,8 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category,)));
   }
 
-  void _onTapSubCategory(String subCategory, {String category}) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category, subCategory: subCategory,)));
+  void _onTapSection(String section, {String category}) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category, section: section,)));
   }
 }
 

@@ -19,6 +19,7 @@ class DebugStudentGuidePanel extends StatefulWidget {
 class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
 
   TextEditingController _jsonController;
+  String _jsonContent;
   bool _loadingJsonContent;
 
   @override
@@ -30,7 +31,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
       setState(() {
         _loadingJsonContent = false;
       });
-      _jsonController.text = jsonContent ?? '';
+      _jsonController.text = _jsonContent = jsonContent ?? '';
     });
   }
 
@@ -137,7 +138,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
         setState(() {
           _loadingJsonContent = false;
         });
-        _jsonController.text = jsonContent ?? '';
+        _jsonController.text = _jsonContent = jsonContent ?? '';
       });
     }
   }
@@ -145,6 +146,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   void _onApply() {
     StudentGuide().setContentString(_jsonController.text).then((String jsonContent) {
       if (jsonContent != null) {
+        _jsonContent = jsonContent ?? '';
         AppAlert.showDialogResult(context, "JSON conent applied.");
       }
       else {
@@ -154,14 +156,20 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   }
 
   void _onPreview() {
+    if (_jsonController.text != _jsonContent) {
     StudentGuide().setContentString(_jsonController.text).then((String jsonContent) {
       if (jsonContent != null) {
+        _jsonContent = jsonContent;
         Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
       }
       else {
         AppAlert.showDialogResult(context, "Invalid JSON content.");
       }
     });
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+    }
   }
 }
 
