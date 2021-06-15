@@ -55,10 +55,11 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       
       LinkedHashMap<String, LinkedHashSet<String>> categoriesMap = LinkedHashMap<String, LinkedHashSet<String>>();
       
-      for (dynamic guideEntry in StudentGuide().contentList) {
-        if (guideEntry is Map) {
-          String category = AppJson.stringValue(guideEntry['category']);
-          String subCategory = AppJson.stringValue(guideEntry['sub_category']);
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String subCategory = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'sub_category'));
           if ((category != null) && (subCategory != null)) {
             LinkedHashSet<String> categoryEntries = categoriesMap[category];
             if (categoryEntries == null) {

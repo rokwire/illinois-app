@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -21,6 +22,7 @@ class StudentGuide with Service implements NotificationsListener {
   static const String _cacheFileName = "student.guide.json";
 
   List<dynamic> _contentList;
+  LinkedHashMap<String, Map<String, dynamic>> _contentMap;
 
   File          _cacheFile;
   DateTime      _pausedDateTime;
@@ -50,6 +52,7 @@ class StudentGuide with Service implements NotificationsListener {
   Future<void> initService() async {
     _cacheFile = await _getCacheFile();
     _contentList = await _loadContentJsonFromCache() ?? await _loadContentJsonFromAssets();
+    _contentMap = _buildContentMap(_contentList);
   }
 
   @override
@@ -118,6 +121,21 @@ class StudentGuide with Service implements NotificationsListener {
     return AppJson.decodeList(await _loadContentStringFromAssets());
   }
 
+  static LinkedHashMap<String, Map<String, dynamic>> _buildContentMap(List<dynamic> contentList) {
+    LinkedHashMap<String, Map<String, dynamic>> contentMap;
+    if (contentList != null) {
+      contentMap = LinkedHashMap<String, Map<String, dynamic>>();
+      for (dynamic contentEntry in contentList) {
+        Map<String, dynamic> mapEntry = AppJson.mapValue(contentEntry);
+        String id = (mapEntry != null) ? AppJson.stringValue(mapEntry['id']) : null;
+        if (id != null) {
+          contentMap[id] = mapEntry;
+        }
+      }
+    }
+    return contentMap;
+  }
+
   // Content
 
   List<dynamic> get contentList {
@@ -127,18 +145,22 @@ class StudentGuide with Service implements NotificationsListener {
   void _applyContentList(List<dynamic> value) {
     if ((value != null) && !DeepCollectionEquality().equals(_contentList, value)) {
       _contentList = value;
+      _contentMap = _buildContentMap(value);
       NotificationService().notify(notifyChanged);
     }
   }
 
   Map<String, dynamic> entryById(String id) {
-    if (_contentList != null) {
-      for (dynamic entry in _contentList) {
-        if ((entry is Map) && (AppJson.stringValue(entry['id']) == id)) {
-          try { return entry.cast<String, dynamic>(); }
-          catch(e) { print(e?.toString()); }
-        }
+    return (_contentMap != null) ? _contentMap[id] : null;
+  }
+
+  dynamic entryValue(Map<String, dynamic> entry, String key) {
+    while (entry != null) {
+      dynamic value = entry[key];
+      if (value != null) {
+        return value;
       }
+      entry = entryById(AppJson.stringValue(entry['content_ref']));
     }
     return null;
   }
@@ -156,8 +178,8 @@ class StudentGuide with Service implements NotificationsListener {
     return null;
   }
 
-  static bool _isEntryPromoted(Map<String, dynamic> entry) {
-    Map<String, dynamic> promotion = (entry != null) ? AppJson.mapValue(entry['promotion']) : null;
+  bool _isEntryPromoted(Map<String, dynamic> entry) {
+    Map<String, dynamic> promotion = (entry != null) ? AppJson.mapValue(entryValue(entry, 'promotion')) : null;
     return (promotion != null) ?
       _checkPromotionInterval(promotion) &&
       _checkPromotionRoles(promotion) &&

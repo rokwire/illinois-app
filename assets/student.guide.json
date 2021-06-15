@@ -1,13 +1,6 @@
 [
   {
     "id": "campus.recreation",
-    "category": "Involvement",
-    "sub_category": "Socializing",
-    "features": ["events", "dining"],
-    
-    "promotion": {
-      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
-    },
     
     "list_title": "Participate in campus recreation",
     "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
@@ -71,6 +64,28 @@
       ]}
     ],
     "related": [ "fraternity", "students.club", "civic.engagement" ]
+  },
+  {
+    "id": "campus.recreation.involvement",
+    "category": "Involvement",
+    "sub_category": "Socializing",
+    "features": ["events", "athletics", "groups", "quick-polls"],
+    "promotion": {
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
+    },
+    
+    "content_ref": "campus.recreation"
+  },
+  {
+    "id": "campus.recreation.health",
+    "category": "Health & wellness",
+    "sub_category": "Exercise",
+    "features": ["meal_plan", "dining"],
+    "promotion": {
+      "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
+    },
+    
+    "content_ref": "campus.recreation"
   },
   {
     "id": "intramural.sports",

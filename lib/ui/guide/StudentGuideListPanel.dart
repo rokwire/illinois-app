@@ -86,11 +86,12 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       LinkedHashMap<String, List<Map<String, dynamic>>> subCategoriesMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
       LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
-      for (dynamic guideEntry in StudentGuide().contentList) {
-        if (guideEntry is Map) {
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
 
-          String category = AppJson.stringValue(guideEntry['category']);
-          String subCategory = AppJson.stringValue(guideEntry['sub_category']);
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String subCategory = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'sub_category'));
           if ((widget.category == category) && (subCategory != null) && ((widget.subCategory == null) || (widget.subCategory == subCategory))) {
 
             List<Map<String, dynamic>> subCategoryEntries = subCategoriesMap[subCategory];
@@ -99,10 +100,9 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
               subCategoriesMap[subCategory] = subCategoryEntries = <Map<String, dynamic>>[];
             }
             
-            try { subCategoryEntries.add(guideEntry.cast<String, dynamic>()); }
-            catch(e) { print(e?.toString()); }
+            subCategoryEntries.add(guideEntry);
 
-            List<dynamic> features = AppJson.listValue(guideEntry['features']);
+            List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
             if (features != null) {
               for (dynamic feature in features) {
                 if ((feature is String) && !featuresSet.contains(feature)) {
@@ -133,8 +133,9 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
       List<Widget> cardsList = <Widget>[];
       LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
-      for (dynamic guideEntry in widget.promotedList) {
-        if (guideEntry is Map) {
+      for (dynamic promotedEntry in widget.promotedList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
+        if (guideEntry != null) {
 
           cardsList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
@@ -142,7 +143,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
             )
           );
 
-          List<dynamic> features = AppJson.listValue(guideEntry['features']);
+          List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
           if (features != null) {
             for (dynamic feature in features) {
               if ((feature is String) && !featuresSet.contains(feature)) {
@@ -391,8 +392,8 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   
   @override
   Widget build(BuildContext context) {
-    String titleHtml = AppJson.stringValue(widget.guideEntry['list_title']) ?? AppJson.stringValue(widget.guideEntry['title']) ?? '';
-    String descriptionHtml = AppJson.stringValue(widget.guideEntry['list_description']) ?? AppJson.stringValue(widget.guideEntry['description']) ?? '';
+    String titleHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'title')) ?? '';
+    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_description')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'description')) ?? '';
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
