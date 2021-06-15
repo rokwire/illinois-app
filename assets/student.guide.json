@@ -68,7 +68,7 @@
   {
     "id": "campus.recreation.involvement",
     "category": "Involvement",
-    "sub_category": "Socializing",
+    "section": "Socializing",
     "features": ["events", "athletics", "groups", "quick-polls"],
     "promotion": {
       "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
@@ -79,7 +79,7 @@
   {
     "id": "campus.recreation.health",
     "category": "Health & wellness",
-    "sub_category": "Exercise",
+    "section": "Exercise",
     "features": ["meal_plan", "dining"],
     "promotion": {
       "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"}
@@ -90,7 +90,7 @@
   {
     "id": "intramural.sports",
     "category": "Involvement",
-    "sub_category": "Socializing",
+    "section": "Socializing",
 
     "promotion": {
       "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
@@ -105,7 +105,7 @@
   {
     "id": "students.club",
     "category": "Involvement",
-    "sub_category": "Socializing",
+    "section": "Socializing",
     "features": ["groups"],
 
     "promotion": {
@@ -122,7 +122,7 @@
   {
     "id": "fraternity",
     "category": "Involvement",
-    "sub_category": "Socializing",
+    "section": "Socializing",
 
     "promotion": {
       "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
@@ -138,7 +138,7 @@
   {
     "id": "civic.engagement",
     "category": "Involvement",
-    "sub_category": "Community engagement",
+    "section": "Community engagement",
 
     "promotion": {},
 
@@ -148,7 +148,7 @@
   {
     "id": "union.board",
     "category": "Involvement",
-    "sub_category": "Community engagement",
+    "section": "Community engagement",
 
     "promotion": {},
 
@@ -158,7 +158,7 @@
   {
     "id": "volunteer",
     "category": "Involvement",
-    "sub_category": "Community engagement",
+    "section": "Community engagement",
 
     "promotion": {},
 
@@ -168,7 +168,7 @@
   {
     "id": "call.safewalk",
     "category": "Security",
-    "sub_category": "Safety",
+    "section": "Safety",
     "features": ["athletics"],
 
     "title": "Call for a SafeWalk",
@@ -194,7 +194,7 @@
   {
     "id": "call.saferide",
     "category": "Security",
-    "sub_category": "Safety",
+    "section": "Safety",
     "features": ["athletics"],
 
     "title": "Call for a SafeRide",
@@ -203,7 +203,7 @@
   {
     "id": "sexual.assault",
     "category": "Security",
-    "sub_category": "Safety",
+    "section": "Safety",
     "features": ["athletics"],
 
     "title": "Find resources for sexual assault or abuse",
@@ -212,7 +212,7 @@
   {
     "id": "prepared.emergency",
     "category": "Security",
-    "sub_category": "Emergency",
+    "section": "Emergency",
 
     "title": "Be prepared for an emergency",
     "description": "Take a moment to think about what you should do in a situation where your ability to react quickly may save your life."
@@ -220,7 +220,7 @@
   {
     "id": "lorem.ipsum.1",
     "category": "Security",
-    "sub_category": "Emergency",
+    "section": "Emergency",
 
     "title": "In case of emergency",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in arcu sed leo lacinia elementum quis quis mi. Nulla et lobortis eros. Donec vel rhoncus ipsum. Aliquam erat volutpat."
@@ -228,7 +228,7 @@
   {
     "id": "write.workshop",
     "category": "Living on campus",
-    "sub_category": "Academic support",
+    "section": "Academic support",
     "features": ["saved"],
 
     "title": "Take advantage of the Writer’s Workshop",
@@ -254,7 +254,7 @@
   {
     "id": "online.classses",
     "category": "Living on campus",
-    "sub_category": "Academic support",
+    "section": "Academic support",
 
     "title": "Take online classes",
     "description": "Illinois Online offers online classes for students who need to be away from campus or want to get ahead for graduation.",
@@ -264,7 +264,7 @@
   {
     "id": "assistent.center",
     "category": "Living on campus",
-    "sub_category": "Academic support",
+    "section": "Academic support",
 
     "title": "Get help from the Student Assistance Center",
     "description": "The Student Assistance Center promotes the holistic growth and development of Illinois students.",
@@ -274,7 +274,7 @@
   {
     "id": "union.bookstore",
     "category": "Living on campus",
-    "sub_category": "Library access",
+    "section": "Library access",
 
     "title": "The Illini Union Bookstore",
     "description": "The premiere place for students to rent or purchase textbooks.",
@@ -284,7 +284,7 @@
   {
     "id": "lorem.ipsum.2",
     "category": "Living on campus",
-    "sub_category": "Library access",
+    "section": "Library access",
 
     "title": "The Illini Union Bookstore",
     "description": "The premiere place for students to rent or purchase textbooks.",
@@ -294,7 +294,7 @@
   {
     "id": "reflection.rooms",
     "category": "Spirituality",
-    "sub_category": "Reflections",
+    "section": "Reflections",
     "features": ["library"],
 
     "title": "Reflection rooms",
