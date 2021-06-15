@@ -256,4 +256,183 @@ class StudentGuide with Service implements NotificationsListener {
       return value;
     }
   }
+
+  /*static Future<void> _convertFile(String contentFileName, String sourceFileName) async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+
+    String sourceFilePath = join(appDocDir.path, sourceFileName);
+    File sourceFile = File(sourceFilePath);
+    String sourceString = await sourceFile.exists() ? await sourceFile.readAsString() : null;
+    List<dynamic> sourceList = AppJson.decodeList(sourceString);
+    
+    List<dynamic> contentList = _convertContent(sourceList);
+    String contentString = AppJson.encode(contentList, prettify: true);
+    if (contentString != null) {
+      String contentFilePath = join(appDocDir.path, contentFileName);
+      File contentFile = File(contentFilePath);
+      await contentFile.writeAsString(contentString, flush: true);
+    }
+  }
+
+  static List<dynamic> convertContent(List<dynamic> sourceList) {
+    List<dynamic> contentList;
+    if (sourceList != null) {
+      contentList = <dynamic>[];
+      for (dynamic sourceEntry in sourceList) {
+        dynamic contentEntry = _convertContentEntry(sourceEntry);
+        if (contentEntry != null) {
+          contentList.add(contentEntry);
+        }
+      }
+    }
+    return contentList;
+  }
+
+  static Map<String, dynamic> _convertContentEntry(Map<String, dynamic> sourceEntry) {
+    Map<String, dynamic> contentEntry = Map<String, dynamic>();
+
+    // Shared Fields
+    for (String key in ['id', 'guide', 'category', 'section', 'list_title', 'list_description', 'detail_title', 'detail_description', 'image', 'sub_details_title', 'sub_details_description']) {
+      dynamic sourceValue = sourceEntry[key];
+      if (sourceValue != null) {
+        contentEntry[key] = sourceValue;
+      }
+    }
+
+    // Features
+    List<dynamic> features = <dynamic>[];
+    String sourceFeaturesString = AppJson.stringValue(sourceEntry['features']);
+    if (sourceFeaturesString != null) {
+      List<String> sourceFeatures = sourceFeaturesString.split(RegExp('[;,\n]'));
+      for (String sourceFeature in sourceFeatures) {
+        sourceFeature = sourceFeature.trim();
+        if (sourceFeature.isNotEmpty) {
+          features.add(sourceFeature.toLowerCase().replaceAll(' ', '-'));
+        }
+      }
+    }
+    if (features.isNotEmpty) {
+      contentEntry['features'] = features;
+    }
+
+    // Links
+    List<dynamic> contentLinks = <dynamic>[];
+
+    String phoneLinksString = AppJson.stringValue(sourceEntry['phone_links']);
+    if (phoneLinksString != null) {
+      List<String> phoneLinks = phoneLinksString.split(RegExp('[;,\n ]'));
+      for (String phoneLink in phoneLinks) {
+        if (phoneLink.isNotEmpty) {
+          contentLinks.add({ "text": phoneLink, "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-phone.png", "url": "tel:+1-$phoneLink" });
+        }
+      }
+    }
+    String emailLinksString = AppJson.stringValue(sourceEntry['email_links']);
+    if (emailLinksString != null) {
+      List<String> emailLinks = emailLinksString.split(RegExp('[;,\n ]'));
+      for (String emailLink in emailLinks) {
+        if (emailLink.isNotEmpty) {
+          contentLinks.add({ "text": emailLink, "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "url": "mailto:$emailLink" });
+        }
+      }
+    }
+    String webLinksString = AppJson.stringValue(sourceEntry['web_links']);
+    if (webLinksString != null) {
+      List<String> webLinks = webLinksString.split(RegExp('[;,\n ]'));
+      for (String webLink in webLinks) {
+        if (webLink.isNotEmpty) {
+          contentLinks.add({ "text": webLink, "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "url": webLink });
+        }
+      }
+    }
+    
+    if (contentLinks.isNotEmpty) {
+      contentEntry['links'] = contentLinks;
+    }
+
+    // Buttons
+    String buttonText = AppJson.stringValue(sourceEntry['button_text']);
+    String buttonUrl = AppJson.stringValue(sourceEntry['button_link']);
+    if ((buttonText != null) && (0 < buttonText.length) || (buttonUrl != null) && (0 < buttonUrl.length)) {
+      contentEntry['buttons'] = [{ "text": buttonText, "url": buttonUrl }];
+    }
+
+    // Sub Details
+    List<dynamic> subDetails = <dynamic>[];
+    for (int index = 1; index <= 5; index++) {
+      
+      Map<String, dynamic> subDetail = <String, dynamic>{};
+      String sectionTitle = AppJson.stringValue(sourceEntry['sub_details_section${index}_title'])?.replaceAll('\n', '');
+      if (sectionTitle != null) {
+        subDetail['section'] = sectionTitle;
+      }
+
+      Map<String, dynamic> sectionEntry = <String, dynamic>{};
+      
+      String sectionHeading = AppJson.stringValue(sourceEntry['sub_details_section${index}_headings'])?.replaceAll('\n', '');
+      if (sectionHeading != null) {
+        sectionEntry['heading'] = sectionHeading;
+      }
+
+      List<dynamic> numbers = <dynamic>[];
+      String sectionNumbersString = AppJson.stringValue(sourceEntry['sub_details_section${index}_numbers'])?.replaceAll('\n', '');
+      if (sectionNumbersString != null) {
+        List<String> sectionNumers = sectionNumbersString.split(RegExp('[;\n]'));
+        for (String sectionNumer in sectionNumers) {
+          sectionNumer = sectionNumer.trim();
+          if (sectionNumer.isNotEmpty) {
+            numbers.add(sectionNumer);
+          }
+        }
+      }
+      if (numbers.isNotEmpty) {
+        sectionEntry['numbers'] = numbers;
+      }
+
+      List<dynamic> bullets = <dynamic>[];
+      String sectionBulletsString = AppJson.stringValue(sourceEntry['sub_details_section${index}_bullets'])?.replaceAll('\n', '');
+      if (sectionBulletsString != null) {
+        List<String> sectionBullets = sectionBulletsString.split(RegExp('[;\n]'));
+        for (String sectionBullet in sectionBullets) {
+          sectionBullet = sectionBullet.trim();
+          if (sectionBullet.isNotEmpty) {
+            bullets.add(sectionBullet);
+          }
+        }
+      }
+      if (bullets.isNotEmpty) {
+        sectionEntry['bullets'] = bullets;
+      }
+
+      if (sectionEntry.isNotEmpty) {
+        subDetail['entries'] = [ sectionEntry ];
+      }
+
+      if (subDetail.isNotEmpty) {
+        subDetails.add(subDetail);
+      }
+    }
+    if (subDetails.isNotEmpty) {
+      contentEntry['sub_details'] = subDetails;
+    }
+
+    // Related
+    List<dynamic> relatedList = <dynamic>[];
+    String relatedString = AppJson.stringValue(sourceEntry['related']);
+    if (relatedString != null) {
+      List<String> related = relatedString.split(RegExp('[;,\n ]'));
+      for (String relatedEntry in related) {
+        relatedEntry = relatedEntry.trim();
+        if (relatedEntry.isNotEmpty) {
+          relatedList.add(relatedEntry);
+        }
+      }
+    }
+    if (relatedList.isNotEmpty) {
+      contentEntry['related'] = relatedList;
+    }
+    
+    return contentEntry;
+  }*/
+
 }
