@@ -216,6 +216,28 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
                   ),),);
                 }
 
+                List<dynamic> numbers = AppJson.listValue(entry['numbers']);
+                if (numbers != null) {
+                  for (int numberIndex = 0; numberIndex < numbers.length; numberIndex++) {
+                    dynamic numberHtml = numbers[numberIndex];
+                    if (numberHtml is String) {
+                      contentList.add(
+                        Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
+                              Text('${numberIndex + 1}.', style: TextStyle(color: Styles().colors.textBackground, fontSize: 20, fontFamily: Styles().fontFamilies.regular),),),
+                            Expanded(child:
+                              Html(data: numberHtml,
+                              onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+                                style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                            ),),
+                          ],)
+                        ),
+                      );
+                    }
+                  }
+                }
+
                 List<dynamic> bullets = AppJson.listValue(entry['bullets']);
                 if (bullets != null) {
                   for (dynamic bulletHtml in bullets) {
@@ -224,7 +246,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
                         Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
-                              Text('\u2022', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),),),
+                              Text('\u2022', style: TextStyle(color: Styles().colors.textBackground, fontSize: 20, fontFamily: Styles().fontFamilies.regular),),),
                             Expanded(child:
                               Html(data: bulletHtml,
                               onLinkTap: (url, context, attributes, element) => _onTapLink(url),
@@ -236,6 +258,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
                     }
                   }
                 }
+
               }
             }
           }
