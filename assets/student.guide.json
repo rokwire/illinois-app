@@ -47,7 +47,11 @@
   "category":"Health & wellness",
   "section":"Exercise",
   "features":["dining","meal-plan"],
-  "content_ref": "participate.campus.rec.content"
+  "promotion": {
+    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+    "roles": ["NOT", [ "student", "OR", "employee" ]]
+  },
+"content_ref": "participate.campus.rec.content"
 },{
   "id":"participate.campus.rec_01",
   "guide":"For students",
@@ -72,6 +76,11 @@
   "category":"Involvement",
   "section":"Socializing",
   "features":["events","athletics","groups","quick-polls"],
+  "promotion": {
+    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+    "roles": "student",
+    "card": { "role": "Undergraduate", "student_level": "1U" }
+  },
   "content_ref": "join.intramural.content"
 },{
   "id":"join.intramural_02",
@@ -112,6 +121,11 @@
   "category":"Involvement",
   "section":"Socializing",
   "features":["events","athletics","groups","quick-polls"],
+  "promotion": {
+    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+    "roles": "student",
+    "card": { "role": ["NOT", "Undergraduate"] }
+},
   "content_ref": "join.frat.content"
 },{
   "id":"join.frat_03",
@@ -125,6 +139,11 @@
   "guide":"For students",
   "category":"Involvement",
   "section":"Socializing",
+  "promotion": {
+    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
+    "roles": "student",
+    "card": { "role": ["NOT", "Undergraduate"] }
+  },
   "list_title":"Join a student club or organization",
   "list_description":"Illinois is home to many student clubs and organizations. Get involved today!",
   "detail_title":"Join a student club or organization",
