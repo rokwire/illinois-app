@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Dining Dollars payment type processing [#295](https://github.com/rokwire/illinois-app/issues/295).
+### Changed 
+- Various minor updates related Students Guide [#299](https://github.com/rokwire/illinois-app/issues/299).
 
 ## [2.4.23] - 2021-06-15
 ### Changed 
