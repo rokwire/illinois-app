@@ -684,10 +684,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapPublish() async{
     Analytics.instance.logSelect(target: "Publish");
-    ExploreService().postNewEvent(widget?.event).then((bool success){
-        if(success){
+    ExploreService().postNewEvent(widget?.event).then((String eventId){
+        if(eventId!=null){
           AppToast.show("Event successfully created");
-          Navigator.pop(context,success);
+          Navigator.pop(context,eventId!=null);
         }else {
           AppToast.show("Unable to create Event");
         }
