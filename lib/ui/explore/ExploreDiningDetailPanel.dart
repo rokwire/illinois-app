@@ -361,12 +361,14 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   String paymentsToString(List<PaymentType> payments){
-    String result="";
-    if(AppCollection.isCollectionNotEmpty(payments)){
-      payments.forEach((paymentType){
-        String payment = paymentType.toString();
-        String type = payment.substring("PaymentType.".length,payment.length);
-        result+= type+"\n ";
+    String result = "";
+    final String paymentTypePrefix = "PaymentType.";
+    if(AppCollection.isCollectionNotEmpty(payments)) {
+      payments.forEach((payment) {
+        String paymentType = payment?.toString();
+        if ((paymentType != null) && paymentType.startsWith(paymentTypePrefix) && (paymentTypePrefix.length < paymentType.length)) {
+          result += paymentType.substring(paymentTypePrefix.length, paymentType.length) + "\n";
+        }
       });
     }
 
