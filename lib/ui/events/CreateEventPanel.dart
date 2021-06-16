@@ -198,7 +198,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             )
                           ],
                         ),
-                        !_isGroupEvent? _buildCategorySection() : Container(),
+                        _buildCategorySection(),
                         _buildTitleSection(),
                         _isGroupEvent? _buildAttendanceSwitch() : Container(),
                         Padding(
@@ -1321,9 +1321,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     if (_isDataValid()) {
       Event event = _constructEventFromData();
       //post event
-      ExploreService().postNewEvent(event).then((bool success){
-        if(success){
-          Groups().linkEventToGroup(groupId: widget?.group?.id).then((value){
+      ExploreService().postNewEvent(event).then((String eventId){
+        if(eventId!=null){
+          Groups().linkEventToGroup(groupId: widget?.group?.id, eventId: eventId).then((value){
             Navigator.push(
                 context,
                 CupertinoPageRoute(
@@ -1347,7 +1347,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     _location.description = _isOnline? (_eventCallUrlController?.text?.toString()?? "") : (_eventLocationController?.text?.toString()?? "");
 
     event.imageURL = _imageUrl;
-    event.category = _selectedCategory != null ? _selectedCategory["category"] : null;
+    event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
     event.title = _eventTitleController.text;
     event.startDateString = AppDateTime().formatDateTime(
         startDate, format: AppDateTime.eventsServerCreateDateTimeFormat);
@@ -1360,6 +1360,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
     event.recurringFlag = false;//decide do we need it
+    if(widget.group!=null) {
+      event.createdByGroupId = widget.group.id;
+      event.isGroupPrivate = widget.group.privacy!=null ? widget.group.privacy == GroupPrivacy.private : false;
+    }
+    //TBD populate Attendance required value
 
     return event;
   }

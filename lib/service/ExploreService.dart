@@ -103,7 +103,7 @@ class ExploreService /* with Service */ {
     return null;
   }
 
-  Future<bool> postNewEvent(Explore explore) async{
+  Future<String> postNewEvent(Explore explore) async{
     if(_enabled) {
       Event event = explore is Event ? explore : null;
       http.Response response;
@@ -112,13 +112,14 @@ class ExploreService /* with Service */ {
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.User) : null;
-        return ((response != null) && (response.statusCode == 200 || response.statusCode == 201));
+        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
       }
     }
-    return false;
+    return null;
   }
 
   Future<List<Event>> loadEventsByIds(Set<String> eventIds) async {

@@ -80,6 +80,9 @@ class Event with Explore implements Favorite {
 
   String randomImageURL;
 
+  String createdByGroupId;
+  bool isGroupPrivate;
+
   Event({Map<String, dynamic> json, Event other}) {
     if (json != null) {
       _initFromJson(json);
@@ -143,6 +146,8 @@ class Event with Explore implements Favorite {
     this.subEventsMap = subEventsMap;
     track = json['track'];
     isVirtual = json['isVirtual'];
+    createdByGroupId = json["createdByGroupId"];
+    isGroupPrivate = json["isGroupPrivate"];
   }
 
   void _initFromOther(Event other) {
@@ -184,6 +189,8 @@ class Event with Explore implements Favorite {
     subEventsMap = other?.subEventsMap;
     track = other?.track;
     isVirtual = other?.isVirtual;
+    createdByGroupId = other?.createdByGroupId;
+    isGroupPrivate = other?.isGroupPrivate;
   }
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -240,6 +247,8 @@ class Event with Explore implements Favorite {
       "subEvents": subEventsMap,
       "track": track,
       'isVirtual': isVirtual,
+      'createdByGroupId': createdByGroupId,
+      'isGroupPrivate': isGroupPrivate,
     };
   }
 
@@ -400,6 +409,12 @@ class Event with Explore implements Favorite {
     }
     if(isVirtual!=null) {
       result['isVirtual']= isVirtual;
+    }
+    if(createdByGroupId!=null) {
+      result['createdByGroupId']= createdByGroupId;
+    }
+    if(isGroupPrivate!=null) {
+      result['isGroupPrivate']= isGroupPrivate;
     }
 
     return result;
