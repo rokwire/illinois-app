@@ -83,6 +83,10 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       });
         
     }
+    else {
+      _categories = null;
+      _categorySections = null;
+    }
   }
 
   @override
@@ -94,29 +98,39 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       ),
       body: Column(children: <Widget>[
           Expanded(child:
-            SingleChildScrollView(child:
-              SafeArea(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                  _buildContent()
-                ),
-              ),
-            ),
+            _buildContent(),
           ),
         ],),
       backgroundColor: Styles().colors.background,
     );
   }
 
-  List<Widget> _buildContent() {
-    List<Widget> contentList = <Widget>[];
-    for (String category in _categories) {
-      contentList.add(_buildHeading(category));
-      for (String section in _categorySections[category]) {
-        contentList.add(_buildEntry(section, category: category));
+  Widget _buildContent() {
+    if ((_categories != null) && (0 < _categories.length)) {
+      List<Widget> contentList = <Widget>[];
+      for (String category in _categories) {
+        contentList.add(_buildHeading(category));
+        for (String section in _categorySections[category]) {
+          contentList.add(_buildEntry(section, category: category));
+        }
       }
+
+      return SingleChildScrollView(child:
+        SafeArea(child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+            contentList
+          ),
+        ),
+      );
+    }
+    else {
+      return Padding(padding: EdgeInsets.all(32), child:
+        Center(child:
+          Text(Localization().getStringEx('panel.student_guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+        ,)
+      );
     }
 
-    return contentList;
   }
 
   Widget _buildHeading(String category) {
