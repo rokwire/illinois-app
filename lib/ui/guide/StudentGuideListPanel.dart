@@ -86,6 +86,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     else {
       _guideItems = null;
     }
+    _guideItems = null; //TMP
 
     if (_guideItems != null) {
       _features = LinkedHashSet<String>();
@@ -128,40 +129,65 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
 
   List<Widget> _buildContent() {
     List<Widget> contentList = <Widget>[];
-    
-    if ((_features != null) && _features.isNotEmpty) {
-      contentList.add(_buildFeatures());
-    }
 
-    if (widget.section != null) {
-      contentList.add(_buildSectionHeading(widget.section));
-    }
-    else if (widget.promotedList != null) {
-      contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
-    }
+    if ((_guideItems != null) && (0 < _guideItems.length)) {
 
-    List<Widget> cardsList = <Widget>[];
-    if (_guideItems != null) {
-      for (Map<String, dynamic> guideEntry in _guideItems) {
-        cardsList.add(
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-            StudentGuideEntryCard(guideEntry)
-          )
-        );
+      if ((_features != null) && _features.isNotEmpty) {
+        contentList.add(_buildFeatures());
       }
-    }
 
-    contentList.add(
-      Expanded(child:
-        SingleChildScrollView(child:
-          SafeArea(child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-              cardsList
+      if (widget.section != null) {
+        contentList.add(_buildSectionHeading(widget.section));
+      }
+      else if (widget.promotedList != null) {
+        contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
+      }
+
+      List<Widget> cardsList = <Widget>[];
+      if (_guideItems != null) {
+        for (Map<String, dynamic> guideEntry in _guideItems) {
+          cardsList.add(
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+              StudentGuideEntryCard(guideEntry)
+            )
+          );
+        }
+      }
+
+      contentList.add(
+        Expanded(child:
+          SingleChildScrollView(child:
+            SafeArea(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                cardsList
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    }
+    else {
+      String message;
+      if (widget.category != null) {
+        message = Localization().getStringEx('panel.student_guide_list.label.section.empty', 'Empty section content');
+      }
+      else if (widget.promotedList != null) {
+        message = Localization().getStringEx('panel.student_guide_list.label.highlights.empty', 'Empty highlights content');
+      }
+      else {
+        message = Localization().getStringEx('panel.student_guide_list.label.content.empty', 'Empty content');
+      }
+
+      contentList.add(
+        Expanded(child:
+          Padding(padding: EdgeInsets.all(32), child:
+            Center(child:
+              Text(message, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            ,)
+          ),
+        ),
+      );
+    }
 
     return contentList;
   }
