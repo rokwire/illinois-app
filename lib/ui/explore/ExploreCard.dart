@@ -345,14 +345,21 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _exploreLocationDetail() {
-    String locationText = ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
+    String iconRes = 'images/icon-location.png';
+    String eventType;
+    if(widget.explore!=null && widget.explore is Event) {
+      bool isVirtual = (widget.explore as Event).isVirtual ?? false;
+      eventType = isVirtual? "Online event" : "In-person event";
+      iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
+    }
+    String locationText = eventType ?? ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return Semantics(label: locationText, child:Padding(
         padding: _detailPadding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-location.png'),
+            Image.asset(iconRes, excludeFromSemantics: true,),
             Padding(
               padding: _iconPadding,
             ),
