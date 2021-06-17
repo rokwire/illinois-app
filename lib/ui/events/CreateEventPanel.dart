@@ -200,7 +200,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         ),
                         _buildCategorySection(),
                         _buildTitleSection(),
-                        _isGroupEvent? _buildAttendanceSwitch() : Container(),
+                        false && _isGroupEvent? _buildAttendanceSwitch() : Container(),
                         Padding(
                           padding: EdgeInsets.only(bottom: 24),
                           child: Container(
