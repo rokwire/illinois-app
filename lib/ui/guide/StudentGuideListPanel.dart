@@ -23,6 +23,7 @@ import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -177,6 +178,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         ),
       );
     }
+    contentList.add(TabBarWidget());
 
     return contentList;
   }

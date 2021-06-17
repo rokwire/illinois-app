@@ -10,6 +10,7 @@ import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class StudentGuideCategoriesPanel extends StatefulWidget {
@@ -100,6 +101,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
           Expanded(child:
             _buildContent(),
           ),
+          TabBarWidget(),
         ],),
       backgroundColor: Styles().colors.background,
     );

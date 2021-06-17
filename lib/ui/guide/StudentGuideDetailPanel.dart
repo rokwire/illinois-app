@@ -13,6 +13,7 @@ import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -98,6 +99,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           Expanded(child:
             contentWidget
           ),
+          TabBarWidget(),
         ],),
       backgroundColor: Styles().colors.background,
     );
