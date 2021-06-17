@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.4.25] - 2021-06-17
 ### Changed 
 - Various updates and fixes in Students Guide [#303](https://github.com/rokwire/illinois-app/issues/303).
+- Event enhancements (virtual/in person, price etc) [#300](https://github.com/rokwire/illinois-app/issues/300).
 
 ## [2.4.24] - 2021-06-16
 ### Fixed
