@@ -86,7 +86,6 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     else {
       _guideItems = null;
     }
-    _guideItems = null; //TMP
 
     if (_guideItems != null) {
       _features = LinkedHashSet<String>();
