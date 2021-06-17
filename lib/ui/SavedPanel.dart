@@ -31,6 +31,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Reminders.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/model/Dining.dart';
@@ -43,6 +44,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -78,6 +80,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   List<Favorite> _news;
   List<Favorite> _laundries;
   List<Favorite> _reminders;
+  List<Favorite> _guideItems;
 
   bool _showNotificationPermissionPrompt = false;
   bool _laundryAvailable = false;
@@ -88,7 +91,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Assets.notifyChanged,
       User.notifyFavoritesUpdated,
-      Reminders.notifyChanged
+      Reminders.notifyChanged,
+      StudentGuide.notifyChanged
     ]);
     _laundryAvailable = (IlliniCash().ballance?.housingResidenceStatus ?? false);
     _loadSavedItems();
@@ -186,6 +190,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                               headingTitle: Localization().getStringEx('panel.saved.label.reminders', 'Reminders'),
                               headingIconResource: 'images/reminder.png',
                               items: _reminders,),
+                            _buildItemsSection(
+                              headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Student Guide'),
+                              headingIconResource: 'images/icon-news.png',
+                              items: _guideItems,),
                           ],
                         ),
                       ]),
@@ -211,6 +219,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     _loadNews();
     _loadLaundries();
     _loadReminders();
+    _loadGuideItems();
   }
 
   void _loadEvents() {
@@ -327,6 +336,32 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else if (AppCollection.isCollectionNotEmpty(_reminders)) {
       setState(() {
         _reminders = null;
+      });
+    }
+  }
+
+  void _loadGuideItems() {
+
+    Set<String> favoriteGuideIds = User().getFavorites(StudentGuideFavorite.favoriteKeyName);
+    List<Favorite> guideItems = <Favorite>[];
+    if (favoriteGuideIds != null) {
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        String guideEntryId = (guideEntry != null) ? AppJson.stringValue(guideEntry['id']) : null;
+        if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
+          guideItems.add(StudentGuideFavorite(id: guideEntryId));
+        }
+      }
+    }
+
+    if (AppCollection.isCollectionNotEmpty(guideItems) && Connectivity().isNotOffline) {
+      setState(() {
+        _guideItems = guideItems;
+      });
+    }
+    else if (AppCollection.isCollectionNotEmpty(_guideItems)) {
+      setState(() {
+        _guideItems = null;
       });
     }
   }
@@ -503,7 +538,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           !AppCollection.isCollectionNotEmpty(_athletics) &&
           !AppCollection.isCollectionNotEmpty(_news) &&
           !AppCollection.isCollectionNotEmpty(_laundries) &&
-          !AppCollection.isCollectionNotEmpty(_reminders);
+          !AppCollection.isCollectionNotEmpty(_reminders) &&
+          !AppCollection.isCollectionNotEmpty(_guideItems);
   }
 
   void _onAuthorizeTapped(){
@@ -531,6 +567,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == Reminders.notifyChanged) {
       setState(() { _loadReminders(); });
+    }
+    else if (name == StudentGuide.notifyChanged) {
+      setState(() { _loadGuideItems(); });
     }
   }
 }
@@ -656,23 +695,28 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                       )
                     ],
                   ),
-                  Visibility(visible: detailVisible, child: Semantics(label: cardDetailLabel, excludeSemantics: true, child: Padding(
-                    padding: EdgeInsets.only(top: 12),
-                    child: Row(
-                      children: <Widget>[
-                        Image.asset(cardDetailImgRes),
-                        Padding(padding: EdgeInsets.only(right: 10),),
-                        Expanded(child:
-                          Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
-                        )
-                      ],
-                    ),
+                  Visibility(visible: detailVisible, child:
+                    Semantics(label: cardDetailLabel, excludeSemantics: true, child:
+                      Padding(padding: EdgeInsets.only(top: 12), child:
+                        (cardDetailImgRes != null) ? 
+                        Row(children: <Widget>[
+                          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes),),
+                          Expanded(child:
+                            Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                          )
+                        ],) :
+                        Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
                   )),)
                 ]),
               ),
             )
           ],
         )),);
+  }
+
+  String guideEntryField(StudentGuideFavorite item, String name) {
+    Map<String, dynamic> guideEntry = StudentGuide().entryById(item.id);
+    return AppJson.stringValue(StudentGuide().entryValue(guideEntry, name)) ?? AppJson.stringValue(StudentGuide().entryValue(guideEntry, name));
   }
 
   void _onTapItem(Favorite item) {
@@ -686,6 +730,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: item,)));
     } else if (item is LaundryRoom) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: item,)));
+    } else if (item is StudentGuideFavorite) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: item.id,)));
     }
   }
 
@@ -704,6 +750,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return Styles().colors.fillColorPrimary;
     } else if (item is LaundryRoom) {
       return Styles().colors.accentColor2;
+    } else if (item is StudentGuideFavorite) {
+      return Styles().colors.accentColor3;
     } else {
       return Styles().colors.fillColorSecondary;
     }
@@ -720,6 +768,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.title;
     } else if (item is Reminder) {
       return item.label;
+    } else if (item is StudentGuideFavorite) {
+      return guideEntryField(item, 'list_title') ?? guideEntryField(item, 'title');
     } else {
       return null;
     }
@@ -736,12 +786,16 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.getDisplayTime();
     } else if (item is Reminder) {
       return item.displayDate;
+    } else if (item is StudentGuideFavorite) {
+      return guideEntryField(item, 'list_description') ?? guideEntryField(item, 'description');
     } else
       return null;
   }
 
   String _cardDetailImageResource(Favorite item) {
-    if (item is Event || item is Game || item is News) {
+    if (item is StudentGuideFavorite) {
+      return null;
+    } else if (item is Event || item is Game || item is News) {
       return 'images/icon-calendar.png';
     } else {
       return 'images/icon-time.png';

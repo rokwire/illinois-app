@@ -7,8 +7,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -21,6 +23,7 @@ import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,87 +31,122 @@ class StudentGuideListPanel extends StatefulWidget {
   final String category;
   final String section;
   final List<dynamic> promotedList;
+
   StudentGuideListPanel({ this.category, this.section, this.promotedList});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
 
-class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
+class _StudentGuideListPanelState extends State<StudentGuideListPanel> implements NotificationsListener {
+
+  List<Map<String, dynamic>> _guideItems = <Map<String, dynamic>>[];
+  LinkedHashSet<String> _features = LinkedHashSet<String>();
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      StudentGuide.notifyChanged,
+    ]);
+    _buildGuideContent();
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
   }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == StudentGuide.notifyChanged) {
+      setState(() {
+        _buildGuideContent();
+      });
+    }
+  }
+
+  void _buildGuideContent() {
+    if ((widget.category != null) && (widget.section != null) && (StudentGuide().contentList != null)) {
+      _guideItems = <Map<String, dynamic>>[];
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          if ((widget.category == category) && (widget.section == section)) {
+            _guideItems.add(guideEntry);
+          }
+        }
+      }
+    }
+    else if (widget.promotedList != null) {
+      _guideItems = List.from(widget.promotedList);
+    }
+    else {
+      _guideItems = null;
+    }
+
+    if (_guideItems != null) {
+      _features = LinkedHashSet<String>();
+      for (Map<String, dynamic> guideEntry in _guideItems) {
+        List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
+        if (features != null) {
+          for (dynamic feature in features) {
+            if ((feature is String) && !_features.contains(feature)) {
+              _features.add(feature);
+            }
+          }
+        }
+      }
+    }
+    else {
+      _features = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> contentList = <Widget>[];
-    Widget featues = _buildFeatures();
-    if (featues != null) {
-      contentList.add(featues);
-    }
-    contentList.add(Expanded(child: CustomScrollView(slivers: _buildContent())));
 
+    String title;
+    if (widget.category != null) {
+      title = widget.category;
+    }
+    else if (widget.promotedList != null) {
+      title = Localization().getStringEx('panel.student_guide_list.label.highlights.heading', 'Student Guide');
+    }
+    
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(widget.category ?? 'Promoted', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
-      body: Column(children: <Widget>[
-          Expanded(child:
-            SafeArea(child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
-            ),
-          ),
-        ],),
+      body: Column(children: _buildContent()),
       backgroundColor: Styles().colors.background,
     );
   }
 
   List<Widget> _buildContent() {
-    return (widget.category != null) ? _buildCategoryContent() : _buildPromoContent();
-  }
-
-  List<Widget> _buildCategoryContent() {
     List<Widget> contentList = <Widget>[];
-    if (StudentGuide().contentList != null) {
-      LinkedHashMap<String, List<Map<String, dynamic>>> sectionsMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
-      for (dynamic contentEntry in StudentGuide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        if (guideEntry != null) {
 
-          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((widget.category == category) && (section != null) && ((widget.section == null) || (widget.section == section))) {
+    if ((_guideItems != null) && (0 < _guideItems.length)) {
 
-            List<Map<String, dynamic>> sectionEntries = sectionsMap[section];
-            
-            if (sectionEntries == null) {
-              sectionsMap[section] = sectionEntries = <Map<String, dynamic>>[];
-            }
-            
-            sectionEntries.add(guideEntry);
-          }
-        }
+      if ((_features != null) && _features.isNotEmpty) {
+        contentList.add(_buildFeatures());
       }
-      
-      // build sections
-      contentList.addAll(_buildSections(sectionsMap: sectionsMap));
-    }
-    return contentList;
-  }
 
-  List<Widget> _buildPromoContent() {
-    List<Widget> cardsList = <Widget>[];
-    if (widget.promotedList != null) {
-      for (dynamic promotedEntry in widget.promotedList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
-        if (guideEntry != null) {
+      if (widget.section != null) {
+        contentList.add(_buildSectionHeading(widget.section));
+      }
+      else if (widget.promotedList != null) {
+        contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
+      }
 
+      List<Widget> cardsList = <Widget>[];
+      if (_guideItems != null) {
+        for (Map<String, dynamic> guideEntry in _guideItems) {
           cardsList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
               StudentGuideEntryCard(guideEntry)
@@ -116,100 +154,86 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
           );
         }
       }
+
+      contentList.add(
+        Expanded(child:
+          SingleChildScrollView(child:
+            SafeArea(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                cardsList
+              ),
+            ),
+          ),
+        ),
+      );
     }
-    return <Widget>[
-      SliverPersistentHeader(pinned: true, delegate: _PinnedSliverHeading(child: _buildSectionHeading('Selected for you'))),
-      SliverList(delegate: SliverChildListDelegate(cardsList))
-    ];
+    else {
+      contentList.add(
+        Expanded(child:
+          Padding(padding: EdgeInsets.all(32), child:
+            Center(child:
+              Text(Localization().getStringEx('panel.student_guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            ,)
+          ),
+        ),
+      );
+    }
+    contentList.add(TabBarWidget());
+
+    return contentList;
+  }
+
+  Widget _buildSectionHeading(String section) {
+    return Container(color: Styles().colors.fillColorPrimary, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+          ),
+        )
+      ],),
+    );
   }
 
   Widget _buildFeatures() {
-    return (widget.category != null) ? _buildCategoryFeatures() : _buildPromoFeatures();
-  }
-
-  Widget _buildCategoryFeatures() {
-    LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
-    if (StudentGuide().contentList != null) {
-      for (dynamic contentEntry in StudentGuide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        if (guideEntry != null) {
-
-          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((widget.category == category) && (section != null) && ((widget.section == null) || (widget.section == section))) {
-
-            List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
-            if (features != null) {
-              for (dynamic feature in features) {
-                if ((feature is String) && !featuresSet.contains(feature)) {
-                  featuresSet.add(feature);
-                }
-              }
+    if (_features != null) {
+      List<Widget> rowWidgets = <Widget>[];
+      List<Widget> colWidgets = <Widget>[];
+      for (String feature in _features) {
+        StudentGuideFeatureButton featureButton = _buildFeatureButton(feature);
+        if (featureButton != null) {
+          if (rowWidgets.isNotEmpty) {
+            rowWidgets.add(Container(width: 6),);
+          }
+          rowWidgets.add(Expanded(child: featureButton));
+          
+          if (rowWidgets.length >= 5) {
+            if (colWidgets.isNotEmpty) {
+              colWidgets.add(Container(height: 6),);
             }
+            colWidgets.add(Row(crossAxisAlignment: CrossAxisAlignment.center, children: rowWidgets));
+            rowWidgets = <Widget>[];
           }
         }
       }
-    }
 
-    return featuresSet.isNotEmpty ? _buildFeaturesGrid(featuresSet: featuresSet) : null;
-  }
-
-  Widget _buildPromoFeatures() {
-    LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
-    if (widget.promotedList != null) {
-      for (dynamic promotedEntry in widget.promotedList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
-        if (guideEntry != null) {
-          List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
-          if (features != null) {
-            for (dynamic feature in features) {
-              if ((feature is String) && !featuresSet.contains(feature)) {
-                featuresSet.add(feature);
-              }
-            }
-          }
-        }
-      }
-    }
-      // build features
-    return featuresSet.isNotEmpty ? _buildFeaturesGrid(featuresSet: featuresSet) : null;
-  }
-
-  Widget _buildFeaturesGrid({ LinkedHashSet<String> featuresSet }) {
-    List<Widget> rowWidgets = <Widget>[];
-    List<Widget> colWidgets = <Widget>[];
-    for (String feature in featuresSet) {
-      StudentGuideFeatureButton featureButton = _buildFeatureButton(feature);
-      if (featureButton != null) {
-        if (rowWidgets.isNotEmpty) {
+      if (0 < rowWidgets.length) {
+        while (rowWidgets.length < 5) {
           rowWidgets.add(Container(width: 6),);
+          rowWidgets.add(Expanded(child: Container()));
         }
-        rowWidgets.add(Expanded(child: featureButton));
-        
-        if (rowWidgets.length >= 5) {
-          if (colWidgets.isNotEmpty) {
-            colWidgets.add(Container(height: 6),);
-          }
-          colWidgets.add(Row(crossAxisAlignment: CrossAxisAlignment.center, children: rowWidgets));
-          rowWidgets = <Widget>[];
+        if (colWidgets.isNotEmpty) {
+          colWidgets.add(Container(height: 6),);
         }
+        colWidgets.add(Row(children: rowWidgets));
       }
+
+      return Padding(padding: EdgeInsets.all(16), child:
+        Column(children: colWidgets,),
+      );
     }
 
-    if (0 < rowWidgets.length) {
-      while (rowWidgets.length < 5) {
-        rowWidgets.add(Container(width: 6),);
-        rowWidgets.add(Expanded(child: Container()));
-      }
-      if (colWidgets.isNotEmpty) {
-        colWidgets.add(Container(height: 6),);
-      }
-      colWidgets.add(Row(children: rowWidgets));
-    }
-
-    return Padding(padding: EdgeInsets.all(16), child:
-      Column(children: colWidgets,),
-    );
+    return null;
 
     /*return Padding(padding: EdgeInsets.all(16), child:
         Column(children: [
@@ -235,90 +259,64 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   StudentGuideFeatureButton _buildFeatureButton(String feature) {
     
     if (feature == 'athletics') {
-      return StudentGuideFeatureButton(title: "Athletics", icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
     }
     else if (feature == 'buss-pass') {
-      return StudentGuideFeatureButton(title: "Buss Pass", icon: "images/icon-student-guide-buss-pass.png");
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.buss_pass.title", "Buss Pass"), icon: "images/icon-student-guide-buss-pass.png", onTap: _navigateBussPass,);
     }
     else if (feature == 'dining') {
-      return StudentGuideFeatureButton(title: "Dining", icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
     }
     else if (feature == 'events') {
-      return StudentGuideFeatureButton(title: "Events", icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.events.title", "Events"), icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
     }
     else if (feature == 'groups') {
-      return StudentGuideFeatureButton(title: "Groups", icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.groups.title", "Groups"), icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
     }
     else if (feature == 'illini-cash') {
-      return StudentGuideFeatureButton(title: "Illini Cash", icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_cash.title", "Illini Cash"), icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
     }
     else if (feature == 'illini-id') {
-      return StudentGuideFeatureButton(title: "Illini ID", icon: "images/icon-student-guide-illini-id.png");
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_id.title", "Illini ID"), icon: "images/icon-student-guide-illini-id.png", onTap: _navigateIlliniId);
     }
     else if (feature == 'laundry') {
-      return StudentGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.laundry.title", "Laundry"), icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
     }
     else if (feature == 'library-card') {
-      return StudentGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.library_card.title", "Library Card"), icon: "images/icon-student-guide-library-card.png", onTap: _navigateLibraryCard);
     }
     else if (feature == 'meal-plan') {
-      return StudentGuideFeatureButton(title: "Meal Plan", icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.meal_plan.title", "Meal Plan"), icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
     }
     else if (feature == 'my-illini') {
-      return StudentGuideFeatureButton(title: "My Illini", icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.my_illini.title", "My Illini"), icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
     }
     else if (feature == 'parking') {
-      return StudentGuideFeatureButton(title: "Parking", icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.parking.title", "Parking"), icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
     }
     else if (feature == 'quick-polls') {
-      return StudentGuideFeatureButton(title: "Quick Polls", icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.quick_polls.title", "Quick Polls"), icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
     }
     else if (feature == 'saved') {
-      return StudentGuideFeatureButton(title: "Saved", icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.saved.title", "Saved"), icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
     }
     else {
       return null;
     }
   }
 
-  Widget _buildSectionHeading(String section) {
-    return Container(color: Styles().colors.fillColorPrimary, child:
-      Row(children: [
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-          ),
-        )
-      ],),
-    );
-  }
-
-  List<Widget> _buildSections({ LinkedHashMap<String, List<Map<String, dynamic>>> sectionsMap }) {
-    List<Widget> contentList = <Widget>[];
-    sectionsMap.forEach((String section, List<Map<String, dynamic>> entries) {
-
-      List<Widget> entriesList = <Widget>[];
-      for (Map<String, dynamic> entry in entries) {
-        entriesList.add(
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-            StudentGuideEntryCard(entry)
-          )
-        );
-      }
-      if (entries.isNotEmpty) {
-        entriesList.add(Container(height: 16,));
-      }
-
-      contentList.add(SliverPersistentHeader(pinned: true, delegate: _PinnedSliverHeading(child: _buildSectionHeading(section))));
-      contentList.add(SliverList(delegate: SliverChildListDelegate(entriesList)));
-    });
-    
-    return contentList;
-  }
-
   void _navigateAthletics() {
     Analytics.instance.logSelect(target: "Athletics");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+  }
+
+  void _navigateBussPass() {
+    Analytics.instance.logSelect(target: "Buss Pass");
+  }
+
+  void _navigateDining() {
+    Analytics.instance.logSelect(target: "Dinings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
   }
 
   void _navigateEvents() {
@@ -331,16 +329,6 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
-  void _navigateDining() {
-    Analytics.instance.logSelect(target: "Dinings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
-  }
-
-  void _navigateMyIllini() {
-    Analytics.instance.logSelect(target: "My Illini");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: Localization().getStringEx('panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini'),)));
-  }
-
   void _navigateIlliniCash() {
     Analytics.instance.logSelect(target: "Illini Cash");
     Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
@@ -349,6 +337,19 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
           return SettingsIlliniCashPanel();
         }
     ));
+  }
+
+  void _navigateIlliniId() {
+    Analytics.instance.logSelect(target: "Illini ID");
+  }
+
+  void _navigateLaundry() {
+    Analytics.instance.logSelect(target: "Laundry");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
+  void _navigateLibraryCard() {
+    Analytics.instance.logSelect(target: "Library Card");
   }
 
   void _navigateMealPlan() {
@@ -360,14 +361,9 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     ));
   }
 
-  void _navigateLaundry() {
-    Analytics.instance.logSelect(target: "Laundry");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
-  }
-
-  void _navigateSaved() {
-    Analytics.instance.logSelect(target: "Saved");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  void _navigateMyIllini() {
+    Analytics.instance.logSelect(target: "My Illini");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: Localization().getStringEx('panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini'),)));
   }
 
   void _navigateParking() {
@@ -379,6 +375,11 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     Analytics.instance.logSelect(target: "Quick Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
+
+  void _navigateSaved() {
+    Analytics.instance.logSelect(target: "Saved");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  }
 }
 
 
@@ -389,20 +390,36 @@ class StudentGuideEntryCard extends StatefulWidget {
   _StudentGuideEntryCardState createState() => _StudentGuideEntryCardState();
 }
 
-class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
+class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implements NotificationsListener {
 
-  bool _isFavorite = false;
+  bool _isFavorite;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      User.notifyFavoritesUpdated,
+    ]);
+    _isFavorite = User().isFavorite(StudentGuideFavorite(id: guideEntryId));
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
   }
   
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == User.notifyFavoritesUpdated) {
+      setState(() {
+        _isFavorite = User().isFavorite(StudentGuideFavorite(id: guideEntryId));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String titleHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'title')) ?? '';
@@ -439,6 +456,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   }
 
   void _onTapLink(String url) {
+    Analytics.instance.logSelect(target: url);
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -449,14 +467,18 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   }
 
   void _onTapFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+    Analytics.instance.logSelect(target: "Favorite: $guideEntryId");
+    User().switchFavorite(StudentGuideFavorite(id: guideEntryId));
   }
 
   void _onTapEntry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntry: widget.guideEntry,)));
+    Analytics.instance.logSelect(target: guideEntryId);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
   }
+
+  String get guideEntryId {
+    return (widget.guideEntry != null) ? widget.guideEntry['id'] : null;
+  } 
 }
 
 class StudentGuideFeatureButton extends StatefulWidget {
@@ -506,28 +528,4 @@ class _StudentGuideFeatureButtonState extends State<StudentGuideFeatureButton> {
 
 
   void _nop() {}
-}
-
-class _PinnedSliverHeading extends SliverPersistentHeaderDelegate{
-
-  final Widget child;
-  final double constExtent = 48;
-
-  _PinnedSliverHeading({@required this.child});
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(height: constExtent, child: child,);
-  }
-
-  @override
-  double get maxExtent => constExtent;
-
-  @override
-  double get minExtent => constExtent;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
 }

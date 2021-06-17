@@ -271,8 +271,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'student_guide') {
       return _GridSquareButton(
-        title: 'Student Guide',
-        hint: '',
+        title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Student Guide'),
+        hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
         icon: 'images/icon-browse-quick-polls.png',
         color: Styles().colors.accentColor2,
         onTap: () => _navigateStudentGuide(),
