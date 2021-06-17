@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -13,27 +15,71 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StudentGuideDetailPanel extends StatefulWidget {
-  final Map<String, dynamic> guideEntry;
-  StudentGuideDetailPanel({ this.guideEntry });
+  final String guideEntryId;
+  StudentGuideDetailPanel({ this.guideEntryId });
 
   _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
 }
 
-class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
+class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> implements NotificationsListener {
 
   bool _isFavorite = false;
+  Map<String, dynamic> _guideEntry;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      StudentGuide.notifyChanged,
+    ]);
+    _guideEntry = StudentGuide().entryById(widget.guideEntryId);
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
   }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == StudentGuide.notifyChanged) {
+      setState(() {
+        _guideEntry = StudentGuide().entryById(widget.guideEntryId);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget contentWidget;
+    if (_guideEntry != null) {
+      contentWidget = SingleChildScrollView(child:
+        SafeArea(child:
+          Stack(children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+              _buildContent()
+            ),
+            Align(alignment: Alignment.topRight, child:
+              GestureDetector(onTap: _onTapFavorite, child:
+                Container(padding: EdgeInsets.all(16), child: 
+                  Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+            ),),),
+
+          ],)
+        ),
+      );
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.all(32), child:
+        Center(child:
+          Text(Localization().getStringEx('panel.student_guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+        ,)
+      );
+    }
+
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
@@ -41,21 +87,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),
       body: Column(children: <Widget>[
           Expanded(child:
-            SingleChildScrollView(child:
-              SafeArea(child:
-                Stack(children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                    _buildContent()
-                  ),
-                  Align(alignment: Alignment.topRight, child:
-                    GestureDetector(onTap: _onTapFavorite, child:
-                      Container(padding: EdgeInsets.all(16), child: 
-                        Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
-                  ),),),
-
-                ],)
-              ),
-            ),
+            contentWidget
           ),
         ],),
       backgroundColor: Styles().colors.background,
@@ -75,13 +107,13 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   Widget _buildHeading() {
     List<Widget> contentList = <Widget>[];
 
-    String category = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'category'));
+    String category = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
         Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),),
     ),);
 
-    String titleHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'title'));
+    String titleHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'title'));
     if (AppString.isStringNotEmpty(titleHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -91,7 +123,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),);
     }
     
-    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'detail_description')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'description'));
+    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_description')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'description'));
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -102,7 +134,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
     }
 
 
-    List<dynamic> links = AppJson.listValue(StudentGuide().entryValue(widget.guideEntry, 'links'));
+    List<dynamic> links = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'links'));
     if (links != null) {
       for (dynamic link in links) {
         if (link is Map) {
@@ -138,7 +170,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   }
 
   Widget _buildImage() {
-    String imageUrl = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'image'));
+    String imageUrl = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'image'));
     if (AppString.isStringNotEmpty(imageUrl)) {
       return Stack(alignment: Alignment.bottomCenter, children: [
         Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
@@ -170,7 +202,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   Widget _buildDetails() {
     List<Widget> contentList = <Widget>[];
 
-    String title = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'sub_details_title'));
+    String title = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'sub_details_title'));
     if (AppString.isStringNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -178,7 +210,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),);
     }
 
-    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'sub_details_description'));
+    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'sub_details_description'));
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -188,7 +220,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       ),),);
     }
 
-    List<dynamic> subDetails = AppJson.listValue(StudentGuide().entryValue(widget.guideEntry, 'sub_details'));
+    List<dynamic> subDetails = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'sub_details'));
     if (subDetails != null) {
       for (dynamic subDetail in subDetails) {
         if (subDetail is Map) {
@@ -266,7 +298,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
       }
     }
 
-    List<dynamic> buttons = AppJson.listValue(StudentGuide().entryValue(widget.guideEntry, 'buttons'));
+    List<dynamic> buttons = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'buttons'));
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
@@ -310,7 +342,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> {
   }
 
   Widget _buildRelated() {
-    List<dynamic> related = AppJson.listValue(StudentGuide().entryValue(widget.guideEntry, 'related'));
+    List<dynamic> related = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'related'));
     if (related != null) {
       List<Widget> contentList = <Widget>[];
       for (dynamic relatedEntry in related) {

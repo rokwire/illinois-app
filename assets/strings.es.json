@@ -1656,6 +1656,8 @@
     "panel.student_guide_list.button.quick_polls.title": "Encuestas rápidas",
     "panel.student_guide_list.button.saved.title": "Salvado",
 
+    "panel.student_guide_detail.label.content.empty": "Contenido de la guía vacía",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",

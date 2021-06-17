@@ -453,7 +453,9 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   }
 
   void _onTapEntry() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntry: widget.guideEntry,)));
+    String guideEntryId = (widget.guideEntry != null) ? widget.guideEntry['id'] : null;
+    Analytics.instance.logSelect(target: guideEntryId);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 }
 
