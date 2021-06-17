@@ -10,6 +10,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -387,20 +388,36 @@ class StudentGuideEntryCard extends StatefulWidget {
   _StudentGuideEntryCardState createState() => _StudentGuideEntryCardState();
 }
 
-class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
+class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implements NotificationsListener {
 
-  bool _isFavorite = false;
+  bool _isFavorite;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      User.notifyFavoritesUpdated,
+    ]);
+    _isFavorite = User().isFavorite(StudentGuideFavorite(id: guideEntryId));
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
   }
   
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == User.notifyFavoritesUpdated) {
+      setState(() {
+        _isFavorite = User().isFavorite(StudentGuideFavorite(id: guideEntryId));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String titleHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'title')) ?? '';
@@ -437,6 +454,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   }
 
   void _onTapLink(String url) {
+    Analytics.instance.logSelect(target: url);
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -447,16 +465,18 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> {
   }
 
   void _onTapFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+    Analytics.instance.logSelect(target: "Favorite: $guideEntryId");
+    User().switchFavorite(StudentGuideFavorite(id: guideEntryId));
   }
 
   void _onTapEntry() {
-    String guideEntryId = (widget.guideEntry != null) ? widget.guideEntry['id'] : null;
     Analytics.instance.logSelect(target: guideEntryId);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
   }
+
+  String get guideEntryId {
+    return (widget.guideEntry != null) ? widget.guideEntry['id'] : null;
+  } 
 }
 
 class StudentGuideFeatureButton extends StatefulWidget {

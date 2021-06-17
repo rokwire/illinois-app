@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -23,16 +25,18 @@ class StudentGuideDetailPanel extends StatefulWidget {
 
 class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> implements NotificationsListener {
 
-  bool _isFavorite = false;
   Map<String, dynamic> _guideEntry;
+  bool _isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
       StudentGuide.notifyChanged,
+      User.notifyFavoritesUpdated,
     ]);
     _guideEntry = StudentGuide().entryById(widget.guideEntryId);
+    _isFavorite = User().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
   }
 
   @override
@@ -48,6 +52,11 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     if (name == StudentGuide.notifyChanged) {
       setState(() {
         _guideEntry = StudentGuide().entryById(widget.guideEntryId);
+      });
+    }
+    else if (name == User.notifyFavoritesUpdated) {
+      setState(() {
+        _isFavorite = User().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
       });
     }
   }
@@ -375,9 +384,8 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   void _onTapFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+    Analytics.instance.logSelect(target: "Favorite: ${widget.guideEntryId}");
+    User().switchFavorite(StudentGuideFavorite(id: widget.guideEntryId));
   }
 
   void _onTapLink(String url) {
@@ -393,4 +401,5 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   void _onTapLocation(Map<String, dynamic> location) {
     NativeCommunicator().launchMapDirections(jsonData: location);
   }
+
 }
