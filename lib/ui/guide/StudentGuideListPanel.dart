@@ -166,22 +166,11 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       );
     }
     else {
-      String message;
-      if (widget.category != null) {
-        message = Localization().getStringEx('panel.student_guide_list.label.section.empty', 'Empty section content');
-      }
-      else if (widget.promotedList != null) {
-        message = Localization().getStringEx('panel.student_guide_list.label.highlights.empty', 'Empty highlights content');
-      }
-      else {
-        message = Localization().getStringEx('panel.student_guide_list.label.content.empty', 'Empty content');
-      }
-
       contentList.add(
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(message, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(Localization().getStringEx('panel.student_guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
             ,)
           ),
         ),

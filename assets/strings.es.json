@@ -1636,12 +1636,11 @@
     "panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
     "panel.student_guide_categories.label.heading": "Guía de estudiante",
+    "panel.student_guide_categories.label.content.empty": "Contenido de la guía vacía",
 
     "panel.student_guide_list.label.highlights.heading": "Guía de estudiante",
     "panel.student_guide_list.label.highlights.section": "Reflejos",
-    "panel.student_guide_list.label.section.empty": "Contenido de la sección vacía",
-    "panel.student_guide_list.label.highlights.empty": "Contenido destacado vacío",
-    "panel.student_guide_list.label.content.empty": "Contenido vacío",
+    "panel.student_guide_list.label.content.empty": "Contenido de la guía vacía",
     "panel.student_guide_list.button.athletics.title": "Atletismo",
     "panel.student_guide_list.button.buss_pass.title": "Pase de autobus",
     "panel.student_guide_list.button.dining.title": "Comida",

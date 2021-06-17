@@ -1635,12 +1635,11 @@
     "panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
     "panel.student_guide_categories.label.heading": "Student Guide",
+    "panel.student_guide_categories.label.content.empty": "Empty guide content",
 
     "panel.student_guide_list.label.highlights.heading": "Student Guide",
     "panel.student_guide_list.label.highlights.section": "Highlights",
-    "panel.student_guide_list.label.section.empty": "Empty section content",
-    "panel.student_guide_list.label.highlights.empty": "Empty highlights content",
-    "panel.student_guide_list.label.content.empty": "Empty content",
+    "panel.student_guide_list.label.content.empty": "Empty guide content",
     "panel.student_guide_list.button.athletics.title": "Athletics",
     "panel.student_guide_list.button.buss_pass.title": "Buss Pass",
     "panel.student_guide_list.button.dining.title": "Dining",

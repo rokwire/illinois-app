@@ -1636,12 +1636,11 @@
 	"panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
 	"panel.student_guide_categories.label.heading": "學生指南",
+	"panel.student_guide_categories.label.content.empty": "空的指南內容",
 
 	"panel.student_guide_list.label.highlights.heading": "學生指南",
 	"panel.student_guide_list.label.highlights.section": "強調",
-	"panel.student_guide_list.label.section.empty": "空白部分內容",
-	"panel.student_guide_list.label.highlights.empty": "空的高亮內容",
-	"panel.student_guide_list.label.content.empty": "空內容",
+	"panel.student_guide_list.label.content.empty": "空的指南內容",
 	"panel.student_guide_list.button.athletics.title": "競技",
 	"panel.student_guide_list.button.buss_pass.title": "巴士通票",
 	"panel.student_guide_list.button.dining.title": "用餐",
