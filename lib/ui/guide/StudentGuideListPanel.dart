@@ -95,8 +95,8 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
         if (features != null) {
           for (dynamic feature in features) {
-            if ((feature is String) && !features.contains(feature)) {
-              features.add(feature);
+            if ((feature is String) && !_features.contains(feature)) {
+              _features.add(feature);
             }
           }
         }
