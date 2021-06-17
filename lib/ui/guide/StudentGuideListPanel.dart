@@ -7,6 +7,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/SavedPanel.dart';
@@ -34,16 +35,74 @@ class StudentGuideListPanel extends StatefulWidget {
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
 
-class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
+class _StudentGuideListPanelState extends State<StudentGuideListPanel> implements NotificationsListener {
+
+  List<Map<String, dynamic>> _guideItems = <Map<String, dynamic>>[];
+  LinkedHashSet<String> _features = LinkedHashSet<String>();
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      StudentGuide.notifyChanged,
+    ]);
+    _buildGuideContent();
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == StudentGuide.notifyChanged) {
+      setState(() {
+        _buildGuideContent();
+      });
+    }
+  }
+
+  void _buildGuideContent() {
+    if ((widget.category != null) && (widget.section != null) && (StudentGuide().contentList != null)) {
+      _guideItems = <Map<String, dynamic>>[];
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          if ((widget.category == category) && (widget.section == section)) {
+            _guideItems.add(guideEntry);
+          }
+        }
+      }
+    }
+    else if (widget.promotedList != null) {
+      _guideItems = List.from(widget.promotedList);
+    }
+    else {
+      _guideItems = null;
+    }
+
+    if (_guideItems != null) {
+      _features = LinkedHashSet<String>();
+      for (Map<String, dynamic> guideEntry in _guideItems) {
+        List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
+        if (features != null) {
+          for (dynamic feature in features) {
+            if ((feature is String) && !features.contains(feature)) {
+              features.add(feature);
+            }
+          }
+        }
+      }
+    }
+    else {
+      _features = null;
+    }
   }
 
   @override
@@ -68,112 +127,42 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   }
 
   List<Widget> _buildContent() {
-    return (widget.category != null) ? _buildCategoryContent() : _buildPromoContent();
-  }
-
-  List<Widget> _buildCategoryContent() {
     List<Widget> contentList = <Widget>[];
-    if (StudentGuide().contentList != null) {
-      
-      // construct cards & features
-      List<Widget> cardsList = <Widget>[];
-      LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
+    
+    if ((_features != null) && _features.isNotEmpty) {
+      contentList.add(_buildFeatures());
+    }
 
-      for (dynamic contentEntry in StudentGuide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        if (guideEntry != null) {
-
-          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((widget.category == category) && (widget.section == section)) {
-
-            cardsList.add(
-              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-                StudentGuideEntryCard(guideEntry)
-              )
-            );
-
-            List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
-            if (features != null) {
-              for (dynamic feature in features) {
-                if ((feature is String) && !featuresSet.contains(feature)) {
-                  featuresSet.add(feature);
-                }
-              }
-            }
-          }
-        }
-      }
-      
-      if (featuresSet.isNotEmpty) {
-        contentList.add(_buildFeatures(featuresSet: featuresSet));
-      }
-
+    if (widget.section != null) {
       contentList.add(_buildSectionHeading(widget.section));
-
-      contentList.add(
-        Expanded(child:
-          SingleChildScrollView(child:
-            SafeArea(child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                cardsList
-              ),
-            ),
-          ),
-        ),
-      );
     }
-
-    return contentList;
-  }
-
-  List<Widget> _buildPromoContent() {
-    List<Widget> contentList = <Widget>[];
-    if (widget.promotedList != null) {
-      
-      // construct cards & features
-      List<Widget> cardsList = <Widget>[];
-      LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
-
-      for (dynamic promotedEntry in widget.promotedList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
-        if (guideEntry != null) {
-
-          cardsList.add(
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-              StudentGuideEntryCard(guideEntry)
-            )
-          );
-
-          List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
-          if (features != null) {
-            for (dynamic feature in features) {
-              if ((feature is String) && !featuresSet.contains(feature)) {
-                featuresSet.add(feature);
-              }
-            }
-          }
-        }
-      }
-      
-      if (featuresSet.isNotEmpty) {
-        contentList.add(_buildFeatures(featuresSet: featuresSet));
-      }
-
+    else if (widget.promotedList != null) {
       contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
+    }
 
-      contentList.add(
-        Expanded(child:
-          SingleChildScrollView(child:
-            SafeArea(child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                cardsList
-              ),
+    List<Widget> cardsList = <Widget>[];
+    if (_guideItems != null) {
+      for (Map<String, dynamic> guideEntry in _guideItems) {
+        cardsList.add(
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+            StudentGuideEntryCard(guideEntry)
+          )
+        );
+      }
+    }
+
+    contentList.add(
+      Expanded(child:
+        SingleChildScrollView(child:
+          SafeArea(child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+              cardsList
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
+
     return contentList;
   }
 
@@ -189,41 +178,45 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     );
   }
 
-  Widget _buildFeatures({ LinkedHashSet<String> featuresSet }) {
-    List<Widget> rowWidgets = <Widget>[];
-    List<Widget> colWidgets = <Widget>[];
-    for (String feature in featuresSet) {
-      StudentGuideFeatureButton featureButton = _buildFeatureButton(feature);
-      if (featureButton != null) {
-        if (rowWidgets.isNotEmpty) {
-          rowWidgets.add(Container(width: 6),);
-        }
-        rowWidgets.add(Expanded(child: featureButton));
-        
-        if (rowWidgets.length >= 5) {
-          if (colWidgets.isNotEmpty) {
-            colWidgets.add(Container(height: 6),);
+  Widget _buildFeatures() {
+    if (_features != null) {
+      List<Widget> rowWidgets = <Widget>[];
+      List<Widget> colWidgets = <Widget>[];
+      for (String feature in _features) {
+        StudentGuideFeatureButton featureButton = _buildFeatureButton(feature);
+        if (featureButton != null) {
+          if (rowWidgets.isNotEmpty) {
+            rowWidgets.add(Container(width: 6),);
           }
-          colWidgets.add(Row(crossAxisAlignment: CrossAxisAlignment.center, children: rowWidgets));
-          rowWidgets = <Widget>[];
+          rowWidgets.add(Expanded(child: featureButton));
+          
+          if (rowWidgets.length >= 5) {
+            if (colWidgets.isNotEmpty) {
+              colWidgets.add(Container(height: 6),);
+            }
+            colWidgets.add(Row(crossAxisAlignment: CrossAxisAlignment.center, children: rowWidgets));
+            rowWidgets = <Widget>[];
+          }
         }
       }
+
+      if (0 < rowWidgets.length) {
+        while (rowWidgets.length < 5) {
+          rowWidgets.add(Container(width: 6),);
+          rowWidgets.add(Expanded(child: Container()));
+        }
+        if (colWidgets.isNotEmpty) {
+          colWidgets.add(Container(height: 6),);
+        }
+        colWidgets.add(Row(children: rowWidgets));
+      }
+
+      return Padding(padding: EdgeInsets.all(16), child:
+        Column(children: colWidgets,),
+      );
     }
 
-    if (0 < rowWidgets.length) {
-      while (rowWidgets.length < 5) {
-        rowWidgets.add(Container(width: 6),);
-        rowWidgets.add(Expanded(child: Container()));
-      }
-      if (colWidgets.isNotEmpty) {
-        colWidgets.add(Container(height: 6),);
-      }
-      colWidgets.add(Row(children: rowWidgets));
-    }
-
-    return Padding(padding: EdgeInsets.all(16), child:
-      Column(children: colWidgets,),
-    );
+    return null;
 
     /*return Padding(padding: EdgeInsets.all(16), child:
         Column(children: [
