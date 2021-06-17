@@ -436,3 +436,21 @@ class StudentGuide with Service implements NotificationsListener {
   }*/
 
 }
+
+class StudentGuideFavorite implements Favorite {
+  
+  final String id;
+  StudentGuideFavorite({this.id});
+
+  bool operator == (o) => o is StudentGuideFavorite && o.id == id;
+
+  int get hashCode => (id?.hashCode ?? 0);
+
+  @override
+  String get favoriteId => id;
+
+  @override
+  String get favoriteKey => favoriteKeyName;
+
+  static String favoriteKeyName = "studentGuideIds";
+}

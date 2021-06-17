@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
@@ -16,17 +17,17 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class HomeStudentGuidePromoWidget extends StatefulWidget {
+class HomeStudentGuideHighlightsWidget extends StatefulWidget {
 
   final StreamController<void> refreshController;
 
-  HomeStudentGuidePromoWidget({this.refreshController});
+  HomeStudentGuideHighlightsWidget({this.refreshController});
 
   @override
-  _HomeStudentGuidePromoWidgetState createState() => _HomeStudentGuidePromoWidgetState();
+  _HomeStudentGuideHighlightsWidgetState createState() => _HomeStudentGuideHighlightsWidgetState();
 }
 
-class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidget> implements NotificationsListener {
+class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighlightsWidget> implements NotificationsListener {
 
   static const int _maxItems = 3;
 
@@ -83,7 +84,7 @@ class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidge
     return Visibility(visible: AppCollection.isCollectionNotEmpty(_promotedItems), child:
       Column(children: [
           SectionTitlePrimary(
-            title: "Promoted",
+            title: Localization().getStringEx('widget.home_student_guide_highlights.label.heading', 'Student Guide Highlights'),
             iconPath: 'images/campus-tools.png',
             children: _buildPromotedList()
           ),
@@ -115,8 +116,8 @@ class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidge
     if (_maxItems < _promotedItems.length) {
       contentList.add(Container(height: 16,));
       contentList.add(ScalableRoundedButton(
-        label: 'View All',
-        hint: '',
+        label: Localization().getStringEx('widget.home_student_guide_highlights.button.more.title', 'View All'),
+        hint: Localization().getStringEx('widget.home_student_guide_highlights.button.more.hint', 'Tap to view all highlights'),
         borderColor: Styles().colors.fillColorSecondary,
         textColor: Styles().colors.fillColorPrimary,
         backgroundColor: Styles().colors.white,
@@ -127,7 +128,7 @@ class _HomeStudentGuidePromoWidgetState extends State<HomeStudentGuidePromoWidge
   }
 
   void _showAll() {
-    Analytics.instance.logSelect(target: "HomeStudentGuidePromoWidget View All");
+    Analytics.instance.logSelect(target: "HomeStudentGuideHighlightsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(promotedList: _promotedItems,)));
   }
 }
