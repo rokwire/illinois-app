@@ -335,7 +335,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget _exploreLocationDetail() {
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData);
-    if (!(widget?.event?.isVirtual ?? false) && widget?.event?.location != null && (locationText != null) && locationText.isNotEmpty) {
+    bool isVirtual = widget?.event?.isVirtual ?? false;
+    String eventType = isVirtual? "Online event" : "In-person event";
+    String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
+    String value = isVirtual? "Event link" : locationText;
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -345,30 +348,54 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           excludeSemantics: true,
           child:Padding(
             padding: EdgeInsets.only(bottom: 8),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png'),
+                  child:Image.asset(iconRes),
                 ),
-                Expanded(child: Text(locationText,
+                Expanded(child: Text(eventType,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.medium,
                         fontSize: 16,
                         color: Styles().colors.textBackground))),
-              ],
-            ),
+              ]),
+              Container(height: 4,),
+              Container(
+                padding: EdgeInsets.only(left: 30),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                  ),
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                        fontFamily: Styles().fontFamilies.medium,
+                        fontSize: 14,
+                        color: Styles().colors.fillColorPrimary,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1,
+                        decorationStyle:
+                        TextDecorationStyle.solid),
+                  )))
+            ],)
           )
         ),
       );
-    } else {
-      return null;
-    }
   }
   
   Widget _eventPriceDetail() {
-    String priceText = widget?.event?.cost;
+    bool isFree = widget?.event?.isEventFree;
+    String priceText =isFree? "Free" : (widget?.event?.cost ?? "Free");
+    String additionalDescription = isFree? widget?.event?.cost : null;
+    bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
     if ((priceText != null) && priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
@@ -376,20 +403,35 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           excludeSemantics: true,
           child:Padding(
             padding: EdgeInsets.only(bottom: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-cost.png'),
+              child:
+              Column(children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child:Image.asset('images/icon-cost.png'),
+                    ),
+                      Expanded(child:Text(priceText,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 16,
+                            color: Styles().colors.textBackground))),
+
+                    ]),
+                    !hasAdditionalDescription? Container():
+                    Container(
+                      padding: EdgeInsets.only(left: 28),
+                      child: Row(children: [
+                      Expanded(child:Text(additionalDescription,
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies.medium,
+                              fontSize: 16,
+                              color: Styles().colors.textBackground))),
+
+                    ])),
+                  ],
                 ),
-                Expanded(child: Text(priceText,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.medium,
-                        fontSize: 16,
-                        color: Styles().colors.textBackground))),
-              ],
-            ),
           )
         );
     } else {
@@ -658,7 +700,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onLocationDetailTapped() {
-    if(widget?.event?.location?.latitude != null && widget?.event?.location?.longitude != null) {
+    if((widget?.event?.isVirtual?? false) == true){
+      //TBD open link 
+    } else if(widget?.event?.location?.latitude != null && widget?.event?.location?.longitude != null) {
       Analytics.instance.logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.event);
     }

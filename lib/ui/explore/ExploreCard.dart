@@ -107,7 +107,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: widget.border
+                        border: widget.border,
+                        boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
