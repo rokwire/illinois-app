@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
@@ -17,16 +18,71 @@ class StudentGuideCategoriesPanel extends StatefulWidget {
   _StudentGuideCategoriesPanelState createState() => _StudentGuideCategoriesPanelState();
 }
 
-class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPanel> {
+class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPanel> implements NotificationsListener {
+
+  List<String> _categories;
+  Map<String, List<String>> _categorySections;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      StudentGuide.notifyChanged,
+    ]);
+    _buildCategories();
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == StudentGuide.notifyChanged) {
+      setState(() {
+        _buildCategories();
+      });
+    }
+  }
+
+  void _buildCategories() {
+    
+    if (StudentGuide().contentList != null) {
+      
+      LinkedHashMap<String, LinkedHashSet<String>> categoriesMap = LinkedHashMap<String, LinkedHashSet<String>>();
+      
+      for (dynamic contentEntry in StudentGuide().contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (guideEntry != null) {
+          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
+          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          if ((category != null) && (section != null)) {
+            LinkedHashSet<String> categorySections = categoriesMap[category];
+            if (categorySections == null) {
+              categoriesMap[category] = categorySections = LinkedHashSet<String>();
+            }
+            if (!categorySections.contains(section)) {
+              categorySections.add(section);
+            }
+          }
+        }
+      }
+
+      _categories = List.from(categoriesMap.keys) ;
+      _categories.sort();
+
+      _categorySections = Map<String, List<String>>();
+      categoriesMap.forEach((String category, LinkedHashSet<String> sectionsSet) {
+        List<String> sections = List.from(sectionsSet);
+        sections.sort();
+        _categorySections[category] = sections;
+      });
+        
+    }
   }
 
   @override
@@ -53,35 +109,13 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
 
   List<Widget> _buildContent() {
     List<Widget> contentList = <Widget>[];
-    if (StudentGuide().contentList != null) {
-      
-      LinkedHashMap<String, LinkedHashSet<String>> categoriesMap = LinkedHashMap<String, LinkedHashSet<String>>();
-      
-      for (dynamic contentEntry in StudentGuide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        if (guideEntry != null) {
-          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((category != null) && (section != null)) {
-            LinkedHashSet<String> categorySections = categoriesMap[category];
-            if (categorySections == null) {
-              categoriesMap[category] = categorySections = LinkedHashSet<String>();
-            }
-            if (!categorySections.contains(section)) {
-              categorySections.add(section);
-            }
-          }
-        }
+    for (String category in _categories) {
+      contentList.add(_buildHeading(category));
+      for (String section in _categorySections[category]) {
+        contentList.add(_buildEntry(section, category: category));
       }
-
-      categoriesMap.forEach((String category, LinkedHashSet<String> sections) {
-        contentList.add(_buildHeading(category));
-        for (String section in sections) {
-          contentList.add(_buildEntry(section, category: category));
-        }
-      });
-        
     }
+
     return contentList;
   }
 
