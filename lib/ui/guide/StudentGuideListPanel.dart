@@ -28,6 +28,7 @@ class StudentGuideListPanel extends StatefulWidget {
   final String category;
   final String section;
   final List<dynamic> promotedList;
+
   StudentGuideListPanel({ this.category, this.section, this.promotedList});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
@@ -44,27 +45,35 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> contentList = <Widget>[];
-    Widget featues = _buildFeatures();
-    if (featues != null) {
-      contentList.add(featues);
+    
+    String title;
+    if (widget.category != null) {
+      title = widget.category;
     }
-    contentList.add(Expanded(child: CustomScrollView(slivers: _buildContent())));
+    else if (widget.promotedList != null) {
+      title = 'Promoted';
+    }
 
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(widget.category ?? 'Promoted', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
-      body: Column(children: <Widget>[
+      body: Column(children: _buildContent()),
+      /*Column(children: <Widget>[
           Expanded(child:
-            SafeArea(child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList)
+            SingleChildScrollView(child:
+              SafeArea(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                  _buildContent()
+                ),
+              ),
             ),
           ),
-        ],),
+        ],),*/
       backgroundColor: Styles().colors.background,
     );
   }
@@ -76,67 +85,24 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   List<Widget> _buildCategoryContent() {
     List<Widget> contentList = <Widget>[];
     if (StudentGuide().contentList != null) {
-      LinkedHashMap<String, List<Map<String, dynamic>>> sectionsMap = LinkedHashMap<String, List<Map<String, dynamic>>>();
-      for (dynamic contentEntry in StudentGuide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        if (guideEntry != null) {
-
-          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((widget.category == category) && (section != null) && ((widget.section == null) || (widget.section == section))) {
-
-            List<Map<String, dynamic>> sectionEntries = sectionsMap[section];
-            
-            if (sectionEntries == null) {
-              sectionsMap[section] = sectionEntries = <Map<String, dynamic>>[];
-            }
-            
-            sectionEntries.add(guideEntry);
-          }
-        }
-      }
       
-      // build sections
-      contentList.addAll(_buildSections(sectionsMap: sectionsMap));
-    }
-    return contentList;
-  }
+      // construct cards & features
+      List<Widget> cardsList = <Widget>[];
+      LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
 
-  List<Widget> _buildPromoContent() {
-    List<Widget> cardsList = <Widget>[];
-    if (widget.promotedList != null) {
-      for (dynamic promotedEntry in widget.promotedList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
-        if (guideEntry != null) {
-
-          cardsList.add(
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-              StudentGuideEntryCard(guideEntry)
-            )
-          );
-        }
-      }
-    }
-    return <Widget>[
-      SliverPersistentHeader(pinned: true, delegate: _PinnedSliverHeading(child: _buildSectionHeading('Selected for you'))),
-      SliverList(delegate: SliverChildListDelegate(cardsList))
-    ];
-  }
-
-  Widget _buildFeatures() {
-    return (widget.category != null) ? _buildCategoryFeatures() : _buildPromoFeatures();
-  }
-
-  Widget _buildCategoryFeatures() {
-    LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
-    if (StudentGuide().contentList != null) {
       for (dynamic contentEntry in StudentGuide().contentList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
         if (guideEntry != null) {
 
           String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
           String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((widget.category == category) && (section != null) && ((widget.section == null) || (widget.section == section))) {
+          if ((widget.category == category) && (widget.section == section)) {
+
+            cardsList.add(
+              Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+                StudentGuideEntryCard(guideEntry)
+              )
+            );
 
             List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
             if (features != null) {
@@ -149,17 +115,47 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
           }
         }
       }
+      
+      if (featuresSet.isNotEmpty) {
+        contentList.add(_buildFeatures(featuresSet: featuresSet));
+      }
+
+      contentList.add(_buildSectionHeading(widget.section));
+
+      contentList.add(
+        Expanded(child:
+          SingleChildScrollView(child:
+            SafeArea(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                cardsList
+              ),
+            ),
+          ),
+        ),
+      );
     }
 
-    return featuresSet.isNotEmpty ? _buildFeaturesGrid(featuresSet: featuresSet) : null;
+    return contentList;
   }
 
-  Widget _buildPromoFeatures() {
-    LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
+  List<Widget> _buildPromoContent() {
+    List<Widget> contentList = <Widget>[];
     if (widget.promotedList != null) {
+      
+      // construct cards & features
+      List<Widget> cardsList = <Widget>[];
+      LinkedHashSet<String> featuresSet = LinkedHashSet<String>();
+
       for (dynamic promotedEntry in widget.promotedList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(promotedEntry);
         if (guideEntry != null) {
+
+          cardsList.add(
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+              StudentGuideEntryCard(guideEntry)
+            )
+          );
+
           List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
           if (features != null) {
             for (dynamic feature in features) {
@@ -170,12 +166,39 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
           }
         }
       }
+      
+      if (featuresSet.isNotEmpty) {
+        contentList.add(_buildFeatures(featuresSet: featuresSet));
+      }
+
+      contentList.add(
+        Expanded(child:
+          SingleChildScrollView(child:
+            SafeArea(child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                cardsList
+              ),
+            ),
+          ),
+        ),
+      );
     }
-      // build features
-    return featuresSet.isNotEmpty ? _buildFeaturesGrid(featuresSet: featuresSet) : null;
+    return contentList;
   }
 
-  Widget _buildFeaturesGrid({ LinkedHashSet<String> featuresSet }) {
+  Widget _buildSectionHeading(String section) {
+    return Container(color: Styles().colors.fillColorPrimary, child:
+      Row(children: [
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
+            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+          ),
+        )
+      ],),
+    );
+  }
+
+  Widget _buildFeatures({ LinkedHashSet<String> featuresSet }) {
     List<Widget> rowWidgets = <Widget>[];
     List<Widget> colWidgets = <Widget>[];
     for (String feature in featuresSet) {
@@ -279,41 +302,6 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     else {
       return null;
     }
-  }
-
-  Widget _buildSectionHeading(String section) {
-    return Container(color: Styles().colors.fillColorPrimary, child:
-      Row(children: [
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-          ),
-        )
-      ],),
-    );
-  }
-
-  List<Widget> _buildSections({ LinkedHashMap<String, List<Map<String, dynamic>>> sectionsMap }) {
-    List<Widget> contentList = <Widget>[];
-    sectionsMap.forEach((String section, List<Map<String, dynamic>> entries) {
-
-      List<Widget> entriesList = <Widget>[];
-      for (Map<String, dynamic> entry in entries) {
-        entriesList.add(
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
-            StudentGuideEntryCard(entry)
-          )
-        );
-      }
-      if (entries.isNotEmpty) {
-        entriesList.add(Container(height: 16,));
-      }
-
-      contentList.add(SliverPersistentHeader(pinned: true, delegate: _PinnedSliverHeading(child: _buildSectionHeading(section))));
-      contentList.add(SliverList(delegate: SliverChildListDelegate(entriesList)));
-    });
-    
-    return contentList;
   }
 
   void _navigateAthletics() {
@@ -506,28 +494,4 @@ class _StudentGuideFeatureButtonState extends State<StudentGuideFeatureButton> {
 
 
   void _nop() {}
-}
-
-class _PinnedSliverHeading extends SliverPersistentHeaderDelegate{
-
-  final Widget child;
-  final double constExtent = 48;
-
-  _PinnedSliverHeading({@required this.child});
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(height: constExtent, child: child,);
-  }
-
-  @override
-  double get maxExtent => constExtent;
-
-  @override
-  double get minExtent => constExtent;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
 }

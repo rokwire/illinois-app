@@ -114,7 +114,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
   }
 
   void _onTapCategory(String category) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category,)));
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category,)));
   }
 
   void _onTapSection(String section, {String category}) {
