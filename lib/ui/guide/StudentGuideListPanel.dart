@@ -48,32 +48,21 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
 
   @override
   Widget build(BuildContext context) {
-    
+
     String title;
     if (widget.category != null) {
       title = widget.category;
     }
     else if (widget.promotedList != null) {
-      title = 'Promoted';
+      title = Localization().getStringEx('panel.student_guide_list.label.highlights.heading', 'Student Guide');
     }
-
+    
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: _buildContent()),
-      /*Column(children: <Widget>[
-          Expanded(child:
-            SingleChildScrollView(child:
-              SafeArea(child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                  _buildContent()
-                ),
-              ),
-            ),
-          ),
-        ],),*/
       backgroundColor: Styles().colors.background,
     );
   }
@@ -171,6 +160,8 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
         contentList.add(_buildFeatures(featuresSet: featuresSet));
       }
 
+      contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
+
       contentList.add(
         Expanded(child:
           SingleChildScrollView(child:
@@ -258,46 +249,46 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   StudentGuideFeatureButton _buildFeatureButton(String feature) {
     
     if (feature == 'athletics') {
-      return StudentGuideFeatureButton(title: "Athletics", icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
     }
     else if (feature == 'buss-pass') {
-      return StudentGuideFeatureButton(title: "Buss Pass", icon: "images/icon-student-guide-buss-pass.png");
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.buss_pass.title", "Buss Pass"), icon: "images/icon-student-guide-buss-pass.png", onTap: _navigateBussPass,);
     }
     else if (feature == 'dining') {
-      return StudentGuideFeatureButton(title: "Dining", icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
     }
     else if (feature == 'events') {
-      return StudentGuideFeatureButton(title: "Events", icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.events.title", "Events"), icon: "images/icon-student-guide-events.png", onTap: _navigateEvents);
     }
     else if (feature == 'groups') {
-      return StudentGuideFeatureButton(title: "Groups", icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.groups.title", "Groups"), icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups);
     }
     else if (feature == 'illini-cash') {
-      return StudentGuideFeatureButton(title: "Illini Cash", icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_cash.title", "Illini Cash"), icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash);
     }
     else if (feature == 'illini-id') {
-      return StudentGuideFeatureButton(title: "Illini ID", icon: "images/icon-student-guide-illini-id.png");
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_id.title", "Illini ID"), icon: "images/icon-student-guide-illini-id.png", onTap: _navigateIlliniId);
     }
     else if (feature == 'laundry') {
-      return StudentGuideFeatureButton(title: "Laundry", icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.laundry.title", "Laundry"), icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,);
     }
     else if (feature == 'library-card') {
-      return StudentGuideFeatureButton(title: "Library", icon: "images/icon-student-guide-library-card.png");
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.library_card.title", "Library Card"), icon: "images/icon-student-guide-library-card.png", onTap: _navigateLibraryCard);
     }
     else if (feature == 'meal-plan') {
-      return StudentGuideFeatureButton(title: "Meal Plan", icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.meal_plan.title", "Meal Plan"), icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,);
     }
     else if (feature == 'my-illini') {
-      return StudentGuideFeatureButton(title: "My Illini", icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.my_illini.title", "My Illini"), icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini);
     }
     else if (feature == 'parking') {
-      return StudentGuideFeatureButton(title: "Parking", icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.parking.title", "Parking"), icon: "images/icon-student-guide-parking.png", onTap: _navigateParking);
     }
     else if (feature == 'quick-polls') {
-      return StudentGuideFeatureButton(title: "Quick Polls", icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.quick_polls.title", "Quick Polls"), icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls);
     }
     else if (feature == 'saved') {
-      return StudentGuideFeatureButton(title: "Saved", icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.saved.title", "Saved"), icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved);
     }
     else {
       return null;
@@ -307,6 +298,15 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   void _navigateAthletics() {
     Analytics.instance.logSelect(target: "Athletics");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+  }
+
+  void _navigateBussPass() {
+    Analytics.instance.logSelect(target: "Buss Pass");
+  }
+
+  void _navigateDining() {
+    Analytics.instance.logSelect(target: "Dinings");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
   }
 
   void _navigateEvents() {
@@ -319,16 +319,6 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
-  void _navigateDining() {
-    Analytics.instance.logSelect(target: "Dinings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
-  }
-
-  void _navigateMyIllini() {
-    Analytics.instance.logSelect(target: "My Illini");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: Localization().getStringEx('panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini'),)));
-  }
-
   void _navigateIlliniCash() {
     Analytics.instance.logSelect(target: "Illini Cash");
     Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
@@ -337,6 +327,19 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
           return SettingsIlliniCashPanel();
         }
     ));
+  }
+
+  void _navigateIlliniId() {
+    Analytics.instance.logSelect(target: "Illini ID");
+  }
+
+  void _navigateLaundry() {
+    Analytics.instance.logSelect(target: "Laundry");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
+  void _navigateLibraryCard() {
+    Analytics.instance.logSelect(target: "Library Card");
   }
 
   void _navigateMealPlan() {
@@ -348,14 +351,9 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
     ));
   }
 
-  void _navigateLaundry() {
-    Analytics.instance.logSelect(target: "Laundry");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
-  }
-
-  void _navigateSaved() {
-    Analytics.instance.logSelect(target: "Saved");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
+  void _navigateMyIllini() {
+    Analytics.instance.logSelect(target: "My Illini");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: Localization().getStringEx('panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini'),)));
   }
 
   void _navigateParking() {
@@ -366,6 +364,11 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> {
   void _navigateQuickPolls() {
     Analytics.instance.logSelect(target: "Quick Polls");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
+  }
+
+  void _navigateSaved() {
+    Analytics.instance.logSelect(target: "Saved");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
   }
 }
 

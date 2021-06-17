@@ -167,10 +167,12 @@
     "panel.browse.button.state_farm_wayfinding.hint":"",
     "panel.browse.button.groups.title":"Grupos",
     "panel.browse.button.groups.hint":"",
-    "panel.browse.button.safer.title":"Safer Illinois",
+    "panel.browse.button.safer.title":"Illinois más seguro",
     "panel.browse.button.safer.hint":"",
-    "panel.browse.button.add_illini_cash.title": "Add Illini Cash",
+    "panel.browse.button.add_illini_cash.title": "Añadir Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
+    "panel.browse.button.student_guide.title":"Guía de estudiante",
+    "panel.browse.button.student_guide.hint":"",
     "panel.browse.button.privacy_center.title": "Centro de privacidad",
 
     "panel.browse.label.browse_all": "Explorar todo",
@@ -1633,6 +1635,25 @@
     "panel.groups_event_detail.button.add.title": "ADD ",
     "panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
+    "panel.student_guide_categories.label.heading": "Guía de estudiante",
+
+    "panel.student_guide_list.label.highlights.heading": "Guía de estudiante",
+    "panel.student_guide_list.label.highlights.section": "Reflejos",
+    "panel.student_guide_list.button.athletics.title": "Atletismo",
+    "panel.student_guide_list.button.buss_pass.title": "Pase de autobus",
+    "panel.student_guide_list.button.dining.title": "Comida",
+    "panel.student_guide_list.button.events.title": "Events",
+    "panel.student_guide_list.button.groups.title": "團體",
+    "panel.student_guide_list.button.illini_cash.title": "Illini Cash",
+    "panel.student_guide_list.button.illini_id.title": "Illini ID",
+    "panel.student_guide_list.button.laundry.title": "Ropa sucia",
+    "panel.student_guide_list.button.library_card.title": "Tarjeta de biblioteca",
+    "panel.student_guide_list.button.meal_plan.title": "Régimen de comidas",
+    "panel.student_guide_list.button.my_illini.title": "Mi Illini",
+    "panel.student_guide_list.button.parking.title": "Estacionamiento",
+    "panel.student_guide_list.button.quick_polls.title": "Encuestas rápidas",
+    "panel.student_guide_list.button.saved.title": "Salvado",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
@@ -1723,6 +1744,10 @@
 
     "widget.home_upgrade_version.text": "Bienvenido a la última versión de Illinois. Le recomendamos que cierre sesión y luego vuelva a iniciar sesión para asegurarse de que todas las funciones estén disponibles.",
     "widget.home_upgrade_version.button.got_it": "Entendido",
+
+    "widget.home_student_guide_highlights.label.heading": "Aspectos destacados de la guía del estudiante",
+    "widget.home_student_guide_highlights.button.more.title": "Ver todo",
+    "widget.home_student_guide_highlights.button.more.hint": "Toca para ver todos los aspectos destacados",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",

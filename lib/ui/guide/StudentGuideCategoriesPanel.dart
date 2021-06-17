@@ -3,6 +3,8 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
@@ -32,7 +34,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text('Student Guide', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(Localization().getStringEx('panel.student_guide_categories.label.heading', 'Student Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -114,10 +116,12 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
   }
 
   void _onTapCategory(String category) {
+    Analytics.instance.logSelect(target: category);
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category,)));
   }
 
   void _onTapSection(String section, {String category}) {
+    Analytics.instance.logSelect(target: "$section / $category");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category, section: section,)));
   }
 }
