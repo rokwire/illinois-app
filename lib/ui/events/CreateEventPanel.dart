@@ -69,7 +69,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _allDay = false;
   Location _location;
   bool _isOnline = false;
-  bool _isAttendanceRequired = false;
+  //TMP: bool _isAttendanceRequired = false;
 
   bool _loading = false;
 
@@ -200,7 +200,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         ),
                         _buildCategorySection(),
                         _buildTitleSection(),
-                        false && _isGroupEvent? _buildAttendanceSwitch() : Container(),
+                        Container(), //TMP: _isGroupEvent? _buildAttendanceSwitch() : Container(),
                         Padding(
                           padding: EdgeInsets.only(bottom: 24),
                           child: Container(
@@ -1127,7 +1127,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     );
   }
 
-  Widget _buildAttendanceSwitch(){
+  /* TMP: Widget _buildAttendanceSwitch(){
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       child: Semantics(label:Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),//TBD localize
@@ -1143,7 +1143,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           borderRadius:
           BorderRadius.all(Radius.circular(4)),
         )));
-  }
+  }*/
 
   void _prepopulateWithUpdateEvent(){
     Event event = widget.editEvent;
@@ -1220,10 +1220,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     setState(() {});
   }
 
-  void _onAttendanceRequiredToggled() {
+  /* TMP: void _onAttendanceRequiredToggled() {
     _isAttendanceRequired = !_isAttendanceRequired;
     setState(() {});
-  }
+  }*/
 
   void _onTapSelectLocation() {
     Analytics.instance.logSelect(target: "Select Location");
