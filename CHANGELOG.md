@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Hook up Student Guide in recent items.
+
 ### Changed 
 - Hook up Students Guide API [#313](https://github.com/rokwire/illinois-app/issues/313).
 
@@ -12,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed err_cleartext_not_permitted error [#308](https://github.com/rokwire/illinois-app/issues/308)
 
 ## [2.4.25] - 2021-06-17
+### Added
+- Hook up Student Guide in user favorites.
+
 ### Changed 
 - Various updates and fixes in Students Guide [#303](https://github.com/rokwire/illinois-app/issues/303).
 - Event enhancements (virtual/in person, price etc) [#300](https://github.com/rokwire/illinois-app/issues/300).

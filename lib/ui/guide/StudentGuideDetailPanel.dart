@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
@@ -38,6 +40,8 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     ]);
     _guideEntry = StudentGuide().entryById(widget.guideEntryId);
     _isFavorite = User().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+    
+    RecentItems().addRecentItem(RecentItem.fromStudentGuideItem(_guideEntry));
   }
 
   @override

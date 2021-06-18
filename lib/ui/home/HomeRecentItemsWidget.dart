@@ -23,16 +23,19 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -187,6 +190,9 @@ class _RecentItemsList extends StatelessWidget{
       }
       return ExploreDetailPanel(explore: originalObject,);
     }
+    else if ((item.recentItemType == RecentItemType.studentGuide) && (originalObject is Map)) {
+      return StudentGuideDetailPanel(guideEntryId: originalObject[StudentGuide.fieldId],);
+    }
 
     return Container();
   }
@@ -228,8 +234,17 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   @override
   Widget build(BuildContext context) {
-    Object _originalItem = widget.item.fromOriginalJson();
-    bool isFavorite = User().isFavorite(_originalItem);
+    bool isFavorite;
+    Object originalItem = widget.item.fromOriginalJson();
+    if (originalItem is Favorite) {
+      isFavorite = User().isFavorite(originalItem);
+    }
+    else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
+      isFavorite = User().isFavorite(StudentGuideFavorite(id: AppJson.stringValue(originalItem[StudentGuide.fieldId])));
+    }
+    else {
+      isFavorite = false;
+    }
     String itemIconPath = widget.item.getIconPath();
     bool hasIcon = AppString.isStringNotEmpty(itemIconPath);
 
@@ -281,10 +296,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
                             child: Expanded(flex: 2, child:
                             GestureDetector(
                                 behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  Analytics.instance.logSelect(target: "HomeRecentItemCard  Favorite: "+widget?.item?.recentTitle);
-                                  User().switchFavorite(_originalItem);
-                                },
+                                onTap: _onTapFavorite,
                                 child: Semantics(
                                     label: isFavorite
                                         ? Localization().getStringEx(
@@ -391,9 +403,29 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   Widget _topBorder() {
-    Object _originalItem = widget.item.fromOriginalJson();
-    Color borderColor = (_originalItem is Explore) ? _originalItem.uiColor : Styles().colors.fillColorPrimary;
+    Object originalItem = widget.item.fromOriginalJson();
+    Color borderColor = Styles().colors.fillColorPrimary;
+    if (originalItem is Explore) {
+      borderColor = originalItem.uiColor;
+    }
+    else if (widget.item.recentItemType == RecentItemType.studentGuide) {
+      borderColor = Styles().colors.accentColor3;
+    }
+    else {
+      borderColor = Styles().colors.fillColorPrimary;
+    }
     return Container(height: 7, color: borderColor);
+  }
+
+  void _onTapFavorite() {
+    Analytics.instance.logSelect(target: "HomeRecentItemCard  Favorite: "+widget?.item?.recentTitle);
+    Object originalItem = widget.item.fromOriginalJson();
+    if (originalItem is Favorite) {
+      User().switchFavorite(originalItem);
+    }
+    else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
+      User().switchFavorite(StudentGuideFavorite(id: AppJson.stringValue(originalItem[StudentGuide.fieldId])));
+    }
   }
 
   // NotificationsListener

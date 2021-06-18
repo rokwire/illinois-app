@@ -19,6 +19,8 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/utils/Utils.dart';
 
 enum RecentItemType{
   news,
@@ -26,6 +28,7 @@ enum RecentItemType{
   event,
   dining,
   explore, // for backward compatability only, we now use event / dining RecentItemType
+  studentGuide,
 }
 
 class RecentItem{
@@ -115,6 +118,16 @@ class RecentItem{
     return null;
   }
 
+  factory RecentItem.fromStudentGuideItem(Map<String, dynamic> guideItem) {
+    return (guideItem != null) ? RecentItem(
+      recentItemType: RecentItemType.studentGuide,
+      recentTitle: AppJson.stringValue(StudentGuide().entryValue(guideItem, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(guideItem, 'title')) ?? '',
+      recentDescripton: AppJson.stringValue(StudentGuide().entryValue(guideItem, 'list_description')) ?? AppJson.stringValue(StudentGuide().entryValue(guideItem, 'description')) ?? '',
+      recentOriginalJson: guideItem
+    ) : null;
+
+  }
+
   Map<String, dynamic> toJson() =>
       {
         'recent_type': recentTypeToString(recentItemType),
@@ -131,6 +144,7 @@ class RecentItem{
       case RecentItemType.event: return Event.fromJson(recentOriginalJson);
       case RecentItemType.dining: return Dining.fromJson(recentOriginalJson);
       case RecentItemType.explore: return Explore.fromJson(recentOriginalJson);
+      case RecentItemType.studentGuide: return recentOriginalJson;
       default: return null;
     }
   }
@@ -145,6 +159,8 @@ class RecentItem{
         return 'images/icon-calendar.png';
       case RecentItemType.dining:
         return 'images/icon-dining-yellow.png';
+      case RecentItemType.studentGuide:
+        return 'images/icon-news.png';
       case RecentItemType.explore:
         {
           if (Event.canJson(recentOriginalJson)) {
@@ -171,8 +187,10 @@ class RecentItem{
           o.recentTitle == recentTitle;
 
   int get hashCode =>
-      recentTitle.hashCode ^ recentDescripton.hashCode ^ recentItemType
-          .hashCode ^ recentTime.hashCode;
+      (recentTitle?.hashCode ?? 0) ^
+      (recentDescripton?.hashCode ?? 0) ^
+      (recentItemType?.hashCode ?? 0) ^
+      (recentTime?.hashCode ?? 0);
 
   static RecentItemType recentTypeFromString(String value){
     if("news" == value){
@@ -190,6 +208,9 @@ class RecentItem{
     if("explore" == value){
       return RecentItemType.explore;
     }
+    if("student_guide" == value){
+      return RecentItemType.studentGuide;
+    }
     return null;
   }
 
@@ -200,6 +221,7 @@ class RecentItem{
       case RecentItemType.event: return "event";
       case RecentItemType.dining: return "dining";
       case RecentItemType.explore: return "explore";
+      case RecentItemType.studentGuide: return "student_guide";
       default: return null;
     }
   }
