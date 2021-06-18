@@ -22,6 +22,7 @@ enum StudentGuideContentSource { Net, Debug }
 class StudentGuide with Service implements NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
+  static const String fieldId = '_id';
 
   static const String _cacheFileName = "student.guide.json";
 
@@ -160,7 +161,7 @@ class StudentGuide with Service implements NotificationsListener {
       contentMap = LinkedHashMap<String, Map<String, dynamic>>();
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic> mapEntry = AppJson.mapValue(contentEntry);
-        String id = (mapEntry != null) ? AppJson.stringValue(mapEntry['id']) : null;
+        String id = (mapEntry != null) ? AppJson.stringValue(mapEntry[fieldId]) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -331,8 +332,14 @@ class StudentGuide with Service implements NotificationsListener {
   static Map<String, dynamic> _convertContentEntry(Map<String, dynamic> sourceEntry) {
     Map<String, dynamic> contentEntry = Map<String, dynamic>();
 
+    // ID
+    dynamic sourceValue = sourceEntry['id'];
+    if (sourceValue != null) {
+      contentEntry[fieldId] = sourceValue;
+    }
+
     // Shared Fields
-    for (String key in ['id', 'guide', 'category', 'section', 'list_title', 'list_description', 'detail_title', 'detail_description', 'image', 'sub_details_title', 'sub_details_description']) {
+    for (String key in ['guide', 'category', 'section', 'list_title', 'list_description', 'detail_title', 'detail_description', 'image', 'sub_details_title', 'sub_details_description']) {
       dynamic sourceValue = sourceEntry[key];
       if (sourceValue != null) {
         contentEntry[key] = sourceValue;
