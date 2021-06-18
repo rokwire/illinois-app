@@ -298,7 +298,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
-                              label: "Students Guide...",
+                              label: "Student Guide",
                               backgroundColor: Styles().colors.background,
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
@@ -310,7 +310,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
-                              label: "Styles...",
+                              label: "Styles",
                               backgroundColor: Styles().colors.background,
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
