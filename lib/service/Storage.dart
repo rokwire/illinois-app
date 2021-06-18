@@ -123,6 +123,27 @@ class Storage with Service {
     return _sharedPreferences.get(name);
   }
 
+  void operator []=(String key, dynamic value) {
+    if (value is String) {
+      _sharedPreferences.setString(key, value);
+    }
+    else if (value is int) {
+      _sharedPreferences.setInt(key, value);
+    }
+    else if (value is double) {
+      _sharedPreferences.setDouble(key, value);
+    }
+    else if (value is bool) {
+      _sharedPreferences.setBool(key, value);
+    }
+    else if (value is List) {
+      _sharedPreferences.setStringList(key, value.cast<String>());
+    }
+    else if (value == null) {
+      _sharedPreferences.remove(key);
+    }
+  }
+
   // Dining
 
   static const String excludedFoodIngredientsPrefsKey  = 'excluded_food_ingredients_prefs';
@@ -693,6 +714,19 @@ class Storage with Service {
 
   set httpProxyPort(String value) {
     _setStringWithName(_httpProxyPortKey, value);
+  }
+
+  //////////////////
+  // Student Guide
+
+  static const String _studentGuideContentSourceKey = 'student_guide_content_source';
+
+  String get studentGuideContentSource {
+    return _getStringWithName(_studentGuideContentSourceKey);
+  }
+
+  set studentGuideContentSource(String value) {
+    _setStringWithName(_studentGuideContentSourceKey, value);
   }
 
   /////////////

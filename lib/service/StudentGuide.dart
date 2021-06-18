@@ -3,17 +3,21 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
+enum StudentGuideContentSource { Net, Debug }
 
 class StudentGuide with Service implements NotificationsListener {
 
@@ -23,6 +27,7 @@ class StudentGuide with Service implements NotificationsListener {
 
   List<dynamic> _contentList;
   LinkedHashMap<String, Map<String, dynamic>> _contentMap;
+  StudentGuideContentSource _contentSource;
 
   File          _cacheFile;
   DateTime      _pausedDateTime;
@@ -51,13 +56,27 @@ class StudentGuide with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _cacheFile = await _getCacheFile();
-    _contentList = await _loadContentJsonFromCache() ?? await _loadContentJsonFromAssets();
-    _contentMap = _buildContentMap(_contentList);
+    _contentList = await _loadContentJsonFromCache();
+    _contentSource = studentGuideContentSourceFromString(Storage().studentGuideContentSource);
+    if (_contentList != null) {
+      _contentMap = _buildContentMap(_contentList);
+      _updateContentFromNet();
+    }
+    else {
+      String contentString = await _loadContentStringFromNet();
+      _contentList = AppJson.decodeList(contentString);
+      if (_contentList != null) {
+        _contentMap = _buildContentMap(_contentList);
+        _contentSource = StudentGuideContentSource.Net;
+        Storage().studentGuideContentSource = studentGuideContentSourceToString(_contentSource);
+        _saveContentStringToCache(contentString);
+      }
+    }
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return Set.from([Storage(), Config()]);
   }
 
   // NotificationsListener
@@ -77,7 +96,7 @@ class StudentGuide with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          //TBD: refresh
+          _updateContentFromNet();
         }
       }
     }
@@ -111,14 +130,28 @@ class StudentGuide with Service implements NotificationsListener {
     return AppJson.decodeList(await _loadContentStringFromCache());
   }
 
-  Future<String> _loadContentStringFromAssets() async {
-    try { return await rootBundle.loadString('assets/student.guide.json'); }
-    catch (e) { print(e?.toString()); }
+  Future<String> _loadContentStringFromNet() async {
+    try {
+      Response response = await Network().get("${Config().contentUrl}/student_guides", auth: NetworkAuth.App);
+      return ((response != null) && (response.statusCode == 200)) ? response.body : null;
+    }
+    catch (e) { print(e.toString()); }
     return null;
   }
 
-  Future<List<dynamic>> _loadContentJsonFromAssets() async {
-    return AppJson.decodeList(await _loadContentStringFromAssets());
+  Future<void> _updateContentFromNet() async {
+    if ((_contentSource == null) || (_contentSource == StudentGuideContentSource.Net)) {
+      String contentString = await _loadContentStringFromNet();
+      List<dynamic> contentList = AppJson.decodeList(contentString);
+      if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
+        _contentList = contentList;
+        _contentMap = _buildContentMap(_contentList);
+        _contentSource = StudentGuideContentSource.Net;
+        Storage().studentGuideContentSource = studentGuideContentSourceToString(_contentSource);
+        _saveContentStringToCache(contentString);
+        NotificationService().notify(notifyChanged);
+      }
+    }
   }
 
   static LinkedHashMap<String, Map<String, dynamic>> _buildContentMap(List<dynamic> contentList) {
@@ -142,12 +175,8 @@ class StudentGuide with Service implements NotificationsListener {
     return _contentList;
   }
 
-  void _applyContentList(List<dynamic> value) {
-    if ((value != null) && !DeepCollectionEquality().equals(_contentList, value)) {
-      _contentList = value;
-      _contentMap = _buildContentMap(value);
-      NotificationService().notify(notifyChanged);
-    }
+  StudentGuideContentSource get contentSource {
+    return _contentSource;
   }
 
   Map<String, dynamic> entryById(String id) {
@@ -234,26 +263,37 @@ class StudentGuide with Service implements NotificationsListener {
   // Debug
 
   Future<String> getContentString() async {
-    return await _loadContentStringFromCache() ?? await _loadContentStringFromAssets();
+    return await _loadContentStringFromCache();
   }
 
-  Future<String> setContentString(String value) async {
+  Future<String> setDebugContentString(String value) async {
+    String contentString;
+    List<dynamic> contentList;
+    StudentGuideContentSource contentSource;
     if (value != null) {
-      List<dynamic> contentList = AppJson.decodeList(value);
-      if (contentList != null) {
-        await _saveContentStringToCache(value);
-        _applyContentList(contentList);
-        return value;
-      }
-      else {
-        return null;
-      }
+      contentString = value;
+      contentSource = StudentGuideContentSource.Debug;
     }
     else {
-      await _saveContentStringToCache(null);
-      value = await _loadContentStringFromAssets();
-      _applyContentList(AppJson.decodeList(value));
-      return value;
+      contentString = await _loadContentStringFromNet();
+      contentSource = StudentGuideContentSource.Net;
+    }
+
+    contentList = AppJson.decodeList(contentString);
+    if (contentList != null) {
+      _contentSource = contentSource;
+      Storage().studentGuideContentSource = studentGuideContentSourceToString(_contentSource);
+      _saveContentStringToCache(contentString);
+
+      if (!DeepCollectionEquality().equals(_contentList, contentList)) {
+        _contentList = contentList;
+        _contentMap = _buildContentMap(_contentList);
+        NotificationService().notify(notifyChanged);
+      }
+      return contentString;
+    }
+    else {
+      return null;
     }
   }
 
@@ -453,4 +493,24 @@ class StudentGuideFavorite implements Favorite {
   String get favoriteKey => favoriteKeyName;
 
   static String favoriteKeyName = "studentGuideIds";
+}
+
+StudentGuideContentSource studentGuideContentSourceFromString(String value) {
+  if (value == 'Net') {
+    return StudentGuideContentSource.Net;
+  }
+  else if (value == 'Debug') {
+    return StudentGuideContentSource.Debug;
+  }
+  else {
+    return null;
+  }
+}
+
+String studentGuideContentSourceToString(StudentGuideContentSource value) {
+  switch (value) {
+    case StudentGuideContentSource.Net:   return 'Net';
+    case StudentGuideContentSource.Debug: return 'Debug';
+  }
+  return null;
 }
