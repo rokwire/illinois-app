@@ -22,6 +22,8 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
+import 'package:illinois/ui/wallet/IDCardPanel.dart';
+import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -312,6 +314,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
 
   void _navigateBussPass() {
     Analytics.instance.logSelect(target: "Buss Pass");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
   }
 
   void _navigateDining() {
@@ -341,6 +344,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
 
   void _navigateIlliniId() {
     Analytics.instance.logSelect(target: "Illini ID");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => IDCardPanel()));
   }
 
   void _navigateLaundry() {
