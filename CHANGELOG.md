@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed 
 - Hook up Students Guide API [#313](https://github.com/rokwire/illinois-app/issues/313).
 
+### Fixed 
+- Fixed err_cleartext_not_permitted error [#308](https://github.com/rokwire/illinois-app/issues/308)
+
 ## [2.4.25] - 2021-06-17
 ### Changed 
 - Various updates and fixes in Students Guide [#303](https://github.com/rokwire/illinois-app/issues/303).
