@@ -317,7 +317,7 @@
   "links":[{"text":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/","icon":"https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png","url":"tel:+1-217-333-0050"},{"text":"https://odos.illinois.edu/community-of-care/","icon":"https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png","url":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download"}],
   "buttons":[{"text":"Learn more","url":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download"}],
   "sub_details_description": "The app sends users test results and exposure notifications. It is also the easiest and most reliable way to gain access to university buildings that are restricted during the pandemic.\r\n\r\nYou can download the app for iOS or for Android.",
-  "related": "mckinley.app, mckinley.health, immunizations"
+  "related": ["mckinley.app", "mckinley.health", "immunizations"]
 },{
   "id":"community.of.care.content",
   "list_title":"Get help from the Community of Care",
