@@ -353,9 +353,10 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   Widget _buildRelated() {
+    List<Widget> contentList;
     List<dynamic> related = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'related'));
     if (related != null) {
-      List<Widget> contentList = <Widget>[];
+      contentList = <Widget>[];
       for (dynamic relatedEntry in related) {
         Map<String, dynamic> guideEntry;
         if (relatedEntry is Map) {
@@ -371,17 +372,15 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           ),);
         }
       }
+    }
 
-      return Container(padding: EdgeInsets.symmetric(vertical: 16), child:
+    return ((contentList != null) && (0 < contentList.length)) ?
+      Container(padding: EdgeInsets.symmetric(vertical: 16), child:
         SectionTitlePrimary(title: "Related",
           iconPath: 'images/icon-related.png',
           children: contentList,
-        ),
-      );
-    }
-    else {
-      return Container();
-    }
+      )) :
+      Container();
 
   }
 

@@ -1,6 +1,6 @@
 [
   {
-    "id": "campus.recreation",
+    "_id": "campus.recreation",
     
     "list_title": "Participate in campus recreation",
     "list_description": "Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
@@ -66,7 +66,7 @@
     "related": [ "fraternity", "students.club", "civic.engagement" ]
   },
   {
-    "id": "campus.recreation.involvement",
+    "_id": "campus.recreation.involvement",
     "category": "Involvement",
     "section": "Socializing",
     "features": ["events", "athletics", "groups", "quick-polls"],
@@ -77,7 +77,7 @@
     "content_ref": "campus.recreation"
   },
   {
-    "id": "campus.recreation.health",
+    "_id": "campus.recreation.health",
     "category": "Health & wellness",
     "section": "Exercise",
     "features": ["meal_plan", "dining"],
@@ -88,7 +88,7 @@
     "content_ref": "campus.recreation"
   },
   {
-    "id": "intramural.sports",
+    "_id": "intramural.sports",
     "category": "Involvement",
     "section": "Socializing",
 
@@ -103,7 +103,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-profile-glass.webp"
   },
   {
-    "id": "students.club",
+    "_id": "students.club",
     "category": "Involvement",
     "section": "Socializing",
     "features": ["groups"],
@@ -120,7 +120,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-vote-sign.webp"
   },
   {
-    "id": "fraternity",
+    "_id": "fraternity",
     "category": "Involvement",
     "section": "Socializing",
 
@@ -136,7 +136,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-welcome-foellinger.webp"
   },
   {
-    "id": "civic.engagement",
+    "_id": "civic.engagement",
     "category": "Involvement",
     "section": "Community engagement",
 
@@ -146,7 +146,7 @@
     "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
   {
-    "id": "union.board",
+    "_id": "union.board",
     "category": "Involvement",
     "section": "Community engagement",
 
@@ -156,7 +156,7 @@
     "description": "Illinois offers many opportunities to become engaged citizens through student voter initiatives."
   },
   {
-    "id": "volunteer",
+    "_id": "volunteer",
     "category": "Involvement",
     "section": "Community engagement",
 
@@ -166,7 +166,7 @@
     "description": "The Office of Volunteer Programs provides students with opportunities to give back to their community."
   },
   {
-    "id": "call.safewalk",
+    "_id": "call.safewalk",
     "category": "Security",
     "section": "Safety",
     "features": ["athletics"],
@@ -192,7 +192,7 @@
     "related": [ "call.saferide", "sexual.assault", "prepared.emergency" ]
   },
   {
-    "id": "call.saferide",
+    "_id": "call.saferide",
     "category": "Security",
     "section": "Safety",
     "features": ["athletics"],
@@ -201,7 +201,7 @@
     "description": "Limited SafeRides are offered at night for individuals traveling alone when there are no other safe means of transportation."
   },
   {
-    "id": "sexual.assault",
+    "_id": "sexual.assault",
     "category": "Security",
     "section": "Safety",
     "features": ["athletics"],
@@ -210,7 +210,7 @@
     "description": "The University of Illinois at Urbana-Champaign provides prevention and awareness education, resources and reporting options."
   },
   {
-    "id": "prepared.emergency",
+    "_id": "prepared.emergency",
     "category": "Security",
     "section": "Emergency",
 
@@ -218,7 +218,7 @@
     "description": "Take a moment to think about what you should do in a situation where your ability to react quickly may save your life."
   },
   {
-    "id": "lorem.ipsum.1",
+    "_id": "lorem.ipsum.1",
     "category": "Security",
     "section": "Emergency",
 
@@ -226,7 +226,7 @@
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean in arcu sed leo lacinia elementum quis quis mi. Nulla et lobortis eros. Donec vel rhoncus ipsum. Aliquam erat volutpat."
   },
   {
-    "id": "write.workshop",
+    "_id": "write.workshop",
     "category": "Living on campus",
     "section": "Academic support",
     "features": ["saved"],
@@ -252,7 +252,7 @@
     "related": [ "online.classses", "assistent.center", "union.bookstore" ]
   },
   {
-    "id": "online.classses",
+    "_id": "online.classses",
     "category": "Living on campus",
     "section": "Academic support",
 
@@ -262,7 +262,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-firstyear-aceit.webp"
   },
   {
-    "id": "assistent.center",
+    "_id": "assistent.center",
     "category": "Living on campus",
     "section": "Academic support",
 
@@ -272,7 +272,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-involvement-squad.webp"
   },
   {
-    "id": "union.bookstore",
+    "_id": "union.bookstore",
     "category": "Living on campus",
     "section": "Library access",
 
@@ -282,7 +282,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-living-guitar.webp"
   },
   {
-    "id": "lorem.ipsum.2",
+    "_id": "lorem.ipsum.2",
     "category": "Living on campus",
     "section": "Library access",
 
@@ -292,7 +292,7 @@
     "image": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/image-money-frisbee.webp"
   },
   {
-    "id": "reflection.rooms",
+    "_id": "reflection.rooms",
     "category": "Spirituality",
     "section": "Reflections",
     "features": ["library-card"],

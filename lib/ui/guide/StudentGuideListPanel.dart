@@ -477,7 +477,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   String get guideEntryId {
-    return (widget.guideEntry != null) ? widget.guideEntry['id'] : null;
+    return (widget.guideEntry != null) ? widget.guideEntry[StudentGuide.fieldId] : null;
   } 
 }
 

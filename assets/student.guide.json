@@ -1,5 +1,5 @@
 [{
-  "id":"participate.campus.rec.content",
+  "_id":"participate.campus.rec.content",
   "list_title":"Participate in Campus Recreation",
   "list_description":"Campus Recreation offers active learning and self-discovery opportunities to students, faculty, staff, and community members.",
   "detail_title":"Participate in Campus Recreation",
@@ -42,7 +42,7 @@
 	}]}],
 	"related":["join.intramural","group.fitness","upace"]
 },{
-  "id":"participate.campus.rec",
+  "_id":"participate.campus.rec",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
@@ -53,14 +53,14 @@
   },
 "content_ref": "participate.campus.rec.content"
 },{
-  "id":"participate.campus.rec_01",
+  "_id":"participate.campus.rec_01",
   "guide":"For students",
   "category":"Involvement",
   "section":"Socializing",
   "features":["events","athletics","groups","quick-polls"],
   "content_ref": "participate.campus.rec.content"
 },{
-  "id":"join.intramural.content",
+  "_id":"join.intramural.content",
   "list_title":"Join an Intramural Sports Team",
   "list_description":"Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities.",
   "detail_title":"Join an Intramural Sports Team",
@@ -71,7 +71,7 @@
   "sub_details":[{"entries":[{"heading":"All Intramural Activities at Illinois are organized through an app called IM Leagues. IM Leagues allows users to see upcoming activities, register a team or as a free agent, and sign up for games throughout the semester. Once you have an account, you can join a sport in one of three ways.","numbers":["Create a team and invite team members to join.Join a specific existing teamList yourself as a free agent. You can make requests for specific teams or wait for team captains to reach out to you."]}]}],
   "related":["participate.campus.rec","group.fitness","join.frat"]
 },{
-  "id":"join.intramural",
+  "_id":"join.intramural",
   "guide":"For students",
   "category":"Involvement",
   "section":"Socializing",
@@ -83,14 +83,14 @@
   },
   "content_ref": "join.intramural.content"
 },{
-  "id":"join.intramural_02",
+  "_id":"join.intramural_02",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
   "features":["dining","meal-plan"],
   "content_ref": "join.intramural.content"
 },{
-  "id":"learn.money",
+  "_id":"learn.money",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Money management",
@@ -104,7 +104,7 @@
   "buttons":[{"text":"Visit Website","url":"https://www.studentmoney.uillinois.edu/"}],
   "related":["financial.wellness","bank","student.job"]
 },{
-  "id":"join.frat.content",
+  "_id":"join.frat.content",
   "list_title":"Join a fraternity or sorority",
   "list_description":"Fraternities and sororities provide support, housing, mentorship and more to over 7,000 students on campus.",
   "detail_title":"Join a fraternity or sorority",
@@ -116,7 +116,7 @@
   "sub_details":[{"section":"Organizations types","entries":[{"bullets":["General social fraternities/sororities","Fraternities and sororities with academic affiliations","Fraternities and sororities with cultural affiliations","Fraternities and sororities with religious affiliations"]}]},{"entries":[{"heading":"Learn more about the organization types and their recruitment process by visiting the Fraternity and Sorority Affairs website"}]}],
   "related":["join.intramural","join.illini.union","join.club"]
 },{
-  "id":"join.frat",
+  "_id":"join.frat",
   "guide":"For students",
   "category":"Involvement",
   "section":"Socializing",
@@ -128,14 +128,14 @@
 },
   "content_ref": "join.frat.content"
 },{
-  "id":"join.frat_03",
+  "_id":"join.frat_03",
   "guide":"For students",
   "category":"New students",
   "section":"Socializing",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "join.frat.content"
 },{
-  "id":"join.club",
+  "_id":"join.club",
   "guide":"For students",
   "category":"Involvement",
   "section":"Socializing",
@@ -155,7 +155,7 @@
   "buttons":[{"text":"Visit Website","url":"https://studentengagement.illinois.edu/student-org-development-and-administration/"}],
   "related":["volunteer","join.illini.union","join.voter"]
 },{
-  "id":"volunteer",
+  "_id":"volunteer",
   "guide":"For students",
   "category":"Involvement",
   "section":"Community engagement",
@@ -172,7 +172,7 @@
   "sub_details":[{"entries":[{"heading":"There are three types of volunteer programs that students can participate in:","bullets":["Civic engagement & action","Leadership development","Social & community awareness"]}]},{"entries":[{"heading":"Visit the Office of Volunteer Programs website for more info, or fill out a volunteer interest form to get started right away."}]}],
   "related":["join.voter","join.club","join.illini.union"]
 },{
-  "id":"join.illini.union",
+  "_id":"join.illini.union",
   "guide":"For students",
   "category":"Involvement",
   "section":"Community engagement",
@@ -188,7 +188,7 @@
   "buttons":[{"text":"Visit website","url":"https://union.illinois.edu/get-involved/illini-union-board"}],
   "related":["volunteer","join.club","join.voter"]
 },{
-  "id":"join.voter",
+  "_id":"join.voter",
   "guide":"For students",
   "category":"Involvement",
   "section":"Community engagement",
@@ -204,7 +204,7 @@
   "buttons":[{"text":"Visit website","url":"https://sse.illinois.edu/illinivote/"}],
   "related":["join.club","volunteer","join.illini.union"]
 },{
-  "id":"lgbtq.health.content",
+  "_id":"lgbtq.health.content",
   "list_title":"Access LGBTQ Healthcare",
   "list_description":"McKinley Health Center offers LGBTQ inclusive healthcare. ",
   "detail_title":"Access LGBTQ Healthcare",
@@ -214,21 +214,21 @@
   "sub_details":[{"entries":[{"heading":"McKinley Health Center is committed to offering inclusive healthcare services. Offerings include:","bullets":["Helpful hints for a successful appointment experience","Suggestions for students seeking PrEP","Suggestions for trans and gender non-conforming students","Mental health services","LGBT campus resources","LGBT community resources","LGBT health and wellness resources"]}]},{"entries":[{"heading":"You can also get information about STDs and even request a sexual health workshop for a group of 10 students or less."}]}],
   "related":["lgbt.resource","sexual.health","mckinley.health"]
 },{
-  "id":"lgbtq.health",
+  "_id":"lgbtq.health",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
   "features":["dining","meal-plan"],
   "content_ref": "lgbtq.health.content"
 },{
-  "id":"lgbtq.health_04",
+  "_id":"lgbtq.health_04",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"LGBTQ",
   "features":["groups","events"],
   "content_ref": "lgbtq.health.content"
 },{
-  "id":"sexual.health",
+  "_id":"sexual.health",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
@@ -243,7 +243,7 @@
   "sub_details":[{"entries":[{"bullets":["Individual appointments","Campus and community outreach","Safer sex supplies","Peer education"]}]},{"entries":[{"heading":"Visit the website for more details, or call to schedule an appointment."}]}],
   "related":["womens.health","assault.resources","lgbtq.health"]
 },{
-  "id":"womens.health",
+  "_id":"womens.health",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
@@ -257,7 +257,7 @@
   "sub_details":[{"entries":[{"heading":"Services include:","bullets":["Routine exams and pap smears","Contraception","Sexually transmitted infection screening and treatment","Breast exams","Pregnancy options counseling","Colposcopy exams","Evaluation and treatment of menstrual irregularities and other health problems related to women’s health."]}]},{"entries":[{"heading":"Spring and Fall semester hours: 8 a.m.-5 p.m., Monday-Friday Summer hours:8 a.m.-4:30 p.m., Monday-FridayVisit the Women’s Health Department website for information on appointments."}]}],
   "related":["womens.resource","mckinley.health","assault.resources"]
 },{
-  "id":"health.insurance.content",
+  "_id":"health.insurance.content",
   "list_title":"Learn about student health insurance",
   "list_description":"All campus based students are required to have health insurance, either through a university plan or an equivalent.",
   "detail_title":"Learn about student health insurance",
@@ -267,21 +267,21 @@
   "buttons":[{"text":"Visit website","url":"https://si.illinois.edu/"}],
   "related":["mckinley.health","mental.health.services","immunizations"]
 },{
-  "id":"health.insurance",
+  "_id":"health.insurance",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
   "features":["dining","meal-plan"],
   "content_ref": "health.insurance.content"
 },{
-  "id":"health.insurance_05",
+  "_id":"health.insurance_05",
   "guide":"For students",
   "category":"New students",
   "section":"Physical health",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "health.insurance.content"
 },{
-  "id":"immunizations.content",
+  "_id":"immunizations.content",
   "list_title":"Get your required immunizations",
   "list_description":"Students are required to get certain immunizations prior to attending class. ",
   "detail_title":"Get your required immunizations",
@@ -291,21 +291,21 @@
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic"}],
   "related":["mckinley.health","health.insurance","pharmacy"]
 },{
-  "id":"immunizations",
+  "_id":"immunizations",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
   "features":["dining","meal-plan"],
   "content_ref": "immunizations.content"
 },{
-  "id":"immunizations_06",
+  "_id":"immunizations_06",
   "guide":"For students",
   "category":"New students",
   "section":"Physical health",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "immunizations.content"
 },{
-  "id":"safer.illinois",
+  "_id":"safer.illinois",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"COVID-19",
@@ -319,7 +319,7 @@
   "sub_details_description": "The app sends users test results and exposure notifications. It is also the easiest and most reliable way to gain access to university buildings that are restricted during the pandemic.\r\n\r\nYou can download the app for iOS or for Android.",
   "related": ["mckinley.app", "mckinley.health", "immunizations"]
 },{
-  "id":"community.of.care.content",
+  "_id":"community.of.care.content",
   "list_title":"Get help from the Community of Care",
   "list_description":"The Community of Care can help students through physical and emotional distress.",
   "detail_title":"Get help from the Community of Care",
@@ -329,21 +329,21 @@
   "buttons":[{"text":"Visit website","url":"https://odos.illinois.edu/community-of-care/"}],
   "related":["student.assistance","counseling.center","mental.health.services"]
 },{
-  "id":"community.of.care",
+  "_id":"community.of.care",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
   "features":["dining","meal-plan"],
   "content_ref": "community.of.care.content"
 },{
-  "id":"community.of.care_08",
+  "_id":"community.of.care_08",
   "guide":"For students",
   "category":"Academic support",
   "section":"General support",
   "features":["my-illini","library-card"],
   "content_ref": "community.of.care.content"
 },{
-  "id":"drugs.alcohol.help",
+  "_id":"drugs.alcohol.help",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -359,7 +359,7 @@
   "sub_details":[{"section":"Approach","entries":[{"heading":"Please note that due to the Counseling Center’s innovative harm reduction approach, ACE IT does not lecture or preach abstinence.Go to the Counseling Center website to learn more about the program and how to become a peer educator."}]}],
   "related":["alcohol.safety","wellness.pledge","mental.health.services"]
 },{
-  "id":"manage.stress",
+  "_id":"manage.stress",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -375,7 +375,7 @@
   "sub_details":[{"section":"Online relaxation exercises","entries":[{"heading":"Try out one of our online relaxation exercises."}]},{"section":"Stress relief packs","entries":[{"heading":"Around finals, stress relief packs are available to students filled with a variety of stress management tips, snacks, coupons, games, and more. These are distributed at McKinley's Health Resource Center's while supplies last."}]},{"section":"Stress management peers","entries":[{"heading":"Stress Management Peers are dedicated to providing education and awareness to students on stress-related topics. New members can join at the beginning of the fall and spring semesters."}]},{"section":"Sleep pack","entries":[{"heading":"The sleep pack includes a variety of items and resources to help improve your sleep routine. "}]},{"section":"Light therapy","entries":[{"heading":"Light therapy can be especially helpful during winter months when Seasonal Affective Disorder (SAD) and the winter blues set in. Visit the Stress Management webpage for more details."}]}],
   "related":["relaxation","sleep","reflection.rooms"]
 },{
-  "id":"mckinley.health",
+  "_id":"mckinley.health",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
@@ -389,7 +389,7 @@
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu"}],
   "related":["immunizations","health.insurance","pharmacy"]
 },{
-  "id":"sleep",
+  "_id":"sleep",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -403,7 +403,7 @@
   "buttons":[{"text":"Visit website","url":"http://mhcwellness.illinois.edu/get-sleep"}],
   "related":["manage.stress","relaxation","mckinley.app"]
 },{
-  "id":"pharmacy",
+  "_id":"pharmacy",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
@@ -419,7 +419,7 @@
   "sub_details":[{"section":"Basic health supplies","entries":[{"heading":"The McKinley vending machine contains over-the-counter medicines, first aid supplies, and safe sex supplies. The vending machine is located at:301 E. Gregory Drive, SDRP (Ikenberry Commons), Inside the Package Center.Hours of operation are Monday–Friday, 7 to 11:30 p.m. and Saturday–Sunday, 9 to 11:30 p.m.Visit the pharmacy website for details on prescriptions, covered medications and more"}]}],
   "related":["mckinley.health","health.insurance","immunizations"]
 },{
-  "id":"relaxation",
+  "_id":"relaxation",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -433,7 +433,7 @@
   "buttons":[{"text":"Browse exercises","url":"https://go.illinois.edu/UseRelaxationTechniques"}],
   "related":["sleep","manage.stress","reflection.rooms"]
 },{
-  "id":"mental.health.services",
+  "_id":"mental.health.services",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -448,7 +448,7 @@
   "sub_details":[{"section":"Appointments","entries":[{"heading":"To obtain or cancel a McKinley appointment, counseling or medication, call 217-333-2700 during normal business hours Monday through Friday. Failure to cancel an appointment at least two hours prior to your scheduled time will result in a $10 fee charged to your student account."}]},{"section":"Referrals","entries":[{"heading":"If you are being referred to McKinley from an outside provider, please have your provider send McKinley a detailed clinical summary. For medication, make an appointment with a primary caregiver who will then generate an internal referral for psychiatry assessment. For counseling, you may make an appointment directly with the next available counselor."}]},{"section":"Crisis after hours","entries":[{"heading":"If you are in crisis after hours, call the Rosencrance Crisis Line at 217-359-4141."}]}],
   "related":["counseling.center","kognito","welltrack"]
 },{
-  "id":"reflection.rooms.content",
+  "_id":"reflection.rooms.content",
   "list_title":"Reflection rooms",
   "list_description":"The Undergraduate Library has two reflection rooms located on the lower level. ",
   "detail_title":"Reflection rooms",
@@ -459,20 +459,20 @@
   "sub_details":[{"section":"What to expect","entries":[{"heading":"The Undergraduate Library reflection rooms are outfitted to best cater to a wide variety of needs. The rooms are painted blue because it is a calming color. One of the rooms is equipped with a rocking chair and a voice-activated light source that can be customized to provide light across the entire spectrum of colors depending on one’s needs. The other room contains a yoga mat and a white noise machine to encourage meditative movement. You may also check out a tranquility kit to use in the rooms. Kits include a happy light, noise-cancelling headphones, stress balls, and other items to help you take a break during a busy and stressful day."}]},{"section":"Availability","entries":[{"heading":"Both rooms are available during the hours that the library is open with no reservation needed. You can also book a room in advance if you want to schedule a break ahead of time."}]}],
   "related":["undergrad.lib","arboretum","relaxation"]
 },{
-  "id":"reflection.rooms",
+  "_id":"reflection.rooms",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
   "features":["dining","meal-plan"],
   "content_ref": "reflection.rooms.content"
 },{
-  "id":"reflection.rooms_09",
+  "_id":"reflection.rooms_09",
   "guide":"For students",
   "category":"Spirituality",
   "section":"Quiet space",
   "content_ref": "reflection.rooms.content"
 },{
-  "id":"Counseling.center",
+  "_id":"Counseling.center",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -486,7 +486,7 @@
   "buttons":[{"text":"Visit website","url":"http://counselingcenter.illinois.edu/"}],
   "related":["mental.health.services","wellness.pledge","kognito"]
 },{
-  "id":"nutrition.mckinley",
+  "_id":"nutrition.mckinley",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Nutrition",
@@ -503,7 +503,7 @@
   "sub_details":[{"section":"Outreach programs","entries":[{"heading":"Nutrition workshops are available upon request. You must submit your request at least 2 weeks in advance. Submit a request now.Visit McKinley Health’s nutrition webpage for more details and helpful nutrition handouts."}]}],
   "related":["fresh.fruit","nutrition.campus.rec","meal.plan"]
 },{
-  "id":"nutrition.campus.rec",
+  "_id":"nutrition.campus.rec",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Nutrition",
@@ -518,7 +518,7 @@
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/nutrition-coaching/"}],
   "related":["nutrition.mckinley","cooking.class","fresh.fruit"]
 },{
-  "id":"fresh.fruit",
+  "_id":"fresh.fruit",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Nutrition",
@@ -532,7 +532,7 @@
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/programs/student-wellness/get-fresh/"}],
   "related":["cooking.class","meal.plan","nutrition.campus.rec"]
 },{
-  "id":"cooking.class",
+  "_id":"cooking.class",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Nutrition",
@@ -546,7 +546,7 @@
   "sub_details":[{"section":"Guidelines and Tips","entries":[{"bullets":["Cooking class registration will close three days prior to the scheduled class to allow for grocery purchase.","Cooking class registration is non-refundable and non-transferable.","All classes are cooking demonstrations with generous tastings of each recipe!","Due to COVID-19, food containers will be provided to take home leftovers."]}]},{"section":"Allergies/Sensitivities","entries":[{"heading":"Please contact us at least one week in advance, with any food-related allergies or sensitivities. We will do our best to accommodate your request and will contact you if we are unable to meet your needs. Please contact Alana Harris at apharri2@illinois.edu for any additional questions"}]},{"section":"Recipes and Inspiration","entries":[{"heading":"View recipes from past classes.Visit the website for more information and registration details."}]}],
   "related":["fresh.fruit","nutrition.campus.rec","nutrition.mckinley"]
 },{
-  "id":"meal.plan.content",
+  "_id":"meal.plan.content",
   "list_title":"Know your meal plan options",
   "list_description":"Campus meal plans are accepted at any of University Housing’s dining locations. ",
   "detail_title":"Know your meal plan options",
@@ -558,28 +558,28 @@
   "sub_details":[{"section":"Purchase a meal plan ","entries":[{"heading":"If you will be living in University Housing, you can select a meal plan while filling out your housing contract. If you're a student living off campus, or a faculty or staff member, you are welcome to join us, too! Simply purchase a meal plan online.View dining menus, nutrition information, and hours/locations of dining halls directly in this app.Learn more about meal plan options, including how to change your meal plan on the website."}]}],
   "related":["nutrition.campus.rec","nutrition.mckinley","fresh.fruit"]
 },{
-  "id":"meal.plan",
+  "_id":"meal.plan",
   "guide":"For students",
   "category":"Living on campus",
   "section":"Dining",
   "features":["dining","meal-plan","laundry","bus-pass"],
   "content_ref": "meal.plan.content"
 },{
-  "id":"meal.plan_10",
+  "_id":"meal.plan_10",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Nutrition",
   "features":["dining","meal-plan"],
   "content_ref": "meal.plan.content"
 },{
-  "id":"meal.plan_11",
+  "_id":"meal.plan_11",
   "guide":"For students",
   "category":"New students",
   "section":"Dining",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "meal.plan.content"
 },{
-  "id":"training.campus.rec",
+  "_id":"training.campus.rec",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
@@ -595,7 +595,7 @@
   "sub_details":[{"section":"Two Clients with One Personal Trainer","entries":[{"heading":"Want the additional motivation and accountability of training with a friend under the direction of an expert? Then two with one Personal Training is for you."}]},{"section":"Small Group Training","entries":[{"heading":"Small group training (4-6 people) presents the opportunity to experience the benefits of the expertise and motivation of a trainer while lowering the financial entry point and/or spending more time with the trainer for the available funds.Learn more about the cost and packages offered.Please note that patrons can request to participate in their personal training sessions virtually."}]}],
   "related":["training.mckinley","upace","group.fitness"]
 },{
-  "id":"training.mckinley",
+  "_id":"training.mckinley",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
@@ -609,7 +609,7 @@
   "sub_details":[{"section":"Individual appointments","entries":[{"heading":"Students can meet one-on-one with a fitness health educator to learn about:","bullets":["Developing an exercise plan","Strength equipment demonstrations","Personal fitness assessments including body composition, resting heart rate, blood pressure, and strength and flexibility measurements"]}]},{"entries":[{"heading":"Students can schedule a fitness appointment by calling McKinley Health Education at 217-333-2700."}]},{"section":"Outreach programs","entries":[{"heading":"McKinley Health also provides general fitness information including exercise guidelines, target heart rate, exercise prescriptions, and exercise demonstrations. Fitness workshops are available upon request. Submit a request at least two weeks in advance. "}]}],
   "related":["training.campus.rec","group.fitness","participate.campus.rec"]
 },{
-  "id":"group.fitness",
+  "_id":"group.fitness",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
@@ -623,7 +623,7 @@
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/programs/group-fitness/"}],
   "related":["upace","join.intramural","participate.campus.rec"]
 },{
-  "id":"biking.content",
+  "_id":"biking.content",
   "list_title":"Learn about biking on campus",
   "list_description":"Bike at Illinois is your source for everything you need to know about biking on campus.",
   "detail_title":"Learn about biking on campus",
@@ -635,21 +635,21 @@
   "sub_details":[{"section":"You must register your bike","entries":[{"heading":"There is a one-time $10 registration fee per bicycle. Register now."}]},{"section":"You may only park at a bicycle rack","entries":[{"heading":"Find a parking spot using the bike map. A bicycle parked anywhere that is not a designated bike parking area may be impounded, and parked bicycles creating a safety hazard or impeding traffic flow will be removed. If you think your bike may have been impounded, contact the Parking Department at 217-333-3530 or ParkingComments@illinois.edu to retrieve it."}]},{"section":"Fix your bike","entries":[{"heading":"The Campus Bike Center offers hands-on experiential learning and  empowers people with the ability to fix a bicycle."}]},{"section":"Be prepared","entries":[{"heading":"Find out about any closures or detours, and review safe riding tips."}]},{"section":"Meet other bike enthusiasts","entries":[{"heading":"There are clubs and organizations where you can meet like-minded bicyclists. Visit the Bike at Illinois website for more helpful information and resources. "}]}],
   "related":["local.bus","training.campus.rec","training.mckinley"]
 },{
-  "id":"biking",
+  "_id":"biking",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
   "features":["dining","meal-plan"],
   "content_ref": "biking.content"
 },{
-  "id":"biking_12",
+  "_id":"biking_12",
   "guide":"For students",
   "category":"Transportation",
   "section":"Alternative modes of transportation",
   "features":["parking","bus-pass"],
   "content_ref": "biking.content"
 },{
-  "id":"mckinley.app.content",
+  "_id":"mckinley.app.content",
   "list_title":"Download the McKinley Wellness Guide app",
   "list_description":"McKinley’s web-based Wellness Guide provides health and wellness information to U of I students.",
   "detail_title":"Download the McKinley Wellness Guide app",
@@ -659,21 +659,21 @@
   "buttons":[{"text":"Learn more","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
   "related":["welltrack","mckinley.health","pharmacy"]
 },{
-  "id":"mckinley.app",
+  "_id":"mckinley.app",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
   "features":["dining","meal-plan"],
   "content_ref": "mckinley.app.content"
 },{
-  "id":"mckinley.app_13",
+  "_id":"mckinley.app_13",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
   "features":["dining","meal-plan"],
   "content_ref": "mckinley.app.content"
 },{
-  "id":"welltrack",
+  "_id":"welltrack",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
@@ -687,7 +687,7 @@
   "sub_details":[{"section":"Download WellTrack","entries":[{"heading":"Download in the App Store or from Google Play."}]},{"entries":[{"heading":"Log in using your Illinois.edu email and password. You can also log on via the web. Suggested browsers are Chrome and Internet Explorer. The site is not compatible with Firefox."}]},{"section":"How the app helps","entries":[{"heading":"Well Track offers currently enrolled U of I students a variety of assessments and tools to check in on their mental health. There are also self-guided modules to help better manage anxiety and depression and to develop resilience skills.Well Track gives you the tools to understand when you’re having negative moods and see patterns. It works well on its own or as a complement to counseling. "}]},{"section":"Data security","entries":[{"heading":"WellTrack was vetted through Illinois IT security before it was offered to students.  All the data is encrypted in transit and at rest and is housed on Amazon Web Services (AWS) servers.For additional information, view Well Track’s privacy policy. "}]}],
   "related":["mckinley.app","mental.health.services","counseling.center"]
 },{
-  "id":"alcohol.safety",
+  "_id":"alcohol.safety",
   "guide":"For students",
   "category":"Safety",
   "section":"Getting home safely",
@@ -701,7 +701,7 @@
   "sub_details":[{"section":"Drinking laws","entries":[{"bullets":["Drinking age is 21.","Bar entry age in Champaign is 19 and 18 in Urbana, but you cannot drink unless you are 21 years of age.","In Illinois, blood alcohol content of .08 is considered legally intoxicated for those who are 21 and older. There is zero tolerance for those under 21 years of age.","Purchasing, possessing, or consuming alcohol as a minor can result in a fine of $340.","Carrying open liquor outside of premises is a fine of $195.","Providing or purchasing alcohol for a person under 21 is a fine of $340."]}]},{"section":"Safety tips","entries":[{"bullets":["Do not drink and drive.","Do not be a passenger in a vehicle with someone who has been drinking.","Travel home with someone you know.","Do not go alone or with someone you just met.","Stay in well-lit areas and in groups.","Drink plenty of water.","Do not ever leave someone alone that has been drinking or may have consumed too much."]}]},{"entries":[{"heading":"Download the Wellness Guide App for iOS or Android to get more alcohol safety tips."}]}],
   "related":["saferide","safewalk","drugs.alcohol.help"]
 },{
-  "id":"saferide",
+  "_id":"saferide",
   "guide":"For students",
   "category":"Safety",
   "section":"Getting home safely",
@@ -716,7 +716,7 @@
   "sub_details":[{"section":"How to request a ride","entries":[{"heading":"Download the SafeRides Connect App from the App Store or the Google Play Store and register yourself.You can also call and provide the dispatcher with the following information: ","bullets":["First and last name","Phone number","Email address","Pick-up location (street address/landmark)","Destination"]}]},{"section":"SafeRide rules","entries":[{"bullets":["There is a maximum limit of three persons per pick-up location.","SafeRides Connect does not duplicate fixed-route service already provided by MTD.","SafeRides Connect does not provide emergency transportation services to medical facilities.","SafeRides Connect does not provide service to and from bars."]}]}],
   "related":["safewalk","biking","alcohol.safety"]
 },{
-  "id":"safewalk",
+  "_id":"safewalk",
   "guide":"For students",
   "category":"Safety",
   "section":"Getting home safely",
@@ -729,7 +729,7 @@
   "sub_details":[{"entries":[{"heading":"Hours of Operation","bullets":["","Sunday through Wednesday, 9 p.m. to 2:30 a.m. (calls taken until 2:15 a.m.)","Thursday, Friday and Saturday, 9 p.m. to 3 a.m. (calls taken until 2:45 a.m.)"]}]}],
   "related":["saferide","alcohol.safety","biking"]
 },{
-  "id":"assault.resources",
+  "_id":"assault.resources",
   "guide":"For students",
   "category":"Safety",
   "section":"General safety",
@@ -744,7 +744,7 @@
   "sub_details":[{"section":"Speak with a confidential advisor at the Women’s Resource Center","entries":[{"heading":"Confidential Advisors are trained to provide confidential campus-specific crisis management, share referral services, and explore and navigate reporting options. That means when they meet with someone, they make sure the person gets the help they need, on their own terms. Confidential Advisors are able to serve people of all gender identities and are currently located in the Women's Resources Center at:616 E. Green St., Suite 202, Champaign, IL 61820Learn more about Women's Resources Center services."}]}],
   "related":["community.of.care","womens.health","womens.resource"]
 },{
-  "id":"emergency.content",
+  "_id":"emergency.content",
   "list_title":"Be prepared for an emergency",
   "list_description":"Take a moment to think about what you should do in a situation where your ability to react quickly may save your life.",
   "detail_title":"Be prepared for an emergency",
@@ -754,20 +754,20 @@
   "buttons":[{"text":"Visit website","url":"https://police.illinois.edu/emergency-preparedness/run-hide-fight/"}],
   "related":["safety.notices","illini.alerts"]
 },{
-  "id":"emergency",
+  "_id":"emergency",
   "guide":"For students",
   "category":"Safety",
   "section":"General safety",
   "content_ref": "emergency.content"
 },{
-  "id":"emergency_14",
+  "_id":"emergency_14",
   "guide":"For students",
   "category":"New students",
   "section":"General safety",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "emergency.content"
 },{
-  "id":"safety.notices.content",
+  "_id":"safety.notices.content",
   "list_title":"Sign up for campus safety notices",
   "list_description":"When a crime happens, the University of Illinois Police Department informs the community as quickly as possible with Campus Safety Notices.",
   "detail_title":"Sign up for campus safety notices",
@@ -777,20 +777,20 @@
   "buttons":[{"text":"Sign up","url":"https://blogs.illinois.edu/publicSubscribe?blogId=7513"}],
   "related":["illini.alerts","emergency"]
 },{
-  "id":"safety.notices",
+  "_id":"safety.notices",
   "guide":"For students",
   "category":"Safety",
   "section":"General safety",
   "content_ref": "safety.notices.content"
 },{
-  "id":"safety.notices_16",
+  "_id":"safety.notices_16",
   "guide":"For students",
   "category":"New students",
   "section":"General safety",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "safety.notices.content"
 },{
-  "id":"illini.alerts.content",
+  "_id":"illini.alerts.content",
   "list_title":"Sign up for Illini alerts",
   "list_description":"Illini-Alert is used for incidents which present an imminent threat to life, health, or safety to the general campus population. ",
   "detail_title":"Sign up for Illini alerts",
@@ -801,20 +801,20 @@
   "sub_details":[{"section":"Email","entries":[{"heading":"All current University of Illinois at Urbana-Champaign students, faculty, and staff will receive Illini-Alert messages through their campus email addresses. Those with campus email addresses may also enroll up to three alternative email addresses. Visit the website to learn more."}]},{"section":"Text messages","entries":[{"heading":"All current University of Illinois at Urbana-Champaign students, faculty, and staff will be prompted to provide a cell phone number to receive emergency text messages and may register up to three cell phone numbers. Those prompted may opt out, but everyone is strongly encouraged to enroll. Anyone else can receive Illini-Alert text messages by texting “IlliniAlert” to 226787."}]},{"section":"Social media","entries":[{"heading":"Follow @IlliniAlert on Twitter."}]}],
   "related":["safety.notices","emergency"]
 },{
-  "id":"illini.alerts",
+  "_id":"illini.alerts",
   "guide":"For students",
   "category":"Safety",
   "section":"General safety",
   "content_ref": "illini.alerts.content"
 },{
-  "id":"illini.alerts_18",
+  "_id":"illini.alerts_18",
   "guide":"For students",
   "category":"New students",
   "section":"General safety",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "illini.alerts.content"
 },{
-  "id":"parking",
+  "_id":"parking",
   "guide":"For students",
   "category":"Transportation",
   "section":"Travel by car",
@@ -828,7 +828,7 @@
   "sub_details":[{"entries":[{"heading":"Parking services has guidance on:","bullets":["Visitor parking, including meters and lots. If you are just looking for a way to pay for metered parking, download the MobileMeter App.","Permits for students","Parking locations","Paying citations"]}]},{"entries":[{"heading":"Get more details on the website."}]}],
   "related":["car.assistance","local.bus"]
 },{
-  "id":"zipcar",
+  "_id":"zipcar",
   "guide":"For students",
   "category":"Transportation",
   "section":"Travel by car",
@@ -842,7 +842,7 @@
   "buttons":[{"text":"Learn more","url":"https://www.zipcar.com/universities/university-of-illinois-champaign-urbana"}],
   "related":["shuttle.bus","air.train","local.bus"]
 },{
-  "id":"air.train",
+  "_id":"air.train",
   "guide":"For students",
   "category":"Transportation",
   "section":"Long distance travel",
@@ -855,7 +855,7 @@
   "sub_details":[{"entries":[{"heading":"Amtrak service north to Chicago and south to Carbondale and beyond is available at MTD’s Illinois Terminal. Call 800-USA-RAIL or the local Champaign office at 217-352-5905 for ticketing or questions."}]}],
   "related":["zipcar","shuttle.bus","local.bus"]
 },{
-  "id":"shuttle.bus",
+  "_id":"shuttle.bus",
   "guide":"For students",
   "category":"Transportation",
   "section":"Long distance travel",
@@ -868,7 +868,7 @@
   "sub_details":[{"entries":[{"bullets":["UIRide, 217-333-7433","Burlington Trailways, 800-992-4618","Danville JARC, 217-431-0653","Greyhound, 217-352-4150","Peoria Charter, 899-448-0572","Bestway Charter, 630-238-1000"]}]}],
   "related":["air.train","local.bus","zipcar"]
 },{
-  "id":"local.bus",
+  "_id":"local.bus",
   "guide":"For students",
   "category":"Transportation",
   "section":"Alternative modes of transportation",
@@ -883,7 +883,7 @@
   "buttons":[{"text":"Visit website","url":"https://mtd.org/"}],
   "related":["biking","shuttle.bus","zipcar"]
 },{
-  "id":"car.assistance",
+  "_id":"car.assistance",
   "guide":"For students",
   "category":"Transportation",
   "section":"Travel by car",
@@ -898,7 +898,7 @@
   "sub_details":[{"section":"Types of service provided","entries":[{"bullets":["Lock Out Service","Jump Start","Flat Tire","Out of Gas"]}]},{"section":"Requirements","entries":[{"heading":"You must present valid identification and sign a form acknowledging the Parking Department and University are not liable for damages or defects caused or discovered in the act of providing motorist assistance services.Visit the website for more details and restrictions."}]}],
   "related":["parking","local.bus","zipcar"]
 },{
-  "id":"writers.workshop",
+  "_id":"writers.workshop",
   "guide":"For students",
   "category":"Academic support",
   "section":"Writing help",
@@ -913,7 +913,7 @@
   "buttons":[{"text":"Visit website","url":"https://writersworkshop.illinois.edu/"}],
   "related":["online.classes","undergrad.lib","student.assistance"]
 },{
-  "id":"intl.students",
+  "_id":"intl.students",
   "guide":"For students",
   "category":"Academic support",
   "section":"International education",
@@ -928,7 +928,7 @@
   "sub_details":[{"entries":[{"heading":"Programs include: ","bullets":["iCU Intercultural Dialogue Series","InterConnect Dinner Dialogue","Break programs","Global Engagement Lounge (GEL)","Global Leaders Orange and Blue Engagement (GLOBE) program."]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["undocumented.support","omsa","study.abroad"]
 },{
-  "id":"student.assistance",
+  "_id":"student.assistance",
   "guide":"For students",
   "category":"Academic support",
   "section":"General support",
@@ -943,7 +943,7 @@
   "sub_details":[{"entries":[{"heading":"Students visit us regarding a broad range of issues which may be impacting their academic performance including: ","bullets":["Health and mental health","Course attendance issues","Questions about where to go on campus to seek different services","Options for withdrawing from the university","Because they need help and just aren’t sure where to go"]}]},{"entries":[{"heading":"An emergency dean is available outside of normal business hours to respond to student crises or pressing student concerns that cannot wait until the next business day. Please call 217-333-0050 to contact the Emergency Dean."}]}],
   "related":["community.of.care","writers.workshop"]
 },{
-  "id":"undergrad.lib.content",
+  "_id":"undergrad.lib.content",
   "list_title":"The Undergraduate Library",
   "list_description":"The Undergraduate Library is open to students, staff and faculty.",
   "detail_title":"The Undergraduate Library",
@@ -954,21 +954,21 @@
   "buttons":[{"text":"Visit website","url":"https://www.library.illinois.edu/ugl/"}],
   "related":["reflection.rooms","bookstore","arboretum"]
 },{
-  "id":"undergrad.lib",
+  "_id":"undergrad.lib",
   "guide":"For students",
   "category":"Academic support",
   "section":"Books",
   "features":["my-illini","library-card"],
   "content_ref": "undergrad.lib.content"
 },{
-  "id":"undergrad.lib_21",
+  "_id":"undergrad.lib_21",
   "guide":"For students",
   "category":"New students",
   "section":"Books",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "undergrad.lib.content"
 },{
-  "id":"bookstore.content",
+  "_id":"bookstore.content",
   "list_title":"The Illini Union Bookstore",
   "list_description":"The premiere place for students to rent or purchase textbooks.",
   "detail_title":"The Illini Union Bookstore",
@@ -978,28 +978,28 @@
   "buttons":[{"text":"Visit website","url":"https://bookstore.illinois.edu/"}],
   "related":["sell.textbooks","undergrad.lib","webstore"]
 },{
-  "id":"bookstore",
+  "_id":"bookstore",
   "guide":"For students",
   "category":"Academic support",
   "section":"Books",
   "features":["my-illini","library-card"],
   "content_ref": "bookstore.content"
 },{
-  "id":"bookstore_22",
+  "_id":"bookstore_22",
   "guide":"For students",
   "category":"Supplies",
   "section":"Books",
   "features":["illini-cash"],
   "content_ref": "bookstore.content"
 },{
-  "id":"bookstore_23",
+  "_id":"bookstore_23",
   "guide":"For students",
   "category":"New students",
   "section":"Books",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "bookstore.content"
 },{
-  "id":"online.classes",
+  "_id":"online.classes",
   "guide":"For students",
   "category":"Academic support",
   "section":"Excel academically",
@@ -1014,7 +1014,7 @@
   "sub_details":[{"section":"Winter Session and Summer Session ","entries":[{"heading":"Online terms offer you an opportunity to continue your education, persist toward graduation, and learn valuable skills such as time management and goal setting. "}]},{"section":"Degree, certificate, and endorsement programs","entries":[{"heading":"Illinois Online also provides an extensive range of online academic options to students, including 120 online degree, certificate and endorsement programs, and 8,300-plus online course sections. "}]}],
   "related":["writers.workshop","undergrad.lib","leadership.center"]
 },{
-  "id":"move.in.content",
+  "_id":"move.in.content",
   "list_title":"Get ready to move-in",
   "list_description":"Find your move-in date and get information on what to expect from the residence halls. ",
   "detail_title":"Get ready to move-in",
@@ -1025,21 +1025,21 @@
   "buttons":[{"text":"Visit website","url":"https://housing.illinois.edu/"}],
   "related":["roommate","myhousing","meal.plan"]
 },{
-  "id":"move.in",
+  "_id":"move.in",
   "guide":"For students",
   "category":"Living on campus",
   "section":"Housing",
   "features":["dining","meal-plan","laundry","bus-pass"],
   "content_ref": "move.in.content"
 },{
-  "id":"move.in_24",
+  "_id":"move.in_24",
   "guide":"For students",
   "category":"New students",
   "section":"Housing",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "move.in.content"
 },{
-  "id":"myhousing.content",
+  "_id":"myhousing.content",
   "list_title":"Access your MyHousing account",
   "list_description":"Students living on campus can use their MyHousing account to access housing assignments.",
   "detail_title":"Access your MyHousing account",
@@ -1050,21 +1050,21 @@
   "sub_details":[{"entries":[{"heading":"Services in MyHousing may include:","bullets":["Forwarding address form","Emergency contact form","Package delivery form - tell us how you would like to be notified of packages waiting for you","Print address for driver’s license - can be used as a proof of residency for the driver's license facility","Print hall address - can be used as a proof of residency for multiple purposes, including for voter registration","Meal plan balances","Room change request form","Room and roommate information","Bed configuration requests"]}]},{"entries":[{"heading":"Please note that some services are only available for part of the school year. "}]}],
   "related":["move.in","priv.cert.housing","off.campus.housing"]
 },{
-  "id":"myhousing",
+  "_id":"myhousing",
   "guide":"For students",
   "category":"Living on campus",
   "section":"Housing",
   "features":["dining","meal-plan","laundry","bus-pass"],
   "content_ref": "myhousing.content"
 },{
-  "id":"myhousing_25",
+  "_id":"myhousing_25",
   "guide":"For students",
   "category":"New students",
   "section":"Housing",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "myhousing.content"
 },{
-  "id":"priv.cert.housing",
+  "_id":"priv.cert.housing",
   "guide":"For students",
   "category":"Living on campus",
   "section":"Housing",
@@ -1079,7 +1079,7 @@
   "sub_details":[{"section":"Amenities","entries":[{"heading":"All facilities have: ","bullets":["Air conditioning","On-site dining options","Trained residence life staff who provide social and educational support to their residents."]}]},{"entries":[{"heading":"Most but not all facilities have:","bullets":["Semi-private bathrooms","iI-room kitchens","Computer labs","Wireless internet","Swimming pools","Weekly housekeeping"]}]},{"section":"The process of getting approved","entries":[{"heading":"Each unit has their own application, contract, and policies. Your assignment is confirmed immediately when you sign a contract with a specific facility. Most private certified housing units will also send room and roommate assignments in June and July. Move-in information is most often included in assignment communications and will vary by facility. "}]},{"section":"Incentives","entries":[{"heading":"Similar to University Housing, these units have scholarships, returning resident incentives, and additional amenities to encourage students to stay for a second year in these approved facilities."}]}],
   "related":["myhousing","roommate","off.campus.housing"]
 },{
-  "id":"off.campus.housing",
+  "_id":"off.campus.housing",
   "guide":"For students",
   "category":"Living on campus",
   "section":"Housing",
@@ -1093,7 +1093,7 @@
   "buttons":[{"text":"Visit website","url":"https://occl.illinois.edu/"}],
   "related":["roommate","priv.cert.housing","myhousing"]
 },{
-  "id":"roommate.content",
+  "_id":"roommate.content",
   "list_title":"Develop a healthy relationship with your roommate",
   "list_description":"Learning to live with someone new can be challenging, but it can be rewarding too. ",
   "detail_title":"Develop a healthy relationship with your roommate",
@@ -1105,21 +1105,21 @@
   "sub_details":[{"entries":[{"bullets":["Get to know each other. For example, find out if your roommate is a morning person or a night owl.","Discuss personal space. Find out what will be shared and how to go about borrowing something.","Establish what expenses are shared.","Establish rules for guests and socializing.","Do your part to keep your space secure. Lock doors and don’t give out keys.","Talk frequently and address issues promptly."]}]},{"section":"Resolve a conflict","entries":[{"bullets":["Write down what the problem is, from your point of view, to help you stay clear, calm, and realistic.","When you talk with your roommate, meet at a neutral location.","Be respectful, open, and honest as you communicate.","Allow them to respond and share their point of view.","Each of you should share how you would like to see things resolved.","Come to an acceptable agreement and set a date to reevaluate."]}]},{"entries":[{"heading":"If you still need help, talk with your resident advisor or connect with the Office for Conflict Resolution through their website. "}]},{"entries":[{"heading":"Download the Wellness Guide App in Google Play or the App Store for more tips."}]}],
   "related":["move.in","off.campus.housing","myhousing"]
 },{
-  "id":"roommate",
+  "_id":"roommate",
   "guide":"For students",
   "category":"Living on campus",
   "section":"Housing",
   "features":["dining","meal-plan","laundry","bus-pass"],
   "content_ref": "roommate.content"
 },{
-  "id":"roommate_26",
+  "_id":"roommate_26",
   "guide":"For students",
   "category":"New students",
   "section":"Housing",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "roommate.content"
 },{
-  "id":"tech.zone.content",
+  "_id":"tech.zone.content",
   "list_title":"Illini Union Tech Zone",
   "list_description":"The official computer store of the University of Illinois is also an authorized Apple Campus Store.",
   "detail_title":"Illini Union Tech Zone",
@@ -1130,27 +1130,27 @@
   "buttons":[{"text":"Visit website","url":"https://techzone.illinois.edu/"}],
   "related":["webstore","bookstore","tech.services"]
 },{
-  "id":"tech.zone",
+  "_id":"tech.zone",
   "guide":"For students",
   "category":"Supplies",
   "section":"Digital tools and computers",
   "features":["illini-cash"],
   "content_ref": "tech.zone.content"
 },{
-  "id":"tech.zone_27",
+  "_id":"tech.zone_27",
   "guide":"For students",
   "category":"Tech",
   "section":"Digital tools and computers",
   "content_ref": "tech.zone.content"
 },{
-  "id":"tech.zone_28",
+  "_id":"tech.zone_28",
   "guide":"For students",
   "category":"New students",
   "section":"Digital tools and computers",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "tech.zone.content"
 },{
-  "id":"webstore.content",
+  "_id":"webstore.content",
   "list_title":"The University WebStore",
   "list_description":"WebStore strives to provide the software you need at the lowest possible price.",
   "detail_title":"The University WebStore",
@@ -1160,27 +1160,27 @@
   "buttons":[{"text":"Shop online","url":"https://webstore.illinois.edu/home/"}],
   "related":["bookstore","tech.zone","sell.textbooks"]
 },{
-  "id":"webstore",
+  "_id":"webstore",
   "guide":"For students",
   "category":"Supplies",
   "section":"Digital tools and computers",
   "features":["illini-cash"],
   "content_ref": "webstore.content"
 },{
-  "id":"webstore_29",
+  "_id":"webstore_29",
   "guide":"For students",
   "category":"Tech",
   "section":"Digital tools and computers",
   "content_ref": "webstore.content"
 },{
-  "id":"webstore_30",
+  "_id":"webstore_30",
   "guide":"For students",
   "category":"New students",
   "section":"Digital tools and computers",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "webstore.content"
 },{
-  "id":"internet.content",
+  "_id":"internet.content",
   "list_title":"Access university housing internet",
   "list_description":"Instructions for connecting to the internet in university housing.",
   "detail_title":"Access university housing internet",
@@ -1193,20 +1193,20 @@
   "sub_details":[{"section":"IllinoisNet_Guest","entries":[{"heading":"All gaming and streaming devices should be connected to IllinoisNet_Guest. Follow these instructions to connect:","numbers":["Login to the wireless guest portal.  Click \"Add Device\". You will need to enter the device's MAC/Physical address which can be found through the device's network settings. For casting devices check the \"enable AirGroup\" box when adding your device and enter your NetID.Now connect the device to the IllinoisNet_Guest network and continue with your setup."]}]},{"entries":[{"heading":"Read more detailed instructions on connecting to both IllinoisNet and IllinoisNet_Guest.To get help with an issue over the phone, call 217-244-1111, between 7p.m. and 10 p.m."}]}],
   "related":["tech.services","online.storage","myhousing"]
 },{
-  "id":"internet",
+  "_id":"internet",
   "guide":"For students",
   "category":"Tech",
   "section":"Tech support",
   "content_ref": "internet.content"
 },{
-  "id":"internet_31",
+  "_id":"internet_31",
   "guide":"For students",
   "category":"New students",
   "section":"Tech support",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "internet.content"
 },{
-  "id":"sell.textbooks",
+  "_id":"sell.textbooks",
   "guide":"For students",
   "category":"Supplies",
   "section":"Books",
@@ -1221,7 +1221,7 @@
   "sub_details":[{"entries":[{"numbers":["Find your book’s ISBN number and check the buyback price.Provide an address to receive your check.Print the prepaid shipping label and send the book via UPS."]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["bookstore","webstore","tech.zone"]
 },{
-  "id":"tech.services.content",
+  "_id":"tech.services.content",
   "list_title":"Get help from Technology Services",
   "list_description":"Technology Services can help with a wide array of technology problems.",
   "detail_title":"Get help from Technology Services",
@@ -1233,20 +1233,20 @@
   "sub_details":[{"section":"Get help through the website","entries":[{"heading":"On the Technology Services website, you can search the knowledge base for guidance, or you can submit a tech request. You can also check for known outages."}]},{"section":"Get help over the phone or by email","entries":[{"heading":"The Technology Services Help Desk can be reached by phone at 217-244-7000 or by email at consult@illinois.edu. "}]},{"section":"Hours of operation ","entries":[{"bullets":["8 a.m. to 9 p.m., Monday through Friday","12 p.m. to 5:00 p.m., Saturday and Sunday"]}]}],
   "related":["online.storage","internet","tech.zone"]
 },{
-  "id":"tech.services",
+  "_id":"tech.services",
   "guide":"For students",
   "category":"Tech",
   "section":"Tech support",
   "content_ref": "tech.services.content"
 },{
-  "id":"tech.services_32",
+  "_id":"tech.services_32",
   "guide":"For students",
   "category":"New students",
   "section":"Tech support",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "tech.services.content"
 },{
-  "id":"online.storage.content",
+  "_id":"online.storage.content",
   "list_title":"Get free online storage",
   "list_description":"U of I Box is a free cloud-based storage service available to all students, faculty, and staff.",
   "detail_title":"Get free online storage",
@@ -1259,20 +1259,20 @@
   "sub_details":[{"section":"Get help","entries":[{"heading":"The Tech Services Help Desk can be reached by phone at 217-244-7000 or by email at consult@illinois.edu. "}]},{"entries":[{"heading":"Hours of operation ","bullets":["8 a.m. to 9 p.m., Monday through Friday","12 p.m. to 5:00 p.m., Saturday and Sunday"]}]}],
   "related":["tech.services","internet","tech.zone"]
 },{
-  "id":"online.storage",
+  "_id":"online.storage",
   "guide":"For students",
   "category":"Tech",
   "section":"Tech resources",
   "content_ref": "online.storage.content"
 },{
-  "id":"online.storage_33",
+  "_id":"online.storage_33",
   "guide":"For students",
   "category":"New students",
   "section":"Tech resources",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "online.storage.content"
 },{
-  "id":"veterans",
+  "_id":"veterans",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Support services",
@@ -1287,7 +1287,7 @@
   "sub_details":[{"entries":[{"heading":"Offerings include:","bullets":["Academic services, such as tutoring and academic coaching.","A peer support program that connects incoming student veterans •with student veterans that have successfully established themselves in the university setting","Career support, such as a virtual career fair","Professional mentorship","Student internship and job resources","Vocational rehabilitation through the VA"]}]}],
   "related":["disability","omsa"]
 },{
-  "id":"disability",
+  "_id":"disability",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Support services",
@@ -1303,7 +1303,7 @@
   "sub_details":[{"entries":[{"heading":"We can provide:","bullets":["Academic support","Help with living accommodations","Help with transportation and getting around","Health support and services","Help with campus life and involvement","Athletics options"]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["veterans"]
 },{
-  "id":"omsa",
+  "_id":"omsa",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Support services",
@@ -1317,7 +1317,7 @@
   "sub_details":[{"entries":[{"heading":"Services include:","bullets":["Academic mentoring, coaching, and referral services","Tutoring and supplemental instruction","Study skills enrichment","An array of events that celebrate and enhance student success"]}]},{"entries":[{"heading":"The Office of Minority Student Affairs is also home to four federal TRIO programs including the TRIO Student Support Services Program and the TRIO Ronald E. McNair Post-baccalaureate Achievement Program. "}]}],
   "related":["undocumented.support","bnaac","nah"]
 },{
-  "id":"bnaac",
+  "_id":"bnaac",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Cultural centers",
@@ -1331,7 +1331,7 @@
   "buttons":[{"text":"Visit website","url":"go.illinois.edu/BNAACC"}],
   "related":["omsa","la.casa","nah"]
 },{
-  "id":"aacc",
+  "_id":"aacc",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Cultural centers",
@@ -1345,7 +1345,7 @@
   "sub_details":[{"entries":[{"heading":"Programming and resources include:","bullets":["Food for Thought weekly lunchtime discussion series","Chai Time weekly social hours","Leadership trainings","Art shows","Lending library","Student internship","Volunteer opportunities."]}]},{"entries":[{"heading":"The AACC also supports a wide variety of programs that promote global awareness."}]}],
   "related":["omsa","undocumented.support","intl.students"]
 },{
-  "id":"La.casa",
+  "_id":"La.casa",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Cultural centers",
@@ -1359,7 +1359,7 @@
   "sub_details":[{"entries":[{"heading":"La Casa Cultural Latina’s programs include:","bullets":["Cultural celebrations such as Dia de los Muertos and Las Posadas","New Student Programs","Ally-building workshops","Programs to enhance networking skills and professional development","Community outreach programs that connect Illinois students’ with the Latinx community beyond the university, while promoting higher education to Latinx youth.","An Alumni Association and other professional outreach programs","Focus groups and public forums that give students, alumni, and the community an opportunity to have their voices heard."]}]},{"entries":[{"heading":"The programs and events held at La Casa are free and open to all university students, faculty, and staff as well as community members and guests of the university."}]}],
   "related":["omsa","undocumented.support","intl.students"]
 },{
-  "id":"nah",
+  "_id":"nah",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Cultural centers",
@@ -1373,7 +1373,7 @@
   "sub_details":[{"entries":[{"heading":"The Native American House welcomes all, while centering the voices and lived experiences of Indigenous peoples. Programming includes:","bullets":["A congratulatory ceremony","Native Women in Art","Native November","Fall and Spring Welcome Back"]}]}],
   "related":["omsa","bnaac","la.casa"]
 },{
-  "id":"womens.resource",
+  "_id":"womens.resource",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Support services",
@@ -1388,7 +1388,7 @@
   "sub_details":[{"entries":[{"heading":"Offerings include: ","bullets":["Confidential advising, advocacy, and support for survivors and their support persons who have been impacted by sexual assault, rape or abuse.","Workshops ","Fun activities and networking opportunities","Mentoring"]}]}],
   "related":["womens.health","sexual.health","assault.resources"]
 },{
-  "id":"lgbt.resource",
+  "_id":"lgbt.resource",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Resource  centers",
@@ -1404,7 +1404,7 @@
   "sub_details":[{"entries":[{"heading":"Offerings include:","bullets":["Weekly programming","Referrals to LGBTQA inclusive services","Annual Lavender Congratulatory Ceremony for LGBTQA graduating students","Empowering connections to other LGBTQA university community members"]}]}],
   "related":["LGBTQ.health","womens.resource"]
 },{
-  "id":"leadership.center",
+  "_id":"leadership.center",
   "guide":"For students",
   "category":"Career",
   "section":"Get ready for the job market",
@@ -1417,7 +1417,7 @@
   "buttons":[{"text":"Visit website","url":"http://leadership.illinois.edu/"}],
   "related":["career.center","join.club","join.illini.union"]
 },{
-  "id":"career.center",
+  "_id":"career.center",
   "guide":"For students",
   "category":"Career",
   "section":"Get ready for the job market",
@@ -1431,7 +1431,7 @@
   "sub_details":[{"entries":[{"heading":"Services:","bullets":["Career Coaching","Health Professions Advising","Career Decision Making","Considering Graduate School","Resume and Cover Letter Reviews","Personal Statement Reviews","Mock Interviews","Guidance for Writing Cover Letters, Resumes, and Personal Statements","Job and Internship Boards"]}]},{"entries":[{"heading":"Visit the website to schedule an appointment or check in for drop-in services."}]}],
   "related":["leadership.center","join.illini.union","student.job"]
 },{
-  "id":"student.job.content",
+  "_id":"student.job.content",
   "list_title":"Find a student job",
   "list_description":"The Virtual Job Board helps students find part-time employment. ",
   "detail_title":"Find a student job",
@@ -1441,20 +1441,20 @@
   "buttons":[{"text":"Virtual Job Board","url":"https://secure.osfa.illinois.edu/vjb/"}],
   "related":["bank","pay.account","financial.aid"]
 },{
-  "id":"student.job",
+  "_id":"student.job",
   "guide":"For students",
   "category":"Career",
   "section":"Jobs",
   "content_ref": "student.job.content"
 },{
-  "id":"student.job_34",
+  "_id":"student.job_34",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Jobs",
   "features":["illini-cash","my-illini"],
   "content_ref": "student.job.content"
 },{
-  "id":"financial.wellness",
+  "_id":"financial.wellness",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Money management",
@@ -1469,7 +1469,7 @@
   "sub_details":[{"entries":[{"bullets":["Set up an appointment with one of our peer educators to chat.","Get our monthly newsletter","Read all about different personal finance topics in our blog written by college students, for college students."]}]},{"entries":[{"heading":"All services are free to students. "}]}],
   "related":["learn.money","student.job","bank"]
 },{
-  "id":"pay.account",
+  "_id":"pay.account",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Money management",
@@ -1484,7 +1484,7 @@
   "sub_details":[{"entries":[{"heading":"Payments on your account balance are due on the 28th of each month. Visit the website to: ","bullets":["Log in and review or pay your student account ","Make payments in international currency through Flywire","Set up a third-party “authorized payer”","Create an optional 6-month payment plan","Learn more about available financial services"]}]},{"entries":[{"heading":"Contact the University Bursar via phone or email for more detailed information on billing, direct deposit, payment plans, College Illinois, and 529 plans."}]}],
   "related":["tuition","financial.aid","bank"]
 },{
-  "id":"tuition.content",
+  "_id":"tuition.content",
   "list_title":"Learn about tuition rates",
   "list_description":"For questions about tuition rates.",
   "detail_title":"Learn about tuition rates",
@@ -1494,21 +1494,21 @@
   "buttons":[{"text":"Visit website","url":"cost.illinois.edu"}],
   "related":["pay.account","financial.aid","student.job"]
 },{
-  "id":"tuition",
+  "_id":"tuition",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Financial support",
   "features":["illini-cash","my-illini"],
   "content_ref": "tuition.content"
 },{
-  "id":"tuition_35",
+  "_id":"tuition_35",
   "guide":"For students",
   "category":"New students",
   "section":"Financial support",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "tuition.content"
 },{
-  "id":"bank",
+  "_id":"bank",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Money management",
@@ -1523,7 +1523,7 @@
   "sub_details":[{"entries":[{"bullets":["Products and services built with financial education as a focus","The ability to link your i-card to your PNC account and use it as an ATM card","Technology that helps you avoid overdraft fees"]}]},{"entries":[{"heading":"Students are free to use any bank that meets their financial needs."}]}],
   "related":["student.job","financial.wellness","learn.money"]
 },{
-  "id":"financial.aid.content",
+  "_id":"financial.aid.content",
   "list_title":"Apply for financial aid",
   "list_description":"Support services to assist you in securing the resources needed to pursue your education.",
   "detail_title":"Apply for financial aid",
@@ -1534,21 +1534,21 @@
   "sub_details":[{"entries":[{"heading":"Visit the Office of Student Financial Aid website to:","bullets":["See available types of financial aid","Submit applications","Check your financial aid status","Estimate the amount of aid you will receive","Find a job"]}]}],
   "related":["pay.account","tuition","financial.wellness"]
 },{
-  "id":"financial.aid",
+  "_id":"financial.aid",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Financial Support",
   "features":["illini-cash","my-illini"],
   "content_ref": "financial.aid.content"
 },{
-  "id":"financial.aid_36",
+  "_id":"financial.aid_36",
   "guide":"For students",
   "category":"New students",
   "section":"Financial support",
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "financial.aid.content"
 },{
-  "id":"legal",
+  "_id":"legal",
   "guide":"For students",
   "category":"Finance & legal",
   "section":"Legal support",
@@ -1562,7 +1562,7 @@
   "buttons":[{"text":"Visit website","url":"https://odos.illinois.edu/sls/"}],
   "sub_details":[{"entries":[{"bullets":["Housing/Tenant issues","Traffic tickets","Auto accidents","Misdemeanor charges","City ordinance violations","Notary services","Small claims","Power of attorney documents","Name changes"]}]},{"section":"In-court representation, counsel, and advising","entries":[{"heading":"In-court representation in Champaign County is provided in traffic, misdemeanor, and city ordinance violation cases. The office counsels and represents on behalf of student tenants regarding privacy, eviction, landlord failure to make repairs, and rent arrearages, and advises in consumer, collection, credit, and many other issues. "}]},{"section":" Who qualifies for this service?","entries":[{"heading":"Student Legal Services is available to all students who are assessed the Urbana campus Service Fee. Faculty, Staff, and Post-docs are not eligible to use SLS.Schedule an appointment through the website."}]}]
 },{
-  "id":"study.abroad",
+  "_id":"study.abroad",
   "guide":"For students",
   "category":"Academic support",
   "section":"International education",
@@ -1576,7 +1576,7 @@
   "buttons":[{"text":"Visit website","url":"studyabroad.illinois.edu"}],
   "related":["intl.students"]
 },{
-  "id":"undocumented.support",
+  "_id":"undocumented.support",
   "guide":"For students",
   "category":"Diversity & inclusion",
   "section":"Support services",
@@ -1591,7 +1591,7 @@
   "sub_details":[{"section":"Resources","entries":[{"heading":"Weekly at La Casa Cultural Latina we have DACA mentors that are present to help undocumented students navigate institutional challenges and receive the support they need to succeed at the University of Illinois. We also provide education about policies and practices affecting undocumented/DACA students and advocate for financial resources to help them succeed."}]},{"section":"Learn how to be a good ally","entries":[{"heading":"La Casa Cultural Latina offers ally training for faculty and staff who work with undocumented/DACA students, as well as for members of our campus community who want to learn more about how to support them. "}]}],
   "related":["intl.students","omsa","la.casa"]
 },{
-  "id":"upace",
+  "_id":"upace",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
@@ -1605,7 +1605,7 @@
   "sub_details":[{"entries":[{"heading":"Some of the things you can do with the app:","bullets":["Browse the up-to-date Group Fitness class schedule","Reserve your spot in class","View instant changes in class, location or instructor","Share your experience with the fitness team"]}]},{"entries":[{"heading":"Download in the App Store or from Google Play."}]}],
   "related":["group.fitness","participate.campus.rec","training.campus.rec"]
 },{
-  "id":"wellness.pledge.content",
+  "_id":"wellness.pledge.content",
   "list_title":"Take the wellness pledge",
   "list_description":"Make the commitment today that you will prioritize the health and wellbeing of yourself and your community. ",
   "detail_title":"Take the wellness pledge",
@@ -1615,21 +1615,21 @@
   "sub_details":[{"entries":[{"heading":"When you take the pledge, you promise to:","bullets":["Celebrate, love, and accept the body that I have.","Choose to make positive decisions for my health as they relate to nutrition, physical activity, and self-care.","Care for the earth by engaging in environmentally responsible activities.","Consult daily with my personal beliefs, values, and morals that give my life meaning and purpose.","Contribute to the campus community and make the University of Illinois a safe place to learn, live, love, and grow."]}]}],
   "related":["counseling.center","kognito","mental.health.services"]
 },{
-  "id":"wellness.pledge",
+  "_id":"wellness.pledge",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Physical health",
   "features":["dining","meal-plan"],
   "content_ref": "wellness.pledge.content"
 },{
-  "id":"wellness.pledge_37",
+  "_id":"wellness.pledge_37",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
   "features":["dining","meal-plan"],
   "content_ref": "wellness.pledge.content"
 },{
-  "id":"kognito",
+  "_id":"kognito",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Mental & emotional health",
