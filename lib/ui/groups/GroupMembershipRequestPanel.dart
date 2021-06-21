@@ -203,7 +203,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
           });
           Navigator.pop(context);
         }
-      }).catchError((){
+      }).catchError((_){
         AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.label.fail", 'Failed to submit request'));
       });
     }
