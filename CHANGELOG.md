@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed 
 - Update sample student guide to refer images on rokwire-images AWS bucket.
+- Upgrade to Flutter 2.2.2 [#318](https://github.com/rokwire/illinois-app/issues/318).
 ### Added
 - Added id, list title and list description getters in Student Guide service.
 
