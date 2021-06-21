@@ -191,7 +191,7 @@ class _RecentItemsList extends StatelessWidget{
       return ExploreDetailPanel(explore: originalObject,);
     }
     else if ((item.recentItemType == RecentItemType.studentGuide) && (originalObject is Map)) {
-      return StudentGuideDetailPanel(guideEntryId: originalObject[StudentGuide.fieldId],);
+      return StudentGuideDetailPanel(guideEntryId: StudentGuide().entryId(originalObject));
     }
 
     return Container();
@@ -240,7 +240,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       isFavorite = User().isFavorite(originalItem);
     }
     else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      isFavorite = User().isFavorite(StudentGuideFavorite(id: AppJson.stringValue(originalItem[StudentGuide.fieldId])));
+      isFavorite = User().isFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
     }
     else {
       isFavorite = false;
@@ -424,7 +424,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       User().switchFavorite(originalItem);
     }
     else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      User().switchFavorite(StudentGuideFavorite(id: AppJson.stringValue(originalItem[StudentGuide.fieldId])));
+      User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
     }
   }
 

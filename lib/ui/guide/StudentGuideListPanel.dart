@@ -426,8 +426,8 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
 
   @override
   Widget build(BuildContext context) {
-    String titleHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'title')) ?? '';
-    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'list_description')) ?? AppJson.stringValue(StudentGuide().entryValue(widget.guideEntry, 'description')) ?? '';
+    String titleHtml = StudentGuide().entryListTitle(widget.guideEntry) ?? '';
+    String descriptionHtml = StudentGuide().entryListDescription(widget.guideEntry) ?? '';
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -481,7 +481,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   String get guideEntryId {
-    return (widget.guideEntry != null) ? widget.guideEntry[StudentGuide.fieldId] : null;
+    return StudentGuide().entryId(widget.guideEntry);
   } 
 }
 

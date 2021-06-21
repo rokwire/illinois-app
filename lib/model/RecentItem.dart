@@ -20,7 +20,6 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/StudentGuide.dart';
-import 'package:illinois/utils/Utils.dart';
 
 enum RecentItemType{
   news,
@@ -121,8 +120,8 @@ class RecentItem{
   factory RecentItem.fromStudentGuideItem(Map<String, dynamic> guideItem) {
     return (guideItem != null) ? RecentItem(
       recentItemType: RecentItemType.studentGuide,
-      recentTitle: AppJson.stringValue(StudentGuide().entryValue(guideItem, 'list_title')) ?? AppJson.stringValue(StudentGuide().entryValue(guideItem, 'title')) ?? '',
-      recentDescripton: AppJson.stringValue(StudentGuide().entryValue(guideItem, 'list_description')) ?? AppJson.stringValue(StudentGuide().entryValue(guideItem, 'description')) ?? '',
+      recentTitle: StudentGuide().entryListTitle(guideItem) ?? '',
+      recentDescripton: StudentGuide().entryListDescription(guideItem) ?? '',
       recentOriginalJson: guideItem
     ) : null;
 

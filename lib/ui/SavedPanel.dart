@@ -346,8 +346,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     List<Favorite> guideItems = <Favorite>[];
     if (favoriteGuideIds != null) {
       for (dynamic contentEntry in StudentGuide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        String guideEntryId = (guideEntry != null) ? AppJson.stringValue(guideEntry['id']) : null;
+        String guideEntryId = StudentGuide().entryId(AppJson.mapValue(contentEntry));
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
           guideItems.add(StudentGuideFavorite(id: guideEntryId));
         }
@@ -714,11 +713,6 @@ class _SavedItemsListState extends State<_SavedItemsList>{
         )),);
   }
 
-  String guideEntryField(StudentGuideFavorite item, String name) {
-    Map<String, dynamic> guideEntry = StudentGuide().entryById(item.id);
-    return AppJson.stringValue(StudentGuide().entryValue(guideEntry, name)) ?? AppJson.stringValue(StudentGuide().entryValue(guideEntry, name));
-  }
-
   void _onTapItem(Favorite item) {
     if (item is Event) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: item,)));
@@ -769,7 +763,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is Reminder) {
       return item.label;
     } else if (item is StudentGuideFavorite) {
-      return guideEntryField(item, 'list_title') ?? guideEntryField(item, 'title');
+      return StudentGuide().entryListTitle(StudentGuide().entryById(item.id));
     } else {
       return null;
     }
@@ -787,7 +781,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is Reminder) {
       return item.displayDate;
     } else if (item is StudentGuideFavorite) {
-      return guideEntryField(item, 'list_description') ?? guideEntryField(item, 'description');
+      return StudentGuide().entryListDescription(StudentGuide().entryById(item.id));
     } else
       return null;
   }

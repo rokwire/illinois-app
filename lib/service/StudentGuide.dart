@@ -22,7 +22,6 @@ enum StudentGuideContentSource { Net, Debug }
 class StudentGuide with Service implements NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
-  static const String fieldId = '_id';
 
   static const String _cacheFileName = "student.guide.json";
 
@@ -161,7 +160,7 @@ class StudentGuide with Service implements NotificationsListener {
       contentMap = LinkedHashMap<String, Map<String, dynamic>>();
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic> mapEntry = AppJson.mapValue(contentEntry);
-        String id = (mapEntry != null) ? AppJson.stringValue(mapEntry[fieldId]) : null;
+        String id = (mapEntry != null) ? AppJson.stringValue(mapEntry['_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -193,6 +192,18 @@ class StudentGuide with Service implements NotificationsListener {
       entry = entryById(AppJson.stringValue(entry['content_ref']));
     }
     return null;
+  }
+
+  String entryId(Map<String, dynamic> entry) {
+    return AppJson.stringValue(entryValue(entry, '_id'));
+  }
+
+  String entryListTitle(Map<String, dynamic> entry) {
+    return AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
+  }
+
+  String entryListDescription(Map<String, dynamic> entry) {
+    return AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
   }
 
   List<dynamic> get promotedList {
@@ -335,7 +346,7 @@ class StudentGuide with Service implements NotificationsListener {
     // ID
     dynamic sourceValue = sourceEntry['id'];
     if (sourceValue != null) {
-      contentEntry[fieldId] = sourceValue;
+      contentEntry['_id'] = sourceValue;
     }
 
     // Shared Fields
