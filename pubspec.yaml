@@ -57,7 +57,7 @@ dependencies:
   convert: ^3.0.0
   uuid: ^3.0.4
   image_picker: ^0.6.5+3
-  circular_check_box: ^1.0.4
+  roundcheckbox: ^2.0.1
   timezone: ^0.7.0
   flutter_native_timezone: ^1.0.10
   path_provider: ^2.0.1
