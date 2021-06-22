@@ -569,48 +569,45 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     );
   }
 
-  Widget _buildUrlButtons(){
-    String ticketsUrl = widget?.event?.registrationUrl;
+  Widget _buildUrlButtons() {
     String titleUrl = widget?.event?.titleUrl;
-    bool multyActions = AppString.isStringNotEmpty(titleUrl) && AppString.isStringNotEmpty(ticketsUrl);
-    return Container(child:
+    String registrationUrl = widget?.event?.registrationUrl;
+    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
+    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+    bool hasTwoButtons = hasTitleUrl && hasRegistrationUrl;
+    return Visibility(visible: (hasTitleUrl || hasRegistrationUrl), child:
       Column(children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          AppString.isStringEmpty(titleUrl)? Container():
-          Expanded(
-            child: ScalableRoundedButton(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
-              hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
-              backgroundColor: multyActions ? Styles().colors.background : Colors.white,
-              borderColor: multyActions ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
-              textColor: Styles().colors.fillColorPrimary,
-              onTap: (){
-                Analytics.instance.logSelect(target: "Website");
-                _onTapWebButton(titleUrl, 'Website');
+          Visibility(visible: hasTitleUrl, child: Expanded(
+              child: ScalableRoundedButton(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
+                hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
+                backgroundColor: hasTwoButtons ? Styles().colors.background : Colors.white,
+                borderColor: hasTwoButtons ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors.fillColorPrimary,
+                onTap: (){
+                  Analytics.instance.logSelect(target: "Website");
+                  _onTapWebButton(titleUrl, 'Website');
                 },
-          )),
-          Container(width: 6,),
-          AppString.isStringEmpty(ticketsUrl)? Container():
-          Expanded(
-            child: ScalableRoundedButton(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
-              hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
-              textColor: Styles().colors.fillColorPrimary,
-              onTap: () => _onTapGetTickets(ticketsUrl),
-          )),
-
-        ],
+              ))),
+          Visibility(visible: hasTwoButtons, child: Container(width: 6)),
+          Visibility(visible: hasRegistrationUrl, child: Expanded(
+              child: ScalableRoundedButton(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
+                hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors.fillColorPrimary,
+                onTap: () => _onTapGetTickets(registrationUrl),
+              )))
+        ]
       ),
-      Container(
-        height: 6,
-      ),
-      ],)
+      Container(height: 6)
+      ])
     );
   }
 
