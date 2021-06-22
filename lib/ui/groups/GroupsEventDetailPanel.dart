@@ -214,6 +214,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, null); //TBD decide if we need distance calculation - pass _locationData
     bool isVirtual = widget?.event?.isVirtual ?? false;
     String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online event") : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event");
+    bool hasEventUrl = AppString.isStringNotEmpty(widget.event?.location?.description);
+    bool isOnlineUnderlined = isVirtual && hasEventUrl;
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
     String value = isVirtual? Localization().getStringEx('panel.groups_event_detail.button.event_link.title',"Event link") : locationText;
     return GestureDetector(
@@ -237,30 +240,24 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                           padding: EdgeInsets.only(right: 10),
                           child:Image.asset(iconRes),
                         ),
-                        Expanded(child: Text(eventType,
+                        Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: 2), child: Text(eventType,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.medium,
                                 fontSize: 16,
-                                color: Styles().colors.textBackground))),
+                                color: Styles().colors.textBackground)),),
                       ]),
                   Container(height: 4,),
                   Container(
                       padding: EdgeInsets.only(left: 30),
                       child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
-                          ),
+                          decoration: underlineLocationDecoration,
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
                             value,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.medium,
                                 fontSize: 14,
-                                color: Styles().colors.fillColorPrimary,
-                                decorationColor: Styles().colors.fillColorSecondary,
-                                decorationThickness: 1,
-                                decorationStyle:
-                                TextDecorationStyle.solid),
+                                color: Styles().colors.fillColorPrimary),
                           )))
                 ],)
           )
