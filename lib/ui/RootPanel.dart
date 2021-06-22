@@ -515,8 +515,11 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                               fontFamily: Styles().fontFamilies.bold,
                             ),
                           )),
-                      InkWell(onTap: _onTapClose, child: Image.asset('images/close-white.png'))
+                      InkWell(onTap: _onTapClose, child:
+                        Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
+                          Image.asset('images/close-white.png', excludeFromSemantics: true,)))
                     ]),
+                    Semantics(button: true, child:
                     Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: GestureDetector(
@@ -532,7 +535,7 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                               decorationColor: Styles().colors.fillColorSecondary),
                         ),
                       ),
-                    )
+                    ))
                   ]))))
     ]));
   }

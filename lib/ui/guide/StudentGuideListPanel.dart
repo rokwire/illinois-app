@@ -190,7 +190,9 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            Semantics(hint: "Heading", child:
+              Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            )
           ),
         )
       ],),
@@ -437,26 +439,35 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
       clipBehavior: Clip.none,
       child: Stack(children: [
         GestureDetector(onTap: _onTapEntry, child:
-          Padding(padding: EdgeInsets.all(16), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Html(data: titleHtml,
-                onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
-              Container(height: 8,),
-              Html(data: descriptionHtml,
-                onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
-            ],),
-        ),),
+          Semantics(button: true, child:
+            Padding(padding: EdgeInsets.all(16), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Html(data: titleHtml,
+                  onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                Container(height: 8,),
+                Html(data: descriptionHtml,
+                  onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+                  style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+              ],),
+          ),)),
         Container(color: Styles().colors.accentColor3, height: 4),
         Visibility(visible: User().favoritesStarVisible, child:
           Align(alignment: Alignment.topRight, child:
+          Semantics(
+            label: _isFavorite
+                ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+            hint: _isFavorite
+                ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+            button: true,
+            child:
             GestureDetector(onTap: _onTapFavorite, child:
-              Container(padding: EdgeInsets.all(9), child: 
-                Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
-          ),),),),
+              Container(padding: EdgeInsets.all(9), child:
+                Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+          ),)),),),
       ],),
-      
     );
   }
 
