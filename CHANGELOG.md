@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.4.28] - 2021-06-22
 ### Fixed 
 - Fixed guide description in Recently Viewed [#322](https://github.com/rokwire/illinois-app/issues/322).
 - Do not show favorite button in Student Guide items if privacy level does not support this.
