@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 
 - Fixed guide description in Recently Viewer [#322](https://github.com/rokwire/illinois-app/issues/322).
 - Do not show favorite button in Student Guide items if privacy level does not support this.
+- Events and virtual events improvements [#321](https://github.com/rokwire/illinois-app/issues/321).
 
 ## [2.4.27] - 2021-06-21
 ### Changed 
