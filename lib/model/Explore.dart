@@ -209,4 +209,13 @@ class ExploreHelper {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
     }
   }
+
+  static String getExploreEventTypeText(Explore explore){
+    if(explore!=null && explore is Event) {
+      bool isVirtual = explore.isVirtual ?? false;
+      return isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+    }
+
+    return null;
+  }
 }
