@@ -218,7 +218,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String value = isVirtual? Localization().getStringEx('panel.groups_event_detail.button.event_link.title',"Event link") : locationText;
+    String locationId = AppString.getDefaultEmptyString(value: widget.event?.location?.locationId);
+    bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
+    String value = isVirtual ? locationId : locationText;
+    bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
     return GestureDetector(
       onTap: _onLocationDetailTapped,
       child: Semantics(
@@ -240,14 +243,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                           padding: EdgeInsets.only(right: 10),
                           child:Image.asset(iconRes),
                         ),
-                        Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: 2), child: Text(eventType,
+                        Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.medium,
                                 fontSize: 16,
                                 color: Styles().colors.textBackground)),),
                       ]),
                   Container(height: 4,),
-                  Container(
+                  Visibility(visible: isValueVisible, child: Container(
                       padding: EdgeInsets.only(left: 30),
                       child: Container(
                           decoration: underlineLocationDecoration,
@@ -258,7 +261,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                                 fontFamily: Styles().fontFamilies.medium,
                                 fontSize: 14,
                                 color: Styles().colors.fillColorPrimary),
-                          )))
+                          ))))
                 ],)
           )
       ),
