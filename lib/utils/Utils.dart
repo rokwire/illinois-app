@@ -74,6 +74,10 @@ class AppString {
     }
   }
 
+  static String stripHtmlTags(String value) {
+    return value?.replaceAll(RegExp(r'<[^>]*>'), '')?.replaceAll(RegExp(r'&[^;]+;'), ' ');
+  }
+
   /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
 
   static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120

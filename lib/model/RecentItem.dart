@@ -120,8 +120,8 @@ class RecentItem{
   factory RecentItem.fromStudentGuideItem(Map<String, dynamic> guideItem) {
     return (guideItem != null) ? RecentItem(
       recentItemType: RecentItemType.studentGuide,
-      recentTitle: StudentGuide().entryListTitle(guideItem) ?? '',
-      recentDescripton: StudentGuide().entryListDescription(guideItem) ?? '',
+      recentTitle: StudentGuide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',
+      recentDescripton: StudentGuide().entryListDescription(guideItem, stripHtmlTags: true) ?? '',
       recentOriginalJson: guideItem
     ) : null;
 

@@ -763,7 +763,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is Reminder) {
       return item.label;
     } else if (item is StudentGuideFavorite) {
-      return StudentGuide().entryListTitle(StudentGuide().entryById(item.id));
+      return StudentGuide().entryListTitle(StudentGuide().entryById(item.id), stripHtmlTags: true);
     } else {
       return null;
     }
@@ -781,7 +781,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is Reminder) {
       return item.displayDate;
     } else if (item is StudentGuideFavorite) {
-      return StudentGuide().entryListDescription(StudentGuide().entryById(item.id));
+      return StudentGuide().entryListDescription(StudentGuide().entryById(item.id), stripHtmlTags: true);
     } else
       return null;
   }

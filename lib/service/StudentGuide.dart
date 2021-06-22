@@ -198,12 +198,16 @@ class StudentGuide with Service implements NotificationsListener {
     return AppJson.stringValue(entryValue(entry, '_id'));
   }
 
-  String entryListTitle(Map<String, dynamic> entry) {
-    return AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
+  String entryListTitle(Map<String, dynamic> entry, { bool stripHtmlTags }) {
+    String result = AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
+    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    // Bidi.stripHtmlIfNeeded(result);
   }
 
-  String entryListDescription(Map<String, dynamic> entry) {
-    return AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
+  String entryListDescription(Map<String, dynamic> entry, { bool stripHtmlTags }) {
+    String result = AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
+    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    // Bidi.stripHtmlIfNeeded(result);
   }
 
   List<dynamic> get promotedList {
