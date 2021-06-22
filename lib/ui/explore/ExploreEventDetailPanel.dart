@@ -351,7 +351,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget _exploreLocationDetail() {
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
     bool isVirtual = widget?.event?.isVirtual ?? false;
-    String eventType = isVirtual? "Online event" : "In-person event";
+    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     bool hasEventUrl = AppString.isStringNotEmpty(widget.event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
@@ -363,7 +363,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
-          label: locationText,
+          label: "$eventType, $locationText",
           hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
           button: true,
           excludeSemantics: true,
