@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed 
+- Fixed guide description in Recently Viewer [#322](https://github.com/rokwire/illinois-app/issues/322).
+
 ## [2.4.27] - 2021-06-21
 ### Changed 
 - Update sample student guide to refer images on rokwire-images AWS bucket.
