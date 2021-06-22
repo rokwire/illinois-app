@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not show favorite button in Student Guide items if privacy level does not support this.
 - Strip HTML tags from guide list title & description when show them in Saved or Recently Viewed.
 - Events and virtual events improvements [#321](https://github.com/rokwire/illinois-app/issues/321).
+- Improve Accessibility for Student Guide [#320](https://github.com/rokwire/illinois-app/issues/320) 
+- Improve Accessibility for Events [#328](https://github.com/rokwire/illinois-app/issues/328) 
 
 ## [2.4.27] - 2021-06-21
 ### Changed 
