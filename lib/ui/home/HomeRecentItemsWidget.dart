@@ -350,6 +350,9 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       }
       details.add(_timeDetail());
     }
+    if ((widget.item.recentItemType == RecentItemType.studentGuide) && AppString.isStringNotEmpty(widget.item.recentDescripton)) {
+      details.add(_descriptionDetail());
+    }
     return details;
   }
 
@@ -400,6 +403,13 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     } else {
       return null;
     }
+  }
+
+  Widget _descriptionDetail() {
+    return Semantics(label: widget.item.recentDescripton ?? '', excludeSemantics: true, child:Padding(
+      padding: _detailPadding,
+      child: Text(widget.item.recentDescripton ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.textBackground)),
+    ));
   }
 
   Widget _topBorder() {
