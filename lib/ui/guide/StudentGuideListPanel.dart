@@ -449,11 +449,12 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
             ],),
         ),),
         Container(color: Styles().colors.accentColor3, height: 4),
-        Align(alignment: Alignment.topRight, child:
-          GestureDetector(onTap: _onTapFavorite, child:
-            Container(padding: EdgeInsets.all(9), child: 
-              Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
-        ),),),
+        Visibility(visible: User().favoritesStarVisible, child:
+          Align(alignment: Alignment.topRight, child:
+            GestureDetector(onTap: _onTapFavorite, child:
+              Container(padding: EdgeInsets.all(9), child: 
+                Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+          ),),),),
       ],),
       
     );
