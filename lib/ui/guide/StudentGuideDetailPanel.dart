@@ -78,9 +78,18 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
             ),
             Visibility(visible: User().favoritesStarVisible, child:
               Align(alignment: Alignment.topRight, child:
-                GestureDetector(onTap: _onTapFavorite, child:
+              Semantics(
+                label: _isFavorite
+                    ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                    : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                hint: _isFavorite
+                    ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                    : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                button: true,
+                child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.all(16), child: 
-                    Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                    Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+                  )
             ),),),),
           ],)
         ),
@@ -125,7 +134,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     String category = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),),
+        Semantics(hint:"Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),)),
     ),);
 
     String titleHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'title'));
@@ -159,17 +168,18 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           Map<String, dynamic> location = AppJson.mapValue(link['location']);
           if ((text != null) && ((url != null) || (location != null))) {
 
-            contentList.add(GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
-              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  (icon != null) ? Image.network(icon, width: 24, height: 24) : Container(width: 24, height: 24),
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(left: 4), child:
-                      Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
+            contentList.add(Semantics(button: true, child:
+              GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    (icon != null) ? Image.network(icon, width: 24, height: 24, excludeFromSemantics: true,) : Container(width: 24, height: 24),
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.only(left: 4), child:
+                        Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
+                      ),
                     ),
-                  ),
-                ],)
-            ),));
+                  ],)
+              ),)));
           }
         }
       }
@@ -192,7 +202,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           Row(children: [
             Expanded(child:
               Column(children: [
-                Image.network(imageUrl),
+                Image.network(imageUrl, excludeFromSemantics: true,),
               ]),
             ),
           ],)
@@ -202,7 +212,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           Row(children: [
             Expanded(child:
               Column(children: [
-                Image.network(imageUrl),
+                Image.network(imageUrl, excludeFromSemantics: true,),
               ]),
             ),
           ],)

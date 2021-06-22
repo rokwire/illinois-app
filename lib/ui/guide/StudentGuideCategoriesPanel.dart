@@ -140,9 +140,11 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     return GestureDetector(onTap: () => _onTapCategory(category), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 4), child:
         Row(children: [
-          Expanded(child:
-            Text(category, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-          ),
+          Semantics(hint: "Heading", child:
+            Expanded(child:
+              Text(category, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            ),
+          )
         ],),
       ),
     );
