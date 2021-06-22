@@ -76,12 +76,12 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:
               _buildContent()
             ),
-            Align(alignment: Alignment.topRight, child:
-              GestureDetector(onTap: _onTapFavorite, child:
-                Container(padding: EdgeInsets.all(16), child: 
-                  Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
-            ),),),
-
+            Visibility(visible: User().favoritesStarVisible, child:
+              Align(alignment: Alignment.topRight, child:
+                GestureDetector(onTap: _onTapFavorite, child:
+                  Container(padding: EdgeInsets.all(16), child: 
+                    Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+            ),),),),
           ],)
         ),
       );
