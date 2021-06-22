@@ -352,9 +352,15 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
     bool isVirtual = widget?.event?.isVirtual ?? false;
     String eventType = isVirtual? "Online event" : "In-person event";
+    bool hasEventUrl = AppString.isStringNotEmpty(widget.event?.location?.description);
+    bool isOnlineUnderlined = isVirtual && hasEventUrl;
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String value = isVirtual? "Event link" : locationText;
-      return GestureDetector(
+    String locationId = AppString.getDefaultEmptyString(value: widget.event?.location?.locationId);
+    bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
+    String value = isVirtual ? locationId : locationText;
+    bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
           label: locationText,
@@ -375,31 +381,25 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   padding: EdgeInsets.only(right: 10),
                   child:Image.asset(iconRes),
                 ),
-                Expanded(child: Text(eventType,
+                Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.medium,
                         fontSize: 16,
-                        color: Styles().colors.textBackground))),
+                        color: Styles().colors.textBackground)),),
               ]),
               Container(height: 4,),
-              Container(
-                padding: EdgeInsets.only(left: 30),
-                child: Container(
-                  decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
-                  ),
-                  padding: EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    value,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.medium,
-                        fontSize: 14,
-                        color: Styles().colors.fillColorPrimary,
-                        decorationColor: Styles().colors.fillColorSecondary,
-                        decorationThickness: 1,
-                        decorationStyle:
-                        TextDecorationStyle.solid),
-                  )))
+              Visibility(visible: isValueVisible, child: Container(
+                  padding: EdgeInsets.only(left: 30),
+                  child: Container(
+                      decoration: underlineLocationDecoration,
+                      padding: EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 14,
+                            color: Styles().colors.fillColorPrimary),
+                      ))))
             ],)
           )
         ),
@@ -537,7 +537,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
-          longDescription,
+          longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface),
         ));
   }
 
@@ -569,48 +569,45 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     );
   }
 
-  Widget _buildUrlButtons(){
-    String ticketsUrl = widget?.event?.registrationUrl;
+  Widget _buildUrlButtons() {
     String titleUrl = widget?.event?.titleUrl;
-    bool multyActions = AppString.isStringNotEmpty(titleUrl) && AppString.isStringNotEmpty(ticketsUrl);
-    return Container(child:
+    String registrationUrl = widget?.event?.registrationUrl;
+    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
+    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+    bool hasTwoButtons = hasTitleUrl && hasRegistrationUrl;
+    return Visibility(visible: (hasTitleUrl || hasRegistrationUrl), child:
       Column(children: [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          AppString.isStringEmpty(titleUrl)? Container():
-          Expanded(
-            child: ScalableRoundedButton(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
-              hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
-              backgroundColor: multyActions ? Styles().colors.background : Colors.white,
-              borderColor: multyActions ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
-              textColor: Styles().colors.fillColorPrimary,
-              onTap: (){
-                Analytics.instance.logSelect(target: "Website");
-                _onTapWebButton(titleUrl, 'Website');
+          Visibility(visible: hasTitleUrl, child: Expanded(
+              child: ScalableRoundedButton(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
+                hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
+                backgroundColor: hasTwoButtons ? Styles().colors.background : Colors.white,
+                borderColor: hasTwoButtons ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors.fillColorPrimary,
+                onTap: (){
+                  Analytics.instance.logSelect(target: "Website");
+                  _onTapWebButton(titleUrl, 'Website');
                 },
-          )),
-          Container(width: 6,),
-          AppString.isStringEmpty(ticketsUrl)? Container():
-          Expanded(
-            child: ScalableRoundedButton(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
-              hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
-              textColor: Styles().colors.fillColorPrimary,
-              onTap: () => _onTapGetTickets(ticketsUrl),
-          )),
-
-        ],
+              ))),
+          Visibility(visible: hasTwoButtons, child: Container(width: 6)),
+          Visibility(visible: hasRegistrationUrl, child: Expanded(
+              child: ScalableRoundedButton(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
+                hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
+                backgroundColor: Colors.white,
+                borderColor: Styles().colors.fillColorSecondary,
+                textColor: Styles().colors.fillColorPrimary,
+                onTap: () => _onTapGetTickets(registrationUrl),
+              )))
+        ]
       ),
-      Container(
-        height: 6,
-      ),
-      ],)
+      Container(height: 6)
+      ])
     );
   }
 
