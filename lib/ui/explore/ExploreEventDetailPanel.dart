@@ -537,7 +537,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
-          longDescription,
+          longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface),
         ));
   }
 

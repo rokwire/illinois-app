@@ -324,9 +324,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: HtmlWidget(
-          longDescription,
-        ));
+        child: HtmlWidget(longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface)));
   }
 
   Widget _eventUrlButton(){
