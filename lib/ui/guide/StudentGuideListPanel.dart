@@ -520,26 +520,27 @@ class _StudentGuideFeatureButtonState extends State<StudentGuideFeatureButton> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: widget.onTap ?? _nop, child:
-      Container(
-        decoration: BoxDecoration(
-          color: Styles().colors.white,
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-        ), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
-          Column(children: <Widget>[
-            Image.asset(widget.icon),
-            Container(height: 12),
-            Row(children: [
-              Expanded(child:
-                Text(widget.title, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold)),
-              ),
-            ],)
-              
-          ]),
-        ),
-    ),);
+    return Semantics(button: true, child:
+      GestureDetector(onTap: widget.onTap ?? _nop, child:
+        Container(
+          decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+          ), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
+            Column(children: <Widget>[
+              Image.asset(widget.icon, excludeFromSemantics: true,),
+              Container(height: 12),
+              Row(children: [
+                Expanded(child:
+                  Text(widget.title, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold)),
+                ),
+              ],)
+
+            ]),
+          ),
+    ),));
   }
 
 

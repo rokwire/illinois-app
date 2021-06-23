@@ -139,13 +139,13 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     
     return GestureDetector(onTap: () => _onTapCategory(category), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 4), child:
+      Semantics(hint: "Heading", child:
         Row(children: [
-          Semantics(hint: "Heading", child:
-            Expanded(child:
-              Text(category, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-            ),
-          )
-        ],),
+          Expanded(child:
+            Text(category, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+          ),
+          ],),
+        )
       ),
     );
   }
@@ -155,12 +155,13 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       Padding(padding: EdgeInsets.only(left:16, right: 16, top: 4), child:
         Container(color: Styles().colors.fillColorPrimary, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Row(children: [
-              Expanded(child:
-                Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
-              ),
-              Image.asset("images/chevron-right-white.png")
-            ],),
+            Semantics(button: true, child:
+              Row(children: [
+                Expanded(child:
+                  Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+                ),
+                Image.asset("images/chevron-right-white.png", excludeFromSemantics: true,)
+            ],)),
           ),
         ),
       ),
