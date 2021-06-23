@@ -7,51 +7,19 @@
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-money-frisbee.webp",
   "sub_details_description":"Campus Recreation has a variety of facilities and programs. Visit the website to view a complete list.",
   "links":[
-  	{"text":"217-333-3806","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3806"},
-  	{"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},
-  	{"text":"campusrec.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"campusrec.illinois.edu"}
-	],
-	"buttons":[{"text":"Visit Website","url":"campusrec.illinois.edu"}],
-	"sub_details":[{
-		"section":"State of the art facilities", "entries":[{
-			"heading":"Our indoor facilities include:",
-			"bullets":[
-				"Activities and Recreation Center (ARC)",
-				"Campus Recreation Center East (CRCE)",
-				"Campus Bike Center","Ice Arena"]
-		}]},{
-		"entries":[{
-			"heading":"Our outdoor facilities include:",
-			"bullets":[
-				"Complex Fields",
-				"Outdoor Center Playfields",
-				"Illini Grove"]
-	}]},{
-		"section":"Programs for all","entries":[{
-			"heading":"Campus Recreation also offers unique programs designed for patrons of diverse interests, including:",
-			"bullets":[
-				"A variety of group fitness and personal training offerings",
-				"Dozens of intramural activities",
-				"Instructional cooking demonstrations",
-				"Wellness workshops",
-				"Rock climbing clinics",
-				"Swimming programs",
-				"Bicycle demonstrations",
-				"Ice skating classes",
-				"A variety of club sports"]
-	}]}],
-	"related":["join.intramural","group.fitness","upace"]
+    {"text":"217-333-3806","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3806"},
+    {"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},
+    {"text":"campusrec.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"campusrec.illinois.edu"}],
+  "buttons":[{"text":"Visit website","url":"campusrec.illinois.edu"}],
+  "sub_details":[{"section":"State of the art facilities","entries":[{"heading":"Our indoor facilities include:","bullets":["Activities and Recreation Center (ARC)","Campus Recreation Center East (CRCE)","Campus Bike Center","Ice Arena"]}]},{"entries":[{"heading":"Our outdoor facilities include:","bullets":["Complex Fields","Outdoor Center Playfields","Illini Grove"]}]},{"section":"Programs for all","entries":[{"heading":"Campus Recreation also offers unique programs designed for patrons of diverse interests, including:","bullets":["A variety of group fitness and personal training offerings","Dozens of intramural activities","Instructional cooking demonstrations","Wellness workshops","Rock climbing clinics","Swimming programs","Bicycle demonstrations","Ice skating classes","A variety of club sports"]}]}],
+  "related":["join.intramural","group.fitness","upace"]
 },{
   "_id":"participate.campus.rec",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"Exercise",
   "features":["dining","meal-plan"],
-  "promotion": {
-    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
-    "roles": ["NOT", [ "student", "OR", "employee" ]]
-  },
-"content_ref": "participate.campus.rec.content"
+  "content_ref": "participate.campus.rec.content"
 },{
   "_id":"participate.campus.rec_01",
   "guide":"For students",
@@ -66,7 +34,9 @@
   "detail_title":"Join an Intramural Sports Team",
   "detail_description":"Intramurals are easy to join and easy to play. There are activities offered to fit everyone’s needs and abilities. You may join an existing team or start your own.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-living-bowling.webp",
-  "links":[{"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},{"text":"https://campusrec.illinois.edu/programs/intramural/how-to-register/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/intramural/how-to-register/"}],
+  "links":[
+    {"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},
+    {"text":"https://campusrec.illinois.edu/programs/intramural/how-to-register/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/intramural/how-to-register/"}],
   "buttons":[{"text":"Register for an account","url":"https://campusrec.illinois.edu/programs/intramural/how-to-register/"}],
   "sub_details":[{"entries":[{"heading":"All Intramural Activities at Illinois are organized through an app called IM Leagues. IM Leagues allows users to see upcoming activities, register a team or as a free agent, and sign up for games throughout the semester. Once you have an account, you can join a sport in one of three ways.","numbers":["Create a team and invite team members to join.Join a specific existing teamList yourself as a free agent. You can make requests for specific teams or wait for team captains to reach out to you."]}]}],
   "related":["participate.campus.rec","group.fitness","join.frat"]
@@ -76,11 +46,6 @@
   "category":"Involvement",
   "section":"Socializing",
   "features":["events","athletics","groups","quick-polls"],
-  "promotion": {
-    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
-    "roles": "student",
-    "card": { "role": "Undergraduate", "student_level": "1U" }
-  },
   "content_ref": "join.intramural.content"
 },{
   "_id":"join.intramural_02",
@@ -91,7 +56,6 @@
   "content_ref": "join.intramural.content"
 },{
   "_id":"learn.money",
-  "guide":"For students",
   "category":"Finance & legal",
   "section":"Money management",
   "list_title":"Learn money management skills",
@@ -100,8 +64,11 @@
   "detail_description":"The Student Money Management Center offers a variety of financial resources.",
   "sub_details_description":"The Student Money Management Center is here to support you as you embark on your finance journey. There are many ways to connect with the Center and learn.  You can work with a mentor, watch webinars, subscribe to the e-newsletter, complete courses, earn badges, and listen to podcasts. ",
   "features":["illini-cash","my-illini"],
-  "links":[{"text":"217-333-2180","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2180"},{"text":"studentmoney@uillinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:studentmoney@uillinois.edu"},{"text":"https://www.studentmoney.uillinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.studentmoney.uillinois.edu/"}],
-  "buttons":[{"text":"Visit Website","url":"https://www.studentmoney.uillinois.edu/"}],
+  "links":[
+    {"text":"217-333-2180","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2180"},
+    {"text":"studentmoney@uillinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:studentmoney@uillinois.edu"},
+    {"text":"https://www.studentmoney.uillinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.studentmoney.uillinois.edu/"}],
+  "buttons":[{"text":"Visit website","url":"https://www.studentmoney.uillinois.edu/"}],
   "related":["financial.wellness","bank","student.job"]
 },{
   "_id":"join.frat.content",
@@ -111,8 +78,10 @@
   "detail_description":"Fraternities and sororities started as literary societies and have continued today to provide support, housing, career development, mentorship and coaching to over 7,000 students who claim membership in one of the many chapters on campus.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-greeks.webp",
   "sub_details_description":"Fraternal organizations engage in activities which include academic, professional, and personal development, philanthropies to raise money for those in need, community service, and social development. Fraternal organizations are values-based, and your membership is for life!",
-  "links":[{"text":"217-333-7062","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7062"},{"text":"fsaffairs.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"fsaffairs.illinois.edu"}],
-  "buttons":[{"text":"Visit Website","url":"fsaffairs.illinois.edu"}],
+  "links":[
+    {"text":"217-333-7062","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7062"},
+    {"text":"fsaffairs.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"fsaffairs.illinois.edu"}],
+  "buttons":[{"text":"Visit website","url":"fsaffairs.illinois.edu"}],
   "sub_details":[{"section":"Organizations types","entries":[{"bullets":["General social fraternities/sororities","Fraternities and sororities with academic affiliations","Fraternities and sororities with cultural affiliations","Fraternities and sororities with religious affiliations"]}]},{"entries":[{"heading":"Learn more about the organization types and their recruitment process by visiting the Fraternity and Sorority Affairs website"}]}],
   "related":["join.intramural","join.illini.union","join.club"]
 },{
@@ -121,11 +90,6 @@
   "category":"Involvement",
   "section":"Socializing",
   "features":["events","athletics","groups","quick-polls"],
-  "promotion": {
-    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
-    "roles": "student",
-    "card": { "role": ["NOT", "Undergraduate"] }
-},
   "content_ref": "join.frat.content"
 },{
   "_id":"join.frat_03",
@@ -139,27 +103,24 @@
   "guide":"For students",
   "category":"Involvement",
   "section":"Socializing",
-  "promotion": {
-    "interval": { "start": "2021-06-01T00:00:00Z", "end": "2021-07-01T00:00:00Z"},
-    "roles": "student",
-    "card": { "role": ["NOT", "Undergraduate"] }
-  },
   "list_title":"Join a student club or organization",
   "list_description":"Illinois is home to many student clubs and organizations. Get involved today!",
   "detail_title":"Join a student club or organization",
   "detail_description":"Illinois is home to many student clubs and organizations. Engagement in these clubs and organizations supports career readiness, academic skills, and social connection.",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-greeks.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-garden.webp",
   "sub_details_description":"Check out the student org list to find something that interests you or go to the Student Org Development Administration website to learn more about starting a new organization.",
   "features":["events","athletics","groups","quick-polls"],
-  "links":[{"text":"217-300-8757","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-8757"},{"text":"GetInvolved@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:GetInvolved@illinois.edu"},{"text":"https://studentengagement.illinois.edu/student-org-development-and-administration/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://studentengagement.illinois.edu/student-org-development-and-administration/"}],
-  "buttons":[{"text":"Visit Website","url":"https://studentengagement.illinois.edu/student-org-development-and-administration/"}],
+  "links":[
+    {"text":"217-300-8757","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-8757"},
+    {"text":"GetInvolved@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:GetInvolved@illinois.edu"},
+    {"text":"https://studentengagement.illinois.edu/student-org-development-and-administration/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://studentengagement.illinois.edu/student-org-development-and-administration/"}],
+  "buttons":[{"text":"Visit website","url":"https://studentengagement.illinois.edu/student-org-development-and-administration/"}],
   "related":["volunteer","join.illini.union","join.voter"]
 },{
   "_id":"volunteer",
   "guide":"For students",
   "category":"Involvement",
   "section":"Community engagement",
-  "promotion": {},
   "list_title":"Volunteer",
   "list_description":"The Office of Volunteer Programs provides students with opportunities to give back to their community. ",
   "detail_title":"Volunteer",
@@ -167,8 +128,12 @@
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-paint.webp",
   "sub_details_description":"Each of our new students has the power to shape the future. Through sustained volunteerism, our Illini can continue to contribute to the expansion of social change from the first year to graduation and beyond. There are many opportunities to serve.",
   "features":["events","athletics","groups","quick-polls"],
-  "links":[{"text":"217-300-8757","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-8757"},{"text":"StudentEngagement@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:StudentEngagement@illinois.edu"},{"text":"https://studentengagement.illinois.edu/volunteer-programs/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://studentengagement.illinois.edu/volunteer-programs/"}],
-  "buttons":[{"text":"Visit Website","url":"https://studentengagement.illinois.edu/volunteer-programs/"}],
+  "links":[
+    {"text":"217-300-8757","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-8757"},
+    {"text":"StudentEngagement@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:StudentEngagement@illinois.edu"},
+    {"text":"https://studentengagement.illinois.edu/volunteer-programs/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://studentengagement.illinois.edu/volunteer-programs/"},
+    {"text":"Illini Union\nSuite 284\n1401 West Green Street\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.109868865169275,"longitude":-88.22728301757576},"title":"Illini Union"}}],
+  "buttons":[{"text":"Visit website","url":"https://studentengagement.illinois.edu/volunteer-programs/"}],
   "sub_details":[{"entries":[{"heading":"There are three types of volunteer programs that students can participate in:","bullets":["Civic engagement & action","Leadership development","Social & community awareness"]}]},{"entries":[{"heading":"Visit the Office of Volunteer Programs website for more info, or fill out a volunteer interest form to get started right away."}]}],
   "related":["join.voter","join.club","join.illini.union"]
 },{
@@ -176,7 +141,6 @@
   "guide":"For students",
   "category":"Involvement",
   "section":"Community engagement",
-  "promotion": {},
   "list_title":"Join the Illini Union Board",
   "list_description":"The Illini Union Board is the largest student-run event-planning board on campus.",
   "detail_title":"Join the Illini Union Board",
@@ -184,7 +148,10 @@
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-firstyear-aceit.webp",
   "sub_details_description":"The IU Board organizes fun events for students and serves as \"the voice\" of the student body. The Board advises the Illini Union Director on policies, procedures and things going on around the building. The Board voices the concerns, needs, and satisfaction of Illinois students. \n\nAs a member of the IU Board, you can join one of eleven different sections. Learn about these programming areas. \n\nApply to be an IU Board Director or member of the Executive Team.",
   "features":["events","athletics","groups","quick-polls"],
-  "links":[{"text":"217-333-3663","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3663"},{"text":"IUBoard@mx.uillinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:IUBoard@mx.uillinois.edu"},{"text":"https://union.illinois.edu/get-involved/illini-union-board","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://union.illinois.edu/get-involved/illini-union-board"}],
+  "links":[
+    {"text":"217-333-3663","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3663"},
+    {"text":"IUBoard@mx.uillinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:IUBoard@mx.uillinois.edu"},
+    {"text":"https://union.illinois.edu/get-involved/illini-union-board","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://union.illinois.edu/get-involved/illini-union-board"}],
   "buttons":[{"text":"Visit website","url":"https://union.illinois.edu/get-involved/illini-union-board"}],
   "related":["volunteer","join.club","join.voter"]
 },{
@@ -192,7 +159,6 @@
   "guide":"For students",
   "category":"Involvement",
   "section":"Community engagement",
-  "promotion": {},
   "list_title":"Join the voter engagement initiative",
   "list_description":"Illinois offers many opportunities to become engaged citizens through student voter initiatives.",
   "detail_title":"Join the voter engagement initiative",
@@ -200,7 +166,8 @@
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-vote-sticker.webp",
   "sub_details_description":"At Illinois, our goal is to normalize voting behavior through initial opportunities that allow all students to register, learn about issues and candidates, and vote. Democracy relies on each of you to help shape our Illini community and your communities at home. Voting is just one way that each of you can participate in civic engagement that is part of our collective responsibility as citizens. \n\nVisit the Illini Vote website to learn how to make your voice heard during election season.",
   "features":["events","athletics","groups","quick-polls"],
-  "links":[{"text":"https://sse.illinois.edu/illinivote/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://sse.illinois.edu/illinivote/"}],
+  "links":[
+    {"text":"https://sse.illinois.edu/illinivote/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://sse.illinois.edu/illinivote/"}],
   "buttons":[{"text":"Visit website","url":"https://sse.illinois.edu/illinivote/"}],
   "related":["join.club","volunteer","join.illini.union"]
 },{
@@ -209,7 +176,9 @@
   "list_description":"McKinley Health Center offers LGBTQ inclusive healthcare. ",
   "detail_title":"Access LGBTQ Healthcare",
   "detail_description":"McKinley Health Center offers LGBTQ inclusive healthcare. ",
-  "links":[{"text":"https://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health"}],
+  "features":["dining","meal-plan"],
+  "links":[
+    {"text":"https://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health"}],
   "buttons":[{"text":"More info","url":"https://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health"}],
   "sub_details":[{"entries":[{"heading":"McKinley Health Center is committed to offering inclusive healthcare services. Offerings include:","bullets":["Helpful hints for a successful appointment experience","Suggestions for students seeking PrEP","Suggestions for trans and gender non-conforming students","Mental health services","LGBT campus resources","LGBT community resources","LGBT health and wellness resources"]}]},{"entries":[{"heading":"You can also get information about STDs and even request a sexual health workshop for a group of 10 students or less."}]}],
   "related":["lgbt.resource","sexual.health","mckinley.health"]
@@ -238,7 +207,9 @@
   "detail_description":"The Sexual Health Education Program at McKinley Health Center provides information about sexual health and sexuality. The program is open to students of all races/ethnicities, genders, and sexual orientations.",
   "sub_details_description":"The goal of the Sexual Health Education Program is to provide information that helps students feel comfortable and confident in making healthy, informed sexual choices. Offerings include:",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://mckinley.illinois.edu/health-education/sexual-health","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/health-education/sexual-health"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://mckinley.illinois.edu/health-education/sexual-health","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/health-education/sexual-health"}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/health-education/sexual-health"}],
   "sub_details":[{"entries":[{"bullets":["Individual appointments","Campus and community outreach","Safer sex supplies","Peer education"]}]},{"entries":[{"heading":"Visit the website for more details, or call to schedule an appointment."}]}],
   "related":["womens.health","assault.resources","lgbtq.health"]
@@ -252,7 +223,9 @@
   "detail_title":"Access women’s healthcare",
   "detail_description":"The Women's Health Department at McKinley Health Center provides preventive care, treatment and management of health related issues, with emphasis on reproductive health.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://mckinley.illinois.edu/medical-services/womens-health","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/medical-services/womens-health"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://mckinley.illinois.edu/medical-services/womens-health","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/medical-services/womens-health"}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/medical-services/womens-health"}],
   "sub_details":[{"entries":[{"heading":"Services include:","bullets":["Routine exams and pap smears","Contraception","Sexually transmitted infection screening and treatment","Breast exams","Pregnancy options counseling","Colposcopy exams","Evaluation and treatment of menstrual irregularities and other health problems related to women’s health."]}]},{"entries":[{"heading":"Spring and Fall semester hours: 8 a.m.-5 p.m., Monday-Friday Summer hours:8 a.m.-4:30 p.m., Monday-FridayVisit the Women’s Health Department website for information on appointments."}]}],
   "related":["womens.resource","mckinley.health","assault.resources"]
@@ -263,7 +236,10 @@
   "detail_title":"Learn about student health insurance",
   "detail_description":"All campus based students are required to have health insurance, either through a program provided by the university or one determined to be equivalent. ",
   "sub_details_description":"Without proper health insurance, injury or illness can feel like walking a tightrope without a safety net. The Student Health Insurance staff is here to ensure you have all the information needed to make the right decision about your health care coverage needs.\n\nStudents must request an appointment to meet with staff in-person.\n\nCall or email to schedule. Appointments are available Monday through Friday, from 9:00 a.m. to 12:00 p.m. and 1:00 p.m. to 3:30 p.m.",
-  "links":[{"text":"217-333-0165","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0165"},{"text":"insure@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:insure@illinois.edu"},{"text":"https://si.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://si.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-0165","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0165"},
+    {"text":"insure@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:insure@illinois.edu"},
+    {"text":"https://si.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://si.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"https://si.illinois.edu/"}],
   "related":["mckinley.health","mental.health.services","immunizations"]
 },{
@@ -287,7 +263,8 @@
   "detail_title":"Get your required immunizations",
   "detail_description":"Students are required to get certain immunizations prior to attending class. The Immunization, Allergy & Travel Clinic is a convenient place to receive vaccines and allergy treatments.",
   "sub_details_description":"If you are an incoming new student, you should read about the requirements and process for submitting proof of immunization.\n\nIf you are a current student and need an immunization, the Immunization, Allergy & Travel Clinic can help you. The clinic offers a variety of vaccines and immunizations as well as allergy shots. Visit the website for more information.",
-  "links":[{"text":"https://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic"}],
+  "links":[
+    {"text":"https://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic"}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic"}],
   "related":["mckinley.health","health.insurance","pharmacy"]
 },{
@@ -305,19 +282,30 @@
   "features":["dining","meal-plan","my-illini","illini-id","illini-cash","laundry"],
   "content_ref": "immunizations.content"
 },{
+  "_id":"safer.illinois.content",
+  "list_title":"Download the Safer Illinois app",
+  "list_description":"The Safer Illinois app helps faculty, staff and students manage their COVID-19 status.",
+  "detail_title":"Download the Safer Illinois app",
+  "detail_description":"The Safer Illinois app was built by the University of Illinois Urbana-Champaign specifically to support the university community during COVID-19. Use of the app is strongly recommended for all faculty, staff and students.",
+  "sub_details_description":"The app sends users test results and exposure notifications. It is also the easiest and most reliable way to gain access to university buildings that are restricted during the pandemic.\n\nYou can download the app for iOS or for Android.",
+  "links":[
+    {"text":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download"}],
+  "buttons":[{"text":"Learn more","url":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download"}],
+  "related":["mckinley.app","mckinley.health","immunizations"]
+},{
   "_id":"safer.illinois",
+  "guide":"For students",
+  "category":"Campus rules and protocol",
+  "section":"COVID-19",
+  "features":["events"],
+  "content_ref": "safer.illinois.content"
+},{
+  "_id":"safer.illinois_07",
   "guide":"For students",
   "category":"Health & wellness",
   "section":"COVID-19",
   "features":["dining","meal-plan"],
-  "list_title": "Download the Safer Illinois app",
-  "list_description": "The Safer Illinois app helps faculty, staff and students manage their COVID-19 status.",
-  "detail_title": "Download the Safer Illinois app",
-  "detail_description": "The Safer Illinois app was built by the University of Illinois Urbana-Champaign specifically to support the university community during COVID-19. Use of the app is strongly recommended for all faculty, staff and students.",
-  "links":[{"text":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download"}],
-  "buttons":[{"text":"Learn more","url":"https://covid19.illinois.edu/health-and-support/safer-illinois-app/#download"}],
-  "sub_details_description": "The app sends users test results and exposure notifications. It is also the easiest and most reliable way to gain access to university buildings that are restricted during the pandemic.\r\n\r\nYou can download the app for iOS or for Android.",
-  "related": ["mckinley.app", "mckinley.health", "immunizations"]
+  "content_ref": "safer.illinois.content"
 },{
   "_id":"community.of.care.content",
   "list_title":"Get help from the Community of Care",
@@ -325,7 +313,9 @@
   "detail_title":"Get help from the Community of Care",
   "detail_description":"College can be stressful. Many students are balancing family, work, financial, and other obligations, which can lead to physical and emotional distress. The Community of Care can help.",
   "sub_details_description":"If you know someone in distress, you may be in a position to offer support or guide the person to an appropriate resource. Resources are available to both faculty and students.\n\nLearn more about the available resources and when to share a concern or make a referral by visiting The Office of the Dean of Students website.",
-  "links":[{"text":"217-333-0050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0050"},{"text":"https://odos.illinois.edu/community-of-care/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/community-of-care/"}],
+  "links":[
+    {"text":"217-333-0050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0050"},
+    {"text":"https://odos.illinois.edu/community-of-care/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/community-of-care/"}],
   "buttons":[{"text":"Visit website","url":"https://odos.illinois.edu/community-of-care/"}],
   "related":["student.assistance","counseling.center","mental.health.services"]
 },{
@@ -351,12 +341,12 @@
   "list_description":"ACE IT is the Counseling Center’s Alcohol and Other Drug Program, and is required for new students.",
   "detail_title":"Get help with drugs and alcohol ",
   "detail_description":"ACE IT is the Counseling Center’s alcohol and drug program. ACE IT's goal is to help you stay safe, be healthy, and succeed academically—whether or not you choose to drink. The program is required for new students.",
-  "sub_details_title":"What to expect",
-  "sub_details_description":"Participants will complete interactive educational modules. The modules represent a variety of alcohol and other drug-related situations. The workshop lasts about 60 minutes. After each session, participants will take a short quiz that they must pass with at least a 90 percent. ",
   "features":["dining","meal-plan"],
-  "links":[{"text":"aceitprogram@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:aceitprogram@illinois.edu"},{"text":"https://go.illinois.edu/GetHelpWithDrugs","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/GetHelpWithDrugs"}],
+  "links":[
+    {"text":"aceitprogram@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:aceitprogram@illinois.edu"},
+    {"text":"https://go.illinois.edu/GetHelpWithDrugs","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/GetHelpWithDrugs"}],
   "buttons":[{"text":"Visit website","url":"https://go.illinois.edu/GetHelpWithDrugs"}],
-  "sub_details":[{"section":"Approach","entries":[{"heading":"Please note that due to the Counseling Center’s innovative harm reduction approach, ACE IT does not lecture or preach abstinence.Go to the Counseling Center website to learn more about the program and how to become a peer educator."}]}],
+  "sub_details":[{"section":"What to expect","entries":[{"heading":"Participants will complete interactive educational modules. The modules represent a variety of alcohol and other drug-related situations. The workshop lasts about 60 minutes. After each session, participants will take a short quiz that they must pass with at least a 90 percent. "}]},{"section":"Approach","entries":[{"heading":"Please note that due to the Counseling Center’s innovative harm reduction approach, ACE IT does not lecture or preach abstinence.Go to the Counseling Center website to learn more about the program and how to become a peer educator."}]}],
   "related":["alcohol.safety","wellness.pledge","mental.health.services"]
 },{
   "_id":"manage.stress",
@@ -367,12 +357,12 @@
   "list_description":"There are a variety of opportunities for students to explore stress management strategies and relaxation techniques.",
   "detail_title":"Manage stress",
   "detail_description":"McKinley Health Center provides a variety of health-related appointments, as well as a nurse hotline and emergency services.",
-  "sub_details_title":"Workshops and outreach",
-  "sub_details_description":"Stress Management Workshops and Wellness programs can be requested for your group or organization, and may even be tailored to your group’s needs.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://go.illinois.edu/ManageStressMcKinley","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/ManageStressMcKinley"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://go.illinois.edu/ManageStressMcKinley","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/ManageStressMcKinley"}],
   "buttons":[{"text":"Visit website","url":"https://go.illinois.edu/ManageStressMcKinley"}],
-  "sub_details":[{"section":"Online relaxation exercises","entries":[{"heading":"Try out one of our online relaxation exercises."}]},{"section":"Stress relief packs","entries":[{"heading":"Around finals, stress relief packs are available to students filled with a variety of stress management tips, snacks, coupons, games, and more. These are distributed at McKinley's Health Resource Center's while supplies last."}]},{"section":"Stress management peers","entries":[{"heading":"Stress Management Peers are dedicated to providing education and awareness to students on stress-related topics. New members can join at the beginning of the fall and spring semesters."}]},{"section":"Sleep pack","entries":[{"heading":"The sleep pack includes a variety of items and resources to help improve your sleep routine. "}]},{"section":"Light therapy","entries":[{"heading":"Light therapy can be especially helpful during winter months when Seasonal Affective Disorder (SAD) and the winter blues set in. Visit the Stress Management webpage for more details."}]}],
+  "sub_details":[{"section":"Workshops and outreach","entries":[{"heading":"Stress Management Workshops and Wellness programs can be requested for your group or organization, and may even be tailored to your group’s needs."}]},{"section":"Online relaxation exercises","entries":[{"heading":"Try out one of our online relaxation exercises."}]},{"section":"Stress relief packs and sleep packs","entries":[{"heading":"Around finals, stress relief packs are available to students filled with a variety of stress management tips, snacks, coupons, games, and more. These are distributed at McKinley's Health Resource Center's while supplies last.The sleep pack includes a variety of items and resources to help improve your sleep routine. "}]},{"section":"Stress management peers","entries":[{"heading":"Stress Management Peers are dedicated to providing education and awareness to students on stress-related topics. New members can join at the beginning of the fall and spring semesters."}]},{"section":"Light therapy","entries":[{"heading":"Light therapy can be especially helpful during winter months when Seasonal Affective Disorder (SAD) and the winter blues set in. Visit the Stress Management webpage for more details."}]}],
   "related":["relaxation","sleep","reflection.rooms"]
 },{
   "_id":"mckinley.health",
@@ -385,7 +375,10 @@
   "detail_description":"McKinley Health Center provides a variety of health-related appointments, as well as a nurse hotline and emergency services.",
   "sub_details_description":"Call 217-333-2700 to speak with a nurse, 24 hours a day, seven days a week. \n\nAppointments can be made using the same phone number, Monday–Friday, 8 a.m. to 5 p.m.\n\nCall 911 for life-threatening and emergency situations.\n\nVisit the McKinley Health Center website for more information.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://mckinley.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://mckinley.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu"},
+    {"text":"1109 S. Lincoln Avenue Urbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10300924174253,"longitude":-88.2197020642553},"title":"1109 S. Lincoln Avenue Urbana"}}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu"}],
   "related":["immunizations","health.insurance","pharmacy"]
 },{
@@ -399,7 +392,8 @@
   "detail_description":"Sleep is essential for good health, mental and emotional functioning, and personal safety. ",
   "sub_details_description":"A person between the ages of 18 and 24 should get 7 to 8 hours of sleep each night. The McKinley Wellness app has information and tips related to sleep, as well as other wellness topics.    \n\nVisit the Get Sleep web page or download the app for access to all of the wellness tips. You can download the app for iOS or for Android.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"http://mhcwellness.illinois.edu/get-sleep","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://mhcwellness.illinois.edu/get-sleep"}],
+  "links":[
+    {"text":"http://mhcwellness.illinois.edu/get-sleep","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://mhcwellness.illinois.edu/get-sleep"}],
   "buttons":[{"text":"Visit website","url":"http://mhcwellness.illinois.edu/get-sleep"}],
   "related":["manage.stress","relaxation","mckinley.app"]
 },{
@@ -411,12 +405,12 @@
   "list_description":"The McKinley Pharmacy serves the students of the University of Illinois at Urbana-Champaign.",
   "detail_title":"McKinley Pharmacy",
   "detail_description":"The McKinley Pharmacy serves the students of the University of Illinois at Urbana-Champaign.",
-  "sub_details_title":"Prescription medications",
-  "sub_details_description":"Escripts are now accepted! Have your provider submit by calling 217-333-2700 or by fax at 217-244-6309.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://mckinley.illinois.edu/about-pharmacy","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/about-pharmacy"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://mckinley.illinois.edu/about-pharmacy","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/about-pharmacy"}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/about-pharmacy"}],
-  "sub_details":[{"section":"Basic health supplies","entries":[{"heading":"The McKinley vending machine contains over-the-counter medicines, first aid supplies, and safe sex supplies. The vending machine is located at:301 E. Gregory Drive, SDRP (Ikenberry Commons), Inside the Package Center.Hours of operation are Monday–Friday, 7 to 11:30 p.m. and Saturday–Sunday, 9 to 11:30 p.m.Visit the pharmacy website for details on prescriptions, covered medications and more"}]}],
+  "sub_details":[{"section":"Prescription medications","entries":[{"heading":"Escripts are now accepted! Have your provider submit by calling 217-333-2700 or by fax at 217-244-6309."}]},{"section":"Basic health supplies","entries":[{"heading":"The McKinley vending machine contains over-the-counter medicines, first aid supplies, and safe sex supplies. The vending machine is located at:301 E. Gregory Drive, SDRP (Ikenberry Commons), Inside the Package Center.Hours of operation are Monday–Friday, 7 to 11:30 p.m. and Saturday–Sunday, 9 to 11:30 p.m.Visit the pharmacy website for details on prescriptions, covered medications and more"}]}],
   "related":["mckinley.health","health.insurance","immunizations"]
 },{
   "_id":"relaxation",
@@ -429,7 +423,8 @@
   "detail_description":"Short and effective ways to refresh your mind and body, and gain increased energy levels and productivity.  ",
   "sub_details_description":"There are many techniques available for coping with stress. Experimenting with a variety of techniques will help you find what works best for you. Each method varies in the amount of time it takes to master the technique. Choose techniques that work with your schedule and meet your needs. \n\nPreparation for relaxation is an easy yet crucial task. It is important because it enables the exercise to be done effectively, maximizing the overall benefits.  The following guidelines will assist you in being successful with any type of relaxation exercise – deep breathing, meditation, progressive muscle relaxation, visualization, etc. (audio)\n\nBefore you get started, read more about relaxation benefits and tips. \n\nCAUTION: Relaxation exercises should not be practiced or performed while operating a vehicle or other machinery. If you have physical, mental, and/or emotional limitations consult with your provider prior to engaging in relaxation exercises.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"https://go.illinois.edu/UseRelaxationTechniques","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/UseRelaxationTechniques"}],
+  "links":[
+    {"text":"https://go.illinois.edu/UseRelaxationTechniques","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/UseRelaxationTechniques"}],
   "buttons":[{"text":"Browse exercises","url":"https://go.illinois.edu/UseRelaxationTechniques"}],
   "related":["sleep","manage.stress","reflection.rooms"]
 },{
@@ -443,7 +438,9 @@
   "detail_description":"he Mental Health unit at McKinley Health Center provides assessment and recommendations for a variety of emotional and behavioral difficulties.",
   "sub_details_description":"Short-term individual psychotherapy, up to a few sessions, is provided as indicated. Students may also consider the University of Illinois Counseling Center when considering an appointment for counseling.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://go.illinois.edu/AccessMentalHealthServices","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/AccessMentalHealthServices"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://go.illinois.edu/AccessMentalHealthServices","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/AccessMentalHealthServices"}],
   "buttons":[{"text":"Visit website","url":"https://go.illinois.edu/AccessMentalHealthServices"}],
   "sub_details":[{"section":"Appointments","entries":[{"heading":"To obtain or cancel a McKinley appointment, counseling or medication, call 217-333-2700 during normal business hours Monday through Friday. Failure to cancel an appointment at least two hours prior to your scheduled time will result in a $10 fee charged to your student account."}]},{"section":"Referrals","entries":[{"heading":"If you are being referred to McKinley from an outside provider, please have your provider send McKinley a detailed clinical summary. For medication, make an appointment with a primary caregiver who will then generate an internal referral for psychiatry assessment. For counseling, you may make an appointment directly with the next available counselor."}]},{"section":"Crisis after hours","entries":[{"heading":"If you are in crisis after hours, call the Rosencrance Crisis Line at 217-359-4141."}]}],
   "related":["counseling.center","kognito","welltrack"]
@@ -454,7 +451,10 @@
   "detail_title":"Reflection rooms",
   "detail_description":"The Undergraduate Library has two reflection rooms located on the lower level.  While reflection rooms are commonly used for prayer, meditation, and yoga, they can also be used as sensory safe spaces.",
   "sub_details_description":"For people who have autism, anxiety disorders or attention deficit hyperactivity disorder, a reflection room can be a much needed oasis of calm in an otherwise over stimulating environment. ",
-  "links":[{"text":"undergrad@library.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:undergrad@library.illinois.edu"},{"text":"https://go.illinois.edu/ReflectionRooms","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/ReflectionRooms"}],
+  "links":[
+    {"text":"undergrad@library.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:undergrad@library.illinois.edu"},
+    {"text":"https://go.illinois.edu/ReflectionRooms","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/ReflectionRooms"},
+    {"text":"1402 West Gregory Drive \nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10490452667719,"longitude":-88.22692123223419},"title":"1402 West Gregory Drive"}}],
   "buttons":[{"text":"More information","url":"https://go.illinois.edu/ReflectionRooms"}],
   "sub_details":[{"section":"What to expect","entries":[{"heading":"The Undergraduate Library reflection rooms are outfitted to best cater to a wide variety of needs. The rooms are painted blue because it is a calming color. One of the rooms is equipped with a rocking chair and a voice-activated light source that can be customized to provide light across the entire spectrum of colors depending on one’s needs. The other room contains a yoga mat and a white noise machine to encourage meditative movement. You may also check out a tranquility kit to use in the rooms. Kits include a happy light, noise-cancelling headphones, stress balls, and other items to help you take a break during a busy and stressful day."}]},{"section":"Availability","entries":[{"heading":"Both rooms are available during the hours that the library is open with no reservation needed. You can also book a room in advance if you want to schedule a break ahead of time."}]}],
   "related":["undergrad.lib","arboretum","relaxation"]
@@ -482,7 +482,10 @@
   "detail_description":"The Counseling Center provides comprehensive services for your mental wellness.",
   "sub_details_description":"The Counseling Center provides same-day initial appointments. Appointments are available 8 a.m. to 5 p.m., Monday through Friday. \n\nCounseling Center offerings include: \nTime-limited individual counseling\nGroup counseling\nReferrals to community providers\nA suite of skill-building programming focused on your wellness.\n\nStaff members at the Counseling Center have extensive training and experience working with college students. Additionally, staff members reflect patient diversity, and are committed to meeting the needs of the diverse campus population, whenever possible",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-3704","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3704"},{"text":"http://counselingcenter.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://counselingcenter.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-3704","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3704"},
+    {"text":"http://counselingcenter.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://counselingcenter.illinois.edu/"},
+    {"text":"610 East John Street\nStudent Services Building, Room 206\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.109483379862056,"longitude":-88.2298487168902},"title":"610 East John Street"}}],
   "buttons":[{"text":"Visit website","url":"http://counselingcenter.illinois.edu/"}],
   "related":["mental.health.services","wellness.pledge","kognito"]
 },{
@@ -494,13 +497,13 @@
   "list_description":"The Nutrition Education Program aims to educate students on nutrition and encourage healthy eating behaviors.",
   "detail_title":"Sign up for a nutrition appointment at McKinley Health Center",
   "detail_description":"The Nutrition Education Program aims to educate students on nutrition and encourage healthy eating behaviors.",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-paint.webp",
-  "sub_details_title":"Individual appointments ",
-  "sub_details_description":"Students can meet one-on-one with a Registered Dietitian to learn about by calling 217-333-2700 to schedule an appointment.\n ",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-living-dining.webp",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://go.illinois.edu/SignUpForNutrition","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/SignUpForNutrition"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://go.illinois.edu/SignUpForNutrition","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/SignUpForNutrition"}],
   "buttons":[{"text":"Visit website","url":"https://go.illinois.edu/SignUpForNutrition"}],
-  "sub_details":[{"section":"Outreach programs","entries":[{"heading":"Nutrition workshops are available upon request. You must submit your request at least 2 weeks in advance. Submit a request now.Visit McKinley Health’s nutrition webpage for more details and helpful nutrition handouts."}]}],
+  "sub_details":[{"section":"Individual appointments ","entries":[{"heading":"Students can meet one-on-one with a Registered Dietitian to learn about by calling 217-333-2700 to schedule an appointment. "}]},{"entries":[{"heading":"Outreach programs","bullets":["Nutrition workshops are available upon request. You must submit your request at least 2 weeks in advance. Submit a request now.Visit McKinley Health’s nutrition webpage for more details and helpful nutrition handouts."]}]}],
   "related":["fresh.fruit","nutrition.campus.rec","meal.plan"]
 },{
   "_id":"nutrition.campus.rec",
@@ -511,10 +514,11 @@
   "list_description":"Peers in the Dietetic Program provide nutrition services, under the guidance of two registered dieticians.",
   "detail_title":"Sign up for nutrition coaching through Campus Recreation",
   "detail_description":"Peers in the Dietetic Program provide nutrition services, under the guidance of two registered dieticians.",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-paint.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-living-dining.webp",
   "sub_details_description":"During your nutrition coaching session, you will provide staff with your background and health history. We will also ask you to provide details about your food intake during the last 24 hours, physical activity, social-emotional ties to food, and more. \n\nThis assessment will help determine where you are now and where you want to end up. Whether your goal is weight loss, muscle gain, sustainable living, or creating a healthy relationship with food, our staff will help create an individualized game plan that will suit your needs.\n\nVisit the Campus Recreation Nutrition Coaching webpage to find an appointment.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/nutrition-coaching/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/nutrition-coaching/"}],
+  "links":[
+    {"text":"https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/nutrition-coaching/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/nutrition-coaching/"}],
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/nutrition-coaching/"}],
   "related":["nutrition.mckinley","cooking.class","fresh.fruit"]
 },{
@@ -528,7 +532,9 @@
   "detail_description":"Get Fresh! is a cost effective seasonal foods program for students, faculty, and staff. The program aims to increase the availability, accessibility, and consumption of fresh produce on campus.",
   "sub_details_description":"This program is offered through a collaboration between Student Wellness, McKinley Health Center, and Student Sustainable Farm. \n\nParticipants can pick up their seasonal fruit and vegetables every Tuesday of the program between 1 p.m. and 4 p.m. in the ARC Instructional Kitchen. Included in the pick-up will be recipes and educational resources for participants to enjoy.\n\n*Groceries that are not picked up on Tuesday will be donated. Thank you!\n\n*80% of our produce will be coming from the University of Illinois Student Sustainable Farm.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-3806","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3806"},{"text":"https://campusrec.illinois.edu/programs/student-wellness/get-fresh/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/student-wellness/get-fresh/"}],
+  "links":[
+    {"text":"217-333-3806","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3806"},
+    {"text":"https://campusrec.illinois.edu/programs/student-wellness/get-fresh/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/student-wellness/get-fresh/"}],
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/programs/student-wellness/get-fresh/"}],
   "related":["cooking.class","meal.plan","nutrition.campus.rec"]
 },{
@@ -541,7 +547,8 @@
   "detail_title":"Take a cooking class",
   "detail_description":"Campus Recreation offers instructional cooking classes.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"https://campusrec.illinois.edu/instructional-cooking-classes/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/instructional-cooking-classes/"}],
+  "links":[
+    {"text":"https://campusrec.illinois.edu/instructional-cooking-classes/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/instructional-cooking-classes/"}],
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/instructional-cooking-classes/"}],
   "sub_details":[{"section":"Guidelines and Tips","entries":[{"bullets":["Cooking class registration will close three days prior to the scheduled class to allow for grocery purchase.","Cooking class registration is non-refundable and non-transferable.","All classes are cooking demonstrations with generous tastings of each recipe!","Due to COVID-19, food containers will be provided to take home leftovers."]}]},{"section":"Allergies/Sensitivities","entries":[{"heading":"Please contact us at least one week in advance, with any food-related allergies or sensitivities. We will do our best to accommodate your request and will contact you if we are unable to meet your needs. Please contact Alana Harris at apharri2@illinois.edu for any additional questions"}]},{"section":"Recipes and Inspiration","entries":[{"heading":"View recipes from past classes.Visit the website for more information and registration details."}]}],
   "related":["fresh.fruit","nutrition.campus.rec","nutrition.mckinley"]
@@ -551,9 +558,10 @@
   "list_description":"Campus meal plans are accepted at any of University Housing’s dining locations. ",
   "detail_title":"Know your meal plan options",
   "detail_description":"Campus meal plans are accepted at any of University Housing’s dining locations. ",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-paint.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-living-dining.webp",
   "sub_details_description":"Your living situation dictates what type of meal plan is available to you. There are plans for those living in undergraduate residence halls, graduate upper-division or University apartments, and even those that live off-campus.",
-  "links":[{"text":"https://housing.illinois.edu/dining","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/dining"}],
+  "links":[
+    {"text":"https://housing.illinois.edu/dining","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/dining"}],
   "buttons":[{"text":"Visit website","url":"https://housing.illinois.edu/dining"}],
   "sub_details":[{"section":"Purchase a meal plan ","entries":[{"heading":"If you will be living in University Housing, you can select a meal plan while filling out your housing contract. If you're a student living off campus, or a faculty or staff member, you are welcome to join us, too! Simply purchase a meal plan online.View dining menus, nutrition information, and hours/locations of dining halls directly in this app.Learn more about meal plan options, including how to change your meal plan on the website."}]}],
   "related":["nutrition.campus.rec","nutrition.mckinley","fresh.fruit"]
@@ -587,12 +595,12 @@
   "list_description":"Personal trainers can help you build an individualized exercise routine to get you on the right path to achieving your goals.",
   "detail_title":"Sign up for personal training sessions at Campus Recreation",
   "detail_description":"A healthy lifestyle starts with a great routine. Personal trainers can help you build an individualized exercise routine to get you on the right path to achieving your goals. ",
-  "sub_details_title":"One-on-one sessions",
-  "sub_details_description":"With a One on One program, clients work individually with a personal trainer who has extensive knowledge in anatomy, exercise physiology and kinesiology to design a fitness program that meets the unique needs of the client.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"dcr-fitness@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:dcr-fitness@illinois.edu"},{"text":"https://forms.illinois.edu/sec/9298673","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://forms.illinois.edu/sec/9298673"}],
+  "links":[
+    {"text":"dcr-fitness@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:dcr-fitness@illinois.edu"},
+    {"text":"https://forms.illinois.edu/sec/9298673","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://forms.illinois.edu/sec/9298673"}],
   "buttons":[{"text":"Register","url":"https://forms.illinois.edu/sec/9298673"}],
-  "sub_details":[{"section":"Two Clients with One Personal Trainer","entries":[{"heading":"Want the additional motivation and accountability of training with a friend under the direction of an expert? Then two with one Personal Training is for you."}]},{"section":"Small Group Training","entries":[{"heading":"Small group training (4-6 people) presents the opportunity to experience the benefits of the expertise and motivation of a trainer while lowering the financial entry point and/or spending more time with the trainer for the available funds.Learn more about the cost and packages offered.Please note that patrons can request to participate in their personal training sessions virtually."}]}],
+  "sub_details":[{"section":"One-on-one sessions","entries":[{"heading":"With a One on One program, clients work individually with a personal trainer who has extensive knowledge in anatomy, exercise physiology and kinesiology to design a fitness program that meets the unique needs of the client."}]},{"section":"Two Clients with One Personal Trainer","entries":[{"heading":"Want the additional motivation and accountability of training with a friend under the direction of an expert? Then two with one Personal Training is for you."}]},{"section":"Small Group Training","entries":[{"heading":"Small group training (4-6 people) presents the opportunity to experience the benefits of the expertise and motivation of a trainer while lowering the financial entry point and/or spending more time with the trainer for the available funds.Learn more about the cost and packages offered.Please note that patrons can request to participate in their personal training sessions virtually."}]}],
   "related":["training.mckinley","upace","group.fitness"]
 },{
   "_id":"training.mckinley",
@@ -604,7 +612,9 @@
   "detail_title":"Meet one-on-one with a health fitness instructor at McKinley Health",
   "detail_description":"McKinley Health Center has health educators that can help you meet your goals.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},{"text":"https://mckinley.illinois.edu/health-education/fitness","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/health-education/fitness"}],
+  "links":[
+    {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
+    {"text":"https://mckinley.illinois.edu/health-education/fitness","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/health-education/fitness"}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/health-education/fitness"}],
   "sub_details":[{"section":"Individual appointments","entries":[{"heading":"Students can meet one-on-one with a fitness health educator to learn about:","bullets":["Developing an exercise plan","Strength equipment demonstrations","Personal fitness assessments including body composition, resting heart rate, blood pressure, and strength and flexibility measurements"]}]},{"entries":[{"heading":"Students can schedule a fitness appointment by calling McKinley Health Education at 217-333-2700."}]},{"section":"Outreach programs","entries":[{"heading":"McKinley Health also provides general fitness information including exercise guidelines, target heart rate, exercise prescriptions, and exercise demonstrations. Fitness workshops are available upon request. Submit a request at least two weeks in advance. "}]}],
   "related":["training.campus.rec","group.fitness","participate.campus.rec"]
@@ -619,7 +629,10 @@
   "detail_description":"Get motivated and get moving with a Campus Recreation group fitness instructor.",
   "sub_details_description":"All Group Fitness pass holders are required to reserve a spot online. Classes will be available for reservation 72 hours ahead of time and will close when full with a waitlist of three people. \n\nPlease plan to arrive for class at least 5 minutes ahead of start time as waitlisted patrons will be invited to take spots at that time.\n\nCheck out the wide range of class offerings and see what accomodates your schedule!\n\nVisit the Group Fitness webpage for Covid-19 policies and registration instructions.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"217-333-3806","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3806"},{"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},{"text":"https://campusrec.illinois.edu/programs/group-fitness/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/group-fitness/"}],
+  "links":[
+    {"text":"217-333-3806","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3806"},
+    {"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},
+    {"text":"https://campusrec.illinois.edu/programs/group-fitness/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/group-fitness/"}],
   "buttons":[{"text":"Visit website","url":"https://campusrec.illinois.edu/programs/group-fitness/"}],
   "related":["upace","join.intramural","participate.campus.rec"]
 },{
@@ -630,7 +643,9 @@
   "detail_description":"Bike at Illinois is your source for everything you need to know about biking on campus.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-bike.webp",
   "sub_details_description":"If you are new to biking on campus, there are some things you should know. ",
-  "links":[{"text":"bike@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:bike@illinois.edu"},{"text":"https://bike.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bike.illinois.edu/"}],
+  "links":[
+    {"text":"bike@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:bike@illinois.edu"},
+    {"text":"https://bike.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bike.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"https://bike.illinois.edu/"}],
   "sub_details":[{"section":"You must register your bike","entries":[{"heading":"There is a one-time $10 registration fee per bicycle. Register now."}]},{"section":"You may only park at a bicycle rack","entries":[{"heading":"Find a parking spot using the bike map. A bicycle parked anywhere that is not a designated bike parking area may be impounded, and parked bicycles creating a safety hazard or impeding traffic flow will be removed. If you think your bike may have been impounded, contact the Parking Department at 217-333-3530 or ParkingComments@illinois.edu to retrieve it."}]},{"section":"Fix your bike","entries":[{"heading":"The Campus Bike Center offers hands-on experiential learning and  empowers people with the ability to fix a bicycle."}]},{"section":"Be prepared","entries":[{"heading":"Find out about any closures or detours, and review safe riding tips."}]},{"section":"Meet other bike enthusiasts","entries":[{"heading":"There are clubs and organizations where you can meet like-minded bicyclists. Visit the Bike at Illinois website for more helpful information and resources. "}]}],
   "related":["local.bus","training.campus.rec","training.mckinley"]
@@ -655,7 +670,8 @@
   "detail_title":"Download the McKinley Wellness Guide app",
   "detail_description":"McKinley’s web-based Wellness Guide provides health and wellness information to U of I students, connecting them to information and resources that promote wellness.",
   "sub_details_description":"Today’s college students face many challenges in and out of the classroom. Managing multiple demands while establishing a healthy balance of life skills to take care of their overall well-being can be difficult. McKinley Health Center and the University of Illinois have resources and services to help students be connected and grow both personally and professionally.\n\nDownload the app and be immediately connected to a wide variety of health and wellness information, as well as interactive activities. The app is available to download for both iOS and Android.",
-  "links":[{"text":"https://mckinley.illinois.edu/mhc-wellness-app","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
+  "links":[
+    {"text":"https://mckinley.illinois.edu/mhc-wellness-app","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
   "buttons":[{"text":"Learn more","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
   "related":["welltrack","mckinley.health","pharmacy"]
 },{
@@ -682,7 +698,9 @@
   "detail_title":"Download the WellTrack app",
   "detail_description":"WellTrack is an app that allows you to track your moods and learn about how you can better manage conditions like anxiety and depression. It is available to all Illinois students—you do not need to be a client of the Counseling Center to access it.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"support@welltrack.com","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:support@welltrack.com"},{"text":"Illinois.welltrack.com","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"Illinois.welltrack.com"}],
+  "links":[
+    {"text":"support@welltrack.com","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:support@welltrack.com"},
+    {"text":"Illinois.welltrack.com","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"Illinois.welltrack.com"}],
   "buttons":[{"text":"Web browser version","url":"Illinois.welltrack.com"}],
   "sub_details":[{"section":"Download WellTrack","entries":[{"heading":"Download in the App Store or from Google Play."}]},{"entries":[{"heading":"Log in using your Illinois.edu email and password. You can also log on via the web. Suggested browsers are Chrome and Internet Explorer. The site is not compatible with Firefox."}]},{"section":"How the app helps","entries":[{"heading":"Well Track offers currently enrolled U of I students a variety of assessments and tools to check in on their mental health. There are also self-guided modules to help better manage anxiety and depression and to develop resilience skills.Well Track gives you the tools to understand when you’re having negative moods and see patterns. It works well on its own or as a complement to counseling. "}]},{"section":"Data security","entries":[{"heading":"WellTrack was vetted through Illinois IT security before it was offered to students.  All the data is encrypted in transit and at rest and is housed on Amazon Web Services (AWS) servers.For additional information, view Well Track’s privacy policy. "}]}],
   "related":["mckinley.app","mental.health.services","counseling.center"]
@@ -696,38 +714,58 @@
   "detail_title":"Follow alcohol safety guidelines when going out at night",
   "detail_description":"Whenever you go out, be sure to follow some safety guidelines. ",
   "sub_details_description":"If you choose to drink, there are some things you should know.",
-  "links":[{"text":"https://mckinley.illinois.edu/mhc-wellness-app","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
+  "links":[
+    {"text":"https://mckinley.illinois.edu/mhc-wellness-app","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
   "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu/mhc-wellness-app"}],
   "sub_details":[{"section":"Drinking laws","entries":[{"bullets":["Drinking age is 21.","Bar entry age in Champaign is 19 and 18 in Urbana, but you cannot drink unless you are 21 years of age.","In Illinois, blood alcohol content of .08 is considered legally intoxicated for those who are 21 and older. There is zero tolerance for those under 21 years of age.","Purchasing, possessing, or consuming alcohol as a minor can result in a fine of $340.","Carrying open liquor outside of premises is a fine of $195.","Providing or purchasing alcohol for a person under 21 is a fine of $340."]}]},{"section":"Safety tips","entries":[{"bullets":["Do not drink and drive.","Do not be a passenger in a vehicle with someone who has been drinking.","Travel home with someone you know.","Do not go alone or with someone you just met.","Stay in well-lit areas and in groups.","Drink plenty of water.","Do not ever leave someone alone that has been drinking or may have consumed too much."]}]},{"entries":[{"heading":"Download the Wellness Guide App for iOS or Android to get more alcohol safety tips."}]}],
   "related":["saferide","safewalk","drugs.alcohol.help"]
+},{
+  "_id":"saferide.content",
+  "list_title":"Call for a SafeRide",
+  "list_description":"Limited SafeRides are offered at night for individuals traveling alone when there are no other safe means of transportation.",
+  "detail_title":"Call for a SafeRide",
+  "detail_description":"The Champaign-Urbana Mass Transit District offers limited SafeRides at night for individuals traveling alone when no other safe means of transportation are available.",
+  "links":[
+    {"text":"217-265-7433","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-265-7433"},
+    {"text":"https://mtd.org/maps-and-schedules/routes/saferides/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mtd.org/maps-and-schedules/routes/saferides/"}],
+  "buttons":[{"text":"Visit MTD website","url":"https://mtd.org/maps-and-schedules/routes/saferides/"}],
+  "sub_details":[{"section":"When SafeRides are available","entries":[{"heading":"From Dusk (7:00 p.m./5:00 p.m.) until 6:00 a.m., you can use SafeRides Connect anywhere within the designated boundaries. "}]},{"section":"How to request a ride","entries":[{"heading":"Download the SafeRides Connect App from the App Store or the Google Play Store and register yourself.You can also call and provide the dispatcher with the following information: ","bullets":["First and last name","Phone number","Email address","Pick-up location (street address/landmark)","Destination"]}]},{"section":"SafeRide rules","entries":[{"bullets":["There is a maximum limit of three persons per pick-up location.","SafeRides Connect does not duplicate fixed-route service already provided by MTD.","SafeRides Connect does not provide emergency transportation services to medical facilities.","SafeRides Connect does not provide service to and from bars."]}]}],
+  "related":["safewalk","biking","alcohol.safety"]
 },{
   "_id":"saferide",
   "guide":"For students",
   "category":"Safety",
   "section":"Getting home safely",
-  "list_title":"Call for a SafeRide",
-  "list_description":"Limited SafeRides are offered at night for individuals traveling alone when there are no other safe means of transportation.",
-  "detail_title":"Call for a SafeRide",
-  "detail_description":"The Champaign-Urbana Mass Transit District offers limited SafeRides at night for individuals traveling alone when no other safe means of transportation are available.",
-  "sub_details_title":"When SafeRides are available",
-  "sub_details_description":"From Dusk (7:00 p.m./5:00 p.m.) until 6:00 a.m., you can use SafeRides Connect anywhere within the designated boundaries. ",
-  "links":[{"text":"217-265-7433","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-265-7433"},{"text":"https://mtd.org/maps-and-schedules/routes/saferides/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mtd.org/maps-and-schedules/routes/saferides/"}],
-  "buttons":[{"text":"Visit MTD website","url":"https://mtd.org/maps-and-schedules/routes/saferides/"}],
-  "sub_details":[{"section":"How to request a ride","entries":[{"heading":"Download the SafeRides Connect App from the App Store or the Google Play Store and register yourself.You can also call and provide the dispatcher with the following information: ","bullets":["First and last name","Phone number","Email address","Pick-up location (street address/landmark)","Destination"]}]},{"section":"SafeRide rules","entries":[{"bullets":["There is a maximum limit of three persons per pick-up location.","SafeRides Connect does not duplicate fixed-route service already provided by MTD.","SafeRides Connect does not provide emergency transportation services to medical facilities.","SafeRides Connect does not provide service to and from bars."]}]}],
-  "related":["safewalk","biking","alcohol.safety"]
+  "content_ref": "saferide.content"
 },{
-  "_id":"safewalk",
+  "_id":"saferide_38",
   "guide":"For students",
-  "category":"Safety",
+  "category":"Transportation",
   "section":"Getting home safely",
+  "content_ref": "saferide.content"
+},{
+  "_id":"safewalk.content",
   "list_title":"Call for a SafeWalk",
   "list_description":"You don’t have to walk alone. By traveling together, we significantly reduce our chances of being targeted.",
   "detail_title":"Call for a SafeWalk",
   "detail_description":"You don’t have to walk alone. By traveling together, we significantly reduce our chances of being targeted.",
   "sub_details_description":"SafeWalks is a courtesy service provided to University of Illinois students, faculty, and staff. \n\nTo request a SafeWalks escort, call from your cell phone or use a campus emergency phone to contact a dispatcher.\n\nPlease give at least 15 minutes notice.",
-  "links":[{"text":"217-333-1216","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1216"}],
-  "sub_details":[{"entries":[{"heading":"Hours of Operation","bullets":["","Sunday through Wednesday, 9 p.m. to 2:30 a.m. (calls taken until 2:15 a.m.)","Thursday, Friday and Saturday, 9 p.m. to 3 a.m. (calls taken until 2:45 a.m.)"]}]}],
+  "links":[
+    {"text":"217-333-1216","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1216"}],
+  "sub_details":[{"entries":[{"heading":"Hours of operation","bullets":["Sunday through Wednesday, 9 p.m. to 2:30 a.m. (calls taken until 2:15 a.m.)","Thursday, Friday and Saturday, 9 p.m. to 3 a.m. (calls taken until 2:45 a.m.)"]}]}],
   "related":["saferide","alcohol.safety","biking"]
+},{
+  "_id":"safewalk",
+  "guide":"For students",
+  "category":"Safety",
+  "section":"Getting home safely",
+  "content_ref": "safewalk.content"
+},{
+  "_id":"safewalk_39",
+  "guide":"For students",
+  "category":"Transportation",
+  "section":"Getting home safely",
+  "content_ref": "safewalk.content"
 },{
   "_id":"assault.resources",
   "guide":"For students",
@@ -737,11 +775,10 @@
   "list_description":"The University of Illinois at Urbana-Champaign provides prevention and awareness education, resources and reporting options.",
   "detail_title":"Find resources for sexual assault or abuse",
   "detail_description":"Sexual violence is a significant concern on college campuses across the country. The University of Illinois at Urbana-Champaign provides prevention and awareness education, resources and reporting options.",
-  "sub_details_title":"Know your options",
-  "sub_details_description":"The We Care website outlines all available options and can guide you to the right resources.",
-  "links":[{"text":"https://wecare.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://wecare.illinois.edu/"}],
+  "links":[
+    {"text":"https://wecare.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://wecare.illinois.edu/"}],
   "buttons":[{"text":"Visit We Care website","url":"https://wecare.illinois.edu/"}],
-  "sub_details":[{"section":"Speak with a confidential advisor at the Women’s Resource Center","entries":[{"heading":"Confidential Advisors are trained to provide confidential campus-specific crisis management, share referral services, and explore and navigate reporting options. That means when they meet with someone, they make sure the person gets the help they need, on their own terms. Confidential Advisors are able to serve people of all gender identities and are currently located in the Women's Resources Center at:616 E. Green St., Suite 202, Champaign, IL 61820Learn more about Women's Resources Center services."}]}],
+  "sub_details":[{"section":"Know your options","entries":[{"heading":"The We Care website outlines all available options and can guide you to the right resources."}]},{"section":"Speak with a confidential advisor at the Women’s Resource Center","entries":[{"heading":"Confidential Advisors are trained to provide confidential campus-specific crisis management, share referral services, and explore and navigate reporting options. That means when they meet with someone, they make sure the person gets the help they need, on their own terms. Confidential Advisors are able to serve people of all gender identities and are currently located in the Women's Resources Center at:616 E. Green St., Suite 202, Champaign, IL 61820Learn more about Women's Resources Center services."}]}],
   "related":["community.of.care","womens.health","womens.resource"]
 },{
   "_id":"emergency.content",
@@ -750,7 +787,8 @@
   "detail_title":"Be prepared for an emergency",
   "detail_description":"Emergencies can happen anywhere and at any time. It is important to take a moment to think about what you should do in a situation where you ability to react quickly may save your life.",
   "sub_details_description":"When we’re faced with any kind of emergency – like fire, severe weather or if someone is trying to hurt you – we have three options: run, hide or fight. \n\nUniversity Police have provided guidelines for when to use these options. Visit the website for more information.\n\nIn case you need to evacuate, review building plans for any locations you spend time in. ",
-  "links":[{"text":"https://police.illinois.edu/emergency-preparedness/run-hide-fight/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://police.illinois.edu/emergency-preparedness/run-hide-fight/"}],
+  "links":[
+    {"text":"https://police.illinois.edu/emergency-preparedness/run-hide-fight/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://police.illinois.edu/emergency-preparedness/run-hide-fight/"}],
   "buttons":[{"text":"Visit website","url":"https://police.illinois.edu/emergency-preparedness/run-hide-fight/"}],
   "related":["safety.notices","illini.alerts"]
 },{
@@ -773,7 +811,10 @@
   "detail_title":"Sign up for campus safety notices",
   "detail_description":"When a crime happens, the University of Illinois Police Department informs the community as quickly as possible with Campus Safety Notices.",
   "sub_details_description":"Campus Safety Notices are issued by email whenever a serious crime on or immediately adjacent to campus poses a continuing risk to students and employees.\n\nUniversity of Illinois Police Department often goes beyond the minimum legal requirements to the campus about public safety issues. We do this so you have all the information you need to take the appropriate steps to reduce your likelihood of being targeted by a criminal. \n\nNotices are sent automatically to anyone with a campus email address. Anyone without a campus email address can sign up for our mailing list.",
-  "links":[{"text":"217-333-1216","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1216"},{"text":"police@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:police@illinois.edu"},{"text":"https://blogs.illinois.edu/publicSubscribe?blogId=7513","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://blogs.illinois.edu/publicSubscribe?blogId=7513"}],
+  "links":[
+    {"text":"217-333-1216","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1216"},
+    {"text":"police@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:police@illinois.edu"},
+    {"text":"https://blogs.illinois.edu/publicSubscribe?blogId=7513","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://blogs.illinois.edu/publicSubscribe?blogId=7513"}],
   "buttons":[{"text":"Sign up","url":"https://blogs.illinois.edu/publicSubscribe?blogId=7513"}],
   "related":["illini.alerts","emergency"]
 },{
@@ -796,7 +837,10 @@
   "detail_title":"Sign up for Illini alerts",
   "detail_description":"Illini-Alert is used for incidents which present an imminent threat to life, health, or safety to the general campus population. These messages provide emergency information and instructions for personal protective actions.",
   "sub_details_description":"Illini-Alert sends email and text messages, posts to Twitter, and displays on digital signs across campus.",
-  "links":[{"text":"217-333-1217","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1217"},{"text":"police@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:police@illinois.edu"},{"text":"http://emergency.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://emergency.illinois.edu"}],
+  "links":[
+    {"text":"217-333-1217","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1217"},
+    {"text":"police@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:police@illinois.edu"},
+    {"text":"http://emergency.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://emergency.illinois.edu"}],
   "buttons":[{"text":"Visit website","url":"http://emergency.illinois.edu"}],
   "sub_details":[{"section":"Email","entries":[{"heading":"All current University of Illinois at Urbana-Champaign students, faculty, and staff will receive Illini-Alert messages through their campus email addresses. Those with campus email addresses may also enroll up to three alternative email addresses. Visit the website to learn more."}]},{"section":"Text messages","entries":[{"heading":"All current University of Illinois at Urbana-Champaign students, faculty, and staff will be prompted to provide a cell phone number to receive emergency text messages and may register up to three cell phone numbers. Those prompted may opt out, but everyone is strongly encouraged to enroll. Anyone else can receive Illini-Alert text messages by texting “IlliniAlert” to 226787."}]},{"section":"Social media","entries":[{"heading":"Follow @IlliniAlert on Twitter."}]}],
   "related":["safety.notices","emergency"]
@@ -823,7 +867,10 @@
   "detail_title":"Park on campus",
   "detail_description":"Get information on parking, whether you are coming to campus for a special event or classes.",
   "features":["parking","bus-pass"],
-  "links":[{"text":"217-333-3530","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3530"},{"text":"parkingcomments@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:parkingcomments@illinois.edu"},{"text":"https://parking.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://parking.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-3530","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3530"},
+    {"text":"parkingcomments@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:parkingcomments@illinois.edu"},
+    {"text":"https://parking.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://parking.illinois.edu/"}],
   "buttons":[{"text":"Vist website","url":"https://parking.illinois.edu/"}],
   "sub_details":[{"entries":[{"heading":"Parking services has guidance on:","bullets":["Visitor parking, including meters and lots. If you are just looking for a way to pay for metered parking, download the MobileMeter App.","Permits for students","Parking locations","Paying citations"]}]},{"entries":[{"heading":"Get more details on the website."}]}],
   "related":["car.assistance","local.bus"]
@@ -838,7 +885,8 @@
   "detail_description":"Take advantage of the university’s discounted rate.",
   "sub_details_description":"The on-campus program lets Zipcar members drive at a low hourly or daily rate. The rate includes gas and insurance. ",
   "features":["parking","bus-pass"],
-  "links":[{"text":"https://www.zipcar.com/universities/university-of-illinois-champaign-urbana","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.zipcar.com/universities/university-of-illinois-champaign-urbana"}],
+  "links":[
+    {"text":"https://www.zipcar.com/universities/university-of-illinois-champaign-urbana","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.zipcar.com/universities/university-of-illinois-champaign-urbana"}],
   "buttons":[{"text":"Learn more","url":"https://www.zipcar.com/universities/university-of-illinois-champaign-urbana"}],
   "related":["shuttle.bus","air.train","local.bus"]
 },{
@@ -876,10 +924,11 @@
   "list_description":"You need only show your iCard to ride any MTD bus - anywhere, anytime! ",
   "detail_title":"Ride the bus in Champaign-Urbana",
   "detail_description":"You need only show your iCard to ride any MTD bus - anywhere, anytime! ",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-engagement-paint.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-busstop.webp",
   "sub_details_description":"Routes operate frequently on campus and throughout Champaign, Urbana, and Savoy. Late night service is available when the university is in session. \n\nView all the available MTD mobile apps to find one that works for you. \n\nVisit the website for schedules, routes, and the latest MTD news.",
   "features":["parking","bus-pass"],
-  "links":[{"text":"https://mtd.org/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mtd.org/"}],
+  "links":[
+    {"text":"https://mtd.org/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mtd.org/"}],
   "buttons":[{"text":"Visit website","url":"https://mtd.org/"}],
   "related":["biking","shuttle.bus","zipcar"]
 },{
@@ -893,10 +942,44 @@
   "detail_description":"A select few car services are provided free of charge on campus for university employees and students.",
   "sub_details_description":"Call between 7:30 a.m. - 5:30 p.m, Monday through Friday. Services are not available when the university or Parking Department is closed, such as designated campus holidays.\n\nService is only provided on university property, within the area surrounded by University Avenue, Lincoln Avenue, Curtis Road, and Neil Street. Please note that we do not provide services on private property or residential streets. ",
   "features":["parking","bus-pass"],
-  "links":[{"text":"217-244-HELP","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-HELP"},{"text":"https://parking.illinois.edu/campus-parking/motorist-assistance","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://parking.illinois.edu/campus-parking/motorist-assistance"}],
+  "links":[
+    {"text":"217-244-HELP","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-HELP"},
+    {"text":"https://parking.illinois.edu/campus-parking/motorist-assistance","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://parking.illinois.edu/campus-parking/motorist-assistance"}],
   "buttons":[{"text":"Visit website","url":"https://parking.illinois.edu/campus-parking/motorist-assistance"}],
   "sub_details":[{"section":"Types of service provided","entries":[{"bullets":["Lock Out Service","Jump Start","Flat Tire","Out of Gas"]}]},{"section":"Requirements","entries":[{"heading":"You must present valid identification and sign a form acknowledging the Parking Department and University are not liable for damages or defects caused or discovered in the act of providing motorist assistance services.Visit the website for more details and restrictions."}]}],
   "related":["parking","local.bus","zipcar"]
+},{
+  "_id":"clear.bag",
+  "guide":"For students",
+  "category":"Campus rules and protocol",
+  "section":"General rules",
+  "list_title":"Learn about the clear bag policy",
+  "list_description":"When attending events at State Farm Center and Memorial Stadium, you must follow the clear bag policy.",
+  "detail_title":"Learn about the clear bag policy",
+  "detail_description":"When attending events at State Farm Center and Memorial Stadium, you must follow the clear bag policy.",
+  "features":["events"],
+  "links":[
+    {"text":"https://fightingillini.com/sports/2018/8/10/clear-bag-policy.aspx","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://fightingillini.com/sports/2018/8/10/clear-bag-policy.aspx"}],
+  "buttons":[{"text":"More information","url":"https://fightingillini.com/sports/2018/8/10/clear-bag-policy.aspx"}],
+  "sub_details":[{"entries":[{"heading":"Items permitted:","bullets":["Clutches (no larger than 4.5” x 7”)","Clear tote (no larger than 12” x 6” x 12”)","1-gallon clear plastic storage bag","Clear drawstring bag (no larger than 12” x 12”)","Binoculars (without case)","Cameras (lenses no longer than 4”)","Jackets","Items related to a medical condition","Diaper bags (with child)"]}]},{"entries":[{"heading":"Items prohibited, including but not limited to:","bullets":["Bags larger than 4.5” x 7” (including purses and binocular cases)","Containers","Laser pointers","Banners","Flags and signs","Blankets","Noisemakers","Weapons","Laptops","Video recorders, monopods, tripods","Any item deemed dangerous or inappropriate"]}]}],
+  "related":["parking","safety.notices","illini.alerts"]
+},{
+  "_id":"arboretum",
+  "guide":"For students",
+  "category":"Visit campus",
+  "section":"Campus landmarks",
+  "list_title":"Arboretum",
+  "list_description":"The Arboretum is an oasis of natural beauty open to the public.",
+  "detail_title":"Arboretum",
+  "detail_description":"The Arboretum is an exceptional \"living laboratory\" for students in plant sciences and fine and applied arts, as well as an oasis of natural beauty open to the public.",
+  "sub_details_description":"The UI Arboretum is a living laboratory, including plant collections and facilities that support the teaching, research, and public service programs of several units throughout campus. Located on the campus of the University of Illinois, it was developed in the late 1980s to early 1990s, and is currently 57 acres.\n\nThe Arboretum is open to the public, between the hours of sunrise until sunset. Admission is free.",
+  "features":["athletics","parking","events"],
+  "links":[
+    {"text":"arboretum@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:arboretum@illinois.edu"},
+    {"text":"http://arboretum.illinois.edu/index.php","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://arboretum.illinois.edu/index.php"},
+    {"text":"1800 South Lincoln Avenue, Urbana, Illinois 61801.","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.09464091208909,"longitude":-88.21889621689094},"title":"1800 South Lincoln Avenue"}}],
+  "buttons":[{"text":"Visit website","url":"http://arboretum.illinois.edu/index.php"}],
+  "related":["reflection.rooms","undergrad.lib"]
 },{
   "_id":"writers.workshop",
   "guide":"For students",
@@ -906,10 +989,13 @@
   "list_description":"The Writers Workshop supports all writers in the campus community.",
   "detail_title":"Take advantage of the Writer’s Workshop",
   "detail_description":"The Writers Workshop supports all writers in the campus community across all forms of academic and professional writing, at any stage of the writing process.",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-busstop.webp",
   "sub_details_description":"The Writer’s Workshop provides support for all types of writing. Students can get feedback or advice on their writing by scheduling in-person consultations by appointment, drop-in consultations, or written feedback appointments.\n\nThe Workshop also hosts presentations about common academic writing concerns like citing sources, avoiding plagiarism, and polishing final drafts. \n\nVisit the website for more information and instruction on how to sign up.",
   "features":["my-illini","library-card"],
-  "links":[{"text":"217-333-8796","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-8796"},{"text":"wow@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:wow@illinois.edu"},{"text":"https://writersworkshop.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://writersworkshop.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-8796","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-8796"},
+    {"text":"wow@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:wow@illinois.edu"},
+    {"text":"https://writersworkshop.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://writersworkshop.illinois.edu/"},
+    {"text":"251 Undergraduate Library\n1402 W Gregory Dr\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.104855289911995,"longitude":-88.2268675880545},"title":"251 Undergraduate Library"}}],
   "buttons":[{"text":"Visit website","url":"https://writersworkshop.illinois.edu/"}],
   "related":["online.classes","undergrad.lib","student.assistance"]
 },{
@@ -923,7 +1009,10 @@
   "detail_description":"International Education at the Office of Inclusion and Intercultural Relations enhances opportunities for students to engage with cultures from around the world.",
   "sub_details_description":"International Education supports the success of international students, enhances the global competencies of all students, and creates a meaningful cultural exchange between international and domestic students. ",
   "features":["my-illini","library-card"],
-  "links":[{"text":"217-300-0463","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-0463"},{"text":"oiir-ie@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:oiir-ie@illinois.edu"},{"text":"http://oiir.illinois.edu/cultural-resource-centers/international-education","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://oiir.illinois.edu/cultural-resource-centers/international-education"}],
+  "links":[
+    {"text":"217-300-0463","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-0463"},
+    {"text":"oiir-ie@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:oiir-ie@illinois.edu"},
+    {"text":"http://oiir.illinois.edu/cultural-resource-centers/international-education","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://oiir.illinois.edu/cultural-resource-centers/international-education"}],
   "buttons":[{"text":"Visit website","url":"http://oiir.illinois.edu/cultural-resource-centers/international-education"}],
   "sub_details":[{"entries":[{"heading":"Programs include: ","bullets":["iCU Intercultural Dialogue Series","InterConnect Dinner Dialogue","Break programs","Global Engagement Lounge (GEL)","Global Leaders Orange and Blue Engagement (GLOBE) program."]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["undocumented.support","omsa","study.abroad"]
@@ -938,7 +1027,11 @@
   "detail_description":"The Student Assistance Center collaborates with students, faculty, staff, and family members to address disruptions to students’ academic and social stability or behaviors that cause distress in our community.",
   "sub_details_description":"The Student Assistance Center serves as the first point of contact for students who call, email, or walk in to the Office of the Dean of Students. Appointments can be made by phone or email. \n\nDrop-in hours are between 10:00 a.m. and 3:00 p.m., Monday through Friday.",
   "features":["my-illini","library-card"],
-  "links":[{"text":"217-333-0050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0050"},{"text":"helpdean@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:helpdean@illinois.edu"},{"text":"https://odos.illinois.edu/community-of-care/student-assistance-center/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/community-of-care/student-assistance-center/"}],
+  "links":[
+    {"text":"217-333-0050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0050"},
+    {"text":"helpdean@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:helpdean@illinois.edu"},
+    {"text":"https://odos.illinois.edu/community-of-care/student-assistance-center/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/community-of-care/student-assistance-center/"},
+    {"text":"Turner Student Services Building, 3rd floor\n610 E John St.\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10947517428939,"longitude":-88.22983798805423},"title":"Turner Student Services Building"}}],
   "buttons":[{"text":"Visit website","url":"https://odos.illinois.edu/community-of-care/student-assistance-center/"}],
   "sub_details":[{"entries":[{"heading":"Students visit us regarding a broad range of issues which may be impacting their academic performance including: ","bullets":["Health and mental health","Course attendance issues","Questions about where to go on campus to seek different services","Options for withdrawing from the university","Because they need help and just aren’t sure where to go"]}]},{"entries":[{"heading":"An emergency dean is available outside of normal business hours to respond to student crises or pressing student concerns that cannot wait until the next business day. Please call 217-333-0050 to contact the Emergency Dean."}]}],
   "related":["community.of.care","writers.workshop"]
@@ -950,7 +1043,11 @@
   "detail_description":"The Undergraduate Library is open to students, staff and faculty.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-library.webp",
   "sub_details_description":"Working on a class assignment or project? Plan ahead and book the spaces, technology, and expert consultants you need to complete your work. The Undergraduate Library provides a plethora of services you can reserve in advance. Reserve now, using Book It.\n\nCheck out cameras, audio recorders, projectors, and more from the UGL Loanable Technology program, or book time in one of their recording studios in the Media Commons. \n\nVisit the Undergraduate Library’s website for real-time assistance through their interactive Ask A Librarian chat widget, prominently displayed on the webpage.",
-  "links":[{"text":"217-333-3477","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3477"},{"text":"undergrad@library.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:undergrad@library.illinois.edu"},{"text":"https://www.library.illinois.edu/ugl/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.library.illinois.edu/ugl/"}],
+  "links":[
+    {"text":"217-333-3477","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3477"},
+    {"text":"undergrad@library.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:undergrad@library.illinois.edu"},
+    {"text":"https://www.library.illinois.edu/ugl/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.library.illinois.edu/ugl/"},
+    {"text":"1402 West Gregory Drive \nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.104855289911995,"longitude":-88.22693196107014},"title":"1402 West Gregory Drive"}}],
   "buttons":[{"text":"Visit website","url":"https://www.library.illinois.edu/ugl/"}],
   "related":["reflection.rooms","bookstore","arboretum"]
 },{
@@ -974,7 +1071,11 @@
   "detail_title":"The Illini Union Bookstore",
   "detail_description":"As the university’s official bookstore, the Illini Union Bookstore is the premiere place for students to rent or purchase textbooks.",
   "sub_details_description":"In addition to textbooks, course materials and Illini merchandise are available. The bookstore also houses Amazon Hub Lockers, Starbucks, PNC Bank, and the i-card Office.\n\nAll purchases at the Bookstore help support student programs and activities at the Illini Union.\n\nHours of operation are 9 a.m. to 5 p.m., Monday through Saturday. The bookstore is closed on Sundays.",
-  "links":[{"text":"217-333-2050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2050"},{"text":"iubstore@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:iubstore@illinois.edu"},{"text":"https://bookstore.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bookstore.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-2050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2050"},
+    {"text":"iubstore@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:iubstore@illinois.edu"},
+    {"text":"https://bookstore.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bookstore.illinois.edu/"},
+    {"text":"809 S. Wright Street\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10844750497946,"longitude":-88.22924113223401},"title":"809 S. Wright Street"}}],
   "buttons":[{"text":"Visit website","url":"https://bookstore.illinois.edu/"}],
   "related":["sell.textbooks","undergrad.lib","webstore"]
 },{
@@ -1009,7 +1110,10 @@
   "detail_description":"Illinois Online offers online classes for students who need to be away from campus or want to stay ahead on their program of study.",
   "sub_details_description":"Need to stay on track or get ahead for graduation? Are you traveling, returning home, or working at an internship during the winter or summer? Want to take challenging, high-demand courses in an online format from anywhere in the world? ",
   "features":["my-illini","library-card"],
-  "links":[{"text":"217-333-1462","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1462"},{"text":"onlineinfo@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:onlineinfo@illinois.edu"},{"text":"https://online.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://online.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-1462","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1462"},
+    {"text":"onlineinfo@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:onlineinfo@illinois.edu"},
+    {"text":"https://online.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://online.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"https://online.illinois.edu/"}],
   "sub_details":[{"section":"Winter Session and Summer Session ","entries":[{"heading":"Online terms offer you an opportunity to continue your education, persist toward graduation, and learn valuable skills such as time management and goal setting. "}]},{"section":"Degree, certificate, and endorsement programs","entries":[{"heading":"Illinois Online also provides an extensive range of online academic options to students, including 120 online degree, certificate and endorsement programs, and 8,300-plus online course sections. "}]}],
   "related":["writers.workshop","undergrad.lib","leadership.center"]
@@ -1019,9 +1123,12 @@
   "list_description":"Find your move-in date and get information on what to expect from the residence halls. ",
   "detail_title":"Get ready to move-in",
   "detail_description":"Find your move-in date and get information on what to expect from the residence halls. ",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-library.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-living-movein.webp",
   "sub_details_description":"There are specific move-in dates for new freshmen and transfer students, residents of Living-Learning Communities, and Early Arrivals. \n\nEarly arrivals must pay additional costs and sign up for their preferred move-in date and time. \n\nCheck the University Housing calendar for official move-in dates and read the move-in checklist for info about what you are allowed to bring with you.\n\n\nSubmit a request for information or visit the website for more details.",
-  "links":[{"text":"217-333-7111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7111"},{"text":"housing@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:housing@illinois.edu"},{"text":"https://housing.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-7111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7111"},
+    {"text":"housing@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:housing@illinois.edu"},
+    {"text":"https://housing.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"https://housing.illinois.edu/"}],
   "related":["roommate","myhousing","meal.plan"]
 },{
@@ -1045,7 +1152,9 @@
   "detail_title":"Access your MyHousing account",
   "detail_description":"Students living on campus can use their MyHousing account to access housing assignments.",
   "sub_details_description":"MyHousing is your central spot for University Housing services. Throughout the year, a variety of options will be available to you on this site. Be sure to check back whenever you have a service request.",
-  "links":[{"text":"217-333-7111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7111"},{"text":"https://housing.illinois.edu/Tools/MyHousing","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/Tools/MyHousing"}],
+  "links":[
+    {"text":"217-333-7111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7111"},
+    {"text":"https://housing.illinois.edu/Tools/MyHousing","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/Tools/MyHousing"}],
   "buttons":[{"text":"Log in to MyHousing","url":"https://housing.illinois.edu/Tools/MyHousing "}],
   "sub_details":[{"entries":[{"heading":"Services in MyHousing may include:","bullets":["Forwarding address form","Emergency contact form","Package delivery form - tell us how you would like to be notified of packages waiting for you","Print address for driver’s license - can be used as a proof of residency for the driver's license facility","Print hall address - can be used as a proof of residency for multiple purposes, including for voter registration","Meal plan balances","Room change request form","Room and roommate information","Bed configuration requests"]}]},{"entries":[{"heading":"Please note that some services are only available for part of the school year. "}]}],
   "related":["move.in","priv.cert.housing","off.campus.housing"]
@@ -1074,9 +1183,12 @@
   "detail_description":"Private certified housing units offer an array of living accommodations, room types, and programming.",
   "sub_details_description":"Private certified housing units are privately owned buildings that are certified by the university. ",
   "features":["dining","meal-plan","laundry","bus-pass"],
-  "links":[{"text":"217-333-1420","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1420"},{"text":"certhsg@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:certhsg@illinois.edu"},{"text":"https://certified.housing.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://certified.housing.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-1420","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1420"},
+    {"text":"certhsg@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:certhsg@illinois.edu"},
+    {"text":"https://certified.housing.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://certified.housing.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"https://certified.housing.illinois.edu/"}],
-  "sub_details":[{"section":"Amenities","entries":[{"heading":"All facilities have: ","bullets":["Air conditioning","On-site dining options","Trained residence life staff who provide social and educational support to their residents."]}]},{"entries":[{"heading":"Most but not all facilities have:","bullets":["Semi-private bathrooms","iI-room kitchens","Computer labs","Wireless internet","Swimming pools","Weekly housekeeping"]}]},{"section":"The process of getting approved","entries":[{"heading":"Each unit has their own application, contract, and policies. Your assignment is confirmed immediately when you sign a contract with a specific facility. Most private certified housing units will also send room and roommate assignments in June and July. Move-in information is most often included in assignment communications and will vary by facility. "}]},{"section":"Incentives","entries":[{"heading":"Similar to University Housing, these units have scholarships, returning resident incentives, and additional amenities to encourage students to stay for a second year in these approved facilities."}]}],
+  "sub_details":[{"section":"Amenities","entries":[{"heading":"All facilities have:","bullets":["Air conditioning","On-site dining options","Trained residence life staff who provide social and educational support to their residents."]}]},{"entries":[{"heading":"Most but not all facilities have:","bullets":["Semi-private bathrooms","iI-room kitchens","Computer labs","Wireless internet","Swimming pools","Weekly housekeeping"]}]},{"section":"The process of getting approved","entries":[{"heading":"Each unit has their own application, contract, and policies. Your assignment is confirmed immediately when you sign a contract with a specific facility. Most private certified housing units will also send room and roommate assignments in June and July. Move-in information is most often included in assignment communications and will vary by facility. "}]},{"section":"Incentives","entries":[{"heading":"Similar to University Housing, these units have scholarships, returning resident incentives, and additional amenities to encourage students to stay for a second year in these approved facilities."}]}],
   "related":["myhousing","roommate","off.campus.housing"]
 },{
   "_id":"off.campus.housing",
@@ -1089,7 +1201,10 @@
   "detail_description":"Information and resources for students who live in privately owned apartments and houses throughout the campus district and surrounding communities. ",
   "sub_details_description":"The Office of Off-Campus Community Living works to stimulate fairness in landlord-tenant relationships and to support students residing off campus. \n\nVisit the website to learn more about tenant rights and responsibilities, as well as housing options and leases. You can also call to schedule an appointment.",
   "features":["dining","meal-plan","laundry","bus-pass"],
-  "links":[{"text":"217-333-0112","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0112"},{"text":"off-campuscommunityliving@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:off-campuscommunityliving@illinois.edu"},{"text":"https://occl.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://occl.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-0112","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0112"},
+    {"text":"off-campuscommunityliving@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:off-campuscommunityliving@illinois.edu"},
+    {"text":"https://occl.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://occl.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"https://occl.illinois.edu/"}],
   "related":["roommate","priv.cert.housing","myhousing"]
 },{
@@ -1098,11 +1213,11 @@
   "list_description":"Learning to live with someone new can be challenging, but it can be rewarding too. ",
   "detail_title":"Develop a healthy relationship with your roommate",
   "detail_description":"Learning to live with someone new can be challenging, but it can be rewarding too. Communication is key! It may be awkward at first to bring up some topics, but it can lead to a healthy relationship and decreased stress. ",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-busstop.webp",
-  "sub_details_title":"Tips for a healthy roommate relationship",
-  "links":[{"text":"http://conflictresolution.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://conflictresolution.illinois.edu/"}],
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-living-movein.webp",
+  "links":[
+    {"text":"http://conflictresolution.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://conflictresolution.illinois.edu/"}],
   "buttons":[{"text":"Visit website","url":"http://conflictresolution.illinois.edu/"}],
-  "sub_details":[{"entries":[{"bullets":["Get to know each other. For example, find out if your roommate is a morning person or a night owl.","Discuss personal space. Find out what will be shared and how to go about borrowing something.","Establish what expenses are shared.","Establish rules for guests and socializing.","Do your part to keep your space secure. Lock doors and don’t give out keys.","Talk frequently and address issues promptly."]}]},{"section":"Resolve a conflict","entries":[{"bullets":["Write down what the problem is, from your point of view, to help you stay clear, calm, and realistic.","When you talk with your roommate, meet at a neutral location.","Be respectful, open, and honest as you communicate.","Allow them to respond and share their point of view.","Each of you should share how you would like to see things resolved.","Come to an acceptable agreement and set a date to reevaluate."]}]},{"entries":[{"heading":"If you still need help, talk with your resident advisor or connect with the Office for Conflict Resolution through their website. "}]},{"entries":[{"heading":"Download the Wellness Guide App in Google Play or the App Store for more tips."}]}],
+  "sub_details":[{"entries":[{"heading":"Tips for a healthy roommate relationship","bullets":["Get to know each other. For example, find out if your roommate is a morning person or a night owl.","Discuss personal space. Find out what will be shared and how to go about borrowing something.","Establish what expenses are shared.","Establish rules for guests and socializing.","Do your part to keep your space secure. Lock doors and don’t give out keys.","Talk frequently and address issues promptly."]}]},{"entries":[{"heading":"Resolve a conflict","bullets":["Write down what the problem is, from your point of view, to help you stay clear, calm, and realistic.","When you talk with your roommate, meet at a neutral location.","Be respectful, open, and honest as you communicate.","Allow them to respond and share their point of view.","Each of you should share how you would like to see things resolved.","Come to an acceptable agreement and set a date to reevaluate."]}]},{"entries":[{"heading":"If you still need help, talk with your resident advisor or connect with the Office for Conflict Resolution through their website. "}]},{"entries":[{"heading":"Download the Wellness Guide App in Google Play or the App Store for more tips."}]}],
   "related":["move.in","off.campus.housing","myhousing"]
 },{
   "_id":"roommate",
@@ -1126,7 +1241,10 @@
   "detail_description":"The official computer store of the University of Illinois is also an authorized Apple Campus Store.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-tablets.webp",
   "sub_details_description":"Enjoy educational pricing on computers, laptops and tablets, including Apple, Microsoft Surface, and Dell. Located inside the Illini Union, the Tech Zone has a wide range of accessories, like Beats headphones, Apple Watches, Airpods, cables, keyboards, external drives, gaming items, and more. \n\nThe Tech Zone also offers in-house Apple certified repair services and consultations. All purchases at the Tech Zone help support student programs and activities at the Illini Union.\n\nVisit the website to shop online, check store hours, and schedule repair visits.",
-  "links":[{"text":"217-244-7938","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-7938"},{"text":"https://techzone.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://techzone.illinois.edu/"}],
+  "links":[
+    {"text":"217-244-7938","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-7938"},
+    {"text":"https://techzone.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://techzone.illinois.edu/"},
+    {"text":"SW corner of the Illini Union\n1401 W. Green Street\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.109905790024804,"longitude":-88.2273473899058},"title":"SW corner of the Illini Union"}}],
   "buttons":[{"text":"Visit website","url":"https://techzone.illinois.edu/"}],
   "related":["webstore","bookstore","tech.services"]
 },{
@@ -1156,7 +1274,8 @@
   "detail_title":"The University WebStore",
   "detail_description":"Offering over 350 software titles for purchase or download, WebStore strives to provide the software you need at the lowest possible price. ",
   "sub_details_description":"Illinois provides discounted and free applications to students, including Office 365. Browse through hundreds of offerings, then download directly to your personal device. \n\nCheck with your department for the software requirements for your program of study.",
-  "links":[{"text":"https://webstore.illinois.edu/home/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://webstore.illinois.edu/home/"}],
+  "links":[
+    {"text":"https://webstore.illinois.edu/home/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://webstore.illinois.edu/home/"}],
   "buttons":[{"text":"Shop online","url":"https://webstore.illinois.edu/home/"}],
   "related":["bookstore","tech.zone","sell.textbooks"]
 },{
@@ -1186,11 +1305,11 @@
   "detail_title":"Access university housing internet",
   "detail_description":"Instructions for connecting to the internet in university housing.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-computing.webp",
-  "sub_details_title":"IllinoisNet ",
-  "sub_details_description":"All laptops, phones and tablets should be connected to IllinoisNet. Use your NetID and Active Directory (AD) password to login. ",
-  "links":[{"text":"217-244-1111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-1111"},{"text":"https://housing.illinois.edu/technology","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/technology"}],
+  "links":[
+    {"text":"217-244-1111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-1111"},
+    {"text":"https://housing.illinois.edu/technology","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/technology"}],
   "buttons":[{"text":"Visit website","url":"https://housing.illinois.edu/technology"}],
-  "sub_details":[{"section":"IllinoisNet_Guest","entries":[{"heading":"All gaming and streaming devices should be connected to IllinoisNet_Guest. Follow these instructions to connect:","numbers":["Login to the wireless guest portal.  Click \"Add Device\". You will need to enter the device's MAC/Physical address which can be found through the device's network settings. For casting devices check the \"enable AirGroup\" box when adding your device and enter your NetID.Now connect the device to the IllinoisNet_Guest network and continue with your setup."]}]},{"entries":[{"heading":"Read more detailed instructions on connecting to both IllinoisNet and IllinoisNet_Guest.To get help with an issue over the phone, call 217-244-1111, between 7p.m. and 10 p.m."}]}],
+  "sub_details":[{"section":"IllinoisNet ","entries":[{"heading":"All laptops, phones and tablets should be connected to IllinoisNet. Use your NetID and Active Directory (AD) password to login. "}]},{"section":"IllinoisNet_Guest","entries":[{"heading":"All gaming and streaming devices should be connected to IllinoisNet_Guest. Follow these instructions to connect:","numbers":["Login to the wireless guest portal.  Click \"Add Device\". You will need to enter the device's MAC/Physical address which can be found through the device's network settings. For casting devices check the \"enable AirGroup\" box when adding your device and enter your NetID.Now connect the device to the IllinoisNet_Guest network and continue with your setup."]}]},{"entries":[{"heading":"Read more detailed instructions on connecting to both IllinoisNet and IllinoisNet_Guest.To get help with an issue over the phone, call 217-244-1111, between 7p.m. and 10 p.m."}]}],
   "related":["tech.services","online.storage","myhousing"]
 },{
   "_id":"internet",
@@ -1216,7 +1335,11 @@
   "detail_description":"Once you are done with a textbook, you can sell it back to the Illini Union Bookstore.",
   "sub_details_description":"Follow these simple steps to sell back your books.",
   "features":["illini-cash"],
-  "links":[{"text":"217-333-2050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2050"},{"text":"iubstore@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:iubstore@illinois.edu"},{"text":"https://bookstore.illinois.edu/sell_main.asp?","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bookstore.illinois.edu/sell_main.asp?"}],
+  "links":[
+    {"text":"217-333-2050","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2050"},
+    {"text":"iubstore@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:iubstore@illinois.edu"},
+    {"text":"https://bookstore.illinois.edu/sell_main.asp?","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bookstore.illinois.edu/sell_main.asp?"},
+    {"text":"809 S. Wright Street\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10839827077861,"longitude":-88.22920894572619},"title":"809 S. Wright Street"}}],
   "buttons":[{"text":"Visit website","url":"https://bookstore.illinois.edu/sell_main.asp?"}],
   "sub_details":[{"entries":[{"numbers":["Find your book’s ISBN number and check the buyback price.Provide an address to receive your check.Print the prepaid shipping label and send the book via UPS."]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["bookstore","webstore","tech.zone"]
@@ -1228,7 +1351,10 @@
   "detail_description":"Technology Services can help with a wide array of technology problems, whether the problem occurs in a classroom, in your personal space on or off campus. ",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-computing.webp",
   "sub_details_description":"Some common problems that Technology Services can help with are resetting passwords, getting a VPN set up, and troubleshooting WiFi issues.",
-  "links":[{"text":"217-244-7000","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-7000"},{"text":"consult@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:consult@illinois.edu"},{"text":"https://help.uillinois.edu/TDClient/42/UIUC/Home/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://help.uillinois.edu/TDClient/42/UIUC/Home/"}],
+  "links":[
+    {"text":"217-244-7000","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-7000"},
+    {"text":"consult@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:consult@illinois.edu"},
+    {"text":"https://help.uillinois.edu/TDClient/42/UIUC/Home/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://help.uillinois.edu/TDClient/42/UIUC/Home/"}],
   "buttons":[{"text":"Visit website","url":"https://help.uillinois.edu/TDClient/42/UIUC/Home/"}],
   "sub_details":[{"section":"Get help through the website","entries":[{"heading":"On the Technology Services website, you can search the knowledge base for guidance, or you can submit a tech request. You can also check for known outages."}]},{"section":"Get help over the phone or by email","entries":[{"heading":"The Technology Services Help Desk can be reached by phone at 217-244-7000 or by email at consult@illinois.edu. "}]},{"section":"Hours of operation ","entries":[{"bullets":["8 a.m. to 9 p.m., Monday through Friday","12 p.m. to 5:00 p.m., Saturday and Sunday"]}]}],
   "related":["online.storage","internet","tech.zone"]
@@ -1252,11 +1378,12 @@
   "detail_title":"Get free online storage",
   "detail_description":"U of I Box is a free cloud-based storage service available to all students, faculty, and staff.",
   "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-computing.webp",
-  "sub_details_title":"What is it?",
-  "sub_details_description":"Unlimited online storage for individual accounts and team folders, with a 15GB maximum file size limit.",
-  "links":[{"text":"217-244-7000","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-7000"},{"text":"consult@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:consult@illinois.edu"},{"text":"Cloud-dashboard.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"Cloud-dashboard.illinois.edu"}],
+  "links":[
+    {"text":"217-244-7000","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-7000"},
+    {"text":"consult@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:consult@illinois.edu"},
+    {"text":"Cloud-dashboard.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"Cloud-dashboard.illinois.edu"}],
   "buttons":[{"text":"Sign up","url":"Cloud-dashboard.illinois.edu"}],
-  "sub_details":[{"section":"Get help","entries":[{"heading":"The Tech Services Help Desk can be reached by phone at 217-244-7000 or by email at consult@illinois.edu. "}]},{"entries":[{"heading":"Hours of operation ","bullets":["8 a.m. to 9 p.m., Monday through Friday","12 p.m. to 5:00 p.m., Saturday and Sunday"]}]}],
+  "sub_details":[{"section":"What is it?","entries":[{"heading":"Unlimited online storage for individual accounts and team folders, with a 15GB maximum file size limit."}]},{"section":"Get help","entries":[{"heading":"The Tech Services Help Desk can be reached by phone at 217-244-7000 or by email at consult@illinois.edu. "}]},{"section":"Hours of operation ","entries":[{"heading":"8 a.m. to 9 p.m., Monday through Friday,12 p.m. to 5:00 p.m., Saturday and Sunday"}]}],
   "related":["tech.services","internet","tech.zone"]
 },{
   "_id":"online.storage",
@@ -1282,9 +1409,12 @@
   "detail_description":"The Chez Veterans Center assists veterans, active duty, Reserve, National Guard members, and military dependents with their transition to the niversity.",
   "sub_details_description":"The Chez Veterans Center provides individualized advising and advocacy. We also offer a diverse range of programs and services that support student veterans’ academic and personal development.",
   "features":["groups","events"],
-  "links":[{"text":"217-300-3515","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-3515"},{"text":"https://chezveteranscenter.ahs.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://chezveteranscenter.ahs.illinois.edu/"}],
+  "links":[
+    {"text":"217-300-3515","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-300-3515"},
+    {"text":"https://chezveteranscenter.ahs.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://chezveteranscenter.ahs.illinois.edu/"},
+    {"text":"908 W. Nevada Street\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10645479835146,"longitude":-88.2202737592185},"title":"908 W. Nevada Street"}}],
   "buttons":[{"text":"More information","url":"https://chezveteranscenter.ahs.illinois.edu/"}],
-  "sub_details":[{"entries":[{"heading":"Offerings include:","bullets":["Academic services, such as tutoring and academic coaching.","A peer support program that connects incoming student veterans •with student veterans that have successfully established themselves in the university setting","Career support, such as a virtual career fair","Professional mentorship","Student internship and job resources","Vocational rehabilitation through the VA"]}]}],
+  "sub_details":[{"entries":[{"heading":"Offerings include:","bullets":["Academic services, such as tutoring and academic coaching.","A peer support program that connects incoming student veterans with student veterans that have successfully established themselves in the university setting","Career support, such as a virtual career fair","Professional mentorship","Student internship and job resources","Vocational rehabilitation through the VA"]}]}],
   "related":["disability","omsa"]
 },{
   "_id":"disability",
@@ -1295,10 +1425,14 @@
   "list_description":"If you have a qualifying disability, there are accommodations and services available to you.",
   "detail_title":"Access disability resources and services ",
   "detail_description":"If you have a qualifying disability, there are accommodations and services available to you.",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-computing.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-money-disability.webp",
   "sub_details_description":"The Division of Disability Resources and Educational Services provides academic accommodations and support services to students with disabilities. ",
   "features":["groups","events"],
-  "links":[{"text":"217-333-1970","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1970"},{"text":"disability@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:disability@illinois.edu"},{"text":"https://www.disability.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.disability.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-1970","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-1970"},
+    {"text":"disability@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:disability@illinois.edu"},
+    {"text":"https://www.disability.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://www.disability.illinois.edu/"},
+    {"text":"1207 Oak st.\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10316966817343,"longitude":-88.24190717456239},"title":"1207 Oak st."}}],
   "buttons":[{"text":"Visit website","url":"https://www.disability.illinois.edu/"}],
   "sub_details":[{"entries":[{"heading":"We can provide:","bullets":["Academic support","Help with living accommodations","Help with transportation and getting around","Health support and services","Help with campus life and involvement","Athletics options"]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["veterans"]
@@ -1312,7 +1446,11 @@
   "detail_title":"Get support from the Office of Minority Student Affairs",
   "detail_description":"Support services for first generation, low-income, and historically underrepresented and underserved student communities.",
   "features":["groups","events"],
-  "links":[{"text":"217-333-7547","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7547"},{"text":"omsa@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:omsa@illinois.edu"},{"text":"https://omsa.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://omsa.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-7547","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-7547"},
+    {"text":"omsa@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:omsa@illinois.edu"},
+    {"text":"https://omsa.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://omsa.illinois.edu/"},
+    {"text":"130 Turner Student Services Building \n610 East John Street\nChampaign, Illinois 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10951620214294,"longitude":-88.22988090339801},"title":"130 Turner Student Services Building"}}],
   "buttons":[{"text":"Visit website","url":"https://omsa.illinois.edu/"}],
   "sub_details":[{"entries":[{"heading":"Services include:","bullets":["Academic mentoring, coaching, and referral services","Tutoring and supplemental instruction","Study skills enrichment","An array of events that celebrate and enhance student success"]}]},{"entries":[{"heading":"The Office of Minority Student Affairs is also home to four federal TRIO programs including the TRIO Student Support Services Program and the TRIO Ronald E. McNair Post-baccalaureate Achievement Program. "}]}],
   "related":["undocumented.support","bnaac","nah"]
@@ -1327,7 +1465,11 @@
   "detail_description":"The Bruce D. Nesbitt African American Cultural Center provides programs and services that assist with the cultural, personal, and professional development of African American students.",
   "sub_details_description":"Our programs and initiatives examine the Black experience in the United States and throughout the African Diaspora via critical dialogue, heritage exploration, leadership development, and the performing arts. ",
   "features":["groups","events"],
-  "links":[{"text":"217-333-2092","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2092"},{"text":"bnaacc@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:bnaacc@illinois.edu"},{"text":"go.illinois.edu/BNAACC","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"go.illinois.edu/BNAACC"}],
+  "links":[
+    {"text":"217-333-2092","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2092"},
+    {"text":"bnaacc@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:bnaacc@illinois.edu"},
+    {"text":"go.illinois.edu/BNAACC","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"go.illinois.edu/BNAACC"},
+    {"text":"1212 W. Nevada Street MC: 564\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10631133456343,"longitude":-88.22477507456223},"title":"1212 W. Nevada Street MC: 564"}}],
   "buttons":[{"text":"Visit website","url":"go.illinois.edu/BNAACC"}],
   "related":["omsa","la.casa","nah"]
 },{
@@ -1340,7 +1482,11 @@
   "detail_title":"Asian American Cultural Center",
   "detail_description":"The Asian American Cultural Center promotes cross-cultural understanding of Asian and Asian American experiences. ",
   "features":["groups","events"],
-  "links":[{"text":"217-333-9300","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-9300"},{"text":"aacc@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:aacc@illinois.edu"},{"text":"https://oiir.illinois.edu/aacc","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/aacc"}],
+  "links":[
+    {"text":"217-333-9300","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-9300"},
+    {"text":"aacc@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:aacc@illinois.edu"},
+    {"text":"https://oiir.illinois.edu/aacc","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/aacc"},
+    {"text":"1210 West Nevada Street, MC-149\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10660893363004,"longitude":-88.22475627456221},"title":"1210 West Nevada Street, MC-149"}}],
   "buttons":[{"text":"Visit website","url":"https://oiir.illinois.edu/aacc"}],
   "sub_details":[{"entries":[{"heading":"Programming and resources include:","bullets":["Food for Thought weekly lunchtime discussion series","Chai Time weekly social hours","Leadership trainings","Art shows","Lending library","Student internship","Volunteer opportunities."]}]},{"entries":[{"heading":"The AACC also supports a wide variety of programs that promote global awareness."}]}],
   "related":["omsa","undocumented.support","intl.students"]
@@ -1354,7 +1500,11 @@
   "detail_title":"La Casa Cultura Latina",
   "detail_description":"La Casa Cultural Latina promotes a welcoming and dynamic atmosphere through the development of educational, cultural, sociopolitical and social programs that lead to greater recruitment, retention, advancement and empowerment of Latinx students.",
   "features":["groups","events"],
-  "links":[{"text":"217-333-4950","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-4950"},{"text":"lacasa@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:lacasa@illinois.edu"},{"text":"https://oiir.illinois.edu/la-casa-cultural-latina","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/la-casa-cultural-latina"}],
+  "links":[
+    {"text":"217-333-4950","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-4950"},
+    {"text":"lacasa@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:lacasa@illinois.edu"},
+    {"text":"https://oiir.illinois.edu/la-casa-cultural-latina","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/la-casa-cultural-latina"},
+    {"text":"1203 West Nevada Street\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.105723383739324,"longitude":-88.22468354572634},"title":"1203 West Nevada Street"}}],
   "buttons":[{"text":"Visit website","url":"https://oiir.illinois.edu/la-casa-cultural-latina"}],
   "sub_details":[{"entries":[{"heading":"La Casa Cultural Latina’s programs include:","bullets":["Cultural celebrations such as Dia de los Muertos and Las Posadas","New Student Programs","Ally-building workshops","Programs to enhance networking skills and professional development","Community outreach programs that connect Illinois students’ with the Latinx community beyond the university, while promoting higher education to Latinx youth.","An Alumni Association and other professional outreach programs","Focus groups and public forums that give students, alumni, and the community an opportunity to have their voices heard."]}]},{"entries":[{"heading":"The programs and events held at La Casa are free and open to all university students, faculty, and staff as well as community members and guests of the university."}]}],
   "related":["omsa","undocumented.support","intl.students"]
@@ -1368,7 +1518,11 @@
   "detail_title":"Native American House",
   "detail_description":"The Native American House is committed to supporting and empowering Indigenous students and communities by facilitating opportunities for cultural and academic support, engagement, and advocacy.",
   "features":["groups","events"],
-  "links":[{"text":"217-265-0632","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-265-0632"},{"text":"nah@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:nah@illinois.edu"},{"text":"https://oiir.illinois.edu/native-american-house","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/native-american-house"}],
+  "links":[
+    {"text":"217-265-0632","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-265-0632"},
+    {"text":"nah@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:nah@illinois.edu"},
+    {"text":"https://oiir.illinois.edu/native-american-house","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/native-american-house"},
+    {"text":"1206 West Nevada Street\nUrbana, Illinois 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.1063245165895,"longitude":-88.2244556880544},"title":"1206 West Nevada Street"}}],
   "buttons":[{"text":"Visit website","url":"https://oiir.illinois.edu/native-american-house"}],
   "sub_details":[{"entries":[{"heading":"The Native American House welcomes all, while centering the voices and lived experiences of Indigenous peoples. Programming includes:","bullets":["A congratulatory ceremony","Native Women in Art","Native November","Fall and Spring Welcome Back"]}]}],
   "related":["omsa","bnaac","la.casa"]
@@ -1383,23 +1537,31 @@
   "detail_description":"The Women’s Resources Center offers support, advocacy, and educational programs designed to improve the campus climate for womxn and achieve greater gender equity in society.",
   "sub_details_description":"The Women’s Resources Center welcomes students of all gender-identities to participate in its student-centered educational and personal development experiences. ",
   "features":["groups","events"],
-  "links":[{"text":"217-333-3137","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3137"},{"text":"womenscenter@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:womenscenter@illinois.edu"},{"text":"https://oiir.illinois.edu/womens-center","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/womens-center"}],
+  "links":[
+    {"text":"217-333-3137","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-3137"},
+    {"text":"womenscenter@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:womenscenter@illinois.edu"},
+    {"text":"https://oiir.illinois.edu/womens-center","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://oiir.illinois.edu/womens-center"},
+    {"text":"616 E. Green St., Suite 202, Champaign, IL 61820.","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.110765393388505,"longitude":-88.22962163223387},"title":"616 E. Green St."}}],
   "buttons":[{"text":"Visit website","url":"https://oiir.illinois.edu/womens-center"}],
-  "sub_details":[{"entries":[{"heading":"Offerings include: ","bullets":["Confidential advising, advocacy, and support for survivors and their support persons who have been impacted by sexual assault, rape or abuse.","Workshops ","Fun activities and networking opportunities","Mentoring"]}]}],
+  "sub_details":[{"entries":[{"heading":"Offerings include: ","bullets":["Confidential advising, advocacy, and support for survivors and their support persons who have been impacted by sexual assault, rape or abuse.","Workshops","Fun activities and networking opportunities","Mentoring"]}]}],
   "related":["womens.health","sexual.health","assault.resources"]
 },{
   "_id":"lgbt.resource",
   "guide":"For students",
   "category":"Diversity & inclusion",
-  "section":"Resource  centers",
+  "section":"Support services",
   "list_title":"LGBT Resource Center",
   "list_description":"The mission of the LGBT Resource Center is to foster an environment that is open, safe, and inclusive for all.",
   "detail_title":"LGBT Resource Center",
   "detail_description":"The mission of the LGBT Resource Center is to foster an environment that is open, safe, and inclusive for people of all sexualities and gender identities. The Center is a resource not only for the LGBT community but for the entire campus community.",
-  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-cit-computing.webp",
+  "image":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/image-involvement-heart.webp",
   "sub_details_description":"The LGBT Resource Center seeks to address homophobia, biphobia, transphobia, and heterosexist attitudes and beliefs on the campus.",
   "features":["groups","events"],
-  "links":[{"text":"217-244-8863","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-8863"},{"text":"lgbtrc@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:lgbtrc@illinois.edu"},{"text":"http://oiir.illinois.edu/lgbt-resource-center","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://oiir.illinois.edu/lgbt-resource-center"}],
+  "links":[
+    {"text":"217-244-8863","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-8863"},
+    {"text":"lgbtrc@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:lgbtrc@illinois.edu"},
+    {"text":"http://oiir.illinois.edu/lgbt-resource-center","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://oiir.illinois.edu/lgbt-resource-center"},
+    {"text":"Office of Inclusion and Intercultural Relations, room 323\n1401 W. Green Street \nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10985655687954,"longitude":-88.2272937457261},"title":"Office of Inclusion and Intercultural Relations"}}],
   "buttons":[{"text":"Visit website","url":"http://oiir.illinois.edu/lgbt-resource-center"}],
   "sub_details":[{"entries":[{"heading":"Offerings include:","bullets":["Weekly programming","Referrals to LGBTQA inclusive services","Annual Lavender Congratulatory Ceremony for LGBTQA graduating students","Empowering connections to other LGBTQA university community members"]}]}],
   "related":["LGBTQ.health","womens.resource"]
@@ -1413,7 +1575,11 @@
   "detail_title":"Illinois Leadership Center",
   "detail_description":"The Illinois Leadership Center provides resources for students to learn and practice leadership. ",
   "sub_details_description":"The Leadership Center offers programs of varying commitment levels. You can sign up for a single workshop, use the resource library, or even get a Minor in Leadership Studies. \n\nVisit the website for more information.",
-  "links":[{"text":"217-333-0604","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0604"},{"text":"leadership@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:leadership@illinois.edu"},{"text":"http://leadership.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://leadership.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-0604","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0604"},
+    {"text":"leadership@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:leadership@illinois.edu"},
+    {"text":"http://leadership.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"http://leadership.illinois.edu/"},
+    {"text":"1401 W. Green Street, Room 290 Illini Union\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10993861210188,"longitude":-88.22728301689018},"title":"Illini Union"}}],
   "buttons":[{"text":"Visit website","url":"http://leadership.illinois.edu/"}],
   "related":["career.center","join.club","join.illini.union"]
 },{
@@ -1426,7 +1592,10 @@
   "detail_title":"Career Center",
   "detail_description":"Career guidance, advising, job search prep, grad/professional school prep.",
   "sub_details_description":"The Career Center can help you plan your future, and offers guidance and support for health careers, graduate/professional school admission and job search preparation.",
-  "links":[{"text":"217-333-0820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0820"},{"text":"careercenter.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"careercenter.illinois.edu"}],
+  "links":[
+    {"text":"217-333-0820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0820"},
+    {"text":"careercenter.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"careercenter.illinois.edu"},
+    {"text":"715 S. Wright St.\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.109916889998075,"longitude":-88.22901881689019},"title":"715 S. Wright St."}}],
   "buttons":[{"text":"Visit website","url":"careercenter.illinois.edu"}],
   "sub_details":[{"entries":[{"heading":"Services:","bullets":["Career Coaching","Health Professions Advising","Career Decision Making","Considering Graduate School","Resume and Cover Letter Reviews","Personal Statement Reviews","Mock Interviews","Guidance for Writing Cover Letters, Resumes, and Personal Statements","Job and Internship Boards"]}]},{"entries":[{"heading":"Visit the website to schedule an appointment or check in for drop-in services."}]}],
   "related":["leadership.center","join.illini.union","student.job"]
@@ -1437,7 +1606,8 @@
   "detail_title":"Find a student job",
   "detail_description":"The Virtual Job Board helps students find part-time employment. ",
   "sub_details_description":"Use the Virtual Job Board to find open positions or set up notifications for future job openings based on your preferences.",
-  "links":[{"text":"https://secure.osfa.illinois.edu/vjb/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://secure.osfa.illinois.edu/vjb/"}],
+  "links":[
+    {"text":"https://secure.osfa.illinois.edu/vjb/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://secure.osfa.illinois.edu/vjb/"}],
   "buttons":[{"text":"Virtual Job Board","url":"https://secure.osfa.illinois.edu/vjb/"}],
   "related":["bank","pay.account","financial.aid"]
 },{
@@ -1464,7 +1634,11 @@
   "detail_description":"Learn to manage your money effectively and make wise financial decisions.",
   "sub_details_description":"Wondering about credit, budgeting, or other financial topics? ",
   "features":["illini-cash","my-illini"],
-  "links":[{"text":"217-333-5900","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-5900"},{"text":"financial.wellnessuie@gmail.com","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:financial.wellnessuie@gmail.com"},{"text":"go.illinois.edu/FinancialWellness","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"go.illinois.edu/FinancialWellness"}],
+  "links":[
+    {"text":"217-333-5900","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-5900"},
+    {"text":"financial.wellnessuie@gmail.com","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:financial.wellnessuie@gmail.com"},
+    {"text":"go.illinois.edu/FinancialWellness","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"go.illinois.edu/FinancialWellness"},
+    {"text":"Illinois Extension\n111 Mumford Hall (MC-710)\n1301 W. Gregory Dr.\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10374086720875,"longitude":-88.22589344387484},"title":"111 Mumford Hall (MC-710)"}}],
   "buttons":[{"text":"Visit website","url":"go.illinois.edu/FinancialWellness "}],
   "sub_details":[{"entries":[{"bullets":["Set up an appointment with one of our peer educators to chat.","Get our monthly newsletter","Read all about different personal finance topics in our blog written by college students, for college students."]}]},{"entries":[{"heading":"All services are free to students. "}]}],
   "related":["learn.money","student.job","bank"]
@@ -1479,9 +1653,13 @@
   "detail_description":"Pay tuition and fees, set up tuition payment plans, and more.",
   "sub_details_description":"Tuition and fees for Fall and Spring terms are billed in September and February respectively. Summer term fees are billed in June.      ",
   "features":["illini-cash","my-illini"],
-  "links":[{"text":"217-333-2180","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2180"},{"text":"bursarhelp@uillinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:bursarhelp@uillinois.edu"},{"text":"https://paymybill.uillinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://paymybill.uillinois.edu/"}],
+  "links":[
+    {"text":"217-333-2180","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2180"},
+    {"text":"bursarhelp@uillinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:bursarhelp@uillinois.edu"},
+    {"text":"https://paymybill.uillinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://paymybill.uillinois.edu/"},
+    {"text":"Room 162 (MC 367)\nHenry Administration Bldg.\n506 South Wright Street\nUrbana, Illinois 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.108541204730685,"longitude":-88.22823476106991},"title":"Henry Administration Bldg."}}],
   "buttons":[{"text":"Visit website","url":"https://paymybill.uillinois.edu/"}],
-  "sub_details":[{"entries":[{"heading":"Payments on your account balance are due on the 28th of each month. Visit the website to: ","bullets":["Log in and review or pay your student account ","Make payments in international currency through Flywire","Set up a third-party “authorized payer”","Create an optional 6-month payment plan","Learn more about available financial services"]}]},{"entries":[{"heading":"Contact the University Bursar via phone or email for more detailed information on billing, direct deposit, payment plans, College Illinois, and 529 plans."}]}],
+  "sub_details":[{"entries":[{"heading":"Payments on your account balance are due on the 28th of each month. Visit the website to: ","bullets":["Log in and review or pay your student account","Make payments in international currency through Flywire","Set up a third-party “authorized payer”","Create an optional 6-month payment plan","Learn more about available financial services"]}]},{"entries":[{"heading":"Contact the University Bursar via phone or email for more detailed information on billing, direct deposit, payment plans, College Illinois, and 529 plans."}]}],
   "related":["tuition","financial.aid","bank"]
 },{
   "_id":"tuition.content",
@@ -1490,7 +1668,10 @@
   "detail_title":"Learn about tuition rates",
   "detail_description":"For questions about tuition rates.",
   "sub_details_description":"Your tuition rates are based on your specific college and program, your residency status, and enrollment status. \n\nThe Office of the Registrar website provides tuition information and a cost calculator.  Staff can assist you with additional tuition rate questions by phone or email.",
-  "links":[{"text":"217-333-6565","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-6565"},{"text":"registration@illinois.edu.","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:registration@illinois.edu."},{"text":"cost.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"cost.illinois.edu"}],
+  "links":[
+    {"text":"217-333-6565","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-6565"},
+    {"text":"registration@illinois.edu.","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:registration@illinois.edu."},
+    {"text":"cost.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"cost.illinois.edu"}],
   "buttons":[{"text":"Visit website","url":"cost.illinois.edu"}],
   "related":["pay.account","financial.aid","student.job"]
 },{
@@ -1518,7 +1699,10 @@
   "detail_description":"Campus banking program (PNC Bank)",
   "sub_details_description":"PNC Bank is the official student banking provider for the University of Illinois. A bank branch is located at the Illini Union Bookstore, and there are multiple ATMs on campus. Benefits of banking with PNC Banks include:",
   "features":["illini-cash","my-illini"],
-  "links":[{"text":"217-974-7401","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-974-7401"},{"text":"pnc.com/ui","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"pnc.com/ui"}],
+  "links":[
+    {"text":"217-974-7401","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-974-7401"},
+    {"text":"pnc.com/ui","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"pnc.com/ui"},
+    {"text":"Illini Union Bookstore\n809 S. Wright St. \nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10827841753402,"longitude":-88.22919723718299},"title":"Illini Union Bookstore"}}],
   "buttons":[{"text":"Visit PNC","url":"pnc.com/ui"}],
   "sub_details":[{"entries":[{"bullets":["Products and services built with financial education as a focus","The ability to link your i-card to your PNC account and use it as an ATM card","Technology that helps you avoid overdraft fees"]}]},{"entries":[{"heading":"Students are free to use any bank that meets their financial needs."}]}],
   "related":["student.job","financial.wellness","learn.money"]
@@ -1529,7 +1713,11 @@
   "detail_title":"Apply for financial aid",
   "detail_description":"Support services to assist you in securing the resources needed to pursue your education.",
   "sub_details_description":"Our goal is to assist you and your family in securing the resources necessary to fund your education.",
-  "links":[{"text":"217-333-0100","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0100"},{"text":"finaid@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:finaid@illinois.edu"},{"text":"https://osfa.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://osfa.illinois.edu/"}],
+  "links":[
+    {"text":"217-333-0100","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-0100"},
+    {"text":"finaid@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:finaid@illinois.edu"},
+    {"text":"https://osfa.illinois.edu/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://osfa.illinois.edu/"},
+    {"text":"Office of Student Financial Aid\nStudent Services Arcade\n620 East John Street\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10991249316542,"longitude":-88.22905958045331},"title":"Office of Student Financial Aid"}}],
   "buttons":[{"text":"Office of Student Financial Aid","url":"https://osfa.illinois.edu/"}],
   "sub_details":[{"entries":[{"heading":"Visit the Office of Student Financial Aid website to:","bullets":["See available types of financial aid","Submit applications","Check your financial aid status","Estimate the amount of aid you will receive","Find a job"]}]}],
   "related":["pay.account","tuition","financial.wellness"]
@@ -1537,7 +1725,7 @@
   "_id":"financial.aid",
   "guide":"For students",
   "category":"Finance & legal",
-  "section":"Financial Support",
+  "section":"Financial support",
   "features":["illini-cash","my-illini"],
   "content_ref": "financial.aid.content"
 },{
@@ -1558,7 +1746,11 @@
   "detail_description":"Legal services, counsel, and representation for students.",
   "sub_details_description":"Student Legal Services is committed to educating students on laws that may affect their daily lives. ",
   "features":["illini-cash","my-illini"],
-  "links":[{"text":"217-333-9053","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-9053"},{"text":"studentlegalservice@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:studentlegalservice@illinois.edu"},{"text":"https://odos.illinois.edu/sls/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/sls/"}],
+  "links":[
+    {"text":"217-333-9053","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-9053"},
+    {"text":"studentlegalservice@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:studentlegalservice@illinois.edu"},
+    {"text":"https://odos.illinois.edu/sls/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/sls/"},
+    {"text":"324 Illini Union\n1401 West Green Street\nUrbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10994857985865,"longitude":-88.22729760524957},"title":"324 Illini Union"}}],
   "buttons":[{"text":"Visit website","url":"https://odos.illinois.edu/sls/"}],
   "sub_details":[{"entries":[{"bullets":["Housing/Tenant issues","Traffic tickets","Auto accidents","Misdemeanor charges","City ordinance violations","Notary services","Small claims","Power of attorney documents","Name changes"]}]},{"section":"In-court representation, counsel, and advising","entries":[{"heading":"In-court representation in Champaign County is provided in traffic, misdemeanor, and city ordinance violation cases. The office counsels and represents on behalf of student tenants regarding privacy, eviction, landlord failure to make repairs, and rent arrearages, and advises in consumer, collection, credit, and many other issues. "}]},{"section":" Who qualifies for this service?","entries":[{"heading":"Student Legal Services is available to all students who are assessed the Urbana campus Service Fee. Faculty, Staff, and Post-docs are not eligible to use SLS.Schedule an appointment through the website."}]}]
 },{
@@ -1572,7 +1764,11 @@
   "detail_description":"Gain advice and insights on Illinois-sponsored programs for studying abroad. ",
   "sub_details_description":"The University offers approximately 300 programs in more than 45 countries. Students can choose from a wide variety of program types and durations. \n\nThere are many benefits of studying abroad, and the University has opportunities for all students. Visit the website for more information about global learning opportunities and study abroad programs.",
   "features":["my-illini","library-card"],
-  "links":[{"text":"217-333-6322","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-6322"},{"text":"iage@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:iage@illinois.edu"},{"text":"studyabroad.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"studyabroad.illinois.edu"}],
+  "links":[
+    {"text":"217-333-6322","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-6322"},
+    {"text":"iage@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:iage@illinois.edu"},
+    {"text":"studyabroad.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"studyabroad.illinois.edu"},
+    {"text":"112 International Studies Building\n910 S. Fifth St., M/C-480\nChampaign, IL 61820  USA","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10741792524594,"longitude":-88.23163703223408},"title":"112 International Studies Building"}}],
   "buttons":[{"text":"Visit website","url":"studyabroad.illinois.edu"}],
   "related":["intl.students"]
 },{
@@ -1586,7 +1782,9 @@
   "detail_description":"Open Illinois offers services for undocumented students.",
   "sub_details_description":"Open Illinois provides information, resources and guidance for undocumented students, DACA students, and those impacted by immigration reform.",
   "features":["groups","events"],
-  "links":[{"text":"undocumented@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:undocumented@illinois.edu"},{"text":"Open.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"Open.illinois.edu"}],
+  "links":[
+    {"text":"undocumented@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:undocumented@illinois.edu"},
+    {"text":"Open.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"Open.illinois.edu"}],
   "buttons":[{"text":"Visit website","url":"Open.illinois.edu"}],
   "sub_details":[{"section":"Resources","entries":[{"heading":"Weekly at La Casa Cultural Latina we have DACA mentors that are present to help undocumented students navigate institutional challenges and receive the support they need to succeed at the University of Illinois. We also provide education about policies and practices affecting undocumented/DACA students and advocate for financial resources to help them succeed."}]},{"section":"Learn how to be a good ally","entries":[{"heading":"La Casa Cultural Latina offers ally training for faculty and staff who work with undocumented/DACA students, as well as for members of our campus community who want to learn more about how to support them. "}]}],
   "related":["intl.students","omsa","la.casa"]
@@ -1600,7 +1798,9 @@
   "detail_title":"Download the UPACE Fitness app ",
   "detail_description":"The UPACE Fitness app allows you to manage your Campus Recreation workouts from your phone.",
   "features":["dining","meal-plan"],
-  "links":[{"text":"dcr-fitness@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:dcr-fitness@illinois.edu"},{"text":"https://campusrec.illinois.edu/programs/group-fitness/upace-app/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/group-fitness/upace-app/"}],
+  "links":[
+    {"text":"dcr-fitness@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:dcr-fitness@illinois.edu"},
+    {"text":"https://campusrec.illinois.edu/programs/group-fitness/upace-app/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/group-fitness/upace-app/"}],
   "buttons":[{"text":"Learn more","url":"https://campusrec.illinois.edu/programs/group-fitness/upace-app/"}],
   "sub_details":[{"entries":[{"heading":"Some of the things you can do with the app:","bullets":["Browse the up-to-date Group Fitness class schedule","Reserve your spot in class","View instant changes in class, location or instructor","Share your experience with the fitness team"]}]},{"entries":[{"heading":"Download in the App Store or from Google Play."}]}],
   "related":["group.fitness","participate.campus.rec","training.campus.rec"]
@@ -1610,7 +1810,8 @@
   "list_description":"Make the commitment today that you will prioritize the health and wellbeing of yourself and your community. ",
   "detail_title":"Take the wellness pledge",
   "detail_description":"Make the commitment today that you will prioritize the health and wellbeing of yourself and your community. ",
-  "links":[{"text":"https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"}],
+  "links":[
+    {"text":"https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"}],
   "buttons":[{"text":"Take the pledge","url":"https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"}],
   "sub_details":[{"entries":[{"heading":"When you take the pledge, you promise to:","bullets":["Celebrate, love, and accept the body that I have.","Choose to make positive decisions for my health as they relate to nutrition, physical activity, and self-care.","Care for the earth by engaging in environmentally responsible activities.","Consult daily with my personal beliefs, values, and morals that give my life meaning and purpose.","Contribute to the campus community and make the University of Illinois a safe place to learn, live, love, and grow."]}]}],
   "related":["counseling.center","kognito","mental.health.services"]
@@ -1639,7 +1840,8 @@
   "detail_description":"Take the Counseling Center’s online training to learn how to assist distressed students. ",
   "sub_details_description":"Every faculty/staff member and student is encouraged to participate in the Kognito At-Risk training. The training will help you to better identify, support, and connect distressed students with campus services. \n\nKognito At-Risk has the feel of a video game as you make choices about what to say and do in conversations with students who may be distressed. It takes just 30-40 minutes to complete. \n\nVisit the website to learn more and complete the training",
   "features":["dining","meal-plan"],
-  "links":[{"text":"https://odos.illinois.edu/community-of-care/resources/students/kognito/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/community-of-care/resources/students/kognito/"}],
+  "links":[
+    {"text":"https://odos.illinois.edu/community-of-care/resources/students/kognito/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://odos.illinois.edu/community-of-care/resources/students/kognito/"}],
   "buttons":[{"text":"Visit website","url":"https://odos.illinois.edu/community-of-care/resources/students/kognito/"}],
   "related":["wellness.pledge","mental.health.services","drugs.alcohol.help"]
 }]
