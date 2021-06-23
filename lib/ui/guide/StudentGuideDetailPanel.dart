@@ -87,7 +87,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
                     : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
-                  Container(padding: EdgeInsets.all(16), child: 
+                  Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child: 
                     Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
                   )
             ),),),),
@@ -185,7 +185,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       }
     }
 
-    return Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
+    return Container(color: Styles().colors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
