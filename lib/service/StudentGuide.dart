@@ -93,6 +93,7 @@ class StudentGuide with Service implements NotificationsListener {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
+      //TMP: _convertFile('student.guide.import.json', 'Illinois_Student_Guide_Final.json');
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
@@ -322,7 +323,7 @@ class StudentGuide with Service implements NotificationsListener {
     List<dynamic> sourceList = AppJson.decodeList(sourceString);
     
     List<dynamic> contentList = _convertContent(sourceList);
-    String contentString = AppJson.encode(contentList, prettify: true);
+    String contentString = AppJson.encode(contentList, /*prettify: true*/);
     if (contentString != null) {
       String contentFilePath = join(appDocDir.path, contentFileName);
       File contentFile = File(contentFilePath);
@@ -330,7 +331,7 @@ class StudentGuide with Service implements NotificationsListener {
     }
   }
 
-  static List<dynamic> convertContent(List<dynamic> sourceList) {
+  static List<dynamic> _convertContent(List<dynamic> sourceList) {
     List<dynamic> contentList;
     if (sourceList != null) {
       contentList = <dynamic>[];
@@ -385,7 +386,7 @@ class StudentGuide with Service implements NotificationsListener {
       List<String> phoneLinks = phoneLinksString.split(RegExp('[;,\n ]'));
       for (String phoneLink in phoneLinks) {
         if (phoneLink.isNotEmpty) {
-          contentLinks.add({ "text": phoneLink, "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-phone.png", "url": "tel:+1-$phoneLink" });
+          contentLinks.add({ "text": phoneLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp", "url": "tel:+1-$phoneLink" });
         }
       }
     }
@@ -394,7 +395,7 @@ class StudentGuide with Service implements NotificationsListener {
       List<String> emailLinks = emailLinksString.split(RegExp('[;,\n ]'));
       for (String emailLink in emailLinks) {
         if (emailLink.isNotEmpty) {
-          contentLinks.add({ "text": emailLink, "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-mail.png", "url": "mailto:$emailLink" });
+          contentLinks.add({ "text": emailLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp", "url": "mailto:$emailLink" });
         }
       }
     }
@@ -403,9 +404,22 @@ class StudentGuide with Service implements NotificationsListener {
       List<String> webLinks = webLinksString.split(RegExp('[;,\n ]'));
       for (String webLink in webLinks) {
         if (webLink.isNotEmpty) {
-          contentLinks.add({ "text": webLink, "icon": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Images/icon-web.png", "url": webLink });
+          contentLinks.add({ "text": webLink, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp", "url": webLink });
         }
       }
+    }
+    String locationLinkString = AppJson.stringValue(sourceEntry['location_links']);
+    if (locationLinkString != null) {
+      List<String> locationItems = locationLinkString.split(RegExp('[\n]'));
+      String locationTitle = locationLinkString;
+      for (String locationItem in locationItems) {
+        if (locationItem.isNotEmpty) {
+          locationTitle = locationItem;
+          break;
+        }
+      }
+      contentLinks.add({ "text": locationLinkString, "icon": "https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp", "location": { "location": { "latitude": 0.00, "longitude": 0.00}, "title": locationTitle } });
+
     }
     
     if (contentLinks.isNotEmpty) {
@@ -437,9 +451,12 @@ class StudentGuide with Service implements NotificationsListener {
       }
 
       List<dynamic> numbers = <dynamic>[];
-      String sectionNumbersString = AppJson.stringValue(sourceEntry['sub_details_section${index}_numbers'])?.replaceAll('\n', '');
+      String sectionNumbersString = AppJson.stringValue(sourceEntry['sub_details_section${index}_numbers']);
       if (sectionNumbersString != null) {
         List<String> sectionNumers = sectionNumbersString.split(RegExp('[;\n]'));
+        if (sectionNumers.length < 2) {
+          sectionNumers = _splitByCommas(sectionNumbersString);
+        }
         for (String sectionNumer in sectionNumers) {
           sectionNumer = sectionNumer.trim();
           if (sectionNumer.isNotEmpty) {
@@ -452,9 +469,12 @@ class StudentGuide with Service implements NotificationsListener {
       }
 
       List<dynamic> bullets = <dynamic>[];
-      String sectionBulletsString = AppJson.stringValue(sourceEntry['sub_details_section${index}_bullets'])?.replaceAll('\n', '');
+      String sectionBulletsString = AppJson.stringValue(sourceEntry['sub_details_section${index}_bullets']);
       if (sectionBulletsString != null) {
         List<String> sectionBullets = sectionBulletsString.split(RegExp('[;\n]'));
+        if (sectionBullets.length < 2) {
+          sectionBullets = _splitByCommas(sectionBulletsString);
+        }
         for (String sectionBullet in sectionBullets) {
           sectionBullet = sectionBullet.trim();
           if (sectionBullet.isNotEmpty) {
@@ -495,6 +515,17 @@ class StudentGuide with Service implements NotificationsListener {
     }
     
     return contentEntry;
+  }
+
+  static List<String> _splitByCommas(String source) {
+    List<String> result = <String>[];
+    int pos, index = 0;
+    while (0 <= (pos = source.indexOf(RegExp(r",[^ ]|,$"), index))) {
+      result.add(source.substring(index, pos));
+      index = pos + 1;
+    }
+    result.add(source.substring(index));
+    return result;
   }*/
 
 }
