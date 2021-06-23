@@ -364,7 +364,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         onTap: _onLocationDetailTapped,
         child: Semantics(
           label: "$eventType, $locationText",
-          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+          hint: isVirtual ? Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link') : Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
           button: true,
           excludeSemantics: true,
           child:Padding(
