@@ -332,7 +332,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           String url = AppJson.stringValue(button['url']);
           if ((text != null) && (url != null)) {
             buttonWidgets.add(
-              Padding(padding: EdgeInsets.only(top: 6), child:
+              Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text,
                   backgroundColor: Styles().colors.white,
                   textColor: Styles().colors.fillColorPrimary,
@@ -357,7 +357,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
     }
 
-    return Container(padding: EdgeInsets.all(16), child:
+    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32), child:
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -381,7 +381,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
         }
         if (guideEntry != null) {
           contentList.add(
-            Padding(padding: EdgeInsets.only(bottom: 8), child:
+            Padding(padding: EdgeInsets.only(bottom: 16), child:
               StudentGuideEntryCard(guideEntry)
           ),);
         }
