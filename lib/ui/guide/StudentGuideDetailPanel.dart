@@ -134,7 +134,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     String category = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Semantics(hint:"Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),)),
+        Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)),
     ),);
 
     String titleHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'title'));
@@ -143,7 +143,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: titleHtml,
             onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       ),);
     }
     
@@ -255,7 +255,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
               Padding(padding: EdgeInsets.only(top: 16), child:
                 Html(data: sectionHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.semiBold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
             ),),);
           }
 
