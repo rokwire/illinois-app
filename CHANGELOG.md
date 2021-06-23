@@ -5,10 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
 ### Fixed
 - Fix registration url json key for events [#330](https://github.com/rokwire/illinois-app/issues/330).
 - Improve Accessibility for Student Guide [#320](https://github.com/rokwire/illinois-app/issues/320) 
+### Changed 
+- Updated students.guide.json from Illinois_Student_Guide_Final.xlsx [#332](https://github.com/rokwire/illinois-app/issues/332).
 
 ## [2.4.28] - 2021-06-22
 ### Fixed 
