@@ -172,9 +172,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
               GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    (icon != null) ? Image.network(icon, width: 24, height: 24, excludeFromSemantics: true,) : Container(width: 24, height: 24),
+                    (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
-                      Padding(padding: EdgeInsets.only(left: 4), child:
+                      Padding(padding: EdgeInsets.only(left: 8), child:
                         Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
                       ),
                     ),
