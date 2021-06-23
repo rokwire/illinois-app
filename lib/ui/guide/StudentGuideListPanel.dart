@@ -150,7 +150,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       if (_guideItems != null) {
         for (Map<String, dynamic> guideEntry in _guideItems) {
           cardsList.add(
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
               StudentGuideEntryCard(guideEntry)
             )
           );
@@ -160,9 +160,11 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       contentList.add(
         Expanded(child:
           SingleChildScrollView(child:
-            SafeArea(child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                cardsList
+            Padding(padding: EdgeInsets.only(bottom: 16), child:
+              SafeArea(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                  cardsList
+                ),
               ),
             ),
           ),
@@ -232,7 +234,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         colWidgets.add(Row(children: rowWidgets));
       }
 
-      return Padding(padding: EdgeInsets.all(16), child:
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
         Column(children: colWidgets,),
       );
     }
