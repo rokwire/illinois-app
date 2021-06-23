@@ -444,9 +444,10 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
           Semantics(button: true, child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(right: 12), child:
                 Html(data: titleHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
                 Container(height: 8,),
                 Html(data: descriptionHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
