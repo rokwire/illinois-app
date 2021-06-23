@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Fix registration url json key for events [#330](https://github.com/rokwire/illinois-app/issues/330).
+
 ## [2.4.28] - 2021-06-22
 ### Fixed 
 - Fixed guide description in Recently Viewed [#322](https://github.com/rokwire/illinois-app/issues/322).
