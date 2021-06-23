@@ -225,8 +225,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
     return GestureDetector(
       onTap: _onLocationDetailTapped,
       child: Semantics(
-          label: locationText,
-          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+          label: "$eventType, $locationText",
+          hint: isVirtual ? Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link') : Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
           button: true,
           excludeSemantics: true,
           child:Padding(
