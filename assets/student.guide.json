@@ -38,7 +38,7 @@
     {"text":"campusrec@illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-mail.webp","url":"mailto:campusrec@illinois.edu"},
     {"text":"https://campusrec.illinois.edu/programs/intramural/how-to-register/","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://campusrec.illinois.edu/programs/intramural/how-to-register/"}],
   "buttons":[{"text":"Register for an account","url":"https://campusrec.illinois.edu/programs/intramural/how-to-register/"}],
-  "sub_details":[{"entries":[{"heading":"All Intramural Activities at Illinois are organized through an app called IM Leagues. IM Leagues allows users to see upcoming activities, register a team or as a free agent, and sign up for games throughout the semester. Once you have an account, you can join a sport in one of three ways.","numbers":["Create a team and invite team members to join.Join a specific existing teamList yourself as a free agent. You can make requests for specific teams or wait for team captains to reach out to you."]}]}],
+  "sub_details":[{"entries":[{"heading":"All Intramural Activities at Illinois are organized through an app called IM Leagues. IM Leagues allows users to see upcoming activities, register a team or as a free agent, and sign up for games throughout the semester. Once you have an account, you can join a sport in one of three ways.","numbers":["Create a team and invite team members to join.","Join a specific existing team","List yourself as a free agent. You can make requests for specific teams or wait for team captains to reach out to you."]}]}],
   "related":["participate.campus.rec","group.fitness","join.frat"]
 },{
   "_id":"join.intramural",
@@ -503,7 +503,7 @@
     {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
     {"text":"https://go.illinois.edu/SignUpForNutrition","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://go.illinois.edu/SignUpForNutrition"}],
   "buttons":[{"text":"Visit website","url":"https://go.illinois.edu/SignUpForNutrition"}],
-  "sub_details":[{"section":"Individual appointments ","entries":[{"heading":"Students can meet one-on-one with a Registered Dietitian to learn about by calling 217-333-2700 to schedule an appointment. "}]},{"entries":[{"heading":"Outreach programs","bullets":["Nutrition workshops are available upon request. You must submit your request at least 2 weeks in advance. Submit a request now.Visit McKinley Health’s nutrition webpage for more details and helpful nutrition handouts."]}]}],
+  "sub_details":[{"section":"Individual appointments ","entries":[{"heading":"Students can meet one-on-one with a Registered Dietitian to learn about by calling 217-333-2700 to schedule an appointment. "}]},{"entries":[{"heading":"Outreach programs","bullets":["Nutrition workshops are available upon request. You must submit your request at least 2 weeks in advance.","Submit a request now.","Visit McKinley Health’s nutrition webpage for more details and helpful nutrition handouts."]}]}],
   "related":["fresh.fruit","nutrition.campus.rec","meal.plan"]
 },{
   "_id":"nutrition.campus.rec",
@@ -1309,7 +1309,7 @@
     {"text":"217-244-1111","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-244-1111"},
     {"text":"https://housing.illinois.edu/technology","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://housing.illinois.edu/technology"}],
   "buttons":[{"text":"Visit website","url":"https://housing.illinois.edu/technology"}],
-  "sub_details":[{"section":"IllinoisNet ","entries":[{"heading":"All laptops, phones and tablets should be connected to IllinoisNet. Use your NetID and Active Directory (AD) password to login. "}]},{"section":"IllinoisNet_Guest","entries":[{"heading":"All gaming and streaming devices should be connected to IllinoisNet_Guest. Follow these instructions to connect:","numbers":["Login to the wireless guest portal.  Click \"Add Device\". You will need to enter the device's MAC/Physical address which can be found through the device's network settings. For casting devices check the \"enable AirGroup\" box when adding your device and enter your NetID.Now connect the device to the IllinoisNet_Guest network and continue with your setup."]}]},{"entries":[{"heading":"Read more detailed instructions on connecting to both IllinoisNet and IllinoisNet_Guest.To get help with an issue over the phone, call 217-244-1111, between 7p.m. and 10 p.m."}]}],
+  "sub_details":[{"section":"IllinoisNet ","entries":[{"heading":"All laptops, phones and tablets should be connected to IllinoisNet. Use your NetID and Active Directory (AD) password to login. "}]},{"section":"IllinoisNet_Guest","entries":[{"heading":"All gaming and streaming devices should be connected to IllinoisNet_Guest. Follow these instructions to connect:","numbers":["Login to the wireless guest portal.","Click \"Add Device\".","You will need to enter the device's MAC/Physical address which can be found through the device's network settings. For casting devices check the \"enable AirGroup\" box when adding your device and enter your NetID.","Now connect the device to the IllinoisNet_Guest network and continue with your setup."]}]},{"entries":[{"heading":"Read more detailed instructions on connecting to both IllinoisNet and IllinoisNet_Guest.To get help with an issue over the phone, call 217-244-1111, between 7p.m. and 10 p.m."}]}],
   "related":["tech.services","online.storage","myhousing"]
 },{
   "_id":"internet",
@@ -1341,7 +1341,7 @@
     {"text":"https://bookstore.illinois.edu/sell_main.asp?","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://bookstore.illinois.edu/sell_main.asp?"},
     {"text":"809 S. Wright Street\nChampaign, IL 61820","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10839827077861,"longitude":-88.22920894572619},"title":"809 S. Wright Street"}}],
   "buttons":[{"text":"Visit website","url":"https://bookstore.illinois.edu/sell_main.asp?"}],
-  "sub_details":[{"entries":[{"numbers":["Find your book’s ISBN number and check the buyback price.Provide an address to receive your check.Print the prepaid shipping label and send the book via UPS."]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
+  "sub_details":[{"entries":[{"numbers":["Find your book’s ISBN number and check the buyback price.","Provide an address to receive your check.","Print the prepaid shipping label and send the book via UPS."]}]},{"entries":[{"heading":"Visit the website for more information."}]}],
   "related":["bookstore","webstore","tech.zone"]
 },{
   "_id":"tech.services.content",

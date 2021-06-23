@@ -451,7 +451,7 @@ class StudentGuide with Service implements NotificationsListener {
       }
 
       List<dynamic> numbers = <dynamic>[];
-      String sectionNumbersString = AppJson.stringValue(sourceEntry['sub_details_section${index}_numbers'])?.replaceAll('\n', '');
+      String sectionNumbersString = AppJson.stringValue(sourceEntry['sub_details_section${index}_numbers']);
       if (sectionNumbersString != null) {
         List<String> sectionNumers = sectionNumbersString.split(RegExp('[;\n]'));
         if (sectionNumers.length < 2) {
@@ -469,7 +469,7 @@ class StudentGuide with Service implements NotificationsListener {
       }
 
       List<dynamic> bullets = <dynamic>[];
-      String sectionBulletsString = AppJson.stringValue(sourceEntry['sub_details_section${index}_bullets'])?.replaceAll('\n', '');
+      String sectionBulletsString = AppJson.stringValue(sourceEntry['sub_details_section${index}_bullets']);
       if (sectionBulletsString != null) {
         List<String> sectionBullets = sectionBulletsString.split(RegExp('[;\n]'));
         if (sectionBullets.length < 2) {
