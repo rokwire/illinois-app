@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Accessibility for Student Guide [#320](https://github.com/rokwire/illinois-app/issues/320) 
 ### Changed 
 - Updated students.guide.json from Illinois_Student_Guide_Final.xlsx [#332](https://github.com/rokwire/illinois-app/issues/332).
+- Updated Student Guide UI according to Figma review [#335](https://github.com/rokwire/illinois-app/issues/335).
 
 ## [2.4.28] - 2021-06-22
 ### Fixed 
