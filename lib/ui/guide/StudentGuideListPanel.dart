@@ -150,7 +150,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       if (_guideItems != null) {
         for (Map<String, dynamic> guideEntry in _guideItems) {
           cardsList.add(
-            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
               StudentGuideEntryCard(guideEntry)
             )
           );
@@ -160,9 +160,11 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       contentList.add(
         Expanded(child:
           SingleChildScrollView(child:
-            SafeArea(child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-                cardsList
+            Padding(padding: EdgeInsets.only(bottom: 16), child:
+              SafeArea(child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                  cardsList
+                ),
               ),
             ),
           ),
@@ -232,9 +234,14 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         colWidgets.add(Row(children: rowWidgets));
       }
 
-      return Padding(padding: EdgeInsets.all(16), child:
-        Column(children: colWidgets,),
+      return Container(height: (32 * 2 + (12 * 3 + 50 + 16)).toDouble(), child:
+        SingleChildScrollView(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32), child:
+            Column(children: colWidgets,),
+          )
+        ),
       );
+
     }
 
     return null;
@@ -442,9 +449,10 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
           Semantics(button: true, child:
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(padding: EdgeInsets.only(right: 12), child:
                 Html(data: titleHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
                 Container(height: 8,),
                 Html(data: descriptionHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),

@@ -87,7 +87,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
                     : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
-                  Container(padding: EdgeInsets.all(16), child: 
+                  Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child: 
                     Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
                   )
             ),),),),
@@ -134,7 +134,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     String category = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
-        Semantics(hint:"Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold),)),
+        Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)),
     ),);
 
     String titleHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'title'));
@@ -143,7 +143,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
           Html(data: titleHtml,
             onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: FontSize(36), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       ),);
     }
     
@@ -172,10 +172,10 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
               GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    (icon != null) ? Image.network(icon, width: 24, height: 24, excludeFromSemantics: true,) : Container(width: 24, height: 24),
+                    (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
-                      Padding(padding: EdgeInsets.only(left: 4), child:
-                        Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
+                      Padding(padding: EdgeInsets.only(left: 8), child:
+                        Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary))
                       ),
                     ),
                   ],)
@@ -185,7 +185,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       }
     }
 
-    return Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
+    return Container(color: Styles().colors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -255,7 +255,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
               Padding(padding: EdgeInsets.only(top: 16), child:
                 Html(data: sectionHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.semiBold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                  style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
             ),),);
           }
 
@@ -332,7 +332,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           String url = AppJson.stringValue(button['url']);
           if ((text != null) && (url != null)) {
             buttonWidgets.add(
-              Padding(padding: EdgeInsets.only(top: 6), child:
+              Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text,
                   backgroundColor: Styles().colors.white,
                   textColor: Styles().colors.fillColorPrimary,
@@ -357,7 +357,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
     }
 
-    return Container(padding: EdgeInsets.all(16), child:
+    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32), child:
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
@@ -381,7 +381,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
         }
         if (guideEntry != null) {
           contentList.add(
-            Padding(padding: EdgeInsets.only(bottom: 8), child:
+            Padding(padding: EdgeInsets.only(bottom: 16), child:
               StudentGuideEntryCard(guideEntry)
           ),);
         }
