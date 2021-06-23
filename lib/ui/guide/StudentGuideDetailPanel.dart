@@ -175,7 +175,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
-                        Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline))
+                        Text(text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.regular, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary))
                       ),
                     ),
                   ],)
