@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Student Guide button icon and color in Browse panel [#338](https://github.com/rokwire/illinois-app/issues/338).
 - Validate link url/location in Student Guide Detail [#340](https://github.com/rokwire/illinois-app/issues/340).
 - Refresh Guide content when entering Student Guide [#342](https://github.com/rokwire/illinois-app/issues/342).
+- Button title for creating group [#346](https://github.com/rokwire/illinois-app/issues/346).
 
 ## [2.4.29] - 2021-06-23
 ### Fixed
