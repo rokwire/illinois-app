@@ -57,7 +57,9 @@ class CreateEventPanel extends StatefulWidget {
 
 class _CreateEventPanelState extends State<CreateEventPanel> {
   static const String defaultEventTimeZone = "US/Central";
+  static const String defaulPrivacy = "PUBLIC";
   final List<dynamic> _eventTimeZones = ["US/Pacific", "US/Mountain", "US/Central", "US/Eastern"];
+  final List<dynamic> _privacyTypes = ["PUBLIC", "PRIVATE"];
 
   final double _imageHeight = 208;
 
@@ -73,6 +75,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _allDay = false;
   Location _location;
   bool _isOnline = false;
+  bool _isFree = false;
+  String _selectedPrivacy = defaulPrivacy;
   //TMP: bool _isAttendanceRequired = false;
 
   bool _loading = false;
@@ -85,6 +89,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   final _eventLatitudeController = TextEditingController();
   final _eventLongitudeController = TextEditingController();
   final _eventCallUrlController = TextEditingController();
+  final _eventPriceController = TextEditingController();
 
   @override
   void initState() {
@@ -103,6 +108,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     _eventLatitudeController.dispose();
     _eventLocationController.dispose();
     _eventLongitudeController.dispose();
+    _eventPriceController.dispose();
     super.dispose();
   }
 
@@ -513,50 +519,53 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 ])),
                         Container(height: 6,),
                         _buildLocationSection(),
+                        _buildPriceSection(),
+                        _buildPrivacyDropdown(),
                         Container(
                           color: Styles().colors.background,
                           child: Padding(
                             padding: EdgeInsets.only(
-                                left: 24, right: 24, top: 25, bottom: 32),
+                                left: 16, right: 16, top: 2, bottom: 2),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Semantics(label:Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
-                                    header: true, excludeSemantics: true, child:
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 24),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Image.asset(
-                                              'images/icon-campus-tools.png'),
-                                          Expanded(child:
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 3),
-                                              child: Text(
-                                                Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
-                                                style: TextStyle(
-                                                    color: Styles().colors.fillColorPrimary,
-                                                    fontSize: 16,
-                                                    fontFamily: Styles().fontFamilies.bold),
-                                              ),
-                                            )
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                ),
-                                (GroupPrivacy.public == widget.group?.privacy)?
+//                                Semantics(label:Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
+//                                    header: true, excludeSemantics: true, child:
+//                                    Padding(
+//                                      padding: EdgeInsets.only(bottom: 24),
+//                                      child: Row(
+//                                        children: <Widget>[
+//                                          Image.asset(
+//                                              'images/icon-campus-tools.png'),
+//                                          Expanded(child:
+//                                            Padding(
+//                                              padding: EdgeInsets.only(left: 3),
+//                                              child: Text(
+//                                                Localization().getStringEx("panel.create_event.additional_info.title","Additional event information"),
+//                                                style: TextStyle(
+//                                                    color: Styles().colors.fillColorPrimary,
+//                                                    fontSize: 16,
+//                                                    fontFamily: Styles().fontFamilies.bold),
+//                                              ),
+//                                            )
+//                                          )
+//                                        ],
+//                                      ),
+//                                    )
+//                                ),
                                   Container(
-                                    padding: EdgeInsets.only(top: 20),
+                                    padding: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      Localization().getStringEx("panel.create_event.additional_info.group.description","This event will only show up on your group's page."),
+                                      _isPrivateEvent? //TBD localozation
+                                      Localization().getStringEx("panel.create_event.additional_info.group.description.private","This event will only show up on your group's page."):
+                                      Localization().getStringEx("panel.create_event.additional_info.group.description.public","This event will show up on your group's page and also on the event's page."),
                                       style: TextStyle(
                                           color: Styles().colors.textSurface,
                                           fontSize: 16,
                                           fontFamily: Styles().fontFamilies.regular,
                                       ),
                                     ),
-                                  ) : Container()
+                                  )
                               ],
                             ),
                           ),
@@ -1340,6 +1349,195 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     ],),);
   }
 
+  Widget _buildPriceSection(){
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(children: [
+        Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),//TBD localize
+            hint: Localization().getStringEx("panel.create_event.button.free.hint",""), toggled: true, excludeSemantics: true, child:
+            ToggleRibbonButton(
+              height: null,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              label: Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
+              toggled: _isFree,
+              onTap: _onFreeToggled,
+              context: context,
+              border: Border.all(color: Styles().colors.fillColorPrimary),
+              borderRadius:
+              BorderRadius.all(Radius.circular(4)),
+            )),
+        Container(height: 6,),
+        _isFree? Container():
+        Row(
+          mainAxisAlignment:
+          MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              flex: 3,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    Localization().getStringEx("panel.create_event.price.label.title","Price"),
+                    style: TextStyle(
+                        color: Styles().colors.fillColorPrimary,
+                        fontSize: 14,
+                        fontFamily:
+                        Styles().fontFamilies.bold,
+                        letterSpacing: 1),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 2, right: 2),
+                    child: Text(
+                      '*',
+                      style: TextStyle(
+                          color: Styles().colors.fillColorSecondary,
+                          fontSize: 14,
+                          fontFamily:
+                          Styles().fontFamilies.bold),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              width: 16,
+            ),
+            Expanded(
+              flex: 7,
+              child: Semantics(label:Localization().getStringEx("panel.create_event.price.field.title",'Price'),
+                  hint: Localization().getStringEx("panel.create_event.location.lat.title.hint",''), textField: true, excludeSemantics: true, child:
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: Container(
+                      padding:
+                      EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Styles().colors.fillColorPrimary,
+                              width: 1),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(4))),
+                      height: 48,
+                      child: TextField(
+                        controller: _eventPriceController,
+                        decoration: InputDecoration(
+                            border: InputBorder.none),
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                        style: TextStyle(
+                            color: Styles().colors.fillColorPrimary,
+                            fontSize: 20,
+                            fontFamily: Styles().fontFamilies.medium),
+                      ),
+                    ),
+                  )
+              )
+            )
+          ]
+        )
+      ],)
+    );
+  }
+
+  Widget _buildPrivacyDropdown(){
+    return Container(
+        color: Styles().colors.background,
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+                mainAxisAlignment:
+                MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    flex: 3,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Expanded(child:
+                        Text(
+                          Localization().getStringEx("panel.create_event.privacy.title","VISIBILITY"),
+                          style: TextStyle(
+                              color: Styles().colors.fillColorPrimary,
+                              fontSize: 14,
+                              fontFamily:
+                              Styles().fontFamilies.bold,
+                              letterSpacing: 1),
+                        )),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 2, right: 2),
+                          child: Text(
+                            '*',
+                            style: TextStyle(
+                                color: Styles().colors.fillColorSecondary,
+                                fontSize: 14,
+                                fontFamily:
+                                Styles().fontFamilies.bold),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 16,
+                  ),
+                  Expanded(
+                    flex: 7,
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: Styles().colors.fillColorPrimary,
+                                width: 1),
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(4))),
+                        child: Padding(
+                          padding:
+                          EdgeInsets.only(left: 12, right: 8),
+                          child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                  icon: Image.asset(
+                                      'images/icon-down-orange.png'),
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                      color: Styles().colors.mediumGray,
+                                      fontSize: 16,
+                                      fontFamily:
+                                      Styles().fontFamilies.regular),
+                                  hint: Text(
+                                    (_selectedPrivacy) ?? Localization().getStringEx("panel.create_event.privacy.default","Privacy"),
+                                  ),
+                                  items: _privacyTypes.map((dynamic type) {
+                                    return DropdownMenuItem<dynamic>(
+                                      value: type,
+                                      child: Text(
+                                        type,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: _onPrivacyDropDownValueChanged
+                              )),
+                        ),
+                      ),
+                    ),
+                  )
+                ]
+            )
+        )
+    );
+  }
+
   /* TMP: Widget _buildAttendanceSwitch(){
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -1434,6 +1632,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     });
   }
 
+  void _onPrivacyDropDownValueChanged(dynamic value) {
+    Analytics.instance.logSelect(target: "Privacy selected: $value");
+    setState(() {
+      _selectedPrivacy = value;
+    });
+  }
+
+
+
   void _onTapAddImage() async {
     Analytics.instance.logSelect(target: "Add Image");
     _imageUrl = await showDialog(
@@ -1452,6 +1659,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onOnlineToggled() {
     _isOnline = !_isOnline;
+    setState(() {});
+  }
+
+  void _onFreeToggled() {
+    _isFree = !_isFree;
     setState(() {});
   }
 
@@ -1504,7 +1716,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if(_location?.latitude!=null){
         _eventLatitudeController?.text = _location?.latitude?.toString();
       }
-
 
       if(_location?.longitude!=null){
         _eventLongitudeController?.text = _location?.longitude?.toString();
@@ -1613,9 +1824,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
     event.recurringFlag = false;//decide do we need it
+    event.cost = _eventPriceController?.text?.toString();//decide do we need it
+    event.isGroupPrivate = _isPrivateEvent;
     if(widget.group!=null) {
       event.createdByGroupId = widget.group.id;
-      event.isGroupPrivate = widget.group.privacy!=null ? widget.group.privacy == GroupPrivacy.private : false;
     }
     //TBD populate Attendance required value
 
@@ -1762,6 +1974,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   bool get _isGroupEvent{
     return widget.group!=null;
+  }
+
+  bool get _isPrivateEvent{
+   return _selectedPrivacy == "PRIVATE";
   }
 }
 
