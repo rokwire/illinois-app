@@ -180,6 +180,10 @@ class StudentGuide with Service implements NotificationsListener {
     return _contentSource;
   }
 
+  Future<void> refresh() async {
+    await _updateContentFromNet();
+  }
+
   Map<String, dynamic> entryById(String id) {
     return (_contentMap != null) ? _contentMap[id] : null;
   }

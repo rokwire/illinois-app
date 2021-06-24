@@ -31,6 +31,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       StudentGuide.notifyChanged,
     ]);
     _buildCategories();
+    StudentGuide().refresh();
   }
 
   @override
