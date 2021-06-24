@@ -255,7 +255,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
         hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-        icon: 'images/icon-team.png',
+        icon: 'images/icon-browse-gropus.png',
         color: Styles().colors.accentColor2,
         onTap: () => _navigateGroups(),
       );
@@ -264,7 +264,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
         hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
-        icon: 'images/safer-illinois-logo.png',
+        icon: 'images/icon-browse-safer.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
       );
