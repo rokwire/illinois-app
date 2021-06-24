@@ -1060,7 +1060,7 @@
     "panel.create_event.additional_info.description.title":"DESCRIPTION",
     "panel.create_event.additional_info.event.description":"Tell the campus what your event is about.",
     "panel.create_event.additional_info.event.description.hint":"Type something",
-    "panel.create_event.additional_info.purchase_tickets.title":"ADD LINK TO PURCHASE TICKETS",
+    "panel.create_event.additional_info.purchase_tickets.title":"ADD LINK FOR REGISTRATION",
     "panel.create_event.additional_info.button.confirm.title":"Confirm URL",
     "panel.create_event.additional_info.website.title":"ADD EVENT WEBSITE LINK",
     "panel.create_event.additional_info.button.cancel.title":"Cancel",

@@ -1061,7 +1061,7 @@
     "panel.create_event.additional_info.description.title":"DESCRIPCIÓN",
     "panel.create_event.additional_info.event.description":"Cuéntale al campus de qué se trata tu evento",
     "panel.create_event.additional_info.event.description.hint":"Escriba algo",
-    "panel.create_event.additional_info.purchase_tickets.title":"AGREGAR ENLACE A LOS BOLETOS DE COMPRA",
+    "panel.create_event.additional_info.purchase_tickets.title":"ADD LINK FOR REGISTRATION",
     "panel.create_event.additional_info.button.confirm.title":"Confirmar URL",
     "panel.create_event.additional_info.website.title":"AGREGAR ENLACE DEL SITIO WEB DEL EVENTO",
     "panel.create_event.additional_info.button.cancel.title":"Cancelar",
