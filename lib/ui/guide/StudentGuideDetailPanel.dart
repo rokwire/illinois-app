@@ -162,14 +162,20 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     if (links != null) {
       for (dynamic link in links) {
         if (link is Map) {
-          String url = AppJson.stringValue(link['url']);
           String text = AppJson.stringValue(link['text']);
           String icon = AppJson.stringValue(link['icon']);
+          String url = AppJson.stringValue(link['url']);
+          Uri uri = (url != null) ? Uri.tryParse(url) : null;
+          bool hasUri = AppString.isStringNotEmpty(uri?.scheme);
+
           Map<String, dynamic> location = AppJson.mapValue(link['location']);
-          if ((text != null) && ((url != null) || (location != null))) {
+          Map<String, dynamic> locationGps = (location != null) ? AppJson.mapValue(location['location']) : null;
+          bool hasLocation = (locationGps != null) && (locationGps['latitude'] != null) && (locationGps['longitude'] != null);
+
+          if ((text != null) && (hasUri || hasLocation)) {
 
             contentList.add(Semantics(button: true, child:
-              GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
+              GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
@@ -185,18 +191,21 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       }
     }
 
-    return Container(color: Styles().colors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-      Row(children: [
-        Expanded(child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
-        ),
-      ],)
-    );
+    return (0 < contentList.length) ? 
+      Container(color: Styles().colors.white, padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
+        Row(children: [
+          Expanded(child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
+          ),
+        ],)
+      ) :
+      Container();
   }
 
   Widget _buildImage() {
     String imageUrl = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'image'));
-    if (AppString.isStringNotEmpty(imageUrl)) {
+    Uri imageUri = (imageUrl != null) ? Uri.tryParse(imageUrl) : null;
+    if (AppString.isStringNotEmpty(imageUri?.scheme)) {
       return Stack(alignment: Alignment.bottomCenter, children: [
         Container(color: Styles().colors.white, padding: EdgeInsets.all(16), child:
           Row(children: [
@@ -250,7 +259,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       for (dynamic subDetail in subDetails) {
         if (subDetail is Map) {
           String sectionHtml = AppJson.stringValue(subDetail['section']);
-          if (sectionHtml != null) {
+          if (AppString.isStringNotEmpty(sectionHtml)) {
             contentList.add(
               Padding(padding: EdgeInsets.only(top: 16), child:
                 Html(data: sectionHtml,
@@ -264,7 +273,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
             for (dynamic entry in entries) {
               if (entry is Map) {
                 String headingHtml = AppJson.stringValue(entry['heading']);
-                if (headingHtml != null) {
+                if (AppString.isStringNotEmpty(headingHtml)) {
                   contentList.add(
                     Padding(padding: EdgeInsets.only(top: 12, bottom: 8), child:
                       Html(data: headingHtml,
@@ -277,7 +286,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
                 if (numbers != null) {
                   for (int numberIndex = 0; numberIndex < numbers.length; numberIndex++) {
                     dynamic numberHtml = numbers[numberIndex];
-                    if (numberHtml is String) {
+                    if ((numberHtml is String) && (0 < numberHtml.length)) {
                       contentList.add(
                         Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -298,7 +307,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
                 List<dynamic> bullets = AppJson.listValue(entry['bullets']);
                 if (bullets != null) {
                   for (dynamic bulletHtml in bullets) {
-                    if (bulletHtml is String) {
+                    if ((bulletHtml is String) && (0 < bulletHtml.length)) {
                       contentList.add(
                         Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -330,7 +339,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
         if (button is Map) {
           String text = AppJson.stringValue(button['text']);
           String url = AppJson.stringValue(button['url']);
-          if ((text != null) && (url != null)) {
+          Uri uri = (url != null) ? Uri.tryParse(url) : null;
+
+          if (AppString.isStringNotEmpty(text) && AppString.isStringNotEmpty(uri?.scheme)) {
             buttonWidgets.add(
               Padding(padding: EdgeInsets.only(top: 16), child:
                 RoundedButton(label: text,
@@ -357,13 +368,15 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
     }
 
-    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32), child:
-      Row(children: [
-        Expanded(child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
-        ),
-      ],)
-    );
+    return ((contentList != null) && (0 < contentList.length)) ?
+      Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32), child:
+        Row(children: [
+          Expanded(child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList),
+          ),
+        ],)
+      ) :
+      Container();
   }
 
   Widget _buildRelated() {
@@ -415,6 +428,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
   void _onTapLocation(Map<String, dynamic> location) {
     NativeCommunicator().launchMapDirections(jsonData: location);
+  }
+
+  void _nop() {
   }
 
 }

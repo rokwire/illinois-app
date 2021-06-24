@@ -193,7 +193,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(section, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(section ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
             )
           ),
         )
@@ -435,8 +435,8 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
 
   @override
   Widget build(BuildContext context) {
-    String titleHtml = StudentGuide().entryListTitle(widget.guideEntry) ?? '';
-    String descriptionHtml = StudentGuide().entryListDescription(widget.guideEntry) ?? '';
+    String titleHtml = StudentGuide().entryListTitle(widget.guideEntry);
+    String descriptionHtml = StudentGuide().entryListDescription(widget.guideEntry);
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -450,11 +450,11 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
             Padding(padding: EdgeInsets.all(16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Padding(padding: EdgeInsets.only(right: 12), child:
-                Html(data: titleHtml,
+                Html(data: titleHtml ?? '',
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
                   style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
                 Container(height: 8,),
-                Html(data: descriptionHtml,
+                Html(data: descriptionHtml ?? '',
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
                   style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
               ],),
