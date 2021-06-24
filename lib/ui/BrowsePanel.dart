@@ -255,7 +255,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
         hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-        icon: 'images/icon-team.png',
+        icon: 'images/icon-browse-gropus.png',
         color: Styles().colors.accentColor2,
         onTap: () => _navigateGroups(),
       );
@@ -264,7 +264,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
         hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
-        icon: 'images/safer-illinois-logo.png',
+        icon: 'images/icon-browse-safer.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
       );
@@ -273,8 +273,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Student Guide'),
         hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
-        icon: 'images/icon-browse-quick-polls.png',
-        color: Styles().colors.accentColor2,
+        icon: 'images/icon-browse-student-guide.png',
+        color: Styles().colors.accentColor3,
         onTap: () => _navigateStudentGuide(),
       );
     }
@@ -756,7 +756,9 @@ class _GridSquareButton extends StatelessWidget {
                     color: textColor,
                     fontSize: 20,),
               ),),
-              Align(alignment: Alignment.bottomRight, child: Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply, ),),
+              Align(alignment: Alignment.bottomRight, child:
+                Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply),
+              ),
               
             ],),)
         )));
