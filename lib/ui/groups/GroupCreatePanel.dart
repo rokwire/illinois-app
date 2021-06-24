@@ -480,7 +480,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.create.title", "Request Group Approval"),
+              label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               backgroundColor: Colors.white,
               borderColor: Styles().colors.fillColorSecondary,
               textColor: Styles().colors.fillColorPrimary,
