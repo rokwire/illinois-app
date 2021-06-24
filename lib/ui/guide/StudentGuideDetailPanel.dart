@@ -162,14 +162,20 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     if (links != null) {
       for (dynamic link in links) {
         if (link is Map) {
-          String url = AppJson.stringValue(link['url']);
           String text = AppJson.stringValue(link['text']);
           String icon = AppJson.stringValue(link['icon']);
+          String url = AppJson.stringValue(link['url']);
+          Uri uri = (url != null) ? Uri.tryParse(url) : null;
+          bool hasUri = AppString.isStringNotEmpty(uri?.scheme);
+
           Map<String, dynamic> location = AppJson.mapValue(link['location']);
-          if ((text != null) && ((url != null) || (location != null))) {
+          Map<String, dynamic> locationGps = (location != null) ? AppJson.mapValue(location['location']) : null;
+          bool hasLocation = (locationGps != null) && (locationGps['latitude'] != null) && (locationGps['longitude'] != null);
+
+          if ((text != null) && (hasUri || hasLocation)) {
 
             contentList.add(Semantics(button: true, child:
-              GestureDetector(onTap: () => (url != null) ? _onTapLink(url) : _onTapLocation(location), child:
+              GestureDetector(onTap: () => hasUri ? _onTapLink(url) : (hasLocation ? _onTapLocation(location) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
@@ -415,6 +421,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
   void _onTapLocation(Map<String, dynamic> location) {
     NativeCommunicator().launchMapDirections(jsonData: location);
+  }
+
+  void _nop() {
   }
 
 }
