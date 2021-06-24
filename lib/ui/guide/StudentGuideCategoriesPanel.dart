@@ -61,7 +61,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
         if (guideEntry != null) {
           String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
           String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
-          if ((category != null) && (section != null)) {
+          if (AppString.isStringNotEmpty(category) && AppString.isStringNotEmpty(section)) {
             LinkedHashSet<String> categorySections = categoriesMap[category];
             if (categorySections == null) {
               categoriesMap[category] = categorySections = LinkedHashSet<String>();
