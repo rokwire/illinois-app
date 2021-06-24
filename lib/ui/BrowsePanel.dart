@@ -273,8 +273,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Student Guide'),
         hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
-        icon: 'images/icon-browse-quick-polls.png',
-        color: Styles().colors.accentColor2,
+        icon: 'images/icon-browse-student-guide.png',
+        color: Styles().colors.accentColor3,
         onTap: () => _navigateStudentGuide(),
       );
     }
@@ -756,7 +756,9 @@ class _GridSquareButton extends StatelessWidget {
                     color: textColor,
                     fontSize: 20,),
               ),),
-              Align(alignment: Alignment.bottomRight, child: Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply, ),),
+              Align(alignment: Alignment.bottomRight, child:
+                Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply),
+              ),
               
             ],),)
         )));
