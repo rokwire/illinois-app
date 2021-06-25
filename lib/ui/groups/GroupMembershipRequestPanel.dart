@@ -103,16 +103,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   }
 
   Widget _buildHeading() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
-      children:<Widget>[
-        Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
-          Text(Localization().getStringEx("panel.membership_request.label.answer_questions", 'Answer questions'), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
-        ],),
-        Padding(padding: EdgeInsets.only(top: 8), child:
-          Text(Localization().getStringEx("panel.membership_request.label.description", 'Only admins of the group will see your answers.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949))),
-        ),
-      ]);
+    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.'), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Color(0xff494949)));
   }
 
   List<Widget> _buildQuestions() {
