@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.4.31] - 2021-06-25
 ### Added 
 - Added Privacy Center button in Browse panel [#349](https://github.com/rokwire/illinois-app/issues/349).
 ### Fixed
