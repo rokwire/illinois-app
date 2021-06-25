@@ -173,6 +173,7 @@
     "panel.browse.button.student_guide.title":"Student Guide",
     "panel.browse.button.student_guide.hint":"",
     "panel.browse.button.privacy_center.title": "Privacy Center",
+    "panel.browse.button.privacy_center.hint":"",
     
     "panel.browse.label.browse_all": "Browse all",
     "panel.browse.label.offline.sign_in": "Sign In not available while offline.",

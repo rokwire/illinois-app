@@ -278,6 +278,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateStudentGuide(),
       );
     }
+    else if (code == 'privacy_center') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.privacy_center.title', 'Privacy Center'),
+        hint: Localization().getStringEx('panel.browse.button.privacy_center.hint', ''),
+        icon: 'images/icon-browse-privacy-center.png',
+        color: Styles().colors.accentColor4,
+        onTap: () => _navigatePrivacyCenter(),
+      );
+    }
     else {
       return null;
     }
@@ -430,10 +439,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   //It has totally different design. Refactor if needed
   Widget _buildPrivacyCenterButton(){
     return GestureDetector(
-        onTap: (){
-          Analytics.instance.logSelect(target: "Privacy Center");
-          Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
-        },
+        onTap: () => _navigatePrivacyCenter(),
         child: Semantics(
             button: true,
             child:Container(
@@ -441,7 +447,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
               child:Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 decoration: BoxDecoration(
-                    color: UiColors.fromHex("9318bb"),
+                    color: Styles().colors.accentColor4,
                     //border: Border.all(color: Colors.grey, width: 1),
                     borderRadius: BorderRadius.circular(6),
                     boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
@@ -459,7 +465,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
                               fontFamily: Styles().fontFamilies.bold),
                         ),
                       ),
-                      Image.asset("images/group-8.png", excludeFromSemantics: true,),
+                      Image.asset("images/group-8.png", color: Styles().colors.accentColor4, colorBlendMode:BlendMode.multiply, excludeFromSemantics: true,),
                   ],),
                 ),
     )));
@@ -579,6 +585,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateStudentGuide() {
     Analytics.instance.logSelect(target: "Student Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+  }
+
+  void _navigatePrivacyCenter() {
+    Analytics.instance.logSelect(target: "Privacy Center");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
   void _onFeedbackTap() {
