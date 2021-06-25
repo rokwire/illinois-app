@@ -899,7 +899,29 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onMembershipRequest() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+    if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+    } else {
+      _requestMembership();
+    }
+  }
+
+  void _requestMembership() {
+    if (mounted) {
+      setState(() {
+        _loading = true;
+      });
+      Groups().requestMembership(_group, null).then((succeeded) {
+        if (mounted) {
+          setState(() {
+            _loading = false;
+          });
+        }
+        if (!succeeded) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.alert.request_failed.msg", 'Failed to send request.'));
+        }
+      });
+    }
   }
 
   void _onCancelMembershipRequest(){

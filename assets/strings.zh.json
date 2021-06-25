@@ -1486,6 +1486,7 @@
 	"panel.group_detail.button.edit_event.title": "Edit Event",
 	"panel.group_detail.button.remove.title": "Remove",
 	"panel.group_detail.button.delete.title": "Delete",
+	"panel.group_detail.alert.request_failed.msg": "Failed to send request.",
 
 	"panel.find_event.filter.tags.all": "All Tags",
 	"panel.find_event.filter.tags.my": "My Tags",
