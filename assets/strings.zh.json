@@ -1616,7 +1616,7 @@
 	"panel.groups_settings.privacy.hint.default": "Select privacy setting..",
 	"panel.groups_settings.privacy.hint": "Double tap to show privacy oprions",
 	"panel.groups_settings.privacy.description": "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group.",
-	"panel.groups_create.tags.label.question": "Questions",
+	"panel.groups_settings.tags.label.question": "Question(s)",
 	"panel.groups_settings.membership.button.question.description.default": "No question",
 	"panel.groups_settings.membership.title": "Membership",
 	"panel.groups_settings.membership.button.question.title": "Membership Questions",

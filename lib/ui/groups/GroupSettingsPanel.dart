@@ -612,7 +612,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      (questionsCount.toString() + Localization().getStringEx("panel.groups_create.tags.label.question","Questions")) :
+      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
