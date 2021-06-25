@@ -42,6 +42,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as timezone;
 
 
 class CreateEventPanel extends StatefulWidget {
@@ -1367,50 +1368,34 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               borderRadius:
               BorderRadius.all(Radius.circular(4)),
             )),
-        Container(height: 6,),
-        _isFree? Container():
-        Row(
+        Container(height: 8,),
+//        _isFree? Container():
+        Column(
           mainAxisAlignment:
           MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Row(
+            Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(
-                    Localization().getStringEx("panel.create_event.price.label.title","Price"),
+                  Expanded(
+                  child: Text(
+                    Localization().getStringEx("panel.create_event.price.label.title","Cost Description (eg: \$10, Donation suggested)"),//TBD localization
                     style: TextStyle(
                         color: Styles().colors.fillColorPrimary,
                         fontSize: 14,
                         fontFamily:
                         Styles().fontFamilies.bold,
                         letterSpacing: 1),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 2, right: 2),
-                    child: Text(
-                      '*',
-                      style: TextStyle(
-                          color: Styles().colors.fillColorSecondary,
-                          fontSize: 14,
-                          fontFamily:
-                          Styles().fontFamilies.bold),
-                    ),
-                  )
+                  ))
                 ],
               ),
-            ),
             Container(
               width: 16,
             ),
-            Expanded(
-              flex: 7,
-              child: Semantics(label:Localization().getStringEx("panel.create_event.price.field.title",'Price'),
+            Semantics(label:Localization().getStringEx("panel.create_event.price.field.title",'Price'),
                   hint: Localization().getStringEx("panel.create_event.location.lat.title.hint",''), textField: true, excludeSemantics: true, child:
                   Padding(
                     padding: EdgeInsets.only(bottom: 16),
@@ -1438,7 +1423,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                     ),
                   )
               )
-            )
           ]
         )
       ],)
@@ -1639,8 +1623,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     });
   }
 
-
-
   void _onTapAddImage() async {
     Analytics.instance.logSelect(target: "Add Image");
     _imageUrl = await showDialog(
@@ -1813,10 +1795,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
     event.title = _eventTitleController.text;
-    event.startDateString = AppDateTime().formatDateTime(
-        startDate, format: AppDateTime.eventsServerCreateDateTimeFormat);
-    event.endDateString = AppDateTime().formatDateTime(
-        endDate, format: AppDateTime.eventsServerCreateDateTimeFormat);
+    if(startDate!=null) {
+      timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(startDate, timezone.getLocation(_selectedTimeZone));
+      DateTime utcTTime = startTime?.toUtc();
+      event.startDateString = AppDateTime().formatDateTime(
+          utcTTime, format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+
+    }
+    if(endDate!=null) {
+      timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(endDate, timezone.getLocation(_selectedTimeZone));
+      DateTime utcTTime = startTime?.toUtc();
+      event.endDateString = AppDateTime().formatDateTime(
+          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+    }
     event.allDay = _allDay;
     event.location = _location;
     event.longDescription = _eventDescriptionController.text;

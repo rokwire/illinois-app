@@ -256,7 +256,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
                           decoration: underlineLocationDecoration,
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
-                            value,
+                            value??"",
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies.medium,
                                 fontSize: 14,
@@ -300,7 +300,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
               Container(
                   padding: EdgeInsets.only(left: 28),
                   child: Row(children: [
-                    Expanded(child:Text(additionalDescription,
+                    Expanded(child:Text(additionalDescription??"",
                         style: TextStyle(
                             fontFamily: Styles().fontFamilies.medium,
                             fontSize: 16,
@@ -312,7 +312,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
           )
       );
     } else {
-      return null;
+      return Container();
     }
   }
 
