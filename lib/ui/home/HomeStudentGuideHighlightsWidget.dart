@@ -12,6 +12,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';

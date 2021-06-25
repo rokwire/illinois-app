@@ -11,7 +11,7 @@ import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
