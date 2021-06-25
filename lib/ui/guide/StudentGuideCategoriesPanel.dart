@@ -143,7 +143,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       Semantics(hint: "Heading", child:
         Row(children: [
           Expanded(child:
-            Text(category, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            Text(category, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.bold),)
           ),
           ],),
         )
