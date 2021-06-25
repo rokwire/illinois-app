@@ -75,7 +75,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
       appBar: SimpleHeaderBarWithBack(
         context: context,
         backIconRes: 'images/icon-circle-close.png',
-        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Request to join'),
+        titleWidget: Text(Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
