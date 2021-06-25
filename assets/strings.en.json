@@ -1618,7 +1618,7 @@
     "panel.groups_create.tags.label.question": "Questions",
     "panel.groups_settings.membership.button.question.description.default": "No question",
     "panel.groups_settings.membership.title": "Membership",
-    "panel.groups_settings.membership.button.question.title": "Membership question",
+    "panel.groups_settings.membership.button.question.title": "Membership Questions",
     "panel.groups_settings.button.update.title": "Update Settings",
     "panel.groups_create.tags.label.update_error": "Unable to update the group",
 

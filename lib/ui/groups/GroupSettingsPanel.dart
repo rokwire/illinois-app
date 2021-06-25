@@ -624,7 +624,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
           Container(height: 40,),
