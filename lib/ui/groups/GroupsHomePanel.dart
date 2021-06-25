@@ -97,7 +97,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
     Groups().loadGroups(myGroups: false).then((List<Group> groups){
       if(groups != null) {
-        _allGroups = groups;
+        _allGroups = _sortGroups(groups);
       }
     }).whenComplete((){
       setState(() {
@@ -112,8 +112,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
     Groups().loadGroups(myGroups: true).then((List<Group> groups){
       if(AppCollection.isCollectionNotEmpty(groups)) {
-        _myGroups = groups.where((group) => group.currentUserIsUserMember).toList();
-        _myPendingGroups = groups.where((group) => group.currentUserIsPendingMember).toList();
+        List<Group> sortedGroups = _sortGroups(groups);
+        _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+        _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
       }
       else{
         _myGroups = [];
@@ -150,6 +151,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     else if(force || _allGroups == null){
       _loadGroups();
     }
+  }
+
+  List<Group> _sortGroups(List<Group> groups) {
+    if (AppCollection.isCollectionEmpty(groups)) {
+      return groups;
+    }
+    groups.sort((group1, group2) {
+      int cmp = group1.category.compareTo(group2.category);
+      if (cmp != 0) {
+        return cmp;
+      } else {
+        return group1.title.compareTo(group2.title);
+      }
+    });
+    return groups;
   }
 
   @override
