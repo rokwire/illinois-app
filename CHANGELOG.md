@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added 
 - Added Privacy Center button in Browse panel [#349](https://github.com/rokwire/illinois-app/issues/349).
-### Changed 
+### Fixed
+- Fixes in Groups without 1.5 [#351](https://github.com/rokwire/illinois-app/issues/351).
+### Changed
 - Increase fonts for category headings and card titles in Student Guide content [#352](https://github.com/rokwire/illinois-app/issues/352).
 
 ## [2.4.30] - 2021-06-24

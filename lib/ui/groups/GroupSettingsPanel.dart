@@ -417,15 +417,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Tags
   Widget _buildTagsLayout(){
-    String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
+    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
+    String description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
+    String hint = Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSectionTitle(fieldTitle,
-              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
+            _buildInfoHeader(title, description),
             Row(
               children: [
                 Expanded(
@@ -435,8 +435,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
                     child: Semantics(
-                        label: fieldTitle,
-                        hint: fieldHint,
+                        label: title,
+                        hint: hint,
                         textField: true,
                         excludeSemantics: true,
                         child: TextField(
@@ -583,8 +583,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
                   constructDescription:
                       (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
-                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events and posts"),
+                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events") :
+                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events"),
                   constructTitle:
                       (item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.common.privacy_title.private", "Private") :
@@ -612,7 +612,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      (questionsCount.toString() + Localization().getStringEx("panel.groups_create.tags.label.question","Questions")) :
+      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
@@ -624,7 +624,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
           Container(height: 40,),
