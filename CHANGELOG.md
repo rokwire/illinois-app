@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixes in Groups without 1.5 [#351](https://github.com/rokwire/illinois-app/issues/351).
 ### Changed
 - Increase fonts for category headings and card titles in Student Guide content [#352](https://github.com/rokwire/illinois-app/issues/352).
+- improved styling for EventsCreatePanel [#345](https://github.com/rokwire/illinois-app/issues/345).
 
 ## [2.4.30] - 2021-06-24
 ### Changed 
