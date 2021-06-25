@@ -46,7 +46,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About }
+enum _DetailTab { Events, About, Leave }
 
 class GroupPanel extends StatefulWidget {
 
@@ -193,18 +193,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return Scaffold(
       appBar: AppBar(
         leading: HeaderBackButton(),
-        actions: [
-          Semantics(
-              label:  Localization().getStringEx("panel.group_detail.label.options", 'Options'),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                icon: Image.asset(
-                  'images/groups-more-inactive.png',
-                ),
-                onPressed:_onGroupOptionsTap,
-              ))
-        ],
       ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
@@ -460,13 +448,20 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildTabs() {
     List<Widget> tabs = [];
-    for (_DetailTab tab in _DetailTab.values) {
+    List<_DetailTab> visibleTabs = [_DetailTab.Events, _DetailTab.About];
+    bool canLeaveGroup = (_group?.currentUserIsMemberOrAdmin ?? false);
+    if (canLeaveGroup) {
+      visibleTabs.add(_DetailTab.Leave);
+    }
+    for (_DetailTab tab in visibleTabs) {
       String title;
       switch(tab) {
         case _DetailTab.Events: title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events'); break;
         case _DetailTab.About: title = Localization().getStringEx("panel.group_detail.button.about.title", 'About'); break;
+        case _DetailTab.Leave: title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'); break;
       }
       bool selected = (_currentTab == tab);
+      bool leaveTab = (tab == _DetailTab.Leave);
 
       if (0 < tabs.length) {
         tabs.add(Padding(padding: EdgeInsets.only(left: 8),child: Container(),));
@@ -475,12 +470,12 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       tabs.add(Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
         RoundedButton(label: title,
           backgroundColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.background,
-          textColor: selected ? Colors.white :  Styles().colors.fillColorPrimary,
-          fontFamily: selected ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
+          textColor: leaveTab ? Styles().colors.fillColorPrimary : (selected ? Colors.white : Styles().colors.fillColorPrimary),
+          fontFamily: (selected || leaveTab) ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
           fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16),
-          borderColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-          borderWidth: 1,
+          borderColor: leaveTab ? Styles().colors.fillColorSecondary : (selected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
+          borderWidth: leaveTab ? 2 : 1,
           height: 22 + 16*MediaQuery.of(context).textScaleFactor,
           onTap:() { _onTab(tab); }
         ),
@@ -844,41 +839,18 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
   }
 
-  void _onGroupOptionsTap(){
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        builder: (context){
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(height: 48,),
-                RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-leave-group.png",
-                  label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
-                  onTap: (){
-                    showDialog(context: context, builder: (context)=>_buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
-                  },
-                ),
-              ],
-            ),
-          );
-        }
-    );
+  void _onTab(_DetailTab tab) {
+    if (tab == _DetailTab.Leave) {
+      _onTapLeave();
+    } else {
+      setState(() {
+        _currentTab = tab;
+      });
+    }
   }
 
-  void _onTab(_DetailTab tab) {
-    setState(() {
-      _currentTab = tab;
-    });
+  void _onTapLeave() {
+    showDialog(context: context, builder: (context) => _buildLeaveGroupDialog(context));
   }
 
   void _onWebsite() {
@@ -899,7 +871,29 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onMembershipRequest() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+    if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+    } else {
+      _requestMembership();
+    }
+  }
+
+  void _requestMembership() {
+    if (mounted) {
+      setState(() {
+        _loading = true;
+      });
+      Groups().requestMembership(_group, null).then((succeeded) {
+        if (mounted) {
+          setState(() {
+            _loading = false;
+          });
+        }
+        if (!succeeded) {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.alert.request_failed.msg", 'Failed to send request.'));
+        }
+      });
+    }
   }
 
   void _onCancelMembershipRequest(){
