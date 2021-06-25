@@ -417,15 +417,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Tags
   Widget _buildTagsLayout(){
-    String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
+    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
+    String description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
+    String hint = Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSectionTitle(fieldTitle,
-              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
+            _buildInfoHeader(title, description),
             Row(
               children: [
                 Expanded(
@@ -435,8 +435,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
                     child: Semantics(
-                        label: fieldTitle,
-                        hint: fieldHint,
+                        label: title,
+                        hint: hint,
                         textField: true,
                         excludeSemantics: true,
                         child: TextField(
