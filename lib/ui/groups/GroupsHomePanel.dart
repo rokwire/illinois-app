@@ -604,17 +604,14 @@ class _GroupCard extends StatelessWidget{
     );
   }
 
-  Widget _buildHeading(){
-      return
-        group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin
-            ? _buildMember()
-            : Text(Localization().getStringEx("panel.groups_home.label.category", "CATEGORY"),
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies.bold,
-                      fontSize: 16,
-                      color: Styles().colors.fillColorPrimary
-                  ),
-            );
+  Widget _buildHeading() {
+    bool showMember = (group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin);
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+      Visibility(visible: showMember, child: _buildMember()),
+      Visibility(visible: showMember, child: Container(height: 6)),
+      Text(AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")),
+          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+    ]);
   }
 
   Widget _buildMember(){
