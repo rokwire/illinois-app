@@ -583,8 +583,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
                   constructDescription:
                       (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
-                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events and posts"),
+                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events") :
+                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events"),
                   constructTitle:
                       (item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.common.privacy_title.private", "Private") :
