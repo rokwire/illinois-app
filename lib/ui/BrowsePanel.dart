@@ -427,48 +427,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         padding: _ribbonButtonPadding,
         onTap: () => _onFeedbackTap(),
       );
-    } else if (code == "privacy_center"){
-      return _buildPrivacyCenterButton();
     }
     
     else {
       return null;
     }
-  }
-
-  //It has totally different design. Refactor if needed
-  Widget _buildPrivacyCenterButton(){
-    return GestureDetector(
-        onTap: () => _navigatePrivacyCenter(),
-        child: Semantics(
-            button: true,
-            child:Container(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 30),
-              child:Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                decoration: BoxDecoration(
-                    color: Styles().colors.accentColor4,
-                    //border: Border.all(color: Colors.grey, width: 1),
-                    borderRadius: BorderRadius.circular(6),
-                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
-                ),
-                child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(child:
-                        Text(
-                          Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: Styles().colors.white,
-                              fontSize: 20,
-                              fontFamily: Styles().fontFamilies.bold),
-                        ),
-                      ),
-                      Image.asset("images/group-8.png", color: Styles().colors.accentColor4, colorBlendMode:BlendMode.multiply, excludeFromSemantics: true,),
-                  ],),
-                ),
-    )));
   }
 
   void _navigateToExploreEvents() {
