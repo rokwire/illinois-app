@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.5.00] - 2021-06-28
 ### Added
-- New major version 2.5 - privacy center removed from browse content [#350](https://github.com/rokwire/illinois-app/issues/350).
+- New major version 2.5 - privacy center removed from browse content [#370](https://github.com/rokwire/illinois-app/issues/370).
+- Possibility for adding an image when creating group [#375](https://github.com/rokwire/illinois-app/issues/375).
 ### Fixed
 - Crashes in home panel [#373](https://github.com/rokwire/illinois-app/issues/373).
 
