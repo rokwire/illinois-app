@@ -173,7 +173,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
     Event event = widget.event;
     String displayTime = widget?.event?.displayDateTime;
     //Newly created groups pass time in the string
-    if(AppString.isStringEmpty(displayTime.trim())){
+    if(AppString.isStringEmpty(displayTime?.trim())){
       if(event?.startDateString !=null || event?.endDateString != null){
         DateTime startDate = AppDateTime().dateTimeFromString(event?.startDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
         DateTime endDate = AppDateTime().dateTimeFromString(event?.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);

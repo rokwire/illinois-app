@@ -491,7 +491,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     ),
                                   ),
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
-                                      hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
+                                      hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _allDay, excludeSemantics: true, child:
                                   ToggleRibbonButton(
                                     height: null,
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -505,7 +505,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   )),
                                   Container(height: 8,),
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.online","Make this an online event"),
-                                      hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: true, excludeSemantics: true, child:
+                                      hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _isOnline, excludeSemantics: true, child:
                                       ToggleRibbonButton(
                                         height: null,
                                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -860,7 +860,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   Widget _buildTimeZoneDropdown(){
-    return Container(
+    return
+      Semantics(container: true, child:
+      Container(
       child: Padding(
         padding: EdgeInsets.only(bottom: 0),
         child: Row(
@@ -890,6 +892,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         left: 2, right: 2),
                     child: Text(
                       '*',
+                      semanticsLabel: "",
                       style: TextStyle(
                           color: Styles().colors.fillColorSecondary,
                           fontSize: 14,
@@ -940,7 +943,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           ]
         )
       )
-    );
+    ));
   }
 
   _buildLocationSection(){
@@ -996,6 +999,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   padding: EdgeInsets.only(left: 2),
                                   child: Text(
                                     '*',
+                                    semanticsLabel: "",
                                     style: TextStyle(
                                         color: Styles().colors.fillColorSecondary,
                                         fontSize: 14,
@@ -1199,7 +1203,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             ),
                           ),
                         ])),
-                Semantics(label:Localization().getStringEx("panel.create_event.additional_info.button.confirm.purchase_tickets",'Confirm purchase tickets URL'),
+                Semantics(label:Localization().getStringEx("panel.create_event.additional_info.button.confirm.purchase_tickets",'Confirm link for registration url'),
                   hint: Localization().getStringEx("panel.create_event.additional_info.button.confirm.hint",""), button: true, excludeSemantics: true, child:
                   Padding(
                     padding: EdgeInsets.only(bottom: 24),
@@ -1323,7 +1327,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 ),
                               ),
                             ])),
-                    Semantics(label:Localization().getStringEx("panel.create_event.additional_info.button.confirm.call_url",'Confirm video call URL'),
+                    Semantics(label:Localization().getStringEx("panel.create_event.additional_info.button.confirm.call_url",'Confirm online event link URL'),
                       hint: Localization().getStringEx("panel.create_event.additional_info.button.confirm.hint",""), button: true, excludeSemantics: true, child:
                       Padding(
                         padding: EdgeInsets.only(bottom: 24),
@@ -1356,7 +1360,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(children: [
         Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),//TBD localize
-            hint: Localization().getStringEx("panel.create_event.button.free.hint",""), toggled: true, excludeSemantics: true, child:
+            hint: Localization().getStringEx("panel.create_event.button.free.hint",""), toggled: _isFree, excludeSemantics: true, child:
             ToggleRibbonButton(
               height: null,
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -1430,7 +1434,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   Widget _buildPrivacyDropdown(){
-    return Container(
+    return Semantics(container: true, child: Container(
         color: Styles().colors.background,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -1461,6 +1465,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               left: 2, right: 2),
                           child: Text(
                             '*',
+                            semanticsLabel: "",
                             style: TextStyle(
                                 color: Styles().colors.fillColorSecondary,
                                 fontSize: 14,
@@ -1519,7 +1524,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 ]
             )
         )
-    );
+    ));
   }
 
   /* TMP: Widget _buildAttendanceSwitch(){
