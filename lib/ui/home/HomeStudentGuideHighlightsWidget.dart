@@ -113,17 +113,17 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
         }
         contentList.add(StudentGuideEntryCard(AppJson.mapValue(promotedItem)));
       }
-    }
-    if (_maxItems < _promotedItems.length) {
-      contentList.add(Container(height: 16,));
-      contentList.add(ScalableRoundedButton(
-        label: Localization().getStringEx('widget.home_student_guide_highlights.button.more.title', 'View All'),
-        hint: Localization().getStringEx('widget.home_student_guide_highlights.button.more.hint', 'Tap to view all highlights'),
-        borderColor: Styles().colors.fillColorSecondary,
-        textColor: Styles().colors.fillColorPrimary,
-        backgroundColor: Styles().colors.white,
-        onTap: () => _showAll(),
-      ));
+      if (_maxItems < _promotedItems.length) {
+        contentList.add(Container(height: 16,));
+        contentList.add(ScalableRoundedButton(
+          label: Localization().getStringEx('widget.home_student_guide_highlights.button.more.title', 'View All'),
+          hint: Localization().getStringEx('widget.home_student_guide_highlights.button.more.hint', 'Tap to view all highlights'),
+          borderColor: Styles().colors.fillColorSecondary,
+          textColor: Styles().colors.fillColorPrimary,
+          backgroundColor: Styles().colors.white,
+          onTap: () => _showAll(),
+        ));
+      }
     }
     return contentList;
   }

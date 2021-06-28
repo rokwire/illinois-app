@@ -77,7 +77,7 @@ class RootPanel extends StatefulWidget {
   }
 }
 
-class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMixin implements NotificationsListener {
+class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
 
   List<RootTab>  _tabs = [];
   Map<RootTab, Widget> _panels = {};
@@ -104,7 +104,7 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
     ]);
 
     _tabs = _getTabs();
-    _tabBarController = TabController(length:_tabs.length, vsync: this);
+    _initTabBarController();
     _updatePanels(_tabs);
 
     if (widget._data._rootTab != null) {
@@ -200,6 +200,10 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
       _tabBarController.animateTo(newTabIndex);
       _selectTabAtIndex(newTabIndex);
     }
+  }
+
+  void _initTabBarController() {
+    _tabBarController = TabController(length: _tabs.length, vsync: this);
   }
 
   void _selectTabAtIndex(int index) {
@@ -389,10 +393,12 @@ class _RootPanelState extends State<RootPanel> with SingleTickerProviderStateMix
       if (mounted) {
         setState(() {
           _tabs = tabs;
+          _initTabBarController();
         });
       }
       else {
         _tabs = tabs;
+        _initTabBarController();
       }
     }
   }
