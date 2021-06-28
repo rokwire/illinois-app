@@ -19,13 +19,16 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupCreatePanel extends StatefulWidget {
@@ -129,6 +132,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         Container(
                           color: Styles().colors.background,
                           child: Column(children: <Widget>[
+                            _buildImageSection(),
                             _buildNameField(),
                             _buildNameError(),
                             _buildDescriptionField(),
@@ -155,6 +159,49 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           ],
         ),
         backgroundColor: Styles().colors.background);
+  }
+
+  //Image
+  Widget _buildImageSection() {
+    final double _imageHeight = 200;
+
+    return Container(
+        height: _imageHeight,
+        color: Styles().colors.background,
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          AppString.isStringNotEmpty(_group?.imageURL)
+              ? Positioned.fill(child: Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders))
+              : Container(),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
+          Container(
+              height: _imageHeight,
+              child: Center(
+                  child: Semantics(
+                      label: Localization().getStringEx("panel.group_settings.add_image", "Add cover image"),
+                      hint: Localization().getStringEx("panel.group_settings.add_image.hint", ""),
+                      button: true,
+                      excludeSemantics: true,
+                      child: ScalableSmallRoundedButton(
+                          maxLines: 2,
+                          label: Localization().getStringEx("panel.group_settings.add_image", "Add cover image"),
+                          textColor: Styles().colors.fillColorPrimary,
+                          onTap: _onTapAddImage,
+                          showChevron: false))))
+        ]));
+  }
+
+  void _onTapAddImage() async {
+    Analytics.instance.logSelect(target: "Add Image");
+    String _imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    if (_imageUrl != null) {
+      if (mounted) {
+        setState(() {
+          _group.imageURL = _imageUrl;
+        });
+      }
+    }
+    Log.d("Image Url: $_imageUrl");
   }
 
   //Name

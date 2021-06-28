@@ -18,15 +18,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -638,5 +641,193 @@ class _EventContent extends StatelessWidget {
 
   bool get _canDelete{
     return false; //TBD
+  }
+}
+
+/////////////////////////////////////
+// GroupAddImageWidget
+
+class GroupAddImageWidget extends StatefulWidget {
+  @override
+  _GroupAddImageWidgetState createState() => _GroupAddImageWidgetState();
+}
+
+class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
+  var _imageUrlController = TextEditingController();
+
+  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
+  bool _showProgress = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _imageUrlController.dispose();
+    super.dispose();
+  }
+
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Styles().colors.fillColorPrimary,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 10),
+                    child: Text(
+                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: Styles().fontFamilies.medium,
+                          fontSize: 24),
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: _onTapCloseImageSelection,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10, top: 10),
+                      child: Text(
+                        '\u00D7',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 50),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: TextFormField(
+                              controller: _imageUrlController,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
+                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                              ))),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
+                              textColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapUseUrl)),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(10),
+                              child: RoundedButton(
+                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                                  borderColor: Styles().colors.fillColorSecondary,
+                                  backgroundColor: Styles().colors.background,
+                                  textColor: Styles().colors.fillColorPrimary,
+                                  onTap: _onTapChooseFromDevice)),
+                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary)) : Container(),
+                        ],
+                      ),
+                    ]))
+          ],
+        ));
+  }
+
+  void _onTapCloseImageSelection() {
+    Analytics.instance.logSelect(target: "Close image selection");
+    Navigator.pop(context, "");
+  }
+
+  void _onTapUseUrl() {
+    Analytics.instance.logSelect(target: "Use Url");
+    String url = _imageUrlController.value.text;
+    if (url == "") {
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
+      return;
+    }
+
+    bool isReadyUrl = url.endsWith(".webp");
+    if (isReadyUrl) {
+      //ready
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      Navigator.pop(context, url);
+    } else {
+      //we need to process it
+      setState(() {
+        _showProgress = true;
+      });
+
+      Future<ImagesResult> result =
+      ImageService().useUrl(_imageType, url);
+      result.then((logicResult) {
+        setState(() {
+          _showProgress = false;
+        });
+
+
+        ImagesResultType resultType = logicResult.resultType;
+        switch (resultType) {
+          case ImagesResultType.CANCELLED:
+          //do nothing
+            break;
+          case ImagesResultType.ERROR_OCCURRED:
+            AppToast.show(logicResult.errorMessage);
+            break;
+          case ImagesResultType.SUCCEEDED:
+          //ready
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+            Navigator.pop(context, logicResult.data);
+            break;
+        }
+      });
+    }
+  }
+
+  void _onTapChooseFromDevice() {
+    Analytics.instance.logSelect(target: "Choose From Device");
+
+    setState(() {
+      _showProgress = true;
+    });
+
+    Future<ImagesResult> result =
+    ImageService().chooseFromDevice(_imageType);
+    result.then((logicResult) {
+      setState(() {
+        _showProgress = false;
+      });
+
+      ImagesResultType resultType = logicResult.resultType;
+      switch (resultType) {
+        case ImagesResultType.CANCELLED:
+        //do nothing
+          break;
+        case ImagesResultType.ERROR_OCCURRED:
+          AppToast.show(logicResult.errorMessage);
+          break;
+        case ImagesResultType.SUCCEEDED:
+        //ready
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+          Navigator.pop(context, logicResult.data);
+          break;
+      }
+    });
   }
 }
