@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert' as json;
 import 'dart:typed_data';
@@ -61,6 +62,9 @@ class Auth with Service implements NotificationsListener {
   static const String _userPiiFileName   = "piiData.json";
 
   static final Auth _auth = Auth._internal();
+
+  final List<Completer<bool>> _loginCompleters = [];
+  Timer _loginTimer;
 
   AuthToken _authToken;
   AuthToken get authToken{ return _authToken; }
@@ -190,9 +194,9 @@ class Auth with Service implements NotificationsListener {
   ////////////////////////
   // Shibboleth Oauth
 
-  void authenticateWithShibboleth(){
-    
-    if ((Config().shibbolethOauthHostUrl != null) && (Config().shibbolethOauthPathUrl != null) && (Config().shibbolethClientId != null)) {
+  Future<bool> authenticateWithShibboleth() async{
+
+    if (_loginCompleters.isEmpty && (Config().shibbolethOauthHostUrl != null) && (Config().shibbolethOauthPathUrl != null) && (Config().shibbolethClientId != null)) {
       Uri uri = Uri.https(
         Config().shibbolethOauthHostUrl,
         Config().shibbolethOauthPathUrl,
@@ -211,9 +215,11 @@ class Auth with Service implements NotificationsListener {
       var uriStr = uri.toString();
       _launchUrl(uriStr);
     }
+
+    return _createLoginCompleter();
   }
 
-  Future<void> _handleShibbolethAuthentication(code) async {
+  Future<bool> _handleShibbolethAuthentication(code) async {
 
     _notifyAuthStarted();
 
@@ -223,21 +229,24 @@ class Auth with Service implements NotificationsListener {
     AuthToken newAuthToken = await _loadShibbolethAuthTokenWithCode(code);
     if(newAuthToken == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      return;
+      _completeLoginWithResult(false);
+      return false;
     }
 
     // 2. Request AuthInfo
     AuthInfo newAuthInfo = await _loadAuthInfo(optAuthToken: newAuthToken);
     if(newAuthInfo == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      return;
+      _completeLoginWithResult(false);
+      return false;
     }
 
     // 3. Request User Pii Pid
     String newUserPiiPid = await _loadPidWithShibbolethAuth(email: newAuthInfo?.email, optAuthToken: newAuthToken);
     if(newUserPiiPid == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      return;
+      _completeLoginWithResult(false);
+      return false;
     }
 
     // 4. Request UserPiiData
@@ -245,7 +254,8 @@ class Auth with Service implements NotificationsListener {
     UserPiiData newUserPiiData = _userPiiDataFromJsonString(newUserPiiDataString);
     if(newUserPiiData == null || AppCollection.isCollectionEmpty(newUserPiiData?.uuidList)){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      return;
+      _completeLoginWithResult(false);
+      return false;
     }
 
     // 5. Request UserData
@@ -255,7 +265,8 @@ class Auth with Service implements NotificationsListener {
     } on UserNotFoundException catch (_) {}
     if(newUserData == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      return;
+      _completeLoginWithResult(false);
+      return false;
     }
     
     // 6. Load Auth Card
@@ -298,6 +309,9 @@ class Auth with Service implements NotificationsListener {
     Storage().userLoginVersion = Config().appVersion;
 
     _notifyAuthLoginSucceeded(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
+
+    _completeLoginWithResult(true);
+    return true;
   }
 
   Future<void> _syncProfilePiiDataIfNeed() async{
@@ -889,6 +903,38 @@ class Auth with Service implements NotificationsListener {
     if (this.isLoggedIn && !User().privacyMatch(4)) {
       logout();
     }
+  }
+
+  void _createLoginTimer(){
+    if(_loginTimer != null){
+      _loginTimer.cancel();
+    }
+    _loginTimer = Timer(Duration(minutes: 10), (){
+      _completeLoginWithResult(false);
+      _loginTimer = null;
+    });
+  }
+
+  void _cancelLoginTimer(){
+    if(_loginTimer != null){
+      _loginTimer.cancel();
+    }
+    _loginTimer = null;
+  }
+
+  Future<bool> _createLoginCompleter(){
+    Completer<bool> completer = Completer<bool>();
+    _loginCompleters.add(completer);
+    _createLoginTimer();
+    return completer.future;
+  }
+
+  void _completeLoginWithResult(bool success){
+    for(Completer<void> completer in _loginCompleters){
+      completer.complete(success);
+    }
+    _cancelLoginTimer();
+    _loginCompleters.clear();
   }
 
 }

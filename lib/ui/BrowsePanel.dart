@@ -64,6 +64,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
 
+  bool _groupsLogin = false;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
@@ -252,12 +254,24 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
     }
     else if (code == 'groups') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
-        hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-        icon: 'images/icon-browse-gropus.png',
-        color: Styles().colors.accentColor2,
-        onTap: () => _navigateGroups(),
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          _GridSquareButton(
+            title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
+            hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
+            icon: 'images/icon-browse-gropus.png',
+            color: Styles().colors.accentColor2,
+            onTap: () => _navigateGroups(),
+          ),
+          Visibility(
+            visible: _groupsLogin,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white)
+            ),
+          )
+        ],
       );
     }
     else if (code == 'safer') {
@@ -541,8 +555,28 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateGroups() {
-    Analytics.instance.logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    if(Auth().isShibbolethLoggedIn) {
+      Analytics.instance.logSelect(target: "Groups");
+      Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    } else {
+      if (!_groupsLogin) {
+        setState(() {
+          _groupsLogin = true;
+        });
+        Auth().authenticateWithShibboleth().then((success) {
+          setState(() {
+            _groupsLogin = false;
+          });
+          if (success == true) {
+            Analytics.instance.logSelect(target: "Groups");
+            Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+          }
+        });
+      }
+    }
   }
 
   void _navigateStudentGuide() {
