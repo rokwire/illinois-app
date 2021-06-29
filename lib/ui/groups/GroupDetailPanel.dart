@@ -193,6 +193,18 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return Scaffold(
       appBar: AppBar(
         leading: HeaderBackButton(),
+        actions: [
+          Semantics(
+              label:  Localization().getStringEx("panel.group_detail.label.options", 'Options'),
+              button: true,
+              excludeSemantics: true,
+              child: IconButton(
+                icon: Image.asset(
+                  'images/groups-more-inactive.png',
+                ),
+                onPressed:_onGroupOptionsTap,
+              ))
+        ]
       ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
@@ -453,48 +465,56 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     if (canLeaveGroup) {
       visibleTabs.add(_DetailTab.Leave);
     }
+    TextStyle leaveTextStyle = TextStyle(
+        fontSize: 14,
+        fontFamily: Styles().fontFamilies.regular,
+        color: Styles().colors.fillColorPrimary,
+        decoration: TextDecoration.underline,
+        decorationColor: Styles().colors.fillColorSecondary,
+        decorationThickness: 1.5);
     for (_DetailTab tab in visibleTabs) {
       String title;
-      switch(tab) {
-        case _DetailTab.Events: title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events'); break;
-        case _DetailTab.About: title = Localization().getStringEx("panel.group_detail.button.about.title", 'About'); break;
-        case _DetailTab.Leave: title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'); break;
+      switch (tab) {
+        case _DetailTab.Events:
+          title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
+          break;
+        case _DetailTab.About:
+          title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
+          break;
+        case _DetailTab.Leave:
+          title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave');
+          break;
       }
-      bool selected = (_currentTab == tab);
-      bool leaveTab = (tab == _DetailTab.Leave);
+      bool isSelected = (_currentTab == tab);
+      bool isLeaveTab = (tab == _DetailTab.Leave);
 
       if (0 < tabs.length) {
-        tabs.add(Padding(padding: EdgeInsets.only(left: 8),child: Container(),));
+        tabs.add(Padding(
+          padding: EdgeInsets.only(left: 8),
+          child: Container(),
+        ));
       }
 
-      tabs.add(Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
-        RoundedButton(label: title,
-          backgroundColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.background,
-          textColor: leaveTab ? Styles().colors.fillColorPrimary : (selected ? Colors.white : Styles().colors.fillColorPrimary),
-          fontFamily: (selected || leaveTab) ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
+      Widget tabWidget = RoundedButton(
+          textStyle: isLeaveTab ? leaveTextStyle : null,
+          label: title,
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.background,
+          textColor: (isSelected ? Colors.white : Styles().colors.fillColorPrimary),
+          fontFamily: isSelected ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
           fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16),
-          borderColor: leaveTab ? Styles().colors.fillColorSecondary : (selected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
-          borderWidth: leaveTab ? 2 : 1,
-          height: 22 + 16*MediaQuery.of(context).textScaleFactor,
-          onTap:() { _onTab(tab); }
-        ),
-      ],));
+          borderColor: isLeaveTab ? Styles().colors.fillColorSecondary : (isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
+          borderWidth: isLeaveTab ? 2 : 1,
+          height: 22 + 16 * MediaQuery.of(context).textScaleFactor,
+          onTap: () => _onTab(tab));
+
+      if (isLeaveTab) {
+        tabs.add(Expanded(child: Container()));
+      }
+      tabs.add(tabWidget);
     }
 
-    return
-      Row(children: [
-        Expanded(
-          child: Container(
-            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(children:tabs),
-                )
-            ),
-          )
-        )
-      ],);
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
   }
 
   Widget _buildEvents() {
@@ -837,6 +857,31 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         }
       }
     }
+  }
+
+  void _onGroupOptionsTap() {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 48,
+                ),
+                RibbonButton(
+                    height: null,
+                    leftIcon: "images/icon-leave-group.png",
+                    label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
+                    onTap: () {
+                      showDialog(context: context, builder: (context) => _buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
+                    })
+              ]));
+        });
   }
 
   void _onTab(_DetailTab tab) {
