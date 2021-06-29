@@ -101,6 +101,15 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return false;
   }
 
+  bool get _canLeaveGroup {
+    Member currentMemberUser = _group?.currentUserAsMember;
+    if (currentMemberUser?.isAdmin ?? false) {
+      return ((_group?.adminsCount ?? 0) > 1); // Do not allow an admin to leave group if he/she is the only one admin.
+    } else {
+      return currentMemberUser?.isMember ?? false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -191,25 +200,23 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: HeaderBackButton(),
-        actions: [
-          Semantics(
-              label:  Localization().getStringEx("panel.group_detail.label.options", 'Options'),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                icon: Image.asset(
-                  'images/groups-more-inactive.png',
-                ),
-                onPressed:_onGroupOptionsTap,
-              ))
-        ]
-      ),
-      backgroundColor: Styles().colors.background,
-      bottomNavigationBar: TabBarWidget(),
-      body: content,
-    );
+        appBar: AppBar(leading: HeaderBackButton(), actions: [
+          Visibility(
+              visible: _canLeaveGroup,
+              child: Semantics(
+                  label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
+                  button: true,
+                  excludeSemantics: true,
+                  child: IconButton(
+                    icon: Image.asset(
+                      'images/groups-more-inactive.png',
+                    ),
+                    onPressed: _onGroupOptionsTap,
+                  )))
+        ]),
+        backgroundColor: Styles().colors.background,
+        bottomNavigationBar: TabBarWidget(),
+        body: content);
   }
 
   // NotificationsListener
@@ -461,8 +468,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   Widget _buildTabs() {
     List<Widget> tabs = [];
     List<_DetailTab> visibleTabs = [_DetailTab.Events, _DetailTab.About];
-    bool canLeaveGroup = (_group?.currentUserIsMemberOrAdmin ?? false);
-    if (canLeaveGroup) {
+    if (_canLeaveGroup) {
       visibleTabs.add(_DetailTab.Leave);
     }
     TextStyle leaveTextStyle = TextStyle(
