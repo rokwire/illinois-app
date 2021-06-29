@@ -122,6 +122,25 @@ class ExploreService /* with Service */ {
     return null;
   }
 
+  Future<String> updateEvent(Event event) async{
+    if(_enabled && event!=null) {
+      http.Response response;
+      try {
+        dynamic body = json.encode(event.toNotNullJson());
+        String url = Config().eventsUrl + "/" + event.id;
+        response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
+            headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
+            auth: NetworkAuth.User) : null;
+        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
+      } catch (e) {
+        Log.e('Failed to load events');
+        Log.e(e.toString());
+      }
+    }
+    return null;
+  }
+
   Future<List<Event>> loadEventsByIds(Set<String> eventIds) async {
     if(_enabled) {
       if (AppCollection.isCollectionEmpty(eventIds)) {

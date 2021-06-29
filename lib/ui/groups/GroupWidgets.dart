@@ -521,7 +521,7 @@ class _EventContent extends StatelessWidget {
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
         Analytics().logPage(name: "Group Settings");
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: event,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: event, previewMode: isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),

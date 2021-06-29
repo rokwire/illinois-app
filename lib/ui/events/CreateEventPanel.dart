@@ -1550,7 +1550,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
     if(event!=null) {
       _imageUrl = event.imageURL;
-      event.category = _selectedCategory != null ? _selectedCategory["category"] : null;
+//      event.category = _selectedCategory != null ? _selectedCategory["category"] : null;
       if (event.category != null)
         _selectedCategory = {"category": event.category};
 
@@ -1564,10 +1564,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if(endDate!=null)
         endTime = TimeOfDay.fromDateTime(endDate);
       _allDay = event.allDay;
+      _isOnline = event.isVirtual;
+      _isFree = event.isEventFree;
       _location = event.location;
       _eventDescriptionController.text = event.longDescription;
       _eventPurchaseUrlController.text = event.registrationUrl;
       _eventWebsiteController.text = event.titleUrl;
+      _selectedPrivacy = (event?.isGroupPrivate??false) ? "PRIVATE" : "PUBLIC";
+      if(event.location!=null){
+        _eventLatitudeController.text = event.location?.latitude?.toString()??"";
+        _eventLongitudeController.text = event.location?.longitude?.toString()??"";
+      }
     }
   }
 
