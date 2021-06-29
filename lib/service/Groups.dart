@@ -103,6 +103,29 @@ class Groups /* with Service */ {
     return [];
   }
 
+  Future<List<Group>> searchGroups(String searchText) async {
+    if (AppString.isStringEmpty(searchText)) {
+      return null;
+    }
+    String encodedTExt = Uri.encodeComponent(searchText);
+    String url = '${Config().groupsUrl}/groups?title=$encodedTExt';
+    Response response = await Network().get(url, auth: (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+    if (responseCode == 200) {
+      List<dynamic> groupsJson = AppJson.decodeList(responseBody);
+      List<Group> groups;
+      if (AppCollection.isCollectionNotEmpty(groupsJson)) {
+        groups = groupsJson.map((e) => Group.fromJson(e)).toList();
+      }
+      return groups;
+    } else {
+      print('Failed to search for groups. Reason: ');
+      print(responseBody);
+      return null;
+    }
+  }
+
   Future<Group>loadGroup(String groupId) async {
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';

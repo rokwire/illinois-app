@@ -1578,6 +1578,11 @@
 	"panel.groups_search.button.clear.hint": "",
 	"panel.groups_search.button.search.title": "Search",
 	"panel.groups_search.button.search.hint": "",
+	"panel.groups_search.label.search_for": "Searching only Groups Titles",
+	"panel.groups_search.label.not_found": "No results found",
+	"panel.groups_search.label.found_single": "1 result found",
+	"panel.groups_search.label.found_multi": "%d results found",
+	"panel.groups_search.label.results_for": "Results for ",
 
 	"panel.groups_home.label.all_categories": "All categories",
 	"panel.groups_home.label.heading": "Groups",
