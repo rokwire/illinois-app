@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Groups Search [#371](https://github.com/rokwire/illinois-app/issues/371).
+### Changed
+- UI adjustments for "Leave" group [#380](https://github.com/rokwire/illinois-app/issues/380).
 
 ## [2.5.00] - 2021-06-28
 ### Added
