@@ -453,48 +453,56 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     if (canLeaveGroup) {
       visibleTabs.add(_DetailTab.Leave);
     }
+    TextStyle leaveTextStyle = TextStyle(
+        fontSize: 14,
+        fontFamily: Styles().fontFamilies.regular,
+        color: Styles().colors.fillColorPrimary,
+        decoration: TextDecoration.underline,
+        decorationColor: Styles().colors.fillColorSecondary,
+        decorationThickness: 1.5);
     for (_DetailTab tab in visibleTabs) {
       String title;
-      switch(tab) {
-        case _DetailTab.Events: title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events'); break;
-        case _DetailTab.About: title = Localization().getStringEx("panel.group_detail.button.about.title", 'About'); break;
-        case _DetailTab.Leave: title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'); break;
+      switch (tab) {
+        case _DetailTab.Events:
+          title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
+          break;
+        case _DetailTab.About:
+          title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
+          break;
+        case _DetailTab.Leave:
+          title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave');
+          break;
       }
-      bool selected = (_currentTab == tab);
-      bool leaveTab = (tab == _DetailTab.Leave);
+      bool isSelected = (_currentTab == tab);
+      bool isLeaveTab = (tab == _DetailTab.Leave);
 
       if (0 < tabs.length) {
-        tabs.add(Padding(padding: EdgeInsets.only(left: 8),child: Container(),));
+        tabs.add(Padding(
+          padding: EdgeInsets.only(left: 8),
+          child: Container(),
+        ));
       }
 
-      tabs.add(Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
-        RoundedButton(label: title,
-          backgroundColor: selected ? Styles().colors.fillColorPrimary : Styles().colors.background,
-          textColor: leaveTab ? Styles().colors.fillColorPrimary : (selected ? Colors.white : Styles().colors.fillColorPrimary),
-          fontFamily: (selected || leaveTab) ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
+      Widget tabWidget = RoundedButton(
+          textStyle: isLeaveTab ? leaveTextStyle : null,
+          label: title,
+          backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.background,
+          textColor: (isSelected ? Colors.white : Styles().colors.fillColorPrimary),
+          fontFamily: isSelected ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
           fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16),
-          borderColor: leaveTab ? Styles().colors.fillColorSecondary : (selected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
-          borderWidth: leaveTab ? 2 : 1,
-          height: 22 + 16*MediaQuery.of(context).textScaleFactor,
-          onTap:() { _onTab(tab); }
-        ),
-      ],));
+          borderColor: isLeaveTab ? Styles().colors.fillColorSecondary : (isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
+          borderWidth: isLeaveTab ? 2 : 1,
+          height: 22 + 16 * MediaQuery.of(context).textScaleFactor,
+          onTap: () => _onTab(tab));
+
+      if (isLeaveTab) {
+        tabs.add(Expanded(child: Container()));
+      }
+      tabs.add(tabWidget);
     }
 
-    return
-      Row(children: [
-        Expanded(
-          child: Container(
-            child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(children:tabs),
-                )
-            ),
-          )
-        )
-      ],);
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
   }
 
   Widget _buildEvents() {
