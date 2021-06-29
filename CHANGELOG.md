@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Changes to Create Group Event [#345](https://github.com/rokwire/illinois-app/issues/345).
 - UI adjustments for "Leave" group [#380](https://github.com/rokwire/illinois-app/issues/380).
+### Fixed
+- Hide "Leave" button for the only one admin in the group [#362](https://github.com/rokwire/illinois-app/issues/362).
 
 ## [2.5.00] - 2021-06-28
 ### Added
