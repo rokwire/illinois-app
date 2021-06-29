@@ -226,20 +226,22 @@ class Groups /* with Service */ {
     return false; // fail
   }
 
-  Future<bool> leaveGroup(String groupId) async{
-    if(groupId != null) {
-      String url = '${Config().groupsUrl}/group/$groupId/members';
-      try {
-        Response response = await Network().delete(url, auth: NetworkAuth.User,);
-        if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupUpdated, groupId);
-          return true;
-        }
-      } catch (e) {
-        print(e);
-      }
+  Future<bool> leaveGroup(String groupId) async {
+    if (AppString.isStringEmpty(groupId)) {
+      return false;
     }
-    return false; // fail
+    String url = '${Config().groupsUrl}/group/$groupId/members';
+    Response response = await Network().delete(url, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupUpdated, groupId);
+      return true;
+    } else {
+      print('Failed to leave group with id {$groupId}. Response:');
+      String responseString = response?.body;
+      print(responseString);
+      return false;
+    }
   }
 
   Future<bool> acceptMembership(String groupId, String memberId, bool decision, String reason) async{
