@@ -193,6 +193,18 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return Scaffold(
       appBar: AppBar(
         leading: HeaderBackButton(),
+        actions: [
+          Semantics(
+              label:  Localization().getStringEx("panel.group_detail.label.options", 'Options'),
+              button: true,
+              excludeSemantics: true,
+              child: IconButton(
+                icon: Image.asset(
+                  'images/groups-more-inactive.png',
+                ),
+                onPressed:_onGroupOptionsTap,
+              ))
+        ]
       ),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
@@ -845,6 +857,31 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         }
       }
     }
+  }
+
+  void _onGroupOptionsTap() {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 48,
+                ),
+                RibbonButton(
+                    height: null,
+                    leftIcon: "images/icon-leave-group.png",
+                    label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
+                    onTap: () {
+                      showDialog(context: context, builder: (context) => _buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
+                    })
+              ]));
+        });
   }
 
   void _onTab(_DetailTab tab) {
