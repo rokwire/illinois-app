@@ -22,8 +22,8 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
-import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -384,7 +384,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         for (Group group in _myGroups) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup),
+            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
           ));
         }
         widgets.add(Container(height: 8,));
@@ -414,7 +414,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       for (Group group in _myPendingGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: _GroupCard(group: group, displayType: _GroupCardDisplayType.myGroup,),
+          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
         ));
       }
       return
@@ -449,7 +449,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       for(Group group in _allFilteredGroups){
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: _GroupCard(group: group),
+          child: GroupCard(group: group),
         ));
       }
       return Column(children: widgets,);
@@ -568,117 +568,6 @@ class _GroupTabButton extends StatelessWidget{
         ),
       ),
     );
-  }
-}
-
-enum _GroupCardDisplayType {myGroup, allGroups}
-
-class _GroupCard extends StatelessWidget{
-  final Group group;
-  final _GroupCardDisplayType displayType;
-  _GroupCard({@required this.group, this.displayType = _GroupCardDisplayType.allGroups});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _onTapCard(context),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Styles().colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _buildHeading(),
-              Container(height: 3,),
-              Row(children:[
-                Expanded(child:
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 0),
-                    child: Text(group?.title ?? "",
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies.extraBold,
-                          fontSize: 20,
-                          color: Styles().colors.fillColorPrimary
-                      ),
-                    ),
-                  )
-                ),
-              ]),
-              Container(height: 4,),
-              displayType == _GroupCardDisplayType.allGroups? Container() :
-                 _buildUpdateTime()
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeading() {
-    bool showMember = (group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin);
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Visibility(visible: showMember, child: _buildMember()),
-      Visibility(visible: showMember, child: Container(height: 6)),
-      Text(AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")),
-          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
-    ]);
-  }
-
-  Widget _buildMember(){
-    return
-        Row(
-          children: <Widget>[
-            Semantics(
-              label:"status: " + (group?.currentUserStatusText?.toLowerCase() ?? "" )+ " ,for: ",
-              excludeSemantics: true,
-              child:Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: group.currentUserStatusColor,
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                ),
-                child: Center(
-                  child: Text(group.currentUserStatusText.toUpperCase(),
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
-                        fontSize: 12,
-                        color: Styles().colors.white
-                    ),
-                  ),
-                ),
-              )
-            ),
-            Expanded(child: Container(),),
-          ],
-        );
-  }
-
-  Widget _buildUpdateTime(){
-    return Container(
-        child: Text(
-          _timeUpdatedText,
-          style: TextStyle(
-              fontFamily: Styles().fontFamilies.regular,
-              fontSize: 14,
-              color: Styles().colors.textSurface
-          ),
-        )
-    );
-  }
-
-  void _onTapCard(BuildContext context) {
-    Analytics.instance.logSelect(target: "${group.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPanel(groupId: group.id)));
-  }
-
-  String get _timeUpdatedText{
-    return "Updated about 2 hours ago";//TBD
   }
 }
 
