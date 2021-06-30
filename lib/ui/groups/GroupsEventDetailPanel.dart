@@ -327,28 +327,26 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel>{
         child: HtmlWidget(longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface)));
   }
 
-  Widget _eventUrlButton(){
+  Widget _eventUrlButton() {
     String titleUrl = widget?.event?.titleUrl;
 
-    return Container(child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        RoundedButton(
-          label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
-          hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-          backgroundColor: Colors.white,
-          borderColor: Styles().colors.fillColorSecondary,
-          textColor: Styles().colors.fillColorPrimary,
-          onTap: (){
-            Analytics.instance.logSelect(target: "Website");
-            _onTapWebButton(titleUrl, 'Website');
-          },
-        ),
-        Container(
-          height: 6,
-        ),
-      ],
-    ));
+    return Visibility(
+        visible: AppString.isStringNotEmpty(titleUrl),
+        child: Container(
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          RoundedButton(
+            label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+            hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors.fillColorSecondary,
+            textColor: Styles().colors.fillColorPrimary,
+            onTap: () {
+              Analytics.instance.logSelect(target: "Website");
+              _onTapWebButton(titleUrl, 'Website');
+            }
+          ),
+          Container(height: 6)
+        ])));
   }
 
   Widget _buildFavoritesButton(){
