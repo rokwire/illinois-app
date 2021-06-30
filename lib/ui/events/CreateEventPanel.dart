@@ -765,8 +765,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         style: TextStyle(
                             color: Styles().colors.fillColorPrimary,
-                            fontSize: 32,
-                            fontFamily: Styles().fontFamilies.extraBold),
+                            fontSize: 20,
+                            fontFamily: Styles().fontFamilies.medium),
                       )
                   ),
                 )
