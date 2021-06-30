@@ -320,6 +320,7 @@ class Groups /* with Service */ {
     List<dynamic> eventIds = await loadEventIds(groupId);
     List<Event> events = AppCollection.isCollectionNotEmpty(eventIds)? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
     if(AppCollection.isCollectionNotEmpty(events)){
+      ExploreService().sortEvents(events);
       //limit the result count // limit available events
       List<Event> visibleEvents = (limit>0 && events.length>limit)? events.sublist(0,limit) : events;
       return visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
