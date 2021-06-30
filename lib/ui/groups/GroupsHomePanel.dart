@@ -79,7 +79,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
     _loadFilters();
     _loadGroups();
   }
@@ -506,8 +506,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if(name == Groups.notifyUserMembershipUpdated){
       setState(() {});
     }
-    else if (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated){
-      if(mounted) {
+    else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
+      if (mounted) {
         _loadGroups();
         _loadMyGroups();
       }
