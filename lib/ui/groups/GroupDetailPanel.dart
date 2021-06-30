@@ -46,7 +46,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About, Leave }
+enum _DetailTab { Events, About }
 
 class GroupPanel extends StatefulWidget {
 
@@ -467,18 +467,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildTabs() {
     List<Widget> tabs = [];
-    List<_DetailTab> visibleTabs = [_DetailTab.Events, _DetailTab.About];
-    if (_canLeaveGroup) {
-      visibleTabs.add(_DetailTab.Leave);
-    }
-    TextStyle leaveTextStyle = TextStyle(
-        fontSize: 14,
-        fontFamily: Styles().fontFamilies.regular,
-        color: Styles().colors.fillColorPrimary,
-        decoration: TextDecoration.underline,
-        decorationColor: Styles().colors.fillColorSecondary,
-        decorationThickness: 1.5);
-    for (_DetailTab tab in visibleTabs) {
+    for (_DetailTab tab in _DetailTab.values) {
       String title;
       switch (tab) {
         case _DetailTab.Events:
@@ -487,12 +476,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         case _DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
-        case _DetailTab.Leave:
-          title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave');
-          break;
       }
       bool isSelected = (_currentTab == tab);
-      bool isLeaveTab = (tab == _DetailTab.Leave);
 
       if (0 < tabs.length) {
         tabs.add(Padding(
@@ -502,22 +487,35 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       }
 
       Widget tabWidget = RoundedButton(
-          textStyle: isLeaveTab ? leaveTextStyle : null,
           label: title,
           backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.background,
           textColor: (isSelected ? Colors.white : Styles().colors.fillColorPrimary),
           fontFamily: isSelected ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
           fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16),
-          borderColor: isLeaveTab ? Styles().colors.fillColorSecondary : (isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
-          borderWidth: isLeaveTab ? 2 : 1,
+          borderColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          borderWidth: 1,
           height: 22 + 16 * MediaQuery.of(context).textScaleFactor,
           onTap: () => _onTab(tab));
 
-      if (isLeaveTab) {
-        tabs.add(Expanded(child: Container()));
-      }
       tabs.add(tabWidget);
+    }
+
+    if (_canLeaveGroup) {
+      Widget leaveButton = GestureDetector(
+          onTap: _onTapLeave,
+          child: Padding(
+              padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Styles().colors.fillColorSecondary,
+                      decorationThickness: 1.5))));
+      tabs.add(Expanded(child: Container()));
+      tabs.add(leaveButton);
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
@@ -891,13 +889,9 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onTab(_DetailTab tab) {
-    if (tab == _DetailTab.Leave) {
-      _onTapLeave();
-    } else {
-      setState(() {
-        _currentTab = tab;
-      });
-    }
+    setState(() {
+      _currentTab = tab;
+    });
   }
 
   void _onTapLeave() {
