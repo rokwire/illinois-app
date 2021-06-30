@@ -318,10 +318,11 @@ class Groups /* with Service */ {
 
   Future<List<GroupEvent>> loadEvents(String groupId, {int limit = -1}) async {
     List<dynamic> eventIds = await loadEventIds(groupId);
-    List<Event> events = AppCollection.isCollectionNotEmpty(eventIds)? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
-    if(AppCollection.isCollectionNotEmpty(events)){
+    List<Event> events = AppCollection.isCollectionNotEmpty(eventIds) ? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
+    if (AppCollection.isCollectionNotEmpty(events)) {
+      ExploreService().sortEvents(events);
       //limit the result count // limit available events
-      List<Event> visibleEvents = (limit>0 && events.length>limit)? events.sublist(0,limit) : events;
+      List<Event> visibleEvents = ((limit > 0) && (events.length > limit)) ? events.sublist(0, limit) : events;
       return visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
     }
     return null;
