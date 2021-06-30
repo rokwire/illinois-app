@@ -229,6 +229,32 @@ class ExploreService /* with Service */ {
     return null;
   }
 
+  void sortEvents(List<Explore> events) {
+    if (AppCollection.isCollectionEmpty(events) || (events.length == 1)) {
+      return;
+    }
+    events.sort((Explore first, Explore second) => _compareEvents(first, second));
+  }
+
+  int _compareEvents(Explore first, Explore second) {
+    if (first is Event && second is Event) {
+      int firstScore = first?.convergeScore ?? -1;
+      int secondScore = second?.convergeScore ?? -1;
+      int comparedScore = secondScore.compareTo(firstScore); //Descending order by score
+      if (comparedScore == 0) {
+        if (first.startDateGmt == null || second.startDateGmt == null) {
+          return 0;
+        } else {
+          return (first.startDateGmt.isBefore(second.startDateGmt)) ? -1 : 1;
+        }
+      } else {
+        return comparedScore;
+      }
+    } else {
+      return 0;
+    }
+  }
+
   String _buildEventsQueryParameters(String searchText, Core.LocationData locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
 
     String queryParameters = "";
