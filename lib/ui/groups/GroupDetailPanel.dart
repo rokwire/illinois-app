@@ -524,49 +524,46 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   Widget _buildEvents() {
     List<Widget> content = [];
 
-      if (_isAdmin) {
-        content.add(_buildAdminEventOptions());
+    if (_isAdmin) {
+      content.add(_buildAdminEventOptions());
+    }
+
+    if (AppCollection.isCollectionNotEmpty(_groupEvents)) {
+      for (GroupEvent groupEvent in _groupEvents) {
+        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
+      
+      content.add(Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: ScalableSmallRoundedButton(
+              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+              widthCoeficient: 2,
+              backgroundColor: Styles().colors.white,
+              textColor: Styles().colors.fillColorPrimary,
+              fontFamily: Styles().fontFamilies.bold,
+              fontSize: 16,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              borderColor: Styles().colors.fillColorSecondary,
+              borderWidth: 2,
+              onTap: () {
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
+              })));
+    }
 
-      if (_groupEvents != null) {
-        for (GroupEvent groupEvent in _groupEvents) {
-          content.add(GroupEventCard(
-              groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
-        }
-      }
-
-      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
-      ScalableSmallRoundedButton(
-          label: Localization().getStringEx(
-              "panel.group_detail.button.all_events.title", 'See all events'),
-          widthCoeficient: 2,
-          backgroundColor: Styles().colors.white,
-          textColor: Styles().colors.fillColorPrimary,
-          fontFamily: Styles().fontFamilies.bold,
-          fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          borderColor: Styles().colors.fillColorSecondary,
-          borderWidth: 2,
-          onTap: () {
-            Navigator.push(context, CupertinoPageRoute(
-                builder: (context) => GroupAllEventsPanel(group: _group,)));
-          }
-      )));
-
-      return
-        Stack(children: [
-          Column(
-            children: <Widget>[
-             SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') +' (${_groupEvents?.length ?? 0})',
-               iconPath: 'images/icon-calendar.png',
-                children: content,),
-           ]),
-          _updatingEvents?
-            Center(child:
-              Container(padding: EdgeInsets.symmetric(vertical: 50),
-                child:CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ),)) :
-            Container(),
-        ],);
+    return Stack(children: [
+      Column(children: <Widget>[
+        SectionTitlePrimary(
+            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' (${_groupEvents?.length ?? 0})',
+            iconPath: 'images/icon-calendar.png',
+            children: content)
+      ]),
+      _updatingEvents
+          ? Center(
+              child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 50),
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary))))
+          : Container()
+    ]);
   }
 
   Widget _buildAdminEventOptions(){
