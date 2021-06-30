@@ -65,6 +65,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   bool               _cancelling = false;
   bool               _leaving = false;
   bool               _updatingEvents = false;
+  int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
@@ -147,11 +148,13 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(widget.groupId, limit: 3).then((List<GroupEvent> events) {
+    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
-          _groupEvents = events;
-          _applyStepEvents(events);
+          bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
+          _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
+          _groupEvents = hasEventsMap ? eventsMap.values.first : null;
+          _applyStepEvents(_groupEvents);
           _updatingEvents = false;
         });
       }
@@ -553,7 +556,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return Stack(children: [
       Column(children: <Widget>[
         SectionTitlePrimary(
-            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' (${_groupEvents?.length ?? 0})',
+            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
             iconPath: 'images/icon-calendar.png',
             children: content)
       ]),
