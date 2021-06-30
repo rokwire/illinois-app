@@ -29,9 +29,10 @@ import '../WebPanel.dart';
 
 class GroupEventDetailPanel extends StatefulWidget{
   final Event event;
+  final String groupId;
   final bool previewMode;
 
-  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event}) : super(key: key);
+  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event, this.groupId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -415,14 +416,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapEdit(){
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (Event event){
-      Groups().updateEvent(event).then((param){
+      Groups().updateGroupEvents(event).then((param){
           Navigator.pop(context);
       });
     },)));
   }
 
   void _onTapDelete(){
-    Groups().deleteEventFromGroup(eventId: _event.eventId).then((value){
+    Groups().deleteEventFromGroup(eventId: _event?.id, groupId: widget?.groupId).then((value){
       Navigator.of(context).pop();
     });
   }

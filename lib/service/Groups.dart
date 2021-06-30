@@ -372,24 +372,22 @@ class Groups /* with Service */ {
     return false;
   }
 
-  Future<void> updateEvent(Event event){
+  Future<void> updateGroupEvents(Event event){
     return ExploreService().updateEvent(event).then((eventId) {
       NotificationService().notify(Groups.notifyGroupEventsUpdated);
     });
   }
 
   Future<bool> deleteEventFromGroup({String groupId, String eventId}) async {
-    //TBD
-    return false;
+    await removeEventFromGroup(groupId: groupId, eventId: eventId);
+    bool deleteResult = await ExploreService().deleteEvent(eventId);
+    NotificationService().notify(Groups.notifyGroupEventsUpdated);
+    return deleteResult;
   }
 
   Future<Event> createGroupEvent(String groupId, Event event) async {
     //TBD
     return Future<Event>.delayed(Duration(seconds: 1), (){ return event; });
-  }
-
-  Future<bool> updateGroupEvents(String groupId, List<Event> events) async {
-    return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
   }
 
   // Event Comments

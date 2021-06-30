@@ -141,6 +141,24 @@ class ExploreService /* with Service */ {
     return null;
   }
 
+  Future<bool> deleteEvent(String eventId) async{
+    if(_enabled && eventId!=null) {
+      http.Response response;
+      try {
+        String url = Config().eventsUrl + "/" + eventId;
+        response = (Config().eventsUrl != null) ? await Network().delete(url,
+            headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
+            auth: NetworkAuth.User) : null;
+    Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+    return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
+    } catch (e) {
+    Log.e('Failed to load events');
+    Log.e(e.toString());
+    }
+  }
+    return null;
+  }
+
   Future<List<Event>> loadEventsByIds(Set<String> eventIds) async {
     if(_enabled) {
       if (AppCollection.isCollectionEmpty(eventIds)) {
