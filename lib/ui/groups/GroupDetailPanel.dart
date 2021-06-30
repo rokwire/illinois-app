@@ -528,30 +528,30 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         content.add(_buildAdminEventOptions());
       }
 
-      if (_groupEvents != null) {
+      if (AppCollection.isCollectionNotEmpty(_groupEvents)) {
         for (GroupEvent groupEvent in _groupEvents) {
           content.add(GroupEventCard(
               groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
         }
+        content.add(Padding(padding: EdgeInsets.only(top: 16), child:
+        ScalableSmallRoundedButton(
+            label: Localization().getStringEx(
+                "panel.group_detail.button.all_events.title", 'See all events'),
+            widthCoeficient: 2,
+            backgroundColor: Styles().colors.white,
+            textColor: Styles().colors.fillColorPrimary,
+            fontFamily: Styles().fontFamilies.bold,
+            fontSize: 16,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+            borderColor: Styles().colors.fillColorSecondary,
+            borderWidth: 2,
+            onTap: () {
+              Navigator.push(context, CupertinoPageRoute(
+                  builder: (context) => GroupAllEventsPanel(group: _group,)));
+            }
+        )));
       }
 
-      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
-      ScalableSmallRoundedButton(
-          label: Localization().getStringEx(
-              "panel.group_detail.button.all_events.title", 'See all events'),
-          widthCoeficient: 2,
-          backgroundColor: Styles().colors.white,
-          textColor: Styles().colors.fillColorPrimary,
-          fontFamily: Styles().fontFamilies.bold,
-          fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          borderColor: Styles().colors.fillColorSecondary,
-          borderWidth: 2,
-          onTap: () {
-            Navigator.push(context, CupertinoPageRoute(
-                builder: (context) => GroupAllEventsPanel(group: _group,)));
-          }
-      )));
 
       return
         Stack(children: [
