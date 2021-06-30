@@ -142,8 +142,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   void _checkOnlineStatus() async {
     try {
-      Uri uri = Uri.parse(widget.url);
-      final result = await InternetAddress.lookup(uri.host);
+      final result = await InternetAddress.lookup('www.example.com');
       setState(() {
         _onlineStatus = (result.isNotEmpty && result[0].rawAddress.isNotEmpty)
             ? _OnlineStatus.online

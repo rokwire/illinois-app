@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- UI of the "Leave" group button [#388](https://github.com/rokwire/illinois-app/issues/388).
+- Do not show "See All Events" if there are no events [#390](https://github.com/rokwire/illinois-app/issues/390).
+### Fixed
+- Group Event - Oversized font is displayed in the field Event title [#366](https://github.com/rokwire/illinois-app/issues/366).
+- Do not show "Visit Website" button if there is no "titleURL" [#392](https://github.com/rokwire/illinois-app/issues/392).
+- Proper check for online status [#394](https://github.com/rokwire/illinois-app/issues/394).
+- Events sorting in Group [#396](https://github.com/rokwire/illinois-app/issues/396).
+- Group events count [#398](https://github.com/rokwire/illinois-app/issues/398).
 
 ## [2.5.1] - 2021-06-29
 ### Added

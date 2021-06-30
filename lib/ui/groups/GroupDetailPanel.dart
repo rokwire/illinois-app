@@ -46,7 +46,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About, Leave }
+enum _DetailTab { Events, About }
 
 class GroupPanel extends StatefulWidget {
 
@@ -65,6 +65,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   bool               _cancelling = false;
   bool               _leaving = false;
   bool               _updatingEvents = false;
+  int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
@@ -147,11 +148,13 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(widget.groupId, limit: 3).then((List<GroupEvent> events) {
+    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
-          _groupEvents = events;
-          _applyStepEvents(events);
+          bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
+          _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
+          _groupEvents = hasEventsMap ? eventsMap.values.first : null;
+          _applyStepEvents(_groupEvents);
           _updatingEvents = false;
         });
       }
@@ -470,18 +473,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Widget _buildTabs() {
     List<Widget> tabs = [];
-    List<_DetailTab> visibleTabs = [_DetailTab.Events, _DetailTab.About];
-    if (_canLeaveGroup) {
-      visibleTabs.add(_DetailTab.Leave);
-    }
-    TextStyle leaveTextStyle = TextStyle(
-        fontSize: 14,
-        fontFamily: Styles().fontFamilies.regular,
-        color: Styles().colors.fillColorPrimary,
-        decoration: TextDecoration.underline,
-        decorationColor: Styles().colors.fillColorSecondary,
-        decorationThickness: 1.5);
-    for (_DetailTab tab in visibleTabs) {
+    for (_DetailTab tab in _DetailTab.values) {
       String title;
       switch (tab) {
         case _DetailTab.Events:
@@ -490,12 +482,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         case _DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
-        case _DetailTab.Leave:
-          title = Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave');
-          break;
       }
       bool isSelected = (_currentTab == tab);
-      bool isLeaveTab = (tab == _DetailTab.Leave);
 
       if (0 < tabs.length) {
         tabs.add(Padding(
@@ -505,22 +493,35 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       }
 
       Widget tabWidget = RoundedButton(
-          textStyle: isLeaveTab ? leaveTextStyle : null,
           label: title,
           backgroundColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.background,
           textColor: (isSelected ? Colors.white : Styles().colors.fillColorPrimary),
           fontFamily: isSelected ? Styles().fontFamilies.bold : Styles().fontFamilies.regular,
           fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 16),
-          borderColor: isLeaveTab ? Styles().colors.fillColorSecondary : (isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent),
-          borderWidth: isLeaveTab ? 2 : 1,
+          borderColor: isSelected ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+          borderWidth: 1,
           height: 22 + 16 * MediaQuery.of(context).textScaleFactor,
           onTap: () => _onTab(tab));
 
-      if (isLeaveTab) {
-        tabs.add(Expanded(child: Container()));
-      }
       tabs.add(tabWidget);
+    }
+
+    if (_canLeaveGroup) {
+      Widget leaveButton = GestureDetector(
+          onTap: _onTapLeave,
+          child: Padding(
+              padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Styles().colors.fillColorSecondary,
+                      decorationThickness: 1.5))));
+      tabs.add(Expanded(child: Container()));
+      tabs.add(leaveButton);
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
@@ -529,49 +530,46 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   Widget _buildEvents() {
     List<Widget> content = [];
 
-      if (_isAdmin) {
-        content.add(_buildAdminEventOptions());
+    if (_isAdmin) {
+      content.add(_buildAdminEventOptions());
+    }
+
+    if (AppCollection.isCollectionNotEmpty(_groupEvents)) {
+      for (GroupEvent groupEvent in _groupEvents) {
+        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
+      
+      content.add(Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: ScalableSmallRoundedButton(
+              label: Localization().getStringEx("panel.group_detail.button.all_events.title", 'See all events'),
+              widthCoeficient: 2,
+              backgroundColor: Styles().colors.white,
+              textColor: Styles().colors.fillColorPrimary,
+              fontFamily: Styles().fontFamilies.bold,
+              fontSize: 16,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              borderColor: Styles().colors.fillColorSecondary,
+              borderWidth: 2,
+              onTap: () {
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAllEventsPanel(group: _group)));
+              })));
+    }
 
-      if (_groupEvents != null) {
-        for (GroupEvent groupEvent in _groupEvents) {
-          content.add(GroupEventCard(
-              groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
-        }
-      }
-
-      content.add(Padding(padding: EdgeInsets.only(top: 16), child:
-      ScalableSmallRoundedButton(
-          label: Localization().getStringEx(
-              "panel.group_detail.button.all_events.title", 'See all events'),
-          widthCoeficient: 2,
-          backgroundColor: Styles().colors.white,
-          textColor: Styles().colors.fillColorPrimary,
-          fontFamily: Styles().fontFamilies.bold,
-          fontSize: 16,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          borderColor: Styles().colors.fillColorSecondary,
-          borderWidth: 2,
-          onTap: () {
-            Navigator.push(context, CupertinoPageRoute(
-                builder: (context) => GroupAllEventsPanel(group: _group,)));
-          }
-      )));
-
-      return
-        Stack(children: [
-          Column(
-            children: <Widget>[
-             SectionTitlePrimary(title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') +' (${_groupEvents?.length ?? 0})',
-               iconPath: 'images/icon-calendar.png',
-                children: content,),
-           ]),
-          _updatingEvents?
-            Center(child:
-              Container(padding: EdgeInsets.symmetric(vertical: 50),
-                child:CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ),)) :
-            Container(),
-        ],);
+    return Stack(children: [
+      Column(children: <Widget>[
+        SectionTitlePrimary(
+            title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
+            iconPath: 'images/icon-calendar.png',
+            children: content)
+      ]),
+      _updatingEvents
+          ? Center(
+              child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 50),
+                  child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary))))
+          : Container()
+    ]);
   }
 
   Widget _buildAdminEventOptions(){
@@ -894,13 +892,9 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onTab(_DetailTab tab) {
-    if (tab == _DetailTab.Leave) {
-      _onTapLeave();
-    } else {
-      setState(() {
-        _currentTab = tab;
-      });
-    }
+    setState(() {
+      _currentTab = tab;
+    });
   }
 
   void _onTapLeave() {

@@ -342,25 +342,23 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   Widget _eventUrlButton(){
     String titleUrl = _event?.titleUrl;
 
-    return Container(child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        RoundedButton(
-          label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
-          hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-          backgroundColor: Colors.white,
-          borderColor: Styles().colors.fillColorSecondary,
-          textColor: Styles().colors.fillColorPrimary,
-          onTap: (){
-            Analytics.instance.logSelect(target: "Website");
-            _onTapWebButton(titleUrl, 'Website');
-          },
-        ),
-        Container(
-          height: 6,
-        ),
-      ],
-    ));
+    return Visibility(
+        visible: AppString.isStringNotEmpty(titleUrl),
+        child: Container(
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          RoundedButton(
+            label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+            hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors.fillColorSecondary,
+            textColor: Styles().colors.fillColorPrimary,
+            onTap: () {
+              Analytics.instance.logSelect(target: "Website");
+              _onTapWebButton(titleUrl, 'Website');
+            }
+          ),
+          Container(height: 6)
+        ])));
   }
 
   Widget _buildFavoritesButton(){
