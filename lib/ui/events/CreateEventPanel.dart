@@ -46,7 +46,7 @@ import 'package:timezone/timezone.dart' as timezone;
 
 
 class CreateEventPanel extends StatefulWidget {
-  final GroupEvent editEvent;
+  final Event editEvent;
   final Function onEditTap;
   final Group group;
 
@@ -69,8 +69,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   dynamic _selectedCategory;
   String _selectedTimeZone = defaultEventTimeZone;
   String _imageUrl;
-  DateTime startDate;
-  DateTime endDate;
+  timezone.TZDateTime startDate;
+  timezone.TZDateTime endDate;
   TimeOfDay startTime;
   TimeOfDay endTime;
   bool _allDay = false;
@@ -107,7 +107,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     _eventWebsiteController.dispose();
     _eventLocationController.dispose();
     _eventLatitudeController.dispose();
-    _eventLocationController.dispose();
     _eventLongitudeController.dispose();
     _eventPriceController.dispose();
     super.dispose();
@@ -1555,14 +1554,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         _selectedCategory = {"category": event.category};
 
       _eventTitleController.text = event.title;
-//      startDate = AppDateTime().dateTimeFromString(event.startDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
-      startDate = event.startDateGmt;
-      if(startDate!=null)
+      if(event?.startDateGmt!=null) {
+        startDate =  timezone.TZDateTime.from(event?.startDateGmt, timezone.getLocation(_selectedTimeZone));
         startTime = TimeOfDay.fromDateTime(startDate);
 //      endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
-      endDate = event.endDateGmt;
-      if(endDate!=null)
+      }
+//      endDate = event.endDateGmt;
+//      if(endDate==null && event.endDateString!=null){
+//        endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.serverResponseDateTimeFormat);
+//      }
+      if(event.endDateGmt!=null) {
+        endDate = timezone.TZDateTime.from(event.endDateGmt, timezone.getLocation(_selectedTimeZone));
         endTime = TimeOfDay.fromDateTime(endDate);
+      }
       _allDay = event.allDay;
       _isOnline = event.isVirtual;
       _isFree = event.isEventFree;
@@ -1811,14 +1815,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(startDate, timezone.getLocation(_selectedTimeZone));
       DateTime utcTTime = startTime?.toUtc();
       event.startDateString = AppDateTime().formatDateTime(
-          utcTTime, format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
-
+          utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+      event.startDateGmt = utcTTime?.toUtc();
     }
     if(endDate!=null) {
       timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(endDate, timezone.getLocation(_selectedTimeZone));
       DateTime utcTTime = startTime?.toUtc();
       event.endDateString = AppDateTime().formatDateTime(
           utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
+      event.endDateGmt = utcTTime?.toUtc();
     }
     event.allDay = _allDay;
     event.location = _location;
