@@ -117,7 +117,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     return Scaffold(
         appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx("panel.create_event.header.title", "Create An Event"),
+          titleWidget: Text(_panelTitleText,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -145,7 +145,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                     child: Column(
                       children: <Widget>[
 
-                        Semantics(label:Localization().getStringEx("panel.create_event.title","Create an Event"),
+                        Semantics(label:_panelTitleText,
                         hint: Localization().getStringEx("panel.create_event.hint", ""), header: true, excludeSemantics: true, child:
                           Container(
                             color: Styles().colors.fillColorPrimaryVariant,
@@ -159,8 +159,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Image.asset('images/icon-create-event.png'),
                                   Padding(
                                     padding: EdgeInsets.only(left: 12),
-                                    child: Text(
-                                      Localization().getStringEx("panel.create_event.title","Create an Event"),
+                                    child: Text(_panelTitleText,
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
@@ -354,7 +353,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                         startDate,
                                                         startTime) ??
                                                         (_populateDateTimeWithTimeOfDay(
-                                                            DateTime.now(),
+                                                            timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
                                                             startTime)))
                                                     : "-",
                                                 onTap: _onTapStartTime,
@@ -476,8 +475,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                                 startDate,
                                                                 endTime) ??
                                                                 _populateDateTimeWithTimeOfDay(
-                                                                    DateTime
-                                                                        .now(),
+                                                                    timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
                                                                     endTime)))
                                                         : "-",
                                                     onTap: _onTapEndTime,
@@ -1567,13 +1565,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         endDate = timezone.TZDateTime.from(event.endDateGmt, timezone.getLocation(_selectedTimeZone));
         endTime = TimeOfDay.fromDateTime(endDate);
       }
-      _allDay = event.allDay;
-      _isOnline = event.isVirtual;
-      _isFree = event.isEventFree;
+      _allDay = event.allDay ?? false;
+      _isOnline = event.isVirtual ?? false;
+      _isFree = event.isEventFree?? false;
       _location = event.location;
       _eventDescriptionController.text = event.longDescription;
       _eventPurchaseUrlController.text = event.registrationUrl;
       _eventWebsiteController.text = event.titleUrl;
+      _eventPriceController.text = event.cost;
       _selectedPrivacy = (event?.isGroupPrivate??false) ? "PRIVATE" : "PUBLIC";
       if(event.location!=null){
         _eventLatitudeController.text = event.location?.latitude?.toString()??"";
@@ -1813,14 +1812,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.title = _eventTitleController.text;
     if(startDate!=null) {
       timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(startDate, timezone.getLocation(_selectedTimeZone));
-      DateTime utcTTime = startTime?.toUtc();
+      timezone.TZDateTime utcTTime = startTime?.toUtc();
       event.startDateString = AppDateTime().formatDateTime(
           utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
       event.startDateGmt = utcTTime?.toUtc();
     }
     if(endDate!=null) {
       timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(endDate, timezone.getLocation(_selectedTimeZone));
-      DateTime utcTTime = startTime?.toUtc();
+      timezone.TZDateTime utcTTime = startTime?.toUtc();
       event.endDateString = AppDateTime().formatDateTime(
           utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
       event.endDateGmt = utcTTime?.toUtc();
@@ -1834,6 +1833,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.recurringFlag = false;//decide do we need it
     event.cost = _eventPriceController?.text?.toString();//decide do we need it
     event.isGroupPrivate = _isPrivateEvent;
+    event.isEventFree = _isFree;
     if(widget.group!=null) {
       event.createdByGroupId = widget.group.id;
     }
@@ -1849,7 +1849,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapStartDate() async {
     Analytics.instance.logSelect(target: "Start Date");
-    DateTime date = await _pickDate(startDate, null);
+    timezone.TZDateTime date = await _pickDate(startDate, null);
 
     if (date != null) {
       startDate = date;
@@ -1860,7 +1860,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapStartTime() async {
     Analytics.instance.logSelect(target: "Start Time");
-    DateTime start = startDate ?? DateTime.now();
+    timezone.TZDateTime start = startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
     TimeOfDay time =
         await _pickTime(startTime ?? (new TimeOfDay.fromDateTime(start)));
     if (time != null) startTime = time;
@@ -1871,7 +1871,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapEndDate() async {
     Analytics.instance.logSelect(target: "End Date");
-    DateTime date = await _pickDate(endDate, startDate);
+    timezone.TZDateTime date = await _pickDate(endDate, startDate);
 
     if (date != null) {
       endDate = date;
@@ -1882,7 +1882,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapEndTime() async {
     Analytics.instance.logSelect(target: "End Time");
-    DateTime end = endDate ?? DateTime.now();
+    timezone.TZDateTime end = endDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
     TimeOfDay time =
         await _pickTime(endTime ?? (new TimeOfDay.fromDateTime(end)));
     if (time != null) endTime = time;
@@ -1892,22 +1892,24 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _setLoading(bool loading) {
-    setState(() {
-      _loading = loading;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = loading;
+      });
+    }
   }
 
-  Future<DateTime> _pickDate(DateTime date, DateTime startDate) async {
-    DateTime firstDate = startDate ?? DateTime.now();
+  Future<timezone.TZDateTime> _pickDate(timezone.TZDateTime date, timezone.TZDateTime startDate) async {
+    timezone.TZDateTime firstDate = startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
     date = date ?? firstDate;
-    DateTime initialDate = date;
+    timezone.TZDateTime initialDate = date;
     if (firstDate.isAfter(date)) {
       firstDate = initialDate; //Fix exception
     }
-    DateTime lastDate =
-        DateTime.fromMillisecondsSinceEpoch(initialDate.millisecondsSinceEpoch)
+    timezone.TZDateTime lastDate =
+    timezone.TZDateTime.fromMillisecondsSinceEpoch(timezone.getLocation(_selectedTimeZone),initialDate.millisecondsSinceEpoch)
             .add(Duration(days: 365));
-    DateTime result = await showDatePicker(
+    DateTime resultDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: firstDate,
@@ -1920,7 +1922,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       },
     );
 
-    return result;
+    return AppDateTime().changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone));
   }
 
   Future<TimeOfDay> _pickTime(TimeOfDay initialTime) async {
@@ -1929,11 +1931,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     return time;
   }
 
-  DateTime _populateDateTimeWithTimeOfDay(DateTime date, TimeOfDay time) {
+  timezone.TZDateTime _populateDateTimeWithTimeOfDay(timezone.TZDateTime date, TimeOfDay time) {
     if (date != null && time != null) {
       int endHour = time != null ? time.hour : date.hour;
       int endMinute = time != null ? time.minute : date.minute;
-      date = new DateTime(date.year, date.month, date.day, endHour, endMinute);
+      date = new timezone.TZDateTime(date.location,date.year, date.month, date.day, endHour, endMinute);
     }
 
     return date;
@@ -1986,6 +1988,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   bool get _isPrivateEvent{
    return _selectedPrivacy == "PRIVATE";
+  }
+
+  bool get _isEditMode{
+    return widget?.editEvent != null;
+  }
+
+  String get _panelTitleText{
+    return widget?.editEvent!=null ? "Update Event" : Localization().getStringEx("panel.create_event.header.title", "Create An Event");
   }
 }
 
