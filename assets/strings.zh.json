@@ -1639,6 +1639,18 @@
 	"panel.groups_settings.button.tags.title": "Tags",
 	"panel.groups_settings.button.tags.hint": "",
 
+	"panel.group.tags.header.title": "Group Tags",
+	"panel.group.tags.button.done.title": "Done",
+	"panel.group.tags.list.search.label": "SEARCH",
+	"panel.group.tags.list.selected.label": "SELECTED",
+	"panel.group.tags.list.all.label": "ALL TAGS",
+	"panel.group.tags.search.field.label": "Search for tags",
+	"panel.group.tags.search.field.hint": "type the tag you are looking for",
+	"panel.group.tags.search.cancel.label": "Cancel",
+	"panel.group.tags.search.cancel.hint": "clear the search filter",
+	"panel.group.tags.search.button.title": "Search",
+	"panel.group.tags.search.button.hint": "filter tags",
+
 	"panel.groups_event_detail.button.options.title": "Options",
 	"panel.groups_event_detail.label.online_event": "Online Event",
 	"panel.groups_event_detail.label.location.hint": "",

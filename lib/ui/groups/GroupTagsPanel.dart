@@ -23,7 +23,6 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-//TBD search, localization
 class GroupTagsPanel extends StatefulWidget {
   final List<String> selectedTags;
 
@@ -37,6 +36,9 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   List<String> _allTags;
   List<String> _groupTags;
+
+  bool _searchView = false;
+  TextEditingController _searchController = TextEditingController();
 
   bool _loading = false;
 
@@ -66,12 +68,15 @@ class _GroupTagsState extends State<GroupTagsPanel> {
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 12), child: Row(children: [
                 Expanded(child: Container()),
-                RoundedButton(label: 'Done', width: 120, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
+                RoundedButton(label: Localization().getStringEx('panel.group.tags.button.done.title', 'Done'), width: 120, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorSecondary, backgroundColor: Styles().colors.white, onTap: _onTapDone)
               ])),
-              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.selected.label', "SELECTED")))),
+              Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
+              Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")))),
+              Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController?.text))),
+              Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")))),
               Visibility(visible: hasGroupTags, child: _buildTagsWidget(_groupTags)),
-              Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS"))),
-              _buildTagsWidget(_allTags)
+              Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")))),
+              Visibility(visible: !_searchView, child: _buildTagsWidget(_allTags))
             ]))),
         Visibility(visible: _loading, child: Container(alignment: Alignment.center, color: Styles().colors.background, child: CircularProgressIndicator()))
       ])
@@ -115,11 +120,13 @@ class _GroupTagsState extends State<GroupTagsPanel> {
 
   void _onTagTaped(String tag) {
     Analytics.instance.logSelect(target: "Group Tag: $tag");
+    _hideKeyboard();
     _switchTag(tag);
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag), tag);
   }
 
   void _onTapDone() {
+    _hideKeyboard();
     Navigator.of(context).pop(_groupTags);
   }
 
@@ -133,6 +140,105 @@ class _GroupTagsState extends State<GroupTagsPanel> {
       _groupTags.add(tag);
     }
     setState(() {});
+  }
+
+  Widget _buildSearchWidget() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      color: Styles().colors.surface,
+      height: 48,
+      child: Row(
+        children: <Widget>[
+          Flexible(
+            child: Semantics(
+                label: Localization().getStringEx("panel.group.tags.search.field.label", "Search for tags"),
+                hint: Localization().getStringEx("panel.group.tags.search.field.hint", "type the tag you are looking for"),
+                textField: true,
+                excludeSemantics: true,
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (text) => _onTextChanged(text),
+                  onSubmitted: (_) => () {},
+                  cursorColor: Styles().colors.fillColorSecondary,
+                  keyboardType: TextInputType.text,
+                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                  ),
+                )),
+          ),
+          Semantics(
+            label: Localization().getStringEx("panel.group.tags.search.cancel.label", "Cancel"),
+            hint: Localization().getStringEx("panel.group.tags.search.cancel.hint", "clear the search filter"),
+            button: true,
+            excludeSemantics: true,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14),
+              child: GestureDetector(
+                onTap: () {
+                  _onTapCancelSearch();
+                },
+                child: Image.asset(
+                  'images/icon-x-orange.png',
+                  width: 25,
+                  height: 25,
+                ),
+              ),
+            ),
+          ),
+          Semantics(
+              label: Localization().getStringEx("panel.group.tags.search.button.title", "Search"),
+              hint: Localization().getStringEx("panel.group.tags.search.button.hint", "filter tags"),
+              button: true,
+              excludeSemantics: true,
+              child: GestureDetector(
+                onTap: () {
+                  _onSearchTap();
+                },
+                child: Image.asset(
+                  'images/icon-search.png',
+                  color: Styles().colors.fillColorSecondary,
+                  width: 25,
+                  height: 25,
+                ),
+              ))
+        ],
+      ),
+    );
+  }
+
+  void _onTextChanged(text) {
+    setState(() {
+      _searchView = AppString.isStringNotEmpty(text);
+    });
+  }
+
+  void _onSearchTap() async {
+    _hideKeyboard();
+    setState(() {
+      _searchView = true;
+    });
+  }
+
+  void _onTapCancelSearch() {
+    _hideKeyboard();
+    setState(() {
+      _searchController.clear();
+      _searchView = false;
+    });
+  }
+
+  List<String> _filterTags(String key) {
+    if (AppString.isStringEmpty(key)) {
+      return _allTags;
+    } else if (AppCollection.isCollectionNotEmpty(_allTags)) {
+      return _allTags.where((String tag) => tag.toLowerCase().contains(key.toLowerCase())).toList();
+    }
+    return null;
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 
   void _setLoading(bool loading) {
