@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Delete group[#400](https://github.com/rokwire/illinois-app/issues/400)
+- Delete group [#400](https://github.com/rokwire/illinois-app/issues/400)
+- Use correct categories and tags for group [#406](https://github.com/rokwire/illinois-app/issues/406)
 ### Changed
 - Required fields for creating group event [#404](https://github.com/rokwire/illinois-app/issues/404).
 

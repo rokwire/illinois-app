@@ -133,7 +133,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
     List<String> categories = [];
     categories.add(_allCategoriesValue);
-    categories.addAll(await Groups().categories);
+    List<String> groupCategories = await Groups().loadCategories();
+    if (AppCollection.isCollectionNotEmpty(groupCategories)) {
+      categories.addAll(groupCategories);
+    }
     _categories = categories;
     _selectedCategory = _allCategoriesValue;
 
