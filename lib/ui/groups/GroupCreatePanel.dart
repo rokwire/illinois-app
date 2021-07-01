@@ -84,7 +84,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {
       _groupCategoeriesLoading = true;
     });
-    Groups().categories.then((categories){
+    Groups().loadCategories().then((categories){
       setState(() {
         _groupCategories = categories;
       });

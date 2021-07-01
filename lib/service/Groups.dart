@@ -69,24 +69,17 @@ class Groups /* with Service */ {
     return (_userMembership != null) ? _userMembership[groupId] : null;
   }
 
-  // Enumeration APIs
+  // Categories APIs
 
-  Future<List<String>> get categories async {
-    String url = '${Config().groupsUrl}/group-categories';
-    try {
-      Response response = await Network().get(url, auth: NetworkAuth.App,);
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      List<dynamic> categoriesJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-      if(AppCollection.isCollectionNotEmpty(categoriesJson)){
-        return categoriesJson.map((e) => e.toString()).toList();
-      }
-    } catch (e) {
-      print(e);
+  Future<List<String>> loadCategories() async {
+    List<dynamic> categoriesJsonArray = await ExploreService().loadEventCategories();
+    if (AppCollection.isCollectionNotEmpty(categoriesJsonArray)) {
+      List<String> categoriesList = categoriesJsonArray.map((e) => e['category']?.toString()).toList();
+      return categoriesList;
+    } else {
+      return null;
     }
-    return [];
   }
-
 
   // Groups APIs
 

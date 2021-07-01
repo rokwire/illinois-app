@@ -119,7 +119,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _initCategories(){
-    Groups().categories.then((categories){
+    Groups().loadCategories().then((categories){
      setState(() {
        _groupCategories = categories;
      });
