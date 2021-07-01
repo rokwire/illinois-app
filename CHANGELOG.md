@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Required fields for creating group event [#404](https://github.com/rokwire/illinois-app/issues/404).
 - Put "Delete group" in the options menu [#409](https://github.com/rokwire/illinois-app/issues/409).
+### Fixed
+- Display error message when creating group fails [#411](https://github.com/rokwire/illinois-app/issues/411).
 
 ## [2.5.2] - 2021-06-30
 ### Added
