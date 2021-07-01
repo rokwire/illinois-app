@@ -50,6 +50,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _groupNamesLoading = false;
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
+  bool get _canSave => AppString.isStringNotEmpty(_group.title)
+      && AppString.isStringNotEmpty(_group.category);
   bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
 
   @override
@@ -215,7 +217,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-         _buildSectionTitle(title,null),
+         _buildSectionTitle(title, null, true),
           Container(
             height: 48,
             padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
@@ -320,7 +322,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildSectionTitle(Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-              Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."),),
+              Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
             GroupDropDownButton(
               emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
               buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
@@ -528,7 +530,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           child: Center(
             child: ScalableRoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
-              backgroundColor: Colors.white,
+              backgroundColor: _canSave ? Colors.white : Styles().colors.lightGray,
               borderColor: Styles().colors.fillColorSecondary,
               textColor: Styles().colors.fillColorPrimary,
               onTap: _onCreateTap,
@@ -548,28 +550,30 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onCreateTap(){
-    setState(() {
-      _creating = true;
-    });
-    Groups().createGroup(_group).then((detail){
-      if(detail!=null){
-        //ok
+    if(_canSave) {
+      setState(() {
+        _creating = true;
+      });
+      Groups().createGroup(_group).then((detail) {
+        if (detail != null) {
+          //ok
+          setState(() {
+            _creating = false;
+          });
+
+          Navigator.pop(context);
+        }
+      }).catchError((e) {
+        //error
         setState(() {
           _creating = false;
         });
-
-        Navigator.pop(context);
-      }
-    }).catchError((e){
-      //error
-      setState(() {
-        _creating = false;
       });
-    });
+    }
   }
   //
   // Common
-  Widget _buildSectionTitle(String title, String description){
+  Widget _buildSectionTitle(String title, String description, [bool requiredMark = false]){
     return Container(
       padding: EdgeInsets.only(bottom: 8, top:16),
       child:
@@ -582,9 +586,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           header: true,
           excludeSemantics: true,
           child:
-          Text(
-            title,
-            style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold),
+          RichText(
+            text: TextSpan(
+              text: title,
+              children: [
+                TextSpan(
+                  text: requiredMark ?  " *" : "",
+                  style: TextStyle(color: Styles().colors.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies.extraBold),
+                )
+              ],
+              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold),
+            ),
           ),
         ),
         description==null? Container():

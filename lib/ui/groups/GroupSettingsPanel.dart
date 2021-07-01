@@ -166,11 +166,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             height: _imageHeight,
             child: Center(
               child:
-              Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
-                  hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
+              Semantics(label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.group_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                  hint: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.group_settings.modify_image.hint","") : Localization().getStringEx("panel.group_settings.add_image.hint",""),
+                  button: true, excludeSemantics: true, child:
                   ScalableSmallRoundedButton(
                     maxLines: 2,
-                    label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                    label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.group_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
                     textColor: Styles().colors.fillColorPrimary,
                     onTap: _onTapAddImage,
                     showChevron: false,

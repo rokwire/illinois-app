@@ -186,7 +186,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                   });
                 }
             ),
-            Container(height: 8,),
+            Container(height: 12,),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),

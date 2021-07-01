@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Delete group[#400](https://github.com/rokwire/illinois-app/issues/400)
 ### Changed
+- Groups UI improvements [#413](https://github.com/rokwire/illinois-app/issues/413).
 - Required fields for creating group event [#404](https://github.com/rokwire/illinois-app/issues/404).
 
 ## [2.5.2] - 2021-06-30
