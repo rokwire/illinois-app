@@ -360,6 +360,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"),[membersCount]);
     }
 
+    int pendingCount = _group?.pendingCount ?? 0;
+    String pendingMembers = _group.currentUserIsAdmin && pendingCount > 0 ? sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"),[membersCount]) : "";
     if(_isMember){
       if(_isAdmin){
         commands.add(RibbonButton(
@@ -471,6 +473,12 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Text(members,  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.textBackground, ),)
+              ),
+              Visibility(
+                visible: AppString.isStringNotEmpty(pendingMembers),
+                child: Padding(padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.textBackground, ),)
+                ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4),
                 child: Column(children: commands,),

@@ -218,6 +218,18 @@ class Group {
     }
     return membersCount;
   }
+
+  int get pendingCount{
+    int membersCount = 0;
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.isPendingMember){
+          membersCount++;
+        }
+      }
+    }
+    return membersCount;
+  }
 }
 
 //////////////////////////////

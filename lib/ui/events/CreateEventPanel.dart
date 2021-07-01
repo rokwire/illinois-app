@@ -178,6 +178,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               color: Styles().colors.lightGray,
                               height: _imageHeight,
                             ),
+                            AppString.isStringNotEmpty(_imageUrl) ? Image.network(_imageUrl) : Container(),
                             CustomPaint(
                                 painter: TrianglePainter(
                                     painterColor: Styles().colors.fillColorSecondary,
@@ -196,10 +197,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               height: _imageHeight,
                               child: Center(
                                 child:
-                                Semantics(label:Localization().getStringEx("panel.create_event.add_image","Add event image"),
-                                  hint: Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
+                                Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                  hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
                                   ScalableSmallRoundedButton(
-                                    label: Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                    label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                     onTap: _onTapAddImage,
                                     backgroundColor: Styles().colors.white,
                                     textColor: Styles().colors.fillColorPrimary,
@@ -1544,6 +1545,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           child: AddImageWidget(),
         )
     );
+    setState(() {});
   }
 
   void _onAllDayToggled() {

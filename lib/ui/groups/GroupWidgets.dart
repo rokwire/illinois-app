@@ -33,6 +33,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -847,6 +848,7 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [AppString.getDefaultEmptyString(value: group.pendingCount?.toString())]);
     return GestureDetector(
         onTap: () => _onTapCard(context),
         child: Padding(
@@ -867,6 +869,16 @@ class GroupCard extends StatelessWidget {
                             child: Text(group?.title ?? "",
                                 style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))))
                   ]),
+                  Visibility(
+                    visible: (group?.currentUserIsAdmin ?? false) && (group.pendingCount > 0),
+                    child: Text(pendingCountText ?? "",
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies.regular,
+                          fontSize: 16,
+                          color: Styles().colors.textBackgroundVariant
+                      ),
+                    ),
+                  ),
                   Container(height: 4),
                   displayType == GroupCardDisplayType.allGroups ? Container() : _buildUpdateTime()
                 ]))));
