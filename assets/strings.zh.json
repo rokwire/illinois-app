@@ -1464,7 +1464,7 @@
 	"panel.group_detail.button.events.title": "Events",
 	"panel.group_detail.button.about.title": "About",
 	"panel.group_detail.button.leave.title": "Leave",
-	"panel.group_detail.button.group.delete.title": "Delete",
+	"panel.group_detail.button.group.delete.title": "Delete group",
 	"panel.group_detail.button.all_events.title": "See all events",
 	"panel.group_detail.label.upcoming_events": "Upcoming Events",
 	"panel.group_detail.label.upcoming_events.empty": "No upcoming events",
