@@ -81,6 +81,12 @@ class Groups /* with Service */ {
     }
   }
 
+  // Tags APIs
+
+  Future<List<String>> loadTags() async {
+    return ExploreService().loadEventTags();
+  }
+
   // Groups APIs
 
   Future<List<Group>> loadGroups({bool myGroups = false}) async {

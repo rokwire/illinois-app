@@ -24,6 +24,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
+import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
@@ -38,7 +39,6 @@ class GroupCreatePanel extends StatefulWidget {
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
-  final _groupTagsController = TextEditingController();
 
   Group _group;
 
@@ -336,58 +336,33 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           ],
         ));
   }
-  //
+
   //Tags
-  Widget _buildTagsLayout(){
+  Widget _buildTagsLayout() {
     String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSectionTitle(fieldTitle,
-              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
-            Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    height: 48,
-                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-                    child: Semantics(
-                        label: fieldTitle,
-                        hint: fieldHint,
-                        textField: true,
-                        excludeSemantics: true,
-                        child: TextField(
-                          controller: _groupTagsController,
-                          decoration: InputDecoration(border: InputBorder.none,),
-                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                        )),
-                  ),
-                ),
-                Container(width: 8,),
-                Expanded(
-                  flex: 2,
-                  child:
-                  ScalableRoundedButton(
-                    label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
-                    hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", ""),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(
+                flex: 5,
+                child: _buildSectionTitle(
+                    fieldTitle, Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
+            Container(width: 8),
+            Expanded(
+                flex: 2,
+                child: ScalableRoundedButton(
+                    label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
+                    hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
                     backgroundColor: Styles().colors.white,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorSecondary,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    onTap: _onTapAddTag,
-                  )
-                )
-              ],
-            ),
-            Container(height: 10,),
-            _constructTagButtonsContent()
-          ],
-        ));
+                    onTap: _onTapTags))
+          ]),
+          Container(height: 10),
+          _constructTagButtonsContent()
+        ]));
   }
 
   Widget _constructTagButtonsContent(){
@@ -465,19 +440,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {});
   }
 
-  void _onTapAddTag(){
-    String tag = _groupTagsController.text?.toString();
-    if(_group!=null) {
-      if (_group.tags == null) {
-        _group.tags = [];
+  void _onTapTags() {
+    Analytics.instance.logSelect(target: "Tags");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group?.tags))).then((tags) {
+      // (tags == null) means that the user hit the back button
+      if (tags != null) {
+        setState(() {
+          _group.tags = tags;
+        });
       }
-      _group.tags.add(tag);
-      _groupTagsController.clear();
-    }
-
-    setState(() {});
+    });
   }
-  //
 
   //Privacy
   Widget _buildPrivacyDropDown() {

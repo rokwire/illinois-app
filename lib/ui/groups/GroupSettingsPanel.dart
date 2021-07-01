@@ -23,6 +23,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -42,7 +43,6 @@ class GroupSettingsPanel extends StatefulWidget {
 class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
-  final _groupTagsController = TextEditingController();
   final _linkController = TextEditingController();
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
@@ -416,45 +416,26 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildTagsLayout(){
     String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
     String description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
-    String hint = Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildInfoHeader(title, description),
             Row(
               children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    height: 48,
-                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-                    child: Semantics(
-                        label: title,
-                        hint: hint,
-                        textField: true,
-                        excludeSemantics: true,
-                        child: TextField(
-                          controller: _groupTagsController,
-                          decoration: InputDecoration(border: InputBorder.none,),
-                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                        )),
-                  ),
-                ),
-                Container(width: 8,),
+                Expanded(flex: 5, child: _buildInfoHeader(title, description)),
+                Container(width: 8),
                 Expanded(
                     flex: 2,
                     child:
                     ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
-                      hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", "Add"),
+                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
+                      hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
                       backgroundColor: Styles().colors.white,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorSecondary,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      onTap: _onTapAddTag,
+                      onTap: _onTapTags,
                     )
                 )
               ],
@@ -547,17 +528,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {});
   }
 
-  void _onTapAddTag(){
-    String tag = _groupTagsController.text?.toString();
-    if(_group!=null) {
-      if (_group.tags == null) {
-        _group.tags = [];
+  void _onTapTags(){
+    Analytics.instance.logSelect(target: "Tags");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group.tags))).then((tags) {
+      // (tags == null) means that the user hit the back button
+      if (tags != null) {
+        setState(() {
+          _group.tags = tags;
+        });
       }
-      _group.tags.add(tag);
-      _groupTagsController.clear();
-    }
-
-    setState(() {});
+    });
   }
   //
   //Privacy
