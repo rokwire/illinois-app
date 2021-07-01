@@ -25,6 +25,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -35,6 +36,7 @@ class Groups /* with Service */ {
   static const String notifyGroupEventsUpdated   = "edu.illinois.rokwire.groups.events.updated";
   static const String notifyGroupCreated            = "edu.illinois.rokwire.group.created";
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
+  static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
 
   Map<String, Member> _userMembership;
 
@@ -184,6 +186,22 @@ class Groups /* with Service */ {
       }
     }
     return false;
+  }
+
+  Future<bool> deleteGroup(String groupId) async {
+    if (AppString.isStringEmpty(groupId)) {
+      return false;
+    }
+    String url = '${Config().groupsUrl}/group/$groupId';
+    Response response = await Network().delete(url, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupDeleted, null);
+      return true;
+    } else {
+      Log.i('Failed to delete group. Reason:\n${response?.body}');
+      return false;
+    }
   }
 
   // Members APIs

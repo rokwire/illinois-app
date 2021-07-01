@@ -62,8 +62,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   Group              _group;
   bool               _loading = false;
-  bool               _cancelling = false;
-  bool               _leaving = false;
+  bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
@@ -109,6 +108,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     } else {
       return currentMemberUser?.isMember ?? false;
     }
+  }
+
+  bool get _canDeleteGroup {
+    return _isAdmin;
   }
 
   @override
@@ -161,32 +164,39 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     });
   }
 
-  void _cancelMembershipRequest(){
-    setState(() {
-      _cancelling = true;
-    });
-    Groups().cancelRequestMembership(widget.groupId).whenComplete((){
+  void _cancelMembershipRequest() {
+    _setConfirmationLoading(true);
+    Groups().cancelRequestMembership(widget.groupId).whenComplete(() {
       if (mounted) {
-        setState(() {
-          _cancelling = false;
-        });
+        _setConfirmationLoading(false);
         _loadGroup();
       }
     });
   }
 
-  Future<void> _leaveGroup(Function setStateEx){
-    setStateEx(() {
-      _leaving = true;
-    });
-    return Groups().leaveGroup(widget.groupId).whenComplete((){
+  Future<void> _leaveGroup() {
+    _setConfirmationLoading(true);
+    return Groups().leaveGroup(widget.groupId).whenComplete(() {
       if (mounted) {
-        setStateEx(() {
-          _leaving = false;
-        });
+        _setConfirmationLoading(false);
         _loadGroup();
       }
     });
+  }
+
+  Future<bool> _deleteGroup() {
+    _setConfirmationLoading(true);
+    return Groups().deleteGroup(_group?.id).whenComplete(() {
+      _setConfirmationLoading(false);
+    });
+  }
+
+  void _setConfirmationLoading(bool loading) {
+    if (mounted) {
+      setState(() {
+        _confirmationLoading = loading;
+      });
+    }
   }
 
   @override
@@ -507,21 +517,39 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       tabs.add(tabWidget);
     }
 
-    if (_canLeaveGroup) {
-      Widget leaveButton = GestureDetector(
-          onTap: _onTapLeave,
-          child: Padding(
-              padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
-              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors.fillColorSecondary,
-                      decorationThickness: 1.5))));
+    if (_canDeleteGroup || _canLeaveGroup) {
       tabs.add(Expanded(child: Container()));
-      tabs.add(leaveButton);
+
+      if (_canDeleteGroup) {
+        Widget deleteButton = GestureDetector(
+            onTap: _onTapDelete,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+                child: Text(Localization().getStringEx("panel.group_detail.button.group.delete.title", 'Delete'),
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: Styles().fontFamilies.regular,
+                        color: Styles().colors.fillColorPrimary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1.5))));
+        tabs.add(deleteButton);
+      }
+      if (_canLeaveGroup) {
+        Widget leaveButton = GestureDetector(
+            onTap: _onTapLeave,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+                child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: Styles().fontFamilies.regular,
+                        color: Styles().colors.fillColorPrimary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1.5))));
+        tabs.add(leaveButton);
+      }
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
@@ -723,116 +751,52 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                         onTap:() { _onCancelMembershipRequest();  }
                     ),
                   )),
-              _cancelling ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ) : Container(),
+              _confirmationLoading ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ) : Container(),
             ],
           )
           : Container();
   }
 
-  Widget _buildCancelRequestDialog(BuildContext context) {
+  Widget _buildConfirmationDialog(
+      {String confirmationTextMsg, String positiveButtonLabel, String negativeButtonLabel, Function onPositiveTap, double positiveBtnHorizontalPadding = 16}) {
     return Dialog(
-      backgroundColor: Styles().colors.fillColorPrimary,
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 26),
-              child: Text(
-                Localization().getStringEx("panel.group_detail.label.confirm.cancel",  "Are you sure you want to cancel your request to join this group?"),
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                RoundedButton(
-                  label: Localization().getStringEx("panel.group_detail.button.back.title",   "Back"),
-                  fontFamily: "ProximaNovaRegular",
-                  textColor: Styles().colors.fillColorPrimary,
-                  borderColor: Styles().colors.white,
-                  backgroundColor: Styles().colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  onTap: ()=>Navigator.pop(context),
-                ),
-                Container(width: 16,),
-                RoundedButton(
-                  label:  Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title",   "Cancel request"),
-                  fontFamily: "ProximaNovaBold",
-                  textColor: Styles().colors.fillColorPrimary,
-                  borderColor: Styles().colors.white,
-                  backgroundColor: Styles().colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  onTap: (){
-                    _cancelMembershipRequest();
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLeaveGroupDialog(BuildContext context) {
-    return Dialog(
-      backgroundColor: Styles().colors.fillColorPrimary,
-      child: StatefulBuilder(
-          builder: (context, setStateEx){
-            return Padding(
+        backgroundColor: Styles().colors.fillColorPrimary,
+        child: StatefulBuilder(builder: (context, setStateEx) {
+          return Padding(
               padding: EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
-                    child: Text(
-                      Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white),
+                    child: Text(confirmationTextMsg,
+                        textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white))),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                  RoundedButton(
+                      label: AppString.getDefaultEmptyString(
+                          value: negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
+                      fontFamily: "ProximaNovaRegular",
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      onTap: () => Navigator.pop(context)),
+                  Container(width: 16),
+                  Stack(alignment: Alignment.center, children: [
+                    RoundedButton(
+                      label: positiveButtonLabel,
+                      fontFamily: "ProximaNovaBold",
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.white,
+                      backgroundColor: Styles().colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
+                      onTap: onPositiveTap,
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      RoundedButton(
-                        label: Localization().getStringEx("panel.group_detail.button.back.title", "Back"),
-                        fontFamily: "ProximaNovaRegular",
-                        textColor: Styles().colors.fillColorPrimary,
-                        borderColor: Styles().colors.white,
-                        backgroundColor: Styles().colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        onTap: ()=>Navigator.pop(context),
-                      ),
-                      Container(width: 16,),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          RoundedButton(
-                            label:Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
-                            fontFamily: "ProximaNovaBold",
-                            textColor: Styles().colors.fillColorPrimary,
-                            borderColor: Styles().colors.white,
-                            backgroundColor: Styles().colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            onTap: (){
-                              _leaveGroup(setStateEx).then((value) => Navigator.pop(context));
-                            },
-                          ),
-                          _leaving ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ) : Container(),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
-    );
+                    _confirmationLoading
+                        ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary))
+                        : Container()
+                  ])
+                ])
+              ]));
+        }));
   }
 
   void _loadMembershipStepEvents() {
@@ -885,7 +849,13 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                     leftIcon: "images/icon-leave-group.png",
                     label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                     onTap: () {
-                      showDialog(context: context, builder: (context) => _buildLeaveGroupDialog(context)).then((value) => Navigator.pop(context));
+                      showDialog(
+                          context: context,
+                          builder: (context) => _buildConfirmationDialog(
+                              confirmationTextMsg:
+                                  Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+                              positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
+                              onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
                     })
               ]));
         });
@@ -898,7 +868,45 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onTapLeave() {
-    showDialog(context: context, builder: (context) => _buildLeaveGroupDialog(context));
+    showDialog(
+        context: context,
+        builder: (context) => _buildConfirmationDialog(
+            confirmationTextMsg: Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+            positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
+            onPositiveTap: _onTapLeaveDialog));
+  }
+
+  void _onTapLeaveDialog() {
+    _leaveGroup().then((value) => Navigator.pop(context));
+  }
+
+  void _onTapDelete() {
+    int membersCount = _group?.membersCount ?? 0;
+    String confirmMsg = (membersCount > 1)
+        ? sprintf(
+        Localization()
+            .getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"),
+        [membersCount])
+        : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
+    showDialog(
+        context: context,
+        builder: (context) =>
+            _buildConfirmationDialog(
+                confirmationTextMsg: confirmMsg,
+                positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+                onPositiveTap: _onTapDeleteDialog));
+  }
+
+  void _onTapDeleteDialog() {
+    _deleteGroup().then((succeeded) {
+      Navigator.of(context).pop(); // Pop dialog
+      if ((succeeded == true)) {
+        Navigator.of(context).pop(); // Pop to previous panel
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
+      }
+    });
   }
 
   void _onWebsite() {
@@ -944,8 +952,19 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
   }
 
-  void _onCancelMembershipRequest(){
-    showDialog(context: context, builder: (context) => _buildCancelRequestDialog(context));
+  void _onCancelMembershipRequest() {
+    showDialog(
+        context: context,
+        builder: (context) => _buildConfirmationDialog(
+            confirmationTextMsg:
+                Localization().getStringEx("panel.group_detail.label.confirm.cancel", "Are you sure you want to cancel your request to join this group?"),
+            positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title", "Cancel request"),
+            onPositiveTap: _onTapCancelMembershipDialog, positiveBtnHorizontalPadding: 1.5));
+  }
+
+  void _onTapCancelMembershipDialog() {
+    _cancelMembershipRequest();
+    Navigator.pop(context);
   }
 
   void _onTapCreateEvent(){
