@@ -6,10 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Delete group[#400](https://github.com/rokwire/illinois-app/issues/400)
+- Delete group [#400](https://github.com/rokwire/illinois-app/issues/400).
+- Use correct categories and tags for group [#406](https://github.com/rokwire/illinois-app/issues/406).
 ### Changed
 - Groups UI improvements [#413](https://github.com/rokwire/illinois-app/issues/413).
 - Required fields for creating group event [#404](https://github.com/rokwire/illinois-app/issues/404).
+- Put "Delete group" in the options menu [#409](https://github.com/rokwire/illinois-app/issues/409).
+### Fixed
+- Display error message when creating group fails [#411](https://github.com/rokwire/illinois-app/issues/411).
 
 ## [2.5.2] - 2021-06-30
 ### Added
