@@ -415,7 +415,6 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapEdit(){
-    Navigator.pop(context);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (Event event){
       Groups().updateGroupEvents(event).then((param){
           Navigator.pop(context);
