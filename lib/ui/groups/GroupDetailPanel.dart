@@ -215,7 +215,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     return Scaffold(
         appBar: AppBar(leading: HeaderBackButton(), actions: [
           Visibility(
-              visible: _canLeaveGroup,
+              visible: (_canLeaveGroup || _canDeleteGroup),
               child: Semantics(
                   label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
                   button: true,
@@ -517,39 +517,21 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       tabs.add(tabWidget);
     }
 
-    if (_canDeleteGroup || _canLeaveGroup) {
+    if (_canLeaveGroup) {
       tabs.add(Expanded(child: Container()));
-
-      if (_canDeleteGroup) {
-        Widget deleteButton = GestureDetector(
-            onTap: _onTapDelete,
-            child: Padding(
-                padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
-                child: Text(Localization().getStringEx("panel.group_detail.button.group.delete.title", 'Delete'),
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: Styles().fontFamilies.regular,
-                        color: Styles().colors.fillColorPrimary,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Styles().colors.fillColorSecondary,
-                        decorationThickness: 1.5))));
-        tabs.add(deleteButton);
-      }
-      if (_canLeaveGroup) {
-        Widget leaveButton = GestureDetector(
-            onTap: _onTapLeave,
-            child: Padding(
-                padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
-                child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: Styles().fontFamilies.regular,
-                        color: Styles().colors.fillColorPrimary,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Styles().colors.fillColorSecondary,
-                        decorationThickness: 1.5))));
-        tabs.add(leaveButton);
-      }
+      Widget leaveButton = GestureDetector(
+          onTap: _onTapLeave,
+          child: Padding(
+              padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Styles().colors.fillColorSecondary,
+                      decorationThickness: 1.5))));
+      tabs.add(leaveButton);
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
@@ -831,6 +813,14 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   void _onGroupOptionsTap() {
+    int membersCount = _group?.membersCount ?? 0;
+    String confirmMsg = (membersCount > 1)
+        ? sprintf(
+            Localization().getStringEx(
+                "panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"),
+            [membersCount])
+        : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
+
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -842,21 +832,38 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
               child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Container(
-                  height: 48,
+                  height: 24,
                 ),
-                RibbonButton(
-                    height: null,
-                    leftIcon: "images/icon-leave-group.png",
-                    label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => _buildConfirmationDialog(
-                              confirmationTextMsg:
-                                  Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
-                              positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
-                              onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
-                    })
+                Visibility(
+                    visible: _canLeaveGroup,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-leave-group.png",
+                        label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => _buildConfirmationDialog(
+                                  confirmationTextMsg:
+                                      Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+                                  positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
+                                  onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
+                        })),
+                Visibility(
+                    visible: _canDeleteGroup,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-leave-group.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => _buildConfirmationDialog(
+                                  confirmationTextMsg: confirmMsg,
+                                  positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                                  negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+                                  onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
+                        }))
               ]));
         });
   }
@@ -878,24 +885,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void _onTapLeaveDialog() {
     _leaveGroup().then((value) => Navigator.pop(context));
-  }
-
-  void _onTapDelete() {
-    int membersCount = _group?.membersCount ?? 0;
-    String confirmMsg = (membersCount > 1)
-        ? sprintf(
-        Localization()
-            .getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"),
-        [membersCount])
-        : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
-    showDialog(
-        context: context,
-        builder: (context) =>
-            _buildConfirmationDialog(
-                confirmationTextMsg: confirmMsg,
-                positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
-                onPositiveTap: _onTapDeleteDialog));
   }
 
   void _onTapDeleteDialog() {
