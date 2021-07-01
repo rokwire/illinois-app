@@ -607,14 +607,14 @@ class _EventContent extends StatelessWidget {
 
   Widget _buildRemoveEventDialog(BuildContext context){
     return GroupsConfirmationDialog(
-        message: Localization().getStringEx("panel.group_detail.button.remove_event.title",  "Remove this event from your group page?"),
+        message: Localization().getStringEx("panel.group_detail.message.remove_event.title",  "Are you sure you want to remove this event from your group page?"),
         buttonTitle:Localization().getStringEx("panel.group_detail.button.remove.title", "Remove"),
         onConfirmTap:(){_onRemoveEvent(context);});
   }
 
   Widget _buildDeleteEventDialog(BuildContext context){
     return GroupsConfirmationDialog(
-        message: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete this event from your groups page?"),
+        message: Localization().getStringEx("panel.group_detail.message.delete_event.title", "Are you sure you want to delete this event?"),
         buttonTitle:  Localization().getStringEx("panel.group_detail.button.delete.title","Delete"),
         onConfirmTap:(){_onDeleteEvent(context);});
   }
@@ -633,15 +633,20 @@ class _EventContent extends StatelessWidget {
 
   void _onEditEventTap(BuildContext context){
     Analytics().logPage(name: "Create Event");
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group,)));
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group, editEvent: event,onEditTap: (Event event) {
+      Groups().updateGroupEvents(event).then((param) {
+        Navigator.pop(context);
+      });
+    })));
   }
 
   bool get _canEdit{
-    return false; //TBD
+    return isAdmin; //TBD
   }
 
   bool get _canDelete{
-    return false; //TBD
+    return isAdmin; //TBD
   }
 }
 

@@ -415,6 +415,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapEdit(){
+    Navigator.pop(context);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (Event event){
       Groups().updateGroupEvents(event).then((param){
           Navigator.pop(context);
@@ -423,6 +424,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapDelete(){
+    showDialog(context: context, builder: (context)=>
+        GroupsConfirmationDialog(
+          message: Localization().getStringEx("panel.group_detail.message.delete_event.title",  "Are you sure you want to delete this event?"),
+          buttonTitle:Localization().getStringEx("panel.group_detail.button.delete.title", "Delete"),
+          onConfirmTap:(){_deleteEvent();})).then((value) => Navigator.pop(context));
+  }
+
+  void _deleteEvent(){
     Groups().deleteEventFromGroup(eventId: _event?.id, groupId: widget?.groupId).then((value){
       Navigator.of(context).pop();
     });
