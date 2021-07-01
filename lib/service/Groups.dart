@@ -144,7 +144,7 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<String>createGroup(Group group) async {
+  Future<String> createGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups';
       try {
