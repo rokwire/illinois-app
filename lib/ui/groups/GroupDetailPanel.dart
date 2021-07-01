@@ -110,6 +110,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
     }
   }
 
+  bool get _canDeleteGroup {
+    return _isAdmin;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -177,6 +181,13 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         _setConfirmationLoading(false);
         _loadGroup();
       }
+    });
+  }
+
+  Future<bool> _deleteGroup() {
+    _setConfirmationLoading(true);
+    return Groups().deleteGroup(_group?.id).whenComplete(() {
+      _setConfirmationLoading(false);
     });
   }
 
@@ -506,21 +517,39 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       tabs.add(tabWidget);
     }
 
-    if (_canLeaveGroup) {
-      Widget leaveButton = GestureDetector(
-          onTap: _onTapLeave,
-          child: Padding(
-              padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
-              child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Styles().colors.fillColorSecondary,
-                      decorationThickness: 1.5))));
+    if (_canDeleteGroup || _canLeaveGroup) {
       tabs.add(Expanded(child: Container()));
-      tabs.add(leaveButton);
+
+      if (_canDeleteGroup) {
+        Widget deleteButton = GestureDetector(
+            onTap: _onTapDelete,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+                child: Text(Localization().getStringEx("panel.group_detail.button.group.delete.title", 'Delete'),
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: Styles().fontFamilies.regular,
+                        color: Styles().colors.fillColorPrimary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1.5))));
+        tabs.add(deleteButton);
+      }
+      if (_canLeaveGroup) {
+        Widget leaveButton = GestureDetector(
+            onTap: _onTapLeave,
+            child: Padding(
+                padding: EdgeInsets.only(left: 12, top: 10, bottom: 10),
+                child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: Styles().fontFamilies.regular,
+                        color: Styles().colors.fillColorPrimary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1.5))));
+        tabs.add(leaveButton);
+      }
     }
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Row(children: tabs));
@@ -728,7 +757,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
           : Container();
   }
 
-  Widget _buildConfirmationDialog({String confirmationTextMsg, String positiveButtonLabel, Function onPositiveTap, double positiveBtnHorizontalPadding = 16}) {
+  Widget _buildConfirmationDialog(
+      {String confirmationTextMsg, String positiveButtonLabel, String negativeButtonLabel, Function onPositiveTap, double positiveBtnHorizontalPadding = 16}) {
     return Dialog(
         backgroundColor: Styles().colors.fillColorPrimary,
         child: StatefulBuilder(builder: (context, setStateEx) {
@@ -741,7 +771,8 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
                         textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.white))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   RoundedButton(
-                      label: Localization().getStringEx("panel.group_detail.button.back.title", "Back"),
+                      label: AppString.getDefaultEmptyString(
+                          value: negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.white,
@@ -847,6 +878,35 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void _onTapLeaveDialog() {
     _leaveGroup().then((value) => Navigator.pop(context));
+  }
+
+  void _onTapDelete() {
+    int membersCount = _group?.membersCount ?? 0;
+    String confirmMsg = (membersCount > 1)
+        ? sprintf(
+        Localization()
+            .getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"),
+        [membersCount])
+        : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
+    showDialog(
+        context: context,
+        builder: (context) =>
+            _buildConfirmationDialog(
+                confirmationTextMsg: confirmMsg,
+                positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+                onPositiveTap: _onTapDeleteDialog));
+  }
+
+  void _onTapDeleteDialog() {
+    _deleteGroup().then((succeeded) {
+      Navigator.of(context).pop(); // Pop dialog
+      if ((succeeded == true)) {
+        Navigator.of(context).pop(); // Pop to previous panel
+      } else {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
+      }
+    });
   }
 
   void _onWebsite() {
