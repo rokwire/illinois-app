@@ -329,18 +329,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                             Styles().fontFamilies.bold,
                                                             letterSpacing: 1),
                                                       )
-                                                    ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 2),
-                                                      child: Text(
-                                                        '*',
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorSecondary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            Styles().fontFamilies.bold),
-                                                      ),
                                                     )
                                                   ],
                                                 ),
@@ -393,18 +381,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                               fontFamily:
                                                               Styles().fontFamilies.bold,
                                                               letterSpacing: 1),
-                                                        ),
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: 2),
-                                                          child: Text(
-                                                            '*',
-                                                            style: TextStyle(
-                                                                color: Styles().colors.fillColorSecondary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies.bold),
-                                                          ),
                                                         )
                                                       ],
                                                     ),
@@ -448,18 +424,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                                 fontFamily:
                                                                 Styles().fontFamilies.bold,
                                                                 letterSpacing: 1),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: 2),
-                                                          child: Text(
-                                                            '*',
-                                                            style: TextStyle(
-                                                                color: Styles().colors.fillColorSecondary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies.bold),
                                                           ),
                                                         )
                                                       ],
@@ -792,16 +756,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             fontSize: 14,
                             fontFamily: Styles().fontFamilies.bold,
                             letterSpacing: 1),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 2),
-                        child: Text(
-                          '*',
-                          style: TextStyle(
-                              color: Styles().colors.fillColorSecondary,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies.bold),
-                        ),
                       )
                     ],
                   ),
@@ -883,20 +837,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           fontFamily:
                           Styles().fontFamilies.bold,
                           letterSpacing: 1),
-                  )),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 2, right: 2),
-                    child: Text(
-                      '*',
-                      semanticsLabel: "",
-                      style: TextStyle(
-                          color: Styles().colors.fillColorSecondary,
-                          fontSize: 14,
-                          fontFamily:
-                          Styles().fontFamilies.bold),
-                    ),
-                  )
+                  ))
                 ],
               ),
             ), 
@@ -991,17 +932,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontSize: 14,
                                       fontFamily: Styles().fontFamilies.bold,
                                       letterSpacing: 1),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Text(
-                                    '*',
-                                    semanticsLabel: "",
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorSecondary,
-                                        fontSize: 14,
-                                        fontFamily: Styles().fontFamilies.bold),
-                                  ),
                                 )
                               ],
                             ),
@@ -1047,16 +977,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontSize: 14,
                                       fontFamily: Styles().fontFamilies.bold,
                                       letterSpacing: 1),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Text(
-                                    '*',
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorSecondary,
-                                        fontSize: 14,
-                                        fontFamily: Styles().fontFamilies.bold),
-                                  ),
                                 )
                               ],
                             ),
@@ -1102,16 +1022,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontSize: 14,
                                       fontFamily: Styles().fontFamilies.bold,
                                       letterSpacing: 1),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Text(
-                                    '*',
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorSecondary,
-                                        fontSize: 14,
-                                        fontFamily: Styles().fontFamilies.bold),
-                                  ),
                                 )
                               ],
                             ),
@@ -1456,20 +1366,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               fontFamily:
                               Styles().fontFamilies.bold,
                               letterSpacing: 1),
-                        )),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 2, right: 2),
-                          child: Text(
-                            '*',
-                            semanticsLabel: "",
-                            style: TextStyle(
-                                color: Styles().colors.fillColorSecondary,
-                                fontSize: 14,
-                                fontFamily:
-                                Styles().fontFamilies.bold),
-                          ),
-                        )
+                        ))
                       ],
                     ),
                   ),
@@ -1942,22 +1839,16 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   bool _isDataValid() {
-    bool _categoryValidation = _selectedCategory != null || _isGroupEvent; // Category is not required for group events
+    bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation =
         AppString.isStringNotEmpty(_eventTitleController.text);
-    bool _locationValidation = _location != null || _isOnline;
     bool _startDateValidation = startDate != null;
     bool _startTimeValidation = startTime != null || _allDay;
-    bool _endDateValidation = endDate != null;
-    bool _endTimeValidation = endTime != null || _allDay;
     bool _propperStartEndTimeInterval = !(startDate?.isAfter(endDate) ?? true);
 //    bool subCategoryIsValid = _subCategoryController.text?.isNotEmpty;
 
     if (!_categoryValidation) {
       AppAlert.showDialogResult(context,  Localization().getStringEx("panel.create_event.verification.category","Please select category"));
-      return false;
-    } else if (!_locationValidation) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.location","Please select location"));
       return false;
     } else if (!_titleValidation) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.title","Please add title"));
@@ -1967,12 +1858,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       return false;
     } else if (!_startTimeValidation) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.start_time","Please select start time"));
-      return false;
-    } else if (!_endDateValidation) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.end_date","Please select end date"));
-      return false;
-    } else if (!_endTimeValidation) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.end_time","Please select end time"));
       return false;
     } else if (!_propperStartEndTimeInterval) {
       AppAlert.showDialogResult(context,
