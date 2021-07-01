@@ -303,7 +303,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                          ),
                                        ),
                                     Container(width: 10),
-                                    Expanded(
+                                    Visibility(visible: !_allDay, child: Expanded(
                                       flex: 1,
                                       child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
                                           hint: Localization().getStringEx("panel.create_event.date_time.start_time.hint",""), button: true, excludeSemantics: true, child:
@@ -318,29 +318,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 Row(
                                                   children: <Widget>[
                                                     Expanded(child:
-                                                      Text(
-                                                        Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorPrimary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            Styles().fontFamilies.bold,
-                                                            letterSpacing: 1),
-                                                      )
-                                                    ),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 2),
-                                                      child: Text(
-                                                        '*',
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorSecondary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            Styles().fontFamilies.bold),
-                                                      ),
+                                                    Text(
+                                                      Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: Styles().colors.fillColorPrimary,
+                                                          fontSize: 14,
+                                                          fontFamily:
+                                                          Styles().fontFamilies.bold,
+                                                          letterSpacing: 1),
+                                                    )
                                                     )
                                                   ],
                                                 ),
@@ -361,7 +349,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                             ],
                                           )
                                       ),
-                                    ),
+                                    )),
                                       ],
                                     ),
                                   ),
@@ -393,18 +381,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                               fontFamily:
                                                               Styles().fontFamilies.bold,
                                                               letterSpacing: 1),
-                                                        ),
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: 2),
-                                                          child: Text(
-                                                            '*',
-                                                            style: TextStyle(
-                                                                color: Styles().colors.fillColorSecondary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies.bold),
-                                                          ),
                                                         )
                                                       ],
                                                     ),
@@ -423,67 +399,55 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                           ),
                                         ),
                                         Container(width: 10,),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
-                                              hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                    EdgeInsets.only(bottom: 8),
-                                                    child:
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Text(
-                                                            Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: TextStyle(
-                                                                color: Styles().colors.fillColorPrimary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies.bold,
-                                                                letterSpacing: 1),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: 2),
-                                                          child: Text(
-                                                            '*',
-                                                            style: TextStyle(
-                                                                color: Styles().colors.fillColorSecondary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies.bold),
-                                                          ),
-                                                        )
-                                                      ],
+                                        Visibility(visible: !_allDay, child: Expanded(
+                                            flex: 1,
+                                            child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
+                                                hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.only(bottom: 8),
+                                                      child:
+                                                      Row(
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                            child: Text(
+                                                              Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                  color: Styles().colors.fillColorPrimary,
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                  Styles().fontFamilies.bold,
+                                                                  letterSpacing: 1),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  _EventDateDisplayView(
-                                                    label: endTime != null && !_allDay
-                                                        ? DateFormat("h:mma").format(
-                                                        _populateDateTimeWithTimeOfDay(
-                                                            endDate,
-                                                            endTime) ??
-                                                            (_populateDateTimeWithTimeOfDay(
-                                                                startDate,
-                                                                endTime) ??
-                                                                _populateDateTimeWithTimeOfDay(
-                                                                    timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
-                                                                    endTime)))
-                                                        : "-",
-                                                    onTap: _onTapEndTime,
-                                                  )
-                                                ],
-                                              )
-                                          )
-                                        ),
+                                                    _EventDateDisplayView(
+                                                      label: endTime != null && !_allDay
+                                                          ? DateFormat("h:mma").format(
+                                                          _populateDateTimeWithTimeOfDay(
+                                                              endDate,
+                                                              endTime) ??
+                                                              (_populateDateTimeWithTimeOfDay(
+                                                                  startDate,
+                                                                  endTime) ??
+                                                                  _populateDateTimeWithTimeOfDay(
+                                                                      timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
+                                                                      endTime)))
+                                                          : "-",
+                                                      onTap: _onTapEndTime,
+                                                    )
+                                                  ],
+                                                )
+                                            )
+                                        )),
                                       ],
                                     ),
                                   ),
@@ -792,16 +756,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             fontSize: 14,
                             fontFamily: Styles().fontFamilies.bold,
                             letterSpacing: 1),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 2),
-                        child: Text(
-                          '*',
-                          style: TextStyle(
-                              color: Styles().colors.fillColorSecondary,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies.bold),
-                        ),
                       )
                     ],
                   ),
@@ -883,20 +837,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           fontFamily:
                           Styles().fontFamilies.bold,
                           letterSpacing: 1),
-                  )),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 2, right: 2),
-                    child: Text(
-                      '*',
-                      semanticsLabel: "",
-                      style: TextStyle(
-                          color: Styles().colors.fillColorSecondary,
-                          fontSize: 14,
-                          fontFamily:
-                          Styles().fontFamilies.bold),
-                    ),
-                  )
+                  ))
                 ],
               ),
             ), 
@@ -991,17 +932,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontSize: 14,
                                       fontFamily: Styles().fontFamilies.bold,
                                       letterSpacing: 1),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Text(
-                                    '*',
-                                    semanticsLabel: "",
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorSecondary,
-                                        fontSize: 14,
-                                        fontFamily: Styles().fontFamilies.bold),
-                                  ),
                                 )
                               ],
                             ),
@@ -1047,16 +977,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontSize: 14,
                                       fontFamily: Styles().fontFamilies.bold,
                                       letterSpacing: 1),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Text(
-                                    '*',
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorSecondary,
-                                        fontSize: 14,
-                                        fontFamily: Styles().fontFamilies.bold),
-                                  ),
                                 )
                               ],
                             ),
@@ -1102,16 +1022,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       fontSize: 14,
                                       fontFamily: Styles().fontFamilies.bold,
                                       letterSpacing: 1),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 2),
-                                  child: Text(
-                                    '*',
-                                    style: TextStyle(
-                                        color: Styles().colors.fillColorSecondary,
-                                        fontSize: 14,
-                                        fontFamily: Styles().fontFamilies.bold),
-                                  ),
                                 )
                               ],
                             ),
@@ -1456,20 +1366,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               fontFamily:
                               Styles().fontFamilies.bold,
                               letterSpacing: 1),
-                        )),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 2, right: 2),
-                          child: Text(
-                            '*',
-                            semanticsLabel: "",
-                            style: TextStyle(
-                                color: Styles().colors.fillColorSecondary,
-                                fontSize: 14,
-                                fontFamily:
-                                Styles().fontFamilies.bold),
-                          ),
-                        )
+                        ))
                       ],
                     ),
                   ),
@@ -1942,22 +1839,16 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   bool _isDataValid() {
-    bool _categoryValidation = _selectedCategory != null || _isGroupEvent; // Category is not required for group events
+    bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation =
         AppString.isStringNotEmpty(_eventTitleController.text);
-    bool _locationValidation = _location != null || _isOnline;
     bool _startDateValidation = startDate != null;
     bool _startTimeValidation = startTime != null || _allDay;
-    bool _endDateValidation = endDate != null;
-    bool _endTimeValidation = endTime != null || _allDay;
-    bool _propperStartEndTimeInterval = !(startDate?.isAfter(endDate) ?? true);
+    bool _propperStartEndTimeInterval = (endDate != null) ? !(startDate?.isAfter(endDate) ?? true) : true;
 //    bool subCategoryIsValid = _subCategoryController.text?.isNotEmpty;
 
     if (!_categoryValidation) {
       AppAlert.showDialogResult(context,  Localization().getStringEx("panel.create_event.verification.category","Please select category"));
-      return false;
-    } else if (!_locationValidation) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.location","Please select location"));
       return false;
     } else if (!_titleValidation) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.title","Please add title"));
@@ -1968,12 +1859,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     } else if (!_startTimeValidation) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.start_time","Please select start time"));
       return false;
-    } else if (!_endDateValidation) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.end_date","Please select end date"));
-      return false;
-    } else if (!_endTimeValidation) {
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.create_event.verification.end_time","Please select end time"));
-      return false;
     } else if (!_propperStartEndTimeInterval) {
       AppAlert.showDialogResult(context,
           Localization().getStringEx("panel.create_event.verification.date_time","Please select propper time interval. Start date cannot be after end date"));
@@ -1982,17 +1867,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     return true;
   }
 
-  bool get _isGroupEvent{
+  /*bool get _isGroupEvent{
     return widget.group!=null;
-  }
+  }*/
 
   bool get _isPrivateEvent{
    return _selectedPrivacy == "PRIVATE";
   }
 
-  bool get _isEditMode{
+  /*bool get _isEditMode{
     return widget?.editEvent != null;
-  }
+  }*/
 
   String get _panelTitleText{
     return widget?.editEvent!=null ? "Update Event" : Localization().getStringEx("panel.create_event.header.title", "Create An Event");
