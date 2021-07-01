@@ -1636,6 +1636,7 @@
 	"panel.groups_create.tags.label.update_error": "Unable to update the group",
 	"panel.groups_create.button.tags.title": "Tags",
 	"panel.groups_create.button.tags.hint": "",
+	"panel.groups_create.failed.msg": "Failed to create group.",
 	"panel.groups_settings.button.tags.title": "Tags",
 	"panel.groups_settings.button.tags.hint": "",
 

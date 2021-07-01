@@ -520,27 +520,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       ],);
   }
 
-  void _onCreateTap(){
+  void _onCreateTap() {
     setState(() {
       _creating = true;
     });
-    Groups().createGroup(_group).then((detail){
-      if(detail!=null){
-        //ok
-        setState(() {
-          _creating = false;
-        });
-
-        Navigator.pop(context);
-      }
-    }).catchError((e){
-      //error
+    Groups().createGroup(_group).then((detail) {
       setState(() {
         _creating = false;
       });
+      if (detail != null) { //ok
+        Navigator.pop(context);
+      } else { //not ok
+        AppAlert.showDialogResult(context, Localization().getStringEx("panel.groups_create.failed.msg", "Failed to create group."));
+      }
     });
   }
-  //
+
   // Common
   Widget _buildSectionTitle(String title, String description){
     return Container(
