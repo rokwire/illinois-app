@@ -1867,17 +1867,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     return true;
   }
 
-  bool get _isGroupEvent{
+  /*bool get _isGroupEvent{
     return widget.group!=null;
-  }
+  }*/
 
   bool get _isPrivateEvent{
    return _selectedPrivacy == "PRIVATE";
   }
 
-  bool get _isEditMode{
+  /*bool get _isEditMode{
     return widget?.editEvent != null;
-  }
+  }*/
 
   String get _panelTitleText{
     return widget?.editEvent!=null ? "Update Event" : Localization().getStringEx("panel.create_event.header.title", "Create An Event");
