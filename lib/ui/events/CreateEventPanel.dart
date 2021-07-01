@@ -303,7 +303,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                          ),
                                        ),
                                     Container(width: 10),
-                                    Expanded(
+                                    Visibility(visible: !_allDay, child: Expanded(
                                       flex: 1,
                                       child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
                                           hint: Localization().getStringEx("panel.create_event.date_time.start_time.hint",""), button: true, excludeSemantics: true, child:
@@ -318,17 +318,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 Row(
                                                   children: <Widget>[
                                                     Expanded(child:
-                                                      Text(
-                                                        Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                            color: Styles().colors.fillColorPrimary,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                            Styles().fontFamilies.bold,
-                                                            letterSpacing: 1),
-                                                      )
+                                                    Text(
+                                                      Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: Styles().colors.fillColorPrimary,
+                                                          fontSize: 14,
+                                                          fontFamily:
+                                                          Styles().fontFamilies.bold,
+                                                          letterSpacing: 1),
+                                                    )
                                                     )
                                                   ],
                                                 ),
@@ -349,7 +349,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                             ],
                                           )
                                       ),
-                                    ),
+                                    )),
                                       ],
                                     ),
                                   ),
@@ -399,55 +399,55 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                           ),
                                         ),
                                         Container(width: 10,),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
-                                              hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                    EdgeInsets.only(bottom: 8),
-                                                    child:
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Text(
-                                                            Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: TextStyle(
-                                                                color: Styles().colors.fillColorPrimary,
-                                                                fontSize: 14,
-                                                                fontFamily:
-                                                                Styles().fontFamilies.bold,
-                                                                letterSpacing: 1),
-                                                          ),
-                                                        )
-                                                      ],
+                                        Visibility(visible: !_allDay, child: Expanded(
+                                            flex: 1,
+                                            child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
+                                                hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.only(bottom: 8),
+                                                      child:
+                                                      Row(
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                            child: Text(
+                                                              Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
+                                                              maxLines: 1,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                  color: Styles().colors.fillColorPrimary,
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                  Styles().fontFamilies.bold,
+                                                                  letterSpacing: 1),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  _EventDateDisplayView(
-                                                    label: endTime != null && !_allDay
-                                                        ? DateFormat("h:mma").format(
-                                                        _populateDateTimeWithTimeOfDay(
-                                                            endDate,
-                                                            endTime) ??
-                                                            (_populateDateTimeWithTimeOfDay(
-                                                                startDate,
-                                                                endTime) ??
-                                                                _populateDateTimeWithTimeOfDay(
-                                                                    timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
-                                                                    endTime)))
-                                                        : "-",
-                                                    onTap: _onTapEndTime,
-                                                  )
-                                                ],
-                                              )
-                                          )
-                                        ),
+                                                    _EventDateDisplayView(
+                                                      label: endTime != null && !_allDay
+                                                          ? DateFormat("h:mma").format(
+                                                          _populateDateTimeWithTimeOfDay(
+                                                              endDate,
+                                                              endTime) ??
+                                                              (_populateDateTimeWithTimeOfDay(
+                                                                  startDate,
+                                                                  endTime) ??
+                                                                  _populateDateTimeWithTimeOfDay(
+                                                                      timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
+                                                                      endTime)))
+                                                          : "-",
+                                                      onTap: _onTapEndTime,
+                                                    )
+                                                  ],
+                                                )
+                                            )
+                                        )),
                                       ],
                                     ),
                                   ),
@@ -1844,7 +1844,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         AppString.isStringNotEmpty(_eventTitleController.text);
     bool _startDateValidation = startDate != null;
     bool _startTimeValidation = startTime != null || _allDay;
-    bool _propperStartEndTimeInterval = !(startDate?.isAfter(endDate) ?? true);
+    bool _propperStartEndTimeInterval = (endDate != null) ? !(startDate?.isAfter(endDate) ?? true) : true;
 //    bool subCategoryIsValid = _subCategoryController.text?.isNotEmpty;
 
     if (!_categoryValidation) {
