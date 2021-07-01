@@ -114,7 +114,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated]);
     _loadGroup();
     _loadEvents();
   }
@@ -228,6 +228,9 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   void onNotification(String name, dynamic param) {
     if (name == Groups.notifyUserMembershipUpdated) {
       setState(() {});
+    }
+    else if (name == Groups.notifyGroupEventsUpdated) {
+      _loadEvents();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
       _loadGroup();
