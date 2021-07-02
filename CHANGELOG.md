@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Questions when creating group [#417](https://github.com/rokwire/illinois-app/issues/417).
+- Group Admins in "About" section [#419](https://github.com/rokwire/illinois-app/issues/419).
 
 ## [2.5.3] - 2021-07-01
 ### Added
