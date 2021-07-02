@@ -663,45 +663,36 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   Widget _buildAdmins() {
-    if(AppCollection.isCollectionEmpty(_groupAdmins)) {
+    if (AppCollection.isCollectionEmpty(_groupAdmins)) {
       return Container();
     }
     List<Widget> content = [];
-      content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
-      for (Member officer in _groupAdmins) {
-        if (1 < content.length) {
-          content.add(Padding(padding: EdgeInsets.only(left: 8), child: Container()),);
-        }
-        content.add(_OfficerCard(groupMember: officer,));
+    content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
+    for (Member officer in _groupAdmins) {
+      if (1 < content.length) {
+        content.add(Padding(padding: EdgeInsets.only(left: 8), child: Container()));
       }
-      content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
-    return
-      Stack(children: [
-        Container(
-            height: 112,
-            color: Styles().colors.backgroundVariant,
-            child:
-            Column(children: [
-              Container(height: 80,),
-              Container(
-                  height: 32,
-                  child: CustomPaint(
-                    painter: TrianglePainter(painterColor: Styles().colors.background),
-                    child: Container(),
-                  )
-              ),
-            ],)
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-            Text( Localization().getStringEx("panel.group_detail.label.admins",  'Admins'), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),),
-          ),
-          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: content),
-          ),
-        ],),)
-      ],);
+      content.add(_OfficerCard(groupMember: officer));
+    }
+    content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
+    return Stack(children: [
+      Container(
+          height: 112,
+          color: Styles().colors.backgroundVariant,
+          child: Column(children: [
+            Container(height: 80),
+            Container(height: 32, child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container()))
+          ])),
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
+                    style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
+          ]))
+    ]);
   }
 
   Widget _buildMembershipRequest() {
