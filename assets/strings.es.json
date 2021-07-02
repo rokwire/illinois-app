@@ -1446,6 +1446,10 @@
     "panel.groups_create.button.tags.title": "Tags",
     "panel.groups_create.button.tags.hint": "",
     "panel.groups_create.failed.msg": "Failed to create group.",
+    "panel.groups_create.membership.section.title": "Membership",
+    "panel.groups_create.questions.existing.label": "Question(s)",
+    "panel.groups_create..questions.missing.label": "No question",
+    "panel.groups_create.membership.questions.title": "Membership Questions",
 
     "panel.common.privacy_description.private": "Only members can see group events",
     "panel.common.privacy_description.public":  "Anyone can see group events",
