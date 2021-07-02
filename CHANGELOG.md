@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Filter groups by tags [#421](https://github.com/rokwire/illinois-app/issues/421).
 ### Changed
 - Groups UI improvements [#413](https://github.com/rokwire/illinois-app/issues/413).
+### Fixed
+- Group events not showing [#425](https://github.com/rokwire/illinois-app/issues/425).
 
 ## [2.5.3] - 2021-07-01
 ### Added
