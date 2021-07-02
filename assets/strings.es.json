@@ -1614,6 +1614,8 @@
     "panel.groups_home.label.no_results": "There are no groups for the desired filter",
     "panel.groups_home.label.pending": "Pending",
     "panel.groups_home.label.category": "Category",
+    "panel.groups_home.filter.tag.all.label": "All Tags",
+    "panel.groups_home.filter.tag.my.label": "My Tags",
 
     "panel.groups_settings.label.heading": "Group Settings",
     "panel.groups_settings.label.heading.general_info": "General group information",

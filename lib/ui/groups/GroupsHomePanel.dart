@@ -21,6 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -35,46 +36,78 @@ class GroupsHomePanel extends StatefulWidget{
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 }
 
-enum FilterType {none, category, type}
+enum _FilterType { none, category, tags }
+enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
+  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
+
   bool _isFilterLoading = false;
   bool _isAllGroupsLoading = false;
   bool _isMyGroupsLoading = false;
-  bool get _isLoading => _isFilterLoading || _isAllGroupsLoading || _isMyGroupsLoading;
+  bool _myGroupsSelected = false;
 
   List<Group> _allGroups;
   List<Group> _myGroups;
   List<Group> _myPendingGroups;
-  List<Group> get _allFilteredGroups {
-    String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    return AppString.isStringNotEmpty(selectedCategory) && AppCollection.isCollectionNotEmpty(_allGroups)
-        ? _allGroups.where((group) => selectedCategory == group.category).toList()
-        : _allGroups;
-  }
 
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
   String _selectedCategory;
   List<String> _categories;
 
-  FilterType __activeFilterType = FilterType.none;
-  bool get _hasActiveFilter{ return _activeFilterType != FilterType.none; }
-  FilterType get _activeFilterType{ return __activeFilterType; }
-  set _activeFilterType(FilterType value){
-    if(__activeFilterType != value){
+  _TagFilter _selectedTagFilter = _TagFilter.all;
+  _FilterType __activeFilterType = _FilterType.none;
+
+  //TBD: this filtering has to be done on the server side.
+  List<Group> get _allFilteredGroups {
+    if (AppCollection.isCollectionEmpty(_allGroups)) {
+      return _allGroups;
+    }
+    // Filter By Category
+    String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
+    List<Group> filteredGroups = _allGroups;
+    if (AppString.isStringNotEmpty(selectedCategory)) {
+      filteredGroups = _allGroups.where((group) => (selectedCategory == group.category)).toList();
+    }
+    // Filter by User Tags
+    if (_selectedTagFilter == _TagFilter.my) {
+      List<String> userTags = User().getTags();
+      if (AppCollection.isCollectionNotEmpty(userTags) && AppCollection.isCollectionNotEmpty(filteredGroups)) {
+        filteredGroups = filteredGroups.where((group) => group.tags?.any((tag) => userTags.contains(tag)) ?? false).toList();
+      }
+    }
+
+    return filteredGroups;
+  }
+
+  bool get _isLoading {
+    return _isFilterLoading || _isAllGroupsLoading || _isMyGroupsLoading;
+  }
+
+  bool get _hasActiveFilter {
+    return _activeFilterType != _FilterType.none;
+  }
+
+  _FilterType get _activeFilterType {
+    return __activeFilterType;
+  }
+
+  set _activeFilterType(_FilterType value) {
+    if (__activeFilterType != value) {
       __activeFilterType = value;
-      _loadGroups();
+      setState(() {});
     }
   }
 
-  List<String> get _activeFilterList{
-    switch(_activeFilterType){
-      case FilterType.category: return _categories;
-      default: return null;
+  List<dynamic> get _activeFilterList {
+    switch (_activeFilterType) {
+      case _FilterType.category:
+        return _categories;
+      case _FilterType.tags:
+        return _TagFilter.values;
+      default:
+        return null;
     }
   }
-
-  bool _myGroupsSelected = false;
 
   @override
   void initState() {
@@ -171,6 +204,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return groups;
   }
 
+  static String _tagFilterToDisplayString(_TagFilter tagFilter) {
+    switch (tagFilter) {
+      case _TagFilter.all:
+        return Localization().getStringEx('panel.groups_home.filter.tag.all.label', 'All Tags');
+      case _TagFilter.my:
+        return Localization().getStringEx('panel.groups_home.filter.tag.my.label', 'My Tags');
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,7 +299,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     );
   }
 
-  Widget _buildFilterButtons(){
+  Widget _buildFilterButtons() {
+    bool hasCategories = AppCollection.isCollectionNotEmpty(_categories);
     return _isFilterLoading || _myGroupsSelected
       ? Container()
       : Container(
@@ -267,20 +312,31 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                AppCollection.isCollectionEmpty(_categories)
-                    ? Container()
-                    : FilterSelectorWidget(
-                    label: _selectedCategory,
-                    hint: "",
-                    active: (_activeFilterType == FilterType.category),
-                    visible: true,
-                    onTap: (){
-                      Analytics.instance.logSelect(target: "GroupFilter");
-                      setState(() {
-                        _activeFilterType = (_activeFilterType != FilterType.category) ? FilterType.category : FilterType.none;
-                      });
-                    },
-                  ),
+                Visibility(visible: hasCategories, child: FilterSelectorWidget(
+                  label: _selectedCategory,
+                  hint: "",
+                  active: (_activeFilterType == _FilterType.category),
+                  visible: true,
+                  onTap: (){
+                    Analytics.instance.logSelect(target: "GroupFilter - Category");
+                    setState(() {
+                      _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : _FilterType.none;
+                    });
+                  }
+                )),
+                Visibility(visible: hasCategories, child: Container(width: 8)),
+                FilterSelectorWidget(
+                  label: AppString.getDefaultEmptyString(value: _tagFilterToDisplayString(_selectedTagFilter)),
+                  hint: "",
+                  active: (_activeFilterType == _FilterType.tags),
+                  visible: true,
+                  onTap: (){
+                    Analytics.instance.logSelect(target: "GroupFilter - Tags");
+                    setState(() {
+                      _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
+                    });
+                  }
+                ),
                 Expanded(child: Container()),
                 Semantics(
                   label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"),
@@ -305,19 +361,47 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       );
   }
 
-  Widget _buildFilterContent(){
+  Widget _buildFilterContent() {
     return _buildFilterContentEx(
         itemCount: _activeFilterList.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: _activeFilterList[index],
-            selected: (_selectedCategory == _activeFilterList[index]),
+            label: AppString.getDefaultEmptyString(value: _getFilterItemLabel(index)),
+            selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList[index]),
             selectedIconRes: "images/checkbox-selected.png",
-            unselectedIconRes: "images/oval-orange.png",
+            unselectedIconRes: "images/oval-orange.png"
           );
         }
     );
+  }
+
+  bool _isFilterItemSelected(int filterListIndex) {
+    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList.length) {
+      return false;
+    }
+    switch (_activeFilterType) {
+      case _FilterType.category:
+        return (_selectedCategory == _activeFilterList[filterListIndex]);
+      case _FilterType.tags:
+        return (_selectedTagFilter == _activeFilterList[filterListIndex]);
+      default:
+        return false;
+    }
+  }
+
+  String _getFilterItemLabel(int filterListIndex) {
+    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList.length) {
+      return null;
+    }
+    switch (_activeFilterType) {
+      case _FilterType.category:
+        return _activeFilterList[filterListIndex];
+      case _FilterType.tags:
+        return _tagFilterToDisplayString(_activeFilterList[filterListIndex]);
+      default:
+        return null;
+    }
   }
 
   Widget _buildFilterContentEx({@required int itemCount, @required IndexedWidgetBuilder itemBuilder}){
@@ -351,7 +435,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return BlockSemantics(child:GestureDetector(
       onTap: (){
         setState(() {
-          _activeFilterType = FilterType.none;
+          _activeFilterType = _FilterType.none;
         });
       },
         child: Container(color: Color(0x99000000)))
@@ -477,15 +561,23 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _loadContentFromNet();
   }
 
-  void _onTapFilterEntry(String entry){
+  void _onTapFilterEntry(dynamic entry) {
     String analyticsTarget;
-    switch(_activeFilterType){
-      case FilterType.category: _selectedCategory = entry; analyticsTarget = "CategoryFilter"; break;
-      default: break;
+    switch (_activeFilterType) {
+      case _FilterType.category:
+        _selectedCategory = entry;
+        analyticsTarget = "CategoryFilter";
+        break;
+      case _FilterType.tags:
+        _selectedTagFilter = entry;
+        analyticsTarget = "TagFilter";
+        break;
+      default:
+        break;
     }
     Analytics.instance.logSelect(target: "$analyticsTarget: $entry");
     setState(() {
-      _activeFilterType = FilterType.none;
+      _activeFilterType = _FilterType.none;
     });
   }
 
@@ -504,6 +596,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void onTapCreate(){
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
+
+  ///////////////////////////////////
+  // NotificationsListener
 
   void onNotification(String name, dynamic param){
     if(name == Groups.notifyUserMembershipUpdated){
