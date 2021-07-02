@@ -128,7 +128,7 @@ class Groups /* with Service */ {
     }
   }
 
-  Future<Group>loadGroup(String groupId) async {
+  Future<Group> loadGroup(String groupId) async {
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
