@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Questions when creating group [#417](https://github.com/rokwire/illinois-app/issues/417).
+
 ## [2.5.3] - 2021-07-01
 ### Added
 - Delete group [#400](https://github.com/rokwire/illinois-app/issues/400).

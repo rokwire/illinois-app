@@ -169,7 +169,7 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<bool>updateGroup(Group group) async {
+  Future<bool> updateGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups/${group.id}';
       try {
