@@ -461,6 +461,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onOptionsTap(){
+    if(_event?.isGroupPrivate ?? false){
+      return;
+    }
+
     String title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
     String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin form");
     showModalBottomSheet(
@@ -533,6 +537,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
                             Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")+ _currentlySelectedGroup?.title??"");
+                        Groups().linkEventToGroup(groupId:_currentlySelectedGroup.id,eventId: _event?.id);
                       }
                     });
                   },

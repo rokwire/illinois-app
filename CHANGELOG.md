@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Groups UI improvements [#413](https://github.com/rokwire/illinois-app/issues/413).
 ### Fixed
+- Hide the add to group button if the event is a "private group event" [#427](https://github.com/rokwire/illinois-app/issues/427)
 - Group events not showing [#425](https://github.com/rokwire/illinois-app/issues/425).
 
 ## [2.5.3] - 2021-07-01

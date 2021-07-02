@@ -660,7 +660,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+    return (AppString.isStringEmpty(widget.browseGroupId) || (widget?.event?.isGroupPrivate ?? false))? Container():
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
