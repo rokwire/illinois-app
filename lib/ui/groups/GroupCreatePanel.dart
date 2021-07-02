@@ -181,13 +181,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               height: _imageHeight,
               child: Center(
                   child: Semantics(
-                      label: Localization().getStringEx("panel.group_settings.add_image", "Add cover image"),
-                      hint: Localization().getStringEx("panel.group_settings.add_image.hint", ""),
+                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
                       button: true,
                       excludeSemantics: true,
                       child: ScalableSmallRoundedButton(
                           maxLines: 2,
-                          label: Localization().getStringEx("panel.group_settings.add_image", "Add cover image"),
+                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
                           textColor: Styles().colors.fillColorPrimary,
                           onTap: _onTapAddImage,
                           showChevron: false))))
