@@ -663,8 +663,10 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
   }
 
   Widget _buildAdmins() {
+    if(AppCollection.isCollectionEmpty(_groupAdmins)) {
+      return Container();
+    }
     List<Widget> content = [];
-    if (0 < (_groupAdmins?.length ?? 0)) {
       content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
       for (Member officer in _groupAdmins) {
         if (1 < content.length) {
@@ -673,7 +675,6 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         content.add(_OfficerCard(groupMember: officer,));
       }
       content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()),);
-    }
     return
       Stack(children: [
         Container(
