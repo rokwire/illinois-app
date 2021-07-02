@@ -294,6 +294,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
       }
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
+        content.add(_buildAdmins());
       }
     }
     else {
