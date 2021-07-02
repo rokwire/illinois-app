@@ -24,6 +24,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
+import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -147,6 +148,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             Container(height: 24,),
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             _buildPrivacyDropDown(),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                            _buildMembershipLayout()
                         ],),)
 
                       ]),
@@ -490,7 +493,72 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 40,)
       ],);
   }
-  //
+
+  // Membership Questions
+  Widget _buildMembershipLayout() {
+    int questionsCount = _group?.questions?.length ?? 0;
+    String questionsDescription = (0 < questionsCount)
+        ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
+        : Localization().getStringEx("panel.groups_create..questions.missing.label", "No question");
+
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(children: <Widget>[
+        Container(height: 12),
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildMembershipButton(
+                title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
+                description: questionsDescription,
+                onTap: _onTapQuestions)),
+        Container(height: 40),
+      ]),
+    );
+  }
+
+  Widget _buildMembershipButton({String title, String description, Function onTap}) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors.white,
+                border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: <Widget>[
+                Expanded(
+                    child: Text(
+                  title,
+                  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),
+                )),
+                Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Image.asset('images/chevron-right.png'),
+                )
+              ]),
+              Container(
+                  padding: EdgeInsets.only(right: 42, top: 4),
+                  child: Text(
+                    description,
+                    style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  ))
+            ])));
+  }
+
+  void _onTapQuestions() {
+    Analytics.instance.logSelect(target: "Membership Questions");
+    if (_group.questions == null) {
+      _group.questions = [];
+    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.questions))).then((dynamic questions) {
+      if (questions is List<GroupMembershipQuestion>) {
+        _group.questions = questions;
+      }
+      setState(() {});
+    });
+  }
 
   //Buttons
   Widget _buildButtonsLayout() {
