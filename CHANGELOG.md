@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Wellness button to Campus Resources list [#433](https://github.com/rokwire/illinois-app/issues/433).
 - Additional Groups UI improvements and fixes [#413](https://github.com/rokwire/illinois-app/issues/413).
 - Update Delete group event to delete only event with groupId and User is admin in this group  [#435](https://github.com/rokwire/illinois-app/issues/435).
+- Improve create event form validation [#437](https://github.com/rokwire/illinois-app/issues/437).
+
 
 ## [2.5.4] - 2021-07-02
 ### Added
