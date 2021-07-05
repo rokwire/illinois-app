@@ -1498,7 +1498,7 @@
 	"panel.group_detail.button.favorites.title": "Favorites",
 	"panel.group_detail.button.remove_event.title": "Remove Event",
 	"panel.group_detail.message.remove_event.title":  "Are you sure you want to remove this event from your group page?",
-	"panel.group_detail.button.delete_event.title": "Delete Event",
+	"panel.group_detail.button.delete_event.title": "Remove group event",
 	"panel.group_detail.message.delete_event.title": "Are you sure you want to delete this event?",
 	"panel.group_detail.button.edit_event.title": "Edit Event",
 	"panel.group_detail.button.remove.title": "Remove",
