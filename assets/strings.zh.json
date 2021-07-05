@@ -1785,6 +1785,8 @@
 	"widget.home_campus_tools.button.illini_cash.hint":"",
 	"widget.home_campus_tools.button.my_illini.title":"我的Illini",
 	"widget.home_campus_tools.button.my_illini.hint":"",
+	"widget.home_campus_tools.button.wellness.title": "健康",
+	"widget.home_campus_tools.button.wellness.hint": "",
 
 	"widget.home_create_poll.button.close.label":"关闭",
 	"widget.home_create_poll.text.title":"快速创建和共享投票.",

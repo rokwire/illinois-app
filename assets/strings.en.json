@@ -1772,6 +1772,7 @@
     "widget.home_recent_items.button.more.title":"View All",
     "widget.home_recent_items.button.more.hint":"Tap to view all",
 
+    "widget.home_campus_tools.header.my_illini.title": "My Illini",
     "widget.home_campus_tools.label.campus_tools":"Campus Resources",
     "widget.home_campus_tools.button.events.title":"Events",
     "widget.home_campus_tools.button.events.hint":"",
@@ -1784,8 +1785,9 @@
     "widget.home_campus_tools.button.illini_cash.title":"Illini Cash",
     "widget.home_campus_tools.button.illini_cash.hint":"",
     "widget.home_campus_tools.button.my_illini.title": "My Illini",
-    "widget.home_campus_tools.header.my_illini.title": "My Illini",
     "widget.home_campus_tools.button.my_illini.hint": "",
+    "widget.home_campus_tools.button.wellness.title": "Wellness",
+    "widget.home_campus_tools.button.wellness.hint": "",
 
     "widget.home_create_poll.button.close.label":"Close",
     "widget.home_create_poll.text.title":"Quickly create and share polls",
