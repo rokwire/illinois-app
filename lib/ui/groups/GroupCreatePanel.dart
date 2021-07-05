@@ -571,9 +571,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           child: Center(
             child: ScalableRoundedButton(
               label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
-              backgroundColor: _canSave ? Colors.white : Styles().colors.lightGray,
-              borderColor: Styles().colors.fillColorSecondary,
-              textColor: Styles().colors.fillColorPrimary,
+              backgroundColor: Styles().colors.white,
+              borderColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              textColor: _canSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
               onTap: _onCreateTap,
             ),
           )
