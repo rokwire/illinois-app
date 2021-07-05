@@ -220,7 +220,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-         _buildSectionTitle(title,null),
+         _buildSectionTitle(title,null, true),
           Container(
             height: 48,
             padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
