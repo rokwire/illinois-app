@@ -393,13 +393,16 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
         }
       }
 
-      commands.add(
-        RibbonButton(label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-          icon: 'images/external-link.png',
-          leftIcon: 'images/globe.png',
-          padding: EdgeInsets.symmetric(horizontal: 0),
-          onTap: (){ _onWebsite(); },)
-      );
+      if (AppString.isStringNotEmpty(_group?.webURL)) {
+        commands.add(
+          RibbonButton(label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
+            icon: 'images/external-link.png',
+            leftIcon: 'images/globe.png',
+            padding: EdgeInsets.symmetric(horizontal: 0),
+            onTap: (){ _onWebsite(); },)
+        );
+      }
+
       if(tags?.isNotEmpty ?? false) {
         commands.add(Container(height: 12,));
         commands.add(
@@ -901,7 +904,7 @@ class _GroupPanelState extends State<GroupPanel> implements NotificationsListene
 
   void _onWebsite() {
     String url = _group?.webURL;
-    if (url != null) {
+    if (AppString.isStringNotEmpty(url)) {
       launch(url);
     }
   }
