@@ -228,41 +228,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               letterSpacing: 1.0),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          _buildTabs(),
-          _buildFilterButtons(),
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ),)
-                : Stack(
-              alignment: AlignmentDirectional.topCenter,
-              children: <Widget>[
-                Container(
-                  color: Styles().colors.background,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      children: <Widget>[
-                        _myGroupsSelected
-                            ? _buildMyGroupsContent()
-                            : _buildAllGroupsContent(),
-                      ],
-                    ),
+      body: Column(children: <Widget>[
+        _buildTabs(),
+        _buildFilterButtons(),
+        Expanded(
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ),)
+              : Stack(
+            alignment: AlignmentDirectional.topCenter,
+            children: <Widget>[
+              Container(color: Styles().colors.background, child:
+                RefreshIndicator(onRefresh: _onPullToRefresh, child: 
+                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                    Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
                   ),
                 ),
-                Visibility(
-                    visible: _hasActiveFilter,
-                    child: _buildDimmedContainer()
-                ),
-                _hasActiveFilter
-                    ? _buildFilterContent()
-                    : Container()
-              ],
-            ),
+              ),
+              Visibility(
+                  visible: _hasActiveFilter,
+                  child: _buildDimmedContainer()
+              ),
+              _hasActiveFilter
+                  ? _buildFilterContent()
+                  : Container()
+            ],
           ),
-        ],
-      ),
+        ),
+      ],),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
     );
@@ -595,6 +587,24 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void onTapCreate(){
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
+  }
+
+  Future<void> _onPullToRefresh() async {
+    Analytics.instance.logSelect(target: "Pull To Refresh");
+    List<Group> groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
+    if (groups != null) {
+      setState(() {
+        if (_myGroupsSelected) {
+          List<Group> sortedGroups = _sortGroups(groups);
+          _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+          _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+        }
+        else {
+          _allGroups = _sortGroups(groups);
+        }
+      });
+    }
+
   }
 
   ///////////////////////////////////
