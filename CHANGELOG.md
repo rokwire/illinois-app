@@ -10,9 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add a pull to refresh on the Groups List panel [#431](https://github.com/rokwire/illinois-app/issues/431).
 - Add Privacy Center items to Settings Home panel [#433](https://github.com/rokwire/illinois-app/issues/433).
-
 ### Changed
 - Additional Groups UI improvements and fixes [#413](https://github.com/rokwire/illinois-app/issues/413).
+- Improve create event form validation [#437](https://github.com/rokwire/illinois-app/issues/437).
 
 ## [2.5.4] - 2021-07-02
 ### Added

@@ -133,7 +133,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   Widget _buildContent() {
     bool isEdit = widget.editEvent!=null;
-
+    bool isValid = _isFormValid();
     return Stack(children: <Widget>[
           Container(
             color: Colors.white,
@@ -318,7 +318,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 child:
                                                 Row(
                                                   children: <Widget>[
-                                                    Expanded(child:
                                                     Text(
                                                       Localization().getStringEx("panel.create_event.date_time.start_time.title","START TIME"),
                                                       maxLines: 1,
@@ -329,7 +328,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                           fontFamily:
                                                           Styles().fontFamilies.bold,
                                                           letterSpacing: 1),
-                                                    )
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 2),
+                                                      child: Text(
+                                                        '*',
+                                                        style: TextStyle(
+                                                            color: Styles().colors.fillColorSecondary,
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                            Styles().fontFamilies.bold),
+                                                      ),
                                                     )
                                                   ],
                                                 ),
@@ -424,17 +434,27 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                       child:
                                                       Row(
                                                         children: <Widget>[
-                                                          Expanded(
+                                                          Text(
+                                                            Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                                color: Styles().colors.fillColorPrimary,
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                Styles().fontFamilies.bold,
+                                                                letterSpacing: 1),
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: 2),
                                                             child: Text(
-                                                              Localization().getStringEx("panel.create_event.date_time.end_time.title","END TIME"),
-                                                              maxLines: 1,
-                                                              overflow: TextOverflow.ellipsis,
+                                                              '*',
                                                               style: TextStyle(
-                                                                  color: Styles().colors.fillColorPrimary,
+                                                                  color: Styles().colors.fillColorSecondary,
                                                                   fontSize: 14,
                                                                   fontFamily:
-                                                                  Styles().fontFamilies.bold,
-                                                                  letterSpacing: 1),
+                                                                  Styles().fontFamilies.bold),
                                                             ),
                                                           )
                                                         ],
@@ -568,8 +588,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                                 Localization().getStringEx("panel.create_event.additional_info.button.preview.title","Preview"),
                                 backgroundColor: Colors.white,
-                                borderColor: Styles().colors.fillColorSecondary,
-                                textColor: Styles().colors.fillColorPrimary,
+                                borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                                textColor: isValid ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
                                 onTap: isEdit? (){
                                   widget.onEditTap(_populateEventWithData(widget.editEvent));
                                 } : _onTapPreview,
@@ -580,8 +600,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     label: isEdit?  Localization().getStringEx("panel.create_event.additional_info.button.edint.title","Update Event"):
                                     Localization().getStringEx("panel.create_event.additional_info.button.create.title","Create event"),
                                     backgroundColor: Colors.white,
-                                    borderColor: Styles().colors.fillColorSecondary,
-                                    textColor: Styles().colors.fillColorPrimary,
+                                    borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                                    textColor: isValid ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
                                     onTap: isEdit? (){
                                       widget.onEditTap(_populateEventWithData(widget.editEvent));
                                     } : _onTapCreate,
@@ -1662,7 +1682,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapPreview() async {
     Analytics.instance.logSelect(target: "Preview");
-    if (_isDataValid()) {
+    if (_validateWithResult()) {
       Event event = _constructEventFromData();
       Navigator.push(
           context,
@@ -1678,7 +1698,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapCreate() async {
     Analytics.instance.logSelect(target: "Create");
-    if (_isDataValid()) {
+    if (_validateWithResult()) {
       Event event = _constructEventFromData();
       //post event
       ExploreService().postNewEvent(event).then((String eventId){
@@ -1850,7 +1870,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     return date;
   }
 
-  bool _isDataValid() {
+  bool _isFormValid() {
+    bool _categoryValidation = _selectedCategory != null;
+    bool _titleValidation = AppString.isStringNotEmpty(_eventTitleController.text);
+    bool _startDateValidation = startDate != null;
+    bool _startTimeValidation = startTime != null || _allDay;
+    bool _endDateValidation = endDate != null;
+    bool _endTimeValidation = endTime != null || _allDay;
+    bool _propperStartEndTimeInterval = (endDate != null) ? !(startDate?.isAfter(endDate) ?? true) : true;
+    return _categoryValidation && _titleValidation && _startDateValidation && _startTimeValidation &&
+        _endDateValidation && _endTimeValidation && _propperStartEndTimeInterval;
+  }
+
+  bool _validateWithResult() {
     bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation =
         AppString.isStringNotEmpty(_eventTitleController.text);
