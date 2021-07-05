@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add a pull to refresh on the Groups List panel [#431](https://github.com/rokwire/illinois-app/issues/431).
 ### Changed
 - Additional Groups UI improvements and fixes [#413](https://github.com/rokwire/illinois-app/issues/413).
+- Update Delete group event to delete only event with groupId and User is admin in this group  [#435](https://github.com/rokwire/illinois-app/issues/435).
 
 ## [2.5.4] - 2021-07-02
 ### Added
