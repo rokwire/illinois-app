@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not show Website button in GroupDetailPanel if there is no webURL [#429](https://github.com/rokwire/illinois-app/issues/429).
 ### Added
 - Add a pull to refresh on the Groups List panel [#431](https://github.com/rokwire/illinois-app/issues/431).
+### Changed
+- Additional Groups UI improvements and fixes [#413](https://github.com/rokwire/illinois-app/issues/413).
 
 ## [2.5.4] - 2021-07-02
 ### Added
