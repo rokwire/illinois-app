@@ -69,6 +69,11 @@ class Groups /* with Service */ {
     return (_userMembership != null) ? _userMembership[groupId] : null;
   }
 
+  Future<bool> isAdminForGroup(String groupId) async{
+    Group group = await loadGroup(groupId);
+    return group?.currentUserIsAdmin ?? false;
+  }
+
   // Categories APIs
 
   Future<List<String>> loadCategories() async {
@@ -395,9 +400,16 @@ class Groups /* with Service */ {
     });
   }
 
-  Future<bool> deleteEventFromGroup({String groupId, String eventId}) async {
-    await removeEventFromGroup(groupId: groupId, eventId: eventId);
-    bool deleteResult = await ExploreService().deleteEvent(eventId);
+  Future<bool> deleteEventFromGroup({String groupId, Event event}) async {
+    bool deleteResult = false;
+    await removeEventFromGroup(groupId: groupId, eventId: event?.id);
+    String creatorGroupId = event.createdByGroupId;
+    if(creatorGroupId!=null){
+      Group creatorGroup = await loadGroup(creatorGroupId);
+      if(creatorGroup!=null && creatorGroup.currentUserIsAdmin){
+        deleteResult = await ExploreService().deleteEvent(event?.id);
+      }
+    }
     NotificationService().notify(Groups.notifyGroupEventsUpdated);
     return deleteResult;
   }

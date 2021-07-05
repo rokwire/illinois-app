@@ -573,21 +573,13 @@ class _EventContent extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Container(height: 48,),
-                RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-leave-group.png",
-                  label:Localization().getStringEx("panel.group_detail.button.remove_event.title", "Remove Event"),
-                  onTap: (){
-                    showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
-                  },
-                ),
                 !_canDelete? Container():
                   RibbonButton(
                     height: null,
                     leftIcon: "images/icon-leave-group.png",
-                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete Event"),
+                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
                     onTap: (){
-                      showDialog(context: context, builder: (context)=>_buildDeleteEventDialog(context)).then((value) => Navigator.pop(context));
+                      showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
                     },
                   ),
                 !_canEdit? Container():
@@ -613,21 +605,8 @@ class _EventContent extends StatelessWidget {
         onConfirmTap:(){_onRemoveEvent(context);});
   }
 
-  Widget _buildDeleteEventDialog(BuildContext context){
-    return GroupsConfirmationDialog(
-        message: Localization().getStringEx("panel.group_detail.message.delete_event.title", "Are you sure you want to delete this event?"),
-        buttonTitle:  Localization().getStringEx("panel.group_detail.button.delete.title","Delete"),
-        onConfirmTap:(){_onDeleteEvent(context);});
-  }
-
   void _onRemoveEvent(BuildContext context){
-    Groups().removeEventFromGroup(eventId: event.id, groupId: group.id).then((value){
-      Navigator.of(context).pop();
-    });
-  }
-
-  void _onDeleteEvent(BuildContext context){
-    Groups().deleteEventFromGroup(eventId: event.id, groupId: group.id).then((value){
+    Groups().deleteEventFromGroup(event: event, groupId: group.id).then((value){
       Navigator.of(context).pop();
     });
   }
@@ -643,11 +622,11 @@ class _EventContent extends StatelessWidget {
   }
 
   bool get _canEdit{
-    return isAdmin; //TBD
+    return isAdmin;
   }
 
   bool get _canDelete{
-    return isAdmin; //TBD
+    return isAdmin;
   }
 }
 

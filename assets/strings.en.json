@@ -1499,7 +1499,7 @@
     "panel.group_detail.button.favorites.title": "Favorites",
     "panel.group_detail.button.remove_event.title": "Remove Event",
     "panel.group_detail.message.remove_event.title":  "Are you sure you want to remove this event from your group page?",
-    "panel.group_detail.button.delete_event.title": "Delete Event",
+    "panel.group_detail.button.delete_event.title": "Remove group event",
     "panel.group_detail.message.delete_event.title": "Are you sure you want to delete this event?",
     "panel.group_detail.button.edit_event.title": "Edit Event",
     "panel.group_detail.button.remove.title": "Remove",
@@ -1772,6 +1772,7 @@
     "widget.home_recent_items.button.more.title":"View All",
     "widget.home_recent_items.button.more.hint":"Tap to view all",
 
+    "widget.home_campus_tools.header.my_illini.title": "My Illini",
     "widget.home_campus_tools.label.campus_tools":"Campus Resources",
     "widget.home_campus_tools.button.events.title":"Events",
     "widget.home_campus_tools.button.events.hint":"",
@@ -1784,8 +1785,9 @@
     "widget.home_campus_tools.button.illini_cash.title":"Illini Cash",
     "widget.home_campus_tools.button.illini_cash.hint":"",
     "widget.home_campus_tools.button.my_illini.title": "My Illini",
-    "widget.home_campus_tools.header.my_illini.title": "My Illini",
     "widget.home_campus_tools.button.my_illini.hint": "",
+    "widget.home_campus_tools.button.wellness.title": "Wellness",
+    "widget.home_campus_tools.button.wellness.hint": "",
 
     "widget.home_create_poll.button.close.label":"Close",
     "widget.home_create_poll.text.title":"Quickly create and share polls",

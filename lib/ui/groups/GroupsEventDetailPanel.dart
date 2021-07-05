@@ -431,7 +431,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _deleteEvent(){
-    Groups().deleteEventFromGroup(eventId: _event?.id, groupId: widget?.groupId).then((value){
+    Groups().deleteEventFromGroup(event: _event, groupId: widget?.groupId).then((value){
       Navigator.of(context).pop();
     });
   }
