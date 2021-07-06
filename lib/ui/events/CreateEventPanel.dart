@@ -30,6 +30,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -171,45 +172,35 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             ),
                           )
                         ),
-                        Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: <Widget>[
-                            Container(
-                              color: Styles().colors.lightGray,
-                              height: _imageHeight,
-                            ),
-                            AppString.isStringNotEmpty(_imageUrl) ? Image.network(_imageUrl) : Container(),
-                            CustomPaint(
-                                painter: TrianglePainter(
-                                    painterColor: Styles().colors.fillColorSecondary,
-                                    left: false),
-                                child: Container(
-                                  height: 48,
-                                )),
-                            CustomPaint(
-                              painter:
-                                  TrianglePainter(painterColor: Colors.white),
-                              child: Container(
-                                height: 25,
-                              ),
-                            ),
-                            Container(
-                              height: _imageHeight,
-                              child: Center(
-                                child:
-                                Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
-                                  hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
-                                  ScalableSmallRoundedButton(
-                                    label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
-                                    onTap: _onTapAddImage,
-                                    backgroundColor: Styles().colors.white,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    borderColor: Styles().colors.fillColorSecondary,
-                                  )
+                        Container(
+                          height: 200,
+                          color: Styles().colors.background,
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: <Widget>[
+                              AppString.isStringNotEmpty(_imageUrl)
+                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover, headers: Network.appAuthHeaders))
+                                  : Container(),
+                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+                              CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
+                              Container(
+                                height: _imageHeight,
+                                child: Center(
+                                  child:
+                                  Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                    hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
+                                    ScalableSmallRoundedButton(
+                                      label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                                      onTap: _onTapAddImage,
+                                      backgroundColor: Styles().colors.white,
+                                      textColor: Styles().colors.fillColorPrimary,
+                                      borderColor: Styles().colors.fillColorSecondary,
+                                    )
+                                  ),
                                 ),
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                         _buildCategorySection(),
                         _buildTitleSection(),
