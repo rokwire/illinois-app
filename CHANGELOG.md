@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fix Android build [#442](https://github.com/rokwire/illinois-app/issues/442).
+### Changed
+Selecting an image for event creation has a drop down for the type, please no drop down and I think it should just use event-tout. [#445](https://github.com/rokwire/illinois-app/issues/445).
 
 ## [2.5.5] - 2021-07-05
 ### Fixed
