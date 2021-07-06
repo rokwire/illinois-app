@@ -48,17 +48,17 @@ import 'GroupSettingsPanel.dart';
 
 enum _DetailTab { Events, About }
 
-class GroupPanel extends StatefulWidget {
+class GroupDetailPanel extends StatefulWidget {
 
   final String groupId;
 
-  GroupPanel({this.groupId});
+  GroupDetailPanel({this.groupId});
 
   @override
-  _GroupPanelState createState() => _GroupPanelState();
+ _GroupDetailPanelState createState() => _GroupDetailPanelState();
 }
 
-class _GroupPanelState extends State<GroupPanel> implements NotificationsListener {
+class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
 
   Group              _group;
   bool               _loading = false;
