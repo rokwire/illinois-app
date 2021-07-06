@@ -19,7 +19,6 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
@@ -357,7 +356,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
           textColor: Styles().colors.fillColorPrimary,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          rightIconPath: 'images/external-link.png',
+          rightIcon: Image.asset('images/external-link.png'),
           onTap: () {
             _onTapWebButton(titleUrl, 'Website');
           }
@@ -377,7 +376,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           borderColor: Styles().colors.fillColorSecondary,
           textColor: Styles().colors.fillColorPrimary,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          rightIconPath: 'images/external-link.png',
+          rightIcon: Image.asset('images/external-link.png'),
           onTap: () {
             _onTapWebButton(registrationUrl, 'Registration');
           }

@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
 
 class RoundedButton extends StatelessWidget {
   final String label;
@@ -36,8 +35,8 @@ class RoundedButton extends StatelessWidget {
   final bool enabled;
   final double height;
   final double width;
-  final String leftIconPath;
-  final String rightIconPath;
+  final Image leftIcon;
+  final Image rightIcon;
 
   RoundedButton(
       {this.label = '',
@@ -56,8 +55,8 @@ class RoundedButton extends StatelessWidget {
       this.onTap,
       this.height = 48,
       this.width,
-      this.leftIconPath,
-      this.rightIconPath,
+      this.leftIcon,
+      this.rightIcon,
       this.shadow});
 
   @override
@@ -95,7 +94,7 @@ class RoundedButton extends StatelessWidget {
                   padding: padding,
                   child: Semantics( excludeSemantics: true,
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    AppString.isStringNotEmpty(leftIconPath) ? Padding(padding: EdgeInsets.only(right: 5), child: Image.asset(leftIconPath),) : Container(),
+                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(),
                     Text(label, textAlign: textAlign,
                       style: textStyle ?? TextStyle(
                         fontFamily: fontFamily ?? Styles().fontFamilies.bold,
@@ -103,7 +102,7 @@ class RoundedButton extends StatelessWidget {
                         color: textColor,
                       ),
                     ),
-                    AppString.isStringNotEmpty(rightIconPath) ?  Padding(padding: EdgeInsets.only(left: 5), child: Image.asset(rightIconPath),) : Container(),
+                    (rightIcon != null) ?  Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(),
                     /*Visibility(visible: showAdd, child:
                       Padding(padding: EdgeInsets.only(left: 5), child:
                         Image.asset('images/icon-add-20x18.png'),
