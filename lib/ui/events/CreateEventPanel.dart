@@ -1576,10 +1576,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     Analytics.instance.logSelect(target: "Add Image");
     _imageUrl = await showDialog(
         context: context,
-        builder: (_) => Material(
-          type: MaterialType.transparency,
-          child: AddImageWidget(),
-        )
+        builder: (_) => AddImageWidget()
     );
     setState(() {});
   }
@@ -1991,15 +1988,14 @@ class AddImageWidget extends StatefulWidget {
 
 class _AddImageWidgetState extends State<AddImageWidget> {
   var _imageUrlController = TextEditingController();
-  List<ImageType> _imageTypes;
-  ImageType _selectedImageType;
-  bool _showProgress = false;
+  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
+  bool _showUrlProgress = false;
+  bool _showGalleryProgress = false;
 
   _AddImageWidgetState();
 
   @override
   void initState() {
-    _loadImageTypes();
     super.initState();
   }
 
@@ -2009,139 +2005,97 @@ class _AddImageWidgetState extends State<AddImageWidget> {
     super.dispose();
   }
 
-  void _setShowProgress(bool value) {
-    setState(() {
-      _showProgress = value;
-    });
-  }
-
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Expanded(
-        child: Container(
-          //color: Styles().colors.blackTransparent06,
-          child: Dialog(
-            //backgroundColor: Color(0x00ffffff),
-              child: Container(
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      color: Styles().colors.fillColorPrimary,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 10, top: 10),
-                            child: Text(
-                              Localization().getStringEx("widget.add_image.heading", "Select Image"),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: Styles().fontFamilies.medium,
-                                  fontSize: 24),
-                            ),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: _onTapCloseImageSelection,
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 10, top: 10),
-                              child: Text(
-                                '\u00D7',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: Styles().fontFamilies.medium,
-                                    fontSize: 50),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                          child: SingleChildScrollView(
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: DropdownButtonHideUnderline(
-                                          child: DropdownButton(
-                                              icon: Image.asset(
-                                                  'images/icon-down-orange.png'),
-                                              isExpanded: true,
-                                              hint: Text(
-                                                (_selectedImageType != null)
-                                                    ? _selectedImageType.identifier
-                                                    : Localization().getStringEx("widget.add_image.description",'Select an image type'),
-                                              ),
-                                              items: _buildImageTypesItems(),
-                                              onChanged: _onImageTypesValueChanged)),
-                                    ),
-                                    Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: TextFormField(
-                                            controller: _imageUrlController,
-                                            keyboardType: TextInputType.text,
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
-                                              labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
-                                            ))),
-                                    Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: RoundedButton(
-                                            label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
-                                            borderColor: Styles().colors.fillColorSecondary,
-                                            backgroundColor: Styles().colors.background,
-                                            textColor: Styles().colors.fillColorPrimary,
-                                            onTap: _onTapUseUrl)),
-                                    Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: RoundedButton(
-                                            label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                            borderColor: Styles().colors.fillColorSecondary,
-                                            backgroundColor: Styles().colors.background,
-                                            textColor: Styles().colors.fillColorPrimary,
-                                            onTap: _onTapChooseFromDevice)),
-                                    _showProgress ? CircularProgressIndicator() : Container(),
-                                  ]))),
-                    )
-                  ],
+    return Dialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
+              color: Styles().colors.fillColorPrimary,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight:  Radius.circular(4)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(left: 10, top: 10),
+                  child: Text(
+                    Localization().getStringEx("widget.add_image.heading", "Select Image"),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: Styles().fontFamilies.medium,
+                        fontSize: 24),
+                  ),
                 ),
-              )),
-        ),
-      )
-    ]);
-  }
+                Spacer(),
+                GestureDetector(
+                  onTap: _onTapCloseImageSelection,
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 10, top: 10),
+                    child: Text(
+                      '\u00D7',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: Styles().fontFamilies.medium,
+                          fontSize: 50),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                                controller: _imageUrlController,
+                                keyboardType: TextInputType.text,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
+                                  labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                                ))),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.all(10),
+                                child: RoundedButton(
+                                    label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                                    borderColor: Styles().colors.fillColorSecondary,
+                                    backgroundColor: Styles().colors.background,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    onTap: _onTapUseUrl)),
+                            _showUrlProgress ? CircularProgressIndicator() : Container(),
+                          ],
+                        ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.all(10),
+                                child: RoundedButton(
+                                    label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                                    borderColor: Styles().colors.fillColorSecondary,
+                                    backgroundColor: Styles().colors.background,
+                                    textColor: Styles().colors.fillColorPrimary,
+                                    onTap: _onTapChooseFromDevice)),
+                            _showGalleryProgress ? CircularProgressIndicator() : Container(),
+                          ],
+                        ),
+                      ]),
 
-  List<DropdownMenuItem<ImageType>> _buildImageTypesItems() {
-    if (_imageTypes == null) return null;
-    List<DropdownMenuItem<ImageType>> result = [];
-    for (ImageType imageType in _imageTypes) {
-      DropdownMenuItem ddmi = DropdownMenuItem<ImageType>(
-        value: imageType,
-        child: Text(
-          imageType.identifier,
-        ),
-      );
-      result.add(ddmi);
-    }
-    return result;
-  }
-
-  void _onImageTypesValueChanged(ImageType value) {
-    setState(() {
-      _selectedImageType = value;
-    });
-  }
-
-  void _loadImageTypes() {
-    Future future = ImageService().loadImageTypes();
-    future.then((imageTypes) {
-      _imageTypes = imageTypes;
-      setState(() {});
-    });
+                ],
+              ))
+        ],
+      ),
+    );
   }
 
   void _onTapCloseImageSelection() {
@@ -2156,10 +2110,6 @@ class _AddImageWidgetState extends State<AddImageWidget> {
       AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
       return;
     }
-    if (_selectedImageType == null) {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.image_type.label","Please select an image type"));
-      return;
-    }
 
     bool isReadyUrl = url.endsWith(".webp");
     if (isReadyUrl) {
@@ -2168,11 +2118,14 @@ class _AddImageWidgetState extends State<AddImageWidget> {
       Navigator.pop(context, url);
     } else {
       //we need to process it
-      _setShowProgress(true);
-      Future<ImagesResult> result =
-      ImageService().useUrl(_selectedImageType, url);
+      setState(() {
+        _showUrlProgress = true;
+      });
+      Future<ImagesResult> result = ImageService().useUrl(_imageType, url);
       result.then((logicResult) {
-        _setShowProgress(false);
+        setState(() {
+          _showUrlProgress = false;
+        });
 
         ImagesResultType resultType = logicResult.resultType;
         switch (resultType) {
@@ -2194,17 +2147,17 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 
   void _onTapChooseFromDevice() {
     Analytics.instance.logSelect(target: "Choose From Device");
-    if (_selectedImageType == null) {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.image_type.label","Please select an image type"));
-      return;
-    }
 
-    _setShowProgress(true);
+    setState(() {
+      _showGalleryProgress = true;
+    });
 
     Future<ImagesResult> result =
-    ImageService().chooseFromDevice(_selectedImageType);
+    ImageService().chooseFromDevice(_imageType);
     result.then((logicResult) {
-      _setShowProgress(false);
+      setState(() {
+        _showGalleryProgress = false;
+      });
 
       ImagesResultType resultType = logicResult.resultType;
       switch (resultType) {
