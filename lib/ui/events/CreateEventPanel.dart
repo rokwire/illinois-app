@@ -1503,6 +1503,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventPriceController.text = event.cost;
       _selectedPrivacy = (event?.isGroupPrivate??false) ? "PRIVATE" : "PUBLIC";
       if(event.location!=null){
+        if (_isOnline) {
+          _eventCallUrlController?.text = _location.description;
+        }
+        else {
+          _eventLocationController?.text = _location.description;
+        }
         _eventLatitudeController.text = event.location?.latitude?.toString()??"";
         _eventLongitudeController.text = event.location?.longitude?.toString()??"";
       }
@@ -1636,7 +1642,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventLocationController.text = locationName;
 
       if(AppString.isStringNotEmpty(_location.description)){
-        _eventCallUrlController?.text = _location.description;
+        if (_isOnline) {
+          _eventCallUrlController?.text = _location.description;
+        }
+        else {
+          _eventLocationController?.text = _location.description;
+        }
       }
 
       if(_location?.latitude!=null){
