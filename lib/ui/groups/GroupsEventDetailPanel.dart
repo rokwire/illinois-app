@@ -350,13 +350,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
     if (hasTitleUrl) {
       buttons.add(Expanded(child: 
-        RoundedButton(
+        ScalableRoundedButton(
           label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
           hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
           backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
           borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
           textColor: Styles().colors.fillColorPrimary,
-          padding: EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          rightIconPath: 'images/external-link.png',
           onTap: () {
             _onTapWebButton(titleUrl, 'Website');
           }
@@ -369,13 +370,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         buttons.add(Container(width: 6));
       }
       buttons.add(Expanded(child: 
-        RoundedButton(
+        ScalableRoundedButton(
           label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
           hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
           backgroundColor: Colors.white,
           borderColor: Styles().colors.fillColorSecondary,
           textColor: Styles().colors.fillColorPrimary,
-          padding: EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          rightIconPath: 'images/external-link.png',
           onTap: () {
             _onTapWebButton(registrationUrl, 'Registration');
           }
