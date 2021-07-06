@@ -910,12 +910,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void onTapMembers(){
-    Analytics().logPage(name: "Group Members");
+    Analytics().logSelect(target: "Group Members");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
   }
 
   void onTapSettings(){
-    Analytics().logPage(name: "Group Settings");
+    Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
@@ -961,12 +961,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapCreateEvent(){
-    Analytics().logPage(name: "Create Event");
+    Analytics().logSelect(target: "Create Event");
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
   }
 
   void _onTapBrowseEvents(){
-    Analytics().logPage(name: "Browse Events");
+    Analytics().logSelect(target: "Browse Events");
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 
