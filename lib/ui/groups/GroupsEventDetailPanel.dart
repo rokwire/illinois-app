@@ -16,6 +16,7 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -24,7 +25,6 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
-import '../WebPanel.dart';
 
 class GroupEventDetailPanel extends StatefulWidget{
   final Event event;
@@ -341,6 +341,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   Widget _eventUrlButtons(){
     List<Widget> buttons = <Widget>[];
+    
     String titleUrl = _event?.titleUrl;
     bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
 
@@ -354,9 +355,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
           backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
           borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+          rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
           textColor: Styles().colors.fillColorPrimary,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          rightIcon: Image.asset('images/external-link.png'),
           onTap: () {
             _onTapWebButton(titleUrl, 'Website');
           }
@@ -374,9 +375,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
           backgroundColor: Colors.white,
           borderColor: Styles().colors.fillColorSecondary,
+          rightIcon: Image.asset('images/external-link.png'),
           textColor: Styles().colors.fillColorPrimary,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          rightIcon: Image.asset('images/external-link.png'),
           onTap: () {
             _onTapWebButton(registrationUrl, 'Registration');
           }
