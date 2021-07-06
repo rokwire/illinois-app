@@ -19,6 +19,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:location/location.dart' as Core;
 
@@ -53,7 +54,7 @@ class ExploreService /* with Service */ {
           recurrenceId,
           limit);
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get('${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
@@ -83,7 +84,7 @@ class ExploreService /* with Service */ {
       }
       http.Response response;
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get('${Config().eventsOrConvergeUrl}/$eventId', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/$eventId', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to retrieve event with id: $eventId');
         Log.e(e.toString());
@@ -176,8 +177,8 @@ class ExploreService /* with Service */ {
       http.Response response;
       String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-            '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get(
+            '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events by ids.');
         Log.e(e?.toString());
@@ -477,8 +478,8 @@ class ExploreService /* with Service */ {
     }
     http.Response response;
     try {
-      response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-          '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+      response = (Config().eventsUrl != null) ? await Network().get(
+          '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
     } catch (e) {
       Log.e('Failed to load super event sub events');
       Log.e(e.toString());
@@ -526,4 +527,8 @@ class ExploreService /* with Service */ {
 
   bool get _enabled => AppString.isStringNotEmpty(Config().eventsOrConvergeUrl)
       && AppString.isStringNotEmpty(Config().eventsUrl);
+
+  NetworkAuth get _userOrAppAuth{
+    return Auth().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
+  }
 }
