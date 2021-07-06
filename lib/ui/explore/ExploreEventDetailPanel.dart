@@ -582,11 +582,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         children: <Widget>[
           Visibility(visible: hasTitleUrl, child: Expanded(
               child: ScalableRoundedButton(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
                 hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
                 backgroundColor: hasTwoButtons ? Styles().colors.background : Colors.white,
                 borderColor: hasTwoButtons ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+                rightIcon: hasTwoButtons ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
                 textColor: Styles().colors.fillColorPrimary,
                 onTap: (){
                   Analytics.instance.logSelect(target: "Website");
@@ -596,11 +597,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           Visibility(visible: hasTwoButtons, child: Container(width: 6)),
           Visibility(visible: hasRegistrationUrl, child: Expanded(
               child: ScalableRoundedButton(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors.fillColorSecondary,
+                rightIcon: Image.asset('images/external-link.png'),
                 textColor: Styles().colors.fillColorPrimary,
                 onTap: () => _onTapGetTickets(registrationUrl),
               )))
