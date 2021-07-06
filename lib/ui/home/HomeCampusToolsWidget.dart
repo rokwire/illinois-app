@@ -27,6 +27,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
@@ -96,8 +97,13 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     } else if (code == 'my_illini') {
       label = Localization().getStringEx('widget.home_campus_tools.button.my_illini.title', 'My Illini');
       hint = Localization().getStringEx('widget.home_campus_tools.button.my_illini.hint', '');
-      iconPath = 'images/my-illini-orange.png';
+      iconPath = 'images/icon-campus-tools-my-illini.png';
       onTap = _onTapMyIllini;
+    } else if (code == 'wellness') {
+      label = Localization().getStringEx('widget.home_campus_tools.button.wellness.title', 'Wellness');
+      hint = Localization().getStringEx('widget.home_campus_tools.button.wellness.hint', '');
+      iconPath = 'images/icon-campus-tools-wellness.png';
+      onTap = _onTapWellness;
      } else {
       return null;
     }
@@ -211,6 +217,12 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
       }
     }
+  }
+
+  void _onTapWellness() {
+    Analytics.instance.logSelect(target: "Wellness");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel()));
+
   }
 }
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -235,7 +236,7 @@ class UserPiiData {
   }
 
   Future<Uint8List> get photoBytes async{
-    return (photoBase64 != null) ? await compute(AppBytes.decodeBase64Bytes, photoBase64) : null;
+    return (photoBase64 != null) ? await compute(base64Decode, photoBase64) : null;
   }
 
   bool get hasPasportInfo{

@@ -58,9 +58,9 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
       body: SafeArea(child: Column( children: <Widget>[
         Container(
           color: Styles().colors.white,
-          padding: EdgeInsets.only(top: 10, bottom: 10),
+          padding: EdgeInsets.only(top: 19, bottom: 19),
           child: Row(children: <Widget>[
-            Onboarding2BackButton(padding: const EdgeInsets.only(left: 10,),
+            Onboarding2BackButton(padding: const EdgeInsets.only(left: 17,),
                 onTap:() {
                   Analytics.instance.logSelect(target: "Back");
                   Navigator.pop(context);
@@ -96,7 +96,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child: Column(children: <Widget>[
             RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
+              title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University student'),
               hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
               iconPath: 'images/icon-persona-student-normal.png',
               selectedIconPath: 'images/icon-persona-student-selected.png',
@@ -108,7 +108,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             ),
             Container(height: gridSpacing,),
             RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics Fan'),
+              title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics fan'),
               hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
               iconPath: 'images/icon-persona-athletics-normal.png',
               selectedIconPath: 'images/icon-persona-athletics-selected.png',
@@ -160,7 +160,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
             ),
             Container(height: gridSpacing,),
             RoleGridButton(
-              title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University Employee'),
+              title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University employee'),
               hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
               iconPath: 'images/icon-persona-employee-normal.png',
               selectedIconPath: 'images/icon-persona-employee-selected.png',

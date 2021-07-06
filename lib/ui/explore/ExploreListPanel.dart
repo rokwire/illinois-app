@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
@@ -24,7 +25,6 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:location/location.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -61,7 +61,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
     if (widget.explores != null) {
       _explores = widget.explores;
       //Sort "only for when we go to details from map view and there is a list of items because of the map grouping"
-      _sortEvents(_explores);
+      ExploreService().sortEvents(_explores);
     }
   }
 
@@ -135,31 +135,6 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           ExploreDetailPanel(explore: explore,initialLocationData: widget.initialLocationData,)));
-    }
-  }
-
-  void _sortEvents(List<Explore> explores) {
-    if (AppCollection.isCollectionNotEmpty(explores)) {
-      explores.sort((Explore first, Explore second) => _compareTo(first, second));
-    }
-  }
-
-  int _compareTo(Explore first, Explore second) {
-    if ((first is Event) && (second is Event)) {
-      int firstScore = first?.convergeScore ?? -1;
-      int secondScore = second?.convergeScore ?? -1;
-      int comparedScore = secondScore.compareTo(firstScore); //Descending order by score
-      if (comparedScore == 0) {
-        if (first.startDateGmt == null || second.startDateGmt == null) {
-          return 0;
-        } else {
-          return (first.startDateGmt.isBefore(second.startDateGmt)) ? -1 : 1;
-        }
-      } else {
-        return comparedScore;
-      }
-    } else {
-      return 0;
     }
   }
 }

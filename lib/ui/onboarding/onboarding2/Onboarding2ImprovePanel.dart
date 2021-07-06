@@ -84,8 +84,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                             ],)
                         ),
                         Row(children:[
-                          Onboarding2BackButton(padding: const EdgeInsets.only(
-                              left: 17, top: 19, right: 20, bottom: 15),
+                          Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 15),
                               onTap: () {
                                 Analytics.instance.logSelect(target: "Back");
                                 _goBack(context);
@@ -129,15 +128,10 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                   )),
                             )),
                         Container(height: 10,),
-                        Semantics(
-                          button: true,
-                          child: GestureDetector(
-                            onTap: _onTapLearnMore,
-                            child:  Text(
-                                Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn More'),
-                                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary, fontFamily: Styles().fontFamilies.regular,)
-                            ),
-                          ),
+                        Onboarding2UnderlinedButton(
+                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
+                          fontSize: 14,
+                          onTap: _onTapLearnMore,
                         ),
                         Container(height: 18,),
                         Container(
@@ -227,7 +221,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing Activity"),
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title1',"Sharing activity"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
             Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content1',"Sharing your activity history sends your information to processing services. These services generate recommendations based on your interests."),
@@ -235,7 +229,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting Out"),
+              Localization().getStringEx('panel.onboarding2.improve.learn_more.title2',"Opting out"),
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
             Text(Localization().getStringEx('panel.onboarding2.improve.learn_more.location_services.content2',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data. "),
