@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Selecting an image for event creation has a drop down for the type, please no drop down and I think it should just use event-tout. [#445](https://github.com/rokwire/illinois-app/issues/445).
 - Inappropriate event image height on create event panel [#447](https://github.com/rokwire/illinois-app/issues/447).
+### Added
+- Added Registration button in Group Event Detail panel [#444](https://github.com/rokwire/illinois-app/issues/444).
+- Show external link icons in Registration and Visit Website buttons in Group Event Detail panel [#444](https://github.com/rokwire/illinois-app/issues/444).
 
 ## [2.5.5] - 2021-07-05
 ### Fixed
