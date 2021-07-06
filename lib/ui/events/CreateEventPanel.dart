@@ -205,7 +205,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     backgroundColor: Styles().colors.white,
                                     textColor: Styles().colors.fillColorPrimary,
                                     borderColor: Styles().colors.fillColorSecondary,
-                                    showChevron: false,
                                   )
                                 ),
                               ),
@@ -1096,7 +1095,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     fontSize: 16,
                                     onTap: _onTapSelectLocation,
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
-                                    showChevron: false,
                                   ))
                             ],
                           )),

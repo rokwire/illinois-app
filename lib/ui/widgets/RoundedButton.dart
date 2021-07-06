@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class RoundedButton extends StatelessWidget {
   final String label;
@@ -35,7 +36,8 @@ class RoundedButton extends StatelessWidget {
   final bool enabled;
   final double height;
   final double width;
-  final bool showAdd;
+  final String leftIconPath;
+  final String rightIconPath;
 
   RoundedButton(
       {this.label = '',
@@ -54,7 +56,8 @@ class RoundedButton extends StatelessWidget {
       this.onTap,
       this.height = 48,
       this.width,
-      this.showAdd = false,
+      this.leftIconPath,
+      this.rightIconPath,
       this.shadow});
 
   @override
@@ -92,21 +95,19 @@ class RoundedButton extends StatelessWidget {
                   padding: padding,
                   child: Semantics( excludeSemantics: true,
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    Text(
-                      label,
-                      textAlign: textAlign,
+                    AppString.isStringNotEmpty(leftIconPath) ? Padding(padding: EdgeInsets.only(right: 5), child: Image.asset(leftIconPath),) : Container(),
+                    Text(label, textAlign: textAlign,
                       style: textStyle ?? TextStyle(
                         fontFamily: fontFamily ?? Styles().fontFamilies.bold,
                         fontSize: fontSize,
                         color: textColor,
                       ),
                     ),
-                    Visibility(
-                        visible: showAdd,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Image.asset('images/icon-add-20x18.png'),
-                        ))
+                    AppString.isStringNotEmpty(rightIconPath) ?  Padding(padding: EdgeInsets.only(left: 5), child: Image.asset(rightIconPath),) : Container(),
+                    /*Visibility(visible: showAdd, child:
+                      Padding(padding: EdgeInsets.only(left: 5), child:
+                        Image.asset('images/icon-add-20x18.png'),
+                    )),*/
                   ],))),
             ),
           ),

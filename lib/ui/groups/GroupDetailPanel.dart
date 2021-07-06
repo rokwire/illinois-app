@@ -643,8 +643,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     fontSize: 16,
                     borderColor: Styles().colors.fillColorSecondary,
                     borderWidth: 2,
-                    onTap: _onTapCreateEvent,
-                    showAdd: true,),
+                    rightIconPath: 'images/icon-add-20x18.png',
+                    onTap: _onTapCreateEvent,),
                 )
               )
             ],

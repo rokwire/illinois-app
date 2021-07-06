@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/Utils.dart';
 
 typedef void OnWidgetSizeChange(Size size);
 
@@ -130,15 +131,15 @@ class ScalableRoundedButton extends StatelessWidget {
   final TextAlign textAlign;
   final String fontFamily;
   final double fontSize;
+  final int maxLines;
   final Color borderColor;
   final double borderWidth;
   final Color secondaryBorderColor;
   final List<BoxShadow> shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
-  final bool showAdd;
-  final bool showChevron;
-  final int maxLines;
+  final String leftIconPath;
+  final String rightIconPath;
 
   ScalableRoundedButton(
       {this.label = '',
@@ -155,8 +156,8 @@ class ScalableRoundedButton extends StatelessWidget {
         this.secondaryBorderColor,
         this.shadow,
         this.onTap,
-        this.showAdd = false,
-        this.showChevron = false,
+        this.leftIconPath,
+        this.rightIconPath,
         this.maxLines = 10
       });
 
@@ -191,33 +192,28 @@ class ScalableRoundedButton extends StatelessWidget {
                   borderRadius: borderRadius),
               child: Padding(
                   padding: padding,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                    AppString.isStringNotEmpty(leftIconPath) ? Padding(padding: EdgeInsets.only(right: 5), child: Image.asset(leftIconPath),) : Container(),
                     Expanded(child:
-                    Text(
-                      label,
-                      textAlign: textAlign,
-                      maxLines: maxLines,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: fontFamily ?? Styles().fontFamilies.bold,
-                        fontSize: fontSize,
-                        color: textColor,
-                      ),
+                      Text(label, textAlign: textAlign, maxLines: maxLines, overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: fontFamily ?? Styles().fontFamilies.bold,
+                          fontSize: fontSize,
+                          color: textColor,
+                        ),
                     )),
-                    Visibility(
-                        visible: showChevron,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Image.asset('images/chevron-right.png'),
-                        )),
-                    Visibility(
-                        visible: showAdd,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Image.asset('images/icon-add-20x18.png'),
-                        ))
+                    
+                    AppString.isStringNotEmpty(rightIconPath) ? Padding(padding: EdgeInsets.only(left: 5), child: Image.asset(rightIconPath),) : Container(),
+
+                    /*Visibility(visible: showChevron, child:
+                      Padding(padding: EdgeInsets.only(left: 5), child:
+                        Image.asset('images/chevron-right.png'),
+                    )),*/
+                    
+                    /*Visibility(visible: showAdd, child:
+                      Padding(padding: EdgeInsets.only(left: 5), child:
+                        Image.asset('images/icon-add-20x18.png'),
+                    ))*/
                   ],)),
             ),
           ),
@@ -298,8 +294,8 @@ class ScalableSmallRoundedButton extends StatelessWidget{
   final List<BoxShadow> shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
-  final bool showAdd;
-  final bool showChevron;
+  final String leftIconPath;
+  final String rightIconPath;
   final int widthCoeficient;
   final int maxLines;
 
@@ -319,8 +315,8 @@ class ScalableSmallRoundedButton extends StatelessWidget{
     this.secondaryBorderColor,
     this.shadow,
     this.onTap,
-    this.showAdd = false,
-    this.showChevron = false,
+    this.leftIconPath,
+    this.rightIconPath,
     this.maxLines = 10
   }) : super(key: key);
 
@@ -342,7 +338,8 @@ class ScalableSmallRoundedButton extends StatelessWidget{
             textColor: textColor ?? Styles().colors.fillColorPrimary,
             borderColor: borderColor?? Styles().colors.fillColorSecondary,
             backgroundColor: backgroundColor?? Styles().colors.background,
-            showChevron: showChevron,
+            leftIconPath: leftIconPath,
+            rightIconPath: rightIconPath,
             textAlign: textAlign,
             padding: padding,
             enabled: enabled,
@@ -351,7 +348,6 @@ class ScalableSmallRoundedButton extends StatelessWidget{
             fontFamily: fontFamily,
             secondaryBorderColor: secondaryBorderColor,
             shadow: shadow,
-            showAdd: showAdd,
             maxLines: maxLines,
           ),
         ),
