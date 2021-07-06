@@ -16,16 +16,15 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
-import '../WebPanel.dart';
 
 class GroupEventDetailPanel extends StatefulWidget{
   final Event event;
@@ -119,7 +118,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   child: Column(
                     children: [
                       _eventDescription(),
-                      _eventUrlButton(),
+                      _eventUrlButtons(),
                       Container(height: 40,)
                     ],
                   ),
@@ -340,26 +339,56 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         child: HtmlWidget(longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface)));
   }
 
-  Widget _eventUrlButton(){
+  Widget _eventUrlButtons(){
+    List<Widget> buttons = <Widget>[];
+    
     String titleUrl = _event?.titleUrl;
+    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
 
-    return Visibility(
-        visible: AppString.isStringNotEmpty(titleUrl),
-        child: Container(
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          RoundedButton(
-            label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
-            hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-            backgroundColor: Colors.white,
-            borderColor: Styles().colors.fillColorSecondary,
-            textColor: Styles().colors.fillColorPrimary,
-            onTap: () {
-              Analytics.instance.logSelect(target: "Website");
-              _onTapWebButton(titleUrl, 'Website');
-            }
-          ),
-          Container(height: 6)
-        ])));
+    String registrationUrl = _event?.registrationUrl;
+    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+
+    if (hasTitleUrl) {
+      buttons.add(Expanded(child: 
+        ScalableRoundedButton(
+          label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+          hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+          backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
+          borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+          rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
+          textColor: Styles().colors.fillColorPrimary,
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          onTap: () {
+            _onTapWebButton(titleUrl, 'Website');
+          }
+        )
+      ));
+    }
+    
+    if (hasRegistrationUrl) {
+      if (hasTitleUrl) {
+        buttons.add(Container(width: 6));
+      }
+      buttons.add(Expanded(child: 
+        ScalableRoundedButton(
+          label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
+          hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
+          backgroundColor: Colors.white,
+          borderColor: Styles().colors.fillColorSecondary,
+          rightIcon: Image.asset('images/external-link.png'),
+          textColor: Styles().colors.fillColorPrimary,
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          onTap: () {
+            _onTapWebButton(registrationUrl, 'Registration');
+          }
+        )
+      ));
+    }
+
+    return (0 < buttons.length) ? Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons),
+      Container(height: 6)
+    ]) : Container();
   }
 
   Widget _buildFavoritesButton(){
@@ -437,14 +466,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapWebButton(String url, String analyticsName){
+    Analytics.instance.logSelect(target: analyticsName);
     if(AppString.isStringNotEmpty(url)){
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) =>
-                  WebPanel(
-                      analyticsName: "WebPanel($analyticsName)",
-                      url: url)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
     }
   }
 
@@ -452,7 +476,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     if((_event?.isVirtual?? false) == true){
       String url = _event?.location?.description;
       if(AppString.isStringNotEmpty(url)) {
-        _onTapWebButton(url, "Event Link ");
+        _onTapWebButton(url, "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
       Analytics.instance.logSelect(target: "Location Detail");

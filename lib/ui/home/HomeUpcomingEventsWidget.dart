@@ -244,7 +244,6 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
                     'View all events'),
                 hint: Localization().getStringEx(
                     'widget.home_upcoming_events.button.more.hint', ''),
-                showChevron: false,
                 borderColor: Styles().colors.fillColorSecondary,
                 textColor: Styles().colors.fillColorPrimary,
                 backgroundColor: Styles().colors.white,

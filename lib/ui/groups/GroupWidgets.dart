@@ -903,7 +903,7 @@ class GroupCard extends StatelessWidget {
 
   void _onTapCard(BuildContext context) {
     Analytics.instance.logSelect(target: "${group.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPanel(groupId: group.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
   }
 
   String get _timeUpdatedText {

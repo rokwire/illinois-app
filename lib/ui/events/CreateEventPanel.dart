@@ -195,7 +195,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       backgroundColor: Styles().colors.white,
                                       textColor: Styles().colors.fillColorPrimary,
                                       borderColor: Styles().colors.fillColorSecondary,
-                                      showChevron: false,
                                     )
                                   ),
                                 ),
@@ -1087,7 +1086,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     fontSize: 16,
                                     onTap: _onTapSelectLocation,
                                     label: Localization().getStringEx("panel.create_event.location.button.select_location.title","Select location on a map"),
-                                    showChevron: false,
                                   ))
                             ],
                           )),
@@ -1494,6 +1492,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventPriceController.text = event.cost;
       _selectedPrivacy = (event?.isGroupPrivate??false) ? "PRIVATE" : "PUBLIC";
       if(event.location!=null){
+        if (_isOnline) {
+          _eventCallUrlController?.text = _location.description;
+        }
+        else {
+          _eventLocationController?.text = _location.description;
+        }
         _eventLatitudeController.text = event.location?.latitude?.toString()??"";
         _eventLongitudeController.text = event.location?.longitude?.toString()??"";
       }
@@ -1624,7 +1628,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventLocationController.text = locationName;
 
       if(AppString.isStringNotEmpty(_location.description)){
-        _eventCallUrlController?.text = _location.description;
+        if (_isOnline) {
+          _eventCallUrlController?.text = _location.description;
+        }
+        else {
+          _eventLocationController?.text = _location.description;
+        }
       }
 
       if(_location?.latitude!=null){

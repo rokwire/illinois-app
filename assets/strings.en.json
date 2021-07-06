@@ -1672,6 +1672,8 @@
     "panel.groups_event_detail.label.location.hint": "",
     "panel.groups_event_detail.button.visit_website.title": "Visit website",
     "panel.groups_event_detail.button.visit_website.hint": "",
+    "panel.groups_event_detail.button.get_tickets.title": "Register",
+    "panel.groups_event_detail.button.get_tickets.hint": "",
     "panel.groups_event_detail.button.edit.title":  "Edit",
     "panel.groups_event_detail.button.edit.hint": "",
     "panel.groups_event_detail.button.delete.title": "Delete Event",

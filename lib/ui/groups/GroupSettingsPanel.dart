@@ -173,9 +173,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     maxLines: 2,
                     label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
                     textColor: Styles().colors.fillColorPrimary,
-                    onTap: _onTapAddImage,
-                    showChevron: false,
-                  )
+                    onTap: _onTapAddImage,)
               ),
             ),
           )

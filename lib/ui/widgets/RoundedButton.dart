@@ -35,7 +35,8 @@ class RoundedButton extends StatelessWidget {
   final bool enabled;
   final double height;
   final double width;
-  final bool showAdd;
+  final Image leftIcon;
+  final Image rightIcon;
 
   RoundedButton(
       {this.label = '',
@@ -54,7 +55,8 @@ class RoundedButton extends StatelessWidget {
       this.onTap,
       this.height = 48,
       this.width,
-      this.showAdd = false,
+      this.leftIcon,
+      this.rightIcon,
       this.shadow});
 
   @override
@@ -92,21 +94,19 @@ class RoundedButton extends StatelessWidget {
                   padding: padding,
                   child: Semantics( excludeSemantics: true,
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    Text(
-                      label,
-                      textAlign: textAlign,
+                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(),
+                    Text(label, textAlign: textAlign,
                       style: textStyle ?? TextStyle(
                         fontFamily: fontFamily ?? Styles().fontFamilies.bold,
                         fontSize: fontSize,
                         color: textColor,
                       ),
                     ),
-                    Visibility(
-                        visible: showAdd,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: Image.asset('images/icon-add-20x18.png'),
-                        ))
+                    (rightIcon != null) ?  Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(),
+                    /*Visibility(visible: showAdd, child:
+                      Padding(padding: EdgeInsets.only(left: 5), child:
+                        Image.asset('images/icon-add-20x18.png'),
+                    )),*/
                   ],))),
             ),
           ),
