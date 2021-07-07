@@ -245,7 +245,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                        Expanded(
                                          flex:2,
                                          child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_date.title","START DATE"),
-                                             hint: Localization().getStringEx("panel.create_event.date_time.start_date.hint",""), button: true, excludeSemantics: true, child:
+                                             hint: Localization().getStringEx("panel.create_event.date_time.start_date.hint","required"), button: true, excludeSemantics: true, child:
                                              Column(
                                                crossAxisAlignment:
                                                CrossAxisAlignment.start,
@@ -297,7 +297,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     Visibility(visible: !_allDay, child: Expanded(
                                       flex: 1,
                                       child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
-                                          hint: Localization().getStringEx("panel.create_event.date_time.start_time.hint",""), button: true, excludeSemantics: true, child:
+                                          hint: Localization().getStringEx("panel.create_event.date_time.start_time.hint","required"), button: true, excludeSemantics: true, child:
                                           Column(
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -363,7 +363,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         Expanded(
                                           flex: 2,
                                           child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_date.title",'END DATE'),
-                                              hint: Localization().getStringEx("panel.create_event.date_time.end_date.hint",""), button: true, excludeSemantics: true, child:
+                                              hint: Localization().getStringEx("panel.create_event.date_time.end_date.hint","required"), button: true, excludeSemantics: true, child:
                                               Column(
                                                 crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -413,7 +413,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         Visibility(visible: !_allDay, child: Expanded(
                                             flex: 1,
                                             child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
-                                                hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint",""), button: true, excludeSemantics: true, child:
+                                                hint: Localization().getStringEx("panel.create_event.date_time.end_time.hint","required"), button: true, excludeSemantics: true, child:
                                                 Column(
                                                   crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -614,7 +614,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Semantics(label:Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY"),
+            Semantics(label:Localization().getStringEx("panel.create_event.category.title","EVENT CATEGORY") + ", required",
                 hint: Localization().getStringEx("panel.create_event.category.title.hint","Choose the category your event may be filtered by."), header: true, excludeSemantics: true, child:
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -703,7 +703,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child:
-                    Semantics(label:Localization().getStringEx("panel.create_event.title.title","EVENT TITLE"),
+                    Semantics(label:Localization().getStringEx("panel.create_event.title.title","EVENT TITLE") + ", required",
                       hint: Localization().getStringEx("panel.create_event.title.title.hint",""), header: true, excludeSemantics: true, child:
                       Row(
                         children: <Widget>[
