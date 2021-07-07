@@ -93,6 +93,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
         Column( crossAxisAlignment: CrossAxisAlignment.start,
             children:[
               Semantics(
+                container: true,
                 label: buttonTitle,
                 hint: widget.buttonHint,
                 excludeSemantics: true,
@@ -121,11 +122,13 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                 ),
               ),
               buttonDescription==null? Container():
-              Container(
-                padding: EdgeInsets.only(right: 42, bottom: 12),
-                child: Text(buttonDescription,
-                  style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                ),
+              Semantics(container: true, child:
+                Container(
+                  padding: EdgeInsets.only(right: 42, bottom: 12),
+                  child: Text(buttonDescription,
+                    style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  ),
+                )
               )
             ]
         )
@@ -544,14 +547,16 @@ class _EventContent extends StatelessWidget {
                       ),
                     )),
                 !isAdmin? Container() :
-                Container(
-                  padding: EdgeInsets.only(left: 12),
-                  child:
-                  GestureDetector(onTap: () { _onOptionsTap(context);},
-                    child: Container(
-                      child: Image.asset('images/icon-groups-options-orange.png'),
+                Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                  Container(
+                    padding: EdgeInsets.only(left: 12),
+                    child:
+                    GestureDetector(onTap: () { _onOptionsTap(context);},
+                      child: Container(
+                        child: Image.asset('images/icon-groups-options-orange.png', excludeFromSemantics: true,),
+                      ),
                     ),
-                  ),
+                  )
                 )
               ],),))
     ],);

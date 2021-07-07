@@ -486,11 +486,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               }
           )
         ),
-        Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
-          child:Text(
-            Localization().getStringEx("panel.groups_create.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
-            style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
-          ),),
+        Semantics(container: true, child:
+          Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
+            child:Text(
+              Localization().getStringEx("panel.groups_create.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+              style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
+            ),)),
         Container(height: 40,)
       ],);
   }
@@ -573,6 +574,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               backgroundColor: Styles().colors.white,
               borderColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
               textColor: _canSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+              enabled: _canSave,
               onTap: _onCreateTap,
             ),
           )
@@ -619,7 +621,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
         Semantics(
           label: title,
-          hint: title,
+          hint: description,
           header: true,
           excludeSemantics: true,
           child:
@@ -641,6 +643,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               padding: EdgeInsets.only(top: 2),
               child: Text(
                 description,
+                semanticsLabel: "",
                 style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
               ),
             )
@@ -655,7 +658,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child:
           Semantics(
             label: title,
-            hint: title,
             header: true,
             excludeSemantics: true,
             child:
