@@ -173,21 +173,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           )
                         ),
                         Container(
-                          height: 200,
                           color: Styles().colors.background,
                           child: Stack(
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
+                              Container(height: _imageHeight,),
                               AppString.isStringNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover, headers: Network.appAuthHeaders))
-                                  : Container(),
+                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover, height: _imageHeight, headers: Network.appAuthHeaders))
+                                  : Container(height: _imageHeight,),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
-                              Container(
-                                height: _imageHeight,
-                                child: Center(
-                                  child:
-                                  Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 80),
+                                child: Semantics(label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
                                     hint: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image.hint","") : Localization().getStringEx("panel.create_event.add_image.hint",""), button: true, excludeSemantics: true, child:
                                     ScalableSmallRoundedButton(
                                       label: _imageUrl != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
@@ -196,7 +194,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       textColor: Styles().colors.fillColorPrimary,
                                       borderColor: Styles().colors.fillColorSecondary,
                                     )
-                                  ),
                                 ),
                               )
                             ],

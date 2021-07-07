@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Unable to invoke external apps with Android SDK 30 [#455](https://github.com/rokwire/illinois-app/issues/455).
+- Wrong height of Add Image button in Create event & Create Group panels [#458](https://github.com/rokwire/illinois-app/issues/458).
 
 ## [2.5.6] - 2021-07-06
 ### Fixed

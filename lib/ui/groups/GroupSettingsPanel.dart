@@ -144,37 +144,28 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     final double _imageHeight = 200;
 
     return Container(
-      height: _imageHeight,
       color: Styles().colors.background,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
-          CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
-            child: Container(
-              height: 53,
-            ),
-          ),
-          CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.white),
-            child: Container(
-              height: 30,
-            ),
-          ),
-          Container(
-            height: _imageHeight,
-            child: Center(
-              child:
-              Semantics(label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
-                  hint: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
-                  button: true, excludeSemantics: true, child:
-                  ScalableSmallRoundedButton(
-                    maxLines: 2,
-                    label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
-                    textColor: Styles().colors.fillColorPrimary,
-                    onTap: _onTapAddImage,)
-              ),
+          Container(height: _imageHeight,),
+          AppString.isStringNotEmpty(_group?.imageURL)
+              ? Positioned.fill(child: Image.network(_group?.imageURL, fit: BoxFit.cover, height: _imageHeight, headers: Network.appAuthHeaders))
+              : Container(height: _imageHeight,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: Semantics(label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
+                hint: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
+                button: true, excludeSemantics: true, child:
+                ScalableSmallRoundedButton(
+                  label: _group?.imageURL != null ? Localization().getStringEx("panel.create_event.modify_image", "Modify event image") : Localization().getStringEx("panel.create_event.add_image","Add event image"),
+                  onTap: _onTapAddImage,
+                  backgroundColor: Styles().colors.white,
+                  textColor: Styles().colors.fillColorPrimary,
+                  borderColor: Styles().colors.fillColorSecondary,
+                )
             ),
           )
         ],
