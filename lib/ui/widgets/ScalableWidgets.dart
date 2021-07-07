@@ -191,8 +191,9 @@ class ScalableRoundedButton extends StatelessWidget {
                   borderRadius: borderRadius),
               child: Padding(
                   padding: padding,
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(),
+                  child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(height: 0, width: 0),
                     Expanded(child:
                       Text(label, textAlign: textAlign, maxLines: maxLines, overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -202,7 +203,7 @@ class ScalableRoundedButton extends StatelessWidget {
                         ),
                     )),
                     
-                    (rightIcon != null) ? Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(),
+                    (rightIcon != null) ? Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(height: 0, width: 0),
 
                     /*Visibility(visible: showChevron, child:
                       Padding(padding: EdgeInsets.only(left: 5), child:
@@ -213,7 +214,7 @@ class ScalableRoundedButton extends StatelessWidget {
                       Padding(padding: EdgeInsets.only(left: 5), child:
                         Image.asset('images/icon-add-20x18.png'),
                     ))*/
-                  ],)),
+                  ],),),
             ),
           ),
         ));
