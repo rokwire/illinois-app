@@ -41,7 +41,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   Semantics(
                     hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
                     header: true,
-                    child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus in Your Pocket",)),
+                    child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A smart campus in your pocket",)),
                   ),
                   Container(height: 14,),
                   Container(
@@ -73,36 +73,11 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                       textColor: Styles().colors.fillColorPrimary,
                       onTap: () => _onGoNext(context),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Analytics.instance.logSelect(target: 'Returning User') ;
-                        _onReturningUser(context);
-                      },
-                      child: Semantics(
-                          label: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
-                          hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
-                          button: true,
-                          excludeSemantics: true,
-                          child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
-                                ),
-                                padding: EdgeInsets.only(bottom: 2),
-                                child: Text(
-                                  Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.medium,
-                                    fontSize: 16,
-                                    color: Styles().colors.fillColorPrimary,
-//                                    decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
-                                    decorationThickness: 1,
-                                    decorationStyle:
-                                    TextDecorationStyle.solid),
-                              )))),
-                    )
+                   Onboarding2UnderlinedButton(
+                     title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
+                     hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
+                     onTap: (){_onReturningUser(context);},
+                   )
                   ],
                 ),
               ),

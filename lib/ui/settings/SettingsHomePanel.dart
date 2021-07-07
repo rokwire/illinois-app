@@ -33,8 +33,11 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
+import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
 import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
+import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -108,6 +111,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       if (code == 'user_info') {
         contentList.add(_buildUserInfo());
       }
+      else if (code == 'privacy_center') {
+        contentList.add(_buildPrivacyCenterButton(),);
+      }
       else if (code == 'connect') {
         contentList.add(_buildConnect());
       }
@@ -120,17 +126,17 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'notifications') {
         contentList.add(_buildNotifications());
       }
+      else if (code == 'privacy0') {
+        contentList.add(_buildPrivacy0());
+      }
       else if (code == 'privacy') {
-        contentList.add(_buildPrivacy());
+        contentList.add(_buildPrivacy(),);
       }
       else if (code == 'account') {
         contentList.add(_buildAccount());
       }
       else if (code == 'feedback') {
         contentList.add(_buildFeedback(),);
-      }
-      else if (code == 'privacy_center') {
-        contentList.add(_buildPrivacyCenterButton(),);
       }
     }
 
@@ -610,12 +616,12 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials;
   }
 
-  // Privacy
+  // Privacy 0
 
-  Widget _buildPrivacy() {
+  Widget _buildPrivacy0() {
     List<Widget> contentList =  [];
 
-    List<dynamic> codes = FlexUI()['settings.privacy'] ?? [];
+    List<dynamic> codes = FlexUI()['settings.privacy0'] ?? [];
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
@@ -654,6 +660,163 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     if (Config().privacyPolicyUrl != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Statement"),)));
     }
+  }
+
+  // Privacy
+
+  Widget _buildPrivacy() {
+    List<Widget> contentList =  [];
+
+    List<dynamic> codes = FlexUI()['settings.privacy'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
+      if (code == 'buttons') {
+        contentList.add(_buildPrivacyButtons());
+      }
+      else if (code == 'delete') {
+        contentList.add(_buildPrivacyDelete());
+      }
+    }
+
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16), child: Column(children: contentList,));
+  }
+
+  Widget _buildPrivacyButtons() {
+
+    List<Widget> rowWidgets = <Widget>[];
+    List<Widget> colWidgets = <Widget>[];
+
+    List<dynamic> codes = FlexUI()['settings.privacy.buttons'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      Widget privacyButton = _buildPrivacyButton(codes[index]);
+      if (privacyButton != null) {
+          if (rowWidgets.isNotEmpty) {
+            rowWidgets.add(Container(width: 12),);
+          }
+          rowWidgets.add(Expanded(child: privacyButton));
+          
+          if (rowWidgets.length >= 3) {
+            if (colWidgets.isNotEmpty) {
+              colWidgets.add(Container(height: 12),);
+            }
+            colWidgets.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowWidgets));
+            rowWidgets = <Widget>[];
+          }
+      }
+    }
+
+    if (0 < rowWidgets.length) {
+      while (rowWidgets.length < 3) {
+        rowWidgets.add(Container(width: 12),);
+        rowWidgets.add(Expanded(child: Container()));
+      }
+      if (colWidgets.isNotEmpty) {
+        colWidgets.add(Container(height: 12),);
+      }
+      colWidgets.add(Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowWidgets));
+    }
+
+    return Padding(padding: EdgeInsets.only(top: 12), child: Column(children: colWidgets,));
+
+    /*return Padding(padding: EdgeInsets.only(top: 12), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Expanded(child: _PrivacyGridButton(
+        title: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
+        iconPath: 'images/group-5.png',
+        onTap: _onTapPersonalInformation,
+      ),),
+      Container(width: 12,),
+      Expanded(child: _PrivacyGridButton(
+        title: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.button.notifications.", ""),
+        iconPath: 'images/notifications.png',
+        onTap: _onTapNotifications,
+      ),),
+    ]));*/
+  }
+
+  Widget _buildPrivacyButton(String code) {
+    if (code == 'personal_info') {
+      return _PrivacyGridButton(
+        title: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.title", "Personal Information"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.button.personal_information.hint", ""),
+        iconPath: 'images/group-5.png',
+        onTap: _onTapPersonalInformation,
+      );
+    }
+    else if (code == 'notifications') {
+      return _PrivacyGridButton(
+        title: Localization().getStringEx("panel.settings.privacy_center.button.notifications.title", "Notification Preferences"),
+        hint: Localization().getStringEx("panel.settings.privacy_center.button.notifications.", ""),
+        iconPath: 'images/notifications.png',
+        onTap: _onTapNotifications,
+      );
+    }
+    else {
+      return null;
+    }
+  }
+
+  Widget _buildPrivacyDelete() {
+    return Padding(padding: EdgeInsets.only(top: 12), child:
+      Column(children: <Widget>[
+        ScalableRoundedButton(
+          backgroundColor: Styles().colors.white,
+          textColor: UiColors.fromHex("#f54400"),
+          fontSize: 16,
+          fontFamily: Styles().fontFamilies.regular,
+          label: Localization().getStringEx("panel.settings.privacy_center.button.delete_data.title", "Forget all of my information"),
+          hint: Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+          shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+          onTap: _onTapDeleteData,
+        ),
+        Container(height: 16,),
+        ExcludeSemantics(
+        child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
+          textAlign: TextAlign.center,
+          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),)),
+    ],),);
+  }
+
+  void _onTapPersonalInformation() {
+    Analytics.instance.logSelect(target: "Personal Information");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
+  }
+
+  void _onTapNotifications() {
+    Analytics.instance.logSelect(target: "Notifications");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
+  }
+
+  void _onTapDeleteData(){
+    SettingsDialog.show(context,
+        title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
+        message: [
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+        ],
+        continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
+        onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
+            progressController(loading: true);
+            _deleteUserData().then((_){
+              progressController(loading: false);
+              Navigator.pop(context);
+            });
+
+        },
+        longButtonTitle: true
+      );
+  }
+
+  Future<void> _deleteUserData() async{
+    Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
+    bool piiDeleted = await Auth().deleteUserPiiData();
+    if(piiDeleted) {
+      await User().deleteUser();
+    }
+    Auth().logout();
   }
 
   // Account
@@ -864,6 +1027,40 @@ class _OptionsSection extends StatelessWidget {
             )
           ])
         ]));
+  }
+}
+
+class _PrivacyGridButton extends StatelessWidget {
+  final String title;
+  final String hint;
+  final String iconPath;
+  final Function onTap;
+
+  const _PrivacyGridButton({Key key, this.title, this.hint, this.iconPath, this.onTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(onTap: onTap, child:
+      Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
+        Padding(padding: EdgeInsets.all(2), child:
+          Container(
+            decoration: BoxDecoration(color: (Styles().colors.white),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
+            child: Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
+              Column(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Padding(padding: EdgeInsets.only(bottom: 16), child:
+                  Image.asset((iconPath)),
+                ),
+                Padding(padding: EdgeInsets.only(left: 10, right: 10, top: 10), child:
+                  Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)))
+              ],),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

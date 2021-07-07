@@ -75,8 +75,9 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
           }
         }
       });
-      Groups().loadEvents(null).then((List<Event> events) {
-        if (events != null) {
+      Groups().loadEvents(null).then((Map<int, List<GroupEvent>> eventsMap) {
+        List<GroupEvent> events = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap.values.first : null;
+        if (AppCollection.isCollectionNotEmpty(events)) {
           for (Event event in events) {
             _events[event.id] = event;
           }

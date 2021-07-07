@@ -84,10 +84,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
     Uint8List photoBytes = await  Auth().authCard.photoBytes;
-    if(AppCollection.isCollectionNotEmpty(photoBytes)){
-      return await compute(AppImage.memoryImageWithBytes, photoBytes);
-    }
-    return null;
+    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
   // NotificationsListener

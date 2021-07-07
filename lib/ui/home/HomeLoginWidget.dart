@@ -88,7 +88,7 @@ class HomeLoginNetIdWidget extends StatelessWidget{
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "student"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "faculty member"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Log in with your NetID."))
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID."))
           ],),
           )),
           Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
@@ -144,7 +144,7 @@ class HomeLoginPhoneWidget extends StatelessWidget{
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone.title", "Verify Your Phone Number"),
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone.title", "Verify your phone number"),
               hint: '',
               borderColor: Styles().colors.fillColorSecondary,
               backgroundColor: Styles().colors.surface,

@@ -17,10 +17,16 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/Utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupsSearchPanel extends StatefulWidget {
   @override
@@ -28,11 +34,16 @@ class GroupsSearchPanel extends StatefulWidget {
 }
 
 class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
-  TextEditingController _textEditingController = TextEditingController();
+  List<Group> _groups;
+  TextEditingController _searchController = TextEditingController();
+  String _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+  int _resultsCount = 0;
+  bool _resultsCountLabelVisible = false;
+  bool _loading = false;
 
   @override
   void dispose() {
-    _textEditingController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -76,7 +87,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
                       textField: true,
                       excludeSemantics: true,
                       child: TextField(
-                        controller: _textEditingController,
+                        controller: _searchController,
                         onChanged: (text) => _onTextChanged(text),
                         onSubmitted: (_) => _onTapSearch(),
                         autofocus: true,
@@ -131,12 +142,30 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-            child: Text("TBD",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies.regular,
-                  color: Styles().colors.textBackground),
+              padding: EdgeInsets.all(16),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                      fontSize: 20, color: Styles().colors.fillColorPrimary),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: _searchLabel,
+                        style: TextStyle(
+                          fontFamily: Styles().fontFamilies.semiBold,
+                        )),
+                  ],
+                ),
+              )),
+          Visibility(
+            visible: _resultsCountLabelVisible,
+            child: Padding(
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
+              child: Text(_resultsInfoText,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: Styles().fontFamilies.regular,
+                    color: Styles().colors.textBackground),
+              ),
             ),
           ),
           _buildListViewWidget()
@@ -146,19 +175,92 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
   }
 
   Widget _buildListViewWidget() {
-    //TBD
-    return Container();
+    if (_loading) {
+      return Container(
+        child: Align(
+          alignment: Alignment.center,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    int groupsCount = AppCollection.isCollectionNotEmpty(_groups) ? _groups.length : 0;
+    Widget groupsContent;
+    if (groupsCount > 0) {
+      groupsContent = ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        separatorBuilder: (context, index) => Divider(
+          color: Colors.transparent,
+        ),
+        itemCount: groupsCount,
+        itemBuilder: (context, index) {
+          Group group = _groups[index];
+          GroupCard groupCard = GroupCard(group: group);
+          return Padding(padding: EdgeInsets.only(top: 16), child: groupCard);
+        }
+      );
+    }
+    return groupsContent ?? Container();
   }
 
-  void _onTapSearch(){
-    //TBD
+  String get _resultsInfoText {
+    if (_resultsCount == 0) {
+      return Localization().getStringEx('panel.groups_search.label.not_found', 'No results found');
+    } else if (_resultsCount == 1) {
+      return Localization().getStringEx('panel.groups_search.label.found_single', '1 result found');
+    } else if (_resultsCount > 1) {
+      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found'), [_resultsCount]);
+    } else {
+      return "";
+    }
   }
 
-  void _onTapClear(){
-    //TBD
+  void _onTapSearch() {
+    Analytics.instance.logSelect(target: "Search Groups");
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _setLoading(true);
+    String searchValue = _searchController.text;
+    if (AppString.isStringEmpty(searchValue)) {
+      return;
+    }
+    searchValue = searchValue.trim();
+    if (AppString.isStringEmpty(searchValue)) {
+      return;
+    }
+    _setLoading(true);
+    Groups().searchGroups(searchValue).then((groups) {
+      _groups = groups;
+      _resultsCount = _groups?.length ?? 0;
+      _resultsCountLabelVisible = true;
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
+      _setLoading(false);
+    });
   }
 
-  void _onTextChanged(String text){
-    //TBD
+  void _onTapClear() {
+    Analytics.instance.logSelect(target: "Clear Search");
+    if (AppString.isStringEmpty(_searchController.text)) {
+      Navigator.pop(context);
+      return;
+    }
+    _groups = null;
+    _searchController.clear();
+    _resultsCountLabelVisible = false;
+    setState(() {
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+    });
+  }
+
+  void _onTextChanged(String text) {
+    _resultsCountLabelVisible = false;
+    setState(() {
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+    });
+  }
+
+  void _setLoading(bool loading) {
+    setState(() {
+      _loading = loading;
+    });
   }
 }

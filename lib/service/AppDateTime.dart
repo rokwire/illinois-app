@@ -265,4 +265,13 @@ class AppDateTime with Service {
       return 'Just now';
     }
   }
+
+  timezone.TZDateTime changeTimeZoneToDate(DateTime time, timezone.Location location){
+    try{
+     return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
+    } catch(e){
+      print(e);
+    }
+    return null;
+  }
 }

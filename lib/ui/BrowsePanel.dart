@@ -32,6 +32,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
+import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -62,6 +63,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   static const _saferIllonoisAppStoreAndroid  = "market://details?id=edu.illinois.covid";
 
   final EdgeInsets _ribbonButtonPadding = EdgeInsets.symmetric(horizontal: 16);
+
+  bool _groupsLogin = false;
 
   @override
   void initState() {
@@ -251,21 +254,51 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
       );
     }
     else if (code == 'groups') {
-      return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
-        hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
-        icon: 'images/icon-team.png',
-        color: Styles().colors.accentColor2,
-        onTap: () => _navigateGroups(),
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          _GridSquareButton(
+            title: Localization().getStringEx('panel.browse.button.groups.title', 'Groups'),
+            hint: Localization().getStringEx('panel.browse.button.groups.hint', ''),
+            icon: 'images/icon-browse-gropus.png',
+            color: Styles().colors.accentColor2,
+            onTap: () => _navigateGroups(),
+          ),
+          Visibility(
+            visible: _groupsLogin,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white)
+            ),
+          )
+        ],
       );
     }
     else if (code == 'safer') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.safer.title', 'Safer Illinois'),
         hint: Localization().getStringEx('panel.browse.button.safer.hint', ''),
-        icon: 'images/safer-illinois-logo.png',
+        icon: 'images/icon-browse-safer.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
+      );
+    }
+    else if (code == 'student_guide') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Student Guide'),
+        hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
+        icon: 'images/icon-browse-student-guide.png',
+        color: Styles().colors.accentColor3,
+        onTap: () => _navigateStudentGuide(),
+      );
+    }
+    else if (code == 'privacy_center') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.privacy_center.title', 'Privacy Center'),
+        hint: Localization().getStringEx('panel.browse.button.privacy_center.hint', ''),
+        icon: 'images/icon-browse-privacy-center.png',
+        color: Styles().colors.accentColor4,
+        onTap: () => _navigatePrivacyCenter(),
       );
     }
     else {
@@ -408,51 +441,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         padding: _ribbonButtonPadding,
         onTap: () => _onFeedbackTap(),
       );
-    } else if (code == "privacy_center"){
-      return _buildPrivacyCenterButton();
     }
     
     else {
       return null;
     }
-  }
-
-  //It has totally different design. Refactor if needed
-  Widget _buildPrivacyCenterButton(){
-    return GestureDetector(
-        onTap: (){
-          Analytics.instance.logSelect(target: "Privacy Center");
-          Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
-        },
-        child: Semantics(
-            button: true,
-            child:Container(
-              padding: EdgeInsets.only(left: 16, right: 16, bottom: 30),
-              child:Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                decoration: BoxDecoration(
-                    color: UiColors.fromHex("9318bb"),
-                    //border: Border.all(color: Colors.grey, width: 1),
-                    borderRadius: BorderRadius.circular(6),
-                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
-                ),
-                child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Expanded(child:
-                        Text(
-                          Localization().getStringEx("panel.browse.button.privacy_center.title","Privacy Center"),
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: Styles().colors.white,
-                              fontSize: 20,
-                              fontFamily: Styles().fontFamilies.bold),
-                        ),
-                      ),
-                      Image.asset("images/group-8.png", excludeFromSemantics: true,),
-                  ],),
-                ),
-    )));
   }
 
   void _navigateToExploreEvents() {
@@ -562,8 +555,42 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateGroups() {
-    Analytics.instance.logSelect(target: "Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    if(Auth().isShibbolethLoggedIn) {
+      Analytics.instance.logSelect(target: "Groups");
+      Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    } else {
+      if (!_groupsLogin) {
+        setState(() {
+          _groupsLogin = true;
+        });
+        Analytics.instance.logSelect(target: "Groups Login");
+        Auth().authenticateWithShibboleth().then((success) {
+          setState(() {
+            _groupsLogin = false;
+          });
+          if (success == true) {
+            Analytics.instance.logSelect(target: "Groups");
+            Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+          } else {
+            Analytics.instance.logSelect(target: "Groups Login Failed");
+            AppAlert.showDialogResult(context, Localization().getStringEx("panel.browse.button.groups.login.error", "Unable to login"));
+          }
+        });
+      }
+    }
+  }
+
+  void _navigateStudentGuide() {
+    Analytics.instance.logSelect(target: "Student Guide");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+  }
+
+  void _navigatePrivacyCenter() {
+    Analytics.instance.logSelect(target: "Privacy Center");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
   }
 
   void _onFeedbackTap() {
@@ -741,7 +768,9 @@ class _GridSquareButton extends StatelessWidget {
                     color: textColor,
                     fontSize: 20,),
               ),),
-              Align(alignment: Alignment.bottomRight, child: Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply, ),),
+              Align(alignment: Alignment.bottomRight, child:
+                Image.asset(icon, color: color, colorBlendMode:BlendMode.multiply),
+              ),
               
             ],),)
         )));

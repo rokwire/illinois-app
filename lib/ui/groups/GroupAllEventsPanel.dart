@@ -7,6 +7,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class GroupAllEventsPanel extends StatefulWidget{
   final Group group;
@@ -23,10 +24,10 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
   //TBD Localization
   @override
   void initState() {
-    Groups().loadEvents(widget.group?.id).then((List<GroupEvent> events) {
+    Groups().loadEvents(widget.group?.id).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
-          _groupEvents = events;
+          _groupEvents = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap.values.first : null;
         });
       }
     });

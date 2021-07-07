@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Localization.dart';
@@ -254,11 +255,11 @@ class AuthCard {
       magTrack2.hashCode ^
       photoBase64.hashCode;
 
-  Future<Uint8List> get photoBytes async{
-    return (photoBase64 != null) ? await compute(AppBytes.decodeBase64Bytes, photoBase64) : null;
+  Future<Uint8List> get photoBytes async {
+    return (photoBase64 != null) ? await compute(base64Decode, photoBase64) : null;
   }
 
-  String get roleDisplayString{
+  String get roleDisplayString {
     if(role == "Undergraduate" && studentLevel != "1U"){
       return Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card");
     }

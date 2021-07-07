@@ -334,9 +334,10 @@ public class MapPickLocationActivity extends AppCompatActivity {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.zIndex(1);
-        String title = (explore != null) ? (String)explore.get("name") : getString(R.string.custom);
+        String latLangAsTitle = String.format(Locale.getDefault(), "%f, %f", latLng.latitude, latLng.longitude);
+        String title = (explore != null) ? (String)explore.get("name") : latLangAsTitle;
         if (Utils.Str.isEmpty(title) || "null".equals(title)) {
-            title = getString(R.string.custom);
+            title = latLangAsTitle;
         }
         markerOptions.title(title);
         customLocationMarker = googleMap.addMarker(markerOptions);

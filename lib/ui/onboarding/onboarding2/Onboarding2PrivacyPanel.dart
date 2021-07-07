@@ -72,10 +72,9 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         children: <Widget>[
 
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 18),
+//                            padding: EdgeInsets.symmetric(vertical: 19),
                             child: Row(children: [
-                            Onboarding2BackButton(padding: const EdgeInsets.only(
-                                left: 17, right: 20),
+                            Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
                                 color: Styles().colors.white,
                                 onTap: () {
                                   Analytics.instance.logSelect(target: "Back");
@@ -90,7 +89,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 //                              },
 //                              child:
                               Semantics(
-                                  label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
+                                  label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
                                   hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
                                   button: true,
                                   excludeSemantics: true,
@@ -452,25 +451,29 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return
       GestureDetector(
         onTap: _openPrivacyPolicy,
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
-          ),
-          padding: EdgeInsets.only(bottom: 2),
-          child:
-          Row(children: [
-            Text(
-              Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Policy "),
-              style: TextStyle(
-                  fontFamily: Styles().fontFamilies.regular,
-                  fontSize: 14,
-                  color: Styles().colors.white),
+        child:
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 19),
+          child:Container(
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+            ),
+            padding: EdgeInsets.only(bottom: 2),
+            child:
+            Row(children: [
+              Text(
+                Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
+                style: TextStyle(
+                    fontFamily: Styles().fontFamilies.regular,
+                    fontSize: 14,
+                    color: Styles().colors.white),
 
-            ),
-            Container(padding: EdgeInsets.only(bottom: 3),
-                child: Image.asset("images/icon-external-link-white.png")
-            ),
-          ],)
+              ),
+              Container(padding: EdgeInsets.only(bottom: 3),
+                  child: Image.asset("images/icon-external-link-white.png")
+              ),
+            ],)
+          )
         )
       );
   }
@@ -483,11 +486,11 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     String description = Localization().getStringEx('panel.onboarding2.privacy.description_short.unknown.title', "Unknown privacy level");
     int privacyLevel = _privacyLevel ?? -1;
     switch(privacyLevel){
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.1.title', "Browse Privately");
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore Privately ");
-      case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.3.title', "Personalized for You");
-      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.4.title', "Personalized for You");//TBD 4
-      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.5.title', "Full Access");
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.1.title', "Browse privately");
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore privately ");
+      case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.3.title', "Personalized for you");
+      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.4.title', "Personalized for you");//TBD 4
+      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.5.title', "Full access");
     }
     return description;
   }
@@ -507,12 +510,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   String get _continueButtonLabel{
     switch(_privacyLevel){
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start Browsing");
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing");
           break;
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start Exploring");
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring");
           break;
     }
-    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save Privacy Level");
+    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level");
   }
 
   void _goNext(BuildContext context) {
@@ -529,7 +532,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   void _openPrivacyPolicy(){
     Analytics.instance.logSelect(target: "Privacy Statement");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy.label.title", "Privacy Policy"),)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
     }
   }
 }
