@@ -94,7 +94,7 @@ class RoundedButton extends StatelessWidget {
                   padding: padding,
                   child: Semantics( excludeSemantics: true,
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(),
+                    (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(height: 0, width: 0),
                     Text(label, textAlign: textAlign,
                       style: textStyle ?? TextStyle(
                         fontFamily: fontFamily ?? Styles().fontFamilies.bold,
@@ -102,7 +102,7 @@ class RoundedButton extends StatelessWidget {
                         color: textColor,
                       ),
                     ),
-                    (rightIcon != null) ?  Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(),
+                    (rightIcon != null) ?  Padding(padding: EdgeInsets.only(left: 5), child: rightIcon,) : Container(height: 0, width: 0),
                     /*Visibility(visible: showAdd, child:
                       Padding(padding: EdgeInsets.only(left: 5), child:
                         Image.asset('images/icon-add-20x18.png'),
