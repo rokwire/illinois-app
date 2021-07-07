@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
-- Unable to invoke external apps with Android SDK 30 [#455](https://github.com/rokwire/illinois-app/issues/455).
 - Use zero sized containers when no left/right icons in RoundedButtons [#461](https://github.com/rokwire/illinois-app/issues/461).
 
 ## [2.5.6] - 2021-07-06
