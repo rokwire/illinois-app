@@ -1794,6 +1794,7 @@
     "widget.home_campus_tools.button.wellness.title": "Bienestar",
     "widget.home_campus_tools.button.wellness.hint": "",
 
+    "widget.home_create_poll.heading.title":"Centro",
     "widget.home_create_poll.button.close.label":"Cerrar",
     "widget.home_create_poll.text.title":"Crea y comparte encuestas rápidamente.",
     "widget.home_create_poll.text.description":"Las personas cercanas a usted serán notificadas para votar a través de la aplicación de Illinois.",

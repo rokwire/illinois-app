@@ -1793,6 +1793,7 @@
     "widget.home_campus_tools.button.wellness.title": "Wellness",
     "widget.home_campus_tools.button.wellness.hint": "",
 
+    "widget.home_create_poll.heading.title":"Polls",
     "widget.home_create_poll.button.close.label":"Close",
     "widget.home_create_poll.text.title":"Quickly create and share polls",
     "widget.home_create_poll.text.description":"People near you will be notified to vote through the Illinois app.",

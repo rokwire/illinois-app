@@ -1792,6 +1792,7 @@
 	"widget.home_campus_tools.button.wellness.title": "健康",
 	"widget.home_campus_tools.button.wellness.hint": "",
 
+	"widget.home_create_poll.heading.title":"民意調查",
 	"widget.home_create_poll.button.close.label":"关闭",
 	"widget.home_create_poll.text.title":"快速创建和共享投票.",
 	"widget.home_create_poll.text.description":"你附近的人会被通知通过伊利诺伊州的应用程序投票.",
