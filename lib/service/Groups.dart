@@ -394,10 +394,12 @@ class Groups /* with Service */ {
     return false;
   }
 
-  Future<void> updateGroupEvents(Event event){
-    return ExploreService().updateEvent(event).then((eventId) {
+  Future<String> updateGroupEvents(Event event) async {
+    String id = await ExploreService().updateEvent(event);
+    if (AppString.isStringNotEmpty(id)) {
       NotificationService().notify(Groups.notifyGroupEventsUpdated);
-    });
+    }
+    return id;
   }
 
   Future<bool> deleteEventFromGroup({String groupId, Event event}) async {

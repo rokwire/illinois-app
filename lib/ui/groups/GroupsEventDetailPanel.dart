@@ -444,9 +444,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapEdit(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (Event event){
-      Groups().updateGroupEvents(event).then((param){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (BuildContext context, Event event) {
+      Groups().updateGroupEvents(event).then((String id) {
+        if (AppString.isStringNotEmpty(id)) {
           Navigator.pop(context);
+        }
+        else {
+          AppAlert.showDialogResult(context, "Unable to update event");
+        }
       });
     },)));
   }

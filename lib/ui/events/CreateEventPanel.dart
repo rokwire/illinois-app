@@ -581,7 +581,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                                 textColor: isValid ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
                                 onTap: isEdit? (){
-                                  widget.onEditTap(_populateEventWithData(widget.editEvent));
+                                  widget.onEditTap(context, _populateEventWithData(widget.editEvent));
                                 } : _onTapPreview,
                               )),
                               (widget.group==null)? Container():
@@ -593,7 +593,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                                     textColor: isValid ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
                                     onTap: isEdit? (){
-                                      widget.onEditTap(_populateEventWithData(widget.editEvent));
+                                      widget.onEditTap(context, _populateEventWithData(widget.editEvent));
                                     } : _onTapCreate,
                                   ))
                             ],
