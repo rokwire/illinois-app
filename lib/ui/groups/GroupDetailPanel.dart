@@ -15,7 +15,6 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
@@ -111,6 +110,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canDeleteGroup {
+    return _isAdmin;
+  }
+
+  bool get _canAddEvent {
     return _isAdmin;
   }
 
@@ -552,9 +555,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildEvents() {
     List<Widget> content = [];
 
-    if (_isAdmin) {
-      content.add(_buildAdminEventOptions());
-    }
+//    if (_isAdmin) {
+//      content.add(_buildAdminEventOptions());
+//    }
 
     if (AppCollection.isCollectionNotEmpty(_groupEvents)) {
       for (GroupEvent groupEvent in _groupEvents) {
@@ -594,7 +597,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ]);
   }
 
-  Widget _buildAdminEventOptions(){
+  /*Widget _buildAdminEventOptions(){
     bool haveEvents = _groupEvents?.isNotEmpty ?? false;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -652,7 +655,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ],)
       ),
     );
-  }
+  }*/
 
   Widget _buildAbout() {
     String description = _group?.description ?? '';
@@ -867,7 +870,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                                   positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
                                   negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
                                   onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
-                        }))
+                        })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-edit.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapBrowseEvents();
+                        })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-edit.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreateEvent();
+                        })),
               ]));
         });
   }
@@ -970,9 +993,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 
-  bool get _canCreateEvent{
-    return true; //TBD
-  }
 }
 
 class _OfficerCard extends StatelessWidget {
