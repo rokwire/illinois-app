@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -80,8 +81,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
     interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
+    String eventType = ExploreHelper.getExploreEventTypeText(explore)??"";
 
-    return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests";
+    return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
   }
 
   @override
@@ -106,7 +108,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: widget.border
+                        border: widget.border,
+                        boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +133,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                   width: _smallImageSize,
                                   height: _smallImageSize,
                                   child: Image.network(
-                                    imageUrl, fit: BoxFit.fill, headers: AppImage.getAuthImageHeaders(),),),)),
+                                    imageUrl, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
                         ],),
                         _explorePaymentTypes(),
                         _buildConvergeButton(),
@@ -344,14 +347,21 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _exploreLocationDetail() {
-    String locationText = ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
+    String iconRes = 'images/icon-location.png';
+    String eventType;
+    if(widget.explore!=null && widget.explore is Event) {
+      bool isVirtual = (widget.explore as Event).isVirtual ?? false;
+      eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
+    }
+    String locationText = eventType ?? ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return Semantics(label: locationText, child:Padding(
         padding: _detailPadding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-location.png'),
+            Image.asset(iconRes, excludeFromSemantics: true,),
             Padding(
               padding: _iconPadding,
             ),

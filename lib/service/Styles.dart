@@ -370,6 +370,7 @@ class UiColors {
   Color get accentColor1               => _colorMap['accentColor1'];
   Color get accentColor2               => _colorMap['accentColor2'];
   Color get accentColor3               => _colorMap['accentColor3'];
+  Color get accentColor4               => _colorMap['accentColor4'];
 
   Color get iconColor                  => _colorMap['iconColor'];
 

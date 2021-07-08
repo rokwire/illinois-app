@@ -194,10 +194,12 @@
 	
 	NSDictionary *location = [explore inaDictForKey:@"location"];
 	NSString *title = [location inaStringForKey:@"name"];
+	
 	if (title.length == 0)
 		title = [explore inaStringForKey:@"name"];
 	if (title.length == 0)
-		title = NSLocalizedString(@"CUSTOM", nil);
+		title = [NSString stringWithFormat:@"%.06f, %.06f",[location inaDoubleForKey:@"latitude"],[location inaDoubleForKey:@"longitude"]];
+
 	NSString *description = [location inaStringForKey:@"description"];
 	
 	_customLocationMarker = [[GMSMarker alloc] init];

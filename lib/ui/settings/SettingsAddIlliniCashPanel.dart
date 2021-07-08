@@ -28,7 +28,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:circular_check_box/circular_check_box.dart';
+import 'package:roundcheckbox/roundcheckbox.dart';
 
 class SettingsAddIlliniCashPanel extends StatefulWidget {
 
@@ -578,17 +578,18 @@ class _SettingsAddIlliniCashPanelState
                                             ""),
                                         checked: _agreePrivacy,
                                         excludeSemantics: true,
-                                        child: CircularCheckBox(
-                                          value: _agreePrivacy,
-                                          onChanged: (dynamic value) {
+                                        child: RoundCheckBox(
+                                          isChecked: _agreePrivacy,
+                                          checkedColor: Styles().colors.fillColorSecondary, 
+                                          size: 28,
+                                          onTap: (bool value) {
                                             Analytics.instance.logSelect(target: "Agree");
                                             _agreePrivacy = !_agreePrivacy;
                                             setState(() {});
                                           },
-                                          activeColor: Styles().colors.fillColorSecondary,
                                         ),
                                       ),
-//                        Container(width: 8,),
+                                      Container(width: 12,),
                                       Semantics(
                                         excludeSemantics: true,
                                         child: Text(

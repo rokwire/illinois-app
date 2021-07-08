@@ -53,32 +53,47 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return Visibility(visible: _visible, child: Semantics(container: true, child:Container(
         color: Styles().colors.background,
         child: Row(children: <Widget>[Expanded(child:
-        Stack(children: <Widget>[
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: _buildContent()),
+            _buildHeader(),
+            _buildContent(),
           ]),
-          Container(alignment: Alignment.topRight, child: Semantics(
+/*          Container(alignment: Alignment.topRight, child: Semantics(
               label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"),
               button: true,
               excludeSemantics: true,
               child: InkWell(
                   onTap : _onClose,
                   child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-orange.png'))))),
-
-        ],),
+*/
         )],)
     )));
   }
 
+  Widget _buildHeader() {
+    return Container(color: Styles().colors.fillColorPrimary, child:
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Expanded(child: 
+          Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+            Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"), style:
+              TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),),
+        Semantics(label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"), button: true, excludeSemantics: true, child:
+          InkWell(onTap : _onClose, child:
+            Container(width: 48, height: 56, alignment: Alignment.center, child:
+              Image.asset('images/close-orange.png')))),
+
+      ],),);
+  }
+
   Widget _buildContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls."), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, ),),
-      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-      Text(_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app."):
-      Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you."),
-        style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies.medium, fontSize: 16,),),),
-      _buildButtons()
-    ],);
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: 
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls."), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, ),),
+        Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        Text(_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app."):
+        Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you."),
+          style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies.medium, fontSize: 16,),),),
+        _buildButtons()
+      ],),);
   }
 
   Widget _buildButtons(){

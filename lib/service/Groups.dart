@@ -25,6 +25,7 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -32,8 +33,10 @@ import 'package:illinois/utils/Utils.dart';
 class Groups /* with Service */ {
 
   static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
+  static const String notifyGroupEventsUpdated   = "edu.illinois.rokwire.groups.events.updated";
   static const String notifyGroupCreated            = "edu.illinois.rokwire.group.created";
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
+  static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
 
   Map<String, Member> _userMembership;
 
@@ -66,24 +69,28 @@ class Groups /* with Service */ {
     return (_userMembership != null) ? _userMembership[groupId] : null;
   }
 
-  // Enumeration APIs
-
-  Future<List<String>> get categories async {
-    String url = '${Config().groupsUrl}/group-categories';
-    try {
-      Response response = await Network().get(url, auth: NetworkAuth.App,);
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      List<dynamic> categoriesJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-      if(AppCollection.isCollectionNotEmpty(categoriesJson)){
-        return categoriesJson.map((e) => e.toString()).toList();
-      }
-    } catch (e) {
-      print(e);
-    }
-    return [];
+  Future<bool> isAdminForGroup(String groupId) async{
+    Group group = await loadGroup(groupId);
+    return group?.currentUserIsAdmin ?? false;
   }
 
+  // Categories APIs
+
+  Future<List<String>> loadCategories() async {
+    List<dynamic> categoriesJsonArray = await ExploreService().loadEventCategories();
+    if (AppCollection.isCollectionNotEmpty(categoriesJsonArray)) {
+      List<String> categoriesList = categoriesJsonArray.map((e) => e['category']?.toString()).toList();
+      return categoriesList;
+    } else {
+      return null;
+    }
+  }
+
+  // Tags APIs
+
+  Future<List<String>> loadTags() async {
+    return ExploreService().loadEventTags();
+  }
 
   // Groups APIs
 
@@ -103,7 +110,30 @@ class Groups /* with Service */ {
     return [];
   }
 
-  Future<Group>loadGroup(String groupId) async {
+  Future<List<Group>> searchGroups(String searchText) async {
+    if (AppString.isStringEmpty(searchText)) {
+      return null;
+    }
+    String encodedTExt = Uri.encodeComponent(searchText);
+    String url = '${Config().groupsUrl}/groups?title=$encodedTExt';
+    Response response = await Network().get(url, auth: (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+    if (responseCode == 200) {
+      List<dynamic> groupsJson = AppJson.decodeList(responseBody);
+      List<Group> groups;
+      if (AppCollection.isCollectionNotEmpty(groupsJson)) {
+        groups = groupsJson.map((e) => Group.fromJson(e)).toList();
+      }
+      return groups;
+    } else {
+      print('Failed to search for groups. Reason: ');
+      print(responseBody);
+      return null;
+    }
+  }
+
+  Future<Group> loadGroup(String groupId) async {
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
@@ -119,7 +149,7 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<String>createGroup(Group group) async {
+  Future<String> createGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups';
       try {
@@ -144,7 +174,7 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<bool>updateGroup(Group group) async {
+  Future<bool> updateGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups/${group.id}';
       try {
@@ -160,6 +190,22 @@ class Groups /* with Service */ {
       }
     }
     return false;
+  }
+
+  Future<bool> deleteGroup(String groupId) async {
+    if (AppString.isStringEmpty(groupId)) {
+      return false;
+    }
+    String url = '${Config().groupsUrl}/group/$groupId';
+    Response response = await Network().delete(url, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupDeleted, null);
+      return true;
+    } else {
+      Log.i('Failed to delete group. Reason:\n${response?.body}');
+      return false;
+    }
   }
 
   // Members APIs
@@ -203,20 +249,22 @@ class Groups /* with Service */ {
     return false; // fail
   }
 
-  Future<bool> leaveGroup(String groupId) async{
-    if(groupId != null) {
-      String url = '${Config().groupsUrl}/group/$groupId/members';
-      try {
-        Response response = await Network().delete(url, auth: NetworkAuth.User,);
-        if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupUpdated, groupId);
-          return true;
-        }
-      } catch (e) {
-        print(e);
-      }
+  Future<bool> leaveGroup(String groupId) async {
+    if (AppString.isStringEmpty(groupId)) {
+      return false;
     }
-    return false; // fail
+    String url = '${Config().groupsUrl}/group/$groupId/members';
+    Response response = await Network().delete(url, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupUpdated, groupId);
+      return true;
+    } else {
+      print('Failed to leave group with id {$groupId}. Response:');
+      String responseString = response?.body;
+      print(responseString);
+      return false;
+    }
   }
 
   Future<bool> acceptMembership(String groupId, String memberId, bool decision, String reason) async{
@@ -291,13 +339,23 @@ class Groups /* with Service */ {
     return null; // fail
   }
 
-  Future<List<GroupEvent>> loadEvents(String groupId, {int limit = -1}) async {
+  ///
+  /// Returns Map with single element:
+  ///
+  /// key - all events count ignoring the limit,
+  /// 
+  /// value - events (limited or not)
+  ///
+  Future<Map<int, List<GroupEvent>>> loadEvents(String groupId, {int limit = -1}) async {
     List<dynamic> eventIds = await loadEventIds(groupId);
-    List<Event> events = AppCollection.isCollectionNotEmpty(eventIds)? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
-    if(AppCollection.isCollectionNotEmpty(events)){
+    List<Event> events = AppCollection.isCollectionNotEmpty(eventIds) ? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
+    if (AppCollection.isCollectionNotEmpty(events)) {
+      int eventsCount = events.length;
+      ExploreService().sortEvents(events);
       //limit the result count // limit available events
-      List<Event> visibleEvents = (limit>0 && events.length>limit)? events.sublist(0,limit) : events;
-      return visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
+      List<Event> visibleEvents = ((limit > 0) && (eventsCount > limit)) ? events.sublist(0, limit) : events;
+      List<GroupEvent> groupEvents = visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
+      return {eventsCount: groupEvents};
     }
     return null;
   }
@@ -336,18 +394,31 @@ class Groups /* with Service */ {
     return false;
   }
 
-  Future<bool> deleteEventFromGroup({String groupId, String eventId}) async {
-    //TBD
-    return false;
+  Future<String> updateGroupEvents(Event event) async {
+    String id = await ExploreService().updateEvent(event);
+    if (AppString.isStringNotEmpty(id)) {
+      NotificationService().notify(Groups.notifyGroupEventsUpdated);
+    }
+    return id;
+  }
+
+  Future<bool> deleteEventFromGroup({String groupId, Event event}) async {
+    bool deleteResult = false;
+    await removeEventFromGroup(groupId: groupId, eventId: event?.id);
+    String creatorGroupId = event.createdByGroupId;
+    if(creatorGroupId!=null){
+      Group creatorGroup = await loadGroup(creatorGroupId);
+      if(creatorGroup!=null && creatorGroup.currentUserIsAdmin){
+        deleteResult = await ExploreService().deleteEvent(event?.id);
+      }
+    }
+    NotificationService().notify(Groups.notifyGroupEventsUpdated);
+    return deleteResult;
   }
 
   Future<Event> createGroupEvent(String groupId, Event event) async {
     //TBD
     return Future<Event>.delayed(Duration(seconds: 1), (){ return event; });
-  }
-
-  Future<bool> updateGroupEvents(String groupId, List<Event> events) async {
-    return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
   }
 
   // Event Comments

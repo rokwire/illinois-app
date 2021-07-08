@@ -59,7 +59,8 @@ class RecentItems with Service implements NotificationsListener {
   }
 
   void addRecentItem(RecentItem item) {
-    if (recentItems != null && recentItems.contains(item)) {
+
+    if ((item == null) || (recentItems?.contains(item) == true)) {
       return;
     }
     recentItems.addFirst(item);

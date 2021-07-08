@@ -353,7 +353,33 @@ class Network  {
     return _readBytes(url, headers: headers, auth: auth, timeout: timeout);
   }
 
-  Future<Map<String, String>> _prepareHeaders(Map<String, String> headers, NetworkAuth auth, Uri uri) async{
+
+  static Map<String, String> get appAuthHeaders {
+    return authHeaders(NetworkAuth.App);
+  }
+
+  static Map<String, String> authHeaders(NetworkAuth auth) {
+    return _prepareAuthHeaders(null, auth);
+  }
+
+  static Future<Map<String, String>> _prepareHeaders(Map<String, String> headers, NetworkAuth auth, Uri uri) async {
+
+    // authentication
+    headers = _prepareAuthHeaders(headers, auth);
+
+    // cookies
+    String cookies = (uri != null) ? await _loadCookiesForRequest(uri) : null;
+    if (AppString.isStringNotEmpty(cookies)) {
+      if (headers == null) {
+        headers = new Map();
+      }
+      headers["Cookie"] = cookies;
+    }
+
+    return headers;
+  }
+
+  static Map<String, String> _prepareAuthHeaders(Map<String, String> headers, NetworkAuth auth) {
 
     if (auth == NetworkAuth.App) {
       String rokwireApiKey = Config().rokwireApiKey;
@@ -384,15 +410,6 @@ class Network  {
       }
     }
 
-    //cookies
-    String cookies = await _loadCookiesForRequest(uri);
-    if (AppString.isStringNotEmpty(cookies)) {
-      if (headers == null) {
-        headers = new Map();
-      }
-      headers["Cookie"] = cookies;
-    }
-
     return headers;
   }
 
@@ -406,7 +423,15 @@ class Network  {
         && (NetworkAuth.User == auth || NetworkAuth.Access == auth));
   }
 
-  void _saveCookiesFromResponse(String url, Http.Response response) {
+  Http.Response _responseTimeoutHandler() {
+    return null;
+  }
+
+  Uint8List _responseBytesHandler() {
+    return null;
+  }
+
+  static void _saveCookiesFromResponse(String url, Http.Response response) {
     Uri uri = _uriFromUrlString(url);
     if ((uri == null) || response == null)
       return;
@@ -434,7 +459,7 @@ class Network  {
     cj.saveFromResponse(uri, cookies);
   }
 
-  Future<String> _loadCookiesForRequest(Uri uri) async{
+  static Future<String> _loadCookiesForRequest(Uri uri) async{
     var cj = new CookieJar();
     List<Cookie> cookies = await cj.loadForRequest(uri);
     if (cookies == null || cookies.length == 0)
@@ -451,15 +476,7 @@ class Network  {
     return result;
   }
 
-  Http.Response _responseTimeoutHandler() {
-    return null;
-  }
-
-  Uint8List _responseBytesHandler() {
-    return null;
-  }
-
-  Uri _uriFromUrlString(dynamic url){
+  static Uri _uriFromUrlString(dynamic url) {
     Uri uri;
     if (url is Uri) {
       uri = url;
