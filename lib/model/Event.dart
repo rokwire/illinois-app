@@ -132,7 +132,12 @@ class Event with Explore implements Favorite {
     outlookUrl = json['outlookUrl'];
     speaker = json['speaker'];
     registrationLabel = json['registrationLabel'];
-    registrationUrl = json['registrationURL'];
+    if (AppString.isStringNotEmpty(json['registrationUrl'])) {
+      registrationUrl = json['registrationUrl'];
+    }
+    else if (AppString.isStringNotEmpty(json['registrationURL'])) {
+      registrationUrl = json['registrationURL'];
+    }
     cost = json['cost'];
     this.contacts = contacts;
     this.tags = tags;

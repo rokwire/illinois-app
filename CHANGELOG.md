@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Cafe Credits to Dining Dollars - missed one spot [#453](https://github.com/rokwire/illinois-app/issues/453).
 - Check for return value of update group event.
+### Fixed
+- Support both "registrationUrl" and "registrationURL" for Event.registrationUrl [#468](https://github.com/rokwire/illinois-app/issues/468).
 
 ## [2.5.7] - 2021-07-07
 ### Fixed
