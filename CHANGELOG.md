@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- GroupsDetailPanel: move admin event buttons to the bottomSheet menu [#470](https://github.com/rokwire/illinois-app/issues/470).
 - Cafe Credits to Dining Dollars - missed one spot [#453](https://github.com/rokwire/illinois-app/issues/453).
 - Check for return value of update group event.
 ### Fixed
