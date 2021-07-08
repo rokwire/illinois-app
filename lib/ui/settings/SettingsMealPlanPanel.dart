@@ -179,7 +179,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     return Column(
       children: <Widget>[
         _buildSettingsHeader(Localization().getStringEx(
-            "panel.settings.meal_plan.cafe_credit_history.text", "Caf\u00E9 Credit History"), 'images/icon-schedule.png'),
+            "panel.settings.meal_plan.dining_dollars_history.text", "Dining Dollars History"), 'images/icon-schedule.png'),
         _buildBalanceTableRow(_cafeCreditTransactionsLoading, _cafeCreditTransactions),
         Container(height: 20,),
       ],
