@@ -41,20 +41,18 @@ class GroupEventDetailPanel extends StatefulWidget{
 }
 
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with NotificationsListener{
-  List<Group> _adminGroups;
+  List<Group> _adminGroups = [];
   Event _event;
-
   Group _currentlySelectedGroup;
-  List<Group> _linkedGroups;
 
   @override
   void initState() {
     _event = widget.event;
-    _linkedGroups = []; //TBD preload if necessary
     Groups().loadGroups(myGroups: true).then((groups) {
-      setState(() {
-        _adminGroups = groups;
-      });
+      if(groups?.isNotEmpty ?? false){
+        _adminGroups = groups.where((group) => group?.currentUserIsAdmin)?.toList() ?? [];
+      }
+      setState(() {});
     });
 
     NotificationService().subscribe(this, [Groups.notifyGroupEventsUpdated]);
@@ -572,9 +570,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   textColor: Styles().colors.fillColorPrimary,
                   onTap: (){
                     setState(() {
-                      //TBD proper add and update
                       if(_currentlySelectedGroup!=null) {
-                        _linkedGroups.add(_currentlySelectedGroup);
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
                             Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")+ _currentlySelectedGroup?.title??"");
