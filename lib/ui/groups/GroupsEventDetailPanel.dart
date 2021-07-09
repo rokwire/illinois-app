@@ -19,6 +19,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -361,7 +362,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               textColor: Styles().colors.fillColorPrimary,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
-                _onTapWebButton(titleUrl, 'Website');
+                _onTapWebButton(titleUrl, analyticsName: 'Website');
               }),
       ),),],),);
     }
@@ -379,7 +380,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             textColor: Styles().colors.fillColorPrimary,
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             onTap: () {
-              _onTapWebButton(registrationUrl, 'Registration');
+              _onTapRegistration(registrationUrl);
             }),
       ),),],),);
     }
@@ -466,10 +467,23 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     });
   }
 
-  void _onTapWebButton(String url, String analyticsName){
-    Analytics.instance.logSelect(target: analyticsName);
+  void _onTapWebButton(String url, { String analyticsName }) {
+    if (analyticsName != null) {
+      Analytics.instance.logSelect(target: analyticsName);
+    }
     if(AppString.isStringNotEmpty(url)){
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url, analyticsName: "WebPanel($analyticsName)",)));
+    }
+  }
+
+  void _onTapRegistration(String registrationUrl) {
+    Analytics.instance.logSelect(target: "Registration");
+    if (User().showTicketsConfirmationModal) {
+      PrivacyTicketsDialog.show(context, onContinueTap: () {
+        _onTapWebButton(registrationUrl);
+      });
+    } else {
+      _onTapWebButton(registrationUrl);
     }
   }
 
@@ -477,7 +491,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     if((_event?.isVirtual?? false) == true){
       String url = _event?.location?.description;
       if(AppString.isStringNotEmpty(url)) {
-        _onTapWebButton(url, "Event Link");
+        _onTapWebButton(url, analyticsName: "Event Link");
       }
     } else if(_event?.location?.latitude != null && _event?.location?.longitude != null) {
       Analytics.instance.logSelect(target: "Location Detail");
