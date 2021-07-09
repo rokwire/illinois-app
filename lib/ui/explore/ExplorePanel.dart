@@ -1108,7 +1108,14 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-          ExploreDetailPanel(explore: explore,initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)));
+          ExploreDetailPanel(explore: explore,initialLocationData: _locationData,browseGroupId: widget.browseGroupId,)
+      )).then(
+          (value){
+            if(value!=null && value == true){
+              Navigator.pop(context);
+            }
+          }
+      );
     }
   }
 

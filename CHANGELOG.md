@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show Visit website and Registration buttons underneath each other [#483](https://github.com/rokwire/illinois-app/issues/483).
 - Prompt before exit without Save when creating/updating group events [#485](https://github.com/rokwire/illinois-app/issues/485).
 - Rename rejected to "Denied" and show rejected status in the Group Card [#482](https://github.com/rokwire/illinois-app/issues/482).
+- Pop to Group Panel after adding a public event [#478](https://github.com/rokwire/illinois-app/issues/478)
 ### Fixed
 - Allow adding event only to admin groups[#480](https://github.com/rokwire/illinois-app/issues/480).
 - Hide options button for private group events [#477](https://github.com/rokwire/illinois-app/issues/477).
