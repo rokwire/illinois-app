@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show Visit website and Registration buttons underneath each other [#483](https://github.com/rokwire/illinois-app/issues/483).
+- Prompt before exit without Save when creating/updating group events [#485](https://github.com/rokwire/illinois-app/issues/485).
 
 ## [2.5.8] - 2021-07-08
 ### Changed
