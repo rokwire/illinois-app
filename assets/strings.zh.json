@@ -1094,6 +1094,7 @@
 	"panel.create_event.additional_info.purchase_tickets.hint":"",
 	"panel.create_event.additional_info.button.confirm.website":"确认网站URL",
 	"panel.create_event.additional_info.button.confirm.purchase_tickets":"确认购买票URL",
+	"panel.create_event.back.prompt":"是否要保存更改？",
 
 	"panel.profile_info.header.title":"个人信息",
 	"panel.profile_info.net_id.title":"NetID",

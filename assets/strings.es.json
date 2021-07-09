@@ -1094,6 +1094,7 @@
     "panel.create_event.additional_info.purchase_tickets.hint":"",
     "panel.create_event.additional_info.button.confirm.website":"Confirmar URL del sitio web",
     "panel.create_event.additional_info.button.confirm.purchase_tickets":"Confirmar URL de los boletos de compra",
+    "panel.create_event.back.prompt":"¿Quieres guardar tus cambios?",
 
     "panel.profile_info.header.title":"INFORMACIÓN PERSONAL",
     "panel.profile_info.net_id.title":"NetID",

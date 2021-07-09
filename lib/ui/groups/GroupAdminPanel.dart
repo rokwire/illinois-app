@@ -475,7 +475,14 @@ class _EventCard extends StatelessWidget {
                             Navigator.pop(context);
                             Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: event, onEditTap: (Event event){
                               //TBD notify service for Event Update
-                              Navigator.pop(context);
+                              Groups().updateGroupEvents(event).then((String id) {
+                                if (AppString.isStringNotEmpty(id)) {
+                                  Navigator.pop(context);
+                                }
+                                else {
+                                  AppAlert.showDialogResult(context, "Unable to update event");
+                                }
+                              });
                             },)));
                           },
                         ),

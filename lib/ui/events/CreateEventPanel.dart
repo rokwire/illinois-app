@@ -70,10 +70,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   dynamic _selectedCategory;
   String _selectedTimeZone = defaultEventTimeZone;
   String _imageUrl;
-  timezone.TZDateTime startDate;
-  timezone.TZDateTime endDate;
-  TimeOfDay startTime;
-  TimeOfDay endTime;
+  timezone.TZDateTime _startDate;
+  timezone.TZDateTime _endDate;
+  TimeOfDay _startTime;
+  TimeOfDay _endTime;
   bool _allDay = false;
   Location _location;
   bool _isOnline = false;
@@ -82,6 +82,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   //TMP: bool _isAttendanceRequired = false;
 
   bool _loading = false;
+  bool _modified = false;
 
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
@@ -118,6 +119,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     return Scaffold(
         appBar: SimpleHeaderBarWithBack(
           context: context,
+          onBackPressed: _onTapBack,
           titleWidget: Text(_panelTitleText,
             style: TextStyle(
                 color: Colors.white,
@@ -281,10 +283,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                    ),
                                                  ),
                                                  _EventDateDisplayView(
-                                                   label: startDate != null
+                                                   label: _startDate != null
                                                        ? AppDateTime()
                                                        .formatDateTime(
-                                                       startDate,
+                                                       _startDate,
                                                        format: "EEE, MMM dd, yyyy")
                                                        : "-",
                                                    onTap: _onTapStartDate,
@@ -335,15 +337,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                 ),
                                               ),
                                               _EventDateDisplayView(
-                                                label: startTime != null &&
+                                                label: _startTime != null &&
                                                     !_allDay
                                                     ? DateFormat("h:mma").format(
                                                     _populateDateTimeWithTimeOfDay(
-                                                        startDate,
-                                                        startTime) ??
+                                                        _startDate,
+                                                        _startTime) ??
                                                         (_populateDateTimeWithTimeOfDay(
                                                             timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
-                                                            startTime)))
+                                                            _startTime)))
                                                     : "-",
                                                 onTap: _onTapStartTime,
                                               )
@@ -397,10 +399,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                     ),
                                                   ),
                                                   _EventDateDisplayView(
-                                                    label: endDate != null
+                                                    label: _endDate != null
                                                         ? AppDateTime()
                                                         .formatDateTime(
-                                                        endDate,
+                                                        _endDate,
                                                         format: "EEE, MMM dd, yyyy")
                                                         : "-",
                                                     onTap: _onTapEndDate,
@@ -451,17 +453,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                                       ),
                                                     ),
                                                     _EventDateDisplayView(
-                                                      label: endTime != null && !_allDay
+                                                      label: _endTime != null && !_allDay
                                                           ? DateFormat("h:mma").format(
                                                           _populateDateTimeWithTimeOfDay(
-                                                              endDate,
-                                                              endTime) ??
+                                                              _endDate,
+                                                              _endTime) ??
                                                               (_populateDateTimeWithTimeOfDay(
-                                                                  startDate,
-                                                                  endTime) ??
+                                                                  _startDate,
+                                                                  _endTime) ??
                                                                   _populateDateTimeWithTimeOfDay(
                                                                       timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone)),
-                                                                      endTime)))
+                                                                      _endTime)))
                                                           : "-",
                                                       onTap: _onTapEndTime,
                                                     )
@@ -580,9 +582,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 backgroundColor: Colors.white,
                                 borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                                 textColor: isValid ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-                                onTap: isEdit? (){
-                                  widget.onEditTap(context, _populateEventWithData(widget.editEvent));
-                                } : _onTapPreview,
+                                onTap: isEdit? _onTapUpdate : _onTapPreview,
                               )),
                               (widget.group==null)? Container():
                               Expanded(
@@ -592,9 +592,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                     backgroundColor: Colors.white,
                                     borderColor: isValid ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
                                     textColor: isValid ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-                                    onTap: isEdit? (){
-                                      widget.onEditTap(context, _populateEventWithData(widget.editEvent));
-                                    } : _onTapCreate,
+                                    onTap: isEdit? _onTapUpdate : _onTapCreate,
                                   ))
                             ],
                           ),
@@ -741,8 +739,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       hint: Localization().getStringEx("panel.create_event.title.title.hint",""), textField: true, excludeSemantics: true, child:
                       TextField(
                         controller: _eventTitleController,
-                        decoration:
-                        InputDecoration(border: InputBorder.none),
+                        onChanged: _onTextChanged,
+                        decoration: InputDecoration(border: InputBorder.none),
                         maxLength: 64,
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         style: TextStyle(
@@ -811,6 +809,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           height: 120,
                           child: TextField(
                             controller: _eventDescriptionController,
+                            onChanged: _onTextChanged,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: Localization().getStringEx("panel.create_event.additional_info.event.description.hint","Type something"),
@@ -973,6 +972,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               height: 48,
                               child: TextField(
                                 controller: _eventLocationController,
+                                onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -1018,6 +1018,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               height: 48,
                               child: TextField(
                                 controller: _eventLatitudeController,
+                                onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -1063,6 +1064,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               height: 48,
                               child: TextField(
                                 controller: _eventLongitudeController,
+                                onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -1120,6 +1122,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               height: 48,
                               child: TextField(
                                 controller: _eventPurchaseUrlController,
+                                onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 style: TextStyle(
@@ -1179,6 +1182,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                               height: 48,
                               child: TextField(
                                 controller: _eventWebsiteController,
+                                onChanged: _onTextChanged,
                                 decoration: InputDecoration(
                                     border: InputBorder.none),
                                 style: TextStyle(
@@ -1244,6 +1248,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   height: 48,
                                   child: TextField(
                                     controller: _eventCallUrlController,
+                                    onChanged: _onTextChanged,
                                     decoration: InputDecoration(
                                         border: InputBorder.none),
                                     style: TextStyle(
@@ -1343,6 +1348,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       height: 48,
                       child: TextField(
                         controller: _eventPriceController,
+                        onChanged: _onTextChanged,
                         decoration: InputDecoration(
                             border: InputBorder.none),
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -1470,17 +1476,17 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       _eventTitleController.text = event.title;
       if(event?.startDateGmt!=null) {
-        startDate =  timezone.TZDateTime.from(event?.startDateGmt, timezone.getLocation(_selectedTimeZone));
-        startTime = TimeOfDay.fromDateTime(startDate);
-//      endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
+        _startDate =  timezone.TZDateTime.from(event?.startDateGmt, timezone.getLocation(_selectedTimeZone));
+        _startTime = TimeOfDay.fromDateTime(_startDate);
+//      _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
       }
-//      endDate = event.endDateGmt;
-//      if(endDate==null && event.endDateString!=null){
-//        endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.serverResponseDateTimeFormat);
+//      _endDate = event.endDateGmt;
+//      if(_endDate==null && event.endDateString!=null){
+//        _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.serverResponseDateTimeFormat);
 //      }
       if(event.endDateGmt!=null) {
-        endDate = timezone.TZDateTime.from(event.endDateGmt, timezone.getLocation(_selectedTimeZone));
-        endTime = TimeOfDay.fromDateTime(endDate);
+        _endDate = timezone.TZDateTime.from(event.endDateGmt, timezone.getLocation(_selectedTimeZone));
+        _endTime = TimeOfDay.fromDateTime(_endDate);
       }
       _allDay = event.allDay ?? false;
       _isOnline = event.isVirtual ?? false;
@@ -1529,6 +1535,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     Analytics.instance.logSelect(target: "Category selected: $value");
     setState(() {
       _selectedCategory = value;
+      _modified = true;
     });
   }
 
@@ -1551,6 +1558,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     Analytics.instance.logSelect(target: "Time Zone selected: $value");
     setState(() {
       _selectedTimeZone = value;
+      _modified = true;
     });
   }
 
@@ -1558,35 +1566,49 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     Analytics.instance.logSelect(target: "Privacy selected: $value");
     setState(() {
       _selectedPrivacy = value;
+      _modified = true;
     });
   }
 
   void _onTapAddImage() async {
     Analytics.instance.logSelect(target: "Add Image");
-    _imageUrl = await showDialog(
+    String imageUrl = await showDialog(
         context: context,
         builder: (_) => AddImageWidget()
     );
-    setState(() {});
+    if (AppString.isStringNotEmpty(imageUrl) && (_imageUrl != imageUrl)) {
+      setState(() {
+        _imageUrl = imageUrl;
+        _modified = true;
+      });
+    }
+  }
+
+  void _onTextChanged(_) {
+    _modified = true;
   }
 
   void _onAllDayToggled() {
     _allDay = !_allDay;
+    _modified = true;
     setState(() {});
   }
 
   void _onOnlineToggled() {
     _isOnline = !_isOnline;
+    _modified = true;
     setState(() {});
   }
 
   void _onFreeToggled() {
     _isFree = !_isFree;
+    _modified = true;
     setState(() {});
   }
 
   /* TMP: void _onAttendanceRequiredToggled() {
     _isAttendanceRequired = !_isAttendanceRequired;
+    _modified = true;
     setState(() {});
   }*/
 
@@ -1607,6 +1629,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         Map<String, dynamic> locationData = locationSelectionResult["location"];
         if (locationData != null) {
           _location = Location.fromJSON(locationData);
+          _modified = true;
           _populateLocationField();
           setState(() {});
         }
@@ -1675,6 +1698,49 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   void _onTapCancel() {
     Analytics.instance.logSelect(target: "Cancel");
     Navigator.pop(context);
+    //TBD: prompt
+  }
+
+  void _onTapBack() {
+    if (_modified) {
+      _promptBack().then((bool result) {
+        if (result) {
+          if (widget.editEvent != null) {
+            _onTapUpdate();
+          }
+          else {
+            _onTapCreate();
+          }
+        }
+        else {
+          Navigator.pop(context);
+        }
+      });
+    }
+    else {
+      Navigator.pop(context);
+    }
+  }
+
+  Future<bool> _promptBack() async {
+    String message = Localization().getStringEx('panel.create_event.back.prompt', 'Do you want to save your changes?');
+    return await showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
+            onPressed:(){
+              Analytics.instance.logAlert(text: message, selection: "Yes");
+              Navigator.pop(context, true);
+            }),
+          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
+            onPressed:(){
+              Analytics.instance.logAlert(text: message, selection: "No");
+              Navigator.pop(context, false);
+            }),
+        ]
+      );
+    });
   }
 
   void _onTapPreview() async {
@@ -1693,7 +1759,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     }
   }
 
-  void _onTapCreate() async {
+  void _onTapCreate() {
     Analytics.instance.logSelect(target: "Create");
     if (_validateWithResult()) {
       Event event = _constructEventFromData();
@@ -1716,6 +1782,10 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
     }
   }
+
+  void _onTapUpdate() {
+    widget.onEditTap(context, _populateEventWithData(widget.editEvent));
+  }
   
   Event _populateEventWithData(Event event){
     if(_location==null) {
@@ -1736,15 +1806,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
     event.title = _eventTitleController.text;
-    if(startDate!=null) {
-      timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(startDate, timezone.getLocation(_selectedTimeZone));
+    if(_startDate!=null) {
+      timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(_startDate, timezone.getLocation(_selectedTimeZone));
       timezone.TZDateTime utcTTime = startTime?.toUtc();
       event.startDateString = AppDateTime().formatDateTime(
           utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
       event.startDateGmt = utcTTime?.toUtc();
     }
-    if(endDate!=null) {
-      timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(endDate, timezone.getLocation(_selectedTimeZone));
+    if(_endDate!=null) {
+      timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(_endDate, timezone.getLocation(_selectedTimeZone));
       timezone.TZDateTime utcTTime = startTime?.toUtc();
       event.endDateString = AppDateTime().formatDateTime(
           utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
@@ -1775,45 +1845,49 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   void _onTapStartDate() async {
     Analytics.instance.logSelect(target: "Start Date");
-    timezone.TZDateTime date = await _pickDate(startDate, null);
+    timezone.TZDateTime date = await _pickDate(_startDate, null);
 
     if (date != null) {
-      startDate = date;
-      startDate = _populateDateTimeWithTimeOfDay(date, startTime);
+      _startDate = date;
+      _startDate = _populateDateTimeWithTimeOfDay(date, _startTime);
+      _modified = true;
     }
     setState(() {});
   }
 
   void _onTapStartTime() async {
     Analytics.instance.logSelect(target: "Start Time");
-    timezone.TZDateTime start = startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
+    timezone.TZDateTime start = _startDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
     TimeOfDay time =
-        await _pickTime(startTime ?? (new TimeOfDay.fromDateTime(start)));
-    if (time != null) startTime = time;
+        await _pickTime(_startTime ?? (new TimeOfDay.fromDateTime(start)));
+    if (time != null) _startTime = time;
 
-    startDate = _populateDateTimeWithTimeOfDay(start, startTime);
+    _startDate = _populateDateTimeWithTimeOfDay(start, _startTime);
+    _modified = true;
     setState(() {});
   }
 
   void _onTapEndDate() async {
     Analytics.instance.logSelect(target: "End Date");
-    timezone.TZDateTime date = await _pickDate(endDate, startDate);
+    timezone.TZDateTime date = await _pickDate(_endDate, _startDate);
 
     if (date != null) {
-      endDate = date;
-      endDate = _populateDateTimeWithTimeOfDay(date, endTime);
+      _endDate = date;
+      _endDate = _populateDateTimeWithTimeOfDay(date, _endTime);
+      _modified = true;
     }
     setState(() {});
   }
 
   void _onTapEndTime() async {
     Analytics.instance.logSelect(target: "End Time");
-    timezone.TZDateTime end = endDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
+    timezone.TZDateTime end = _endDate ?? timezone.TZDateTime.now(timezone.getLocation(_selectedTimeZone));
     TimeOfDay time =
-        await _pickTime(endTime ?? (new TimeOfDay.fromDateTime(end)));
-    if (time != null) endTime = time;
+        await _pickTime(_endTime ?? (new TimeOfDay.fromDateTime(end)));
+    if (time != null) _endTime = time;
 
-    endDate = _populateDateTimeWithTimeOfDay(end, endTime);
+    _endDate = _populateDateTimeWithTimeOfDay(end, _endTime);
+    _modified = true;
     setState(() {});
   }
 
@@ -1870,11 +1944,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _isFormValid() {
     bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation = AppString.isStringNotEmpty(_eventTitleController.text);
-    bool _startDateValidation = startDate != null;
-    bool _startTimeValidation = startTime != null || _allDay;
-    bool _endDateValidation = endDate != null;
-    bool _endTimeValidation = endTime != null || _allDay;
-    bool _propperStartEndTimeInterval = (endDate != null) ? !(startDate?.isAfter(endDate) ?? true) : true;
+    bool _startDateValidation = _startDate != null;
+    bool _startTimeValidation = _startTime != null || _allDay;
+    bool _endDateValidation = _endDate != null;
+    bool _endTimeValidation = _endTime != null || _allDay;
+    bool _propperStartEndTimeInterval = (_endDate != null) ? !(_startDate?.isAfter(_endDate) ?? true) : true;
     return _categoryValidation && _titleValidation && _startDateValidation && _startTimeValidation &&
         _endDateValidation && _endTimeValidation && _propperStartEndTimeInterval;
   }
@@ -1883,11 +1957,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     bool _categoryValidation = _selectedCategory != null;
     bool _titleValidation =
         AppString.isStringNotEmpty(_eventTitleController.text);
-    bool _startDateValidation = startDate != null;
-    bool _startTimeValidation = startTime != null || _allDay;
-    bool _endDateValidation = endDate != null;
-    bool _endTimeValidation = endTime != null || _allDay;
-    bool _propperStartEndTimeInterval = (endDate != null) ? !(startDate?.isAfter(endDate) ?? true) : true;
+    bool _startDateValidation = _startDate != null;
+    bool _startTimeValidation = _startTime != null || _allDay;
+    bool _endDateValidation = _endDate != null;
+    bool _endTimeValidation = _endTime != null || _allDay;
+    bool _propperStartEndTimeInterval = (_endDate != null) ? !(_startDate?.isAfter(_endDate) ?? true) : true;
 //    bool subCategoryIsValid = _subCategoryController.text?.isNotEmpty;
 
     if (!_categoryValidation) {

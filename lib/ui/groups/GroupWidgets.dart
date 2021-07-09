@@ -620,8 +620,13 @@ class _EventContent extends StatelessWidget {
     Analytics().logPage(name: "Create Event");
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group, editEvent: event,onEditTap: (Event event) {
-      Groups().updateGroupEvents(event).then((param) {
-        Navigator.pop(context);
+      Groups().updateGroupEvents(event).then((String id) {
+        if (AppString.isStringNotEmpty(id)) {
+          Navigator.pop(context);
+        }
+        else {
+          AppAlert.showDialogResult(context, "Unable to update event");
+        }
       });
     })));
   }
