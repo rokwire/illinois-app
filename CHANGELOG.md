@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed typo in "Choose a group you’re an admin" message [#479](https://github.com/rokwire/illinois-app/issues/479).
 - Fixed favorite button in group event card [#476](https://github.com/rokwire/illinois-app/issues/476).
-
+- Fixed pending members count in Group detail panel [#481](https://github.com/rokwire/illinois-app/issues/481).
 
 ## [2.5.8] - 2021-07-08
 ### Changed
