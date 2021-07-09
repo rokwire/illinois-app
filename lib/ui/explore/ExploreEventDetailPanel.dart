@@ -752,7 +752,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       setState(() {
         _addToGroupInProgress = true;
       });
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     });
   }
 
