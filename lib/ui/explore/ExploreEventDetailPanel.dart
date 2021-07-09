@@ -570,33 +570,38 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildUrlButtons() {
+    List<Widget> buttons = <Widget>[];
+    
     String titleUrl = widget?.event?.titleUrl;
-    String registrationUrl = widget?.event?.registrationUrl;
     bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
+
+    String registrationUrl = widget?.event?.registrationUrl;
     bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
-    bool hasTwoButtons = hasTitleUrl && hasRegistrationUrl;
-    return Visibility(visible: (hasTitleUrl || hasRegistrationUrl), child:
-      Column(children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Visibility(visible: hasTitleUrl, child: Expanded(
-              child: ScalableRoundedButton(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
-                hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
-                backgroundColor: hasTwoButtons ? Styles().colors.background : Colors.white,
-                borderColor: hasTwoButtons ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
-                rightIcon: hasTwoButtons ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
-                textColor: Styles().colors.fillColorPrimary,
-                onTap: (){
-                  Analytics.instance.logSelect(target: "Website");
-                  _onTapWebButton(titleUrl, 'Website');
-                },
-              ))),
-          Visibility(visible: hasTwoButtons, child: Container(width: 6)),
-          Visibility(visible: hasRegistrationUrl, child: Expanded(
-              child: ScalableRoundedButton(
+
+    if (hasTitleUrl) {
+      buttons.add(Row(children:<Widget>[
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(bottom: 6), child:
+            ScalableRoundedButton(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
+              hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
+              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
+              textColor: Styles().colors.fillColorPrimary,
+              onTap: () {
+                Analytics.instance.logSelect(target: "Website");
+                _onTapWebButton(titleUrl, 'Website');
+              },),
+      ),),],),);
+    }
+    
+    if (hasRegistrationUrl) {
+      buttons.add(Row(children:<Widget>[
+        Expanded(child:
+        Padding(padding: EdgeInsets.only(bottom: 6), child:
+          ScalableRoundedButton(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
@@ -604,13 +609,14 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 borderColor: Styles().colors.fillColorSecondary,
                 rightIcon: Image.asset('images/external-link.png'),
                 textColor: Styles().colors.fillColorPrimary,
-                onTap: () => _onTapGetTickets(registrationUrl),
-              )))
-        ]
-      ),
-      Container(height: 6)
-      ])
-    );
+                onTap: () {
+                Analytics.instance.logSelect(target: "Website");
+                  _onTapGetTickets(registrationUrl);
+                },),
+      ),),],),);
+    }
+
+    return (0 < buttons.length) ? Column(children: buttons) : Container(width: 0, height: 0);
   }
 
   Widget _buildConvergeContent() {

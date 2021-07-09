@@ -349,46 +349,42 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
 
     if (hasTitleUrl) {
-      buttons.add(Expanded(child: 
-        ScalableRoundedButton(
-          label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
-          hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
-          backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
-          borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
-          rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
-          textColor: Styles().colors.fillColorPrimary,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          onTap: () {
-            _onTapWebButton(titleUrl, 'Website');
-          }
-        )
-      ));
+      buttons.add(Row(children:<Widget>[
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(bottom: 6), child:
+            ScalableRoundedButton(
+              label: Localization().getStringEx('panel.groups_event_detail.button.visit_website.title', 'Visit website'),
+              hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
+              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
+              textColor: Styles().colors.fillColorPrimary,
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              onTap: () {
+                _onTapWebButton(titleUrl, 'Website');
+              }),
+      ),),],),);
     }
     
     if (hasRegistrationUrl) {
-      if (hasTitleUrl) {
-        buttons.add(Container(width: 6));
-      }
-      buttons.add(Expanded(child: 
-        ScalableRoundedButton(
-          label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
-          hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
-          backgroundColor: Colors.white,
-          borderColor: Styles().colors.fillColorSecondary,
-          rightIcon: Image.asset('images/external-link.png'),
-          textColor: Styles().colors.fillColorPrimary,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          onTap: () {
-            _onTapWebButton(registrationUrl, 'Registration');
-          }
-        )
-      ));
+      buttons.add(Row(children:<Widget>[
+        Expanded(child:
+        Padding(padding: EdgeInsets.only(bottom: 6), child:
+          ScalableRoundedButton(
+            label: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.title', 'Register'),
+            hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
+            backgroundColor: Colors.white,
+            borderColor: Styles().colors.fillColorSecondary,
+            rightIcon: Image.asset('images/external-link.png'),
+            textColor: Styles().colors.fillColorPrimary,
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            onTap: () {
+              _onTapWebButton(registrationUrl, 'Registration');
+            }),
+      ),),],),);
     }
 
-    return (0 < buttons.length) ? Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons),
-      Container(height: 6)
-    ]) : Container();
+    return (0 < buttons.length) ? Column(children: buttons) : Container(width: 0, height: 0);
   }
 
   Widget _buildFavoritesButton(){
