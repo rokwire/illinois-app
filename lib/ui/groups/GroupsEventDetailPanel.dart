@@ -74,16 +74,18 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         leading: HeaderBackButton(),
         actions: [
           _buildFavoritesButton(),
-          Semantics(
-              label: Localization().getStringEx('panel.groups_event_detail.button.options.title', 'Options'),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                icon: Image.asset(
-                  'images/groups-more-inactive.png',
-                ),
-                onPressed:_onOptionsTap,
-              ))
+          Visibility(
+            visible: !_isPrivateGroupEvent,
+            child: Semantics(
+                label: Localization().getStringEx('panel.groups_event_detail.button.options.title', 'Options'),
+                button: true,
+                excludeSemantics: true,
+                child: IconButton(
+                  icon: Image.asset(
+                    'images/groups-more-inactive.png',
+                  ),
+                  onPressed:_onOptionsTap,
+              )))
         ],
       ),
       backgroundColor: Styles().colors.background,
@@ -500,7 +502,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onOptionsTap(){
-    if(_event?.isGroupPrivate ?? false){
+    if(_isPrivateGroupEvent){
       return;
     }
 
@@ -590,6 +592,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   bool get isFavorite => User().isFavorite(_event);
+
+  bool get _isPrivateGroupEvent => _event?.isGroupPrivate ?? false;
 
   @override
   void onNotification(String name, param) {
