@@ -365,7 +365,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     int pendingCount = _group?.pendingCount ?? 0;
-    String pendingMembers = _group.currentUserIsAdmin && pendingCount > 0 ? sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"),[membersCount]) : "";
+    String pendingMembers;
+    if (_group.currentUserIsAdmin && pendingCount > 0) {
+      pendingMembers = pendingCount > 1 ?
+        sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]) :
+        Localization().getStringEx("panel.group_detail.pending_members.count.one", "1 Pending Member");
+    }
+    else {
+      pendingMembers = "";
+    }
+
     if(_isMember){
       if(_isAdmin){
         commands.add(RibbonButton(
