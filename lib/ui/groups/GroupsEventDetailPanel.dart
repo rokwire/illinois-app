@@ -505,7 +505,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
 
     String title =  Localization().getStringEx('panel.groups_event_detail.label.options.add_event', "ADD EVENT");
-    String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin form");
+    String description= Localization().getStringEx('panel.groups_event_detail.label.options.choose_group', "Choose a group you’re an admin for");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
