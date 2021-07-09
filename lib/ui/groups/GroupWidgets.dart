@@ -917,7 +917,7 @@ class GroupCard extends StatelessWidget {
   }
 
   Widget _buildHeading() {
-    bool showMember = (group.currentUserIsPendingMember || group.currentUserIsMemberOrAdmin);
+    bool showMember = group?.currentUserAsMember?.status != null;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
       Visibility(visible: showMember, child: _buildMember()),
       Visibility(visible: showMember, child: Container(height: 6)),

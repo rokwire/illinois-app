@@ -414,7 +414,7 @@ String groupMemberStatusToDisplayString(GroupMemberStatus value) {
     } else if (value == GroupMemberStatus.admin) {
       return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
     } else if (value == GroupMemberStatus.rejected) {
-      return Localization().getStringEx('model.groups.member.status.rejected', 'Rejected');
+      return Localization().getStringEx('model.groups.member.status.rejected', 'Denied');
     }
   }
   return null;
