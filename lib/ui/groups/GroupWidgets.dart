@@ -24,7 +24,9 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
@@ -500,7 +502,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
   }
 }
 
-class _EventContent extends StatelessWidget {
+class _EventContent extends StatefulWidget {
   final Group group;
   final Event event;
   final bool isAdmin;
@@ -508,61 +510,97 @@ class _EventContent extends StatelessWidget {
   _EventContent({this.event, this.isAdmin = false, this.group});
 
   @override
+  createState()=> _EventContentState();
+}
+
+class _EventContentState extends State<_EventContent> implements NotificationsListener {
+
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == User.notifyFavoritesUpdated) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    bool isFavorite = User().isExploreFavorite(widget.event);
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
-      Text(event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
+      Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
       ),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),)
+      Text(widget.event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),)
       ),
     ],)),);
 
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
         Analytics().logPage(name: "Group Settings");
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: event, groupId: group?.id,previewMode: isAdmin,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, groupId: widget.group?.id,previewMode: widget.isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
           )
       ),
-      Align(alignment: Alignment.topRight,
-          child:
-          Container(
-            padding: EdgeInsets.only(top: 16, right: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Semantics(
-                    label: Localization().getStringEx("panel.group_detail.button.favorites.title", "Favorites"),
-                    button: true,
-                    child: GestureDetector(onTap: () { /*TBD switch favorite */ },
-                      child: Container(
-                        child: Image.asset('images/icon-star.png', excludeFromSemantics: true,),
-                      ),
-                    )),
-                !isAdmin? Container() :
-                Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                  Container(
-                    padding: EdgeInsets.only(left: 12),
-                    child:
-                    GestureDetector(onTap: () { _onOptionsTap(context);},
-                      child: Container(
-                        child: Image.asset('images/icon-groups-options-orange.png', excludeFromSemantics: true,),
-                      ),
-                    ),
-                  )
-                )
-              ],),))
+      Align(alignment: Alignment.topRight, child:
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Semantics(
+              label: isFavorite ? Localization().getStringEx(
+                  'widget.card.button.favorite.off.title',
+                  'Remove From Favorites') : Localization().getStringEx(
+                  'widget.card.button.favorite.on.title',
+                  'Add To Favorites'),
+              hint: isFavorite ? Localization().getStringEx(
+                  'widget.card.button.favorite.off.hint', '') : Localization()
+                  .getStringEx('widget.card.button.favorite.on.hint', ''),
+              button: true,
+              excludeSemantics: true,
+              child: GestureDetector(onTap: _onFavoriteTap, child:
+                Container(width: 42, height: 42, alignment: Alignment.center, child:
+                  Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+                ),
+              )),
+                
+            !widget.isAdmin? Container(width: 0, height: 0) :
+            Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+              GestureDetector(onTap: () { _onOptionsTap();}, child:
+                Container(width: 42, height: 42, alignment: Alignment.center, child:
+                  Image.asset('images/icon-groups-options-orange.png'),
+                ),
+              ),
+            )
+      ],),)
     ],);
   }
 
-  void _onOptionsTap(BuildContext context){
+  void _onFavoriteTap() {
+    Analytics.instance.logSelect(target: "Favorite");
+    User().switchFavorite(widget.event);
+  }
+
+  void _onOptionsTap(){
+    Analytics.instance.logSelect(target: "Options");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -611,7 +649,7 @@ class _EventContent extends StatelessWidget {
   }
 
   void _onRemoveEvent(BuildContext context){
-    Groups().deleteEventFromGroup(event: event, groupId: group.id).then((value){
+    Groups().deleteEventFromGroup(event: widget.event, groupId: widget.group.id).then((value){
       Navigator.of(context).pop();
     });
   }
@@ -619,7 +657,7 @@ class _EventContent extends StatelessWidget {
   void _onEditEventTap(BuildContext context){
     Analytics().logPage(name: "Create Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group, editEvent: event,onEditTap: (Event event) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event,onEditTap: (Event event) {
       Groups().updateGroupEvents(event).then((String id) {
         if (AppString.isStringNotEmpty(id)) {
           Navigator.pop(context);
@@ -632,11 +670,11 @@ class _EventContent extends StatelessWidget {
   }
 
   bool get _canEdit{
-    return isAdmin;
+    return widget.isAdmin;
   }
 
   bool get _canDelete{
-    return isAdmin;
+    return widget.isAdmin;
   }
 }
 
