@@ -16,7 +16,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:math';
 import 'package:illinois/service/Styles.dart';
@@ -30,13 +29,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/Network.dart';
-
-class AppBytes{
-  static Uint8List decodeBase64Bytes(String base64String){
-    return base64Decode(base64String);
-  }
-}
 
 class AppString {
 
@@ -80,6 +72,10 @@ class AppString {
     else {
       return "${value[0].toUpperCase()}${value.substring(1).toLowerCase()}";
     }
+  }
+
+  static String stripHtmlTags(String value) {
+    return value?.replaceAll(RegExp(r'<[^>]*>'), '')?.replaceAll(RegExp(r'&[^;]+;'), ' ');
   }
 
   /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
@@ -550,25 +546,6 @@ class AppSemantics {
     }
 }
 
-class AppImage {
-  static Map<String, String> getAuthImageHeaders() {
-    Map<String, String> headers;
-      String rokwireApiKey = Config().rokwireApiKey;
-      if (AppString.isStringNotEmpty(rokwireApiKey)) {
-        headers = Map();
-        headers[Network.RokwireApiKey] = rokwireApiKey;
-      }
-    return headers;
-  }
-
-  static MemoryImage memoryImageWithBytes( Uint8List bytes){
-    if(AppCollection.isCollectionNotEmpty(bytes)) {
-      return MemoryImage(bytes);
-    }
-    return null;
-  }
-}
-
 class AppDeviceOrientation {
   
   static DeviceOrientation fromStr(String value) {
@@ -652,8 +629,57 @@ class AppGeometry {
   }
 }
 
-class AppProgressIndicator{
-  static CircularProgressIndicator create([Color color]){
-    return CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(color != null ? color : Styles().colors.fillColorPrimary));
+class AppBoolExpr {
+  
+  static bool eval(dynamic expr, bool Function(String) evalArg) {
+    
+    if (expr is String) {
+
+      if (expr == 'TRUE') {
+        return true;
+      }
+      if (expr == 'FALSE') {
+        return false;
+      }
+
+      bool argValue = (evalArg != null) ? evalArg(expr) : null;
+      return argValue ?? true; // allow everything that is not defined or we do not understand
+    }
+    
+    else if (expr is List) {
+      
+      if (expr.length == 1) {
+        return eval(expr[0], evalArg);
+      }
+      
+      if (expr.length == 2) {
+        dynamic operation = expr[0];
+        dynamic argument = expr[1];
+        if (operation is String) {
+          if (operation == 'NOT') {
+            return !eval(argument, evalArg);
+          }
+        }
+      }
+
+      if (expr.length > 2) {
+        bool result = eval(expr[0], evalArg);
+        for (int index = 1; (index + 1) < expr.length; index += 2) {
+          dynamic operation = expr[index];
+          dynamic argument = expr[index + 1];
+          if (operation is String) {
+            if (operation == 'AND') {
+              result = result && eval(argument, evalArg);
+            }
+            else if (operation == 'OR') {
+              result = result || eval(argument, evalArg);
+            }
+          }
+        }
+        return result;
+      }
+    }
+    
+    return true; // allow everything that is not defined or we do not understand
   }
 }

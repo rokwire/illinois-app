@@ -18,17 +18,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -88,6 +95,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
         Column( crossAxisAlignment: CrossAxisAlignment.start,
             children:[
               Semantics(
+                container: true,
                 label: buttonTitle,
                 hint: widget.buttonHint,
                 excludeSemantics: true,
@@ -116,11 +124,13 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                 ),
               ),
               buttonDescription==null? Container():
-              Container(
-                padding: EdgeInsets.only(right: 42, bottom: 12),
-                child: Text(buttonDescription,
-                  style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                ),
+              Semantics(container: true, child:
+                Container(
+                  padding: EdgeInsets.only(right: 42, bottom: 12),
+                  child: Text(buttonDescription,
+                    style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  ),
+                )
               )
             ]
         )
@@ -492,7 +502,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
   }
 }
 
-class _EventContent extends StatelessWidget {
+class _EventContent extends StatefulWidget {
   final Group group;
   final Event event;
   final bool isAdmin;
@@ -500,59 +510,97 @@ class _EventContent extends StatelessWidget {
   _EventContent({this.event, this.isAdmin = false, this.group});
 
   @override
+  createState()=> _EventContentState();
+}
+
+class _EventContentState extends State<_EventContent> implements NotificationsListener {
+
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == User.notifyFavoritesUpdated) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    bool isFavorite = User().isExploreFavorite(widget.event);
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
-      Text(event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
+      Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
       ),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),)
+      Text(widget.event.timeDisplayString,  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),)
       ),
     ],)),);
 
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
         Analytics().logPage(name: "Group Settings");
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: event,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, groupId: widget.group?.id,previewMode: widget.isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
           )
       ),
-      Align(alignment: Alignment.topRight,
-          child:
-          Container(
-            padding: EdgeInsets.only(top: 16, right: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Semantics(
-                    label: Localization().getStringEx("panel.group_detail.button.favorites.title", "Favorites"),
-                    button: true,
-                    child: GestureDetector(onTap: () { /*TBD switch favorite */ },
-                      child: Container(
-                        child: Image.asset('images/icon-star.png', excludeFromSemantics: true,),
-                      ),
-                    )),
-                !isAdmin? Container() :
-                Container(
-                  padding: EdgeInsets.only(left: 12),
-                  child:
-                  GestureDetector(onTap: () { _onOptionsTap(context);},
-                    child: Container(
-                      child: Image.asset('images/icon-groups-options-orange.png'),
-                    ),
-                  ),
-                )
-              ],),))
+      Align(alignment: Alignment.topRight, child:
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Semantics(
+              label: isFavorite ? Localization().getStringEx(
+                  'widget.card.button.favorite.off.title',
+                  'Remove From Favorites') : Localization().getStringEx(
+                  'widget.card.button.favorite.on.title',
+                  'Add To Favorites'),
+              hint: isFavorite ? Localization().getStringEx(
+                  'widget.card.button.favorite.off.hint', '') : Localization()
+                  .getStringEx('widget.card.button.favorite.on.hint', ''),
+              button: true,
+              excludeSemantics: true,
+              child: GestureDetector(onTap: _onFavoriteTap, child:
+                Container(width: 42, height: 42, alignment: Alignment.center, child:
+                  Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+                ),
+              )),
+                
+            !widget.isAdmin? Container(width: 0, height: 0) :
+            Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+              GestureDetector(onTap: () { _onOptionsTap();}, child:
+                Container(width: 42, height: 42, alignment: Alignment.center, child:
+                  Image.asset('images/icon-groups-options-orange.png'),
+                ),
+              ),
+            )
+      ],),)
     ],);
   }
 
-  void _onOptionsTap(BuildContext context){
+  void _onFavoriteTap() {
+    Analytics.instance.logSelect(target: "Favorite");
+    User().switchFavorite(widget.event);
+  }
+
+  void _onOptionsTap(){
+    Analytics.instance.logSelect(target: "Options");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -568,21 +616,13 @@ class _EventContent extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Container(height: 48,),
-                RibbonButton(
-                  height: null,
-                  leftIcon: "images/icon-leave-group.png",
-                  label:Localization().getStringEx("panel.group_detail.button.remove_event.title", "Remove Event"),
-                  onTap: (){
-                    showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
-                  },
-                ),
                 !_canDelete? Container():
                   RibbonButton(
                     height: null,
                     leftIcon: "images/icon-leave-group.png",
-                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete Event"),
+                    label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
                     onTap: (){
-                      showDialog(context: context, builder: (context)=>_buildDeleteEventDialog(context)).then((value) => Navigator.pop(context));
+                      showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
                     },
                   ),
                 !_canEdit? Container():
@@ -603,40 +643,318 @@ class _EventContent extends StatelessWidget {
 
   Widget _buildRemoveEventDialog(BuildContext context){
     return GroupsConfirmationDialog(
-        message: Localization().getStringEx("panel.group_detail.button.remove_event.title",  "Remove this event from your group page?"),
+        message: Localization().getStringEx("panel.group_detail.message.remove_event.title",  "Are you sure you want to remove this event from your group page?"),
         buttonTitle:Localization().getStringEx("panel.group_detail.button.remove.title", "Remove"),
         onConfirmTap:(){_onRemoveEvent(context);});
   }
 
-  Widget _buildDeleteEventDialog(BuildContext context){
-    return GroupsConfirmationDialog(
-        message: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Delete this event from your groups page?"),
-        buttonTitle:  Localization().getStringEx("panel.group_detail.button.delete.title","Delete"),
-        onConfirmTap:(){_onDeleteEvent(context);});
-  }
-
   void _onRemoveEvent(BuildContext context){
-    Groups().removeEventFromGroup(eventId: event.id, groupId: group.id).then((value){
-      Navigator.of(context).pop();
-    });
-  }
-
-  void _onDeleteEvent(BuildContext context){
-    Groups().deleteEventFromGroup(eventId: event.id, groupId: group.id).then((value){
+    Groups().deleteEventFromGroup(event: widget.event, groupId: widget.group.id).then((value){
       Navigator.of(context).pop();
     });
   }
 
   void _onEditEventTap(BuildContext context){
     Analytics().logPage(name: "Create Event");
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: group,)));
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event,onEditTap: (Event event) {
+      Groups().updateGroupEvents(event).then((String id) {
+        if (AppString.isStringNotEmpty(id)) {
+          Navigator.pop(context);
+        }
+        else {
+          AppAlert.showDialogResult(context, "Unable to update event");
+        }
+      });
+    })));
   }
 
   bool get _canEdit{
-    return false; //TBD
+    return widget.isAdmin;
   }
 
   bool get _canDelete{
-    return false; //TBD
+    return widget.isAdmin;
+  }
+}
+
+/////////////////////////////////////
+// GroupAddImageWidget
+
+class GroupAddImageWidget extends StatefulWidget {
+  @override
+  _GroupAddImageWidgetState createState() => _GroupAddImageWidgetState();
+}
+
+class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
+  var _imageUrlController = TextEditingController();
+
+  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
+  bool _showProgress = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _imageUrlController.dispose();
+    super.dispose();
+  }
+
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Styles().colors.fillColorPrimary,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, top: 10),
+                    child: Text(
+                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: Styles().fontFamilies.medium,
+                          fontSize: 24),
+                    ),
+                  ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: _onTapCloseImageSelection,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10, top: 10),
+                      child: Text(
+                        '\u00D7',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 50),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: TextFormField(
+                              controller: _imageUrlController,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
+                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
+                              ))),
+                      Padding(
+                          padding: EdgeInsets.all(10),
+                          child: RoundedButton(
+                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
+                              borderColor: Styles().colors.fillColorSecondary,
+                              backgroundColor: Styles().colors.background,
+                              textColor: Styles().colors.fillColorPrimary,
+                              onTap: _onTapUseUrl)),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(10),
+                              child: RoundedButton(
+                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
+                                  borderColor: Styles().colors.fillColorSecondary,
+                                  backgroundColor: Styles().colors.background,
+                                  textColor: Styles().colors.fillColorPrimary,
+                                  onTap: _onTapChooseFromDevice)),
+                          _showProgress ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary)) : Container(),
+                        ],
+                      ),
+                    ]))
+          ],
+        ));
+  }
+
+  void _onTapCloseImageSelection() {
+    Analytics.instance.logSelect(target: "Close image selection");
+    Navigator.pop(context, "");
+  }
+
+  void _onTapUseUrl() {
+    Analytics.instance.logSelect(target: "Use Url");
+    String url = _imageUrlController.value.text;
+    if (url == "") {
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
+      return;
+    }
+
+    bool isReadyUrl = url.endsWith(".webp");
+    if (isReadyUrl) {
+      //ready
+      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+      Navigator.pop(context, url);
+    } else {
+      //we need to process it
+      setState(() {
+        _showProgress = true;
+      });
+
+      Future<ImagesResult> result =
+      ImageService().useUrl(_imageType, url);
+      result.then((logicResult) {
+        setState(() {
+          _showProgress = false;
+        });
+
+
+        ImagesResultType resultType = logicResult.resultType;
+        switch (resultType) {
+          case ImagesResultType.CANCELLED:
+          //do nothing
+            break;
+          case ImagesResultType.ERROR_OCCURRED:
+            AppToast.show(logicResult.errorMessage);
+            break;
+          case ImagesResultType.SUCCEEDED:
+          //ready
+            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+            Navigator.pop(context, logicResult.data);
+            break;
+        }
+      });
+    }
+  }
+
+  void _onTapChooseFromDevice() {
+    Analytics.instance.logSelect(target: "Choose From Device");
+
+    setState(() {
+      _showProgress = true;
+    });
+
+    Future<ImagesResult> result =
+    ImageService().chooseFromDevice(_imageType);
+    result.then((logicResult) {
+      setState(() {
+        _showProgress = false;
+      });
+
+      ImagesResultType resultType = logicResult.resultType;
+      switch (resultType) {
+        case ImagesResultType.CANCELLED:
+        //do nothing
+          break;
+        case ImagesResultType.ERROR_OCCURRED:
+          AppToast.show(logicResult.errorMessage);
+          break;
+        case ImagesResultType.SUCCEEDED:
+        //ready
+          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
+          Navigator.pop(context, logicResult.data);
+          break;
+      }
+    });
+  }
+}
+
+/////////////////////////////////////
+// GroupCard
+
+
+enum GroupCardDisplayType { myGroup, allGroups }
+
+class GroupCard extends StatelessWidget {
+  final Group group;
+  final GroupCardDisplayType displayType;
+
+  GroupCard({@required this.group, this.displayType = GroupCardDisplayType.allGroups});
+
+  @override
+  Widget build(BuildContext context) {
+    String pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [AppString.getDefaultEmptyString(value: group.pendingCount?.toString())]);
+    return GestureDetector(
+        onTap: () => _onTapCard(context),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                    color: Styles().colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  _buildHeading(),
+                  Container(height: 3),
+                  Row(children: [
+                    Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            child: Text(group?.title ?? "",
+                                style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))))
+                  ]),
+                  Visibility(
+                    visible: (group?.currentUserIsAdmin ?? false) && (group.pendingCount > 0),
+                    child: Text(pendingCountText ?? "",
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies.regular,
+                          fontSize: 16,
+                          color: Styles().colors.textBackgroundVariant
+                      ),
+                    ),
+                  ),
+                  Container(height: 4),
+                  displayType == GroupCardDisplayType.allGroups ? Container() : _buildUpdateTime()
+                ]))));
+  }
+
+  Widget _buildHeading() {
+    bool showMember = group?.currentUserAsMember?.status != null;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+      Visibility(visible: showMember, child: _buildMember()),
+      Visibility(visible: showMember, child: Container(height: 6)),
+      Text(AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")),
+          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+    ]);
+  }
+
+  Widget _buildMember() {
+    return Row(children: <Widget>[
+      Semantics(
+          label: "status: " + (group?.currentUserStatusText?.toLowerCase() ?? "") + " ,for: ",
+          excludeSemantics: true,
+          child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(color: group.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
+              child: Center(
+                  child: Text(group.currentUserStatusText.toUpperCase(),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white))))),
+      Expanded(child: Container())
+    ]);
+  }
+
+  Widget _buildUpdateTime() {
+    return Container(
+        child: Text(
+      _timeUpdatedText,
+      style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface),
+    ));
+  }
+
+  void _onTapCard(BuildContext context) {
+    Analytics.instance.logSelect(target: "${group.title}");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
+  }
+
+  String get _timeUpdatedText {
+    return "Updated about 2 hours ago"; //TBD
   }
 }

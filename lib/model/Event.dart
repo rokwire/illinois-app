@@ -80,6 +80,11 @@ class Event with Explore implements Favorite {
 
   String randomImageURL;
 
+  String createdByGroupId;
+  bool isGroupPrivate;
+
+  bool isEventFree;
+
   Event({Map<String, dynamic> json, Event other}) {
     if (json != null) {
       _initFromJson(json);
@@ -127,7 +132,12 @@ class Event with Explore implements Favorite {
     outlookUrl = json['outlookUrl'];
     speaker = json['speaker'];
     registrationLabel = json['registrationLabel'];
-    registrationUrl = json['registrationUrl'];
+    if (AppString.isStringNotEmpty(json['registrationUrl'])) {
+      registrationUrl = json['registrationUrl'];
+    }
+    else if (AppString.isStringNotEmpty(json['registrationURL'])) {
+      registrationUrl = json['registrationURL'];
+    }
     cost = json['cost'];
     this.contacts = contacts;
     this.tags = tags;
@@ -142,7 +152,10 @@ class Event with Explore implements Favorite {
     isSuperEvent = json['isSuperEvent'] ?? false;
     this.subEventsMap = subEventsMap;
     track = json['track'];
-    isVirtual = json['isVirtual'];
+    isVirtual = json['isVirtual'] ?? false;
+    createdByGroupId = json["createdByGroupId"];
+    isGroupPrivate = json["isGroupPrivate"] ?? false;
+    isEventFree = json["isEventFree"] ?? false;
   }
 
   void _initFromOther(Event other) {
@@ -184,6 +197,9 @@ class Event with Explore implements Favorite {
     subEventsMap = other?.subEventsMap;
     track = other?.track;
     isVirtual = other?.isVirtual;
+    createdByGroupId = other?.createdByGroupId;
+    isGroupPrivate = other?.isGroupPrivate;
+    isEventFree = other?.isEventFree;
   }
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -240,6 +256,9 @@ class Event with Explore implements Favorite {
       "subEvents": subEventsMap,
       "track": track,
       'isVirtual': isVirtual,
+      'createdByGroupId': createdByGroupId,
+      'isGroupPrivate': isGroupPrivate,
+      'isEventFree': isEventFree,
     };
   }
 
@@ -400,6 +419,15 @@ class Event with Explore implements Favorite {
     }
     if(isVirtual!=null) {
       result['isVirtual']= isVirtual;
+    }
+    if(createdByGroupId!=null) {
+      result['createdByGroupId']= createdByGroupId;
+    }
+    if(isGroupPrivate!=null) {
+      result['isGroupPrivate']= isGroupPrivate;
+    }
+    if(isEventFree!=null) {
+      result['isEventFree']= isEventFree;
     }
 
     return result;

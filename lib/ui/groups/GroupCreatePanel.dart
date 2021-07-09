@@ -19,13 +19,18 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/Network.dart';
+import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
+import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupCreatePanel extends StatefulWidget {
@@ -35,7 +40,6 @@ class GroupCreatePanel extends StatefulWidget {
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
-  final _groupTagsController = TextEditingController();
 
   Group _group;
 
@@ -47,6 +51,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _groupNamesLoading = false;
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
+  bool get _canSave => AppString.isStringNotEmpty(_group.title)
+      && AppString.isStringNotEmpty(_group.category);
   bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
 
   @override
@@ -81,7 +87,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {
       _groupCategoeriesLoading = true;
     });
-    Groups().categories.then((categories){
+    Groups().loadCategories().then((categories){
       setState(() {
         _groupCategories = categories;
       });
@@ -129,6 +135,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         Container(
                           color: Styles().colors.background,
                           child: Column(children: <Widget>[
+                            _buildImageSection(),
                             _buildNameField(),
                             _buildNameError(),
                             _buildDescriptionField(),
@@ -143,6 +150,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             Container(height: 24,),
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             _buildPrivacyDropDown(),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                            _buildMembershipLayout()
                         ],),)
 
                       ]),
@@ -157,6 +166,48 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         backgroundColor: Styles().colors.background);
   }
 
+  //Image
+  Widget _buildImageSection() {
+    final double _imageHeight = 200;
+
+    return Container(
+        height: _imageHeight,
+        color: Styles().colors.background,
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          AppString.isStringNotEmpty(_group?.imageURL)
+              ? Positioned.fill(child: Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders))
+              : Container(),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
+          Container(
+              height: _imageHeight,
+              child: Center(
+                  child: Semantics(
+                      label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                      hint: Localization().getStringEx("panel.groups_settings.add_image.hint", ""),
+                      button: true,
+                      excludeSemantics: true,
+                      child: ScalableSmallRoundedButton(
+                          maxLines: 2,
+                          label: Localization().getStringEx("panel.groups_settings.add_image", "Add cover image"),
+                          textColor: Styles().colors.fillColorPrimary,
+                          onTap: _onTapAddImage,))))
+        ]));
+  }
+
+  void _onTapAddImage() async {
+    Analytics.instance.logSelect(target: "Add Image");
+    String _imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    if (_imageUrl != null) {
+      if (mounted) {
+        setState(() {
+          _group.imageURL = _imageUrl;
+        });
+      }
+    }
+    Log.d("Image Url: $_imageUrl");
+  }
+
   //Name
   Widget _buildNameField() {
     String title = Localization().getStringEx("panel.groups_create.name.title", "NAME YOUR GROUP");
@@ -168,7 +219,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-         _buildSectionTitle(title,null),
+         _buildSectionTitle(title,null, true),
           Container(
             height: 48,
             padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
@@ -273,7 +324,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildSectionTitle(Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-              Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."),),
+              Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
             GroupDropDownButton(
               emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
               buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
@@ -289,58 +340,33 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           ],
         ));
   }
-  //
+
   //Tags
-  Widget _buildTagsLayout(){
+  Widget _buildTagsLayout() {
     String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSectionTitle(fieldTitle,
-              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
-            Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    height: 48,
-                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-                    child: Semantics(
-                        label: fieldTitle,
-                        hint: fieldHint,
-                        textField: true,
-                        excludeSemantics: true,
-                        child: TextField(
-                          controller: _groupTagsController,
-                          decoration: InputDecoration(border: InputBorder.none,),
-                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                        )),
-                  ),
-                ),
-                Container(width: 8,),
-                Expanded(
-                  flex: 2,
-                  child:
-                  ScalableRoundedButton(
-                    label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
-                    hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", ""),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(
+                flex: 5,
+                child: _buildSectionTitle(
+                    fieldTitle, Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
+            Container(width: 8),
+            Expanded(
+                flex: 2,
+                child: ScalableRoundedButton(
+                    label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
+                    hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
                     backgroundColor: Styles().colors.white,
                     textColor: Styles().colors.fillColorPrimary,
                     borderColor: Styles().colors.fillColorSecondary,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    onTap: _onTapAddTag,
-                  )
-                )
-              ],
-            ),
-            Container(height: 10,),
-            _constructTagButtonsContent()
-          ],
-        ));
+                    onTap: _onTapTags))
+          ]),
+          Container(height: 10),
+          _constructTagButtonsContent()
+        ]));
   }
 
   Widget _constructTagButtonsContent(){
@@ -418,19 +444,17 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     setState(() {});
   }
 
-  void _onTapAddTag(){
-    String tag = _groupTagsController.text?.toString();
-    if(_group!=null) {
-      if (_group.tags == null) {
-        _group.tags = [];
+  void _onTapTags() {
+    Analytics.instance.logSelect(target: "Tags");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group?.tags))).then((tags) {
+      // (tags == null) means that the user hit the back button
+      if (tags != null) {
+        setState(() {
+          _group.tags = tags;
+        });
       }
-      _group.tags.add(tag);
-      _groupTagsController.clear();
-    }
-
-    setState(() {});
+    });
   }
-  //
 
   //Privacy
   Widget _buildPrivacyDropDown() {
@@ -448,8 +472,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               initialSelectedValue: _group.privacy,
               constructDescription:
                   (item) => item == GroupPrivacy.private?
-              Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
-              Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events and posts"),
+              Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events") :
+              Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events"),
               constructTitle:
                   (item) => item == GroupPrivacy.private?
               Localization().getStringEx("panel.common.privacy_title.private", "Private") :
@@ -462,15 +486,81 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               }
           )
         ),
-        Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
-          child:Text(
-            Localization().getStringEx("panel.groups_create.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
-            style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
-          ),),
+        Semantics(container: true, child:
+          Container(padding: EdgeInsets.symmetric(horizontal: 24,vertical: 12),
+            child:Text(
+              Localization().getStringEx("panel.groups_create.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+              style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
+            ),)),
         Container(height: 40,)
       ],);
   }
-  //
+
+  // Membership Questions
+  Widget _buildMembershipLayout() {
+    int questionsCount = _group?.questions?.length ?? 0;
+    String questionsDescription = (0 < questionsCount)
+        ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
+        : Localization().getStringEx("panel.groups_create..questions.missing.label", "No question");
+
+    return Container(
+      color: Styles().colors.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(children: <Widget>[
+        Container(height: 12),
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildMembershipButton(
+                title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
+                description: questionsDescription,
+                onTap: _onTapQuestions)),
+        Container(height: 40),
+      ]),
+    );
+  }
+
+  Widget _buildMembershipButton({String title, String description, Function onTap}) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors.white,
+                border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.start, mainAxisSize: MainAxisSize.max, children: <Widget>[
+                Expanded(
+                    child: Text(
+                  title,
+                  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),
+                )),
+                Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Image.asset('images/chevron-right.png'),
+                )
+              ]),
+              Container(
+                  padding: EdgeInsets.only(right: 42, top: 4),
+                  child: Text(
+                    description,
+                    style: TextStyle(color: Styles().colors.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  ))
+            ])));
+  }
+
+  void _onTapQuestions() {
+    Analytics.instance.logSelect(target: "Membership Questions");
+    if (_group.questions == null) {
+      _group.questions = [];
+    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group.questions))).then((dynamic questions) {
+      if (questions is List<GroupMembershipQuestion>) {
+        _group.questions = questions;
+      }
+      setState(() {});
+    });
+  }
 
   //Buttons
   Widget _buildButtonsLayout() {
@@ -480,10 +570,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.create.title", "Request Group Approval"),
-              backgroundColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
-              textColor: Styles().colors.fillColorPrimary,
+              label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
+              backgroundColor: Styles().colors.white,
+              borderColor: _canSave ? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+              textColor: _canSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+              enabled: _canSave,
               onTap: _onCreateTap,
             ),
           )
@@ -500,29 +591,28 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       ],);
   }
 
-  void _onCreateTap(){
-    setState(() {
-      _creating = true;
-    });
-    Groups().createGroup(_group).then((detail){
-      if(detail!=null){
-        //ok
+  void _onCreateTap() {
+    if(!_creating && _canSave) {
+      setState(() {
+        _creating = true;
+      });
+      Groups().createGroup(_group).then((detail) {
         setState(() {
           _creating = false;
         });
-
-        Navigator.pop(context);
-      }
-    }).catchError((e){
-      //error
-      setState(() {
-        _creating = false;
+        if (detail != null) { //ok
+          Navigator.pop(context);
+        } else { //not ok
+          AppAlert.showDialogResult(context, Localization().getStringEx(
+              "panel.groups_create.failed.msg", "Failed to create group."));
+        }
       });
-    });
+    }
   }
+
   //
   // Common
-  Widget _buildSectionTitle(String title, String description){
+  Widget _buildSectionTitle(String title, String description, [bool requiredMark = false]){
     return Container(
       padding: EdgeInsets.only(bottom: 8, top:16),
       child:
@@ -531,13 +621,21 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
         Semantics(
           label: title,
-          hint: title,
+          hint: description,
           header: true,
           excludeSemantics: true,
           child:
-          Text(
-            title,
-            style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold),
+          RichText(
+            text: TextSpan(
+              text: title,
+              children: [
+                TextSpan(
+                  text: requiredMark ?  " *" : "",
+                  style: TextStyle(color: Styles().colors.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies.extraBold),
+                )
+              ],
+              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold),
+            ),
           ),
         ),
         description==null? Container():
@@ -545,6 +643,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               padding: EdgeInsets.only(top: 2),
               child: Text(
                 description,
+                semanticsLabel: "",
                 style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
               ),
             )
@@ -559,7 +658,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child:
           Semantics(
             label: title,
-            hint: title,
             header: true,
             excludeSemantics: true,
             child:

@@ -19,6 +19,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:location/location.dart' as Core;
 
@@ -53,7 +54,7 @@ class ExploreService /* with Service */ {
           recurrenceId,
           limit);
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get('${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
@@ -83,7 +84,7 @@ class ExploreService /* with Service */ {
       }
       http.Response response;
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get('${Config().eventsOrConvergeUrl}/$eventId', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/$eventId', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to retrieve event with id: $eventId');
         Log.e(e.toString());
@@ -103,7 +104,7 @@ class ExploreService /* with Service */ {
     return null;
   }
 
-  Future<bool> postNewEvent(Explore explore) async{
+  Future<String> postNewEvent(Explore explore) async{
     if(_enabled) {
       Event event = explore is Event ? explore : null;
       http.Response response;
@@ -112,13 +113,51 @@ class ExploreService /* with Service */ {
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.User) : null;
-        return ((response != null) && (response.statusCode == 200 || response.statusCode == 201));
+        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
       }
     }
-    return false;
+    return null;
+  }
+
+  Future<String> updateEvent(Event event) async{
+    if(_enabled && event!=null) {
+      http.Response response;
+      try {
+        dynamic body = json.encode(event.toNotNullJson());
+        String url = Config().eventsUrl + "/" + event.id;
+        response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
+            headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
+            auth: NetworkAuth.User) : null;
+        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
+      } catch (e) {
+        Log.e('Failed to load events');
+        Log.e(e.toString());
+      }
+    }
+    return null;
+  }
+
+  Future<bool> deleteEvent(String eventId) async{
+    if(_enabled && eventId!=null) {
+      http.Response response;
+      try {
+        String url = Config().eventsUrl + "/" + eventId;
+        response = (Config().eventsUrl != null) ? await Network().delete(url,
+            headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
+            auth: NetworkAuth.User) : null;
+    Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+    return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
+    } catch (e) {
+    Log.e('Failed to load events');
+    Log.e(e.toString());
+    }
+  }
+    return null;
   }
 
   Future<List<Event>> loadEventsByIds(Set<String> eventIds) async {
@@ -138,8 +177,8 @@ class ExploreService /* with Service */ {
       http.Response response;
       String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
       try {
-        response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-            '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get(
+            '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events by ids.');
         Log.e(e?.toString());
@@ -226,6 +265,32 @@ class ExploreService /* with Service */ {
       }
     }
     return null;
+  }
+
+  void sortEvents(List<Explore> events) {
+    if (AppCollection.isCollectionEmpty(events) || (events.length == 1)) {
+      return;
+    }
+    events.sort((Explore first, Explore second) => _compareEvents(first, second));
+  }
+
+  int _compareEvents(Explore first, Explore second) {
+    if (first is Event && second is Event) {
+      int firstScore = first?.convergeScore ?? -1;
+      int secondScore = second?.convergeScore ?? -1;
+      int comparedScore = secondScore.compareTo(firstScore); //Descending order by score
+      if (comparedScore == 0) {
+        if (first.startDateGmt == null || second.startDateGmt == null) {
+          return 0;
+        } else {
+          return (first.startDateGmt.isBefore(second.startDateGmt)) ? -1 : 1;
+        }
+      } else {
+        return comparedScore;
+      }
+    } else {
+      return 0;
+    }
   }
 
   String _buildEventsQueryParameters(String searchText, Core.LocationData locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
@@ -413,8 +478,8 @@ class ExploreService /* with Service */ {
     }
     http.Response response;
     try {
-      response = (Config().eventsOrConvergeUrl != null) ? await Network().get(
-          '${Config().eventsOrConvergeUrl}$queryParameters', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+      response = (Config().eventsUrl != null) ? await Network().get(
+          '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
     } catch (e) {
       Log.e('Failed to load super event sub events');
       Log.e(e.toString());
@@ -462,4 +527,8 @@ class ExploreService /* with Service */ {
 
   bool get _enabled => AppString.isStringNotEmpty(Config().eventsOrConvergeUrl)
       && AppString.isStringNotEmpty(Config().eventsUrl);
+
+  NetworkAuth get _userOrAppAuth{
+    return Auth().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
+  }
 }

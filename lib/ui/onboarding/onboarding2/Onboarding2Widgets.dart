@@ -76,7 +76,7 @@ class Onboarding2BackButton extends StatelessWidget {
   final String image;
   final Color color;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left-gray.png', this.color});
+  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left.png', this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -212,18 +212,37 @@ class Onboarding2InfoDialog extends StatelessWidget{
                         Container(height: 12,),
                         content ?? Container(),
                         Container(height:10),
+//                        RichText(
+//                            textScaleFactor: MediaQuery.textScaleFactorOf(context),
+//                            text: new TextSpan(
+//                                children: <TextSpan>[
+//                                  TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
+//                                  TextSpan(text:Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy Policy "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+//                                      recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
+//                                        WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
+//                                      ]),
+//                                ]
+//                            )
+//                        ),
+
                         RichText(
                             textScaleFactor: MediaQuery.textScaleFactorOf(context),
                             text: new TextSpan(
-                                children: <TextSpan>[
+                                children:[
                                   TextSpan(text: Localization().getStringEx("panel.onboarding2.dialog.learn_more.collected_information_disclosure", "All of this information is collected and used in accordance with our "), style: Onboarding2InfoDialog.contentStyle,),
-                                  TextSpan(text:Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy Policy "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
-                                      recognizer: TapGestureRecognizer()..onTap = _openPrivacyPolicy, children: [
-                                        WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
-                                      ]),
+                                  WidgetSpan(child: Onboarding2UnderlinedButton(title: Localization().getStringEx("panel.onboarding2.dialog.learn_more.button.privacy_policy.title", "Privacy notice "), onTap: _openPrivacyPolicy, padding: EdgeInsets.all(0),fontFamily: Styles().fontFamilies.regular,fontSize: 14,)),
+                                  WidgetSpan(child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                                      ),
+                                      padding: EdgeInsets.only(bottom: 2),
+                                      child: Container(
+                                          padding: EdgeInsets.only(bottom: 4),
+                                          child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))),
                                 ]
                             )
-                        )
+                        ),
+                        Container(height:36)
                       ],
                     )
                   )
@@ -237,7 +256,51 @@ class Onboarding2InfoDialog extends StatelessWidget{
   void _openPrivacyPolicy(){
     Analytics.instance.logSelect(target: "Privacy Policy");
     if (Config().privacyPolicyUrl != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.settings.privacy_statement.label.title", "Privacy Policy"),)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().privacyPolicyUrl, hideToolBar:true, title: Localization().getStringEx("panel.onboarding2.panel.privacy_notice.heading.title", "Privacy notice"),)));
     }
   }
+}
+
+class Onboarding2UnderlinedButton extends StatelessWidget{
+  final Function onTap;
+  final String title;
+  final String hint;
+  final double fontSize;
+  final EdgeInsets padding;
+  final String fontFamily;
+
+  const Onboarding2UnderlinedButton({Key key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets.symmetric(vertical: 20), this.fontFamily}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return  GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Semantics(
+          label: title,
+          hint: hint,
+          button: true,
+          excludeSemantics: true,
+          child: Padding(
+              padding: padding,
+              child: Container(
+                  decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1, ),)
+                  ),
+                  padding: EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                        fontFamily: fontFamily ?? Styles().fontFamilies.medium,
+                        fontSize: fontSize,
+                        color: Styles().colors.fillColorPrimary,
+                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationThickness: 1,
+                        decorationStyle:
+                        TextDecorationStyle.solid),
+                  )))),
+    );
+  }
+
 }

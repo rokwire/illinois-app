@@ -116,7 +116,7 @@ class Group {
     json['image_url']         = imageURL;
     json['web_url']           = webURL;
     json['tags']              = tags;
-    json['members']           = AppCollection.isCollectionNotEmpty(questions) ? members.map((e) => e?.toJson()).toList() : null;
+    json['members']           = AppCollection.isCollectionNotEmpty(members) ? members.map((e) => e?.toJson()).toList() : null;
     json['membership_questions']= AppCollection.isCollectionNotEmpty(questions) ? questions.map((e) => e?.question ?? "").toList() : null;
 
     return json;
@@ -218,6 +218,18 @@ class Group {
     }
     return membersCount;
   }
+
+  int get pendingCount{
+    int membersCount = 0;
+    if(AppCollection.isCollectionNotEmpty(members)){
+      for(Member member in members){
+        if(member.isPendingMember){
+          membersCount++;
+        }
+      }
+    }
+    return membersCount;
+  }
 }
 
 //////////////////////////////
@@ -282,7 +294,11 @@ class Member {
     try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
     try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
     try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
-    try { answers = _answers.map((answerJson) => GroupMembershipAnswer.fromJson(answerJson)).toList(); } catch(e) { print(e.toString()); }
+    try {
+      answers = AppCollection.isCollectionNotEmpty(_answers) ? _answers.map((answerJson) => GroupMembershipAnswer.fromJson(answerJson)).toList() : null;
+    } catch (e) {
+      print(e.toString());
+    }
 
     try { dateCreated    = AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true); } catch(e) { print(e.toString()); }
     try { dateUpdated    = AppDateTime().dateTimeFromString(json['date_updated'], format: AppDateTime.parkingEventDateFormat, isUtc: true); } catch(e) { print(e.toString()); }
@@ -316,7 +332,7 @@ class Member {
     json['photo_url']           = photoURL;
     json['status']              = groupMemberStatusToString(status);
     json['officerTitle']        = officerTitle;
-    json['answers']             = answers.map((answer) => answer.toJson()).toList();
+    json['answers']             = AppCollection.isCollectionNotEmpty(answers) ? answers.map((answer) => answer.toJson()).toList() : null;
     json['date_created']        = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.parkingEventDateFormat);
     json['date_updated']        = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.parkingEventDateFormat);
 
@@ -398,7 +414,7 @@ String groupMemberStatusToDisplayString(GroupMemberStatus value) {
     } else if (value == GroupMemberStatus.admin) {
       return Localization().getStringEx('model.groups.member.status.admin', 'Admin');
     } else if (value == GroupMemberStatus.rejected) {
-      return Localization().getStringEx('model.groups.member.status.rejected', 'Rejected');
+      return Localization().getStringEx('model.groups.member.status.rejected', 'Denied');
     }
   }
   return null;

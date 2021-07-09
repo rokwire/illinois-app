@@ -325,13 +325,13 @@ class Dining with Explore implements Favorite {
 //////////////////////////////
 /// PaymentType
 
-enum PaymentType { ClassicMeal, CafeCredits, IlliniCash, CreditCard, Cash, GooglePay, ApplePay  }
+enum PaymentType { ClassicMeal, DiningDollars, IlliniCash, CreditCard, Cash, GooglePay, ApplePay  }
 
 class PaymentTypeHelper {
   static String paymentTypeToString(PaymentType paymentType) {
     switch(paymentType) {
       case PaymentType.ClassicMeal: return 'ClassicMeal';
-      case PaymentType.CafeCredits: return 'CaféCredits';
+      case PaymentType.DiningDollars: return 'Dining Dollars';
       case PaymentType.IlliniCash:  return 'IlliniCash';
       case PaymentType.CreditCard:  return 'CreditCard';
       case PaymentType.Cash:        return 'Cash';
@@ -346,8 +346,8 @@ class PaymentTypeHelper {
       if (paymentTypeString == 'ClassicMeal') {
         return PaymentType.ClassicMeal;
       }
-      else if (paymentTypeString == 'CafeCredits') {
-        return PaymentType.CafeCredits;
+      else if (paymentTypeString == 'Dining Dollars') {
+        return PaymentType.DiningDollars;
       }
       else if (paymentTypeString == 'IlliniCash') {
         return PaymentType.IlliniCash;
@@ -374,7 +374,7 @@ class PaymentTypeHelper {
       switch (paymentType) {
         case PaymentType.ClassicMeal:
           return Localization().getStringEx('payment_type.text.classic_meal', 'Classic Meal');
-        case PaymentType.CafeCredits:
+        case PaymentType.DiningDollars:
           return Localization().getStringEx('payment_type.text.dining_dollars', 'Dining Dollars');
        case PaymentType.IlliniCash:
           return Localization().getStringEx('payment_type.text.illini_cash', 'Illini Cash');
@@ -398,8 +398,8 @@ class PaymentTypeHelper {
     switch (paymentType) {
       case PaymentType.ClassicMeal:
         return 'images/icon-payment-type-classic-meal.png';
-      case PaymentType.CafeCredits:
-        return 'images/icon-payment-type-cafe-credits.png';
+      case PaymentType.DiningDollars:
+        return 'images/icon-payment-type-dining-dollars.png';
       case PaymentType.IlliniCash:
         return 'images/icon-payment-type-ilini-cash.png';
       case PaymentType.CreditCard:

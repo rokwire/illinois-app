@@ -117,6 +117,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                     SliverToutHeaderBar(
                       context: context,
                       imageUrl: widget.event.exploreImageURL,
+                      leftTriangleColor: Colors.white
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate(
@@ -131,24 +132,36 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: <Widget>[
                                         _buildPreviewHeader(),
-                                        Padding(padding: EdgeInsets.only(left: _horizontalPadding), child:_exploreHeading()),
+                                        _exploreHeading(),
                                         Column(
                                           children: <Widget>[
                                             Padding(
                                                 padding:
-                                                EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                                                EdgeInsets.symmetric(horizontal: 0),
                                                 child: Column(
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: <Widget>[
-                                                      _exploreTitle(),
-                                                      _eventSponsor(),
-                                                      _exploreDetails(),
-                                                      _exploreSubTitle(),
-                                                      _exploreDescription(),
-                                                      _buildUrlButtons(),
-                                                      _buildPreviewButtons(),
-                                                      _buildGroupButtons(),
+                                                    Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                                                      color: Colors.white,
+                                                      child:Column(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: <Widget>[
+                                                          _exploreTitle(),
+                                                          _eventSponsor(),
+                                                          _exploreDetails(),
+                                                          _exploreSubTitle(),
+                                                        ])),
+                                                      Container(
+                                                        padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                                                        child: Column(children: [
+                                                          _exploreDescription(),
+                                                          _buildUrlButtons(),
+                                                          _buildPreviewButtons(),
+                                                          _buildGroupButtons(),
+                                                      ],))
                                                     ]
                                                 )),
                                           ],
@@ -177,7 +190,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String category = widget?.event?.category;
     bool isFavorite = User().isFavorite(widget.event);
     bool starVisible = User().favoritesStarVisible;
-    return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.only(left: _horizontalPadding,top: 16, bottom: 12), child: Row(
       children: <Widget>[
         Expanded(child:
           Text(
@@ -334,41 +349,68 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreLocationDetail() {
-    String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData);
-    if (!(widget?.event?.isVirtual ?? false) && widget?.event?.location != null && (locationText != null) && locationText.isNotEmpty) {
-      return GestureDetector(
+    String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
+    bool isVirtual = widget?.event?.isVirtual ?? false;
+    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+    bool hasEventUrl = AppString.isStringNotEmpty(widget.event?.location?.description);
+    bool isOnlineUnderlined = isVirtual && hasEventUrl;
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary, width: 1)));
+    String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
+    String locationId = AppString.getDefaultEmptyString(value: widget.event?.location?.locationId);
+    bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
+    String value = isVirtual ? locationId : locationText;
+    bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
-          label: locationText,
-          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+          label: "$eventType, $locationText",
+          hint: isVirtual ? Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link') : Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
           button: true,
           excludeSemantics: true,
           child:Padding(
             padding: EdgeInsets.only(bottom: 8),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png'),
+                  child:Image.asset(iconRes),
                 ),
-                Expanded(child: Text(locationText,
+                Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.medium,
                         fontSize: 16,
-                        color: Styles().colors.textBackground))),
-              ],
-            ),
+                        color: Styles().colors.textBackground)),),
+              ]),
+              Container(height: 4,),
+              Visibility(visible: isValueVisible, child: Container(
+                  padding: EdgeInsets.only(left: 30),
+                  child: Container(
+                      decoration: underlineLocationDecoration,
+                      padding: EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 14,
+                            color: Styles().colors.fillColorPrimary),
+                      ))))
+            ],)
           )
         ),
       );
-    } else {
-      return null;
-    }
   }
   
   Widget _eventPriceDetail() {
-    String priceText = widget?.event?.cost;
+    bool isFree = widget?.event?.isEventFree ?? false;
+    String priceText =isFree? "Free" : (widget?.event?.cost ?? "Free");
+    String additionalDescription = isFree? widget?.event?.cost : null;
+    bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
     if ((priceText != null) && priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
@@ -376,20 +418,35 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           excludeSemantics: true,
           child:Padding(
             padding: EdgeInsets.only(bottom: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-cost.png'),
+              child:
+              Column(children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child:Image.asset('images/icon-cost.png'),
+                    ),
+                      Expanded(child:Text(priceText,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.medium,
+                            fontSize: 16,
+                            color: Styles().colors.textBackground))),
+
+                    ]),
+                    !hasAdditionalDescription? Container():
+                    Container(
+                      padding: EdgeInsets.only(left: 28),
+                      child: Row(children: [
+                      Expanded(child:Text(additionalDescription,
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies.medium,
+                              fontSize: 16,
+                              color: Styles().colors.textBackground))),
+
+                    ])),
+                  ],
                 ),
-                Expanded(child: Text(priceText,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.medium,
-                        fontSize: 16,
-                        color: Styles().colors.textBackground))),
-              ],
-            ),
           )
         );
     } else {
@@ -480,7 +537,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: HtmlWidget(
-          longDescription,
+          longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface),
         ));
   }
 
@@ -512,42 +569,54 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     );
   }
 
-  Widget _buildUrlButtons(){
-    String ticketsUrl = widget?.event?.registrationUrl;
+  Widget _buildUrlButtons() {
+    List<Widget> buttons = <Widget>[];
+    
     String titleUrl = widget?.event?.titleUrl;
+    bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
 
-    return Container(child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          AppString.isStringEmpty(ticketsUrl)? Container():
-          RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Get tickets'),
+    String registrationUrl = widget?.event?.registrationUrl;
+    bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
+
+    if (hasTitleUrl) {
+      buttons.add(Row(children:<Widget>[
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(bottom: 6), child:
+            ScalableRoundedButton(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
+              hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
+              backgroundColor: hasRegistrationUrl ? Styles().colors.background : Colors.white,
+              borderColor: hasRegistrationUrl ? Styles().colors.fillColorPrimary: Styles().colors.fillColorSecondary,
+              rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
+              textColor: Styles().colors.fillColorPrimary,
+              onTap: () {
+                Analytics.instance.logSelect(target: "Website");
+                _onTapWebButton(titleUrl, 'Website');
+              },),
+      ),),],),);
+    }
+    
+    if (hasRegistrationUrl) {
+      buttons.add(Row(children:<Widget>[
+        Expanded(child:
+        Padding(padding: EdgeInsets.only(bottom: 6), child:
+          ScalableRoundedButton(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                label: Localization().getStringEx('panel.explore_detail.button.get_tickets.title', 'Register'),
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors.fillColorSecondary,
+                rightIcon: Image.asset('images/external-link.png'),
                 textColor: Styles().colors.fillColorPrimary,
-                onTap: () => _onTapGetTickets(ticketsUrl),
-              ),
-          Container(
-            height: 6,
-          ),
-          AppString.isStringEmpty(titleUrl)? Container():
-          RoundedButton(
-                label: Localization().getStringEx('panel.explore_detail.button.visit_website.title', 'Visit website'),
-                hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
-                backgroundColor: Colors.white,
-                borderColor: Styles().colors.fillColorSecondary,
-                textColor: Styles().colors.fillColorPrimary,
-                onTap: (){
-                  Analytics.instance.logSelect(target: "Website");
-                  _onTapWebButton(titleUrl, 'Website');
-                  },
-              ),
-          Container(
-            height: 6,
-          ),
-        ],
-      ));
+                onTap: () {
+                Analytics.instance.logSelect(target: "Website");
+                  _onTapGetTickets(registrationUrl);
+                },),
+      ),),],),);
+    }
+
+    return (0 < buttons.length) ? Column(children: buttons) : Container(width: 0, height: 0);
   }
 
   Widget _buildConvergeContent() {
@@ -599,7 +668,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return AppString.isStringEmpty(widget.browseGroupId)? Container():
+    return (AppString.isStringEmpty(widget.browseGroupId) || (widget?.event?.isGroupPrivate ?? false))? Container():
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
@@ -658,7 +727,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onLocationDetailTapped() {
-    if(widget?.event?.location?.latitude != null && widget?.event?.location?.longitude != null) {
+    if((widget?.event?.isVirtual?? false) == true){
+      String url = widget?.event?.location?.description;
+      if(AppString.isStringNotEmpty(url)) {
+        _onTapWebButton(url, "Event Link ");
+      }
+    } else if(widget?.event?.location?.latitude != null && widget?.event?.location?.longitude != null) {
       Analytics.instance.logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.event);
     }
@@ -678,16 +752,16 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       setState(() {
         _addToGroupInProgress = true;
       });
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     });
   }
 
   void _onTapPublish() async{
     Analytics.instance.logSelect(target: "Publish");
-    ExploreService().postNewEvent(widget?.event).then((bool success){
-        if(success){
+    ExploreService().postNewEvent(widget?.event).then((String eventId){
+        if(eventId!=null){
           AppToast.show("Event successfully created");
-          Navigator.pop(context,success);
+          Navigator.pop(context,eventId!=null);
         }else {
           AppToast.show("Unable to create Event");
         }

@@ -28,7 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/debug/DebugStudentsGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
@@ -268,7 +268,21 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onUserProfileInfoClicked(context))),
+                              onTap: () { _onUserProfileInfoClicked(); }
+                              )),
+                    ),
+                    Visibility(
+                      visible: true,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "User Card Info",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: () { _onUserCardInfoClicked(); }
+                              )),
                     ),
                     Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -284,19 +298,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
-                              label: "Students Guide...",
+                              label: "Student Guide",
                               backgroundColor: Styles().colors.background,
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onTapStudentsGuide))
+                              onTap: _onTapStudentGuide))
                     ),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
                       child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
-                              label: "Styles...",
+                              label: "Styles",
                               backgroundColor: Styles().colors.background,
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
@@ -505,68 +519,57 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
     };
   }
-  Function _onUserProfileInfoClicked(BuildContext context) {
-    return () {
-      showDialog(
-          context: context,
-          builder: (_) => Material(
-            type: MaterialType.transparency,
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-            child:
-            Dialog(
-              //backgroundColor: Color(0x00ffffff),
-                child:Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        color: Styles().colors.fillColorPrimary,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Container(width: 20,),
-                            Expanded(
-                              child: RoundedButton(
-                                label: "Copy to clipboard",
-                                borderColor: Styles().colors.fillColorSecondary,
-                                onTap: _onTapCopyToClipboard,
-                              ),
-                            ),
-                            Container(width: 20,),
-                            GestureDetector(
-                              onTap:  ()=>Navigator.of(context).pop(),
-                              child: Padding(
-                                padding: EdgeInsets.only(right: 10, top: 10),
-                                child: Text('\u00D7',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: Styles().fontFamilies.medium,
-                                      fontSize: 50
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container( child:
-                            SingleChildScrollView(
-                          child: Container(color: Styles().colors.background, child:Text(_userDebugData))
-                        )
-                        )
-                      )
-                    ]
-                  )
-                )
-            )
-          )
-      );
-    };
+  
+  void _onUserProfileInfoClicked() {
+    showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(_userDebugData) );
   }
 
-  void _onTapCopyToClipboard(){
-    Clipboard.setData(ClipboardData(text:_userDebugData)).then((_){
-      AppToast.show("User data has been copied to the clipboard!");
+  void _onUserCardInfoClicked() {
+    String cardInfo = AppJson.encode(Auth().authCard?.toShortJson(), prettify: true);
+    if (AppString.isStringNotEmpty(cardInfo)) {
+      showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
+    }
+    else {
+      AppAlert.showDialogResult(context, 'No card available.');
+    }
+  }
+  //
+
+  Widget _buildTextContentInfoDialog(String textContent) {
+    return Material(type: MaterialType.transparency, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)), child:
+      Dialog(backgroundColor: Styles().colors.background, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Container(color: Styles().colors.fillColorPrimary, child:
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+              Container(width: 20,),
+              Expanded(child:
+                RoundedButton(
+                  label: "Copy to clipboard",
+                  borderColor: Styles().colors.fillColorSecondary,
+                  onTap: (){ _copyToClipboard(textContent); },
+                ),
+              ),
+              Container(width: 20,),
+              GestureDetector( onTap:  () => Navigator.of(context).pop(), child:
+                Padding(padding: EdgeInsets.only(right: 10, top: 10), child:
+                  Text('\u00D7', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.medium, fontSize: 50 ),),
+                ),
+              ),
+            ],),
+          ),
+          Expanded(child:
+            SingleChildScrollView(child:
+              Padding(padding: EdgeInsets.all(8), child: Text(textContent, style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies.bold, fontSize: 14)))
+            )
+          ),
+        ])
+      )
+    );
+  }
+
+  void _copyToClipboard(String textContent){
+    Clipboard.setData(ClipboardData(text: textContent)).then((_){
+      AppToast.show("Text data has been copied to the clipboard!");
     });
   }
 
@@ -579,8 +582,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 
-  void _onTapStudentsGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentsGuidePanel()));
+  void _onTapStudentGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentGuidePanel()));
   }
 
   void _onConfigChanged(dynamic env) {

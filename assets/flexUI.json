@@ -2,9 +2,9 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["connect","upgrade_version_message", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items"],
+		"home": ["connect", "upgrade_version_message", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
 		"home.connect": ["netid", "phone"],
-		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini"],
+		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
 
 		"wallet": ["wallet.connect", "wallet.content", "wallet.cards"],
 		"wallet.connect":["netid", "phone"],
@@ -12,18 +12,20 @@
 		"wallet.cards":["mtd", "id", "library"],
 
 		"browse": ["browse.all", "browse.content"],
-		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups"],
-		"browse.content": ["privacy_center","settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
+		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "student_guide", "privacy_center"],
+		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 
-		"settings": ["user_info", "connect", "customizations", "connected", "notifications", "privacy", "account", "feedback"],
+		"settings": ["user_info", "privacy_center", "connect", "connected", "privacy", "feedback"],
 		"settings.connect": ["netid", "phone"],
 		"settings.customizations": ["roles", "interests", "food_filters" ],
 		"settings.connected": ["netid", "phone"],
 		"settings.connected.netid": ["info", "disconnect", "connect"],
 		"settings.connected.phone": ["info", "disconnect", "verify"],
 		"settings.notifications": ["reminders", "athletics_updates", "dining"],
-		"settings.privacy": ["edit", "statement"],
 		"settings.account": ["personal_info"],
+		"settings.privacy0": ["edit", "statement"],
+		"settings.privacy": ["buttons", "delete"],
+		"settings.privacy.buttons": ["personal_info", "notifications"],
 
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "bluetooth_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
@@ -53,7 +55,7 @@
 
 			"onboarding.sport_prefs"          : ["fan"],
 
-			"wallet.cards.mtd"				  : ["NOT",["resident"]]
+			"wallet.cards.mtd"                : ["NOT",["resident"]]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -84,7 +86,7 @@
 			"onboarding.sport_prefs"          : 3
 		},
 		"auth": {
-			"home.connect"					  : {"loggedIn": false },
+			"home.connect"                    : {"loggedIn": false },
 			"laundry"                         : { "shibbolethLoggedIn": true },
 			"illini_cash"                     : { "shibbolethLoggedIn": true },
 			"create_event"                    : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },

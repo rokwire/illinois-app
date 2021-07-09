@@ -17,14 +17,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -44,7 +43,6 @@ class GroupSettingsPanel extends StatefulWidget {
 class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
-  final _groupTagsController = TextEditingController();
   final _linkController = TextEditingController();
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
@@ -121,7 +119,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _initCategories(){
-    Groups().categories.then((categories){
+    Groups().loadCategories().then((categories){
      setState(() {
        _groupCategories = categories;
      });
@@ -151,7 +149,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: AppImage.getAuthImageHeaders(),)) : Container(),
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -168,15 +166,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             height: _imageHeight,
             child: Center(
               child:
-              Semantics(label:Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
-                  hint: Localization().getStringEx("panel.group_settings.add_image.hint",""), button: true, excludeSemantics: true, child:
+              Semantics(label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
+                  hint: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image.hint","") : Localization().getStringEx("panel.groups_settings.add_image.hint",""),
+                  button: true, excludeSemantics: true, child:
                   ScalableSmallRoundedButton(
                     maxLines: 2,
-                    label: Localization().getStringEx("panel.group_settings.add_image","Add cover image"),
+                    label: AppString.isStringNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add cover image"),
                     textColor: Styles().colors.fillColorPrimary,
-                    onTap: _onTapAddImage,
-                    showChevron: false,
-                  )
+                    onTap: _onTapAddImage,)
               ),
             ),
           )
@@ -191,7 +188,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         context: context,
         builder: (_) => Material(
           type: MaterialType.transparency,
-          child: _AddImageWidget(),
+          child: GroupAddImageWidget(),
         )
     );
     if(_imageUrl!=null){
@@ -416,47 +413,28 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Tags
   Widget _buildTagsLayout(){
-    String fieldTitle = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String fieldHint= Localization().getStringEx("panel.groups_create.tags.hint", "");
+    String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
+    String description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSectionTitle(fieldTitle,
-              Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."),),
             Row(
               children: [
-                Expanded(
-                  flex: 5,
-                  child: Container(
-                    height: 48,
-                    padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
-                    child: Semantics(
-                        label: fieldTitle,
-                        hint: fieldHint,
-                        textField: true,
-                        excludeSemantics: true,
-                        child: TextField(
-                          controller: _groupTagsController,
-                          decoration: InputDecoration(border: InputBorder.none,),
-                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                        )),
-                  ),
-                ),
-                Container(width: 8,),
+                Expanded(flex: 5, child: _buildInfoHeader(title, description)),
+                Container(width: 8),
                 Expanded(
                     flex: 2,
                     child:
                     ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.groups_create.tags.button.add.title", "Add"),
-                      hint: Localization().getStringEx("panel.groups_create.tags.button.add.hint", "Add"),
+                      label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
+                      hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
                       backgroundColor: Styles().colors.white,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorSecondary,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      onTap: _onTapAddTag,
+                      onTap: _onTapTags,
                     )
                 )
               ],
@@ -549,17 +527,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {});
   }
 
-  void _onTapAddTag(){
-    String tag = _groupTagsController.text?.toString();
-    if(_group!=null) {
-      if (_group.tags == null) {
-        _group.tags = [];
+  void _onTapTags(){
+    Analytics.instance.logSelect(target: "Tags");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group.tags))).then((tags) {
+      // (tags == null) means that the user hit the back button
+      if (tags != null) {
+        setState(() {
+          _group.tags = tags;
+        });
       }
-      _group.tags.add(tag);
-      _groupTagsController.clear();
-    }
-
-    setState(() {});
+    });
   }
   //
   //Privacy
@@ -582,8 +559,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
                   constructDescription:
                       (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events and posts") :
-                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events and posts"),
+                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events") :
+                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events"),
                   constructTitle:
                       (item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.common.privacy_title.private", "Private") :
@@ -611,7 +588,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      (questionsCount.toString() + Localization().getStringEx("panel.groups_create.tags.label.question","Questions")) :
+      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
@@ -623,7 +600,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership question"),
+            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
           Container(height: 40,),
@@ -811,189 +788,3 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 }
 
-class _AddImageWidget extends StatefulWidget {
-  @override
-  _AddImageWidgetState createState() => _AddImageWidgetState();
-}
-
-class _AddImageWidgetState extends State<_AddImageWidget> {
-  var _imageUrlController = TextEditingController();
-
-  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
-  bool _showProgress = false;
-
-  _AddImageWidgetState();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _imageUrlController.dispose();
-    super.dispose();
-  }
-
-  Widget build(BuildContext context) {
-    return Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Styles().colors.fillColorPrimary,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 10, top: 10),
-                    child: Text(
-                      Localization().getStringEx("widget.add_image.heading", "Select Image"),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: Styles().fontFamilies.medium,
-                          fontSize: 24),
-                    ),
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: _onTapCloseImageSelection,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10, top: 10),
-                      child: Text(
-                        '\u00D7',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: Styles().fontFamilies.medium,
-                            fontSize: 50),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.all(10),
-                          child: TextFormField(
-                              controller: _imageUrlController,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText:  Localization().getStringEx("widget.add_image.field.description.label","Image url"),
-                                labelText:  Localization().getStringEx("widget.add_image.field.description.hint","Image url"),
-                              ))),
-                      Padding(
-                          padding: EdgeInsets.all(10),
-                          child: RoundedButton(
-                              label: Localization().getStringEx("widget.add_image.button.use_url.label","Use Url"),
-                              borderColor: Styles().colors.fillColorSecondary,
-                              backgroundColor: Styles().colors.background,
-                              textColor: Styles().colors.fillColorPrimary,
-                              onTap: _onTapUseUrl)),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Padding(
-                              padding: EdgeInsets.all(10),
-                              child: RoundedButton(
-                                  label:  Localization().getStringEx("widget.add_image.button.chose_device.label","Choose from device"),
-                                  borderColor: Styles().colors.fillColorSecondary,
-                                  backgroundColor: Styles().colors.background,
-                                  textColor: Styles().colors.fillColorPrimary,
-                                  onTap: _onTapChooseFromDevice)),
-                          _showProgress ? AppProgressIndicator.create() : Container(),
-                        ],
-                      ),
-                    ]))
-          ],
-        ));
-  }
-
-  void _onTapCloseImageSelection() {
-    Analytics.instance.logSelect(target: "Close image selection");
-    Navigator.pop(context, "");
-  }
-
-  void _onTapUseUrl() {
-    Analytics.instance.logSelect(target: "Use Url");
-    String url = _imageUrlController.value.text;
-    if (url == "") {
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.url.label","Please enter an url"));
-      return;
-    }
-
-    bool isReadyUrl = url.endsWith(".webp");
-    if (isReadyUrl) {
-      //ready
-      AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-      Navigator.pop(context, url);
-    } else {
-      //we need to process it
-      setState(() {
-        _showProgress = true;
-      });
-
-      Future<ImagesResult> result =
-      ImageService().useUrl(_imageType, url);
-      result.then((logicResult) {
-        setState(() {
-          _showProgress = false;
-        });
-
-
-        ImagesResultType resultType = logicResult.resultType;
-        switch (resultType) {
-          case ImagesResultType.CANCELLED:
-          //do nothing
-            break;
-          case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage);
-            break;
-          case ImagesResultType.SUCCEEDED:
-          //ready
-            AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-            Navigator.pop(context, logicResult.data);
-            break;
-        }
-      });
-    }
-  }
-
-  void _onTapChooseFromDevice() {
-    Analytics.instance.logSelect(target: "Choose From Device");
-
-    setState(() {
-      _showProgress = true;
-    });
-
-    Future<ImagesResult> result =
-    ImageService().chooseFromDevice(_imageType);
-    result.then((logicResult) {
-      setState(() {
-        _showProgress = false;
-      });
-
-      ImagesResultType resultType = logicResult.resultType;
-      switch (resultType) {
-        case ImagesResultType.CANCELLED:
-        //do nothing
-          break;
-        case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage);
-          break;
-        case ImagesResultType.SUCCEEDED:
-        //ready
-          AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image"));
-          Navigator.pop(context, logicResult.data);
-          break;
-      }
-    });
-  }
-}

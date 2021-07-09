@@ -6,6 +6,189 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.5.9] - 2021-07-09
+### Changed
+- Show Visit website and Registration buttons underneath each other [#483](https://github.com/rokwire/illinois-app/issues/483).
+- Prompt before exit without Save when creating/updating group events [#485](https://github.com/rokwire/illinois-app/issues/485).
+- Rename rejected to "Denied" and show rejected status in the Group Card [#482](https://github.com/rokwire/illinois-app/issues/482).
+- Pop to Group Panel after adding a public event [#478](https://github.com/rokwire/illinois-app/issues/478)
+### Fixed
+- Allow adding event only to admin groups[#480](https://github.com/rokwire/illinois-app/issues/480).
+- Hide options button for private group events [#477](https://github.com/rokwire/illinois-app/issues/477).
+- Fixed typo in "Choose a group you’re an admin" message [#479](https://github.com/rokwire/illinois-app/issues/479).
+- Fixed favorite button in group event card [#476](https://github.com/rokwire/illinois-app/issues/476).
+- Fixed pending members count in Group detail panel [#481](https://github.com/rokwire/illinois-app/issues/481).
+
+## [2.5.8] - 2021-07-08
+### Changed
+- GroupsDetailPanel: move admin event buttons to the bottomSheet menu [#470](https://github.com/rokwire/illinois-app/issues/470).
+- Cafe Credits to Dining Dollars - missed one spot [#453](https://github.com/rokwire/illinois-app/issues/453).
+- Check for return value of update group event.
+### Added
+- Added header bar to Polls widget in Home panel [#472](https://github.com/rokwire/illinois-app/issues/472).
+### Fixed
+- Support both "registrationUrl" and "registrationURL" for Event.registrationUrl [#468](https://github.com/rokwire/illinois-app/issues/468).
+
+## [2.5.7] - 2021-07-07
+### Fixed
+- Use zero sized containers when no left/right icons in RoundedButtons [#461](https://github.com/rokwire/illinois-app/issues/461).
+
+## [2.5.6] - 2021-07-06
+### Fixed
+- Fix Android build [#442](https://github.com/rokwire/illinois-app/issues/442).
+### Changed
+- Selecting an image for event creation has a drop down for the type, please no drop down and I think it should just use event-tout. [#445](https://github.com/rokwire/illinois-app/issues/445).
+- Inappropriate event image height on create event panel [#447](https://github.com/rokwire/illinois-app/issues/447).
+### Added
+- Added Registration button in Group Event Detail panel [#444](https://github.com/rokwire/illinois-app/issues/444).
+- Show external link icons in Registration and Visit Website buttons in Group Event Detail panel [#444](https://github.com/rokwire/illinois-app/issues/444).
+
+## [2.5.5] - 2021-07-05
+### Fixed
+- Do not show Website button in GroupDetailPanel if there is no webURL [#429](https://github.com/rokwire/illinois-app/issues/429).
+### Added
+- Add a pull to refresh on the Groups List panel [#431](https://github.com/rokwire/illinois-app/issues/431).
+- Add Privacy Center items to Settings Home panel [#439](https://github.com/rokwire/illinois-app/issues/439).
+### Changed
+- Add Wellness button to Campus Resources list [#433](https://github.com/rokwire/illinois-app/issues/433).
+- Additional Groups UI improvements and fixes [#413](https://github.com/rokwire/illinois-app/issues/413).
+- Update Delete group event to delete only event with groupId and User is admin in this group  [#435](https://github.com/rokwire/illinois-app/issues/435).
+- Improve create event form validation [#437](https://github.com/rokwire/illinois-app/issues/437).
+
+
+## [2.5.4] - 2021-07-02
+### Added
+- Questions when creating group [#417](https://github.com/rokwire/illinois-app/issues/417).
+- Group Admins in "About" section [#419](https://github.com/rokwire/illinois-app/issues/419).
+- Filter groups by tags [#421](https://github.com/rokwire/illinois-app/issues/421).
+### Changed
+- Groups UI improvements [#413](https://github.com/rokwire/illinois-app/issues/413).
+### Fixed
+- Hide the add to group button if the event is a "private group event" [#427](https://github.com/rokwire/illinois-app/issues/427)
+- Group events not showing [#425](https://github.com/rokwire/illinois-app/issues/425).
+
+## [2.5.3] - 2021-07-01
+### Added
+- Delete group [#400](https://github.com/rokwire/illinois-app/issues/400).
+- Use correct categories and tags for group [#406](https://github.com/rokwire/illinois-app/issues/406).
+- Required fields for creating group event [#404](https://github.com/rokwire/illinois-app/issues/404).
+- Put "Delete group" in the options menu [#409](https://github.com/rokwire/illinois-app/issues/409).
+- Changed dialog messages for remove/delete event[#408](https://github.com/rokwire/illinois-app/issues/408).
+### Fixed
+- Display error message when creating group fails [#411](https://github.com/rokwire/illinois-app/issues/411).
+
+## [2.5.2] - 2021-06-30
+### Added
+- Groups Event implement edit and delete event[#387](https://github.com/rokwire/illinois-app/issues/387)
+### Changed
+- UI of the "Leave" group button [#388](https://github.com/rokwire/illinois-app/issues/388).
+- Do not show "See All Events" if there are no events [#390](https://github.com/rokwire/illinois-app/issues/390).
+### Fixed
+- Group Event - Oversized font is displayed in the field Event title [#366](https://github.com/rokwire/illinois-app/issues/366).
+- Do not show "Visit Website" button if there is no "titleURL" [#392](https://github.com/rokwire/illinois-app/issues/392).
+- Proper check for online status [#394](https://github.com/rokwire/illinois-app/issues/394).
+- Events sorting in Group [#396](https://github.com/rokwire/illinois-app/issues/396).
+- Group events count [#398](https://github.com/rokwire/illinois-app/issues/398).
+
+## [2.5.1] - 2021-06-29
+### Added
+- Groups - Prompt Login button for unverified users [#357](https://github.com/rokwire/illinois-app/issues/357).
+- Groups Search [#371](https://github.com/rokwire/illinois-app/issues/371).
+### Changed
+- Changes to Create Group Event [#345](https://github.com/rokwire/illinois-app/issues/345).
+- UI adjustments for "Leave" group [#380](https://github.com/rokwire/illinois-app/issues/380).
+### Fixed
+- Hide "Leave" button for the only one admin in the group [#362](https://github.com/rokwire/illinois-app/issues/362).
+
+## [2.5.00] - 2021-06-28
+### Added
+- New major version 2.5 - privacy center removed from browse content [#370](https://github.com/rokwire/illinois-app/issues/370).
+- Possibility for adding an image when creating group [#375](https://github.com/rokwire/illinois-app/issues/375).
+### Fixed
+- Crashes in home panel [#373](https://github.com/rokwire/illinois-app/issues/373).
+
+## [2.4.31] - 2021-06-25
+### Added 
+- Added Privacy Center button in Browse panel [#349](https://github.com/rokwire/illinois-app/issues/349).
+### Fixed
+- Fixes in Groups without 1.5 [#351](https://github.com/rokwire/illinois-app/issues/351).
+### Changed
+- Increase fonts for category headings and card titles in Student Guide content [#352](https://github.com/rokwire/illinois-app/issues/352).
+- improved styling for EventsCreatePanel [#345](https://github.com/rokwire/illinois-app/issues/345).
+
+## [2.4.30] - 2021-06-24
+### Changed 
+- Updated Student Guide button icon and color in Browse panel [#338](https://github.com/rokwire/illinois-app/issues/338).
+- Validate link url/location in Student Guide Detail [#340](https://github.com/rokwire/illinois-app/issues/340).
+- Refresh Guide content when entering Student Guide [#342](https://github.com/rokwire/illinois-app/issues/342).
+- Button title for creating group [#346](https://github.com/rokwire/illinois-app/issues/346).
+- Changes to Create Group Even [#345](https://github.com/rokwire/illinois-app/issues/345).
+
+## [2.4.29] - 2021-06-23
+### Fixed
+- Fix registration url json key for events [#330](https://github.com/rokwire/illinois-app/issues/330).
+- Improve Accessibility for Student Guide [#320](https://github.com/rokwire/illinois-app/issues/320) 
+### Changed 
+- Updated students.guide.json from Illinois_Student_Guide_Final.xlsx [#332](https://github.com/rokwire/illinois-app/issues/332).
+- Updated Student Guide UI according to Figma review [#335](https://github.com/rokwire/illinois-app/issues/335).
+
+## [2.4.28] - 2021-06-22
+### Fixed 
+- Fixed guide description in Recently Viewed [#322](https://github.com/rokwire/illinois-app/issues/322).
+- Do not show favorite button in Student Guide items if privacy level does not support this.
+- Strip HTML tags from guide list title & description when show them in Saved or Recently Viewed.
+- Events and virtual events improvements [#321](https://github.com/rokwire/illinois-app/issues/321).
+- Improve Accessibility for Student Guide [#320](https://github.com/rokwire/illinois-app/issues/320) 
+- Improve Accessibility for Events [#328](https://github.com/rokwire/illinois-app/issues/328) 
+
+## [2.4.27] - 2021-06-21
+### Changed 
+- Update sample student guide to refer images on rokwire-images AWS bucket.
+- Upgrade to Flutter 2.2.2 [#318](https://github.com/rokwire/illinois-app/issues/318).
+### Added
+- Added id, list title and list description getters in Student Guide service.
+
+## [2.4.26] - 2021-06-18
+### Added
+- Hook up Student Guide in recent items.
+### Changed 
+- Hook up Students Guide API [#313](https://github.com/rokwire/illinois-app/issues/313).
+### Fixed 
+- Fixed err_cleartext_not_permitted error [#308](https://github.com/rokwire/illinois-app/issues/308)
+
+## [2.4.25] - 2021-06-17
+### Added
+- Hook up Student Guide in user favorites.
+
+### Changed 
+- Various updates and fixes in Students Guide [#303](https://github.com/rokwire/illinois-app/issues/303).
+- Event enhancements (virtual/in person, price etc) [#300](https://github.com/rokwire/illinois-app/issues/300).
+
+## [2.4.24] - 2021-06-16
+### Fixed
+- Dining Dollars payment type processing [#295](https://github.com/rokwire/illinois-app/issues/295).
+### Changed 
+- Various minor updates related Students Guide [#299](https://github.com/rokwire/illinois-app/issues/299).
+
+## [2.4.23] - 2021-06-15
+### Changed 
+- Imported 20210614_Student Import.xlsx, interoduced number list and content references [#293](https://github.com/rokwire/illinois-app/issues/293).
+
+## [2.4.22] - 2021-06-14
+### Changed 
+- Updated promotion format to use boolean expession conditions for card and role [#286](https://github.com/rokwire/illinois-app/issues/286).
+- Fixed inconsistencies from the initial designs of the On boarding panels. [284](https://github.com/rokwire/illinois-app/issues/284)
+
+## [2.4.21] - 2021-06-11
+### Added
+- Created promoted student guide items widget in Home panel [#282](https://github.com/rokwire/illinois-app/issues/282).
+
+## [2.4.20] - 2021-06-10
+### Added
+- Introduced Student Guide service [#282](https://github.com/rokwire/illinois-app/issues/282).
+### Changed 
+- Updated Student Guide UI as defined in Figma. 
+
 ## [2.4.19] - 2021-06-08
 ### Changed 
 - Improved styling for Groups CreateEvent panel [276](https://github.com/rokwire/illinois-app/issues/276).

@@ -342,58 +342,10 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   static bool _localeEvalRoleRule(dynamic roleRule) {
-    
-    if (roleRule is String) {
-
-      if (roleRule == 'TRUE') {
-        return true;
-      }
-      if (roleRule == 'FALSE') {
-        return false;
-      }
-      
-      UserRole userRole = UserRole.fromString(roleRule);
-      if (userRole != null) {
-        Set<UserRole> userRoles = User().roles;
-        return (userRoles != null) && (userRoles.contains(userRole));
-      }
-    }
-    
-    if (roleRule is List) {
-      
-      if (roleRule.length == 1) {
-        return _localeEvalRoleRule(roleRule[0]);
-      }
-      
-      if (roleRule.length == 2) {
-        dynamic operation = roleRule[0];
-        dynamic argument = roleRule[1];
-        if (operation is String) {
-          if (operation == 'NOT') {
-            return !_localeEvalRoleRule(argument);
-          }
-        }
-      }
-
-      if (roleRule.length > 2) {
-        bool result = _localeEvalRoleRule(roleRule[0]);
-        for (int index = 1; (index + 1) < roleRule.length; index += 2) {
-          dynamic operation = roleRule[index];
-          dynamic argument = roleRule[index + 1];
-          if (operation is String) {
-            if (operation == 'AND') {
-              result = result && _localeEvalRoleRule(argument);
-            }
-            else if (operation == 'OR') {
-              result = result || _localeEvalRoleRule(argument);
-            }
-          }
-        }
-        return result;
-      }
-    }
-    
-    return true; // allow everything that is not defined or we do not understand
+    return AppBoolExpr.eval(roleRule, (String argument) {
+      UserRole userRole = UserRole.fromString(argument);
+      return (userRole != null) ? (User().roles?.contains(userRole) ?? false) : null;
+    });
   }
 
   static bool _localeEvalIlliniCashRule(dynamic illiniCashRule) {
