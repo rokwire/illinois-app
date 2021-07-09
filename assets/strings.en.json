@@ -1682,7 +1682,7 @@
     "panel.groups_event_detail.button.delete.title": "Delete Event",
     "panel.groups_event_detail.button.delete.hint": "",
     "panel.groups_event_detail.label.options.add_event": "ADD EVENT",
-    "panel.groups_event_detail.label.options.choose_group": "Choose a group you’re an admin form",
+    "panel.groups_event_detail.label.options.choose_group": "Choose a group you’re an admin for",
     "panel.groups_event_detail.button.select_group.title": "Select a group..",
     "panel.groups_event_detail.button.select_group.hint": "Double tap to show categories options",
     "panel.groups_event_detail.button.add.title": "ADD ",
