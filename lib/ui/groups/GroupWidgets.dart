@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/ImageType.dart';
@@ -956,5 +957,78 @@ class GroupCard extends StatelessWidget {
 
   String get _timeUpdatedText {
     return "Updated about 2 hours ago"; //TBD
+  }
+}
+
+//////////////////////////////////////
+// GroupPostCard
+
+class GroupPostCard extends StatefulWidget {
+  final GroupPost post;
+  final Group group;
+
+  GroupPostCard({@required this.post, @required this.group});
+
+  @override
+  _GroupPostCardState createState() => _GroupPostCardState();
+}
+
+class _GroupPostCardState extends State<GroupPostCard> {
+  @override
+  Widget build(BuildContext context) {
+    String memberName = widget.post?.member?.name;
+    int repliesCount = widget.post?.replies?.length ?? 0;
+    bool repliesCountVisible = (repliesCount > 0);
+    String htmlBody = widget.post?.body;
+    return GestureDetector(
+        onTap: _onTapCard,
+        child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors.white,
+                boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                borderRadius: BorderRadius.all(Radius.circular(8))),
+            child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Text(AppString.getDefaultEmptyString(value: memberName),
+                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                    Visibility(
+                        visible: repliesCountVisible,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(AppString.getDefaultEmptyString(value: repliesCount?.toString()),
+                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14)))),
+                    Expanded(child: Container()),
+                    Visibility(
+                        visible: _isReplyVisible,
+                        child: GestureDetector(
+                            onTap: _onTapReply,
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 5), child: Image.asset('images/icon-group-post-reply.png'))))
+                  ]),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Html(data: htmlBody, style: {
+                        "body": Style(
+                            color: Styles().colors.fillColorPrimary,
+                            fontFamily: Styles().fontFamilies.regular,
+                            fontSize: FontSize(16),
+                            maxLines: 3,
+                            textOverflow: TextOverflow.ellipsis)
+                      }))
+                ]))));
+  }
+
+  void _onTapCard() {
+    //TBD implement
+  }
+
+  void _onTapReply() {
+    //TBD implement
+  }
+
+  bool get _isReplyVisible {
+    return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 }

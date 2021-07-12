@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
@@ -65,6 +67,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
+  List<GroupPost>    _groupPosts;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
 
@@ -124,9 +127,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated]);
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated, Groups.notifyGroupPostsUpdated]);
     _loadGroup();
     _loadEvents();
+    _loadPosts();
   }
 
   @override
@@ -162,6 +166,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _updatingEvents = false;
         });
       }
+    });
+  }
+
+  void _loadPosts() {
+    _increaseProgress();
+    Groups().loadGroupPosts(widget.groupId).then((posts) {
+      _groupPosts = posts;
+      _decreaseProgress();
     });
   }
 
@@ -239,14 +251,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Groups.notifyUserMembershipUpdated) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
       _loadEvents();
     }
-    else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
+    else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup();
       _loadEvents();
+      _loadPosts();
+    } else if (name == Groups.notifyGroupPostsUpdated) {
+      _loadPosts();
     }
   }
 
@@ -293,6 +310,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildTabs());
       if (_currentTab == _DetailTab.Events) {
         content.add(_buildEvents());
+        content.add(_buildPosts());
       }
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
@@ -304,6 +322,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildAdmins());
       if (isPublic) {
         content.add(_buildEvents());
+        content.add(_buildPosts());
       }
     }
 
@@ -571,7 +590,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       for (GroupEvent groupEvent in _groupEvents) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
-      
+
       content.add(Padding(
           padding: EdgeInsets.only(top: 16),
           child: ScalableSmallRoundedButton(
@@ -605,65 +624,44 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ]);
   }
 
-  /*Widget _buildAdminEventOptions(){
-    bool haveEvents = _groupEvents?.isNotEmpty ?? false;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-        decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-            borderRadius: BorderRadius.all(Radius.circular(8))
-        ),
-        child: Column(children: [
-          haveEvents? Container():
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                Text(Localization().getStringEx("panel.group_detail.label.upcoming_events.empty", "No upcoming events"), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.textBackground, ), textAlign: TextAlign.left,),
-                Container(height: 8,),
-                Text(Localization().getStringEx("panel.group_detail.label.upcoming_events.hint", "Create a new event or share an existing event with your members. "), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, )),
-                Container(height: 16,),
-              ],),
-          Row(
-            children: [
-              Expanded(child:
-                ScalableRoundedButton(
-                    label: Localization().getStringEx("panel.group_detail.button.browse.title",  "Browse"),
-                    backgroundColor: Styles().colors.white,
-                    textColor: Styles().colors.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 16,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    borderWidth: 2,
-                    onTap:_onTapBrowseEvents
-                ),
-              ),
-              Visibility(
-                visible: _canCreateEvent,
-                child: Container(width: 16,)),
-              Visibility(
-                visible: _canCreateEvent,
-                child: Expanded(child:
-                  ScalableRoundedButton(
-                    label:  Localization().getStringEx("panel.group_detail.button.create_event.title",  "Create event"),
-                    backgroundColor: Styles().colors.white,
-                    textColor: Styles().colors.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 16,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    borderWidth: 2,
-                    rightIcon: Image.asset('images/icon-add-20x18.png'),
-                    onTap: _onTapCreateEvent,),
-                )
-              )
-            ],
-          ),
-        ],)
-      ),
-    );
-  }*/
+  Widget _buildPosts() {
+    if (AppCollection.isCollectionEmpty(_groupPosts)) {
+      return Container();
+    }
+    List<Widget> postsContent = [];
+
+    int limit = min(_groupPosts.length, 3);
+    for (int i = 0; i < limit; i++) {
+      GroupPost post = _groupPosts[i];
+      if (i > 0) {
+        postsContent.add(Container(height: 16));
+      }
+      postsContent.add(GroupPostCard(post: post, group: _group));
+    }
+
+    if (limit < _groupPosts.length) {
+      postsContent.add(Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: ScalableSmallRoundedButton(
+              label: Localization().getStringEx("panel.group_detail.button.all_posts.title", 'See more'),
+              widthCoeficient: 2,
+              backgroundColor: Styles().colors.white,
+              textColor: Styles().colors.fillColorPrimary,
+              fontFamily: Styles().fontFamilies.bold,
+              fontSize: 16,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+              borderColor: Styles().colors.fillColorSecondary,
+              borderWidth: 2,
+              onTap: () {
+                //TBD: show all posts panel
+              })));
+    }
+
+    return Column(children: <Widget>[
+      SectionTitlePrimary(
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'), iconPath: 'images/icon-calendar.png', children: postsContent)
+    ]);
+  }
 
   Widget _buildAbout() {
     String description = _group?.description ?? '';

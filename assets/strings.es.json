@@ -1490,6 +1490,8 @@
     "panel.group_detail.label.upcoming_events.hint": "Create a new event or share an existing event with your members. ",
     "panel.group_detail.button.browse.title":  "Browse",
     "panel.group_detail.button.create_event.title":  "Create event",
+    "panel.group_detail.button.all_posts.title": "See more",
+    "panel.group_detail.label.posts": "Posts",
     "panel.group_detail.label.about_us":  "About us",
     "panel.group_detail.label.admins":  "Admins",
     "panel.group_detail.label.become_member": "Become a member",

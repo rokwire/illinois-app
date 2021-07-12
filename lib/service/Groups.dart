@@ -38,7 +38,6 @@ class Groups /* with Service */ {
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
   static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
   static const String notifyGroupPostsUpdated       = "edu.illinois.rokwire.group.posts.updated";
-  static const String notifyGroupPostRepliesUpdated = "edu.illinois.rokwire.group.post.replies.updated";
 
   Map<String, Member> _userMembership;
 
@@ -464,6 +463,33 @@ class Groups /* with Service */ {
     }
   }
 
+  Future<List<GroupPost>> loadGroupPosts(String groupId) async {
+    if (AppString.isStringEmpty(groupId)) {
+      return null;
+    }
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/post';
+    Response response = await Network().get(requestUrl, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    String responseString = response?.body;
+    if (responseCode == 200) {
+      List<GroupPost> posts = GroupPost.fromJsonList(AppJson.decodeList(responseString));
+      if (AppCollection.isCollectionNotEmpty(posts)) {
+        // Sort descending by date created
+        posts.sort((GroupPost first, GroupPost second) {
+          if (first.dateCreatedUtc == null || second.dateCreatedUtc == null) {
+            return 0;
+          } else {
+            return (second.dateCreatedUtc.compareTo(first.dateCreatedUtc));
+          }
+        });
+      }
+      return posts;
+    } else {
+      Log.e('Failed to retrieve group posts. Response: ${response?.body}');
+      return null;
+    }
+  }
+
   Future<bool> createPostReply(String postId, GroupPostReply reply) async {
     if (AppString.isStringEmpty(postId) || (reply == null)) {
       return false;
@@ -473,7 +499,7 @@ class Groups /* with Service */ {
     Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostRepliesUpdated, null);
+      NotificationService().notify(notifyGroupPostsUpdated, null);
       return true;
     } else {
       Log.e('Failed to create post reply. Response: ${response?.body}');
@@ -489,7 +515,7 @@ class Groups /* with Service */ {
     Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostRepliesUpdated, null);
+      NotificationService().notify(notifyGroupPostsUpdated, null);
       return true;
     } else {
       Log.e('Failed to delete post reply. Response: ${response?.body}');

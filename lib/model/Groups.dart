@@ -725,7 +725,7 @@ class GroupPost {
         member: Member.fromJson(json['member']),
         body: json['body'],
         dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-        replies: GroupPostReply.fromJsonArray(json['replies']));
+        replies: GroupPostReply.fromJsonList(json['replies']));
   }
 
   Map<String, dynamic> toJson() {
@@ -737,9 +737,10 @@ class GroupPost {
     };
   }
 
-  static List<GroupPost> fromJsonArray(List<dynamic> jsonList) {
+  static List<GroupPost> fromJsonList(List<dynamic> jsonList) {
     List<GroupPost> posts;
     if (jsonList != null) {
+      posts = [];
       for (dynamic jsonEntry in jsonList) {
         posts.add(GroupPost.fromJson(jsonEntry));
       }
@@ -779,9 +780,10 @@ class GroupPostReply {
     };
   }
 
-  static List<GroupPostReply> fromJsonArray(List<dynamic> jsonList) {
+  static List<GroupPostReply> fromJsonList(List<dynamic> jsonList) {
     List<GroupPostReply> replies;
     if (jsonList != null) {
+      replies = [];
       for (dynamic jsonEntry in jsonList) {
         replies.add(GroupPostReply.fromJson(jsonEntry));
       }
