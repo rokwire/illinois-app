@@ -869,7 +869,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     visible: _canDeleteGroup,
                     child: RibbonButton(
                         height: null,
-                        leftIcon: "images/icon-leave-group.png",
+                        leftIcon: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
                           showDialog(
