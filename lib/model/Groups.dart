@@ -703,3 +703,89 @@ class GroupEventComment {
     return json;
   }
 }
+
+//////////////////////////////
+// GroupPost
+
+class GroupPost {
+  final String id;
+  final Member member;
+  final String body;
+  final DateTime dateCreatedUtc;
+  final List<GroupPostReply> replies;
+
+  GroupPost({this.id, this.member, this.body, this.dateCreatedUtc, this.replies});
+
+  factory GroupPost.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
+    return GroupPost(
+        id: json['id'],
+        member: Member.fromJson(json['member']),
+        body: json['body'],
+        dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
+        replies: GroupPostReply.fromJsonArray(json['replies']));
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'member': member?.toJson(),
+      'body': body,
+      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat)
+    };
+  }
+
+  static List<GroupPost> fromJsonArray(List<dynamic> jsonList) {
+    List<GroupPost> posts;
+    if (jsonList != null) {
+      for (dynamic jsonEntry in jsonList) {
+        posts.add(GroupPost.fromJson(jsonEntry));
+      }
+    }
+    return posts;
+  }
+}
+
+//////////////////////////////
+// GroupPostReply
+
+class GroupPostReply {
+  final String id;
+  final Member member;
+  final String body;
+  final DateTime dateCreatedUtc;
+
+  GroupPostReply({this.id, this.member, this.body, this.dateCreatedUtc});
+
+  factory GroupPostReply.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
+    return GroupPostReply(
+        id: json['id'],
+        member: Member.fromJson(json['member']),
+        body: json['body'],
+        dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true));
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'member': member?.toJson(),
+      'body': body,
+      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat)
+    };
+  }
+
+  static List<GroupPostReply> fromJsonArray(List<dynamic> jsonList) {
+    List<GroupPostReply> replies;
+    if (jsonList != null) {
+      for (dynamic jsonEntry in jsonList) {
+        replies.add(GroupPostReply.fromJson(jsonEntry));
+      }
+    }
+    return replies;
+  }
+}

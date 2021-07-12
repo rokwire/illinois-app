@@ -37,6 +37,8 @@ class Groups /* with Service */ {
   static const String notifyGroupCreated            = "edu.illinois.rokwire.group.created";
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
   static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
+  static const String notifyGroupPostsUpdated       = "edu.illinois.rokwire.group.posts.updated";
+  static const String notifyGroupPostRepliesUpdated = "edu.illinois.rokwire.group.post.replies.updated";
 
   Map<String, Member> _userMembership;
 
@@ -425,5 +427,73 @@ class Groups /* with Service */ {
 
   Future<bool> postEventComment(String groupId, String eventId, GroupEventComment comment) {
     return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
+  }
+
+  // Group Posts and Replies
+
+  Future<bool> createPost(String groupId, GroupPost post) async {
+    if (AppString.isStringEmpty(groupId) || (post == null)) {
+      return false;
+    }
+    String requestBody = AppJson.encode(post.toJson());
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/post';
+    Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostsUpdated, null);
+      return true;
+    } else {
+      Log.e('Failed to create group post. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<bool> deletePost(String postId) async {
+    if (AppString.isStringEmpty(postId)) {
+      return false;
+    }
+    String requestUrl = '${Config().groupsUrl}/post/$postId';
+    Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostsUpdated, null);
+      return true;
+    } else {
+      Log.e('Failed to delete group post. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<bool> createPostReply(String postId, GroupPostReply reply) async {
+    if (AppString.isStringEmpty(postId) || (reply == null)) {
+      return false;
+    }
+    String requestBody = AppJson.encode(reply.toJson());
+    String requestUrl = '${Config().groupsUrl}/post/$postId/reply';
+    Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostRepliesUpdated, null);
+      return true;
+    } else {
+      Log.e('Failed to create post reply. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<bool> deleteReply(String replyId) async {
+    if (AppString.isStringEmpty(replyId)) {
+      return false;
+    }
+    String requestUrl = '${Config().groupsUrl}/reply/$replyId';
+    Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostRepliesUpdated, null);
+      return true;
+    } else {
+      Log.e('Failed to delete post reply. Response: ${response?.body}');
+      return false;
+    }
   }
 }
