@@ -1498,6 +1498,7 @@
 	"panel.group_detail.label.confirm.leave": "Are you sure you want to leave this group?",
 	"panel.group_detail.button.back.title": "Back",
 	"panel.group_detail.button.leave_group.title": "Leave group",
+	"panel.group_detail.button.create_post.title": "Create Post",
 	"panel.group_detail.button.previous_post.title": "See previous posts",
 	"panel.group_detail.button.add_post.title": "Add a public post ...",
 	"panel.group_detail.button.favorites.title": "Favorites",

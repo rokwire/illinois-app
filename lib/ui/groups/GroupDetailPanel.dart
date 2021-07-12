@@ -117,6 +117,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin;
   }
 
+  bool get _canCreatePost {
+    return _isAdmin || _isMember;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -215,10 +219,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content = _buildErrorContent();
     }
 
+    bool optionsMenuVisible = _canLeaveGroup || _canDeleteGroup || _canCreatePost;
     return Scaffold(
         appBar: AppBar(leading: HeaderBackButton(), actions: [
           Visibility(
-              visible: (_canLeaveGroup || _canDeleteGroup),
+              visible: optionsMenuVisible,
               child: Semantics(
                   label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
                   button: true,
@@ -851,6 +856,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   height: 24,
                 ),
                 Visibility(
+                    visible: _canCreatePost,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-add-20x18.png",
+                        label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+                        onTap: _onTapCreatePost)),
+                Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
                         height: null,
@@ -1000,6 +1012,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapBrowseEvents(){
     Analytics().logSelect(target: "Browse Events");
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
+  }
+
+  void _onTapCreatePost() {
+    //TBD - to be implemented
   }
 
 }
