@@ -127,7 +127,7 @@ class AppDateTime with Service {
   }
 
   String formatDateTime(DateTime dateTime,
-      {String format, bool ignoreTimeZone = false, bool showTzSuffix = false}) {
+      {String format, String locale, bool ignoreTimeZone = false, bool showTzSuffix = false}) {
     if (dateTime == null) {
       return null;
     }
@@ -136,7 +136,7 @@ class AppDateTime with Service {
     }
     bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
     String formattedDateTime;
-    DateFormat dateFormat = DateFormat(format);
+    DateFormat dateFormat = DateFormat(format, locale);
     if (ignoreTimeZone || useDeviceLocalTimeZone) {
       try { formattedDateTime = dateFormat.format(dateTime); }
       catch (e) { print(e?.toString()); }

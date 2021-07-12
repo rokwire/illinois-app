@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Build campus reminders from Student Guide [#497](https://github.com/rokwire/illinois-app/issues/497).
 
 ## [2.5.9] - 2021-07-09
 ### Changed
