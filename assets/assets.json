@@ -106,23 +106,6 @@
 		}
 	},
 
-	"reminders": {
-		"content":[
-			{"id":"KC20210115","date":"2021-01-15","label":"Student health insurance change/waiver begins for coverage period Jan 15, 2021 - May 14, 2021"},
-			{"id":"KC20210118","date":"2021-01-18","label":"Martin Luther King, Jr. Day (all-campus holiday)"},
-			{"id":"KC20210125","date":"2021-01-25","label":"First day of instruction (Spring 2021)"},
-            {"id":"KC20210205","date":"2021-02-05","label":"10th day add/drop deadline (Spring 2021)"},
-			{"id":"KC20210217","date":"2021-02-17","label":"Break – Non-instructional day"},
-			{"id":"KC20210305","date":"2021-03-05","label":"Student health insurance open enrollment ends for coverage period Jan 15, 2021 - May 14, 2021"},
-            {"id":"KC20210322","date":"2021-03-22","label":"Priority registration Time Tickets available (Fall 2021)"},
-            {"id":"KC20210324","date":"2021-03-24","label":"Break – Non-instructional day"},
-			{"id":"KC20210405","date":"2021-04-05","label":"Priority registration begins (Fall 2021)"},
-			{"id":"KC20210413","date":"2021-04-13","label":"Break – Non-instructional day"},
-            {"id":"KC20210426","date":"2021-04-26","label":"Open registration begins for all students (Fall 2021)"},
-            {"id":"KC20210505","date":"2021-05-05","label":"Last day of instruction"}
-		]
-	},
-
 	"geo_fence": {
 		"regions": [
 			{"id":"@Rokwire",          "types":["test"],             "name":"1301 W Springfield Ave, Urbana, IL 61801, USA", "enabled": true, "location": {"latitude": 40.112501, "longitude":  -88.226915, "radius": 200}},

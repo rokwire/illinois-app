@@ -29,9 +29,9 @@ import 'package:illinois/utils/Utils.dart';
 class StudentGuideListPanel extends StatefulWidget {
   final String category;
   final String section;
-  final List<dynamic> promotedList;
+  final List<dynamic> contentList;
 
-  StudentGuideListPanel({ this.category, this.section, this.promotedList});
+  StudentGuideListPanel({ this.category, this.section, this.contentList});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
@@ -70,6 +70,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
   void _buildGuideContent() {
     if ((widget.category != null) && (widget.section != null) && (StudentGuide().contentList != null)) {
       _guideItems = <Map<String, dynamic>>[];
+
       for (dynamic contentEntry in StudentGuide().contentList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
         if (guideEntry != null) {
@@ -81,14 +82,22 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         }
       }
     }
-    else if (widget.promotedList != null) {
-      _guideItems = List.from(widget.promotedList);
+    else if (widget.contentList != null) {
+      _guideItems = List.from(widget.contentList);
     }
     else {
       _guideItems = null;
     }
 
     if (_guideItems != null) {
+
+        _guideItems.sort((dynamic entry1, dynamic entry2) {
+          return AppSort.compareIntegers(
+            (entry1 is Map) ? AppJson.intValue(entry1['sort_order']) : null,
+            (entry2 is Map) ? AppJson.intValue(entry2['sort_order']) : null
+          );
+        });
+
       _features = LinkedHashSet<String>();
       for (Map<String, dynamic> guideEntry in _guideItems) {
         List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
@@ -113,7 +122,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     if (widget.category != null) {
       title = widget.category;
     }
-    else if (widget.promotedList != null) {
+    else if (widget.contentList != null) {
       title = Localization().getStringEx('panel.student_guide_list.label.highlights.heading', 'Student Guide');
     }
     
@@ -139,7 +148,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       if (widget.section != null) {
         contentList.add(_buildSectionHeading(widget.section));
       }
-      else if (widget.promotedList != null) {
+      else if (widget.contentList != null) {
         contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
       }
 

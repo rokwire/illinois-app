@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
@@ -14,6 +15,7 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -24,6 +26,7 @@ class StudentGuide with Service implements NotificationsListener {
   static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
 
   static const String _cacheFileName = "student.guide.json";
+  static const String campusRemindersCategory = "Campus Reminders";
 
   List<dynamic> _contentList;
   LinkedHashMap<String, Map<String, dynamic>> _contentMap;
@@ -279,6 +282,38 @@ class StudentGuide with Service implements NotificationsListener {
       }
     }
     return true;
+  }
+  
+  List<dynamic> get remindersList {
+    if (_contentList != null) {
+      List<dynamic> remindersList = <dynamic>[];
+      String currentMonth = AppDateTime().formatDateTime(DateTime.now(), format: "MMMM", locale: "en");
+      for (dynamic entry in _contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
+        if ((AppJson.stringValue(entryValue(guideEntry, 'category'))?.toLowerCase() == campusRemindersCategory?.toLowerCase()) &&
+            (AppJson.stringValue(entryValue(guideEntry, 'section'))?.toLowerCase() == currentMonth.toLowerCase()))
+        {
+          remindersList.add(entry);
+        }
+      }
+
+      remindersList.sort((dynamic entry1, dynamic entry2) {
+        return AppSort.compareIntegers(
+          (entry1 is Map) ? AppJson.intValue(entry1['sort_order']) : null,
+          (entry2 is Map) ? AppJson.intValue(entry2['sort_order']) : null
+        );
+      });
+
+      return remindersList;
+    }
+    return null;
+  }
+
+  static int compareMonths(String month1, String month2) {
+    int m1, m2;
+    try { m1 = DateFormat("MMMM", "en").parseLoose(month1)?.month; } catch(e) {}
+    try { m2 = DateFormat("MMMM", "en").parseLoose(month2)?.month; } catch(e) {}
+    return AppSort.compareIntegers(m1, m2);
   }
 
   // Debug

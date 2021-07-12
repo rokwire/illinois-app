@@ -546,6 +546,35 @@ class AppSemantics {
     }
 }
 
+class AppSort {
+  static int compareIntegers(int v1, int v2) {
+    if (v1 != null) {
+      if (v2 != null) {
+        if (v1 < v2) {
+          return -1;
+        }
+        if (v1 > v2) {
+          return 1;
+        }
+        else {
+          return 0;
+        }
+      }
+      else {
+        return -1;
+      }
+    }
+    else {
+      if (v2 != null) {
+        return 1;
+      }
+      else {
+        return 0;
+      }
+    }
+  }
+}
+
 class AppDeviceOrientation {
   
   static DeviceOrientation fromStr(String value) {
