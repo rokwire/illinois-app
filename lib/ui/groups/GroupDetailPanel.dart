@@ -60,7 +60,7 @@ class GroupDetailPanel extends StatefulWidget {
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
 
   Group              _group;
-  bool               _loading = false;
+  int                _progress = 0;
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
@@ -136,21 +136,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroup(){
-    setState(() {
-      _loading = true;
-    });
-    Groups().loadGroup(widget.groupId).then((Group group){
-      if (mounted) {
-        setState(() {
-          _loading = false;
-          if(group != null) {
-            _group = group;
-            _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
-            _loadMembershipStepEvents();
-          }
-        });
+  void _loadGroup() {
+    _increaseProgress();
+    Groups().loadGroup(widget.groupId).then((Group group) {
+      if (group != null) {
+        _group = group;
+        _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+        _loadMembershipStepEvents();
       }
+      _decreaseProgress();
     });
   }
 
@@ -209,7 +203,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   Widget build(BuildContext context) {
     Widget content;
-    if (_loading == true) {
+    if (_isLoading) {
       content = _buildLoadingContent();
     }
     else if (_group != null) {
@@ -972,21 +966,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _requestMembership() {
-    if (mounted) {
-      setState(() {
-        _loading = true;
-      });
+      _increaseProgress();
       Groups().requestMembership(_group, null).then((succeeded) {
-        if (mounted) {
-          setState(() {
-            _loading = false;
-          });
-        }
+        _decreaseProgress();
         if (!succeeded) {
           AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.alert.request_failed.msg", 'Failed to send request.'));
         }
       });
-    }
   }
 
   void _onCancelMembershipRequest() {
@@ -1018,6 +1004,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     //TBD - to be implemented
   }
 
+  void _increaseProgress() {
+    _progress++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _progress--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return _progress > 0;
+  }
 }
 
 class _OfficerCard extends StatelessWidget {
