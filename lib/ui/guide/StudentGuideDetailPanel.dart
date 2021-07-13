@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -147,6 +148,16 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       ),);
     }
     
+    DateTime date = StudentGuide().isEntryReminder(_guideEntry) ? StudentGuide().reminderDate(_guideEntry) : null;
+    if (date != null) {
+      String dateString = AppDateTime().formatDateTime(StudentGuide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
+      contentList.add(
+        Padding(padding: EdgeInsets.zero, child:
+          Text(dateString ?? '',
+            style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.medium),),
+      ),);
+    }
+
     String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_description')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'description'));
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
