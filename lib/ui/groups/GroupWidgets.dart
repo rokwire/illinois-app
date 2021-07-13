@@ -991,14 +991,14 @@ class _GroupPostCardState extends State<GroupPostCard> {
                 padding: EdgeInsets.all(12),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-                    Text(AppString.getDefaultEmptyString(value: memberName),
-                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                    Text(AppString.getDefaultEmptyString(value: widget.post.subject),
+                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                     Visibility(
                         visible: repliesCountVisible,
                         child: Padding(
-                            padding: EdgeInsets.only(left: 10),
+                            padding: EdgeInsets.only(left: 14),
                             child: Text(AppString.getDefaultEmptyString(value: repliesCount?.toString()),
-                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14)))),
+                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))),
                     Expanded(child: Container()),
                     Visibility(
                         visible: _isReplyVisible,
@@ -1007,6 +1007,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             child: Padding(
                                 padding: EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 5), child: Image.asset('images/icon-group-post-reply.png'))))
                   ]),
+                  Text(AppString.getDefaultEmptyString(value: memberName),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
                   Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: Html(data: htmlBody, style: {
