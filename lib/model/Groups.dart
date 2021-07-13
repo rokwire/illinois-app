@@ -710,11 +710,13 @@ class GroupEventComment {
 class GroupPost {
   final String id;
   final Member member;
+  final String subject;
   final String body;
   final DateTime dateCreatedUtc;
+  final bool private;
   final List<GroupPostReply> replies;
 
-  GroupPost({this.id, this.member, this.body, this.dateCreatedUtc, this.replies});
+  GroupPost({this.id, this.member, this.subject, this.body, this.dateCreatedUtc, this.private, this.replies});
 
   factory GroupPost.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -723,8 +725,10 @@ class GroupPost {
     return GroupPost(
         id: json['id'],
         member: Member.fromJson(json['member']),
+        subject: json['subject'],
         body: json['body'],
         dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
+        private: json['private'],
         replies: GroupPostReply.fromJsonList(json['replies']));
   }
 
@@ -732,8 +736,11 @@ class GroupPost {
     return {
       'id': id,
       'member': member?.toJson(),
+      'subject': subject,
       'body': body,
-      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat)
+      'private': private,
+      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat),
+      'replies': GroupPostReply.toJsonList(replies)
     };
   }
 
@@ -755,10 +762,12 @@ class GroupPost {
 class GroupPostReply {
   final String id;
   final Member member;
+  final String subject;
   final String body;
   final DateTime dateCreatedUtc;
+  final bool private;
 
-  GroupPostReply({this.id, this.member, this.body, this.dateCreatedUtc});
+  GroupPostReply({this.id, this.member, this.subject, this.body, this.dateCreatedUtc, this.private});
 
   factory GroupPostReply.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -767,16 +776,20 @@ class GroupPostReply {
     return GroupPostReply(
         id: json['id'],
         member: Member.fromJson(json['member']),
+        subject: json['subject'],
         body: json['body'],
-        dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true));
+        dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
+        private: json['private']);
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'member': member?.toJson(),
+      'subject': subject,
       'body': body,
-      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat)
+      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat),
+      'private': private
     };
   }
 
@@ -789,5 +802,16 @@ class GroupPostReply {
       }
     }
     return replies;
+  }
+
+  static List<dynamic> toJsonList(List<GroupPostReply> replies) {
+    List<dynamic> jsonList;
+    if (replies != null) {
+      jsonList = [];
+      for (GroupPostReply reply in replies) {
+        jsonList.add(reply?.toJson());
+      }
+    }
+    return jsonList;
   }
 }
