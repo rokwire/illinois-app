@@ -39,7 +39,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/Reminders.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/LocalNotifications.dart';
@@ -107,7 +106,6 @@ class Services {
     FirebaseMessaging(),
     Sports(),
     LiveStats(),
-    Reminders(),
     RecentItems(),
     DiningService(),
     IlliniCash(),

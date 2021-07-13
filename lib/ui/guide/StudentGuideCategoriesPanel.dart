@@ -80,7 +80,14 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       _categorySections = Map<String, List<String>>();
       categoriesMap.forEach((String category, LinkedHashSet<String> sectionsSet) {
         List<String> sections = List.from(sectionsSet);
-        sections.sort();
+        if (category.toLowerCase() == StudentGuide.campusRemindersCategory.toLowerCase()) {
+          sections.sort((String month1, String month2) {
+            return StudentGuide.compareMonths(month1, month2);
+          });
+        }
+        else {
+          sections.sort();
+        }
         _categorySections[category] = sections;
       });
         

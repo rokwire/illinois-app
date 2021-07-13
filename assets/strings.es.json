@@ -1737,6 +1737,8 @@
     "widget.game_detail_heading.button.roster.hint": "Toca para ver la lista",
 
     "widget.home_campus_reminders.label.campus_reminders":"RECORDATORIOS DE CAMPUS",
+    "widget.home_campus_reminders.button.more.title": "Ver todo",
+    "widget.home_campus_reminders.button.more.hint": "Toca para ver todos los recordatorios",
 
     "widget.card.button.favorite.on.title":"Agregar a favoritos",
     "widget.card.button.favorite.on.hint":"",
