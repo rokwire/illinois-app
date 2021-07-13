@@ -550,27 +550,34 @@ class AppSort {
   static int compareIntegers(int v1, int v2) {
     if (v1 != null) {
       if (v2 != null) {
-        if (v1 < v2) {
-          return -1;
-        }
-        if (v1 > v2) {
-          return 1;
-        }
-        else {
-          return 0;
-        }
+        return v1.compareTo(v2);
       }
       else {
         return -1;
       }
     }
+    else if (v2 != null) {
+      return 1;
+    }
     else {
+      return 0;
+    }
+  }
+
+  static int compareDateTimes(DateTime v1, DateTime v2) {
+    if (v1 != null) {
       if (v2 != null) {
-        return 1;
+        return v1.compareTo(v2);
       }
       else {
-        return 0;
+        return -1;
       }
+    }
+    else if (v2 != null) {
+      return 1;
+    }
+    else {
+      return 0;
     }
   }
 }

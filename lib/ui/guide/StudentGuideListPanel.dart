@@ -28,10 +28,11 @@ import 'package:illinois/utils/Utils.dart';
 
 class StudentGuideListPanel extends StatefulWidget {
   final String category;
-  final String section;
+  final StudentGuideSection section;
   final List<dynamic> contentList;
+  final String contentTitle;
 
-  StudentGuideListPanel({ this.category, this.section, this.contentList});
+  StudentGuideListPanel({ this.category, this.section, this.contentList, this.contentTitle});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
@@ -75,7 +76,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
         if (guideEntry != null) {
           String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          StudentGuideSection section = StudentGuideSection.fromGuideEntry(guideEntry);
           if ((widget.category == category) && (widget.section == section)) {
             _guideItems.add(guideEntry);
           }
@@ -146,10 +147,10 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       }
 
       if (widget.section != null) {
-        contentList.add(_buildSectionHeading(widget.section));
+        contentList.add(_buildSectionHeading(widget.section.name));
       }
       else if (widget.contentList != null) {
-        contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
+        contentList.add(_buildSectionHeading(widget.contentTitle));
       }
 
       List<Widget> cardsList = <Widget>[];
@@ -193,13 +194,13 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     return contentList;
   }
 
-  Widget _buildSectionHeading(String section) {
+  Widget _buildSectionHeading(String title) {
     return Container(color: Styles().colors.fillColorPrimary, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(section ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
             )
           ),
         )
