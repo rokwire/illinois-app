@@ -29,6 +29,7 @@ import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -51,6 +52,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _groupNamesLoading = false;
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
+  bool _hideGroup = false;
   bool get _canSave => AppString.isStringNotEmpty(_group.title)
       && AppString.isStringNotEmpty(_group.category);
   bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
@@ -151,7 +153,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             _buildPrivacyDropDown(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
-                            _buildMembershipLayout()
+                            _buildMembershipLayout(),
+                            Container(height: 8,),
+                            _buildHideGroupSection(),
+                            Container(height: 24,),
                         ],),)
 
                       ]),
@@ -271,6 +276,32 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     ));
   }
   //
+  //Hidden Group
+  Widget _buildHideGroupSection(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Semantics(label:Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
+        hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _hideGroup, excludeSemantics: true, child:
+        ToggleRibbonButton(
+          height: null,
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          label: Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
+          toggled: _hideGroup,
+          onTap: _onHideToggled,
+          context: context,
+          border: Border.all(color: Styles().colors.fillColorPrimary),
+          borderRadius:
+          BorderRadius.all(Radius.circular(4)),
+        )));
+
+  }
+
+  void _onHideToggled(){
+    setState((){
+      _hideGroup = !_hideGroup;
+    });
+  }
+
   //Description
   //Name
   Widget _buildDescriptionField() {
