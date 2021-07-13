@@ -76,7 +76,8 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
                   style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
                 Container(height: isReminder ? 4 : 8,),
                 isReminder ?
-                  Text(reminderDate ?? '', style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.medium),) :
+                  Text(reminderDate ?? '',
+                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.medium),) :
                   Html(data: descriptionHtml ?? '',
                     onLinkTap: (url, context, attributes, element) => _onTapLink(url),
                     style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
