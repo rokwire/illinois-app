@@ -67,7 +67,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
-  List<GroupPost>    _groupPosts;
+  List<GroupPost>    _visibleGroupPosts;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
 
@@ -130,7 +130,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated, Groups.notifyGroupPostsUpdated]);
     _loadGroup();
     _loadEvents();
-    _loadPosts();
   }
 
   @override
@@ -145,6 +144,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Groups().loadGroup(widget.groupId).then((Group group) {
       if (group != null) {
         _group = group;
+        _loadPosts();
         _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
         _loadMembershipStepEvents();
       }
@@ -172,7 +172,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _loadPosts() {
     _increaseProgress();
     Groups().loadGroupPosts(widget.groupId).then((posts) {
-      _groupPosts = posts;
+      if (AppCollection.isCollectionNotEmpty(posts)) {
+        // Store only visible posts in this collection
+        _visibleGroupPosts = [];
+        bool currentUserIsMemberOrAdmin = _group?.currentUserIsMemberOrAdmin ?? false;
+        for (GroupPost post in posts) {
+          bool isPostVisible = (post.private == false) || (post.private == null) || currentUserIsMemberOrAdmin;
+          if (isPostVisible) {
+            _visibleGroupPosts.add(post);
+          }
+        }
+      } else {
+        _visibleGroupPosts = null;
+      }
       _decreaseProgress();
     });
   }
@@ -261,7 +273,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup();
       _loadEvents();
-      _loadPosts();
     } else if (name == Groups.notifyGroupPostsUpdated) {
       _loadPosts();
     }
@@ -625,21 +636,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildPosts() {
-    if (AppCollection.isCollectionEmpty(_groupPosts)) {
+    if (AppCollection.isCollectionEmpty(_visibleGroupPosts)) {
       return Container();
     }
     List<Widget> postsContent = [];
-
-    int limit = min(_groupPosts.length, 3);
+    int limit = min(_visibleGroupPosts.length, 3);
     for (int i = 0; i < limit; i++) {
-      GroupPost post = _groupPosts[i];
+      GroupPost post = _visibleGroupPosts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
       postsContent.add(GroupPostCard(post: post, group: _group));
     }
 
-    if (limit < _groupPosts.length) {
+    if (limit < _visibleGroupPosts.length) {
       postsContent.add(Padding(
           padding: EdgeInsets.only(top: 16),
           child: ScalableSmallRoundedButton(
