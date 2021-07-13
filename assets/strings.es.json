@@ -1457,12 +1457,11 @@
     "panel.common.privacy_title.private": "Private",
     "panel.common.privacy_title.public":  "Public",
 
-    "panel.group_create_post.label.title": "New Post",
-    "panel.group_create_post.label.post": "post",
-    "panel.group_create_post.label.post.hint": "",
-    "panel.group_create_post.post.field.description": "Write a comment",
-    "panel.group_create_post.post.field.hint": "",
-    "panel.group_create_post.post.field.empty":  "Unable to create post",
+    "panel.group.post.create.header.title": "New Post",
+    "panel.group.post.create.subject.label": "Subject",
+    "panel.group.post.create.subject.field.hint": "Write a Subject",
+    "panel.group.post.create.body.label": "Body",
+    "panel.group.post.create.body.field.hint": "Write a Post",
 
     "panel.group_detail.label.options": "Options",
     "panel.group_detail.label.error_message": "Failed to load group data.",

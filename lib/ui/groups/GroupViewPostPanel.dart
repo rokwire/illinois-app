@@ -43,8 +43,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
               Localization().getStringEx('panel.group.post.header.title', 'Post'),
               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1),
             ),
-            centerTitle: true,
-            actions: []),
+            centerTitle: true),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: TabBarWidget(),
         body: SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

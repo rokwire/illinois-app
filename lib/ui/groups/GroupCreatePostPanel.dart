@@ -17,31 +17,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 class GroupCreatePostPanel extends StatefulWidget{
   
-  final String groupId;
-  final GroupEvent groupEvent;
+  final Group group;
+  final GroupPost post;
 
-  const GroupCreatePostPanel({Key key,  this.groupEvent, this.groupId,}) : super(key: key);
+  GroupCreatePostPanel({@required this.group, this.post});
 
   @override
   State<StatefulWidget> createState() => _GroupCreatePostPanelState();
 }
 
 class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
-  Member _member;
-  
-  TextEditingController _postController = new TextEditingController();
+
+  TextEditingController _subjectController = TextEditingController();
+  TextEditingController _bodyController = TextEditingController();
 
   @override
   void initState() {
-    _initMember();
     super.initState();
   }
 
@@ -50,161 +48,53 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     super.dispose();
   }
 
-  _initMember(){
-    _member = Groups().getUserMembership(widget.groupId);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverAppBar(pinned: true,
-                    floating: true,
-                    primary: true,
-                    forceElevated: true,
-                    centerTitle: true,
-                    leading: Semantics(
-                        label: Localization().getStringEx('headerbar.back.title', 'Back'),
-                        hint: Localization().getStringEx('headerbar.back.hint', ''),
-                        button: true,
-                        excludeSemantics: true,
-                        child: IconButton(
-                            icon: Image.asset('images/icon-circle-close.png', excludeFromSemantics: true,),
-                            onPressed: _onTapBack)),
-                    title: Text(
-                      Localization().getStringEx('panel.group_create_post.label.title', 'New Post'),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.0),
-                    ),
-                    actions: <Widget>[
-                      Semantics(
-                          label: Localization().getStringEx('panel.group_create_post.label.post', 'post'),
-                          hint: Localization().getStringEx('panel.group_create_post.label.post.hint', ''),
-                          button: true,
-                          excludeSemantics: true,
-                          child: InkWell(
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Text(Localization().getStringEx('panel.group_create_post.label.post', 'Post'),
-                                  style: TextStyle(
-                                    color: _postEnabled?Styles().colors.white : Styles().colors.disabledTextColorTwo,
-                                      fontSize: 16,
-                                      fontFamily: Styles().fontFamilies.semiBold,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Styles().colors.fillColorSecondary,
-                                      decorationThickness: 1,
-                                      decorationStyle: TextDecorationStyle.solid
-                                  ),)),
-                              onTap: _onTapPost))
-                    ],
-                  ),
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      Semantics(
-                        explicitChildNodes: true,
-                        child: Column(
-                          children: [
-                            _buildEventInfo(),
-                            _buildPostField()
-                          ],
-                        ))
-                    ]),
-                  )
-                ],
-              )
-          ),
-        ],
-      ),
+      appBar: AppBar(
+          leading: HeaderBackButton(),
+          title: Text(Localization().getStringEx('panel.group.post.create.header.title', 'New Post'),
+              style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1)),
+          centerTitle: true),
+      body: SingleChildScrollView(child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
+                style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
+            Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: TextField(
+                  controller: _subjectController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                      hintText: Localization().getStringEx("panel.group.post.create.subject.field.hint", "Write a Subject"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                )),
+            Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
+                    style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+            Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: TextField(
+                  controller: _bodyController,
+                  maxLines: 15,
+                  decoration: InputDecoration(
+                      hintText: Localization().getStringEx("panel.group.post.create.body.field.hint", "Write a Body"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                )),
+            //TBD: position, implement on send
+            Row(children: [
+              Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.send.title', 'Send'), borderColor: Styles().colors.fillColorSecondary, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white)),
+              Container(width: 20),
+              Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.cancel.title', 'Cancel'), borderColor: Styles().colors.textSurface, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white, onTap: _onTapCancel))
+            ])
+          ]))),
       backgroundColor: Styles().colors.background,
     );
   }
 
-  Widget _buildEventInfo(){
-    return
-      Container(
-          decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [
-              BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2)),
-            ],
-          ),
-          padding: EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(padding: EdgeInsets.only(bottom: 8,right: 25), child:
-              Text(widget.groupEvent?.title??"",  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
-            ),
-            Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true,),),
-              Expanded(
-                child: Text(widget.groupEvent?.timeDisplayString??"",  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
-              )
-            ],)
-      ]));
-  }
-
-  Widget _buildPostField(){
-    String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "Write a comment");
-    String fieldHint = Localization().getStringEx("panel.group_create_post.post.field.hint", "");
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Semantics(
-          label: fieldTitle,
-          hint: fieldHint,
-          textField: true,
-          excludeSemantics: true,
-          child: TextField(
-            controller: _postController,
-            maxLines: 64,
-            decoration: InputDecoration(
-              hintText: fieldTitle,
-              border: InputBorder.none,),
-            style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-            onChanged: (text){
-              setState(() {});
-            },
-          )),
-    );
-  }
-
-  void _onTapPost(){
-    Analytics.instance.logSelect(target: "Post");
-    
-    if(_isPostValid) {
-      GroupEventComment comment = GroupEventComment();
-      comment.member = _member;
-      comment.text = _postController?.text?.toString();
-      comment.dateCreated = DateTime.now();
-      Groups().postEventComment(widget.groupId, widget.groupEvent?.eventId, comment).then((success){
-        if(success){
-          Navigator.pop(context);
-        } else {
-          AppAlert.showDialogResult(context,Localization().getStringEx("panel.group_create_post.post.field.empty",  "Unable to create post"));
-        }
-      });
-
-    } else {
-      //Invalid post
-    }
-  }
-
-  void _onTapBack() {
-    Analytics.instance.logSelect(target: "Back");
-    Navigator.pop(context);
-  }
-
-  bool get _isPostValid{
-    return _postController?.text?.toString()?.isNotEmpty??false;
-  }
-
-  bool get _postEnabled{
-    return _isPostValid;
+  void _onTapCancel() {
+    Navigator.of(context).pop();
   }
 }

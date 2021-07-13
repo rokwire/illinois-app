@@ -29,7 +29,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupViewPostPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
@@ -366,7 +365,8 @@ class _GroupEventCardState extends State<GroupEventCard>{
               child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
                   onTap: (){
                     Analytics().logPage(name: "Add post");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
+                    //TBD: remove if not used
+                    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
                   }))
       );
     }
