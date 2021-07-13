@@ -30,8 +30,9 @@ class StudentGuideListPanel extends StatefulWidget {
   final String category;
   final StudentGuideSection section;
   final List<dynamic> contentList;
+  final String contentTitle;
 
-  StudentGuideListPanel({ this.category, this.section, this.contentList});
+  StudentGuideListPanel({ this.category, this.section, this.contentList, this.contentTitle});
 
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
 }
@@ -146,10 +147,10 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       }
 
       if (widget.section != null) {
-        contentList.add(_buildSectionHeading(widget.section));
+        contentList.add(_buildSectionHeading(widget.section.name));
       }
       else if (widget.contentList != null) {
-        contentList.add(_buildSectionHeading(StudentGuideSection(name:Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights'))));
+        contentList.add(_buildSectionHeading(widget.contentTitle));
       }
 
       List<Widget> cardsList = <Widget>[];
@@ -193,13 +194,13 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     return contentList;
   }
 
-  Widget _buildSectionHeading(StudentGuideSection section) {
+  Widget _buildSectionHeading(String title) {
     return Container(color: Styles().colors.fillColorPrimary, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(section?.name ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
             )
           ),
         )
