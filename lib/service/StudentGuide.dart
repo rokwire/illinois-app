@@ -217,6 +217,19 @@ class StudentGuide with Service implements NotificationsListener {
     // Bidi.stripHtmlIfNeeded(result);
   }
 
+  bool isEntryReminder(Map<String, dynamic> entry) {
+    return AppJson.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+  }
+
+  DateTime reminderDate(Map<String, dynamic> entry) {
+    return AppDateTime().dateTimeFromString(AppJson.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+  }
+
+  DateTime reminderSectionDate(Map<String, dynamic> entry) {
+    DateTime entryDate = StudentGuide().reminderDate(entry);
+    return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
+  }
+
   List<dynamic> get promotedList {
     if (_contentList != null) {
       List<dynamic> promotedList = <dynamic>[];
@@ -290,9 +303,8 @@ class StudentGuide with Service implements NotificationsListener {
       DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
       for (dynamic entry in _contentList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
-        String contentType = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'content_type'));
-        if (contentType == StudentGuide.campusReminderContentType) {
-          DateTime entryDate = AppDateTime().dateTimeFromString(AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+        if (isEntryReminder(guideEntry)) {
+          DateTime entryDate = reminderDate(guideEntry);
           if ((entryDate != null) && (entryDate.month == midnightUtc.month) && (midnightUtc.compareTo(entryDate) <= 0)) {
             remindersList.add(entry);
           }
@@ -300,10 +312,7 @@ class StudentGuide with Service implements NotificationsListener {
       }
 
       remindersList.sort((dynamic entry1, dynamic entry2) {
-        return AppSort.compareDateTimes(
-          AppDateTime().dateTimeFromString(AppJson.stringValue(StudentGuide().entryValue(entry1, 'date')), format: "yyyy-MM-dd", isUtc: true),
-          AppDateTime().dateTimeFromString(AppJson.stringValue(StudentGuide().entryValue(entry2, 'date')), format: "yyyy-MM-dd", isUtc: true)
-        );
+        return AppSort.compareDateTimes(StudentGuide().reminderDate(entry1), StudentGuide().reminderDate(entry2));
       });
 
       return remindersList;
@@ -573,7 +582,7 @@ class StudentGuideSection {
   factory StudentGuideSection.fromGuideEntry(Map<String, dynamic> guideEntry) {
     return (guideEntry != null) ? StudentGuideSection(
         name: AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
-        date: _entryDateTime(guideEntry),
+        date: StudentGuide().isEntryReminder(guideEntry) ? StudentGuide().reminderSectionDate(guideEntry) : null,
     ) : null;
   }
 
@@ -585,15 +594,6 @@ class StudentGuideSection {
   int get hashCode =>
     (name?.hashCode ?? 0) ^
     (date?.hashCode ?? 0);
-
-  static DateTime _entryDateTime(Map<String, dynamic> guideEntry) {
-    String contentType = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'content_type'));
-    if (contentType == StudentGuide.campusReminderContentType) {
-      DateTime entryDate = AppDateTime().dateTimeFromString(AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'date')), format: "yyyy-MM-dd", isUtc: true);
-      return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
-    }
-    return null;
-  }
 
   int compareTo(StudentGuideSection section) {
     if (date != null) {
