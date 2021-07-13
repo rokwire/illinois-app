@@ -601,22 +601,22 @@ class StudentGuideSection {
         return date.compareTo(section.date);
       }
       else {
-        return 1;
+        return -1;
       }
     }
     else if (section.date != null) {
-      return -1;
+      return 1;
     }
     else if (name != null) {
       if (section.name != null) {
         return name.compareTo(section.name);
       }
       else {
-        return 1;
+        return -1;
       }
     }
     else if (section.name != null) {
-      return -1;
+      return 1;
     }
     else {
       return 0;

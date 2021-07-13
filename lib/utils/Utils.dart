@@ -553,11 +553,11 @@ class AppSort {
         return v1.compareTo(v2);
       }
       else {
-        return 1;
+        return -1;
       }
     }
     else if (v2 != null) {
-      return -1;
+      return 1;
     }
     else {
       return 0;
@@ -570,11 +570,11 @@ class AppSort {
         return v1.compareTo(v2);
       }
       else {
-        return 1;
+        return -1;
       }
     }
     else if (v2 != null) {
-      return -1;
+      return 1;
     }
     else {
       return 0;
