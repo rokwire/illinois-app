@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update campus reminders content [#500](https://github.com/rokwire/illinois-app/issues/500).
+
+## [2.6.0] - 2021-07-12
+### Changed
 - Build campus reminders from Student Guide [#497](https://github.com/rokwire/illinois-app/issues/497).
 
 ## [2.5.9] - 2021-07-09
