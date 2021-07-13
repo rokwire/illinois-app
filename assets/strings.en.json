@@ -1693,6 +1693,8 @@
     "panel.groups_event_detail.button.add.title": "ADD ",
     "panel.groups_event_detail.label.link_result":  "Event has been linked to",
 
+    "panel.group.post.header.title": "Post",
+
     "panel.student_guide_categories.label.heading": "Student Guide",
     "panel.student_guide_categories.label.content.empty": "Empty guide content",
 

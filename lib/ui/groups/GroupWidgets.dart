@@ -31,6 +31,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupViewPostPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -977,8 +978,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
   @override
   Widget build(BuildContext context) {
     String memberName = widget.post?.member?.name;
-    int repliesCount = widget.post?.replies?.length ?? 0;
-    bool repliesCountVisible = (repliesCount > 0);
     String htmlBody = widget.post?.body;
     return GestureDetector(
         onTap: _onTapCard,
@@ -994,10 +993,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
                     Text(AppString.getDefaultEmptyString(value: widget.post.subject),
                         style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                     Visibility(
-                        visible: repliesCountVisible,
+                        visible: (_visibleRepliesCount > 0),
                         child: Padding(
                             padding: EdgeInsets.only(left: 14),
-                            child: Text(AppString.getDefaultEmptyString(value: repliesCount?.toString()),
+                            child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
                                 style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))),
                     Expanded(child: Container()),
                     Visibility(
@@ -1023,7 +1022,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onTapCard() {
-    //TBD implement
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupViewPostPanel(post: widget.post, group: widget.group)));
   }
 
   void _onTapReply() {
@@ -1032,5 +1031,61 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   bool get _isReplyVisible {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+  int get _visibleRepliesCount {
+    if (AppCollection.isCollectionEmpty(widget.post?.replies)) {
+      return 0;
+    }
+    bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+    int visibleRepliesCount = 0;
+    for (GroupPostReply reply in widget.post.replies) {
+      if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
+        visibleRepliesCount++;
+      }
+    }
+    return visibleRepliesCount;
+  }
+}
+
+//////////////////////////////////////
+// GroupReplyCard
+
+class GroupReplyCard extends StatefulWidget {
+  final GroupPostReply reply;
+  final Group group;
+
+  GroupReplyCard({@required this.reply, @required this.group});
+
+  @override
+  _GroupReplyCardState createState() => _GroupReplyCardState();
+}
+
+class _GroupReplyCardState extends State<GroupReplyCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(AppString.getDefaultEmptyString(value: widget.reply.subject),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+              Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+              Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Html(data: widget.reply?.body, style: {
+                    "body": Style(
+                        color: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies.regular,
+                        fontSize: FontSize(16),
+                        maxLines: 3,
+                        textOverflow: TextOverflow.ellipsis)
+                  }))
+            ])));
   }
 }
