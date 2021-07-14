@@ -864,7 +864,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         height: null,
                         leftIcon: "images/icon-add-20x18.png",
                         label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
-                        onTap: _onTapCreatePost)),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost();
+                        })),
                 Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
