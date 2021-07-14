@@ -229,7 +229,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     }
     _setLoading(true);
     Groups().searchGroups(searchValue).then((groups) {
-      _groups = groups;
+
+      _groups = _filterGroups(groups, searchValue);
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
       _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
@@ -262,5 +263,13 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     setState(() {
       _loading = loading;
     });
+  }
+
+  List<Group> _filterGroups(List<Group> groups, String searchText){
+    if(AppCollection.isCollectionEmpty(groups) || AppString.isStringEmpty(searchText)){
+      return groups;
+    }
+
+    return groups.where((group) => (!group.isHidden) || (group?.title?.toUpperCase() == searchText.toUpperCase()))?.toList();
   }
 }
