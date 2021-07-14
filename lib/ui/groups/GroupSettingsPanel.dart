@@ -24,6 +24,7 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -100,6 +101,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildTagsLayout(),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
+                            Container(height: 8, color: Styles().colors.background,),
+                            _buildHideGroupSection(),
+                            Container(height: 24,  color: Styles().colors.background,),
                           ],),)
                       ]),
                     ),
@@ -264,6 +268,33 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               ),
             )
         ));
+  }
+  //
+  //Hidden Group
+  Widget _buildHideGroupSection(){
+    return Container(
+        color: Styles().colors.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Semantics(label:Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
+            hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _group?.hidden ?? false, excludeSemantics: true, child:
+            ToggleRibbonButton(
+              height: null,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              label: Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
+              toggled: _group?.hidden ?? false,
+              onTap: _onHideToggled,
+              context: context,
+              border: Border.all(color: Styles().colors.fillColorPrimary),
+              borderRadius:
+              BorderRadius.all(Radius.circular(4)),
+            )));
+
+  }
+
+  void _onHideToggled(){
+    setState((){
+      _group.hidden = !(_group?.hidden ?? false);
+    });
   }
   //
 

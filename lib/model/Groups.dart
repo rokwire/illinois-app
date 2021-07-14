@@ -33,6 +33,7 @@ class Group {
 	String              type;
 	String              title;
 	bool                certified;
+	bool                hidden;
 
   GroupPrivacy         privacy;
   String               description;
@@ -58,6 +59,7 @@ class Group {
     try { type            = json['type'];       } catch(e) { print(e.toString()); }
     try { title           = json['title'];      } catch(e) { print(e.toString()); }
     try { certified       = json['certified']; } catch(e) { print(e.toString()); }
+    try { hidden          = json['hidden']; } catch(e) { print(e.toString()); }
     try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
     try { description     = json['description'];  } catch(e) { print(e.toString()); }
     try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
@@ -84,6 +86,7 @@ class Group {
     type            = other?.type;
     title           = other?.title;
     certified       = other?.certified;
+    hidden          = other?.hidden;
     privacy         = other?.privacy;
     description     = other?.description;
     imageURL        = other?.imageURL;
@@ -111,6 +114,7 @@ class Group {
     json['type']              = type;
     json['title']             = title;
     json['certified']         = certified;
+    json['hidden']            = hidden;
     json['privacy']           = groupPrivacyToString(privacy);
     json['description']       = description;
     json['image_url']         = imageURL;

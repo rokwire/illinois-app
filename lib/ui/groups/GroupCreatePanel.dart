@@ -52,7 +52,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _groupNamesLoading = false;
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
-  bool _hideGroup = false;
   bool get _canSave => AppString.isStringNotEmpty(_group.title)
       && AppString.isStringNotEmpty(_group.category);
   bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
@@ -281,12 +280,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Semantics(label:Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
-        hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _hideGroup, excludeSemantics: true, child:
+        hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _group?.hidden ?? false, excludeSemantics: true, child:
         ToggleRibbonButton(
           height: null,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           label: Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
-          toggled: _hideGroup,
+          toggled: _group?.hidden ?? false,
           onTap: _onHideToggled,
           context: context,
           border: Border.all(color: Styles().colors.fillColorPrimary),
@@ -298,7 +297,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onHideToggled(){
     setState((){
-      _hideGroup = !_hideGroup;
+      _group.hidden = !(_group?.hidden ?? false);
     });
   }
 
