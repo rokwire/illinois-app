@@ -39,6 +39,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
 
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
+  TextEditingController _linkController = TextEditingController();
   bool _private = true;
 
   bool _loading = false;
@@ -53,6 +54,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     super.dispose();
     _subjectController.dispose();
     _bodyController.dispose();
+    _linkController.dispose();
   }
 
   @override
@@ -89,7 +91,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                         controller: _subjectController,
                         maxLines: 1,
                         decoration: InputDecoration(
-                            hintText: Localization().getStringEx("panel.group.post.create.subject.field.hint", "Write a Subject"),
+                            hintText: Localization().getStringEx('panel.group.post.create.subject.field.hint', 'Write a Subject'),
                             border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
                         style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular))),
                 Padding(
@@ -100,7 +102,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                       Padding(padding: EdgeInsets.only(left: 30), child: GestureDetector(onTap: _onTapBold, child: Text('B', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)))),
                       Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapItalic, child: Text('I', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.mediumIt)))),
                       Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapUnderline, child: Text('U', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, decoration: TextDecoration.underline, decorationThickness: 2, decorationColor: Styles().colors.fillColorPrimary)))),
-                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapLink, child: Text('Link', style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapLink, child: Text(Localization().getStringEx('panel.group.post.create.link.label', 'Link'), style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)))),
                     ])),
                 Padding(
                     padding: EdgeInsets.only(top: 8),
@@ -204,12 +206,49 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
   }
 
   void _onTapLink() {
-    //TBD implement
+    int linkStartPosition = _bodyController.selection.start;
+    int linkEndPosition = _bodyController.selection.end;
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildLinkDialog(), actions: [
+      TextButton(onPressed: () => _onTapOkLink(linkStartPosition, linkEndPosition), child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
+      TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')))
+    ]);
+  }
+
+  Widget _buildLinkDialog() {
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.group.post.create.dialog.link.edit.header', 'Edit Link'),
+          style: TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)),
+      Padding(padding: EdgeInsets.only(top: 16), child: Text(Localization().getStringEx('panel.group.post.create.dialog.link.label', 'Link to:'),
+          style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.fillColorPrimary))),
+      Padding(padding: EdgeInsets.only(top: 6), child: TextField(
+          controller: _linkController,
+          maxLines: 1,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular)))
+    ]);
+  }
+
+  void _onTapOkLink(int startPosition, int endPosition) {
+    Navigator.of(context).pop();
+    if ((startPosition < 0) || (endPosition < 0)) {
+      return;
+    }
+    String link = _linkController.text;
+    _linkController.text = '';
+    _wrapBody('<a href="$link">', '</a>', startPosition, endPosition);
   }
 
   void _wrapBodySelection(String firstValue, String secondValue) {
     int startPosition = _bodyController.selection.start;
     int endPosition = _bodyController.selection.end;
+    if ((startPosition < 0) || (endPosition < 0)) {
+      return;
+    }
+    _wrapBody(firstValue, secondValue, startPosition, endPosition);
+  }
+
+  void _wrapBody(String firstValue, String secondValue, int startPosition, int endPosition) {
     String currentText = _bodyController.text;
     String result = AppString.wrapRange(currentText, firstValue, secondValue, startPosition, endPosition);
     _bodyController.text = result;

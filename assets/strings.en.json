@@ -1467,6 +1467,9 @@
     "panel.group.post.create.validation.body.msg": "Please, populate 'Body' field",
     "panel.group.post.create.post.failed.msg": "Failed to create new post.",
     "panel.group.post.create.reply.failed.msg": "Failed to create new reply.",
+    "panel.group.post.create.link.label": "Link",
+    "panel.group.post.create.dialog.link.edit.header": "Edit Link",
+    "panel.group.post.create.dialog.link.label": "Link To:",
 
     "panel.group_detail.label.options": "Options",
     "panel.group_detail.label.error_message": "Failed to load group data.",
