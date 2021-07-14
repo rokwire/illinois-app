@@ -280,12 +280,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Semantics(label:Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
-        hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _group?.hidden ?? false, excludeSemantics: true, child:
+        hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _group?.isHidden ?? false, excludeSemantics: true, child:
         ToggleRibbonButton(
           height: null,
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           label: Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
-          toggled: _group?.hidden ?? false,
+          toggled: _group?.isHidden ?? false,
           onTap: _onHideToggled,
           context: context,
           border: Border.all(color: Styles().colors.fillColorPrimary),
@@ -297,7 +297,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onHideToggled(){
     setState((){
-      _group.hidden = !(_group?.hidden ?? false);
+      _group.hidden = !(_group?.isHidden ?? false);
     });
   }
 

@@ -234,6 +234,10 @@ class Group {
     }
     return membersCount;
   }
+
+  bool get isHidden{
+    return hidden ?? false;
+  }
 }
 
 //////////////////////////////
