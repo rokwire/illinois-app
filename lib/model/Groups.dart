@@ -717,14 +717,15 @@ class GroupEventComment {
 
 class GroupPost {
   final String id;
+  final String parentId;
   final Member member;
   final String subject;
   final String body;
   final DateTime dateCreatedUtc;
   final bool private;
-  final List<GroupPostReply> replies;
+  final List<GroupPost> replies;
 
-  GroupPost({this.id, this.member, this.subject, this.body, this.dateCreatedUtc, this.private, this.replies});
+  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.private, this.replies});
 
   factory GroupPost.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -732,24 +733,21 @@ class GroupPost {
     }
     return GroupPost(
         id: json['id'],
+        parentId: json['parent_id'],
         member: Member.fromJson(json['member']),
         subject: json['subject'],
         body: json['body'],
         dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
         private: json['private'],
-        replies: GroupPostReply.fromJsonList(json['replies']));
+        replies: GroupPost.fromJsonList(json['replies']));
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'member': member?.toJson(),
-      'subject': subject,
-      'body': body,
-      'private': private,
-      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat),
-      'replies': GroupPostReply.toJsonList(replies)
-    };
+    Map<String, dynamic> json = {'subject': subject, 'body': body, 'private': private};
+    if (parentId != null) {
+      json['parent_id'] = parentId;
+    }
+    return json;
   }
 
   static List<GroupPost> fromJsonList(List<dynamic> jsonList) {
@@ -762,62 +760,13 @@ class GroupPost {
     }
     return posts;
   }
-}
 
-//////////////////////////////
-// GroupPostReply
-
-class GroupPostReply {
-  final String id;
-  final Member member;
-  final String subject;
-  final String body;
-  final DateTime dateCreatedUtc;
-  final bool private;
-
-  GroupPostReply({this.id, this.member, this.subject, this.body, this.dateCreatedUtc, this.private});
-
-  factory GroupPostReply.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
-    return GroupPostReply(
-        id: json['id'],
-        member: Member.fromJson(json['member']),
-        subject: json['subject'],
-        body: json['body'],
-        dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
-        private: json['private']);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'member': member?.toJson(),
-      'subject': subject,
-      'body': body,
-      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat),
-      'private': private
-    };
-  }
-
-  static List<GroupPostReply> fromJsonList(List<dynamic> jsonList) {
-    List<GroupPostReply> replies;
-    if (jsonList != null) {
-      replies = [];
-      for (dynamic jsonEntry in jsonList) {
-        replies.add(GroupPostReply.fromJson(jsonEntry));
-      }
-    }
-    return replies;
-  }
-
-  static List<dynamic> toJsonList(List<GroupPostReply> replies) {
+  static List<dynamic> toJsonList(List<GroupPost> posts) {
     List<dynamic> jsonList;
-    if (replies != null) {
+    if (posts != null) {
       jsonList = [];
-      for (GroupPostReply reply in replies) {
-        jsonList.add(reply?.toJson());
+      for (GroupPost post in posts) {
+        jsonList.add(post?.toJson());
       }
     }
     return jsonList;

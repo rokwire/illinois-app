@@ -1040,7 +1040,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
     }
     bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
     int visibleRepliesCount = 0;
-    for (GroupPostReply reply in widget.post.replies) {
+    for (GroupPost reply in widget.post.replies) {
       if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
         visibleRepliesCount++;
       }
@@ -1053,7 +1053,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 // GroupReplyCard
 
 class GroupReplyCard extends StatefulWidget {
-  final GroupPostReply reply;
+  final GroupPost reply;
   final Group group;
   final String iconPath;
   final Function onIconTap;
