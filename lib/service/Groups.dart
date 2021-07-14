@@ -489,37 +489,4 @@ class Groups /* with Service */ {
       return null;
     }
   }
-
-  Future<bool> createPostReply(String groupId, GroupPostReply reply) async {
-    if (AppString.isStringEmpty(groupId) || (reply == null)) {
-      return false;
-    }
-    String requestBody = AppJson.encode(reply.toJson());
-    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
-    Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
-    int responseCode = response?.statusCode ?? -1;
-    if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, null);
-      return true;
-    } else {
-      Log.e('Failed to create post reply. Response: ${response?.body}');
-      return false;
-    }
-  }
-
-  Future<bool> deleteReply(String replyId) async {
-    if (AppString.isStringEmpty(replyId)) {
-      return false;
-    }
-    String requestUrl = '${Config().groupsUrl}/posts/$replyId';
-    Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
-    int responseCode = response?.statusCode ?? -1;
-    if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, null);
-      return true;
-    } else {
-      Log.e('Failed to delete post reply. Response: ${response?.body}');
-      return false;
-    }
-  }
 }

@@ -70,7 +70,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
   }
 
   Widget _buildRepliesWidget() {
-    List<GroupPostReply> replies = _getVisibleReplies();
+    List<GroupPost> replies = _getVisibleReplies();
     if (AppCollection.isCollectionEmpty(replies)) {
       return Container();
     }
@@ -79,7 +79,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
       if (i > 0) {
         replyWidgetList.add(Container(height: 10));
       }
-      GroupPostReply reply = replies[i];
+      GroupPost reply = replies[i];
       String deleteIconPath;
       Function deleteFunctionTap;
       if (_isDeleteReplyVisible(reply)) {
@@ -91,14 +91,14 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     return Padding(padding: EdgeInsets.only(left: 25, top: 20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replyWidgetList));
   }
 
-  List<GroupPostReply> _getVisibleReplies() {
-    List<GroupPostReply> replies = widget.post?.replies;
+  List<GroupPost> _getVisibleReplies() {
+    List<GroupPost> replies = widget.post?.replies;
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
-    List<GroupPostReply> visibleReplies = [];
+    List<GroupPost> visibleReplies = [];
     bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
-    for (GroupPostReply reply in replies) {
+    for (GroupPost reply in replies) {
       bool replyVisible = (reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin;
       if (replyVisible) {
         visibleReplies.add(reply);
@@ -134,7 +134,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     });
   }
 
-  void _onTapDeleteReply(GroupPostReply reply) {
+  void _onTapDeleteReply(GroupPost reply) {
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: Text(Localization().getStringEx('panel.group.view.post.reply.delete.confirm.msg', 'Are you sure that you want to delete this reply?')),
@@ -151,7 +151,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deleteReply(String replyId) {
     _setLoading(true);
-    Groups().deleteReply(replyId).then((succeeded) {
+    Groups().deletePost(replyId).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -169,7 +169,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     }
   }
 
-  bool _isDeleteReplyVisible(GroupPostReply reply) {
+  bool _isDeleteReplyVisible(GroupPost reply) {
     if (reply == null) {
       return false;
     } else if (widget.group?.currentUserIsAdmin ?? false) {

@@ -158,18 +158,15 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
       return;
     }
     _setLoading(true);
+    GroupPost post;
     if (_isNewPost) {
-      GroupPost post = GroupPost(subject: subject, body: body, private: _private);
-      Groups().createPost(widget.group?.id, post).then((succeeded) {
-        _onCreateFinished(succeeded);
-      });
+      post = GroupPost(subject: subject, body: body, private: _private);
     } else {
-      GroupPostReply reply = GroupPostReply(parentId: widget.post?.id, subject: subject, body: body, private: _private);
-      _setLoading(true);
-      Groups().createPostReply(widget.group?.id, reply).then((succeeded) {
-        _onCreateFinished(succeeded);
-      });
+      post = GroupPost(parentId: widget.post?.id, subject: subject, body: body, private: _private);
     }
+    Groups().createPost(widget.group?.id, post).then((succeeded) {
+      _onCreateFinished(succeeded);
+    });
   }
 
   void _onCreateFinished(bool succeeded) {
