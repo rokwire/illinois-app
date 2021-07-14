@@ -159,14 +159,14 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     }
     _setLoading(true);
     if (_isNewPost) {
-      GroupPost post = GroupPost(subject: subject, body: body, private: _private, dateCreatedUtc: DateTime.now().toUtc()); //TBD check if we have to send member
+      GroupPost post = GroupPost(subject: subject, body: body, private: _private);
       Groups().createPost(widget.group?.id, post).then((succeeded) {
         _onCreateFinished(succeeded);
       });
     } else {
-      GroupPostReply reply = GroupPostReply(subject: subject, body: body, private: _private, dateCreatedUtc: DateTime.now().toUtc()); //TBD check if we have to send member
+      GroupPostReply reply = GroupPostReply(parentId: widget.post?.id, subject: subject, body: body, private: _private);
       _setLoading(true);
-      Groups().createPostReply(widget.post?.id, reply).then((succeeded) {
+      Groups().createPostReply(widget.group?.id, reply).then((succeeded) {
         _onCreateFinished(succeeded);
       });
     }

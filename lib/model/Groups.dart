@@ -734,13 +734,9 @@ class GroupPost {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'member': member?.toJson(),
       'subject': subject,
       'body': body,
-      'private': private,
-      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat),
-      'replies': GroupPostReply.toJsonList(replies)
+      'private': private
     };
   }
 
@@ -761,13 +757,14 @@ class GroupPost {
 
 class GroupPostReply {
   final String id;
+  final String parentId;
   final Member member;
   final String subject;
   final String body;
   final DateTime dateCreatedUtc;
   final bool private;
 
-  GroupPostReply({this.id, this.member, this.subject, this.body, this.dateCreatedUtc, this.private});
+  GroupPostReply({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.private});
 
   factory GroupPostReply.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -775,6 +772,7 @@ class GroupPostReply {
     }
     return GroupPostReply(
         id: json['id'],
+        parentId: json['parent_id'],
         member: Member.fromJson(json['member']),
         subject: json['subject'],
         body: json['body'],
@@ -784,11 +782,9 @@ class GroupPostReply {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'member': member?.toJson(),
+      'parent_id': parentId,
       'subject': subject,
       'body': body,
-      'date_created': AppDateTime().formatDateTime(dateCreatedUtc, format: AppDateTime.parkingEventDateFormat),
       'private': private
     };
   }

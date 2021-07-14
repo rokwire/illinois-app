@@ -435,7 +435,7 @@ class Groups /* with Service */ {
       return false;
     }
     String requestBody = AppJson.encode(post.toJson());
-    String requestUrl = '${Config().groupsUrl}/group/$groupId/post';
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
     Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
@@ -451,7 +451,7 @@ class Groups /* with Service */ {
     if (AppString.isStringEmpty(postId)) {
       return false;
     }
-    String requestUrl = '${Config().groupsUrl}/post/$postId';
+    String requestUrl = '${Config().groupsUrl}/posts/$postId';
     Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
@@ -467,7 +467,7 @@ class Groups /* with Service */ {
     if (AppString.isStringEmpty(groupId)) {
       return null;
     }
-    String requestUrl = '${Config().groupsUrl}/group/$groupId/post';
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
     Response response = await Network().get(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     String responseString = response?.body;
@@ -490,12 +490,12 @@ class Groups /* with Service */ {
     }
   }
 
-  Future<bool> createPostReply(String postId, GroupPostReply reply) async {
-    if (AppString.isStringEmpty(postId) || (reply == null)) {
+  Future<bool> createPostReply(String groupId, GroupPostReply reply) async {
+    if (AppString.isStringEmpty(groupId) || (reply == null)) {
       return false;
     }
     String requestBody = AppJson.encode(reply.toJson());
-    String requestUrl = '${Config().groupsUrl}/post/$postId/reply';
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
     Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
@@ -511,7 +511,7 @@ class Groups /* with Service */ {
     if (AppString.isStringEmpty(replyId)) {
       return false;
     }
-    String requestUrl = '${Config().groupsUrl}/reply/$replyId';
+    String requestUrl = '${Config().groupsUrl}/posts/$replyId';
     Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
