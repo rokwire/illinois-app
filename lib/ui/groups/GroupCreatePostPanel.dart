@@ -17,10 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class GroupCreatePostPanel extends StatefulWidget{
   
@@ -37,6 +39,9 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
 
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
+  bool _private = true;
+
+  bool _loading = false;
 
   @override
   void initState() {
@@ -50,51 +55,127 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
 
   @override
   Widget build(BuildContext context) {
+    String headerTitle = _isNewPost
+        ? Localization().getStringEx('panel.group.post.create.header.post.title', 'New Post')
+        : Localization().getStringEx('panel.group.post.create.header.reply.title', 'New Reply');
+
     return Scaffold(
       appBar: AppBar(
           leading: HeaderBackButton(),
-          title: Text(Localization().getStringEx('panel.group.post.create.header.title', 'New Post'),
+          title: Text(headerTitle,
               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1)),
           centerTitle: true),
-      body: SingleChildScrollView(child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
-                style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
-            Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: TextField(
-                  controller: _subjectController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      hintText: Localization().getStringEx("panel.group.post.create.subject.field.hint", "Write a Subject"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                )),
-            Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
-                    style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
-            Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: TextField(
-                  controller: _bodyController,
-                  maxLines: 15,
-                  decoration: InputDecoration(
-                      hintText: Localization().getStringEx("panel.group.post.create.body.field.hint", "Write a Body"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                )),
-            //TBD: position, implement on send
-            Row(children: [
-              Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.send.title', 'Send'), borderColor: Styles().colors.fillColorSecondary, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white)),
-              Container(width: 20),
-              Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.cancel.title', 'Cancel'), borderColor: Styles().colors.textSurface, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white, onTap: _onTapCancel))
-            ])
-          ]))),
+      body: Stack(alignment: Alignment.center, children: [
+        SingleChildScrollView(child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Visibility(visible: _privateSwitchVisible, child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(Localization().getStringEx('panel.group.post.create.private.label', 'Private'),
+                    style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
+                GestureDetector(onTap: _onTapPrivate, child: Image.asset(_private ? 'images/switch-on.png' : 'images/switch-off.png'))
+              ])),
+              Padding(padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0), child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
+                  style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+              Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: TextField(
+                    controller: _subjectController,
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                        hintText: Localization().getStringEx("panel.group.post.create.subject.field.hint", "Write a Subject"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  )),
+              Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
+                      style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+              Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: TextField(
+                    controller: _bodyController,
+                    maxLines: 15,
+                    decoration: InputDecoration(
+                        hintText: Localization().getStringEx("panel.group.post.create.body.field.hint", "Write a Body"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  )),
+              //TBD: position
+              Row(children: [
+                Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.send.title', 'Send'), borderColor: Styles().colors.fillColorSecondary, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white, onTap: _onTapSend,)),
+                Container(width: 20),
+                Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.cancel.title', 'Cancel'), borderColor: Styles().colors.textSurface, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white, onTap: _onTapCancel))
+              ])
+            ]))),
+        Visibility(visible: _loading, child: CircularProgressIndicator())
+      ]),
       backgroundColor: Styles().colors.background,
     );
   }
 
   void _onTapCancel() {
     Navigator.of(context).pop();
+  }
+
+  void _onTapSend() {
+    FocusScope.of(context).unfocus();
+    String subject = _subjectController.text;
+    if (AppString.isStringEmpty(subject)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.subject.msg', "Please, populate 'Subject' field"));
+      return;
+    }
+    String body = _bodyController.text;
+    if (AppString.isStringEmpty(body)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.body.msg', "Please, populate 'Body' field"));
+      return;
+    }
+    _setLoading(true);
+    if (_isNewPost) {
+      GroupPost post = GroupPost(subject: subject, body: body, private: _private, dateCreatedUtc: DateTime.now().toUtc()); //TBD check if we have to send member
+      Groups().createPost(widget.group?.id, post).then((succeeded) {
+        _onCreateFinished(succeeded);
+      });
+    } else {
+      GroupPostReply reply = GroupPostReply(subject: subject, body: body, private: _private, dateCreatedUtc: DateTime.now().toUtc()); //TBD check if we have to send member
+      _setLoading(true);
+      Groups().createPostReply(widget.post?.id, reply).then((succeeded) {
+        _onCreateFinished(succeeded);
+      });
+    }
+  }
+
+  void _onCreateFinished(bool succeeded) {
+    _setLoading(false);
+    if (succeeded) {
+      Navigator.of(context).pop();
+    } else {
+      AppAlert.showDialogResult(
+          context,
+          _isNewPost
+              ? Localization().getStringEx('panel.group.post.create.post.failed.msg', 'Failed to create new post.')
+              : Localization().getStringEx('panel.group.post.create.reply.failed.msg', 'Failed to create new reply.'));
+    }
+  }
+
+  void _onTapPrivate() {
+    if (mounted) {
+      setState(() {
+        _private = !_private;
+      });
+    }
+  }
+
+  void _setLoading(bool loading) {
+    if (mounted) {
+      setState(() {
+        _loading = loading;
+      });
+    }
+  }
+
+  bool get _isNewPost {
+    return (widget.post == null);
+  }
+
+  bool get _privateSwitchVisible {
+    return (widget.group?.privacy == GroupPrivacy.public);
   }
 }
