@@ -17,194 +17,257 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupCreatePostPanel extends StatefulWidget{
   
-  final String groupId;
-  final GroupEvent groupEvent;
+  final Group group;
+  final GroupPost post;
 
-  const GroupCreatePostPanel({Key key,  this.groupEvent, this.groupId,}) : super(key: key);
+  GroupCreatePostPanel({@required this.group, this.post});
 
   @override
   State<StatefulWidget> createState() => _GroupCreatePostPanelState();
 }
 
 class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
-  Member _member;
-  
-  TextEditingController _postController = new TextEditingController();
+
+  TextEditingController _subjectController = TextEditingController();
+  TextEditingController _bodyController = TextEditingController();
+  TextEditingController _linkController = TextEditingController();
+  bool _private = true;
+
+  bool _loading = false;
 
   @override
   void initState() {
-    _initMember();
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  _initMember(){
-    _member = Groups().getUserMembership(widget.groupId);
+    _subjectController.dispose();
+    _bodyController.dispose();
+    _linkController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    String headerTitle = _isNewPost
+        ? Localization().getStringEx('panel.group.post.create.header.post.title', 'New Post')
+        : Localization().getStringEx('panel.group.post.create.header.reply.title', 'New Reply');
+
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverAppBar(pinned: true,
-                    floating: true,
-                    primary: true,
-                    forceElevated: true,
-                    centerTitle: true,
-                    leading: Semantics(
-                        label: Localization().getStringEx('headerbar.back.title', 'Back'),
-                        hint: Localization().getStringEx('headerbar.back.hint', ''),
-                        button: true,
-                        excludeSemantics: true,
-                        child: IconButton(
-                            icon: Image.asset('images/icon-circle-close.png', excludeFromSemantics: true,),
-                            onPressed: _onTapBack)),
-                    title: Text(
-                      Localization().getStringEx('panel.group_create_post.label.title', 'New Post'),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.0),
-                    ),
-                    actions: <Widget>[
-                      Semantics(
-                          label: Localization().getStringEx('panel.group_create_post.label.post', 'post'),
-                          hint: Localization().getStringEx('panel.group_create_post.label.post.hint', ''),
-                          button: true,
-                          excludeSemantics: true,
-                          child: InkWell(
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Text(Localization().getStringEx('panel.group_create_post.label.post', 'Post'),
-                                  style: TextStyle(
-                                    color: _postEnabled?Styles().colors.white : Styles().colors.disabledTextColorTwo,
-                                      fontSize: 16,
-                                      fontFamily: Styles().fontFamilies.semiBold,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Styles().colors.fillColorSecondary,
-                                      decorationThickness: 1,
-                                      decorationStyle: TextDecorationStyle.solid
-                                  ),)),
-                              onTap: _onTapPost))
-                    ],
-                  ),
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      Semantics(
-                        explicitChildNodes: true,
-                        child: Column(
-                          children: [
-                            _buildEventInfo(),
-                            _buildPostField()
-                          ],
-                        ))
-                    ]),
-                  )
-                ],
-              )
-          ),
-        ],
-      ),
+      appBar: AppBar(
+          leading: HeaderBackButton(),
+          title: Text(headerTitle, style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1)),
+          centerTitle: true),
+      body: Padding(
+          padding: EdgeInsets.all(16),
+          child: Stack(alignment: Alignment.center, children: [
+            Stack(children: [
+              SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Visibility(
+                    visible: _privateSwitchVisible,
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(Localization().getStringEx('panel.group.post.create.private.label', 'Private'),
+                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
+                      GestureDetector(onTap: _onTapPrivate, child: Image.asset(_private ? 'images/switch-on.png' : 'images/switch-off.png'))
+                    ])),
+                Padding(
+                    padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0),
+                    child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
+                        style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: TextField(
+                        controller: _subjectController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                            hintText: Localization().getStringEx('panel.group.post.create.subject.field.hint', 'Write a Subject'),
+                            border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular))),
+                Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
+                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
+                      Padding(padding: EdgeInsets.only(left: 30), child: GestureDetector(onTap: _onTapBold, child: Text('B', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapItalic, child: Text('I', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.mediumIt)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapUnderline, child: Text('U', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, decoration: TextDecoration.underline, decorationThickness: 2, decorationColor: Styles().colors.fillColorPrimary)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapLink, child: Text(Localization().getStringEx('panel.group.post.create.link.label', 'Link'), style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)))),
+                    ])),
+                Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: TextField(
+                        toolbarOptions: ToolbarOptions(copy: false, cut: false, selectAll: false),
+                        controller: _bodyController,
+                        maxLines: 15,
+                        decoration: InputDecoration(
+                            hintText: Localization().getStringEx("panel.group.post.create.body.field.hint", "Write a Body"),
+                            border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular)))
+              ])),
+              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Flexible(
+                    flex: 1,
+                    child: RoundedButton(
+                        label: Localization().getStringEx('panel.group.post.create.button.send.title', 'Send'),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        onTap: _onTapSend)),
+                Container(width: 20),
+                Flexible(
+                    flex: 1,
+                    child: RoundedButton(
+                        label: Localization().getStringEx('panel.group.post.create.button.cancel.title', 'Cancel'),
+                        borderColor: Styles().colors.textSurface,
+                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        onTap: _onTapCancel))
+              ])
+            ]),
+            Visibility(visible: _loading, child: CircularProgressIndicator())
+          ])),
       backgroundColor: Styles().colors.background,
     );
   }
 
-  Widget _buildEventInfo(){
-    return
-      Container(
-          decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [
-              BoxShadow(color: Styles().colors.fillColorPrimaryTransparent015, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(0, 2)),
-            ],
-          ),
-          padding: EdgeInsets.all(16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(padding: EdgeInsets.only(bottom: 8,right: 25), child:
-              Text(widget.groupEvent?.title??"",  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
-            ),
-            Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true,),),
-              Expanded(
-                child: Text(widget.groupEvent?.timeDisplayString??"",  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textBackground),),
-              )
-            ],)
-      ]));
+  void _onTapCancel() {
+    Navigator.of(context).pop();
   }
 
-  Widget _buildPostField(){
-    String fieldTitle = Localization().getStringEx("panel.group_create_post.post.field.description", "Write a comment");
-    String fieldHint = Localization().getStringEx("panel.group_create_post.post.field.hint", "");
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Semantics(
-          label: fieldTitle,
-          hint: fieldHint,
-          textField: true,
-          excludeSemantics: true,
-          child: TextField(
-            controller: _postController,
-            maxLines: 64,
-            decoration: InputDecoration(
-              hintText: fieldTitle,
-              border: InputBorder.none,),
-            style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-            onChanged: (text){
-              setState(() {});
-            },
-          )),
-    );
-  }
-
-  void _onTapPost(){
-    Analytics.instance.logSelect(target: "Post");
-    
-    if(_isPostValid) {
-      GroupEventComment comment = GroupEventComment();
-      comment.member = _member;
-      comment.text = _postController?.text?.toString();
-      comment.dateCreated = DateTime.now();
-      Groups().postEventComment(widget.groupId, widget.groupEvent?.eventId, comment).then((success){
-        if(success){
-          Navigator.pop(context);
-        } else {
-          AppAlert.showDialogResult(context,Localization().getStringEx("panel.group_create_post.post.field.empty",  "Unable to create post"));
-        }
+  void _onTapSend() {
+    FocusScope.of(context).unfocus();
+    String subject = _subjectController.text;
+    if (AppString.isStringEmpty(subject)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.subject.msg', "Please, populate 'Subject' field"));
+      return;
+    }
+    String body = _bodyController.text;
+    if (AppString.isStringEmpty(body)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.body.msg', "Please, populate 'Body' field"));
+      return;
+    }
+    _setLoading(true);
+    if (_isNewPost) {
+      GroupPost post = GroupPost(subject: subject, body: body, private: _private, dateCreatedUtc: DateTime.now().toUtc()); //TBD check if we have to send member
+      Groups().createPost(widget.group?.id, post).then((succeeded) {
+        _onCreateFinished(succeeded);
       });
-
     } else {
-      //Invalid post
+      GroupPostReply reply = GroupPostReply(subject: subject, body: body, private: _private, dateCreatedUtc: DateTime.now().toUtc()); //TBD check if we have to send member
+      _setLoading(true);
+      Groups().createPostReply(widget.post?.id, reply).then((succeeded) {
+        _onCreateFinished(succeeded);
+      });
     }
   }
 
-  void _onTapBack() {
-    Analytics.instance.logSelect(target: "Back");
-    Navigator.pop(context);
+  void _onCreateFinished(bool succeeded) {
+    _setLoading(false);
+    if (succeeded) {
+      Navigator.of(context).pop();
+    } else {
+      AppAlert.showDialogResult(
+          context,
+          _isNewPost
+              ? Localization().getStringEx('panel.group.post.create.post.failed.msg', 'Failed to create new post.')
+              : Localization().getStringEx('panel.group.post.create.reply.failed.msg', 'Failed to create new reply.'));
+    }
   }
 
-  bool get _isPostValid{
-    return _postController?.text?.toString()?.isNotEmpty??false;
+  void _onTapPrivate() {
+    if (mounted) {
+      setState(() {
+        _private = !_private;
+      });
+    }
   }
 
-  bool get _postEnabled{
-    return _isPostValid;
+  void _onTapBold() {
+    _wrapBodySelection('<b>', '</b>');
+  }
+
+  void _onTapItalic() {
+    _wrapBodySelection('<i>', '</i>');
+  }
+
+  void _onTapUnderline() {
+    _wrapBodySelection('<u>', '</u>');
+  }
+
+  void _onTapLink() {
+    int linkStartPosition = _bodyController.selection.start;
+    int linkEndPosition = _bodyController.selection.end;
+    AppAlert.showCustomDialog(context: context, contentWidget: _buildLinkDialog(), actions: [
+      TextButton(onPressed: () => _onTapOkLink(linkStartPosition, linkEndPosition), child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
+      TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')))
+    ]);
+  }
+
+  Widget _buildLinkDialog() {
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.group.post.create.dialog.link.edit.header', 'Edit Link'),
+          style: TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)),
+      Padding(padding: EdgeInsets.only(top: 16), child: Text(Localization().getStringEx('panel.group.post.create.dialog.link.label', 'Link to:'),
+          style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.fillColorPrimary))),
+      Padding(padding: EdgeInsets.only(top: 6), child: TextField(
+          controller: _linkController,
+          maxLines: 1,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular)))
+    ]);
+  }
+
+  void _onTapOkLink(int startPosition, int endPosition) {
+    Navigator.of(context).pop();
+    if ((startPosition < 0) || (endPosition < 0)) {
+      return;
+    }
+    String link = _linkController.text;
+    _linkController.text = '';
+    _wrapBody('<a href="$link">', '</a>', startPosition, endPosition);
+  }
+
+  void _wrapBodySelection(String firstValue, String secondValue) {
+    int startPosition = _bodyController.selection.start;
+    int endPosition = _bodyController.selection.end;
+    if ((startPosition < 0) || (endPosition < 0)) {
+      return;
+    }
+    _wrapBody(firstValue, secondValue, startPosition, endPosition);
+  }
+
+  void _wrapBody(String firstValue, String secondValue, int startPosition, int endPosition) {
+    String currentText = _bodyController.text;
+    String result = AppString.wrapRange(currentText, firstValue, secondValue, startPosition, endPosition);
+    _bodyController.text = result;
+    _bodyController.selection = TextSelection.fromPosition(TextPosition(offset: (endPosition + firstValue.length)));
+  }
+
+  void _setLoading(bool loading) {
+    if (mounted) {
+      setState(() {
+        _loading = loading;
+      });
+    }
+  }
+
+  bool get _isNewPost {
+    return (widget.post == null);
+  }
+
+  bool get _privateSwitchVisible {
+    return (widget.group?.privacy == GroupPrivacy.public);
   }
 }
