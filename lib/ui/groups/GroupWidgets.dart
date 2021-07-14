@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/ImageType.dart';
@@ -30,6 +31,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupViewPostPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -364,7 +366,8 @@ class _GroupEventCardState extends State<GroupEventCard>{
               child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
                   onTap: (){
                     Analytics().logPage(name: "Add post");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
+                    //TBD: remove if not used
+                    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
                   }))
       );
     }
@@ -956,5 +959,145 @@ class GroupCard extends StatelessWidget {
 
   String get _timeUpdatedText {
     return "Updated about 2 hours ago"; //TBD
+  }
+}
+
+//////////////////////////////////////
+// GroupPostCard
+
+class GroupPostCard extends StatefulWidget {
+  final GroupPost post;
+  final Group group;
+
+  GroupPostCard({@required this.post, @required this.group});
+
+  @override
+  _GroupPostCardState createState() => _GroupPostCardState();
+}
+
+class _GroupPostCardState extends State<GroupPostCard> {
+  @override
+  Widget build(BuildContext context) {
+    String memberName = widget.post?.member?.name;
+    String htmlBody = widget.post?.body;
+    return GestureDetector(
+        onTap: _onTapCard,
+        child: Container(
+            decoration: BoxDecoration(
+                color: Styles().colors.white,
+                boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                borderRadius: BorderRadius.all(Radius.circular(8))),
+            child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Text(AppString.getDefaultEmptyString(value: widget.post.subject),
+                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                    Visibility(
+                        visible: (_visibleRepliesCount > 0),
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 14),
+                            child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
+                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))),
+                    Expanded(child: Container()),
+                    Visibility(
+                        visible: _isReplyVisible,
+                        child: GestureDetector(
+                            onTap: _onTapReply,
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 5), child: Image.asset('images/icon-group-post-reply.png'))))
+                  ]),
+                  Text(AppString.getDefaultEmptyString(value: memberName),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Html(data: htmlBody, style: {
+                        "body": Style(
+                            color: Styles().colors.fillColorPrimary,
+                            fontFamily: Styles().fontFamilies.regular,
+                            fontSize: FontSize(16),
+                            maxLines: 3,
+                            textOverflow: TextOverflow.ellipsis)
+                      }))
+                ]))));
+  }
+
+  void _onTapCard() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupViewPostPanel(post: widget.post, group: widget.group)));
+  }
+
+  void _onTapReply() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: widget.post, group: widget.group)));
+  }
+
+  bool get _isReplyVisible {
+    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+  int get _visibleRepliesCount {
+    if (AppCollection.isCollectionEmpty(widget.post?.replies)) {
+      return 0;
+    }
+    bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+    int visibleRepliesCount = 0;
+    for (GroupPostReply reply in widget.post.replies) {
+      if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
+        visibleRepliesCount++;
+      }
+    }
+    return visibleRepliesCount;
+  }
+}
+
+//////////////////////////////////////
+// GroupReplyCard
+
+class GroupReplyCard extends StatefulWidget {
+  final GroupPostReply reply;
+  final Group group;
+  final String iconPath;
+  final Function onIconTap;
+
+  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap});
+
+  @override
+  _GroupReplyCardState createState() => _GroupReplyCardState();
+}
+
+class _GroupReplyCardState extends State<GroupReplyCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(AppString.getDefaultEmptyString(value: widget.reply.subject),
+                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                Visibility(
+                    visible: AppString.isStringNotEmpty(widget.iconPath),
+                    child: GestureDetector(
+                        onTap: widget.onIconTap,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png') : Container()))))
+              ]),
+              Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+              Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Html(data: widget.reply?.body, style: {
+                    "body": Style(
+                        color: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies.regular,
+                        fontSize: FontSize(16),
+                        maxLines: 3,
+                        textOverflow: TextOverflow.ellipsis)
+                  }))
+            ])));
   }
 }

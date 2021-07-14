@@ -23,7 +23,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupMembersPanel.dart';
 import 'package:illinois/ui/groups/GroupSettingsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -384,7 +383,8 @@ class _EventCard extends StatelessWidget {
           child:_buildAddPostButton(photoUrl: Groups().getUserMembership(groupId)?.photoURL,
           onTap: (){
             Analytics().logPage(name: "Add post");
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: groupEvent,groupId: groupId,)));
+            // TBD: remove if not used
+            // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: groupEvent,groupId: groupId,)));
         })));
 
     return Padding(
