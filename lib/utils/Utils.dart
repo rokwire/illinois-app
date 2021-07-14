@@ -47,6 +47,16 @@ class AppString {
     return value;
   }
 
+  static String wrapRange(String s, String firstValue, String secondValue, int startPosition, int endPosition) {
+    if ((s == null) || (firstValue == null) || (secondValue == null) || (startPosition < 0) || (endPosition < 0)) {
+      return s;
+    }
+    String word = s.substring(startPosition, endPosition);
+    String wrappedWord = firstValue + word + secondValue;
+    String updatedString = s.replaceRange(startPosition, endPosition, wrappedWord);
+    return updatedString;
+  }
+
   static String getMaskedPhoneNumber(String phoneNumber) {
     if(AppString.isStringEmpty(phoneNumber)) {
       return "*********";

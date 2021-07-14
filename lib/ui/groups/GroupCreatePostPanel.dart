@@ -51,6 +51,8 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
   @override
   void dispose() {
     super.dispose();
+    _subjectController.dispose();
+    _bodyController.dispose();
   }
 
   @override
@@ -92,11 +94,18 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                         style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular))),
                 Padding(
                     padding: EdgeInsets.only(top: 16),
-                    child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
-                        style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
+                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
+                      Padding(padding: EdgeInsets.only(left: 30), child: GestureDetector(onTap: _onTapBold, child: Text('B', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapItalic, child: Text('I', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.mediumIt)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapUnderline, child: Text('U', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, decoration: TextDecoration.underline, decorationThickness: 2, decorationColor: Styles().colors.fillColorPrimary)))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapLink, child: Text('Link', style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)))),
+                    ])),
                 Padding(
                     padding: EdgeInsets.only(top: 8),
                     child: TextField(
+                        toolbarOptions: ToolbarOptions(copy: false, cut: false, selectAll: false),
                         controller: _bodyController,
                         maxLines: 15,
                         decoration: InputDecoration(
@@ -180,6 +189,31 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
         _private = !_private;
       });
     }
+  }
+
+  void _onTapBold() {
+    _wrapBodySelection('<b>', '</b>');
+  }
+
+  void _onTapItalic() {
+    _wrapBodySelection('<i>', '</i>');
+  }
+
+  void _onTapUnderline() {
+    _wrapBodySelection('<u>', '</u>');
+  }
+
+  void _onTapLink() {
+    //TBD implement
+  }
+
+  void _wrapBodySelection(String firstValue, String secondValue) {
+    int startPosition = _bodyController.selection.start;
+    int endPosition = _bodyController.selection.end;
+    String currentText = _bodyController.text;
+    String result = AppString.wrapRange(currentText, firstValue, secondValue, startPosition, endPosition);
+    _bodyController.text = result;
+    _bodyController.selection = TextSelection.fromPosition(TextPosition(offset: (endPosition + firstValue.length)));
   }
 
   void _setLoading(bool loading) {
