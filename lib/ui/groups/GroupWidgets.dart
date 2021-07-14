@@ -1055,8 +1055,10 @@ class _GroupPostCardState extends State<GroupPostCard> {
 class GroupReplyCard extends StatefulWidget {
   final GroupPostReply reply;
   final Group group;
+  final String iconPath;
+  final Function onIconTap;
 
-  GroupReplyCard({@required this.reply, @required this.group});
+  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1073,8 +1075,17 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
         child: Padding(
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(AppString.getDefaultEmptyString(value: widget.reply.subject),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(AppString.getDefaultEmptyString(value: widget.reply.subject),
+                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                Visibility(
+                    visible: AppString.isStringNotEmpty(widget.iconPath),
+                    child: GestureDetector(
+                        onTap: widget.onIconTap,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png') : Container()))))
+              ]),
               Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
               Padding(
