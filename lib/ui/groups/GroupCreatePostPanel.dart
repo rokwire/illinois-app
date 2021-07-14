@@ -62,51 +62,70 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     return Scaffold(
       appBar: AppBar(
           leading: HeaderBackButton(),
-          title: Text(headerTitle,
-              style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1)),
+          title: Text(headerTitle, style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1)),
           centerTitle: true),
-      body: Stack(alignment: Alignment.center, children: [
-        SingleChildScrollView(child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Visibility(visible: _privateSwitchVisible, child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(Localization().getStringEx('panel.group.post.create.private.label', 'Private'),
-                    style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
-                GestureDetector(onTap: _onTapPrivate, child: Image.asset(_private ? 'images/switch-on.png' : 'images/switch-off.png'))
+      body: Padding(
+          padding: EdgeInsets.all(16),
+          child: Stack(alignment: Alignment.center, children: [
+            Stack(children: [
+              SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Visibility(
+                    visible: _privateSwitchVisible,
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(Localization().getStringEx('panel.group.post.create.private.label', 'Private'),
+                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
+                      GestureDetector(onTap: _onTapPrivate, child: Image.asset(_private ? 'images/switch-on.png' : 'images/switch-off.png'))
+                    ])),
+                Padding(
+                    padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0),
+                    child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
+                        style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: TextField(
+                        controller: _subjectController,
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                            hintText: Localization().getStringEx("panel.group.post.create.subject.field.hint", "Write a Subject"),
+                            border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular))),
+                Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
+                        style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: TextField(
+                        controller: _bodyController,
+                        maxLines: 15,
+                        decoration: InputDecoration(
+                            hintText: Localization().getStringEx("panel.group.post.create.body.field.hint", "Write a Body"),
+                            border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular)))
               ])),
-              Padding(padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0), child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
-                  style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
-              Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: TextField(
-                    controller: _subjectController,
-                    maxLines: 1,
-                    decoration: InputDecoration(
-                        hintText: Localization().getStringEx("panel.group.post.create.subject.field.hint", "Write a Subject"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
-                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
-                      style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
-              Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: TextField(
-                    controller: _bodyController,
-                    maxLines: 15,
-                    decoration: InputDecoration(
-                        hintText: Localization().getStringEx("panel.group.post.create.body.field.hint", "Write a Body"), border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
-                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                  )),
-              //TBD: position
-              Row(children: [
-                Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.send.title', 'Send'), borderColor: Styles().colors.fillColorSecondary, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white, onTap: _onTapSend,)),
+              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Flexible(
+                    flex: 1,
+                    child: RoundedButton(
+                        label: Localization().getStringEx('panel.group.post.create.button.send.title', 'Send'),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        onTap: _onTapSend)),
                 Container(width: 20),
-                Flexible(flex: 1, child: RoundedButton(label: Localization().getStringEx('panel.group.post.create.button.cancel.title', 'Cancel'), borderColor: Styles().colors.textSurface, textColor: Styles().colors.fillColorPrimary, backgroundColor: Styles().colors.white, onTap: _onTapCancel))
+                Flexible(
+                    flex: 1,
+                    child: RoundedButton(
+                        label: Localization().getStringEx('panel.group.post.create.button.cancel.title', 'Cancel'),
+                        borderColor: Styles().colors.textSurface,
+                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        onTap: _onTapCancel))
               ])
-            ]))),
-        Visibility(visible: _loading, child: CircularProgressIndicator())
-      ]),
+            ]),
+            Visibility(visible: _loading, child: CircularProgressIndicator())
+          ])),
       backgroundColor: Styles().colors.background,
     );
   }
