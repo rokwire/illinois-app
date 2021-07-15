@@ -447,11 +447,11 @@ class Groups /* with Service */ {
     }
   }
 
-  Future<bool> deletePost(String postId) async {
-    if (AppString.isStringEmpty(postId)) {
+  Future<bool> deletePost(String groupId, String postId) async {
+    if (AppString.isStringEmpty(groupId) || AppString.isStringEmpty(postId)) {
       return false;
     }
-    String requestUrl = '${Config().groupsUrl}/posts/$postId';
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/$postId';
     Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {

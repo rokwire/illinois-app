@@ -157,7 +157,8 @@ class FlexUI with Service implements NotificationsListener {
 
   Future<String> _loadContentStringFromNet() async {
 
-    //TMP: try { return AppJson.encode(await _localBuild()); } catch (e) { print(e.toString()); }
+    //TMP: 
+    try { return AppJson.encode(await _localBuild()); } catch (e) { print(e.toString()); }
 
     Http.Client httpClient;
     

@@ -743,11 +743,19 @@ class GroupPost {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {'subject': subject, 'body': body, 'private': private};
+    Map<String, dynamic> json = {'body': body, 'private': private};
     if (parentId != null) {
       json['parent_id'] = parentId;
     }
+    if (subject != null) {
+      json['subject'] = subject;
+    }
     return json;
+  }
+
+  String get displayDateTime {
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
+    return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
   }
 
   static List<GroupPost> fromJsonList(List<dynamic> jsonList) {

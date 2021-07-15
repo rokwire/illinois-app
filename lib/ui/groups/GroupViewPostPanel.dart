@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -35,6 +37,7 @@ class GroupViewPostPanel extends StatefulWidget {
 }
 
 class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
+  static final double _outerPadding = 16;
   bool _loading = false;
 
   @override
@@ -49,24 +52,64 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
             centerTitle: true),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: TabBarWidget(),
-        body: Stack(children: [SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(AppString.getDefaultEmptyString(value: widget.post?.subject), style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary)),
-            Visibility(visible: _isDeletePostVisible, child: GestureDetector(onTap: _onTapDeletePost, child: Padding(padding: EdgeInsets.only(left: 10, top: 3, bottom: 3), child: Image.asset('images/trash.png'))))
+        body: Stack(children: [
+          Stack(alignment: Alignment.topRight, children: [
+            CustomScrollView(slivers: [
+              SliverPersistentHeader(
+                  floating: false,
+                  pinned: true,
+                  delegate: _GroupPostSubjectHeading(
+                      child: Container(
+                          color: Styles().colors.background,
+                          padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                              Expanded(
+                                  child: Padding(
+                                      padding: EdgeInsets.only(right: 60),
+                                      child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
+                                          maxLines: 5,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
+                            ]),
+                            Padding(
+                                padding: EdgeInsets.only(top: 4),
+                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                            Padding(
+                                padding: EdgeInsets.only(top: 3),
+                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
+                          ])))),
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                Padding(
+                    padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
+                    child: Html(
+                        data: widget.post?.body,
+                        style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))})),
+                Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget())
+              ]))
+            ]),
+            Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Visibility(
+                  visible: _isDeletePostVisible,
+                  child: GestureDetector(
+                      onTap: _onTapDeletePost,
+                      child: Container(color: Colors.transparent, child: Padding(
+                          padding: EdgeInsets.only(left: 16, top: 22, bottom: 10, right: (_isReplyVisible ? (_outerPadding / 2) : _outerPadding)),
+                          child: Image.asset('images/trash.png', width: 20, height: 20))))),
+              Visibility(
+                  visible: _isReplyVisible,
+                  child: GestureDetector(
+                      onTap: _onTapReply,
+                      child: Container(color: Colors.transparent, child: Padding(
+                          padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: _outerPadding),
+                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20)))))
+            ])
           ]),
-          Padding(padding: EdgeInsets.only(top: 4), child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
-              style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Html(data: widget.post?.body, style: {
-                "body": Style(
-                    color: Styles().colors.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies.regular,
-                    fontSize: FontSize(20))
-              })),
-          _buildRepliesWidget()
-        ]))),
-        Visibility(visible: _loading, child: Center(child: CircularProgressIndicator()))]));
+          Visibility(visible: _loading, child: Center(child: CircularProgressIndicator()))
+        ]));
   }
 
   Widget _buildRepliesWidget() {
@@ -124,7 +167,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deletePost() {
     _setLoading(true);
-    Groups().deletePost(widget.post?.id).then((succeeded) {
+    Groups().deletePost(widget.group?.id, widget.post?.id).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -151,7 +194,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deleteReply(String replyId) {
     _setLoading(true);
-    Groups().deletePost(replyId).then((succeeded) {
+    Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -159,6 +202,10 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
         AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.view.post.reply.delete.failed.msg', 'Failed to delete reply.'));
       }
     });
+  }
+
+  void _onTapReply() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: widget.post, group: widget.group)));
   }
 
   void _setLoading(bool loading) {
@@ -195,5 +242,33 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
         return false;
       }
     }
+  }
+
+  bool get _isReplyVisible {
+    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+}
+
+class _GroupPostSubjectHeading extends SliverPersistentHeaderDelegate {
+
+  final Widget child;
+  final double constExtent = 100;
+
+  _GroupPostSubjectHeading({@required this.child});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(height: constExtent, child: child,);
+  }
+
+  @override
+  double get maxExtent => constExtent;
+
+  @override
+  double get minExtent => constExtent;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
   }
 }
