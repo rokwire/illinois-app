@@ -1489,6 +1489,7 @@
     "panel.group_detail.button.website.title": "Website",
     "panel.group_detail.label.tags": "Group Tags: ",
     "panel.group_detail.button.events.title": "Events",
+    "panel.group_detail.button.posts.title": "Posts",
     "panel.group_detail.button.about.title": "About",
     "panel.group_detail.button.leave.title": "Leave",
     "panel.group_detail.button.group.delete.title": "Delete group",
@@ -1707,8 +1708,6 @@
     "panel.group.view.post.delete.failed.msg": "Failed to delete post.",
     "panel.group.view.post.reply.delete.confirm.msg": "Are you sure that you want to delete this reply?",
     "panel.group.view.post.reply.delete.failed.msg": "Failed to delete reply.",
-
-    "widget.group_card.pending.label": "Pending: %s",
 
     "panel.student_guide_categories.label.heading": "Guía de estudiante",
     "panel.student_guide_categories.label.content.empty": "Contenido de la guía vacía",
@@ -1942,6 +1941,11 @@
     "widget.buss_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",
     "widget.card.label.expires.title": "La tarjeta caduca",
+
+    "widget.group_card.pending.label": "Pending: %s",
+
+    "widget.group.card.reply.single.reply.label": "Reply",
+    "widget.group.card.reply.multiple.replies.label": "Replies",
 
     "model.dining.schedule.label.closed_for_two_weeks":"Cerrado por las próximas 2 semanas",
     "model.dining.schedule.label.open_at":"Apertura en",

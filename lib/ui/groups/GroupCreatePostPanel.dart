@@ -59,7 +59,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
 
   @override
   Widget build(BuildContext context) {
-    String headerTitle = _isNewPost
+    String headerTitle = _isPost
         ? Localization().getStringEx('panel.group.post.create.header.post.title', 'New Post')
         : Localization().getStringEx('panel.group.post.create.header.reply.title', 'New Reply');
 
@@ -81,21 +81,23 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                           style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
                       GestureDetector(onTap: _onTapPrivate, child: Image.asset(_private ? 'images/switch-on.png' : 'images/switch-off.png'))
                     ])),
+                Visibility(visible: _isPost, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(
+                      padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0),
+                      child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
+                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                  Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: TextField(
+                          controller: _subjectController,
+                          maxLines: 1,
+                          decoration: InputDecoration(
+                              hintText: Localization().getStringEx('panel.group.post.create.subject.field.hint', 'Write a Subject'),
+                              border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
+                          style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular)))
+                ])),
                 Padding(
-                    padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0),
-                    child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
-                        style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
-                Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: TextField(
-                        controller: _subjectController,
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                            hintText: Localization().getStringEx('panel.group.post.create.subject.field.hint', 'Write a Subject'),
-                            border: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors.mediumGray, width: 0.0))),
-                        style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular))),
-                Padding(
-                    padding: EdgeInsets.only(top: 16),
+                    padding: EdgeInsets.only(top: (_privateSwitchVisible || _isPost) ? 16 : 0),
                     child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
                       Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
                           style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
@@ -148,7 +150,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
   void _onTapSend() {
     FocusScope.of(context).unfocus();
     String subject = _subjectController.text;
-    if (AppString.isStringEmpty(subject)) {
+    if (_isPost && AppString.isStringEmpty(subject)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.subject.msg', "Please, populate 'Subject' field"));
       return;
     }
@@ -159,10 +161,10 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     }
     _setLoading(true);
     GroupPost post;
-    if (_isNewPost) {
+    if (_isPost) {
       post = GroupPost(subject: subject, body: body, private: _private);
     } else {
-      post = GroupPost(parentId: widget.post?.id, subject: subject, body: body, private: _private);
+      post = GroupPost(parentId: widget.post?.id, body: body, private: _private);
     }
     Groups().createPost(widget.group?.id, post).then((succeeded) {
       _onCreateFinished(succeeded);
@@ -176,7 +178,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     } else {
       AppAlert.showDialogResult(
           context,
-          _isNewPost
+          _isPost
               ? Localization().getStringEx('panel.group.post.create.post.failed.msg', 'Failed to create new post.')
               : Localization().getStringEx('panel.group.post.create.reply.failed.msg', 'Failed to create new reply.'));
     }
@@ -260,7 +262,7 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
     }
   }
 
-  bool get _isNewPost {
+  bool get _isPost {
     return (widget.post == null);
   }
 
