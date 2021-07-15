@@ -2164,8 +2164,8 @@
 		"text" : "This is a test emmergency.",
 		"can_close": true,
 		"buttons":[
-			{"title": "Google", "link": {"url": "https://www.google.com"} },
-			{"title": "Yahoo", "link": {"url": "https://www.yahoo.com"} }
+			{"title": "Google", "link": {"url": "https://www.google.com", "options": { "target": "internal", "title": "Emergency" }} },
+			{"title": "Yahoo", "link": {"url": "https://www.yahoo.com", "options": { "target": "internal", "title": "Emergency" }} }
 		]
 	}
 }
