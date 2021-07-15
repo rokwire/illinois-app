@@ -96,16 +96,16 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                   visible: _isDeletePostVisible,
                   child: GestureDetector(
                       onTap: _onTapDeletePost,
-                      child: Padding(
+                      child: Container(color: Colors.transparent, child: Padding(
                           padding: EdgeInsets.only(left: 16, top: 22, bottom: 10, right: (_isReplyVisible ? (_outerPadding / 2) : _outerPadding)),
-                          child: Image.asset('images/trash.png', width: 20, height: 20)))),
+                          child: Image.asset('images/trash.png', width: 20, height: 20))))),
               Visibility(
                   visible: _isReplyVisible,
                   child: GestureDetector(
                       onTap: _onTapReply,
-                      child: Padding(
+                      child: Container(color: Colors.transparent, child: Padding(
                           padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: _outerPadding),
-                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20))))
+                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20)))))
             ])
           ]),
           Visibility(visible: _loading, child: Center(child: CircularProgressIndicator()))

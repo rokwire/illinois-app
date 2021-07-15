@@ -1044,7 +1044,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
           visible: _isReplyVisible,
           child: GestureDetector(
               onTap: _onTapReply,
-              child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png'))))
+              child: Container(
+                  color: Colors.transparent,
+                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png')))))
     ]);
   }
 
