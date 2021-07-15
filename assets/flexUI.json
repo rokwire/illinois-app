@@ -28,8 +28,11 @@
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "bluetooth_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
-
-		"features": ["converge", "create_poll", "mtd_bus_number", "parking_lot_directions"]
+		
+		"features": ["converge", "create_poll", "mtd_bus_number", "parking_lot_directions"],
+		
+		"launch":["emergency"]
+		
 	},
 	"rules": {
 		"roles" : {

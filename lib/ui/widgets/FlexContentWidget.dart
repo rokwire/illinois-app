@@ -19,7 +19,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -44,20 +47,77 @@ import 'package:url_launcher/url_launcher.dart';
 */
 
 class FlexContentWidget extends StatefulWidget {
+  final dynamic assetsKey;
   final Map<String, dynamic> jsonContent;
+  final void Function(BuildContext context) onClose;
 
-  FlexContentWidget({@required this.jsonContent});
+  FlexContentWidget({this.assetsKey, this.jsonContent, this.onClose});
+
+  factory FlexContentWidget.fromAssets(dynamic assetsKey, { void Function(BuildContext context) onClose }) {
+    Map<String, dynamic> jsonContent;
+    dynamic assetsContent = Assets()[assetsKey];
+    try { jsonContent = (assetsContent is Map) ? assetsContent.cast<String, dynamic>() : null; }
+    catch (e) { print(e?.toString()); }
+    return (jsonContent != null) ? FlexContentWidget(assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose) : null;
+  }
 
   @override
   _FlexContentWidgetState createState() => _FlexContentWidgetState();
 }
 
-class _FlexContentWidgetState extends State<FlexContentWidget> {
+class _FlexContentWidgetState extends State<FlexContentWidget> implements NotificationsListener {
   bool _visible = true;
+  Map<String, dynamic> _jsonContent;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    if (widget.jsonContent != null) {
+      _jsonContent = widget.jsonContent;  
+    }
+    if (widget.assetsKey != null) {
+      NotificationService().subscribe(this, Assets.notifyChanged);
+      if (_jsonContent == null) {
+        dynamic content = Assets()[widget.assetsKey];
+        try { _jsonContent = (content is Map) ? content.cast<String, dynamic>() : null; }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param){
+    if (name == Assets.notifyChanged) {
+      if (widget.assetsKey != null) {
+        Map<String, dynamic> jsonContent;
+        dynamic content = Assets()[widget.assetsKey];
+        try { jsonContent = (content is Map) ? content.cast<String, dynamic>() : null; }
+        catch (e) { print(e?.toString()); }
+        
+        if (jsonContent != null) {
+          setState(() { _jsonContent = jsonContent; });
+        }
+        else if (widget.onClose != null) {
+          widget.onClose(context);
+        }
+        else {
+          setState(() { _visible = false; });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool closeVisible = widget.jsonContent != null ? (widget.jsonContent['can_close'] ?? false) : false;
+    bool closeVisible = _jsonContent != null ? (_jsonContent['can_close'] ?? false) : false;
     return Visibility(visible: _visible, child:
       Semantics(container: true, child:
         Container(color: Styles().colors.lightGray, child:
@@ -77,10 +137,10 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
   }
 
   Widget _buildContent() {
-    bool hasJsonContent = (widget.jsonContent != null);
-    String title = hasJsonContent ? widget.jsonContent['title'] : null;
-    String text = hasJsonContent ? widget.jsonContent['text'] : null;
-    List<dynamic> buttonsJsonContent = hasJsonContent ? widget.jsonContent['buttons'] : null;
+    bool hasJsonContent = (_jsonContent != null);
+    String title = hasJsonContent ? _jsonContent['title'] : null;
+    String text = hasJsonContent ? _jsonContent['text'] : null;
+    List<dynamic> buttonsJsonContent = hasJsonContent ? _jsonContent['buttons'] : null;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Visibility(visible: AppString.isStringNotEmpty(title), child:
         Padding(padding: EdgeInsets.only(top: 0), child:
@@ -118,9 +178,14 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
 
   void _onClose() {
     Analytics.instance.logSelect(target: "Flex Content: Close");
-    setState(() {
-      _visible = false;
-    });
+    if (widget.onClose != null) {
+      widget.onClose(context);
+    }
+    else {
+      setState(() {
+        _visible = false;
+      });
+    }
   }
 
   void _onTapButton(Map<String, dynamic> button) {
@@ -145,7 +210,8 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
       launch(url);
     }
     else {
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url )));
+      String title = (options != null) ? AppJson.stringValue(options['title']) : null;
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: title, hideToolBar: !Storage().onBoardingPassed, )));
     }
   }
 }

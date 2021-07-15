@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -169,6 +170,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   Widget build(BuildContext context) {
+    App.instance.homeContext = context;
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     List<Widget> panels = [];

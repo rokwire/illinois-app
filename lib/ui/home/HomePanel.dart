@@ -65,7 +65,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       AppLivecycle.notifyStateChanged,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
-      Styles.notifyChanged
+      Styles.notifyChanged,
+      Assets.notifyChanged,
     ]);
     _contentListCodes = FlexUI()['home'] ?? [];
     _refreshController = StreamController.broadcast();
@@ -161,10 +162,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeLoginWidget();
       }
       else {
-        dynamic data = Assets()[code];
-        if (data is Map) {
-          widget = FlexContentWidget(jsonContent: data);
-        }
+        widget = FlexContentWidget.fromAssets(code);
       }
 
 
@@ -211,6 +209,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       setState(() {});
     }
     else if (name == Styles.notifyChanged){
+      setState(() {});
+    }
+    else if (name == Assets.notifyChanged) {
       setState(() {});
     }
   }

@@ -21,6 +21,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/User.dart';
@@ -37,6 +38,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -91,6 +93,7 @@ class AppExitListener implements NotificationsListener {
 
 class _AppData {
   _AppState _panelState;
+  BuildContext _homeContext;
 }
 
 class App extends StatefulWidget {
@@ -111,16 +114,39 @@ class App extends StatefulWidget {
   }
 
   _AppState createState() {
-    return _data._panelState = _AppState();
+    _AppState appState = _AppState();
+    if ((_data._homeContext != null) && (_data._panelState == null)) {
+      _presentLaunchPopup(appState, _data._homeContext);
+    }
+    return _data._panelState = appState;
+  }
+
+  get homeContext {
+    return _data._homeContext;
+  }
+
+  set homeContext(BuildContext context) {
+    if ((_data._homeContext == null) && (_data._panelState != null)) {
+      _presentLaunchPopup(_data._panelState, context);
+    }
+    _data._homeContext = context;
+  }
+
+  void _presentLaunchPopup(_AppState appState, BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appState._presentLaunchPopup(context);
+    });
   }
 }
 
 class _AppState extends State<App> implements NotificationsListener {
 
+  Key _key = UniqueKey();
   RootPanel rootPanel;
   String _upgradeRequiredVersion;
   String _upgradeAvailableVersion;
-  Key key = UniqueKey();
+  Widget _launchPopup;
+  DateTime _pausedDateTime;
 
   @override
   void initState() {
@@ -134,6 +160,7 @@ class _AppState extends State<App> implements NotificationsListener {
       User.notifyUserDeleted,
       User.notifyPrivacyLevelChanged,
       User.notifyPrivacyLevelEmpty,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     AppLivecycle.instance.ensureBinding();
@@ -164,7 +191,7 @@ class _AppState extends State<App> implements NotificationsListener {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      key: key,
+      key: _key,
       localizationsDelegates: [
         AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
@@ -206,7 +233,7 @@ class _AppState extends State<App> implements NotificationsListener {
   void _resetUI() async {
     this.setState(() {
       rootPanel = RootPanel();
-      key = new UniqueKey();
+      _key = UniqueKey();
     });
   }
 
@@ -214,6 +241,34 @@ class _AppState extends State<App> implements NotificationsListener {
     Storage().onBoardingPassed = true;
     Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel);
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
+  }
+
+  void _presentLaunchPopup(BuildContext context) {
+    if ((_launchPopup == null) && (context != null)) {
+      dynamic launch = FlexUI()['launch'];
+      List<dynamic> launchList = (launch is List) ? launch : null;
+      if (launchList != null) {
+        for (dynamic launchEntry in launchList) {
+          Widget launchPopup = FlexContentWidget.fromAssets(launchEntry, onClose: (BuildContext context) {
+            _launchPopup = null;
+            Navigator.of(context).pop();
+          },);
+          if (launchPopup != null) {
+            _launchPopup = launchPopup;
+            showDialog(context: context, builder: (BuildContext context) {
+              return Dialog(child:
+                Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  launchPopup
+                ]),
+              );
+            }).then((_) {
+              _launchPopup = null;
+            });
+            break;
+          }
+        }
+      }
+    }
   }
 
   // NotificationsListener
@@ -248,6 +303,23 @@ class _AppState extends State<App> implements NotificationsListener {
     }
     else if (name == User.notifyPrivacyLevelEmpty) {
       setState(() { });
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _presentLaunchPopup(App.instance.homeContext);
+        }
+      }
     }
   }
 }
