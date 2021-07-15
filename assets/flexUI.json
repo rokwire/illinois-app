@@ -2,7 +2,7 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["connect", "upgrade_version_message", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
+		"home": ["emergency", "connect", "upgrade_version_message", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
 		"home.connect": ["netid", "phone"],
 		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
 
@@ -124,7 +124,8 @@
 			"create_event"                  : false,
 			"converge"                      : true,
 			"mtd_bus_number"                : true,
-			"parking_lot_directions"        : true
+			"parking_lot_directions"        : true,
+			"emergency"                     : true
 		}
 	}
 }
