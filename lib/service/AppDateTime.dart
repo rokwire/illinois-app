@@ -38,6 +38,7 @@ class AppDateTime with Service {
   static final eventFilterDisplayDateFormat = 'MM/dd';
   static final voterDateFormat = "yyyy/MM/dd";
   static final parkingEventDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+  static final groupPostDateTimeFormat = "MMM dd, HH:mm a";
 
   factory AppDateTime() {
     return _instance;

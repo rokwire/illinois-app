@@ -56,6 +56,8 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
           ]),
           Padding(padding: EdgeInsets.only(top: 4), child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
               style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+          Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+              style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Html(data: widget.post?.body, style: {

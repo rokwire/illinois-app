@@ -1009,6 +1009,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   ]),
                   Text(AppString.getDefaultEmptyString(value: memberName),
                       style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                  Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
                   Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: Html(data: htmlBody, style: {
@@ -1088,6 +1090,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
               ]),
               Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+              Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
+                  style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Html(data: widget.reply?.body, style: {

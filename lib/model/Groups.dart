@@ -750,6 +750,11 @@ class GroupPost {
     return json;
   }
 
+  String get displayDateTime {
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
+    return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
+  }
+
   static List<GroupPost> fromJsonList(List<dynamic> jsonList) {
     List<GroupPost> posts;
     if (jsonList != null) {
