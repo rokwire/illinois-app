@@ -130,8 +130,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
     Groups().loadGroups(myGroups: false).then((List<Group> groups){
       if(groups != null) {
-        List<Group> filteredGroups = _filterGroups(groups);
-        _allGroups = _sortGroups(filteredGroups);
+        _allGroups = _sortGroups(groups);
       }
     }).whenComplete((){
       setState(() {
@@ -146,8 +145,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
     Groups().loadGroups(myGroups: true).then((List<Group> groups){
       if(AppCollection.isCollectionNotEmpty(groups)) {
-        List<Group> filteredGroups = _filterGroups(groups);
-        List<Group> sortedGroups = _sortGroups(filteredGroups);
+        List<Group> sortedGroups = _sortGroups(groups);
         _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
         _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
       }
@@ -204,15 +202,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
     });
     return groups;
-  }
-
-  List<Group> _filterGroups(List<Group> groups){
-    if (AppCollection.isCollectionEmpty(groups)) {
-      return groups;
-    }
-
-    return groups.where((group) =>
-      (!group.isHidden) || group.currentUserIsMemberOrAdmin)?.toList(); // Only Members And Admins can see Hidden groups
   }
 
   static String _tagFilterToDisplayString(_TagFilter tagFilter) {
@@ -606,8 +595,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if (groups != null) {
       setState(() {
         if (_myGroupsSelected) {
-          List<Group> filteredGroups = _filterGroups(groups);
-          List<Group> sortedGroups = _sortGroups(filteredGroups);
+          List<Group> sortedGroups = _sortGroups(groups);
           _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
           _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
         }
