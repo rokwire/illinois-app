@@ -1080,7 +1080,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(AppString.getDefaultEmptyString(value: widget.reply.subject),
+                Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
                     style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                 Visibility(
                     visible: AppString.isStringNotEmpty(widget.iconPath),
@@ -1090,8 +1090,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                             padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png') : Container()))))
               ]),
-              Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
               Padding(
