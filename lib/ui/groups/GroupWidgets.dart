@@ -980,48 +980,50 @@ class _GroupPostCardState extends State<GroupPostCard> {
   Widget build(BuildContext context) {
     String memberName = widget.post?.member?.name;
     String htmlBody = widget.post?.body;
-    return GestureDetector(
-        onTap: _onTapCard,
-        child: Container(
-            decoration: BoxDecoration(
-                color: Styles().colors.white,
-                boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-                    Text(AppString.getDefaultEmptyString(value: widget.post.subject),
-                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
-                    Visibility(
-                        visible: (_visibleRepliesCount > 0),
-                        child: Padding(
-                            padding: EdgeInsets.only(left: 14),
-                            child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
-                                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))),
-                    Expanded(child: Container()),
-                    Visibility(
-                        visible: _isReplyVisible,
-                        child: GestureDetector(
-                            onTap: _onTapReply,
-                            child: Padding(
-                                padding: EdgeInsets.only(left: 10, top: 5, bottom: 5, right: 5), child: Image.asset('images/icon-group-post-reply.png'))))
-                  ]),
-                  Text(AppString.getDefaultEmptyString(value: memberName),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
-                  Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Html(data: htmlBody, style: {
-                        "body": Style(
-                            color: Styles().colors.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies.regular,
-                            fontSize: FontSize(16),
-                            maxLines: 3,
-                            textOverflow: TextOverflow.ellipsis)
-                      }))
-                ]))));
+    return Stack(alignment: Alignment.topRight, children: [
+      GestureDetector(
+          onTap: _onTapCard,
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors.white,
+                  boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+                      Text(AppString.getDefaultEmptyString(value: widget.post.subject),
+                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                      Visibility(
+                          visible: (_visibleRepliesCount > 0),
+                          child: Padding(
+                              padding: EdgeInsets.only(left: 14),
+                              child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
+                                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))),
+                    ]),
+                    Text(AppString.getDefaultEmptyString(value: memberName),
+                        style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                    Padding(
+                        padding: EdgeInsets.only(top: 3),
+                        child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
+                    Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Html(data: htmlBody, style: {
+                          "body": Style(
+                              color: Styles().colors.fillColorPrimary,
+                              fontFamily: Styles().fontFamilies.regular,
+                              fontSize: FontSize(16),
+                              maxLines: 3,
+                              textOverflow: TextOverflow.ellipsis)
+                        }))
+                  ])))),
+      Visibility(
+          visible: _isReplyVisible,
+          child: GestureDetector(
+              onTap: _onTapReply,
+              child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png'))))
+    ]);
   }
 
   void _onTapCard() {
