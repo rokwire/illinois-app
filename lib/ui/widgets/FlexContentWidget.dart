@@ -58,36 +58,22 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
   @override
   Widget build(BuildContext context) {
     bool closeVisible = widget.jsonContent != null ? (widget.jsonContent['can_close'] ?? false) : false;
-    return Visibility(
-        visible: _visible,
-        child: Semantics(
-            container: true,
-            child: Container(
-                color: Styles().colors.lightGray,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: 1,
-                            color: Styles().colors.fillColorPrimaryVariant,
-                          ),
-                          Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: _buildContent()),
-                          Visibility(visible: closeVisible, child: Container(
-                              alignment: Alignment.topRight,
-                              child: Semantics(
-                                  label: Localization().getStringEx("widget.flex_content_widget.button.close.hint", "Close"),
-                                  button: true,
-                                  excludeSemantics: true,
-                                  child: InkWell(
-                                      onTap: _onClose,
-                                      child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-orange.png'))))),),
-                        ],
-                      ),
-                    )
-                  ],
-                ))));
+    return Visibility(visible: _visible, child:
+      Semantics(container: true, child:
+        Container(color: Styles().colors.lightGray, child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Stack(children: <Widget>[
+                Container(height: 1, color: Styles().colors.fillColorPrimaryVariant,),
+                Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child:
+                  _buildContent()),
+                Visibility(visible: closeVisible, child:
+                  Container(alignment: Alignment.topRight, child:
+                    Semantics(label: Localization().getStringEx("widget.flex_content_widget.button.close.hint", "Close"), button: true, excludeSemantics: true, child:
+                      InkWell(onTap: _onClose, child:
+                        Container(width: 48, height: 48, alignment: Alignment.center, child:
+                          Image.asset('images/close-orange.png'))))),),
+    ],),)],),),),);
   }
 
   Widget _buildContent() {
@@ -95,27 +81,14 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
     String title = hasJsonContent ? widget.jsonContent['title'] : null;
     String text = hasJsonContent ? widget.jsonContent['text'] : null;
     List<dynamic> buttonsJsonContent = hasJsonContent ? widget.jsonContent['buttons'] : null;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Visibility(visible: AppString.isStringNotEmpty(title), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Text(
-          AppString.getDefaultEmptyString(value: title),
-          style: TextStyle(
-            color: Styles().colors.fillColorPrimary,
-            fontFamily: Styles().fontFamilies.extraBold,
-            fontSize: 20,
-          ),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Visibility(visible: AppString.isStringNotEmpty(title), child:
+        Padding(padding: EdgeInsets.only(top: 0), child:
+          Text(title ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, ),
         ),),),
-        Visibility(visible: AppString.isStringNotEmpty(text), child: Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(
-            AppString.getDefaultEmptyString(value: text),
-            style: TextStyle(
-              color: Color(0xff494949),
-              fontFamily: Styles().fontFamilies.medium,
-              fontSize: 16,
-            ),
-          ),
+        Visibility(visible: AppString.isStringNotEmpty(text), child:
+          Padding(padding: EdgeInsets.only(top: 10), child:
+            Text(AppString.getDefaultEmptyString(value: text), style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies.medium, fontSize: 16, ), ),
         ),),
         _buildButtons(buttonsJsonContent)
       ],
@@ -129,21 +102,18 @@ class _FlexContentWidgetState extends State<FlexContentWidget> {
     List<Widget> buttons = [];
     for (Map<String, dynamic> buttonContent in buttonsJsonContent) {
       String title = buttonContent['title'];
-      buttons.add(Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          RoundedButton(
-            label: AppString.getDefaultEmptyString(value: title),
-            padding: EdgeInsets.symmetric(horizontal: 14),
-            textColor: Styles().colors.fillColorPrimary,
-            borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.white,
-            onTap: () => _onTapButton(buttonContent),
-          ),
-        ],
+      buttons.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        RoundedButton(
+          label: AppString.getDefaultEmptyString(value: title),
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          textColor: Styles().colors.fillColorPrimary,
+          borderColor: Styles().colors.fillColorSecondary,
+          backgroundColor: Styles().colors.white,
+          onTap: () => _onTapButton(buttonContent),
+        ),],
       ));
     }
-    return Wrap(runSpacing: 8, spacing: 16, children: buttons);
+    return Padding(padding: EdgeInsets.only(top: 20), child: Wrap(runSpacing: 8, spacing: 16, children: buttons));
   }
 
   void _onClose() {
