@@ -58,8 +58,8 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                     padding: EdgeInsets.all(16),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
-                            style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))
+                        Expanded(child: Padding(padding: EdgeInsets.only(right: 60), child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
                       ]),
                       Padding(
                           padding: EdgeInsets.only(top: 4),
