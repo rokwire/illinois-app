@@ -36,8 +36,11 @@ class Assets with Service implements NotificationsListener {
 
   static const String _assetsName      = "assets.json";
 
+  Map<String, dynamic> _internalContent;
+  Map<String, dynamic> _externalContent;
   File      _cacheFile;
   DateTime  _pausedDateTime;
+
 
   // Singleton Factory
 
@@ -50,20 +53,6 @@ class Assets with Service implements NotificationsListener {
 
   Assets get instance {
     return _instance;
-  }
-
-  // Assets
-
-  Map<String, dynamic> _assets;
-
-  dynamic operator [](dynamic key) {
-    return AppMapPathKey.entry(_assets, key);
-  }
-
-  String randomStringFromListWithKey(dynamic key) {
-    dynamic list = AppMapPathKey.entry(_assets, key);
-    dynamic entry = ((list != null) && (list is List) && (0 < list.length)) ? list[Random().nextInt(list.length)] : null;
-    return ((entry != null) && (entry is String)) ? entry : null;
   }
 
   // Initialization
@@ -80,73 +69,15 @@ class Assets with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    await _getCacheFile();
-    await _loadFromCache();
-    if (_assets == null) {
-      await _loadFromAssets();
-    }
-    _loadFromNet();
+    _cacheFile = await _getCacheFile();
+    _internalContent = await _loadFromAssets();
+    _externalContent = await _loadFromCache();
+    _updateFromNet();
   }
 
   @override
   Set<Service> get serviceDependsOn {
     return Set.from([Config()]);
-  }
-
-  Future<void> _getCacheFile() async {
-    Directory assetsDir = Config().assetsCacheDir;
-    if ((assetsDir != null) && !await assetsDir.exists()) {
-      await assetsDir.create(recursive: true);
-    }
-    String cacheFilePath = (assetsDir != null) ? join(assetsDir.path, _assetsName) : null;
-    _cacheFile = (cacheFilePath != null) ? File(cacheFilePath) : null;
-  }
-
-  Future<void> _loadFromCache() async {
-    try {
-      String assetsContent = ((_cacheFile != null) && await _cacheFile.exists()) ? await _cacheFile.readAsString() : null;
-      await _applyAssetsContent(assetsContent);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<void> _loadFromAssets() async {
-    try {
-      String assetsContent = await rootBundle.loadString('assets/$_assetsName');
-      await _applyAssetsContent(assetsContent);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<void> _loadFromNet() async {
-    try {
-      http.Response response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
-      String assetsContent =  ((response != null) && (response.statusCode == 200)) ? response.body : null;
-      await _applyAssetsContent(assetsContent, cacheContent: true, notifyUpdate: true);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<void> _applyAssetsContent(String assetsContent, {bool cacheContent = false, bool notifyUpdate = false}) async {
-    try {
-      Map<String, dynamic> assets = (assetsContent != null) ? AppJson.decode(assetsContent) : null;
-      if ((assets != null) && assets.isNotEmpty) {
-        if ((_assets == null) || !DeepCollectionEquality().equals(_assets, assets)) {
-          _assets = assets;
-          if (notifyUpdate) {
-            NotificationService().notify(notifyChanged, null);
-          }
-          if ((_cacheFile != null) && cacheContent) {
-            await _cacheFile.writeAsString(assetsContent, flush: true);
-          }
-        }
-      }
-    } catch (e) {
-      print(e.toString());
-    }
   }
 
   // NotificationsListener
@@ -166,9 +97,82 @@ class Assets with Service implements NotificationsListener {
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadFromNet();
+          _updateFromNet();
         }
       }
+    }
+  }
+
+  // Assets
+
+  dynamic operator [](dynamic key) {
+    return AppMapPathKey.entry(_externalContent, key) ?? AppMapPathKey.entry(_internalContent, key);
+  }
+
+  String randomStringFromListWithKey(dynamic key) {
+    dynamic list = this[key];
+    dynamic entry = ((list != null) && (list is List) && (0 < list.length)) ? list[Random().nextInt(list.length)] : null;
+    return ((entry != null) && (entry is String)) ? entry : null;
+  }
+
+  // Implementation
+
+  Future<File> _getCacheFile() async {
+    Directory assetsDir = Config().assetsCacheDir;
+    if ((assetsDir != null) && !await assetsDir.exists()) {
+      await assetsDir.create(recursive: true);
+    }
+    String cacheFilePath = (assetsDir != null) ? join(assetsDir.path, _assetsName) : null;
+    return (cacheFilePath != null) ? File(cacheFilePath) : null;
+  }
+
+  Future<Map<String, dynamic>> _loadFromCache() async {
+    try {
+      String assetsContent = ((_cacheFile != null) && await _cacheFile.exists()) ? await _cacheFile.readAsString() : null;
+      return AppJson.decodeMap(assetsContent);
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>> _loadFromAssets() async {
+    try {
+      String assetsContent = await rootBundle.loadString('assets/$_assetsName');
+      return AppJson.decodeMap(assetsContent);
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<String> _loadContentStringFromNet() async {
+    try {
+      http.Response response = (Config().assetsUrl != null) ? await Network().get("${Config().assetsUrl}/$_assetsName") : null;
+      return ((response != null) && (response.statusCode == 200)) ? response.body : null;
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<void> _updateFromNet() async {
+    try {
+      String externalContentString = await _loadContentStringFromNet();
+      Map<String, dynamic> externalContent = AppJson.decodeMap(externalContentString);
+      if ((externalContent != null) && !DeepCollectionEquality().equals(_externalContent, externalContent)) {
+        if (externalContent.isNotEmpty) {
+          _externalContent = externalContent;
+          await _cacheFile?.writeAsString(externalContentString, flush: true);
+        }
+        else {
+          _externalContent = null;
+          await _cacheFile?.delete();
+        }
+        NotificationService().notify(notifyChanged);
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

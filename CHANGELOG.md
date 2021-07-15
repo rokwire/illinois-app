@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Group posts updates [#507](https://github.com/rokwire/illinois-app/issues/507).
+- Emergency home widget / launch popup [#508](https://github.com/rokwire/illinois-app/issues/508).
 
 ## [2.6.2] - 2021-07-14
 ### Added
