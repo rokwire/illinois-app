@@ -124,7 +124,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deletePost() {
     _setLoading(true);
-    Groups().deletePost(widget.post?.id).then((succeeded) {
+    Groups().deletePost(widget.group?.id, widget.post?.id).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -151,7 +151,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deleteReply(String replyId) {
     _setLoading(true);
-    Groups().deletePost(replyId).then((succeeded) {
+    Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
