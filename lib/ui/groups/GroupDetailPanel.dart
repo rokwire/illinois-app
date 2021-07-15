@@ -48,7 +48,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About }
+enum _DetailTab { Events, Posts, About }
 
 class GroupDetailPanel extends StatefulWidget {
 
@@ -69,6 +69,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
   List<GroupPost>    _visibleGroupPosts;
+  GlobalKey          _postsKey = GlobalKey();
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
 
@@ -227,6 +228,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   @override
   Widget build(BuildContext context) {
+    _postBuildCallBack();
     Widget content;
     if (_isLoading) {
       content = _buildLoadingContent();
@@ -320,7 +322,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ];
     if (_isMember) {
       content.add(_buildTabs());
-      if (_currentTab == _DetailTab.Events) {
+      if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
         content.add(_buildPosts());
       }
@@ -543,6 +545,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         case _DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
           break;
+        case _DetailTab.Posts:
+          title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
+          break;
         case _DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
           break;
@@ -668,7 +673,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               })));
     }
 
-    return Column(children: <Widget>[
+    return Column(key: _postsKey, children: <Widget>[
       SectionTitlePrimary(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'), iconPath: 'images/icon-calendar.png', children: postsContent)
     ]);
@@ -1015,6 +1020,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(group: _group)));
+  }
+
+  void _postBuildCallBack() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToPosts();
+    });
+  }
+
+  void _scrollToPosts() {
+    if ((_currentTab == _DetailTab.Posts) && AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
+      BuildContext currentContext = _postsKey?.currentContext;
+      if (currentContext != null) {
+        Scrollable.ensureVisible(currentContext);
+      }
+    }
   }
 
   void _increaseProgress() {
