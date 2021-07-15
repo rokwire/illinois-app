@@ -37,6 +37,7 @@ class GroupViewPostPanel extends StatefulWidget {
 }
 
 class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
+  static final double _outerPadding = 16;
   bool _loading = false;
 
   @override
@@ -53,43 +54,57 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
         bottomNavigationBar: TabBarWidget(),
         body: Stack(children: [
           Stack(alignment: Alignment.topRight, children: [
-            SingleChildScrollView(
-                child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        Expanded(child: Padding(padding: EdgeInsets.only(right: 60), child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
-                      ]),
-                      Padding(
-                          padding: EdgeInsets.only(top: 4),
-                          child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
-                              style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
-                      Padding(
-                          padding: EdgeInsets.only(top: 3),
-                          child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
-                              style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
-                      Padding(
-                          padding: EdgeInsets.only(top: 16),
-                          child: Html(data: widget.post?.body, style: {
-                            "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))
-                          })),
-                      _buildRepliesWidget()
-                    ]))),
+            CustomScrollView(slivers: [
+              SliverPersistentHeader(
+                  floating: false,
+                  pinned: true,
+                  delegate: _GroupPostSubjectHeading(
+                      child: Container(
+                          color: Styles().colors.background,
+                          padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                              Expanded(
+                                  child: Padding(
+                                      padding: EdgeInsets.only(right: 60),
+                                      child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
+                                          maxLines: 5,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
+                            ]),
+                            Padding(
+                                padding: EdgeInsets.only(top: 4),
+                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                            Padding(
+                                padding: EdgeInsets.only(top: 3),
+                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
+                          ])))),
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                Padding(
+                    padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
+                    child: Html(
+                        data: widget.post?.body,
+                        style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))})),
+                Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget())
+              ]))
+            ]),
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
               Visibility(
                   visible: _isDeletePostVisible,
                   child: GestureDetector(
                       onTap: _onTapDeletePost,
                       child: Padding(
-                          padding: EdgeInsets.only(left: 16, top: 22, bottom: 10, right: (_isReplyVisible ? 8 : 16)),
+                          padding: EdgeInsets.only(left: 16, top: 22, bottom: 10, right: (_isReplyVisible ? (_outerPadding / 2) : _outerPadding)),
                           child: Image.asset('images/trash.png', width: 20, height: 20)))),
               Visibility(
                   visible: _isReplyVisible,
                   child: GestureDetector(
                       onTap: _onTapReply,
                       child: Padding(
-                          padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: 16),
+                          padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: _outerPadding),
                           child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20))))
             ])
           ]),
@@ -231,5 +246,29 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   bool get _isReplyVisible {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+}
+
+class _GroupPostSubjectHeading extends SliverPersistentHeaderDelegate {
+
+  final Widget child;
+  final double constExtent = 100;
+
+  _GroupPostSubjectHeading({@required this.child});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(height: constExtent, child: child,);
+  }
+
+  @override
+  double get maxExtent => constExtent;
+
+  @override
+  double get minExtent => constExtent;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
   }
 }
