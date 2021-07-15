@@ -976,10 +976,22 @@ class GroupPostCard extends StatefulWidget {
 }
 
 class _GroupPostCardState extends State<GroupPostCard> {
+  int _visibleRepliesCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initVisibleRepliesCount();
+  }
+
   @override
   Widget build(BuildContext context) {
     String memberName = widget.post?.member?.name;
     String htmlBody = widget.post?.body;
+    bool isRepliesLabelVisible = (_visibleRepliesCount > 0);
+    String repliesLabel = (_visibleRepliesCount == 1)
+        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
+        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
     return Stack(alignment: Alignment.topRight, children: [
       GestureDetector(
           onTap: _onTapCard,
@@ -991,15 +1003,25 @@ class _GroupPostCardState extends State<GroupPostCard> {
               child: Padding(
                   padding: EdgeInsets.all(12),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-                      Text(AppString.getDefaultEmptyString(value: widget.post.subject),
-                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                      Expanded(
+                          child: Text(AppString.getDefaultEmptyString(value: widget.post.subject),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary))),
                       Visibility(
-                          visible: (_visibleRepliesCount > 0),
-                          child: Padding(
-                              padding: EdgeInsets.only(left: 14),
-                              child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
-                                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))),
+                          visible: isRepliesLabelVisible,
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                            Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18))),
+                            Padding(
+                                padding: EdgeInsets.only(left: 2),
+                                child: Text(AppString.getDefaultEmptyString(value: repliesLabel),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))
+                          ])),
+                      Container(width: 34)
                     ]),
                     Text(AppString.getDefaultEmptyString(value: memberName),
                         style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
@@ -1038,18 +1060,15 @@ class _GroupPostCardState extends State<GroupPostCard> {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  int get _visibleRepliesCount {
-    if (AppCollection.isCollectionEmpty(widget.post?.replies)) {
-      return 0;
-    }
-    bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
-    int visibleRepliesCount = 0;
-    for (GroupPost reply in widget.post.replies) {
-      if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
-        visibleRepliesCount++;
+  void _initVisibleRepliesCount() {
+    if (AppCollection.isCollectionNotEmpty(widget.post?.replies)) {
+      bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+      for (GroupPost reply in widget.post.replies) {
+        if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
+          _visibleRepliesCount++;
+        }
       }
     }
-    return visibleRepliesCount;
   }
 }
 

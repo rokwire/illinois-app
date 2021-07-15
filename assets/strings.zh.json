@@ -1706,8 +1706,6 @@
 	"panel.group.view.post.reply.delete.confirm.msg": "Are you sure that you want to delete this reply?",
 	"panel.group.view.post.reply.delete.failed.msg": "Failed to delete reply.",
 
-	"widget.group_card.pending.label": "Pending: %s",
-
 	"panel.student_guide_categories.label.heading": "學生指南",
 	"panel.student_guide_categories.label.content.empty": "空的指南內容",
 
@@ -1940,6 +1938,11 @@
 	"widget.buss_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
 	"widget.card.label.expires.title": "卡过期",
+
+	"widget.group_card.pending.label": "Pending: %s",
+
+	"widget.group.card.reply.single.reply.label": "Reply",
+	"widget.group.card.reply.multiple.replies.label": "Replies",
 
 	"model.dining.schedule.label.closed_for_two_weeks":"接下来2周关闭",
 	"model.dining.schedule.label.open_at":"在开头",
