@@ -31,7 +31,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupViewPostPanel.dart';
+import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -1051,7 +1051,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onTapCard() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupViewPostPanel(post: widget.post, group: widget.group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
   }
 
   void _onTapReply() {

@@ -28,17 +28,17 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class GroupViewPostPanel extends StatefulWidget {
+class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
   final Group group;
 
-  GroupViewPostPanel({@required this.post, @required this.group});
+  GroupPostDetailPanel({@required this.post, @required this.group});
 
   @override
-  _GroupViewPostPanelState createState() => _GroupViewPostPanelState();
+  _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 }
 
-class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
 
   GroupPost _post;
@@ -63,7 +63,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
         appBar: AppBar(
             leading: HeaderBackButton(),
             title: Text(
-              Localization().getStringEx('panel.group.view.post.header.title', 'Post'),
+              Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1),
             ),
             centerTitle: true),
@@ -172,7 +172,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
   void _onTapDeletePost() {
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx('panel.group.view.post.delete.confirm.msg', 'Are you sure that you want to delete this post?')),
+        contentWidget: Text(Localization().getStringEx('panel.group.detail.post.delete.confirm.msg', 'Are you sure that you want to delete this post?')),
         actions: <Widget>[
           TextButton(
               child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
@@ -191,7 +191,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
       if (succeeded) {
         Navigator.of(context).pop();
       } else {
-        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.view.post.delete.failed.msg', 'Failed to delete post.'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.delete.failed.msg', 'Failed to delete post.'));
       }
     });
   }
@@ -214,7 +214,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
                 RibbonButton(
                   height: null,
                   leftIcon: "images/trash.png",
-                  label:Localization().getStringEx("panel.group.view.post.reply.delete.label", "Delete"),
+                  label:Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                   onTap: () {
                     Navigator.of(context).pop();
                     _onTapDeleteReply(reply);
@@ -223,7 +223,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
                 RibbonButton(
                   height: null,
                   leftIcon: "images/icon-group-post-reply.png",
-                  label:Localization().getStringEx("panel.group.view.post.reply.reply.label", "Reply"),
+                  label:Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
                     Navigator.of(context).pop();
                     _onTapReply(reply: reply);
@@ -239,7 +239,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
   void _onTapDeleteReply(GroupPost reply) {
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx('panel.group.view.post.reply.delete.confirm.msg', 'Are you sure that you want to delete this reply?')),
+        contentWidget: Text(Localization().getStringEx('panel.group.detail.post.reply.delete.confirm.msg', 'Are you sure that you want to delete this reply?')),
         actions: <Widget>[
           TextButton(
               child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
@@ -256,7 +256,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
     Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
       _setLoading(false);
       if (!succeeded) {
-        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.view.post.reply.delete.failed.msg', 'Failed to delete reply.'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.reply.delete.failed.msg', 'Failed to delete reply.'));
       }
     });
   }
