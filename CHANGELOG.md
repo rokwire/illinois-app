@@ -5,15 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [2.6.4] - 2021-07-16
 ### Added
 - Group posts updates - part 2 (without point 2.3) [#516](https://github.com/rokwire/illinois-app/issues/516).
+### Fixed
+- Fixed Accessibility for Post panels [#517](https://github.com/rokwire/illinois-app/issues/517).
 
 ## [2.6.3] - 2021-07-15
 ### Added
 - Group posts updates [#507](https://github.com/rokwire/illinois-app/issues/507).
 - Emergency home widget / launch popup [#508](https://github.com/rokwire/illinois-app/issues/508).
-### Fixed
-- Fixed Accessibility for Post panels [#517](https://github.com/rokwire/illinois-app/issues/517).
 
 ## [2.6.2] - 2021-07-14
 ### Added
