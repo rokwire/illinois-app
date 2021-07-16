@@ -122,7 +122,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
                       onTap: _onTapReply,
                       child: Container(color: Colors.transparent, child: Padding(
                           padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: _outerPadding),
-                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20)))))
+                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, fit: BoxFit.fill)))))
             ])
           ]),
           Visibility(visible: _loading, child: Center(child: CircularProgressIndicator()))

@@ -1046,7 +1046,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
               onTap: _onTapReply,
               child: Container(
                   color: Colors.transparent,
-                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png')))))
+                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, fit: BoxFit.fill)))))
     ]);
   }
 
