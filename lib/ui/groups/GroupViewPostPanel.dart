@@ -20,6 +20,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -37,9 +38,24 @@ class GroupViewPostPanel extends StatefulWidget {
   _GroupViewPostPanelState createState() => _GroupViewPostPanelState();
 }
 
-class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
+class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
+
+  GroupPost _post;
   bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    _post = widget.post;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,18 +84,18 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                               Expanded(
                                   child: Padding(
                                       padding: EdgeInsets.only(right: 60),
-                                      child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
+                                      child: Text(AppString.getDefaultEmptyString(value: _post?.subject),
                                           maxLines: 5,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
                             ]),
                             Padding(
                                 padding: EdgeInsets.only(top: 4),
-                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
+                                child: Text(AppString.getDefaultEmptyString(value: _post?.member?.name),
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
                             Padding(
                                 padding: EdgeInsets.only(top: 3),
-                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                child: Text(AppString.getDefaultEmptyString(value: _post?.displayDateTime),
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
                           ])))),
               SliverList(
@@ -87,7 +103,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                 Padding(
                     padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
                     child: Html(
-                        data: widget.post?.body,
+                        data: _post?.body,
                         style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))})),
                 Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget())
               ]))
@@ -136,7 +152,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
   }
 
   List<GroupPost> _getVisibleReplies() {
-    List<GroupPost> replies = widget.post?.replies;
+    List<GroupPost> replies = _post?.replies;
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
@@ -168,7 +184,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deletePost() {
     _setLoading(true);
-    Groups().deletePost(widget.group?.id, widget.post?.id).then((succeeded) {
+    Groups().deletePost(widget.group?.id, _post?.id).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -237,16 +253,26 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     _setLoading(true);
     Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
       _setLoading(false);
-      if (succeeded) {
-        Navigator.of(context).pop();
-      } else {
+      if (!succeeded) {
         AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.view.post.reply.delete.failed.msg', 'Failed to delete reply.'));
       }
     });
   }
 
   void _onTapReply({GroupPost reply}) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: ((reply != null) ? reply : widget.post), group: widget.group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: ((reply != null) ? reply : _post), group: widget.group)));
+  }
+
+  void _reloadPost() {
+    _setLoading(true);
+    Groups().loadGroupPosts(widget.group?.id).then((posts) {
+      if (AppCollection.isCollectionNotEmpty(posts)) {
+        _post = posts.firstWhere((post) => (post.id == _post?.id));
+      } else {
+        _post = null;
+      }
+      _setLoading(false);
+    });
   }
 
   void _setLoading(bool loading) {
@@ -277,7 +303,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     } else {
       if (widget.group?.currentUserIsUserMember ?? false) {
         String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-        String postMemberEmail = widget.post?.member?.email;
+        String postMemberEmail = _post?.member?.email;
         return AppString.isStringNotEmpty(currentMemberEmail) && AppString.isStringNotEmpty(postMemberEmail) && (currentMemberEmail == postMemberEmail);
       } else {
         return false;
@@ -287,6 +313,16 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   bool get _isReplyVisible {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Groups.notifyGroupPostsUpdated) {
+      _reloadPost();
+    }
   }
 }
 
