@@ -31,7 +31,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
-import 'package:illinois/ui/groups/GroupViewPostPanel.dart';
+import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -981,7 +981,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   @override
   void initState() {
     super.initState();
-    _initVisibleRepliesCount();
+    _calculateVisibleRepliesCount(widget.post?.replies);
   }
 
   @override
@@ -1048,12 +1048,16 @@ class _GroupPostCardState extends State<GroupPostCard> {
               onTap: _onTapReply,
               child: Container(
                   color: Colors.transparent,
+<<<<<<< HEAD
                   child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', excludeFromSemantics: true,))))))
+=======
+                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, fit: BoxFit.fill)))))
+>>>>>>> b419aa43fa193ebc5e8b5cc3c138cd0670eb4333
     ]);
   }
 
   void _onTapCard() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupViewPostPanel(post: widget.post, group: widget.group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
   }
 
   void _onTapReply() {
@@ -1064,13 +1068,14 @@ class _GroupPostCardState extends State<GroupPostCard> {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  void _initVisibleRepliesCount() {
-    if (AppCollection.isCollectionNotEmpty(widget.post?.replies)) {
+  void _calculateVisibleRepliesCount(List<GroupPost> replies) {
+    if (AppCollection.isCollectionNotEmpty(replies)) {
       bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
-      for (GroupPost reply in widget.post.replies) {
+      for (GroupPost reply in replies) {
         if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
           _visibleRepliesCount++;
         }
+        _calculateVisibleRepliesCount(reply?.replies);
       }
     }
   }
@@ -1113,7 +1118,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
+<<<<<<< HEAD
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png', excludeFromSemantics: true,) : Container())))))))
+=======
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath) : Container()))))
+>>>>>>> b419aa43fa193ebc5e8b5cc3c138cd0670eb4333
               ]),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
