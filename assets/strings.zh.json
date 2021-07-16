@@ -1706,6 +1706,8 @@
 	"panel.group.view.post.delete.failed.msg": "Failed to delete post.",
 	"panel.group.view.post.reply.delete.confirm.msg": "Are you sure that you want to delete this reply?",
 	"panel.group.view.post.reply.delete.failed.msg": "Failed to delete reply.",
+	"panel.group.view.post.reply.delete.label": "Delete",
+	"panel.group.view.post.reply.reply.label": "Reply",
 
 	"panel.student_guide_categories.label.heading": "學生指南",
 	"panel.student_guide_categories.label.content.empty": "空的指南內容",

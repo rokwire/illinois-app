@@ -23,6 +23,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -123,13 +124,13 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
         replyWidgetList.add(Container(height: 10));
       }
       GroupPost reply = replies[i];
-      String deleteIconPath;
-      Function deleteFunctionTap;
-      if (_isDeleteReplyVisible(reply)) {
-        deleteIconPath = 'images/trash.png';
-        deleteFunctionTap = () => _onTapDeleteReply(reply);
+      String optionsIconPath;
+      Function optionsFunctionTap;
+      if (_isReplyOptionsVisible(reply)) {
+        optionsIconPath = 'images/icon-groups-options-orange.png';
+        optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
-      replyWidgetList.add(GroupReplyCard(reply: reply, group: widget.group, iconPath: deleteIconPath, onIconTap: deleteFunctionTap));
+      replyWidgetList.add(GroupReplyCard(reply: reply, group: widget.group, iconPath: optionsIconPath, onIconTap: optionsFunctionTap));
     }
     return Padding(padding: EdgeInsets.only(left: 25, top: 20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replyWidgetList));
   }
@@ -177,6 +178,46 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     });
   }
 
+  void _onTapReplyOptions(GroupPost reply) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Styles().colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context){
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                RibbonButton(
+                  height: null,
+                  leftIcon: "images/trash.png",
+                  label:Localization().getStringEx("panel.group.view.post.reply.delete.label", "Delete"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapDeleteReply(reply);
+                  },
+                ),
+                RibbonButton(
+                  height: null,
+                  leftIcon: "images/icon-group-post-reply.png",
+                  label:Localization().getStringEx("panel.group.view.post.reply.reply.label", "Reply"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapReply(reply: reply);
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
   void _onTapDeleteReply(GroupPost reply) {
     AppAlert.showCustomDialog(
         context: context,
@@ -204,8 +245,8 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     });
   }
 
-  void _onTapReply() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: widget.post, group: widget.group)));
+  void _onTapReply({GroupPost reply}) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: ((reply != null) ? reply : widget.post), group: widget.group)));
   }
 
   void _setLoading(bool loading) {
@@ -216,7 +257,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     }
   }
 
-  bool _isDeleteReplyVisible(GroupPost reply) {
+  bool _isReplyOptionsVisible(GroupPost reply) {
     if (reply == null) {
       return false;
     } else if (widget.group?.currentUserIsAdmin ?? false) {

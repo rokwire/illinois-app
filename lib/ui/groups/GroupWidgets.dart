@@ -1109,7 +1109,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
-                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png') : Container()))))
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath) : Container()))))
               ]),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
