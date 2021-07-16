@@ -993,7 +993,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
     return Stack(alignment: Alignment.topRight, children: [
-      GestureDetector(
+      Semantics(button:true,
+        child:GestureDetector(
           onTap: _onTapCard,
           child: Container(
               decoration: BoxDecoration(
@@ -1039,7 +1040,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               maxLines: 3,
                               textOverflow: TextOverflow.ellipsis)
                         }))
-                  ])))),
+                  ]))))),
       Visibility(
           visible: _isReplyVisible,
           child:
@@ -1084,9 +1085,10 @@ class GroupReplyCard extends StatefulWidget {
   final GroupPost reply;
   final Group group;
   final String iconPath;
+  final String semanticsLabel;
   final Function onIconTap;
 
-  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap});
+  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1109,7 +1111,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                 Visibility(
                     visible: AppString.isStringNotEmpty(widget.iconPath),
                     child: Semantics(container: true, child:Container(
-                    child: Semantics(label: "Delete", button: true,
+                    child: Semantics(label: widget.semanticsLabel??"", button: true,
                     child: GestureDetector(
                         onTap: widget.onIconTap,
                         child: Padding(
