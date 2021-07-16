@@ -21,6 +21,7 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -75,17 +76,24 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
               SingleChildScrollView(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Visibility(
-                    visible: _privateSwitchVisible,
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(Localization().getStringEx('panel.group.post.create.private.label', 'Private'),
-                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
-                      GestureDetector(onTap: _onTapPrivate, child: Image.asset(_private ? 'images/switch-on.png' : 'images/switch-off.png'))
-                    ])),
+                  visible: _privateSwitchVisible,
+                  child: ToggleRibbonButton(
+                    height: null,
+                    backgroundColor: Styles().colors.background,
+                    style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary),
+                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    label: Localization().getStringEx('panel.group.post.create.private.label', 'Private'),
+                    toggled: _private,
+                    onTap: _onTapPrivate,
+                    context: context,
+                  )),
                 Visibility(visible: _isPost, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(
+                  Semantics(hint: Localization().getStringEx('panel.group.post.create.subject.hint', 'Heading'),
+                    child: Padding(
                       padding: EdgeInsets.only(top: _privateSwitchVisible ? 16 : 0),
                       child: Text(Localization().getStringEx('panel.group.post.create.subject.label', 'Subject'),
                           style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                  ),
                   Padding(
                       padding: EdgeInsets.only(top: 8),
                       child: TextField(
@@ -99,12 +107,13 @@ class _GroupCreatePostPanelState extends State<GroupCreatePostPanel>{
                 Padding(
                     padding: EdgeInsets.only(top: (_privateSwitchVisible || _isPost) ? 16 : 0),
                     child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
-                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary)),
-                      Padding(padding: EdgeInsets.only(left: 30), child: GestureDetector(onTap: _onTapBold, child: Text('B', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)))),
-                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapItalic, child: Text('I', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.mediumIt)))),
-                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapUnderline, child: Text('U', style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, decoration: TextDecoration.underline, decorationThickness: 2, decorationColor: Styles().colors.fillColorPrimary)))),
-                      Padding(padding: EdgeInsets.only(left: 20), child: GestureDetector(onTap: _onTapLink, child: Text(Localization().getStringEx('panel.group.post.create.link.label', 'Link'), style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium)))),
+                      Semantics(hint: Localization().getStringEx('panel.group.post.create.body.hint', 'Heading'),
+                        child: Text(Localization().getStringEx('panel.group.post.create.body.label', 'Body'),
+                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary))),
+                      Padding(padding: EdgeInsets.only(left: 30), child: Semantics(label:Localization().getStringEx('panel.group.post.create.option.bold.label', 'Bold'), button: true, child: GestureDetector(onTap: _onTapBold, child: Text('B', semanticsLabel: "", style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold))))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: Semantics(label:Localization().getStringEx('panel.group.post.create.option.italic.label', 'Italic'), button: true, child: GestureDetector(onTap: _onTapItalic, child: Text('I', semanticsLabel: "", style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.mediumIt))))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: Semantics(label:Localization().getStringEx('panel.group.post.create.option.underline.label', 'Underline'), button: true, child: GestureDetector(onTap: _onTapUnderline, child: Text('U', semanticsLabel: "", style: TextStyle(fontSize: 24, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, decoration: TextDecoration.underline, decorationThickness: 2, decorationColor: Styles().colors.fillColorPrimary))))),
+                      Padding(padding: EdgeInsets.only(left: 20), child: Semantics(label:Localization().getStringEx('panel.group.post.create.link.label', 'Link'), button: true, child: GestureDetector(onTap: _onTapLink, child: Text(Localization().getStringEx('panel.group.post.create.link.label', 'Link'), semanticsLabel: "", style: TextStyle(fontSize: 18, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium))))),
                     ])),
                 Padding(
                     padding: EdgeInsets.only(top: 8),

@@ -993,7 +993,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
     return Stack(alignment: Alignment.topRight, children: [
-      GestureDetector(
+      Semantics(button:true,
+        child:GestureDetector(
           onTap: _onTapCard,
           child: Container(
               decoration: BoxDecoration(
@@ -1039,14 +1040,16 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               maxLines: 3,
                               textOverflow: TextOverflow.ellipsis)
                         }))
-                  ])))),
+                  ]))))),
       Visibility(
           visible: _isReplyVisible,
-          child: GestureDetector(
+          child:
+          Semantics(label: Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply'), button: true, child:
+            GestureDetector(
               onTap: _onTapReply,
               child: Container(
                   color: Colors.transparent,
-                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, fit: BoxFit.fill)))))
+                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', excludeFromSemantics: true, width: 20, height: 20, fit: BoxFit.fill))))))
     ]);
   }
 
@@ -1082,9 +1085,10 @@ class GroupReplyCard extends StatefulWidget {
   final GroupPost reply;
   final Group group;
   final String iconPath;
+  final String semanticsLabel;
   final Function onIconTap;
 
-  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap});
+  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1106,11 +1110,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                     style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                 Visibility(
                     visible: AppString.isStringNotEmpty(widget.iconPath),
+                    child: Semantics(container: true, child:Container(
+                    child: Semantics(label: widget.semanticsLabel??"", button: true,
                     child: GestureDetector(
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
-                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath) : Container()))))
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
               ]),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),

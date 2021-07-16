@@ -277,7 +277,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Hidden Group
   Widget _buildHideGroupSection(){
-    return Container(
+    return Semantics(container: true, child:
+      Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Semantics(label:Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
         hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _group?.isHidden ?? false, excludeSemantics: true, child:
@@ -288,10 +289,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           toggled: _group?.isHidden ?? false,
           onTap: _onHideToggled,
           context: context,
-          border: Border.all(color: Styles().colors.fillColorPrimary),
+          border: Border.all(color: Styles().colors.surfaceAccent),
           borderRadius:
           BorderRadius.all(Radius.circular(4)),
-        )));
+        ))));
 
   }
 
