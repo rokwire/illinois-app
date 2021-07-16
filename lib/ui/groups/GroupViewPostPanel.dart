@@ -105,7 +105,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
                     child: Html(
                         data: _post?.body,
                         style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))})),
-                Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget())
+                Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget(replies: _post?.replies))
               ]))
             ]),
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -129,30 +129,32 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> implements Noti
         ]));
   }
 
-  Widget _buildRepliesWidget() {
-    List<GroupPost> replies = _getVisibleReplies();
-    if (AppCollection.isCollectionEmpty(replies)) {
+  Widget _buildRepliesWidget({List<GroupPost> replies, double leftPaddingOffset = 0, bool nestedReply = false}) {
+    List<GroupPost> visibleReplies = _getVisibleReplies(replies);
+    if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
     }
     List<Widget> replyWidgetList = [];
-    for (int i = 0; i < replies.length; i++) {
-      if (i > 0) {
+    for (int i = 0; i < visibleReplies.length; i++) {
+      if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
       }
-      GroupPost reply = replies[i];
+      GroupPost reply = visibleReplies[i];
       String optionsIconPath;
       Function optionsFunctionTap;
       if (_isReplyOptionsVisible(reply)) {
         optionsIconPath = 'images/icon-groups-options-orange.png';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
-      replyWidgetList.add(GroupReplyCard(reply: reply, group: widget.group, iconPath: optionsIconPath, onIconTap: optionsFunctionTap));
+      replyWidgetList.add(Padding(padding: EdgeInsets.only(left: leftPaddingOffset), child: GroupReplyCard(reply: reply, group: widget.group, iconPath: optionsIconPath, onIconTap: optionsFunctionTap)));
+      replyWidgetList.add(_buildRepliesWidget(replies: reply?.replies, leftPaddingOffset: (leftPaddingOffset + 5), nestedReply: true));
     }
-    return Padding(padding: EdgeInsets.only(left: 25, top: 20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replyWidgetList));
+    return Padding(
+        padding: EdgeInsets.only(left: nestedReply ? 0 : 10, top: nestedReply ? 0 : 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replyWidgetList));
   }
 
-  List<GroupPost> _getVisibleReplies() {
-    List<GroupPost> replies = _post?.replies;
+  List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
