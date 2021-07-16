@@ -1048,11 +1048,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
               onTap: _onTapReply,
               child: Container(
                   color: Colors.transparent,
-<<<<<<< HEAD
-                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', excludeFromSemantics: true,))))))
-=======
-                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, fit: BoxFit.fill)))))
->>>>>>> b419aa43fa193ebc5e8b5cc3c138cd0670eb4333
+                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', excludeFromSemantics: true, width: 20, height: 20, fit: BoxFit.fill))))))
     ]);
   }
 
@@ -1118,11 +1114,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
-<<<<<<< HEAD
-                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png', excludeFromSemantics: true,) : Container())))))))
-=======
-                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath) : Container()))))
->>>>>>> b419aa43fa193ebc5e8b5cc3c138cd0670eb4333
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
               ]),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
