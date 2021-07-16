@@ -1042,11 +1042,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   ])))),
       Visibility(
           visible: _isReplyVisible,
-          child: GestureDetector(
+          child:
+          Semantics(label: Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply'), button: true, child:
+            GestureDetector(
               onTap: _onTapReply,
               child: Container(
                   color: Colors.transparent,
-                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png')))))
+                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', excludeFromSemantics: true,))))))
     ]);
   }
 
@@ -1105,11 +1107,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                     style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                 Visibility(
                     visible: AppString.isStringNotEmpty(widget.iconPath),
+                    child: Semantics(container: true, child:Container(
+                    child: Semantics(label: "Delete", button: true,
                     child: GestureDetector(
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
-                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png') : Container()))))
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset('images/trash.png', excludeFromSemantics: true,) : Container())))))))
               ]),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),

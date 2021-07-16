@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Groups.dart';
@@ -63,31 +64,35 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                           color: Styles().colors.background,
                           padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                              Expanded(
-                                  child: Padding(
-                                      padding: EdgeInsets.only(right: 60),
-                                      child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
-                                          maxLines: 5,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
-                            ]),
-                            Padding(
+                            Semantics(sortKey: OrdinalSortKey(1), container: true, child:
+                              Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                Expanded(
+                                    child: Padding(
+                                        padding: EdgeInsets.only(right: 60),
+                                        child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
+                                            maxLines: 5,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
+                              ])),
+                            Semantics(sortKey: OrdinalSortKey(2), container: true, child:
+                              Padding(
                                 padding: EdgeInsets.only(top: 4),
                                 child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
-                            Padding(
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary)))),
+                            Semantics(sortKey: OrdinalSortKey(3), container: true, child:
+                              Padding(
                                 padding: EdgeInsets.only(top: 3),
                                 child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary)))),
                           ])))),
               SliverList(
                   delegate: SliverChildListDelegate([
+                  Semantics(sortKey: OrdinalSortKey(4),container: true,child:
                 Padding(
                     padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
                     child: Html(
                         data: widget.post?.body,
-                        style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))})),
+                        style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))}))),
                 Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget())
               ]))
             ]),
@@ -95,6 +100,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
               Visibility(
                   visible: _isDeletePostVisible,
                   child: Semantics(
+                    sortKey: OrdinalSortKey(5),
                     label: Localization().getStringEx('panel.group.view.post.button.delete.title', "Delete"),
                     button: true,
                     child: GestureDetector(
@@ -105,6 +111,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
               Visibility(
                   visible: _isReplyVisible,
                   child: Semantics(
+                    sortKey: OrdinalSortKey(6),
                     label: Localization().getStringEx('panel.group.view.post.button.reply.title', "Reply"),
                     button: true,
                     child: GestureDetector(
