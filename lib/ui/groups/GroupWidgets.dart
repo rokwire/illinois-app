@@ -981,7 +981,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   @override
   void initState() {
     super.initState();
-    _initVisibleRepliesCount();
+    _calculateVisibleRepliesCount(widget.post?.replies);
   }
 
   @override
@@ -1062,13 +1062,14 @@ class _GroupPostCardState extends State<GroupPostCard> {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  void _initVisibleRepliesCount() {
-    if (AppCollection.isCollectionNotEmpty(widget.post?.replies)) {
+  void _calculateVisibleRepliesCount(List<GroupPost> replies) {
+    if (AppCollection.isCollectionNotEmpty(replies)) {
       bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
-      for (GroupPost reply in widget.post.replies) {
+      for (GroupPost reply in replies) {
         if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
           _visibleRepliesCount++;
         }
+        _calculateVisibleRepliesCount(reply?.replies);
       }
     }
   }
