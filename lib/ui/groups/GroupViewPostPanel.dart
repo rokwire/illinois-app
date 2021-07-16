@@ -94,18 +94,24 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
               Visibility(
                   visible: _isDeletePostVisible,
-                  child: GestureDetector(
+                  child: Semantics(
+                    label: Localization().getStringEx('panel.group.view.post.button.delete.title', "Delete"),
+                    button: true,
+                    child: GestureDetector(
                       onTap: _onTapDeletePost,
                       child: Container(color: Colors.transparent, child: Padding(
                           padding: EdgeInsets.only(left: 16, top: 22, bottom: 10, right: (_isReplyVisible ? (_outerPadding / 2) : _outerPadding)),
-                          child: Image.asset('images/trash.png', width: 20, height: 20))))),
+                          child: Image.asset('images/trash.png', width: 20, height: 20, excludeFromSemantics: true,)))))),
               Visibility(
                   visible: _isReplyVisible,
-                  child: GestureDetector(
+                  child: Semantics(
+                    label: Localization().getStringEx('panel.group.view.post.button.reply.title', "Reply"),
+                    button: true,
+                    child: GestureDetector(
                       onTap: _onTapReply,
                       child: Container(color: Colors.transparent, child: Padding(
                           padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: _outerPadding),
-                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20)))))
+                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, excludeFromSemantics: true,))))))
             ])
           ]),
           Visibility(visible: _loading, child: Center(child: CircularProgressIndicator()))
@@ -252,7 +258,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 class _GroupPostSubjectHeading extends SliverPersistentHeaderDelegate {
 
   final Widget child;
-  final double constExtent = 100;
+  final double constExtent = 110;
 
   _GroupPostSubjectHeading({@required this.child});
 

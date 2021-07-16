@@ -34,6 +34,7 @@ class RibbonButton extends StatelessWidget {
   final String icon;
   final BuildContext context;
   final String hint;
+  final Color backgroundColor;
 
   RibbonButton({
     @required this.label,
@@ -48,6 +49,7 @@ class RibbonButton extends StatelessWidget {
     this.leftIcon,
     this.context,
     this.hint,
+    this.backgroundColor =  Colors.white,
   });
 
   @override
@@ -65,7 +67,7 @@ class RibbonButton extends StatelessWidget {
       onTap: () { onTap(); anaunceChange(); },
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[ Expanded(
         child: Container(
-          decoration: BoxDecoration(color: Colors.white, border:border, borderRadius: borderRadius, boxShadow: shadow),
+          decoration: BoxDecoration(color: backgroundColor, border:border, borderRadius: borderRadius, boxShadow: shadow),
           height: this.height,
           child: Padding(
             padding: padding,
@@ -103,6 +105,7 @@ class ToggleRibbonButton extends RibbonButton {
   final TextStyle style;
   final double height;
   final EdgeInsets padding;
+  final Color backgroundColor;
 
   ToggleRibbonButton ({
     @required this.label,
@@ -114,6 +117,7 @@ class ToggleRibbonButton extends RibbonButton {
     this.height = 48.0,
     this.style,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    this.backgroundColor =  Colors.white
   });
 
   @override
