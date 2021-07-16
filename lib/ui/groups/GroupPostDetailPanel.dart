@@ -20,25 +20,42 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class GroupViewPostPanel extends StatefulWidget {
+class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
   final Group group;
 
-  GroupViewPostPanel({@required this.post, @required this.group});
+  GroupPostDetailPanel({@required this.post, @required this.group});
 
   @override
-  _GroupViewPostPanelState createState() => _GroupViewPostPanelState();
+  _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 }
 
-class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
+
+  GroupPost _post;
   bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    _post = widget.post;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +63,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
         appBar: AppBar(
             leading: HeaderBackButton(),
             title: Text(
-              Localization().getStringEx('panel.group.view.post.header.title', 'Post'),
+              Localization().getStringEx('panel.group.detail.post.header.title', 'Post'),
               style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1),
             ),
             centerTitle: true),
@@ -67,18 +84,18 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                               Expanded(
                                   child: Padding(
                                       padding: EdgeInsets.only(right: 60),
-                                      child: Text(AppString.getDefaultEmptyString(value: widget.post?.subject),
+                                      child: Text(AppString.getDefaultEmptyString(value: _post?.subject),
                                           maxLines: 5,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 24, color: Styles().colors.fillColorPrimary))))
                             ]),
                             Padding(
                                 padding: EdgeInsets.only(top: 4),
-                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.member?.name),
+                                child: Text(AppString.getDefaultEmptyString(value: _post?.member?.name),
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 20, color: Styles().colors.fillColorPrimary))),
                             Padding(
                                 padding: EdgeInsets.only(top: 3),
-                                child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                child: Text(AppString.getDefaultEmptyString(value: _post?.displayDateTime),
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
                           ])))),
               SliverList(
@@ -86,9 +103,9 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                 Padding(
                     padding: EdgeInsets.only(left: _outerPadding, top: _outerPadding, right: _outerPadding),
                     child: Html(
-                        data: widget.post?.body,
+                        data: _post?.body,
                         style: {"body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20))})),
-                Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget())
+                Padding(padding: EdgeInsets.only(left: _outerPadding, right: _outerPadding, bottom: _outerPadding), child: _buildRepliesWidget(replies: _post?.replies))
               ]))
             ]),
             Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -105,37 +122,39 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
                       onTap: _onTapReply,
                       child: Container(color: Colors.transparent, child: Padding(
                           padding: EdgeInsets.only(left: (_isDeletePostVisible ? 8 : 16), top: 22, bottom: 10, right: _outerPadding),
-                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20)))))
+                          child: Image.asset('images/icon-group-post-reply.png', width: 20, height: 20, fit: BoxFit.fill)))))
             ])
           ]),
           Visibility(visible: _loading, child: Center(child: CircularProgressIndicator()))
         ]));
   }
 
-  Widget _buildRepliesWidget() {
-    List<GroupPost> replies = _getVisibleReplies();
-    if (AppCollection.isCollectionEmpty(replies)) {
+  Widget _buildRepliesWidget({List<GroupPost> replies, double leftPaddingOffset = 0, bool nestedReply = false}) {
+    List<GroupPost> visibleReplies = _getVisibleReplies(replies);
+    if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
     }
     List<Widget> replyWidgetList = [];
-    for (int i = 0; i < replies.length; i++) {
-      if (i > 0) {
+    for (int i = 0; i < visibleReplies.length; i++) {
+      if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
       }
-      GroupPost reply = replies[i];
-      String deleteIconPath;
-      Function deleteFunctionTap;
-      if (_isDeleteReplyVisible(reply)) {
-        deleteIconPath = 'images/trash.png';
-        deleteFunctionTap = () => _onTapDeleteReply(reply);
+      GroupPost reply = visibleReplies[i];
+      String optionsIconPath;
+      Function optionsFunctionTap;
+      if (_isReplyOptionsVisible(reply)) {
+        optionsIconPath = 'images/icon-groups-options-orange.png';
+        optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
-      replyWidgetList.add(GroupReplyCard(reply: reply, group: widget.group, iconPath: deleteIconPath, onIconTap: deleteFunctionTap));
+      replyWidgetList.add(Padding(padding: EdgeInsets.only(left: leftPaddingOffset), child: GroupReplyCard(reply: reply, group: widget.group, iconPath: optionsIconPath, onIconTap: optionsFunctionTap)));
+      replyWidgetList.add(_buildRepliesWidget(replies: reply?.replies, leftPaddingOffset: (leftPaddingOffset + 5), nestedReply: true));
     }
-    return Padding(padding: EdgeInsets.only(left: 25, top: 20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replyWidgetList));
+    return Padding(
+        padding: EdgeInsets.only(left: nestedReply ? 0 : 10, top: nestedReply ? 0 : 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: replyWidgetList));
   }
 
-  List<GroupPost> _getVisibleReplies() {
-    List<GroupPost> replies = widget.post?.replies;
+  List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
@@ -153,7 +172,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
   void _onTapDeletePost() {
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx('panel.group.view.post.delete.confirm.msg', 'Are you sure that you want to delete this post?')),
+        contentWidget: Text(Localization().getStringEx('panel.group.detail.post.delete.confirm.msg', 'Are you sure that you want to delete this post?')),
         actions: <Widget>[
           TextButton(
               child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
@@ -167,20 +186,60 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   void _deletePost() {
     _setLoading(true);
-    Groups().deletePost(widget.group?.id, widget.post?.id).then((succeeded) {
+    Groups().deletePost(widget.group?.id, _post?.id).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
       } else {
-        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.view.post.delete.failed.msg', 'Failed to delete post.'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.delete.failed.msg', 'Failed to delete post.'));
       }
     });
+  }
+
+  void _onTapReplyOptions(GroupPost reply) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Styles().colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context){
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16,vertical: 17),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                RibbonButton(
+                  height: null,
+                  leftIcon: "images/trash.png",
+                  label:Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapDeleteReply(reply);
+                  },
+                ),
+                RibbonButton(
+                  height: null,
+                  leftIcon: "images/icon-group-post-reply.png",
+                  label:Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapReply(reply: reply);
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+    );
   }
 
   void _onTapDeleteReply(GroupPost reply) {
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx('panel.group.view.post.reply.delete.confirm.msg', 'Are you sure that you want to delete this reply?')),
+        contentWidget: Text(Localization().getStringEx('panel.group.detail.post.reply.delete.confirm.msg', 'Are you sure that you want to delete this reply?')),
         actions: <Widget>[
           TextButton(
               child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
@@ -196,16 +255,26 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     _setLoading(true);
     Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
       _setLoading(false);
-      if (succeeded) {
-        Navigator.of(context).pop();
-      } else {
-        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.view.post.reply.delete.failed.msg', 'Failed to delete reply.'));
+      if (!succeeded) {
+        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.reply.delete.failed.msg', 'Failed to delete reply.'));
       }
     });
   }
 
-  void _onTapReply() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: widget.post, group: widget.group)));
+  void _onTapReply({GroupPost reply}) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(post: ((reply != null) ? reply : _post), group: widget.group)));
+  }
+
+  void _reloadPost() {
+    _setLoading(true);
+    Groups().loadGroupPosts(widget.group?.id).then((posts) {
+      if (AppCollection.isCollectionNotEmpty(posts)) {
+        _post = posts.firstWhere((post) => (post.id == _post?.id));
+      } else {
+        _post = null;
+      }
+      _setLoading(false);
+    });
   }
 
   void _setLoading(bool loading) {
@@ -216,7 +285,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     }
   }
 
-  bool _isDeleteReplyVisible(GroupPost reply) {
+  bool _isReplyOptionsVisible(GroupPost reply) {
     if (reply == null) {
       return false;
     } else if (widget.group?.currentUserIsAdmin ?? false) {
@@ -236,7 +305,7 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
     } else {
       if (widget.group?.currentUserIsUserMember ?? false) {
         String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-        String postMemberEmail = widget.post?.member?.email;
+        String postMemberEmail = _post?.member?.email;
         return AppString.isStringNotEmpty(currentMemberEmail) && AppString.isStringNotEmpty(postMemberEmail) && (currentMemberEmail == postMemberEmail);
       } else {
         return false;
@@ -246,6 +315,16 @@ class _GroupViewPostPanelState extends State<GroupViewPostPanel> {
 
   bool get _isReplyVisible {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Groups.notifyGroupPostsUpdated) {
+      _reloadPost();
+    }
   }
 }
 

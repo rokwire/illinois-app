@@ -473,16 +473,6 @@ class Groups /* with Service */ {
     String responseString = response?.body;
     if (responseCode == 200) {
       List<GroupPost> posts = GroupPost.fromJsonList(AppJson.decodeList(responseString));
-      if (AppCollection.isCollectionNotEmpty(posts)) {
-        // Sort descending by date created
-        posts.sort((GroupPost first, GroupPost second) {
-          if (first.dateCreatedUtc == null || second.dateCreatedUtc == null) {
-            return 0;
-          } else {
-            return (second.dateCreatedUtc.compareTo(first.dateCreatedUtc));
-          }
-        });
-      }
       return posts;
     } else {
       Log.e('Failed to retrieve group posts. Response: ${response?.body}');
