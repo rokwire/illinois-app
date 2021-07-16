@@ -37,7 +37,7 @@ import 'package:url_launcher/url_launcher.dart';
 				"text": "7 Dobromir, can we have 3 widgets made like we hacked voter widget for c o v i d. Stored in assets.json. They will be hidden by talent chooser/assets until needed.",
 				"can_close": true,
 				"buttons":[
-					{"title":"Yes", "link": {"url": "https://illinois.edu", "options": { "target": "internal" } } },
+					{"title":"Yes", "link": {"url": "https://illinois.edu", "options": { "target": "internal", "title": "Yes Web Panel" } } },
 					{"title":"No", "link": {"url": "https://illinois.edu", "options": { "target": "external" } } },
 					{"title":"Maybe", "link": {"url": "https://illinois.edu", "options": { "target": { "ios": "internal", "android": "external" } } } }
 				]
@@ -210,8 +210,8 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       launch(url);
     }
     else {
-      String title = (options != null) ? AppJson.stringValue(options['title']) : null;
-      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: title, hideToolBar: !Storage().onBoardingPassed, )));
+      String panelTitle = ((options != null) ? AppJson.stringValue(options['title']) : null) ?? title;
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WebPanel(url: url, title: panelTitle, hideToolBar: !Storage().onBoardingPassed, )));
     }
   }
 }
