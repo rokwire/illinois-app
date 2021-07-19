@@ -54,7 +54,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   final ItemScrollController _positionedScrollController =
       ItemScrollController();
   String _selectedReplyId;
-  bool _isPostReply = false;
   bool _private = true;
 
   bool _loading = false;
@@ -64,9 +63,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
-    _isPostReply = widget.postReply;
-    if (_isPostReply) {
-      _selectedReplyId = _post?.id;
+    if (widget.postReply) {
+      _selectedReplyId = widget.post?.id; // default reply to the main post
     }
   }
 
@@ -595,6 +593,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   void _deleteReply(String replyId) {
     _setLoading(true);
+    _clearSelectedReplyId();
     Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
       _setLoading(false);
       if (!succeeded) {
@@ -656,33 +655,44 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   void _onTapSend() {
-    //TODO: implement
-    print(_selectedReplyId);
     FocusScope.of(context).unfocus();
-    // String subject = _subjectController.text;
-    // if (_isCreatePost && AppString.isStringEmpty(subject)) {
-    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Please, populate 'Subject' field"));
-    //   return;
-    // }
-    // String body = _bodyController.text;
-    // if (AppString.isStringEmpty(body)) {
-    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Please, populate 'Body' field"));
-    //   return;
-    // }
-    // _setLoading(true);
-    // GroupPost post;
-    // if (_isCreatePost) {
-    //   post = GroupPost(subject: subject, body: body, private: _private);
-    // } else {
-    //   post = GroupPost(parentId: widget.post?.id, body: body, private: _private);
-    // }
-    // Groups().createPost(widget.group?.id, post).then((succeeded) {
-    //   _onCreateFinished(succeeded);
-    // });
+    String subject = _subjectController.text;
+    if (_isCreatePost && AppString.isStringEmpty(subject)) {
+      AppAlert.showDialogResult(
+          context,
+          Localization().getStringEx(
+              'panel.group.detail.post.create.validation.subject.msg',
+              "Please, populate 'Subject' field"));
+      return;
+    }
+    String body = _bodyController.text;
+    if (AppString.isStringEmpty(body)) {
+      AppAlert.showDialogResult(
+          context,
+          Localization().getStringEx(
+              'panel.group.detail.post.create.validation.body.msg',
+              "Please, populate 'Body' field"));
+      return;
+    }
+    _setLoading(true);
+    GroupPost post;
+    if (_isCreatePost) {
+      post = GroupPost(subject: subject, body: body, private: _private);
+    } else {
+      post = GroupPost(
+          parentId: AppString.getDefaultEmptyString(
+              value: _selectedReplyId, defaultValue: _post?.id),
+          body: body,
+          private: _private);
+    }
+    Groups().createPost(widget.group?.id, post).then((succeeded) {
+      _onCreateFinished(succeeded);
+    });
   }
 
   void _onCreateFinished(bool succeeded) {
     _setLoading(false);
+    _clearSelectedReplyId();
     if (succeeded) {
       if (_isCreatePost) {
         Navigator.of(context).pop();
@@ -814,15 +824,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   void _scrollToPostEdit() {
-    if (AppString.isStringNotEmpty(_selectedReplyId) || _isPostReply) {
+    if (AppString.isStringNotEmpty(_selectedReplyId)) {
       // index = 2 is the index of the post edit control
-      _positionedScrollController
-          .scrollTo(index: 1, duration: Duration(milliseconds: 10))
-          .then((_) {
-        _selectedReplyId = null;
-        _isPostReply = false;
-      });
+      _positionedScrollController.scrollTo(
+          index: 1, duration: Duration(milliseconds: 10));
     }
+  }
+
+  void _clearSelectedReplyId() {
+    _selectedReplyId = null;
   }
 
   bool get _isDeletePostVisible {
