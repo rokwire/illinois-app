@@ -64,8 +64,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
-    _selectedReplyId = _post?.id;
     _isPostReply = widget.postReply;
+    if (_isPostReply) {
+      _selectedReplyId = _post?.id;
+    }
   }
 
   @override
@@ -809,7 +811,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   void _scrollToPostEdit() {
-    //TODO: simple detail view without scrolling
     if (AppString.isStringNotEmpty(_selectedReplyId) || _isPostReply) {
       // index = 2 is the index of the post edit control
       _positionedScrollController
