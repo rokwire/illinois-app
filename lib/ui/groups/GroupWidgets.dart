@@ -1001,13 +1001,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
                   borderRadius: BorderRadius.all(Radius.circular(8))),
               child: Padding(
-                  padding: EdgeInsets.all(12),
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
                           child: Text(AppString.getDefaultEmptyString(value: widget.post.subject),
                               overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
+                              maxLines: 1,
                               style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary))),
                       Visibility(
                           visible: isRepliesLabelVisible,
@@ -1015,21 +1015,15 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18))),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14))),
                             Padding(
-                                padding: EdgeInsets.only(left: 2),
+                                padding: EdgeInsets.only(left: 8),
                                 child: Text(AppString.getDefaultEmptyString(value: repliesLabel),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18)))
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14)))
                           ])),
                       Container(width: 34)
                     ]),
-                    Text(AppString.getDefaultEmptyString(value: memberName),
-                        style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
-                    Padding(
-                        padding: EdgeInsets.only(top: 3),
-                        child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
-                            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
-                    Padding(
+                    Container(
                         padding: EdgeInsets.only(top: 10),
                         child: Html(data: htmlBody, style: {
                           "body": Style(
@@ -1037,8 +1031,32 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               fontFamily: Styles().fontFamilies.regular,
                               fontSize: FontSize(16),
                               maxLines: 3,
-                              textOverflow: TextOverflow.ellipsis)
-                        }))
+                              textOverflow: TextOverflow.ellipsis,
+                          ),
+                        })),
+                    Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child:Padding(
+                              padding: EdgeInsets.only(right: 6),
+                              child:Text(AppString.getDefaultEmptyString(value: memberName),
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                          )),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
+                          ),
+                        ],
+                      )
+                    )
                   ]))))),
       Visibility(
           visible: _isReplyVisible,

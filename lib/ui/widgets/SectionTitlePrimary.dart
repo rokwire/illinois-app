@@ -28,9 +28,12 @@ class SectionTitlePrimary extends StatelessWidget{
   final Color backgroundColor;
   final Color slantColor;
   final Color textColor;
+  final String rightIconPath;
+  final String rightIconLabel;
+  final Function rightIconAction;
 
-  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.children,
-    this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor});
+  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children,
+    this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor, this.rightIconAction, this.rightIconLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +92,18 @@ class SectionTitlePrimary extends StatelessWidget{
                           fontSize: 20),
                     )
                   ),
+                  rightIconPath != null ?
+                  Semantics(
+                    button: true,
+                    label: rightIconLabel,
+                    child: GestureDetector(
+                      onTap: rightIconAction ?? (){},
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 16),
+                        child: Image.asset(
+                          rightIconPath, excludeFromSemantics: true,),
+                      ))): Container(),
                 ],
               )),
             ),

@@ -675,7 +675,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(key: _postsKey, children: <Widget>[
       SectionTitlePrimary(
-          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'), iconPath: 'images/icon-calendar.png', children: postsContent)
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+          iconPath: 'images/icon-calendar.png',
+          rightIconPath: _canCreatePost? "images/icon-add-20x18.png" : null,
+          rightIconAction: _onTapCreatePost,
+          rightIconLabel: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+          children: postsContent)
     ]);
   }
 
