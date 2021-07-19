@@ -694,6 +694,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _setLoading(false);
     _clearSelectedReplyId();
     if (succeeded) {
+      _bodyController.text = ''; //clear body content after successfull save
       if (_isCreatePost) {
         Navigator.of(context).pop();
       } else {
