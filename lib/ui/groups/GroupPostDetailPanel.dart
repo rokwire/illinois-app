@@ -142,7 +142,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                                 child: Semantics(
                                                     label: Localization()
                                                         .getStringEx(
-                                                            'panel.group.view.post.button.delete.title',
+                                                            'panel.group.detail.post.reply.delete.label',
                                                             "Delete"),
                                                     button: true,
                                                     child: GestureDetector(
@@ -171,7 +171,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                         visible: _isReplyVisible,
                                         child: Semantics(
                                             label: Localization().getStringEx(
-                                                'panel.group.view.post.button.reply.title',
+                                                'panel.group.detail.post.reply.reply.label',
                                                 "Reply"),
                                             button: true,
                                             child: GestureDetector(
@@ -280,7 +280,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     return Padding(
         padding: EdgeInsets.all(_outerPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          //TODO: localization:
           Visibility(
               visible: _privateSwitchVisible,
               child: Row(
@@ -288,7 +287,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                   children: [
                     Text(
                         Localization().getStringEx(
-                            'panel.group.post.create.private.label', 'Private'),
+                            'panel.group.detail.post.create.private.label',
+                            'Private'),
                         style: TextStyle(
                             fontSize: 18,
                             fontFamily: Styles().fontFamilies.bold,
@@ -309,7 +309,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                             top: _privateSwitchVisible ? 16 : 0),
                         child: Text(
                             Localization().getStringEx(
-                                'panel.group.post.create.subject.label',
+                                'panel.group.detail.post.create.subject.label',
                                 'Subject'),
                             style: TextStyle(
                                 fontSize: 18,
@@ -322,7 +322,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                             maxLines: 1,
                             decoration: InputDecoration(
                                 hintText: Localization().getStringEx(
-                                    'panel.group.post.create.subject.field.hint',
+                                    'panel.group.detail.post.create.subject.field.hint',
                                     'Write a Subject'),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide(
@@ -342,7 +342,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                   children: [
                     Text(
                         Localization().getStringEx(
-                            'panel.group.post.create.body.label', 'Body'),
+                            'panel.group.detail.post.create.body.label',
+                            'Body'),
                         style: TextStyle(
                             fontSize: 18,
                             fontFamily: Styles().fontFamilies.bold,
@@ -385,7 +386,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                             onTap: _onTapLink,
                             child: Text(
                                 Localization().getStringEx(
-                                    'panel.group.post.create.link.label',
+                                    'panel.group.detail.post.create.link.label',
                                     'Link'),
                                 style: TextStyle(
                                     fontSize: 18,
@@ -402,7 +403,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                   maxLines: 15,
                   decoration: InputDecoration(
                       hintText: Localization().getStringEx(
-                          "panel.group.post.create.body.field.hint",
+                          "panel.group.detail.post.create.body.field.hint",
                           "Write a Body"),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -416,7 +417,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                 flex: 1,
                 child: RoundedButton(
                     label: Localization().getStringEx(
-                        'panel.group.post.create.button.send.title', 'Send'),
+                        'panel.group.detail.post.create.button.send.title',
+                        'Send'),
                     borderColor: Styles().colors.fillColorSecondary,
                     textColor: Styles().colors.fillColorPrimary,
                     backgroundColor: Styles().colors.white,
@@ -426,7 +428,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                 flex: 1,
                 child: RoundedButton(
                     label: Localization().getStringEx(
-                        'panel.group.post.create.button.cancel.title',
+                        'panel.group.detail.post.create.button.cancel.title',
                         'Cancel'),
                     borderColor: Styles().colors.textSurface,
                     textColor: Styles().colors.fillColorPrimary,
@@ -659,12 +661,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     FocusScope.of(context).unfocus();
     // String subject = _subjectController.text;
     // if (_isCreatePost && AppString.isStringEmpty(subject)) {
-    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.subject.msg', "Please, populate 'Subject' field"));
+    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.subject.msg', "Please, populate 'Subject' field"));
     //   return;
     // }
     // String body = _bodyController.text;
     // if (AppString.isStringEmpty(body)) {
-    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.post.create.validation.body.msg', "Please, populate 'Body' field"));
+    //   AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Please, populate 'Body' field"));
     //   return;
     // }
     // _setLoading(true);
@@ -692,10 +694,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
           context,
           _isCreatePost
               ? Localization().getStringEx(
-                  'panel.group.post.create.post.failed.msg',
+                  'panel.group.detail.post.create.post.failed.msg',
                   'Failed to create new post.')
               : Localization().getStringEx(
-                  'panel.group.post.create.reply.failed.msg',
+                  'panel.group.detail.post.create.reply.failed.msg',
                   'Failed to create new reply.'));
     }
   }
@@ -744,7 +746,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
         children: [
           Text(
               Localization().getStringEx(
-                  'panel.group.post.create.dialog.link.edit.header',
+                  'panel.group.detail.post.create.dialog.link.edit.header',
                   'Edit Link'),
               style: TextStyle(
                   fontSize: 20,
@@ -754,7 +756,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
-                      'panel.group.post.create.dialog.link.label', 'Link to:'),
+                      'panel.group.detail.post.create.dialog.link.label',
+                      'Link to:'),
                   style: TextStyle(
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies.regular,
