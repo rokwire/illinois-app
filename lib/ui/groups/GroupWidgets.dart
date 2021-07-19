@@ -1144,7 +1144,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         color: Styles().colors.fillColorPrimary,
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: FontSize(16),
-                        maxLines: 3,
+                        maxLines: 3000,
                         textOverflow: TextOverflow.ellipsis)
                   }))
             ])));
