@@ -862,29 +862,3 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     }
   }
 }
-
-class _GroupPostSubjectHeading extends SliverPersistentHeaderDelegate {
-  final Widget child;
-  final bool visible;
-  final double constExtent = 110;
-
-  _GroupPostSubjectHeading({@required this.child, this.visible = false});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Visibility(
-        visible: visible, child: Container(height: constExtent, child: child));
-  }
-
-  @override
-  double get maxExtent => (visible ? constExtent : 0);
-
-  @override
-  double get minExtent => (visible ? constExtent : 0);
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
-}
