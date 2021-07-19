@@ -489,6 +489,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
         visibleReplies.add(reply);
       }
     }
+    if (AppCollection.isCollectionNotEmpty(visibleReplies)) {
+      // Sort oldest to newest
+      visibleReplies.sort((GroupPost first, GroupPost second) {
+        if (first.dateCreatedUtc == null || second.dateCreatedUtc == null) {
+          return 0;
+        } else {
+          return (first.dateCreatedUtc.compareTo(second.dateCreatedUtc));
+        }
+      });
+    }
     return visibleReplies;
   }
 
