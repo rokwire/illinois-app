@@ -64,7 +64,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     if (widget.postReply) {
-      _selectedReplyId = widget.post?.id; // default reply to the main post
+      _selectedReplyId = _post?.id; // default reply to the main post
     }
   }
 
