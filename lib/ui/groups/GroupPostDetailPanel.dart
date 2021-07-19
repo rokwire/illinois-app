@@ -674,15 +674,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               "Please, populate 'Body' field"));
       return;
     }
+    String htmlModifiedBody = _replaceNewLineSymbols(body);
     _setLoading(true);
     GroupPost post;
     if (_isCreatePost) {
-      post = GroupPost(subject: subject, body: body, private: _private);
+      post = GroupPost(subject: subject, body: htmlModifiedBody, private: _private);
     } else {
       post = GroupPost(
           parentId: AppString.getDefaultEmptyString(
               value: _selectedReplyId, defaultValue: _post?.id),
-          body: body,
+          body: htmlModifiedBody,
           private: _private);
     }
     Groups().createPost(widget.group?.id, post).then((succeeded) {
@@ -834,6 +835,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   void _clearSelectedReplyId() {
     _selectedReplyId = null;
+  }
+
+  String _replaceNewLineSymbols(String value) {
+    if (AppString.isStringEmpty(value)) {
+      return value;
+    }
+    value = value.replaceAll('\r\n', '</br>');
+    value = value.replaceAll('\n', '</br>');
+    return value;
   }
 
   bool get _isDeletePostVisible {
