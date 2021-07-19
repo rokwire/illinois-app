@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Scroll to edit control on post reply (point 2.3) [#516](https://github.com/rokwire/illinois-app/issues/516).
+- Replace symbols for new lines in Group Post [#521](https://github.com/rokwire/illinois-app/issues/521).
 
 ## [2.6.4] - 2021-07-16
 ### Added
