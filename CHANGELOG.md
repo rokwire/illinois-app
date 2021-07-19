@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace symbols for new lines in Group Post [#521](https://github.com/rokwire/illinois-app/issues/521).
 - Adjust Post Card UI[#524](https://github.com/rokwire/illinois-app/issues/524).
 - Expand group reply card [#523](https://github.com/rokwire/illinois-app/issues/523).
+- Allow Cut, Copy and Paste options in group post [#528](https://github.com/rokwire/illinois-app/issues/528).
 
 ## [2.6.4] - 2021-07-16
 ### Added
