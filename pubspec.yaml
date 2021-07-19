@@ -73,6 +73,7 @@ dependencies:
   notification_permissions: ^0.5.0
 # system_setting: ^0.1.4
   app_settings: ^4.1.0
+  scrollable_positioned_list: ^0.1.10
 
 dev_dependencies:
   flutter_test:
