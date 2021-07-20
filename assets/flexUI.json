@@ -91,7 +91,6 @@
 		"auth": {
 			"home.connect"                    : {"loggedIn": false },
 			"laundry"                         : { "shibbolethLoggedIn": true },
-			"illini_cash"                     : { "shibbolethLoggedIn": true },
 			"create_event"                    : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },
 			"create_stadium_poll"             : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager" },
 			"upgrade_version_message"         : { "shibbolethLoggedIn": true },
