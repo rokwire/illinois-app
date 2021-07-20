@@ -383,8 +383,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               Padding(
                   padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                   child: TextField(
-                      toolbarOptions:
-                          ToolbarOptions(copy: false, cut: false, paste: false),
                       controller: _bodyController,
                       maxLines: 15,
                       decoration: InputDecoration(
