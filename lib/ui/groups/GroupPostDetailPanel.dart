@@ -386,9 +386,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                       controller: _bodyController,
                       maxLines: 15,
                       decoration: InputDecoration(
-                          hintText: Localization().getStringEx(
+                          hintText: (_isCreatePost ? Localization().getStringEx(
                               "panel.group.detail.post.create.body.field.hint",
-                              "Write a Body"),
+                              "Write a Post ...") : Localization().getStringEx(
+                              "panel.group.detail.post.reply.create.body.field.hint",
+                              "Write a Reply ...")),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Styles().colors.mediumGray,
