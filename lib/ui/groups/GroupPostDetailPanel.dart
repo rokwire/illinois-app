@@ -555,22 +555,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               children: <Widget>[
                 RibbonButton(
                   height: null,
-                  leftIcon: "images/trash.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.delete.label", "Delete"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapDeleteReply(reply);
-                  },
-                ),
-                RibbonButton(
-                  height: null,
                   leftIcon: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
                     Navigator.of(context).pop();
                     _onTapReply(reply: reply);
+                  },
+                ),
+                RibbonButton(
+                  height: null,
+                  leftIcon: "images/trash.png",
+                  label: Localization().getStringEx(
+                      "panel.group.detail.post.reply.delete.label", "Delete"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapDeleteReply(reply);
                   },
                 ),
               ],
