@@ -1705,7 +1705,8 @@
     "panel.group.detail.post.create.reply.failed.msg": "Failed to create new reply.",
     "panel.group.detail.post.create.link.label": "Link",
     "panel.group.detail.post.create.dialog.link.edit.header": "Edit Link",
-    "panel.group.detail.post.create.dialog.link.label": "Link To:",
+    "panel.group.detail.post.create.dialog.link.text.label": "Link Text:",
+    "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
 
     "panel.student_guide_categories.label.heading": "Student Guide",
     "panel.student_guide_categories.label.content.empty": "Empty guide content",

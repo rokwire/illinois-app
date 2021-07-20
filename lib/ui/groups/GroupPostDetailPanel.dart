@@ -19,10 +19,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -50,7 +52,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   GroupPost _post;
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
-  TextEditingController _linkController = TextEditingController();
+  TextEditingController _linkTextController = TextEditingController();
+  TextEditingController _linkUrlController = TextEditingController();
   final ItemScrollController _positionedScrollController =
       ItemScrollController();
   String _selectedReplyId;
@@ -74,7 +77,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     NotificationService().unsubscribe(this);
     _subjectController.dispose();
     _bodyController.dispose();
-    _linkController.dispose();
+    _linkTextController.dispose();
+    _linkUrlController.dispose();
   }
 
   @override
@@ -264,7 +268,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                             color: Styles().colors.fillColorPrimary,
                             fontFamily: Styles().fontFamilies.regular,
                             fontSize: FontSize(20))
-                      })),
+                      },
+                      onLinkTap: (url, context, attributes, element) =>
+                          _onTapPostLink(url))),
               Padding(
                   padding: EdgeInsets.only(
                       left: _outerPadding,
@@ -275,163 +281,174 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   Widget _buildPostEdit() {
-    return Padding(
-        padding: EdgeInsets.all(_outerPadding),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Visibility(
-              visible: _privateSwitchVisible,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                        Localization().getStringEx(
-                            'panel.group.detail.post.create.private.label',
-                            'Private'),
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: Styles().fontFamilies.bold,
-                            color: Styles().colors.fillColorPrimary)),
-                    GestureDetector(
-                        onTap: _onTapPrivate,
-                        child: Image.asset(_private
-                            ? 'images/switch-on.png'
-                            : 'images/switch-off.png'))
-                  ])),
-          Visibility(
-              visible: _isCreatePost,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.only(
-                            top: _privateSwitchVisible ? 16 : 0),
-                        child: Text(
+    bool currentUserIsMemberOrAdmin =
+        widget.group?.currentUserIsMemberOrAdmin ?? false;
+    return Visibility(
+        visible: currentUserIsMemberOrAdmin,
+        child: Padding(
+            padding: EdgeInsets.all(_outerPadding),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Visibility(
+                  visible: _privateSwitchVisible,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
                             Localization().getStringEx(
-                                'panel.group.detail.post.create.subject.label',
-                                'Subject'),
+                                'panel.group.detail.post.create.private.label',
+                                'Private'),
                             style: TextStyle(
                                 fontSize: 18,
                                 fontFamily: Styles().fontFamilies.bold,
-                                color: Styles().colors.fillColorPrimary))),
-                    Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: TextField(
-                            controller: _subjectController,
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                                hintText: Localization().getStringEx(
-                                    'panel.group.detail.post.create.subject.field.hint',
-                                    'Write a Subject'),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Styles().colors.mediumGray,
-                                        width: 0.0))),
-                            style: TextStyle(
-                                color: Styles().colors.textBackground,
-                                fontSize: 16,
-                                fontFamily: Styles().fontFamilies.regular)))
-                  ])),
-          Padding(
-              padding: EdgeInsets.only(
-                  top: (_privateSwitchVisible || _isCreatePost) ? 16 : 0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                        Localization().getStringEx(
-                            'panel.group.detail.post.create.body.label',
-                            'Body'),
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: Styles().fontFamilies.bold,
-                            color: Styles().colors.fillColorPrimary)),
-                    Padding(
-                        padding: EdgeInsets.only(left: 30),
-                        child: GestureDetector(
-                            onTap: _onTapBold,
-                            child: Text('B',
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    color: Styles().colors.fillColorPrimary,
-                                    fontFamily: Styles().fontFamilies.bold)))),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: GestureDetector(
-                            onTap: _onTapItalic,
-                            child: Text('I',
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    color: Styles().colors.fillColorPrimary,
-                                    fontFamily:
-                                        Styles().fontFamilies.mediumIt)))),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: GestureDetector(
-                            onTap: _onTapUnderline,
-                            child: Text('U',
-                                style: TextStyle(
-                                    fontSize: 24,
-                                    color: Styles().colors.fillColorPrimary,
-                                    fontFamily: Styles().fontFamilies.medium,
-                                    decoration: TextDecoration.underline,
-                                    decorationThickness: 2,
-                                    decorationColor:
-                                        Styles().colors.fillColorPrimary)))),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: GestureDetector(
-                            onTap: _onTapLink,
+                                color: Styles().colors.fillColorPrimary)),
+                        GestureDetector(
+                            onTap: _onTapPrivate,
+                            child: Image.asset(_private
+                                ? 'images/switch-on.png'
+                                : 'images/switch-off.png'))
+                      ])),
+              Visibility(
+                  visible: _isCreatePost,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: _privateSwitchVisible ? 16 : 0),
                             child: Text(
                                 Localization().getStringEx(
-                                    'panel.group.detail.post.create.link.label',
-                                    'Link'),
+                                    'panel.group.detail.post.create.subject.label',
+                                    'Subject'),
                                 style: TextStyle(
                                     fontSize: 18,
-                                    color: Styles().colors.fillColorPrimary,
-                                    fontFamily:
-                                        Styles().fontFamilies.medium)))),
-                  ])),
-          Padding(
-              padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-              child: TextField(
-                  controller: _bodyController,
-                  maxLines: 15,
-                  decoration: InputDecoration(
-                      hintText: Localization().getStringEx(
-                          "panel.group.detail.post.create.body.field.hint",
-                          "Write a Body"),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
-          Row(children: [
-            Flexible(
-                flex: 1,
-                child: RoundedButton(
-                    label: Localization().getStringEx(
-                        'panel.group.detail.post.create.button.send.title',
-                        'Send'),
-                    borderColor: Styles().colors.fillColorSecondary,
-                    textColor: Styles().colors.fillColorPrimary,
-                    backgroundColor: Styles().colors.white,
-                    onTap: _onTapSend)),
-            Container(width: 20),
-            Flexible(
-                flex: 1,
-                child: RoundedButton(
-                    label: Localization().getStringEx(
-                        'panel.group.detail.post.create.button.cancel.title',
-                        'Cancel'),
-                    borderColor: Styles().colors.textSurface,
-                    textColor: Styles().colors.fillColorPrimary,
-                    backgroundColor: Styles().colors.white,
-                    onTap: _onTapCancel))
-          ])
-        ]));
+                                    fontFamily: Styles().fontFamilies.bold,
+                                    color: Styles().colors.fillColorPrimary))),
+                        Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child: TextField(
+                                controller: _subjectController,
+                                maxLines: 1,
+                                decoration: InputDecoration(
+                                    hintText: Localization().getStringEx(
+                                        'panel.group.detail.post.create.subject.field.hint',
+                                        'Write a Subject'),
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Styles().colors.mediumGray,
+                                            width: 0.0))),
+                                style: TextStyle(
+                                    color: Styles().colors.textBackground,
+                                    fontSize: 16,
+                                    fontFamily: Styles().fontFamilies.regular)))
+                      ])),
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: (_privateSwitchVisible || _isCreatePost) ? 16 : 0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                            Localization().getStringEx(
+                                'panel.group.detail.post.create.body.label',
+                                'Body'),
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: Styles().fontFamilies.bold,
+                                color: Styles().colors.fillColorPrimary)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 30),
+                            child: GestureDetector(
+                                onTap: _onTapBold,
+                                child: Text('B',
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        color: Styles().colors.fillColorPrimary,
+                                        fontFamily:
+                                            Styles().fontFamilies.bold)))),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: GestureDetector(
+                                onTap: _onTapItalic,
+                                child: Text('I',
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        color: Styles().colors.fillColorPrimary,
+                                        fontFamily:
+                                            Styles().fontFamilies.mediumIt)))),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: GestureDetector(
+                                onTap: _onTapUnderline,
+                                child: Text('U',
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        color: Styles().colors.fillColorPrimary,
+                                        fontFamily:
+                                            Styles().fontFamilies.medium,
+                                        decoration: TextDecoration.underline,
+                                        decorationThickness: 2,
+                                        decorationColor: Styles()
+                                            .colors
+                                            .fillColorPrimary)))),
+                        Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: GestureDetector(
+                                onTap: _onTapEditLink,
+                                child: Text(
+                                    Localization().getStringEx(
+                                        'panel.group.detail.post.create.link.label',
+                                        'Link'),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Styles().colors.fillColorPrimary,
+                                        fontFamily:
+                                            Styles().fontFamilies.medium)))),
+                      ])),
+              Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
+                  child: TextField(
+                      toolbarOptions:
+                          ToolbarOptions(copy: false, cut: false, paste: false),
+                      controller: _bodyController,
+                      maxLines: 15,
+                      decoration: InputDecoration(
+                          hintText: Localization().getStringEx(
+                              "panel.group.detail.post.create.body.field.hint",
+                              "Write a Body"),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Styles().colors.mediumGray,
+                                  width: 0.0))),
+                      style: TextStyle(
+                          color: Styles().colors.textBackground,
+                          fontSize: 16,
+                          fontFamily: Styles().fontFamilies.regular))),
+              Row(children: [
+                Flexible(
+                    flex: 1,
+                    child: RoundedButton(
+                        label: Localization().getStringEx(
+                            'panel.group.detail.post.create.button.send.title',
+                            'Send'),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        onTap: _onTapSend)),
+                Container(width: 20),
+                Flexible(
+                    flex: 1,
+                    child: RoundedButton(
+                        label: Localization().getStringEx(
+                            'panel.group.detail.post.create.button.cancel.title',
+                            'Cancel'),
+                        borderColor: Styles().colors.textSurface,
+                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors.white,
+                        onTap: _onTapCancel))
+              ])
+            ])));
   }
 
   Widget _buildRepliesWidget(
@@ -622,6 +639,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     }
   }
 
+  void _onTapPostLink(String url) {
+    Analytics.instance.logSelect(target: url);
+    if (AppString.isStringNotEmpty(url)) {
+      Navigator.push(context,
+          CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
+  }
+
   void _reloadPost() {
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
@@ -742,9 +767,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _wrapBodySelection('<u>', '</u>');
   }
 
-  void _onTapLink() {
+  void _onTapEditLink() {
     int linkStartPosition = _bodyController.selection.start;
     int linkEndPosition = _bodyController.selection.end;
+    _linkTextController.text = AppString.getDefaultEmptyString(
+        value: _bodyController.selection?.textInside(_bodyController.text));
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: _buildLinkDialog(),
@@ -776,8 +803,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.label',
-                      'Link to:'),
+                      'panel.group.detail.post.create.dialog.link.text.label',
+                      'Link Text:'),
                   style: TextStyle(
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies.regular,
@@ -785,7 +812,30 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
-                  controller: _linkController,
+                  controller: _linkTextController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(
+                      color: Styles().colors.textBackground,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular))),
+          Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(
+                  Localization().getStringEx(
+                      'panel.group.detail.post.create.dialog.link.url.label',
+                      'Link URL:'),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary))),
+          Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: TextField(
+                  controller: _linkUrlController,
                   maxLines: 1,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -803,9 +853,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     if ((startPosition < 0) || (endPosition < 0)) {
       return;
     }
-    String link = _linkController.text;
-    _linkController.text = '';
-    _wrapBody('<a href="$link">', '</a>', startPosition, endPosition);
+    String linkText = _linkTextController.text;
+    _linkTextController.text = '';
+    String linkUrl = _linkUrlController.text;
+    _linkUrlController.text = '';
+    String currentText = _bodyController.text;
+    currentText = currentText.replaceRange(startPosition, endPosition, linkText);
+    _bodyController.text = currentText;
+    endPosition = startPosition + linkText.length;
+    _wrapBody('<a href="$linkUrl">', '</a>', startPosition, endPosition);
   }
 
   void _wrapBodySelection(String firstValue, String secondValue) {
@@ -835,7 +891,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   void _scrollToPostEdit() {
     if (AppString.isStringNotEmpty(_selectedReplyId)) {
-      // index = 2 is the index of the post edit control
+      // index = 1 is the index of the post edit control
       _positionedScrollController.scrollTo(
           index: 1, duration: Duration(milliseconds: 10));
     }
