@@ -290,40 +290,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Visibility(
-                  visible: _privateSwitchVisible,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                            Localization().getStringEx(
-                                'panel.group.detail.post.create.private.label',
-                                'Private'),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: Styles().fontFamilies.bold,
-                                color: Styles().colors.fillColorPrimary)),
-                        GestureDetector(
-                            onTap: _onTapPrivate,
-                            child: Image.asset(_private
-                                ? 'images/switch-on.png'
-                                : 'images/switch-off.png'))
-                      ])),
-              Visibility(
                   visible: _isCreatePost,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: _privateSwitchVisible ? 16 : 0),
-                            child: Text(
-                                Localization().getStringEx(
-                                    'panel.group.detail.post.create.subject.label',
-                                    'Subject'),
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: Styles().fontFamilies.bold,
-                                    color: Styles().colors.fillColorPrimary))),
+                        Text(
+                            Localization().getStringEx(
+                                'panel.group.detail.post.create.subject.label',
+                                'Subject'),
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: Styles().fontFamilies.bold,
+                                color: Styles().colors.fillColorPrimary)),
                         Padding(
                             padding: EdgeInsets.only(top: 8),
                             child: TextField(
@@ -343,19 +321,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                     fontFamily: Styles().fontFamilies.regular)))
                       ])),
               Padding(
-                  padding: EdgeInsets.only(
-                      top: (_privateSwitchVisible || _isCreatePost) ? 16 : 0),
+                  padding: EdgeInsets.only(top: _isCreatePost ? 16 : 0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _FontIcon(onTap: _onTapBold, iconPath: 'images/icon-bold.png'),
+                        _FontIcon(
+                            onTap: _onTapBold,
+                            iconPath: 'images/icon-bold.png'),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
-                            child: _FontIcon(onTap: _onTapItalic, iconPath: 'images/icon-italic.png')),
+                            child: _FontIcon(
+                                onTap: _onTapItalic,
+                                iconPath: 'images/icon-italic.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
-                            child: _FontIcon(onTap: _onTapUnderline, iconPath: 'images/icon-underline.png')),
+                            child: _FontIcon(
+                                onTap: _onTapUnderline,
+                                iconPath: 'images/icon-underline.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: GestureDetector(
@@ -369,6 +352,33 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                         color: Colors.black,
                                         fontFamily:
                                             Styles().fontFamilies.medium)))),
+                        Expanded(child: Container()),
+                        Visibility(
+                            visible: _privateSwitchVisible,
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      Localization().getStringEx(
+                                          'panel.group.detail.post.create.private.label',
+                                          'Private'),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontFamily:
+                                              Styles().fontFamilies.bold,
+                                          color: Styles()
+                                              .colors
+                                              .fillColorPrimary)),
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 10),
+                                      child: Container(
+                                          color: Colors.transparent,
+                                          child: GestureDetector(
+                                              onTap: _onTapPrivate,
+                                              child: Image.asset(_private
+                                                  ? 'images/switch-on.png'
+                                                  : 'images/switch-off.png'))))
+                                ]))
                       ])),
               Padding(
                   padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
@@ -675,7 +685,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _setLoading(true);
     GroupPost post;
     if (_isCreatePost) {
-      post = GroupPost(subject: subject, body: htmlModifiedBody, private: _private);
+      post = GroupPost(
+          subject: subject, body: htmlModifiedBody, private: _private);
     } else {
       post = GroupPost(
           parentId: AppString.getDefaultEmptyString(
@@ -822,7 +833,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     String linkUrl = _linkUrlController.text;
     _linkUrlController.text = '';
     String currentText = _bodyController.text;
-    currentText = currentText.replaceRange(startPosition, endPosition, linkText);
+    currentText =
+        currentText.replaceRange(startPosition, endPosition, linkText);
     _bodyController.text = currentText;
     endPosition = startPosition + linkText.length;
     _wrapBody('<a href="$linkUrl">', '</a>', startPosition, endPosition);
@@ -920,7 +932,6 @@ class _FontIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: onTap,
-        child: Image.asset(iconPath, width: 18, height: 18));
+        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18));
   }
 }
