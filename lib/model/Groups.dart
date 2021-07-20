@@ -770,7 +770,7 @@ class GroupPost {
         if (first.dateCreatedUtc == null || second.dateCreatedUtc == null) {
           return 0;
         } else {
-          return (second.dateCreatedUtc.compareTo(first.dateCreatedUtc));
+          return (first.dateCreatedUtc.compareTo(second.dateCreatedUtc));
         }
       });
     }
