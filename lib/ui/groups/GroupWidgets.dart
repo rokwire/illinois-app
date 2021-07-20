@@ -28,6 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -1033,7 +1034,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               maxLines: 3,
                               textOverflow: TextOverflow.ellipsis,
                           ),
-                        })),
+                        }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
                     Container(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1076,6 +1077,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   void _onTapReply() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReply: true)));
+  }
+
+  void _onLinkTap(String url) {
+    Analytics.instance.logSelect(target: url);
+    if (AppString.isStringNotEmpty(url)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
   }
 
   bool get _isReplyVisible {
@@ -1146,7 +1154,14 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         fontSize: FontSize(16),
                         maxLines: 3000,
                         textOverflow: TextOverflow.ellipsis)
-                  }))
+                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))
             ])));
+  }
+
+  void _onLinkTap(String url) {
+    Analytics.instance.logSelect(target: url);
+    if (AppString.isStringNotEmpty(url)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
   }
 }
