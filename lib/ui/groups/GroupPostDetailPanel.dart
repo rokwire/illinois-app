@@ -275,7 +275,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   Widget _buildPostEdit() {
-    return Padding(
+    bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+    return Visibility(visible: currentUserIsMemberOrAdmin, child: Padding(
         padding: EdgeInsets.all(_outerPadding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Visibility(
@@ -431,7 +432,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                     backgroundColor: Styles().colors.white,
                     onTap: _onTapCancel))
           ])
-        ]));
+        ])));
   }
 
   Widget _buildRepliesWidget(
