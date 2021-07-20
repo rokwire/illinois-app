@@ -835,7 +835,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   void _scrollToPostEdit() {
     if (AppString.isStringNotEmpty(_selectedReplyId)) {
-      // index = 2 is the index of the post edit control
+      // index = 1 is the index of the post edit control
       _positionedScrollController.scrollTo(
           index: 1, duration: Duration(milliseconds: 10));
     }
