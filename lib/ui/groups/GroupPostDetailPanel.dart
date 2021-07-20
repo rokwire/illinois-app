@@ -19,10 +19,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -264,7 +266,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                             color: Styles().colors.fillColorPrimary,
                             fontFamily: Styles().fontFamilies.regular,
                             fontSize: FontSize(20))
-                      })),
+                      }, onLinkTap: (url, context, attributes, element) => _onTapPostLink(url))),
               Padding(
                   padding: EdgeInsets.only(
                       left: _outerPadding,
@@ -382,7 +384,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                     Padding(
                         padding: EdgeInsets.only(left: 20),
                         child: GestureDetector(
-                            onTap: _onTapLink,
+                            onTap: _onTapEditLink,
                             child: Text(
                                 Localization().getStringEx(
                                     'panel.group.detail.post.create.link.label',
@@ -623,6 +625,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     }
   }
 
+  void _onTapPostLink(String url) {
+    Analytics.instance.logSelect(target: url);
+    if (AppString.isStringNotEmpty(url)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
+  }
+
   void _reloadPost() {
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
@@ -743,7 +752,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _wrapBodySelection('<u>', '</u>');
   }
 
-  void _onTapLink() {
+  void _onTapEditLink() {
     int linkStartPosition = _bodyController.selection.start;
     int linkEndPosition = _bodyController.selection.end;
     AppAlert.showCustomDialog(
