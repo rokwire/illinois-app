@@ -359,39 +359,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                 color: Styles().colors.fillColorPrimary)),
                         Padding(
                             padding: EdgeInsets.only(left: 30),
-                            child: GestureDetector(
-                                onTap: _onTapBold,
-                                child: Text('B',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Styles().colors.fillColorPrimary,
-                                        fontFamily:
-                                            Styles().fontFamilies.bold)))),
+                            child: _FontIcon(onTap: _onTapBold, iconPath: 'images/icon-bold.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
-                            child: GestureDetector(
-                                onTap: _onTapItalic,
-                                child: Text('I',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Styles().colors.fillColorPrimary,
-                                        fontFamily:
-                                            Styles().fontFamilies.mediumIt)))),
+                            child: _FontIcon(onTap: _onTapItalic, iconPath: 'images/icon-italic.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
-                            child: GestureDetector(
-                                onTap: _onTapUnderline,
-                                child: Text('U',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Styles().colors.fillColorPrimary,
-                                        fontFamily:
-                                            Styles().fontFamilies.medium,
-                                        decoration: TextDecoration.underline,
-                                        decorationThickness: 2,
-                                        decorationColor: Styles()
-                                            .colors
-                                            .fillColorPrimary)))),
+                            child: _FontIcon(onTap: _onTapUnderline, iconPath: 'images/icon-underline.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: GestureDetector(
@@ -401,8 +375,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                         'panel.group.detail.post.create.link.label',
                                         'Link'),
                                     style: TextStyle(
-                                        fontSize: 18,
-                                        color: Styles().colors.fillColorPrimary,
+                                        fontSize: 20,
+                                        color: Colors.black,
                                         fontFamily:
                                             Styles().fontFamilies.medium)))),
                       ])),
@@ -945,5 +919,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
     }
+  }
+}
+
+class _FontIcon extends StatelessWidget {
+  final Function onTap;
+  final String iconPath;
+  _FontIcon({@required this.onTap, @required this.iconPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Image.asset(iconPath, width: 18, height: 18));
   }
 }
