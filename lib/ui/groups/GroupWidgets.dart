@@ -1022,10 +1022,9 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 child: Text(AppString.getDefaultEmptyString(value: repliesLabel),
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14)))
                           ])),
-                      Container(width: 34)
                     ]),
                     Container(
-                        padding: EdgeInsets.only(top: 10),
+                        padding: EdgeInsets.only(top: 10, bottom: 10),
                         child: Html(data: htmlBody, style: {
                           "body": Style(
                               color: Styles().colors.fillColorPrimary,
@@ -1033,6 +1032,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               fontSize: FontSize(16),
                               maxLines: 3,
                               textOverflow: TextOverflow.ellipsis,
+                              margin: EdgeInsets.zero,
                           ),
                         }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
                     Container(
@@ -1059,15 +1059,6 @@ class _GroupPostCardState extends State<GroupPostCard> {
                       )
                     )
                   ]))))),
-      Visibility(
-          visible: _isReplyVisible,
-          child:
-          Semantics(label: Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply'), button: true, child:
-            GestureDetector(
-              onTap: _onTapReply,
-              child: Container(
-                  color: Colors.transparent,
-                  child: Padding(padding: EdgeInsets.only(left: 20, top: 14, bottom: 20, right: 12), child: Image.asset('images/icon-group-post-reply.png', excludeFromSemantics: true, width: 20, height: 20, fit: BoxFit.fill))))))
     ]);
   }
 
@@ -1075,19 +1066,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
   }
 
-  void _onTapReply() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, postReply: true)));
-  }
-
   void _onLinkTap(String url) {
     Analytics.instance.logSelect(target: url);
     if (AppString.isStringNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
-  }
-
-  bool get _isReplyVisible {
-    return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
   void _calculateVisibleRepliesCount(List<GroupPost> replies) {

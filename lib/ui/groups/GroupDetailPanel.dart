@@ -187,6 +187,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       } else {
         _visibleGroupPosts = null;
       }
+      _visibleGroupPosts.sort((group1, group2){
+        return (group1?.dateCreatedUtc?.isBefore(group2.dateCreatedUtc ?? TimeOfDay.now()) ?? false)? -1 : 1 ;
+      });
       _decreaseProgress();
     });
   }
