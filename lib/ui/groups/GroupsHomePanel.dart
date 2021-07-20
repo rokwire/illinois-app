@@ -45,7 +45,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isFilterLoading = false;
   bool _isAllGroupsLoading = false;
   bool _isMyGroupsLoading = false;
-  bool _myGroupsSelected = false;
+  bool _myGroupsSelected = true;
+  bool _initMyGroupsPassed = false;
 
   List<Group> _allGroups;
   List<Group> _myGroups;
@@ -114,7 +115,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
     _loadFilters();
-    _loadGroups();
+    _loadMyGroups();
   }
 
   @override
@@ -139,7 +140,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  void _loadMyGroups(){
+  void _loadMyGroups() {
     setState(() {
       _isMyGroupsLoading = true;
     });
@@ -153,7 +154,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _myGroups = [];
         _myPendingGroups = [];
       }
-    }).whenComplete((){
+    }).whenComplete(() {
+      if (!_initMyGroupsPassed) {
+        _initMyGroupsPassed = true;
+        _switchToAllGroupsIfNeeded();
+      }
       setState(() {
         _isMyGroupsLoading = false;
       });
@@ -551,6 +556,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void switchTabSelection() {
     setState((){ _myGroupsSelected = !_myGroupsSelected; });
     _loadContentFromNet();
+  }
+
+  void _switchToAllGroupsIfNeeded() {
+    if (AppCollection.isCollectionEmpty(_myGroups) &&
+        AppCollection.isCollectionEmpty(_myPendingGroups)) {
+      switchTabSelection();
+    }
   }
 
   void _onTapFilterEntry(dynamic entry) {
