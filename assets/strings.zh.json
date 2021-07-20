@@ -1696,7 +1696,6 @@
     "panel.group.detail.post.create.private.label": "Private",
     "panel.group.detail.post.create.subject.label": "Subject",
     "panel.group.detail.post.create.subject.field.hint": "Write a Subject",
-    "panel.group.detail.post.create.body.label": "Body",
     "panel.group.detail.post.create.body.field.hint": "Write a Body",
     "panel.group.detail.post.create.validation.subject.msg": "Please, populate 'Subject' field",
     "panel.group.detail.post.create.validation.body.msg": "Please, populate 'Body' field",

@@ -349,17 +349,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                            Localization().getStringEx(
-                                'panel.group.detail.post.create.body.label',
-                                'Body'),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: Styles().fontFamilies.bold,
-                                color: Styles().colors.fillColorPrimary)),
-                        Padding(
-                            padding: EdgeInsets.only(left: 30),
-                            child: _FontIcon(onTap: _onTapBold, iconPath: 'images/icon-bold.png')),
+                        _FontIcon(onTap: _onTapBold, iconPath: 'images/icon-bold.png'),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: _FontIcon(onTap: _onTapItalic, iconPath: 'images/icon-italic.png')),
