@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed vertical overflow of GroupPostDetailPanel header [#552](https://github.com/rokwire/illinois-app/issues/552).
 ### Added
 - Add group privacy description in group detail panel [#554](https://github.com/rokwire/illinois-app/issues/554).
-
+- Show group privacy status in group card [#556](https://github.com/rokwire/illinois-app/issues/556).
+ 
 ## [2.6.6] - 2021-07-20
 ### Added
 - Possibility for changing highlighted link text in group post/reply body [#536](https://github.com/rokwire/illinois-app/issues/536).
