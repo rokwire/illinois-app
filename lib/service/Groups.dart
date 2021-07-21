@@ -434,7 +434,7 @@ class Groups /* with Service */ {
     if (AppString.isStringEmpty(groupId) || (post == null)) {
       return false;
     }
-    String requestBody = AppJson.encode(post.toJson());
+    String requestBody = AppJson.encode(post.toJson(create: true));
     String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
     Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
@@ -443,6 +443,23 @@ class Groups /* with Service */ {
       return true;
     } else {
       Log.e('Failed to create group post. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<bool> updatePost(String groupId, GroupPost post) async {
+    if (AppString.isStringEmpty(groupId) || (post == null)) {
+      return false;
+    }
+    String requestBody = AppJson.encode(post.toJson());
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post.id}';
+    Response response = await Network().put(requestUrl, auth: NetworkAuth.User, body: requestBody);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostsUpdated, null);
+      return true;
+    } else {
+      Log.e('Failed to update group post. Response: ${response?.body}');
       return false;
     }
   }

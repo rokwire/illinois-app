@@ -722,10 +722,11 @@ class GroupPost {
   final String subject;
   final String body;
   final DateTime dateCreatedUtc;
+  final DateTime dateUpdatedUtc;
   final bool private;
   final List<GroupPost> replies;
 
-  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.private, this.replies});
+  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.replies});
 
   factory GroupPost.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -738,13 +739,14 @@ class GroupPost {
         subject: json['subject'],
         body: json['body'],
         dateCreatedUtc: AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
+        dateUpdatedUtc: AppDateTime().dateTimeFromString(json['date_updated'], format: AppDateTime.parkingEventDateFormat, isUtc: true),
         private: json['private'],
         replies: GroupPost.fromJsonList(json['replies']));
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool create = false}) {
     Map<String, dynamic> json = {'body': body, 'private': private};
-    if (parentId != null) {
+    if ((parentId != null) && create) {
       json['parent_id'] = parentId;
     }
     if (subject != null) {
@@ -756,6 +758,10 @@ class GroupPost {
   String get displayDateTime {
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
+  }
+
+  bool get isUpdated {
+    return dateCreatedUtc != dateUpdatedUtc;
   }
 
   static List<GroupPost> fromJsonList(List<dynamic> jsonList) {
@@ -775,16 +781,5 @@ class GroupPost {
       });
     }
     return posts;
-  }
-
-  static List<dynamic> toJsonList(List<GroupPost> posts) {
-    List<dynamic> jsonList;
-    if (posts != null) {
-      jsonList = [];
-      for (GroupPost post in posts) {
-        jsonList.add(post?.toJson());
-      }
-    }
-    return jsonList;
   }
 }
