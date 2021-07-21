@@ -1138,8 +1138,21 @@ class GroupReplyCard extends StatefulWidget {
 }
 
 class _GroupReplyCardState extends State<GroupReplyCard> {
+  int _visibleRepliesCount = 0;
+
+  @override
+  void initState() {
+    _calculateVisibleRepliesCount(widget.reply?.replies);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isRepliesLabelVisible = (_visibleRepliesCount > 0);
+    String repliesLabel = (_visibleRepliesCount == 1)
+        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
+        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+
     return Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
@@ -1172,7 +1185,18 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         fontSize: FontSize(16),
                         maxLines: 3000,
                         textOverflow: TextOverflow.ellipsis)
-                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))
+                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
+              Visibility(
+                visible: isRepliesLabelVisible,
+                child: Container(
+                  child: Row(children: [
+                    Expanded(child: Container()),
+                    Container(
+                      child: Text("$_visibleRepliesCount $repliesLabel",
+                         style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline)
+                      )
+                    )
+                ],),))
             ])));
   }
 
@@ -1180,6 +1204,17 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
     Analytics.instance.logSelect(target: url);
     if (AppString.isStringNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
+  }
+
+  void _calculateVisibleRepliesCount(List<GroupPost> replies) {
+    if (AppCollection.isCollectionNotEmpty(replies)) {
+      bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+      for (GroupPost reply in replies) {
+        if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
+          _visibleRepliesCount++;
+        }
+      }
     }
   }
 }
