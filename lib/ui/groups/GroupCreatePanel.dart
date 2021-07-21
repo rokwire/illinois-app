@@ -150,11 +150,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             Container(height: 1, color: Styles().colors.surfaceAccent,),
                             Container(height: 24,),
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
+                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY"), null)),
+                            _buildHideGroupSection(),
+                            Container(height: 8),
                             _buildPrivacyDropDown(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                             _buildMembershipLayout(),
-                            Container(height: 8,),
-                            _buildHideGroupSection(),
                             Container(height: 24,),
                         ],),)
 
@@ -491,9 +492,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildPrivacyDropDown() {
     return
       Column(children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child:  _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY"),null)),
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:  GroupDropDownButton(
