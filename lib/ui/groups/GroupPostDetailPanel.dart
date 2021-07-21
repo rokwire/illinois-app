@@ -34,11 +34,12 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
+  final GroupPost focusedReply;
   final Group group;
   final bool postReply;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.postReply = false});
+      {@required this.group, this.post, this.postReply = false, this.focusedReply});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -48,6 +49,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   static final double _outerPadding = 16;
 
   GroupPost _post;
+  GroupPost _focusedReply;
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _linkTextController = TextEditingController();
@@ -67,6 +69,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
+    _focusedReply = widget.focusedReply;
     if (widget.postReply) {
       _selectedReplyId = _post?.id; // default reply to the main post
     }
@@ -281,7 +284,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       left: _outerPadding,
                       right: _outerPadding,
                       bottom: _outerPadding),
-                  child: _buildRepliesWidget(replies: _post?.replies))
+                  child: _buildRepliesWidget(replies: _focusedReply!= null ? [_focusedReply] :_post?.replies, buildSubReplies: _focusedReply!= null, showRepliesCount: _focusedReply == null))
             ])));
   }
 
@@ -406,7 +409,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildRepliesWidget(
       {List<GroupPost> replies,
       double leftPaddingOffset = 0,
-      bool nestedReply = false}) {
+      bool nestedReply = false,
+      bool buildSubReplies = false,
+      bool showRepliesCount = true}) {
     List<GroupPost> visibleReplies = _getVisibleReplies(replies);
     if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
@@ -427,14 +432,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           padding: EdgeInsets.only(left: leftPaddingOffset),
           child: GroupReplyCard(
               reply: reply,
+              post: widget.post,
               group: widget.group,
               iconPath: optionsIconPath,
               semanticsLabel: "options",
+              showRepliesCount: showRepliesCount,
               onIconTap: optionsFunctionTap)));
-      replyWidgetList.add(_buildRepliesWidget(
-          replies: reply?.replies,
-          leftPaddingOffset: (leftPaddingOffset + 5),
-          nestedReply: true));
+      if(buildSubReplies) {
+        replyWidgetList.add(_buildRepliesWidget(
+            replies: reply?.replies,
+            leftPaddingOffset: (leftPaddingOffset + 5),
+            nestedReply: true));
+      }
     }
     return Padding(
         padding: EdgeInsets.only(top: nestedReply ? 0 : 20),
@@ -631,11 +640,36 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
         _post = posts.firstWhere((post) => (post.id == _post?.id));
+        GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
+        if(updatedReply!=null){
+          _focusedReply = updatedReply;       
+        }
       } else {
         _post = null;
       }
       _setLoading(false);
     });
+  }
+
+  GroupPost deepFindPost(List<GroupPost> posts, String id){
+    if(AppCollection.isCollectionEmpty(posts) || AppString.isStringEmpty(id)){
+      return null;
+    }
+
+    GroupPost result;
+    for(GroupPost post in posts){
+      if(post?.id == id){
+        result = post;
+        break;
+      } else {
+        result = deepFindPost(post.replies, id);
+        if(result!=null){
+          break;
+        }
+      }
+    }
+
+    return result;
   }
 
   void _setLoading(bool loading) {
