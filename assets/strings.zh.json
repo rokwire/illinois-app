@@ -1693,7 +1693,6 @@
 	"panel.group.detail.post.reply.delete.failed.msg": "Failed to delete reply.",
 	"panel.group.detail.post.reply.delete.label": "Delete",
 	"panel.group.detail.post.reply.reply.label": "Reply",
-    "panel.group.detail.post.create.private.label": "Private",
     "panel.group.detail.post.create.subject.label": "Subject",
     "panel.group.detail.post.create.subject.field.hint": "Write a Subject",
     "panel.group.detail.post.create.body.field.hint": "Write a Post ...",

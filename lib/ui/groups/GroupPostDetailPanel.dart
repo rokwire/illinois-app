@@ -57,7 +57,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   final ItemScrollController _positionedScrollController =
       ItemScrollController();
   String _selectedReplyId;
-  bool _private = true;
 
   bool _loading = false;
 
@@ -351,34 +350,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                         fontSize: 20,
                                         color: Colors.black,
                                         fontFamily:
-                                            Styles().fontFamilies.medium)))),
-                        Expanded(child: Container()),
-                        Visibility(
-                            visible: _privateSwitchVisible,
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      Localization().getStringEx(
-                                          'panel.group.detail.post.create.private.label',
-                                          'Private'),
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontFamily:
-                                              Styles().fontFamilies.bold,
-                                          color: Styles()
-                                              .colors
-                                              .fillColorPrimary)),
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: Container(
-                                          color: Colors.transparent,
-                                          child: GestureDetector(
-                                              onTap: _onTapPrivate,
-                                              child: Image.asset(_private
-                                                  ? 'images/switch-on.png'
-                                                  : 'images/switch-off.png'))))
-                                ]))
+                                            Styles().fontFamilies.medium))))
                       ])),
               Padding(
                   padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
@@ -675,14 +647,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _setLoading(true);
     GroupPost post;
     if (_isCreatePost) {
-      post = GroupPost(
-          subject: subject, body: htmlModifiedBody, private: _private);
+      post = GroupPost(subject: subject, body: htmlModifiedBody, private: true);
     } else {
       post = GroupPost(
-          parentId: AppString.getDefaultEmptyString(
-              value: _selectedReplyId, defaultValue: _post?.id),
-          body: htmlModifiedBody,
-          private: _private);
+          parentId: AppString.getDefaultEmptyString(value: _selectedReplyId, defaultValue: _post?.id), body: htmlModifiedBody, private: true);
     }
     Groups().createPost(widget.group?.id, post).then((succeeded) {
       _onCreateFinished(succeeded);
@@ -709,14 +677,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               : Localization().getStringEx(
                   'panel.group.detail.post.create.reply.failed.msg',
                   'Failed to create new reply.'));
-    }
-  }
-
-  void _onTapPrivate() {
-    if (mounted) {
-      setState(() {
-        _private = !_private;
-      });
     }
   }
 
@@ -894,10 +854,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   bool get _isReplyVisible {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
-  }
-
-  bool get _privateSwitchVisible {
-    return (widget.group?.privacy == GroupPrivacy.public);
   }
 
   bool get _isCreatePost {
