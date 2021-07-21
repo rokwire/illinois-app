@@ -37,9 +37,10 @@ class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost focusedReply;
   final Group group;
   final bool postReply;
+  final bool hidePostOptions;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.postReply = false, this.focusedReply});
+      {@required this.group, this.post, this.postReply = false, this.focusedReply, this.hidePostOptions = false});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -145,7 +146,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                                     .colors
                                                     .fillColorPrimary))),
                                     Visibility(
-                                        visible: _isDeletePostVisible,
+                                        visible: _isDeletePostVisible && !widget.hidePostOptions,
                                         child: Semantics(
                                             container: true,
                                             sortKey: OrdinalSortKey(5),
@@ -179,7 +180,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                                                       true,
                                                                 )))))))),
                                     Visibility(
-                                        visible: _isReplyVisible,
+                                        visible: _isReplyVisible && !widget.hidePostOptions,
                                         child: Semantics(
                                             label: Localization().getStringEx(
                                                 'panel.group.detail.post.reply.reply.label',
@@ -438,7 +439,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               iconPath: optionsIconPath,
               semanticsLabel: "options",
               showRepliesCount: showRepliesCount,
-              onIconTap: optionsFunctionTap)));
+              onIconTap: optionsFunctionTap,
+          )));
       if(buildSubReplies) {
         replyWidgetList.add(_buildRepliesWidget(
             replies: reply?.replies,
@@ -622,7 +624,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
         _post = posts.firstWhere((post) => (post.id == _post?.id));
         GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
-          _focusedReply = updatedReply;       
+          setState(() {
+            _focusedReply = updatedReply;
+          });
         }
       } else {
         _post = null;

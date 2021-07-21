@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove "Private" checkbox for Group Posts and Replies [#549](https://github.com/rokwire/illinois-app/issues/549).
 - Changes for hidden groups [#551](https://github.com/rokwire/illinois-app/issues/551).
 - Only Admin or Member can see Group posts and replies [#558](https://github.com/rokwire/illinois-app/issues/558).
+- Repies are opened in separate panel [#565](https://github.com/rokwire/illinois-app/issues/565).
 ### Fixed
 - Fixed vertical overflow of GroupPostDetailPanel header [#552](https://github.com/rokwire/illinois-app/issues/552).
 - Allow group members to reply [#561](https://github.com/rokwire/illinois-app/issues/561).
