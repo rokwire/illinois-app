@@ -99,10 +99,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             ),
                             _buildCategoryDropDown(),
                             _buildTagsLayout(),
+                            Container(color: Styles().colors.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"), "images/icon-privacy.png"),
+                              _buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null, topPadding: 12)
+                            ]))),
+                            _buildHideGroupSection(),
+                            Container(height: 8, color: Styles().colors.background),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
-                            Container(height: 8, color: Styles().colors.background,),
-                            _buildHideGroupSection(),
                             Container(height: 24,  color: Styles().colors.background,),
                           ],),)
                       ]),
@@ -292,10 +296,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   }
 
-  void _onHideToggled(){
-    setState((){
-      _group.hidden = !(_group?.hidden ?? false);
-    });
+  void _onHideToggled() {
+    _group.hidden = !(_group?.hidden ?? false);
+    if (_group.hidden) {
+      _onPrivacyChanged(GroupPrivacy.private);
+    } else if (mounted) {
+      setState(() {});
+    }
   }
   //
 
@@ -577,14 +584,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         padding: EdgeInsets.symmetric(horizontal: 16),
         color: Styles().colors.background,
         child:Column(children: <Widget>[
-          Container(
-              child:  _buildSectionTitle( Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"),"images/icon-privacy.png")),
-          Container(
-              child:  _buildInfoHeader( Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"),null, topPadding: 12)),
           Semantics(
           explicitChildNodes: true,
           child: Container(
               child:  GroupDropDownButton(
+                  enabled: !(_group?.hidden ?? false),
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
@@ -597,11 +601,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       (item) => item == GroupPrivacy.private?
                         Localization().getStringEx("panel.common.privacy_title.private", "Private") :
                         Localization().getStringEx("panel.common.privacy_title.public",  "Public"),
-                  onValueChanged: (value) {
-                    setState(() {
-                      _group?.privacy = value;
-                    });
-                  }
+                  onValueChanged: (value) => _onPrivacyChanged(value)
               )
           )),
           Semantics(
@@ -615,6 +615,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(height: 8,)
       ],));
   }
+
+  void _onPrivacyChanged(dynamic value) {
+    _group?.privacy = value;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //
   //Membership
   Widget _buildMembershipLayout(){
