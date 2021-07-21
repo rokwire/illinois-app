@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed vertical overflow of GroupPostDetailPanel header [#552](https://github.com/rokwire/illinois-app/issues/552).
 - Allow group members to reply [#561](https://github.com/rokwire/illinois-app/issues/561).
+- Update Event Creation - Private/Public Checkbox default value [#563](https://github.com/rokwire/illinois-app/issues/563). 
 ### Added
 - Add group privacy description in group detail panel [#554](https://github.com/rokwire/illinois-app/issues/554).
 - Show group privacy status in group card [#556](https://github.com/rokwire/illinois-app/issues/556).
