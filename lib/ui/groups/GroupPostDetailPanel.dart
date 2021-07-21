@@ -44,10 +44,8 @@ class GroupPostDetailPanel extends StatefulWidget {
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 }
 
-class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
-    implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
-
 
   GroupPost _post;
   TextEditingController _subjectController = TextEditingController();
@@ -57,6 +55,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   final ItemScrollController _positionedScrollController =
       ItemScrollController();
   String _selectedReplyId;
+  bool _editPostMode = false;
 
   bool _loading = false;
 
@@ -529,7 +528,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Visibility(visible: (_isReplyVisible || _isDeleteReplyVisible(reply)), child: RibbonButton(
+                Visibility(visible: _isReplyVisible, child: RibbonButton(
                   height: null,
                   leftIcon: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
@@ -537,6 +536,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                   onTap: () {
                     Navigator.of(context).pop();
                     _onTapReply(reply: reply);
+                  },
+                )),
+                Visibility(visible: _isEditVisible(reply), child: RibbonButton(
+                  height: null,
+                  leftIcon: "images/icon-edit.png",
+                  label: Localization().getStringEx(
+                      "panel.group.detail.post.reply.edit.label", "Edit"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapEditPost(reply: reply);
                   },
                 )),
                 Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
@@ -591,8 +600,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   void _onTapReply({GroupPost reply}) {
+    _clearBodyControllerContent();
     _selectedReplyId = AppString.getDefaultEmptyString(
         value: reply?.id, defaultValue: _post?.id);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _onTapEditPost({GroupPost reply}) {
+    _selectedReplyId = AppString.getDefaultEmptyString(
+        value: reply?.id, defaultValue: _post?.id);
+    _editPostMode = true;
+    _bodyController.text = (reply ?? _post)?.body;
     if (mounted) {
       setState(() {});
     }
@@ -652,23 +672,30 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     }
     String htmlModifiedBody = _replaceNewLineSymbols(body);
     _setLoading(true);
-    GroupPost post;
-    if (_isCreatePost) {
-      post = GroupPost(subject: subject, body: htmlModifiedBody, private: true);
+    if (_editPostMode) {
+      GroupPost postToUpdate = GroupPost(id: _selectedReplyId, subject: AppString.getDefaultEmptyString(value: subject, defaultValue: null), body: body, private: true);
+      Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
+        _onUpdateFinished(succeeded);
+      });
     } else {
-      post = GroupPost(
-          parentId: AppString.getDefaultEmptyString(value: _selectedReplyId, defaultValue: _post?.id), body: htmlModifiedBody, private: true);
+      GroupPost post;
+      if (_isCreatePost) {
+        post = GroupPost(subject: subject, body: htmlModifiedBody, private: true);
+      } else {
+        post = GroupPost(
+            parentId: AppString.getDefaultEmptyString(value: _selectedReplyId, defaultValue: _post?.id), body: htmlModifiedBody, private: true);
+      }
+      Groups().createPost(widget.group?.id, post).then((succeeded) {
+        _onCreateFinished(succeeded);
+      });
     }
-    Groups().createPost(widget.group?.id, post).then((succeeded) {
-      _onCreateFinished(succeeded);
-    });
   }
 
   void _onCreateFinished(bool succeeded) {
     _setLoading(false);
-    _clearSelectedReplyId();
     if (succeeded) {
-      _bodyController.text = ''; //clear body content after successfull save
+      _clearSelectedReplyId();
+      _clearBodyControllerContent();
       if (_isCreatePost) {
         Navigator.of(context).pop();
       } else {
@@ -684,6 +711,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               : Localization().getStringEx(
                   'panel.group.detail.post.create.reply.failed.msg',
                   'Failed to create new reply.'));
+    }
+  }
+
+  void _onUpdateFinished(bool succeeded) {
+    _setLoading(false);
+    if (succeeded) {
+      _clearSelectedReplyId();
+      _editPostMode = false;
+      _clearBodyControllerContent();
+      _reloadPost();
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.update.reply.failed.msg', 'Failed to edit reply.'));
     }
   }
 
@@ -834,6 +873,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _selectedReplyId = null;
   }
 
+  void _clearBodyControllerContent() {
+    _bodyController.text = '';
+  }
+
   String _replaceNewLineSymbols(String value) {
     if (AppString.isStringEmpty(value)) {
       return value;
@@ -843,26 +886,34 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     return value;
   }
 
-  bool _isDeleteReplyVisible(GroupPost reply) {
-    return _isDeleteVisible(reply);
-  }
-
-  bool get _isDeletePostVisible {
-    return _isDeleteVisible(_post);
+  bool _isEditVisible(GroupPost post) {
+    return _isCurrentUserCreator(post);
   }
 
   bool _isDeleteVisible(GroupPost item) {
     if (widget.group?.currentUserIsAdmin ?? false) {
       return true;
     } else if (widget.group?.currentUserIsUserMember ?? false) {
-      String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-      String itemMemberEmail = item?.member?.email;
-      return AppString.isStringNotEmpty(currentMemberEmail) &&
-          AppString.isStringNotEmpty(itemMemberEmail) &&
-          (currentMemberEmail == itemMemberEmail);
+      return _isCurrentUserCreator(item);
     } else {
       return false;
     }
+  }
+
+  bool _isDeleteReplyVisible(GroupPost reply) {
+    return _isDeleteVisible(reply);
+  }
+
+  bool _isCurrentUserCreator(GroupPost item) {
+    String currentMemberEmail = widget.group?.currentUserAsMember?.email;
+    String itemMemberEmail = item?.member?.email;
+    return AppString.isStringNotEmpty(currentMemberEmail) &&
+        AppString.isStringNotEmpty(itemMemberEmail) &&
+        (currentMemberEmail == itemMemberEmail);
+  }
+
+  bool get _isDeletePostVisible {
+    return _isDeleteVisible(_post);
   }
 
   bool get _isReplyVisible {
