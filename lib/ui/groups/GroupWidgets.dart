@@ -1126,20 +1126,35 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
 class GroupReplyCard extends StatefulWidget {
   final GroupPost reply;
+  final GroupPost post;
   final Group group;
   final String iconPath;
   final String semanticsLabel;
   final Function onIconTap;
+  final bool showRepliesCount;
 
-  GroupReplyCard({@required this.reply, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
 }
 
 class _GroupReplyCardState extends State<GroupReplyCard> {
+  int _visibleRepliesCount = 0;
+
+  @override
+  void initState() {
+    _calculateVisibleRepliesCount(widget.reply?.replies);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isRepliesLabelVisible = (_visibleRepliesCount > 0) && widget.showRepliesCount;
+    String repliesLabel = (_visibleRepliesCount == 1)
+        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
+        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+
     return Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
@@ -1172,7 +1187,21 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                         fontSize: FontSize(16),
                         maxLines: 3000,
                         textOverflow: TextOverflow.ellipsis)
-                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))
+                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
+              Visibility(
+                visible: isRepliesLabelVisible,
+                child:
+                GestureDetector(
+                  onTap: _onTapCard,
+                  child: Container(
+                  child: Row(children: [
+                    Expanded(child: Container()),
+                    Container(
+                      child: Text("$_visibleRepliesCount $repliesLabel",
+                         style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline)
+                      )
+                    )
+                ],),)))
             ])));
   }
 
@@ -1180,6 +1209,21 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
     Analytics.instance.logSelect(target: url);
     if (AppString.isStringNotEmpty(url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
+  }
+
+  void _onTapCard(){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply,)));
+  }
+
+  void _calculateVisibleRepliesCount(List<GroupPost> replies) {
+    if (AppCollection.isCollectionNotEmpty(replies)) {
+      bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+      for (GroupPost reply in replies) {
+        if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
+          _visibleRepliesCount++;
+        }
+      }
     }
   }
 }
