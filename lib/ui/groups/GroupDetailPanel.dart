@@ -172,23 +172,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadPosts() {
-    _increaseProgress();
-    Groups().loadGroupPosts(widget.groupId).then((posts) {
-      if (AppCollection.isCollectionNotEmpty(posts)) {
-        // Store only visible posts in this collection
-        _visibleGroupPosts = [];
-        bool currentUserIsMemberOrAdmin = _group?.currentUserIsMemberOrAdmin ?? false;
-        for (GroupPost post in posts) {
-          bool isPostVisible = (post.private == false) || (post.private == null) || currentUserIsMemberOrAdmin;
-          if (isPostVisible) {
-            _visibleGroupPosts.add(post);
+    bool currentUserIsMemberOrAdmin = _group?.currentUserIsMemberOrAdmin ?? false;
+    if (currentUserIsMemberOrAdmin) {
+      _increaseProgress();
+      Groups().loadGroupPosts(widget.groupId).then((posts) {
+        if (AppCollection.isCollectionNotEmpty(posts)) {
+          // Store only visible posts in this collection
+          _visibleGroupPosts = [];
+          for (GroupPost post in posts) {
+            bool isPostVisible = (post.private == false) || (post.private == null) || currentUserIsMemberOrAdmin;
+            if (isPostVisible) {
+              _visibleGroupPosts.add(post);
+            }
           }
+        } else {
+          _visibleGroupPosts = null;
         }
-      } else {
-        _visibleGroupPosts = null;
-      }
-      _decreaseProgress();
-    });
+        _decreaseProgress();
+      });
+    }
   }
 
   void _cancelMembershipRequest() {
