@@ -297,10 +297,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   }
 
-  void _onHideToggled(){
-    setState((){
-      _group.hidden = !(_group?.isHidden ?? false);
-    });
+  void _onHideToggled() {
+    _group.hidden = !(_group?.hidden ?? false);
+    if (_group.hidden) {
+      _onPrivacyChanged(GroupPrivacy.private);
+    } else if (mounted) {
+      setState(() {});
+    }
   }
 
   //Description
@@ -495,6 +498,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:  GroupDropDownButton(
+              enabled: !(_group?.hidden ?? false),
               emptySelectionText: Localization().getStringEx("panel.groups_create.privacy.hint.default","Select privacy setting.."),
               buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy options"),
               items: _groupPrivacyOptions,
@@ -508,11 +512,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               Localization().getStringEx("panel.common.privacy_title.private", "Private") :
               Localization().getStringEx("panel.common.privacy_title.public",  "Public"),
 
-              onValueChanged: (value) {
-                setState(() {
-                  _group.privacy = value;
-                });
-              }
+              onValueChanged: (value) => _onPrivacyChanged(value)
           )
         ),
         Semantics(container: true, child:
@@ -523,6 +523,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             ),)),
         Container(height: 40,)
       ],);
+  }
+
+  void _onPrivacyChanged(dynamic value) {
+    _group?.privacy = value;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   // Membership Questions

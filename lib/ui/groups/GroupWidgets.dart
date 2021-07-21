@@ -53,11 +53,12 @@ class GroupDropDownButton<T> extends StatefulWidget{
   final GroupDropDownDescriptionDataBuilder<T> constructTitle;
   final GroupDropDownDescriptionDataBuilder<T> constructDescription;
   final Function onValueChanged;
+  final bool enabled;
 
   final EdgeInsets padding;
   final BoxDecoration decoration;
 
-  GroupDropDownButton({Key key, this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.onValueChanged,
+  GroupDropDownButton({Key key, this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.onValueChanged, this.enabled = true,
     this.constructTitle, this.constructDescription, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
 
   @override
@@ -67,13 +68,6 @@ class GroupDropDownButton<T> extends StatefulWidget{
 }
 
 class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
-  T selectedValue;
-
-  @override
-  void initState() {
-    selectedValue = widget.initialSelectedValue;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,13 +110,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                       isExpanded: true,
                       focusColor: Styles().colors.white,
                       underline: Container(),
-                      hint: Text(buttonTitle ?? "", style: selectedValue == null?hintStyle:valueStyle),
+                      hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
                       items: _constructItems(),
-                      onChanged: (value){
-                        selectedValue = value;
-                        widget.onValueChanged(value);
-                        setState(() {});
-                      }),
+                      onChanged: (widget.enabled ? (value) => _onValueChanged(value) : null)),
                 ),
               ),
               buttonDescription==null? Container():
@@ -182,9 +172,14 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     );
   }
 
+  void _onValueChanged(dynamic value) {
+    widget.onValueChanged(value);
+    setState(() {});
+  }
+
   String _getButtonDescriptionText(){
-    if(selectedValue!=null){
-      return widget.constructDescription!=null? widget.constructDescription(selectedValue) : null;
+    if (widget.initialSelectedValue != null) {
+      return widget.constructDescription!=null? widget.constructDescription(widget.initialSelectedValue) : null;
     } else {
       //empty null for now
       return null;
@@ -192,8 +187,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
   }
 
   String _getButtonTitleText(){
-    if(selectedValue!=null){
-      return widget.constructTitle!=null? widget.constructTitle(selectedValue) : selectedValue.toString();
+    if (widget.initialSelectedValue != null) {
+      return widget.constructTitle != null ? widget.constructTitle(widget.initialSelectedValue) : widget.initialSelectedValue?.toString();
     } else {
       return widget.emptySelectionText;
     }
@@ -207,7 +202,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     return widget.items.map((Object item) {
       String name = widget.constructTitle!=null? widget.constructTitle(item) : item?.toString();
       String description = widget.constructDescription!=null? widget.constructDescription(item) : null;
-      bool isSelected = selectedValue!=null && selectedValue == item;
+      bool isSelected = (widget.initialSelectedValue != null) && (widget.initialSelectedValue == item);
       return DropdownMenuItem<dynamic>(
         value: item,
         child: item!=null? _buildDropDownItem(name,description,isSelected): Container(),
