@@ -328,11 +328,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
+        content.add(_buildPrivacyDescription());
         content.add(_buildAdmins());
       }
     }
     else {
       content.add(_buildAbout());
+      content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
       if (isPublic) {
         content.add(_buildEvents());
@@ -686,13 +688,39 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildAbout() {
     String description = _group?.description ?? '';
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 16), child:
+        Padding(padding: EdgeInsets.only(bottom: 4), child:
           Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
         ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), trimLines: 4, iconColor: Styles().colors.fillColorPrimary,),
       ],),);
+  }
+
+  Widget _buildPrivacyDescription() {
+    String title, description;
+    if (_group?.hidden == true) {
+      title = Localization().getStringEx("panel.group_detail.label.title.hidden", 'This is a Hidden Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.hidden", 'Only admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.');
+    }
+    else if (_group?.privacy == GroupPrivacy.private) {
+      title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.private", 'Only admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.');
+    }
+    else if (_group?.privacy == GroupPrivacy.public) {
+      title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.public", 'Only admins can see members.\nOnly members can see posts.\nAll users can see group events, unless they are marked private.\nAll users can see admins.');
+    }
+    
+    return (AppString.isStringNotEmpty(title) && AppString.isStringNotEmpty(description)) ?
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(bottom: 4), child:
+            Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
+          ),
+          Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), ),
+        ],),) :
+      Container(width: 0, height: 0);
   }
 
   Widget _buildAdmins() {
