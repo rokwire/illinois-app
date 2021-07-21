@@ -915,29 +915,69 @@ class GroupCard extends StatelessWidget {
   }
 
   Widget _buildHeading() {
-    bool showMember = group?.currentUserAsMember?.status != null;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Visibility(visible: showMember, child: _buildMember()),
-      Visibility(visible: showMember, child: Container(height: 6)),
-      Text(AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")),
-          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
-    ]);
-  }
-
-  Widget _buildMember() {
-    return Row(children: <Widget>[
-      Semantics(
-          label: "status: " + (group?.currentUserStatusText?.toLowerCase() ?? "") + " ,for: ",
+    List<Widget> leftContent = <Widget>[];
+    
+    if (group?.currentUserAsMember?.status != null) {
+      leftContent.add(
+        Semantics(
+          label: "status: ${group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
           excludeSemantics: true,
           child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: group.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
-              child: Center(
-                  child: Text(group.currentUserStatusText.toUpperCase(),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white))))),
-      Expanded(child: Container())
-    ]);
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: group.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Text(group.currentUserStatusText.toUpperCase(),
+              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white)))),
+      );
+    }
+
+    String groupCategory = AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    if (AppString.isStringNotEmpty(groupCategory)) {
+      if (leftContent.isNotEmpty) {
+        leftContent.add(Container(height: 6,));
+      }
+      leftContent.add(
+        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+      );
+    }
+
+    List<Widget> rightContent = <Widget>[];
+
+    String privacyStatus;
+    if (group?.hidden == true) {
+      privacyStatus = "Hidden";
+    }
+    else if (group?.privacy == GroupPrivacy.private) {
+      privacyStatus = "Private";
+    }
+
+    if (privacyStatus != null) {
+      rightContent.add(
+        Semantics(
+          label: "status: $privacyStatus ,for: ",
+          excludeSemantics: true,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Text(privacyStatus.toUpperCase(),
+              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white)))),
+      );
+    }
+
+    List<Widget> content = <Widget>[];
+    if (leftContent.isNotEmpty) {
+      content.add(Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: leftContent,)));
+    }
+    
+    if (rightContent.isNotEmpty) {
+      if (leftContent.isEmpty) {
+        content.add(Expanded(child: Container()));
+      }
+      content.add(Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: rightContent,));
+    }
+
+    return content.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: content,) : Container(width: 0, height: 0);
   }
+
 
   Widget _buildUpdateTime() {
     return Container(
