@@ -47,7 +47,7 @@ class GroupPostDetailPanel extends StatefulWidget {
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     implements NotificationsListener {
   static final double _outerPadding = 16;
-  static final double _sliverHeaderHeight = 110;
+
 
   GroupPost _post;
   TextEditingController _subjectController = TextEditingController();
@@ -60,6 +60,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   bool _loading = false;
 
+  final GlobalKey _sliverHeaderKey = GlobalKey();
+  double _sliverHeaderHeight;
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +71,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     if (widget.postReply) {
       _selectedReplyId = _post?.id; // default reply to the main post
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _evalSliverHeaderHeight();
+    });
   }
 
   @override
@@ -108,11 +114,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
             Visibility(
                 visible: !_isCreatePost,
                 child: Container(
-                    height: _sliverHeaderHeight,
+                    key: _sliverHeaderKey,
                     color: Styles().colors.background,
-                    padding: EdgeInsets.only(left: _outerPadding),
+                    padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Semantics(
                               sortKey: OrdinalSortKey(1),
@@ -202,10 +209,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                               sortKey: OrdinalSortKey(2),
                               container: true,
                               child: Padding(
-                                  padding: EdgeInsets.only(top: 4),
+                                  padding: EdgeInsets.only(top: 4, right: _outerPadding),
                                   child: Text(
                                       AppString.getDefaultEmptyString(
-                                          value: _post?.member?.name),
+                                          value: _post?.member?.name ),
                                       style: TextStyle(
                                           fontFamily:
                                               Styles().fontFamilies.medium,
@@ -217,7 +224,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                               sortKey: OrdinalSortKey(3),
                               container: true,
                               child: Padding(
-                                  padding: EdgeInsets.only(top: 3),
+                                  padding: EdgeInsets.only(top: 3, right: _outerPadding),
                                   child: Text(
                                       AppString.getDefaultEmptyString(
                                           value: _post?.displayDateTime),
@@ -258,7 +265,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               Padding(
                   padding: EdgeInsets.only(
                       left: _outerPadding,
-                      top: _sliverHeaderHeight,
+                      top: _sliverHeaderHeight ?? 0,
                       right: _outerPadding),
                   child: Html(
                       data: AppString.getDefaultEmptyString(value: _post?.body),
@@ -453,6 +460,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
       }
     }
     return visibleReplies;
+  }
+
+  void _evalSliverHeaderHeight() {
+    double sliverHeaderHeight;
+    try {
+      final RenderObject renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        sliverHeaderHeight = renderBox.size.height;
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+
+    setState(() {
+      _sliverHeaderHeight = sliverHeaderHeight;
+    });
   }
 
   void _onTapDeletePost() {
