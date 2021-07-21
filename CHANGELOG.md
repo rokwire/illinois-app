@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Only Admin or Member can see Group posts and replies [#558](https://github.com/rokwire/illinois-app/issues/558).
 ### Fixed
 - Fixed vertical overflow of GroupPostDetailPanel header [#552](https://github.com/rokwire/illinois-app/issues/552).
+- Allow group members to reply [#561](https://github.com/rokwire/illinois-app/issues/561).
 ### Added
 - Add group privacy description in group detail panel [#554](https://github.com/rokwire/illinois-app/issues/554).
 - Show group privacy status in group card [#556](https://github.com/rokwire/illinois-app/issues/556).
