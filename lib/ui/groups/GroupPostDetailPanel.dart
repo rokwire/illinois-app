@@ -420,7 +420,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
       GroupPost reply = visibleReplies[i];
       String optionsIconPath;
       Function optionsFunctionTap;
-      if (_isReplyOptionsVisible(reply)) {
+      if (_isReplyVisible) {
         optionsIconPath = 'images/icon-groups-options-orange.png';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
@@ -529,7 +529,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                RibbonButton(
+                Visibility(visible: (_isReplyVisible || _isDeleteReplyVisible(reply)), child: RibbonButton(
                   height: null,
                   leftIcon: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
@@ -538,8 +538,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                     Navigator.of(context).pop();
                     _onTapReply(reply: reply);
                   },
-                ),
-                RibbonButton(
+                )),
+                Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
                   height: null,
                   leftIcon: "images/trash.png",
                   label: Localization().getStringEx(
@@ -548,7 +548,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                     Navigator.of(context).pop();
                     _onTapDeleteReply(reply);
                   },
-                ),
+                )),
               ],
             ),
           );
@@ -623,22 +623,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
       setState(() {
         _loading = loading;
       });
-    }
-  }
-
-  bool _isReplyOptionsVisible(GroupPost reply) {
-    if (reply == null) {
-      return false;
-    } else if (widget.group?.currentUserIsAdmin ?? false) {
-      return true;
-    } else if (widget.group?.currentUserIsUserMember ?? false) {
-      String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-      String replyMemberEmail = reply?.member?.email;
-      return AppString.isStringNotEmpty(currentMemberEmail) &&
-          AppString.isStringNotEmpty(replyMemberEmail) &&
-          (currentMemberEmail == replyMemberEmail);
-    } else {
-      return false;
     }
   }
 
@@ -859,19 +843,25 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     return value;
   }
 
+  bool _isDeleteReplyVisible(GroupPost reply) {
+    return _isDeleteVisible(reply);
+  }
+
   bool get _isDeletePostVisible {
+    return _isDeleteVisible(_post);
+  }
+
+  bool _isDeleteVisible(GroupPost item) {
     if (widget.group?.currentUserIsAdmin ?? false) {
       return true;
+    } else if (widget.group?.currentUserIsUserMember ?? false) {
+      String currentMemberEmail = widget.group?.currentUserAsMember?.email;
+      String itemMemberEmail = item?.member?.email;
+      return AppString.isStringNotEmpty(currentMemberEmail) &&
+          AppString.isStringNotEmpty(itemMemberEmail) &&
+          (currentMemberEmail == itemMemberEmail);
     } else {
-      if (widget.group?.currentUserIsUserMember ?? false) {
-        String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-        String postMemberEmail = _post?.member?.email;
-        return AppString.isStringNotEmpty(currentMemberEmail) &&
-            AppString.isStringNotEmpty(postMemberEmail) &&
-            (currentMemberEmail == postMemberEmail);
-      } else {
-        return false;
-      }
+      return false;
     }
   }
 
