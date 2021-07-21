@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Remove "Private" checkbox for Group Posts and Replies [#549](https://github.com/rokwire/illinois-app/issues/549).
+- Changes for hidden groups [#551](https://github.com/rokwire/illinois-app/issues/551).
 ### Fixed
 - Fixed vertical overflow of GroupPostDetailPanel header [#552](https://github.com/rokwire/illinois-app/issues/552).
 ### Added
