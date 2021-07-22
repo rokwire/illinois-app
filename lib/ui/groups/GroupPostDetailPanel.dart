@@ -58,7 +58,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final ItemScrollController _positionedScrollController =
       ItemScrollController();
   String _selectedReplyId;
-  bool _editPostMode = false;
+  GroupPost _editingPost;
 
   bool _loading = false;
 
@@ -260,6 +260,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostContent() {
+    List<GroupPost> replies;
+    if (_focusedReply != null) {
+      replies = [_focusedReply];
+    }
+    else if (_editingPost != null) {
+      replies = [_editingPost];
+    }
+    else {
+      replies = _post?.replies;
+    }
+
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -287,7 +298,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       left: _outerPadding,
                       right: _outerPadding,
                       bottom: _outerPadding),
-                  child: _buildRepliesWidget(replies: _focusedReply!= null ? [_focusedReply] :_post?.replies, buildSubReplies: _focusedReply!= null, showRepliesCount: _focusedReply == null))
+                  child: _buildRepliesWidget(replies: replies, buildSubReplies: _focusedReply != null, showRepliesCount: _focusedReply == null))
             ])));
   }
 
@@ -387,9 +398,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 Flexible(
                     flex: 1,
                     child: RoundedButton(
-                        label: Localization().getStringEx(
-                            'panel.group.detail.post.create.button.send.title',
-                            'Send'),
+                        label: (_editingPost != null) ?
+                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
+                          Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         borderColor: Styles().colors.fillColorSecondary,
                         textColor: Styles().colors.fillColorPrimary,
                         backgroundColor: Styles().colors.white,
@@ -613,21 +624,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapReply({GroupPost reply}) {
-    _clearBodyControllerContent();
-    _selectedReplyId = AppString.getDefaultEmptyString(
-        value: reply?.id, defaultValue: _post?.id);
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _selectedReplyId = AppString.getDefaultEmptyString(value: reply?.id, defaultValue: _post?.id);
+      });
+      _clearBodyControllerContent();
+      _scrollToPostEdit();
     }
   }
 
   void _onTapEditPost({GroupPost reply}) {
-    _selectedReplyId = AppString.getDefaultEmptyString(
-        value: reply?.id, defaultValue: _post?.id);
-    _editPostMode = true;
-    _bodyController.text = (reply ?? _post)?.body;
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _editingPost = reply;
+      });
+      _bodyController.text = (reply ?? _post)?.body;
+      _scrollToPostEdit();
     }
   }
 
@@ -687,11 +699,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapCancel() {
-    Navigator.of(context).pop();
+    if (_editingPost != null) {
+      setState(() {
+        _editingPost = null;
+        _bodyController.text = '';
+      });
+    }
+    else {
+      Navigator.of(context).pop();
+    }
   }
 
   void _onTapSend() {
     FocusScope.of(context).unfocus();
+    
     String subject = _subjectController.text;
     if (_isCreatePost && AppString.isStringEmpty(subject)) {
       AppAlert.showDialogResult(
@@ -701,6 +722,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               "Please, populate 'Subject' field"));
       return;
     }
+    
     String body = _bodyController.text;
     if (AppString.isStringEmpty(body)) {
       AppAlert.showDialogResult(
@@ -711,9 +733,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       return;
     }
     String htmlModifiedBody = _replaceNewLineSymbols(body);
+    
     _setLoading(true);
-    if (_editPostMode) {
-      GroupPost postToUpdate = GroupPost(id: _selectedReplyId, subject: AppString.getDefaultEmptyString(value: subject, defaultValue: null), body: body, private: true);
+    if (_editingPost != null) {
+      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
@@ -757,8 +780,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onUpdateFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
-      _clearSelectedReplyId();
-      _editPostMode = false;
+      _editingPost = null;
       _clearBodyControllerContent();
       _reloadPost();
     } else {

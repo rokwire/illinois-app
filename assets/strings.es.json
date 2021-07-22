@@ -1715,6 +1715,8 @@
     "panel.group.detail.post.create.dialog.link.edit.header": "Edit Link",
     "panel.group.detail.post.create.dialog.link.text.label": "Link Text:",
     "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
+    "panel.group.detail.post.create.button.send.title": "Send",
+    "panel.group.detail.post.update.button.update.title": "Update",
 
     "panel.student_guide_categories.label.heading": "Guía de estudiante",
     "panel.student_guide_categories.label.content.empty": "Contenido de la guía vacía",
