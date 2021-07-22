@@ -451,7 +451,7 @@ class Groups /* with Service */ {
     if (AppString.isStringEmpty(groupId) || (post == null)) {
       return false;
     }
-    String requestBody = AppJson.encode(post.toJson());
+    String requestBody = AppJson.encode(post.toJson(update: true));
     String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post.id}';
     Response response = await Network().put(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;

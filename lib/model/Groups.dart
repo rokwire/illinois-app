@@ -744,10 +744,14 @@ class GroupPost {
         replies: GroupPost.fromJsonList(json['replies']));
   }
 
-  Map<String, dynamic> toJson({bool create = false}) {
+  Map<String, dynamic> toJson({bool create = false, bool update = false}) {
+    // MV: This does not look well at all!
     Map<String, dynamic> json = {'body': body, 'private': private};
     if ((parentId != null) && create) {
       json['parent_id'] = parentId;
+    }
+    if ((id != null) && update) {
+      json['id'] = id;
     }
     if (subject != null) {
       json['subject'] = subject;
