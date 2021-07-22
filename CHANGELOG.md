@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupsDetailPanel: show all posts [#572](https://github.com/rokwire/illinois-app/issues/572).
 ### Added
 - Added post edit functionality [#566](https://github.com/rokwire/illinois-app/issues/566).
+- Added options dropdown in events section header in GroupDetailPanel [#575](https://github.com/rokwire/illinois-app/issues/575).
 
 
 ## [2.6.7] - 2021-07-21
