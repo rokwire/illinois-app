@@ -36,11 +36,10 @@ class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
   final GroupPost focusedReply;
   final Group group;
-  final bool postReply;
   final bool hidePostOptions;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.postReply = false, this.focusedReply, this.hidePostOptions = false});
+      {@required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -71,12 +70,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     _focusedReply = widget.focusedReply;
-    if (widget.postReply) {
-      _selectedReplyId = _post?.id; // default reply to the main post
-    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
-      if (AppString.isStringNotEmpty(_selectedReplyId) || (_focusedReply != null)) {
+      if (_focusedReply != null) {
         _scrollToPostEdit();
       }
     });
@@ -188,7 +184,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                 "Reply"),
                                             button: true,
                                             child: GestureDetector(
-                                                onTap: _onTapReply,
+                                                onTap: _onTapHeaderReply,
                                                 child: Container(
                                                     color: Colors.transparent,
                                                     child: Padding(
@@ -559,7 +555,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       "panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
                     Navigator.of(context).pop();
-                    _onTapReply(reply: reply);
+                    _onTapPostReply(reply: reply);
                   },
                 )),
                 Visibility(visible: _isEditVisible(reply), child: RibbonButton(
@@ -623,14 +619,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  void _onTapReply({GroupPost reply}) {
+  void _onTapHeaderReply() {
+    _clearBodyControllerContent();
+    _scrollToPostEdit();
+  }
+
+  void _onTapPostReply({GroupPost reply}) {
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
     if (mounted) {
       setState(() {
-        _selectedReplyId = AppString.getDefaultEmptyString(value: reply?.id, defaultValue: _post?.id);
+        _selectedReplyId = reply?.id;
       });
-      _clearBodyControllerContent();
-      _scrollToPostEdit();
     }
+    _clearBodyControllerContent();
+    _scrollToPostEdit();
   }
 
   void _onTapEditPost({GroupPost reply}) {
@@ -713,14 +715,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapSend() {
     FocusScope.of(context).unfocus();
     
-    String subject = _subjectController.text;
-    if (_isCreatePost && AppString.isStringEmpty(subject)) {
-      AppAlert.showDialogResult(
-          context,
-          Localization().getStringEx(
-              'panel.group.detail.post.create.validation.subject.msg',
-              "Please, populate 'Subject' field"));
-      return;
+    String subject;
+    if (_isCreatePost) {
+      subject = _subjectController.text;
+      if (AppString.isStringEmpty(subject)) {
+        AppAlert.showDialogResult(
+            context,
+            Localization().getStringEx(
+                'panel.group.detail.post.create.validation.subject.msg',
+                "Please, populate 'Subject' field"));
+        return;
+      }
     }
     
     String body = _bodyController.text;
@@ -741,13 +746,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         _onUpdateFinished(succeeded);
       });
     } else {
-      GroupPost post;
-      if (_isCreatePost) {
-        post = GroupPost(subject: subject, body: htmlModifiedBody, private: true);
-      } else {
-        post = GroupPost(
-            parentId: AppString.getDefaultEmptyString(value: _selectedReplyId, defaultValue: _post?.id), body: htmlModifiedBody, private: true);
+      String parentId;
+      if (_selectedReplyId != null) {
+        parentId = _selectedReplyId;
       }
+      else if (_focusedReply != null) {
+        parentId = _focusedReply.id;
+      }
+      else if (_post != null) {
+        parentId = _post.id;
+      }
+      
+      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true);
       Groups().createPost(widget.group?.id, post).then((succeeded) {
         _onCreateFinished(succeeded);
       });
