@@ -634,6 +634,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         SectionTitlePrimary(
             title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
             iconPath: 'images/icon-calendar.png',
+            rightIconPath: _canAddEvent ? "images/icon-add-20x18.png" : null,
+            rightIconAction: _canAddEvent ? _onTapEventOptions : null,
+            rightIconLabel: _canAddEvent ? Localization().getStringEx("panel.group_detail.button.create_event.title", "Create Event") : null,
             children: content)
       ]),
       _updatingEvents
@@ -668,9 +671,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       SectionTitlePrimary(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
           iconPath: 'images/icon-calendar.png',
-          rightIconPath: _canCreatePost? "images/icon-add-20x18.png" : null,
-          rightIconAction: _onTapCreatePost,
-          rightIconLabel: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+          rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
+          rightIconAction: _canCreatePost ? _onTapCreatePost : null,
+          rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
     ]);
   }
@@ -925,6 +928,44 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                                   negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
                                   onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
                         })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-edit.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapBrowseEvents();
+                        })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-edit.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreateEvent();
+                        })),
+              ]));
+        });
+  }
+
+  void _onTapEventOptions() {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 24,
+                ),
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
