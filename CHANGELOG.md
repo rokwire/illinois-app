@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Scroll to edit controls when loading group post replies [#570](https://github.com/rokwire/illinois-app/issues/570).
 - GroupsDetailPanel: show all posts [#572](https://github.com/rokwire/illinois-app/issues/572).
+### Added
+- Added post edit functionality [#566](https://github.com/rokwire/illinois-app/issues/566).
+
 
 ## [2.6.7] - 2021-07-21
 ### Changed
