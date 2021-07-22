@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.6.8] - 2021-07-22
 ### Changed
 - Scroll to edit controls when loading group post replies [#570](https://github.com/rokwire/illinois-app/issues/570).
 - GroupsDetailPanel: show all posts [#572](https://github.com/rokwire/illinois-app/issues/572).
