@@ -77,6 +77,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
+      if (AppString.isStringNotEmpty(_selectedReplyId) || (_focusedReply != null)) {
+        _scrollToPostEdit();
+      }
     });
   }
 
@@ -92,7 +95,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
 
   @override
   Widget build(BuildContext context) {
-    _postBuildCallback();
     return Scaffold(
         appBar: AppBar(
             leading: HeaderBackButton(),
@@ -854,18 +856,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
         TextPosition(offset: (endPosition + firstValue.length)));
   }
 
-  void _postBuildCallback() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToPostEdit();
-    });
-  }
-
   void _scrollToPostEdit() {
-    if (AppString.isStringNotEmpty(_selectedReplyId)) {
-      // index = 1 is the index of the post edit control
-      _positionedScrollController.scrollTo(
-          index: 1, duration: Duration(milliseconds: 10));
-    }
+    // index = 1 is the index of the post edit control
+    _positionedScrollController.scrollTo(
+        index: 1, duration: Duration(milliseconds: 10));
   }
 
   void _clearSelectedReplyId() {
