@@ -1951,6 +1951,7 @@
 
 	"widget.group.card.reply.single.reply.label": "Reply",
 	"widget.group.card.reply.multiple.replies.label": "Replies",
+	"widget.group.card.reply.edited.reply.label": "edited",
 
 	"model.dining.schedule.label.closed_for_two_weeks":"接下来2周关闭",
 	"model.dining.schedule.label.open_at":"在开头",

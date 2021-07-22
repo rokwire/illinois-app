@@ -1953,6 +1953,7 @@
 
     "widget.group.card.reply.single.reply.label": "Reply",
     "widget.group.card.reply.multiple.replies.label": "Replies",
+    "widget.group.card.reply.edited.reply.label": "edited",
 
     "model.dining.schedule.label.closed_for_two_weeks":"Cerrado por las próximas 2 semanas",
     "model.dining.schedule.label.open_at":"Apertura en",
