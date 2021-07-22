@@ -70,6 +70,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   List<GroupEvent>   _groupEvents;
   List<GroupPost>    _visibleGroupPosts;
   GlobalKey          _postsKey = GlobalKey();
+  GlobalKey          _lastPostKey;
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
 
@@ -650,31 +651,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return Container();
     }
     List<Widget> postsContent = [];
-    int limit = min(_visibleGroupPosts.length, 3);
+    int limit = _visibleGroupPosts.length;
     for (int i = 0; i < limit; i++) {
       GroupPost post = _visibleGroupPosts[i];
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(post: post, group: _group));
-    }
-
-    if (limit < _visibleGroupPosts.length) {
-      postsContent.add(Padding(
-          padding: EdgeInsets.only(top: 16),
-          child: ScalableSmallRoundedButton(
-              label: Localization().getStringEx("panel.group_detail.button.all_posts.title", 'See more'),
-              widthCoeficient: 2,
-              backgroundColor: Styles().colors.white,
-              textColor: Styles().colors.fillColorPrimary,
-              fontFamily: Styles().fontFamilies.bold,
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-              borderColor: Styles().colors.fillColorSecondary,
-              borderWidth: 2,
-              onTap: () {
-                //TBD: show all posts panel
-              })));
+      if(i == limit-1){
+        _lastPostKey = GlobalKey();
+        postsContent.add(Container(key:_lastPostKey, child:GroupPostCard(post: post, group: _group)));
+      } else {
+        postsContent.add(GroupPostCard(post: post, group: _group));
+      }
     }
 
     return Column(key: _postsKey, children: <Widget>[
@@ -1065,7 +1053,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _scrollToPosts() {
     if ((_currentTab == _DetailTab.Posts) && AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
-      BuildContext currentContext = _postsKey?.currentContext;
+      BuildContext currentContext = _lastPostKey?.currentContext ?? _postsKey?.currentContext;
       if (currentContext != null) {
         Scrollable.ensureVisible(currentContext);
       }
