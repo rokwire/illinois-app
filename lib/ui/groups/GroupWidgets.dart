@@ -1139,19 +1139,25 @@ class GroupReplyCard extends StatefulWidget {
   _GroupReplyCardState createState() => _GroupReplyCardState();
 }
 
-class _GroupReplyCardState extends State<GroupReplyCard> {
-  int _visibleRepliesCount = 0;
+class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
 
   @override
   void initState() {
-    _calculateVisibleRepliesCount(widget.reply?.replies);
+    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     super.initState();
   }
 
   @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    bool isRepliesLabelVisible = (_visibleRepliesCount > 0) && widget.showRepliesCount;
-    String repliesLabel = (_visibleRepliesCount == 1)
+    int visibleRepliesCount = widget?.reply?.replies?.length ?? 0;
+    bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
+    String repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
 
@@ -1197,7 +1203,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
                   child: Row(children: [
                     Expanded(child: Container()),
                     Container(
-                      child: Text("$_visibleRepliesCount $repliesLabel",
+                      child: Text("$visibleRepliesCount $repliesLabel",
                          style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline)
                       )
                     )
@@ -1213,17 +1219,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> {
   }
 
   void _onTapCard(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply, hidePostOptions: true,)));
   }
 
-  void _calculateVisibleRepliesCount(List<GroupPost> replies) {
-    if (AppCollection.isCollectionNotEmpty(replies)) {
-      bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
-      for (GroupPost reply in replies) {
-        if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
-          _visibleRepliesCount++;
-        }
-      }
+  @override
+  void onNotification(String name, param) {
+    if (name == Groups.notifyGroupPostsUpdated) {
+      setState(() {});
     }
   }
 }
