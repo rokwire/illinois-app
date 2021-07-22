@@ -1160,7 +1160,11 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     String repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
-
+    String bodyText = AppString.getDefaultEmptyString(value: widget.reply?.body);
+    if (widget.reply?.isUpdated ?? false) {
+      bodyText +=
+          ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+    }
     return Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
@@ -1186,12 +1190,18 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
               Padding(
                   padding: EdgeInsets.only(top: 10),
-                  child: Html(data: widget.reply?.body, style: {
+                  child: Html(data: bodyText, style: {
                     "body": Style(
                         color: Styles().colors.fillColorPrimary,
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: FontSize(16),
                         maxLines: 3000,
+                        textOverflow: TextOverflow.ellipsis),
+                    "span": Style(
+                        color: Styles().colors.blackTransparent018,
+                        fontFamily: Styles().fontFamilies.regular,
+                        fontSize: FontSize(16),
+                        maxLines: 1,
                         textOverflow: TextOverflow.ellipsis)
                   }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
               Visibility(

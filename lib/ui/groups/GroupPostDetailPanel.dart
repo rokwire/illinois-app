@@ -36,20 +36,17 @@ class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
   final GroupPost focusedReply;
   final Group group;
-  final bool postReply;
   final bool hidePostOptions;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.postReply = false, this.focusedReply, this.hidePostOptions = false});
+      {@required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 }
 
-class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
-    implements NotificationsListener {
+class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
-
 
   GroupPost _post;
   GroupPost _focusedReply;
@@ -60,6 +57,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   final ItemScrollController _positionedScrollController =
       ItemScrollController();
   String _selectedReplyId;
+  GroupPost _editingPost;
 
   bool _loading = false;
 
@@ -72,12 +70,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     _focusedReply = widget.focusedReply;
-    if (widget.postReply) {
-      _selectedReplyId = _post?.id; // default reply to the main post
-    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
-      if (AppString.isStringNotEmpty(_selectedReplyId) || (_focusedReply != null)) {
+      if (_focusedReply != null) {
         _scrollToPostEdit();
       }
     });
@@ -189,7 +184,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                                                 "Reply"),
                                             button: true,
                                             child: GestureDetector(
-                                                onTap: _onTapReply,
+                                                onTap: _onTapHeaderReply,
                                                 child: Container(
                                                     color: Colors.transparent,
                                                     child: Padding(
@@ -261,6 +256,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   Widget _buildPostContent() {
+    List<GroupPost> replies;
+    if (_focusedReply != null) {
+      replies = [_focusedReply];
+    }
+    else if (_editingPost != null) {
+      replies = [_editingPost];
+    }
+    else {
+      replies = _post?.replies;
+    }
+
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -288,7 +294,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                       left: _outerPadding,
                       right: _outerPadding,
                       bottom: _outerPadding),
-                  child: _buildRepliesWidget(replies: _focusedReply!= null ? [_focusedReply] :_post?.replies, buildSubReplies: _focusedReply!= null, showRepliesCount: _focusedReply == null))
+                  child: _buildRepliesWidget(replies: replies, buildSubReplies: _focusedReply != null, showRepliesCount: _focusedReply == null))
             ])));
   }
 
@@ -388,9 +394,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
                 Flexible(
                     flex: 1,
                     child: RoundedButton(
-                        label: Localization().getStringEx(
-                            'panel.group.detail.post.create.button.send.title',
-                            'Send'),
+                        label: (_editingPost != null) ?
+                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
+                          Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         borderColor: Styles().colors.fillColorSecondary,
                         textColor: Styles().colors.fillColorPrimary,
                         backgroundColor: Styles().colors.white,
@@ -542,14 +548,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Visibility(visible: (_isReplyVisible || _isDeleteReplyVisible(reply)), child: RibbonButton(
+                Visibility(visible: _isReplyVisible, child: RibbonButton(
                   height: null,
                   leftIcon: "images/icon-group-post-reply.png",
                   label: Localization().getStringEx(
                       "panel.group.detail.post.reply.reply.label", "Reply"),
                   onTap: () {
                     Navigator.of(context).pop();
-                    _onTapReply(reply: reply);
+                    _onTapPostReply(reply: reply);
+                  },
+                )),
+                Visibility(visible: _isEditVisible(reply), child: RibbonButton(
+                  height: null,
+                  leftIcon: "images/icon-edit.png",
+                  label: Localization().getStringEx(
+                      "panel.group.detail.post.reply.edit.label", "Edit"),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _onTapEditPost(reply: reply);
                   },
                 )),
                 Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
@@ -603,11 +619,29 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     });
   }
 
-  void _onTapReply({GroupPost reply}) {
-    _selectedReplyId = AppString.getDefaultEmptyString(
-        value: reply?.id, defaultValue: _post?.id);
+  void _onTapHeaderReply() {
+    _clearBodyControllerContent();
+    _scrollToPostEdit();
+  }
+
+  void _onTapPostReply({GroupPost reply}) {
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _selectedReplyId = reply?.id;
+      });
+    }
+    _clearBodyControllerContent();
+    _scrollToPostEdit();
+  }
+
+  void _onTapEditPost({GroupPost reply}) {
+    if (mounted) {
+      setState(() {
+        _editingPost = reply;
+      });
+      _bodyController.text = (reply ?? _post)?.body;
+      _scrollToPostEdit();
     }
   }
 
@@ -667,20 +701,33 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
   }
 
   void _onTapCancel() {
-    Navigator.of(context).pop();
+    if (_editingPost != null) {
+      setState(() {
+        _editingPost = null;
+        _bodyController.text = '';
+      });
+    }
+    else {
+      Navigator.of(context).pop();
+    }
   }
 
   void _onTapSend() {
     FocusScope.of(context).unfocus();
-    String subject = _subjectController.text;
-    if (_isCreatePost && AppString.isStringEmpty(subject)) {
-      AppAlert.showDialogResult(
-          context,
-          Localization().getStringEx(
-              'panel.group.detail.post.create.validation.subject.msg',
-              "Please, populate 'Subject' field"));
-      return;
+    
+    String subject;
+    if (_isCreatePost) {
+      subject = _subjectController.text;
+      if (AppString.isStringEmpty(subject)) {
+        AppAlert.showDialogResult(
+            context,
+            Localization().getStringEx(
+                'panel.group.detail.post.create.validation.subject.msg',
+                "Please, populate 'Subject' field"));
+        return;
+      }
     }
+    
     String body = _bodyController.text;
     if (AppString.isStringEmpty(body)) {
       AppAlert.showDialogResult(
@@ -691,24 +738,37 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
       return;
     }
     String htmlModifiedBody = _replaceNewLineSymbols(body);
+    
     _setLoading(true);
-    GroupPost post;
-    if (_isCreatePost) {
-      post = GroupPost(subject: subject, body: htmlModifiedBody, private: true);
+    if (_editingPost != null) {
+      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, body: body, private: true);
+      Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
+        _onUpdateFinished(succeeded);
+      });
     } else {
-      post = GroupPost(
-          parentId: AppString.getDefaultEmptyString(value: _selectedReplyId, defaultValue: _post?.id), body: htmlModifiedBody, private: true);
+      String parentId;
+      if (_selectedReplyId != null) {
+        parentId = _selectedReplyId;
+      }
+      else if (_focusedReply != null) {
+        parentId = _focusedReply.id;
+      }
+      else if (_post != null) {
+        parentId = _post.id;
+      }
+      
+      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true);
+      Groups().createPost(widget.group?.id, post).then((succeeded) {
+        _onCreateFinished(succeeded);
+      });
     }
-    Groups().createPost(widget.group?.id, post).then((succeeded) {
-      _onCreateFinished(succeeded);
-    });
   }
 
   void _onCreateFinished(bool succeeded) {
     _setLoading(false);
-    _clearSelectedReplyId();
     if (succeeded) {
-      _bodyController.text = ''; //clear body content after successfull save
+      _clearSelectedReplyId();
+      _clearBodyControllerContent();
       if (_isCreatePost) {
         Navigator.of(context).pop();
       } else {
@@ -724,6 +784,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
               : Localization().getStringEx(
                   'panel.group.detail.post.create.reply.failed.msg',
                   'Failed to create new reply.'));
+    }
+  }
+
+  void _onUpdateFinished(bool succeeded) {
+    _setLoading(false);
+    if (succeeded) {
+      _editingPost = null;
+      _clearBodyControllerContent();
+      _reloadPost();
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.update.reply.failed.msg', 'Failed to edit reply.'));
     }
   }
 
@@ -866,6 +937,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     _selectedReplyId = null;
   }
 
+  void _clearBodyControllerContent() {
+    _bodyController.text = '';
+  }
+
   String _replaceNewLineSymbols(String value) {
     if (AppString.isStringEmpty(value)) {
       return value;
@@ -875,26 +950,34 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel>
     return value;
   }
 
-  bool _isDeleteReplyVisible(GroupPost reply) {
-    return _isDeleteVisible(reply);
-  }
-
-  bool get _isDeletePostVisible {
-    return _isDeleteVisible(_post);
+  bool _isEditVisible(GroupPost post) {
+    return _isCurrentUserCreator(post);
   }
 
   bool _isDeleteVisible(GroupPost item) {
     if (widget.group?.currentUserIsAdmin ?? false) {
       return true;
     } else if (widget.group?.currentUserIsUserMember ?? false) {
-      String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-      String itemMemberEmail = item?.member?.email;
-      return AppString.isStringNotEmpty(currentMemberEmail) &&
-          AppString.isStringNotEmpty(itemMemberEmail) &&
-          (currentMemberEmail == itemMemberEmail);
+      return _isCurrentUserCreator(item);
     } else {
       return false;
     }
+  }
+
+  bool _isDeleteReplyVisible(GroupPost reply) {
+    return _isDeleteVisible(reply);
+  }
+
+  bool _isCurrentUserCreator(GroupPost item) {
+    String currentMemberEmail = widget.group?.currentUserAsMember?.email;
+    String itemMemberEmail = item?.member?.email;
+    return AppString.isStringNotEmpty(currentMemberEmail) &&
+        AppString.isStringNotEmpty(itemMemberEmail) &&
+        (currentMemberEmail == itemMemberEmail);
+  }
+
+  bool get _isDeletePostVisible {
+    return _isDeleteVisible(_post);
   }
 
   bool get _isReplyVisible {

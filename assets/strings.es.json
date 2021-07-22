@@ -1701,6 +1701,7 @@
     "panel.group.detail.post.reply.delete.failed.msg": "Failed to delete reply.",
     "panel.group.detail.post.reply.delete.label": "Delete",
     "panel.group.detail.post.reply.reply.label": "Reply",
+    "panel.group.detail.post.reply.edit.label": "Edit",
     "panel.group.detail.post.create.subject.label": "Subject",
     "panel.group.detail.post.create.subject.field.hint": "Write a Subject",
     "panel.group.detail.post.create.body.field.hint": "Write a Post ...",
@@ -1709,10 +1710,13 @@
     "panel.group.detail.post.create.validation.body.msg": "Please, populate 'Body' field",
     "panel.group.detail.post.create.post.failed.msg": "Failed to create new post.",
     "panel.group.detail.post.create.reply.failed.msg": "Failed to create new reply.",
+    "panel.group.detail.post.update.reply.failed.msg": "Failed to edit reply.",
     "panel.group.detail.post.create.link.label": "Link",
     "panel.group.detail.post.create.dialog.link.edit.header": "Edit Link",
     "panel.group.detail.post.create.dialog.link.text.label": "Link Text:",
     "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
+    "panel.group.detail.post.create.button.send.title": "Send",
+    "panel.group.detail.post.update.button.update.title": "Update",
 
     "panel.student_guide_categories.label.heading": "Guía de estudiante",
     "panel.student_guide_categories.label.content.empty": "Contenido de la guía vacía",
@@ -1951,6 +1955,7 @@
 
     "widget.group.card.reply.single.reply.label": "Reply",
     "widget.group.card.reply.multiple.replies.label": "Replies",
+    "widget.group.card.reply.edited.reply.label": "edited",
 
     "model.dining.schedule.label.closed_for_two_weeks":"Cerrado por las próximas 2 semanas",
     "model.dining.schedule.label.open_at":"Apertura en",
