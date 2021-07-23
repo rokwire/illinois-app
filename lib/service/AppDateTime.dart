@@ -273,7 +273,7 @@ class AppDateTime with Service {
       if (date.compareTo(now) < 0) {
         Duration difference = DateTime.now().difference(date);
         if (difference.inSeconds < 60) {
-          return "${difference.inSeconds}sec";
+          return "now";
         }
         else if (difference.inMinutes < 60) {
           return "${difference.inMinutes}min";
