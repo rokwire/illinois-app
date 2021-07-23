@@ -15,6 +15,8 @@
  */
 
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -209,9 +211,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _refreshCurrentPosts() {
     if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
-      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: _visibleGroupPosts.length, order: GroupSortOrder.desc).then((List<GroupPost> posts) {
+      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: max(_visibleGroupPosts.length, _postsPageSize), order: GroupSortOrder.desc).then((List<GroupPost> posts) {
         if (posts != null) {
-          _visibleGroupPosts = posts;
+          setState(() {
+            _visibleGroupPosts = posts;
+          });
         }
       });
     }
