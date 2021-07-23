@@ -1004,7 +1004,8 @@ class GroupPostCard extends StatefulWidget {
   final GroupPost post;
   final Group group;
 
-  GroupPostCard({@required this.post, @required this.group});
+  GroupPostCard({Key key, @required this.post, @required this.group}) :
+    super(key: key);
 
   @override
   _GroupPostCardState createState() => _GroupPostCardState();

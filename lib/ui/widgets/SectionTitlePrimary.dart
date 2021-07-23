@@ -24,6 +24,7 @@ class SectionTitlePrimary extends StatelessWidget{
   final String subTitle;
   final String iconPath;
   final List<Widget> children;
+  final EdgeInsetsGeometry listPadding;
   final String slantImageRes;
   final Color backgroundColor;
   final Color slantColor;
@@ -32,7 +33,7 @@ class SectionTitlePrimary extends StatelessWidget{
   final String rightIconLabel;
   final Function rightIconAction;
 
-  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children,
+  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children, this.listPadding,
     this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor, this.rightIconAction, this.rightIconLabel});
 
   @override
@@ -122,7 +123,7 @@ class SectionTitlePrimary extends StatelessWidget{
                       Expanded(child: Container(),)
                     ],),),)),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: listPadding ?? EdgeInsets.all(16),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
