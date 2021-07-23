@@ -761,7 +761,8 @@ class GroupPost {
 
   String get displayDateTime {
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
-    return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
+    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
+    return AppDateTime.formatTimeIntervalSinceNow(deviceDateTime);
   }
 
   bool get isUpdated {
