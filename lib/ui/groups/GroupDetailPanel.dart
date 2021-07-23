@@ -17,6 +17,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -61,19 +62,32 @@ class GroupDetailPanel extends StatefulWidget {
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
 
+  final int          _postsPageSize = 8;
+
   Group              _group;
   int                _progress = 0;
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
-  List<GroupPost>    _visibleGroupPosts;
-  GlobalKey          _postsKey = GlobalKey();
-  GlobalKey          _lastPostKey;
+  List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>       _groupAdmins;
   Map<String, Event> _stepsEvents = Map<String, Event>();
 
-  _DetailTab       _currentTab = _DetailTab.Events;
+  _DetailTab         _currentTab = _DetailTab.Events;
+
+  GlobalKey          _scrollContainerKey = GlobalKey();
+  GlobalKey          _firstPostKey = GlobalKey();
+  GlobalKey          _lastPostKey = GlobalKey();
+  ScrollController   _scrollController;
+  BuildContext       _firstPostContext;
+  double             _firstPostTop;
+  double             _firstPostBottom;
+  bool               _lastPostReached;
+  BuildContext       _scrollContainerContext;
+  double             _scrollContainerHeight;
+  bool               _loadingPostsPage;
+  double             _lastScrollOffset;
 
   bool get _isMember {
     if(_group?.members?.isNotEmpty ?? false){
@@ -129,7 +143,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   void initState() {
     super.initState();
+
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated, Groups.notifyGroupPostsUpdated]);
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+
     _loadGroup();
     _loadEvents();
   }
@@ -146,7 +165,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Groups().loadGroup(widget.groupId).then((Group group) {
       if (group != null) {
         _group = group;
-        _loadPosts();
+        _loadInitialPosts();
         _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
         _loadMembershipStepEvents();
       }
@@ -171,25 +190,55 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
-  void _loadPosts() {
-    bool currentUserIsMemberOrAdmin = _group?.currentUserIsMemberOrAdmin ?? false;
-    if (currentUserIsMemberOrAdmin) {
-      _increaseProgress();
-      Groups().loadGroupPosts(widget.groupId).then((posts) {
-        if (AppCollection.isCollectionNotEmpty(posts)) {
-          // Store only visible posts in this collection
-          _visibleGroupPosts = [];
-          for (GroupPost post in posts) {
-            bool isPostVisible = (post.private == false) || (post.private == null) || currentUserIsMemberOrAdmin;
-            if (isPostVisible) {
-              _visibleGroupPosts.add(post);
-            }
-          }
-        } else {
-          _visibleGroupPosts = null;
-        }
-        _decreaseProgress();
+  void _loadInitialPosts() {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
+      setState(() {
+        _progress++;
+        _loadingPostsPage = true;
       });
+      _loadPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _progress--;
+            _loadingPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentPosts() {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
+      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: _visibleGroupPosts.length, order: GroupSortOrder.desc).then((List<GroupPost> posts) {
+        if (posts != null) {
+          _visibleGroupPosts = posts;
+        }
+      });
+    }
+  }
+
+  void _loadNextPostsPage() {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
+      setState(() {
+        _loadingPostsPage = true;
+      });
+      _loadPostsPage().then((_) {
+        double scrollOffsetFromBottom = _scrollController.position.maxScrollExtent - _scrollController.offset;
+        setState(() {
+          _loadingPostsPage = false;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            double newScrollOffsetFromBottom = _scrollController.position.maxScrollExtent - scrollOffsetFromBottom;
+            _scrollController.jumpTo(newScrollOffsetFromBottom);
+          });
+        });
+      });
+    }
+  }
+
+  Future<void> _loadPostsPage() async {
+    List<GroupPost> postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _visibleGroupPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    if (postsPage != null) {
+      _visibleGroupPosts.addAll(postsPage);
     }
   }
 
@@ -278,7 +327,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadGroup();
       _loadEvents();
     } else if (name == Groups.notifyGroupPostsUpdated) {
-      _loadPosts();
+      _refreshCurrentPosts();
     }
   }
 
@@ -346,7 +395,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Column(children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
+            key: _scrollContainerKey,
             scrollDirection: Axis.vertical,
+            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: content,
@@ -652,23 +703,35 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return Container();
     }
     List<Widget> postsContent = [];
-    int limit = _visibleGroupPosts.length;
-    for (int i = 0; i < limit; i++) {
+    postsContent.add(Container(height: 24,
+      child: Align(alignment: Alignment.topCenter,
+        child: SizedBox(height: 16, width: 16,
+          child: Visibility(visible: _loadingPostsPage == true,
+            child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white), )
+          )
+        ),
+      ),
+    ),);
+    int last = _visibleGroupPosts.length - 1;
+    for (int i = last; i >= 0; i--) {
       GroupPost post = _visibleGroupPosts[i];
-      if (i > 0) {
+      if (i < last) {
         postsContent.add(Container(height: 16));
       }
-      if(i == limit-1){
-        _lastPostKey = GlobalKey();
-        postsContent.add(Container(key:_lastPostKey, child:GroupPostCard(post: post, group: _group)));
-      } else {
-        postsContent.add(GroupPostCard(post: post, group: _group));
+      Key key;
+      if (i == last) {
+        key = _firstPostKey;
       }
+      else if (i == 0) {
+        key = _lastPostKey;
+      }
+      postsContent.add(GroupPostCard(key: key, post: post, group: _group));
     }
 
-    return Column(key: _postsKey, children: <Widget>[
+    return Column(children: <Widget>[
       SectionTitlePrimary(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+          listPadding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
           iconPath: 'images/icon-calendar.png',
           rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
@@ -995,8 +1058,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _currentTab = tab;
       });
       
-      if ((_currentTab == _DetailTab.Posts) && AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
-        _schedulePostsScroll();
+      if ((_currentTab == _DetailTab.Posts)) {
+        if (AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
+          _schedulePostsScroll();
+        }
+      }
+      else {
+        _lastPostReached = null;
       }
     }
   }
@@ -1097,10 +1165,39 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _scrollToLastPost() {
-    BuildContext currentContext = _lastPostKey?.currentContext ?? _postsKey?.currentContext;
+    BuildContext currentContext = _lastPostKey?.currentContext;
     if (currentContext != null) {
-      Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
+      Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10)).then((_) {
+        _lastPostReached = true;
+      });
     }
+  }
+
+  void _scrollListener() {
+    BuildContext firstPostContext = _firstPostKey?.currentContext;
+    if (_firstPostContext != firstPostContext) {
+      RenderObject renderObject = firstPostContext?.findRenderObject();
+      RenderAbstractViewport viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
+      _firstPostTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
+      _firstPostBottom = viewport?.getOffsetToReveal(renderObject, 1.0)?.offset;
+      _firstPostContext = firstPostContext;
+    }
+
+    BuildContext scrollContainerContext = _scrollContainerKey?.currentContext;
+    if (_scrollContainerContext != scrollContainerContext) {
+      RenderObject renderBox = scrollContainerContext?.findRenderObject();
+      _scrollContainerHeight = (renderBox is RenderBox) ? renderBox.size?.height : null;
+      _scrollContainerContext = scrollContainerContext;
+    }
+
+    if ((_currentTab == _DetailTab.Posts) && (_firstPostTop != null) && (_firstPostBottom != null) && (_lastPostReached == true) && (_scrollContainerHeight != null) && (_lastScrollOffset != null) && (_scrollController.offset < _lastScrollOffset)) {
+      bool firstPostVisible = (_scrollController.offset < (_firstPostTop + _firstPostBottom)) && (_firstPostTop < (_scrollController.offset + _scrollContainerHeight));
+      if (firstPostVisible && (_loadingPostsPage != true)) {
+        _loadNextPostsPage();
+      }
+    }
+
+    _lastScrollOffset = _scrollController.offset;
   }
 
   void _increaseProgress() {
