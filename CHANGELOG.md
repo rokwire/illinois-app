@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - GroupsDetailPanel: implement posts paging [#572](https://github.com/rokwire/illinois-app/issues/572).
-- Show GroupPost reply thread  [#581](https://github.com/rokwire/illinois-app/issues/581).
+- Show GroupPost reply thread [#581](https://github.com/rokwire/illinois-app/issues/581).
+- Show group post dates as time interval since now [#580](https://github.com/rokwire/illinois-app/issues/580).
 
 ## [2.6.8] - 2021-07-22
 ### Changed
