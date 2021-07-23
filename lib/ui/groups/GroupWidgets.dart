@@ -1177,7 +1177,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
-                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary)),
+                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
                 Visibility(
                     visible: AppString.isStringNotEmpty(widget.iconPath),
                     child: Semantics(container: true, child:Container(
@@ -1185,11 +1185,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: GestureDetector(
                         onTap: widget.onIconTap,
                         child: Padding(
-                            padding: EdgeInsets.only(left: 10, top: 3, bottom: 3),
+                            padding: EdgeInsets.only(left: 10, top: 3),
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
               ]),
-              Padding(padding: EdgeInsets.only(top: 3), child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Html(data: bodyText, style: {
@@ -1198,7 +1196,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: FontSize(16),
                         maxLines: 3000,
-                        textOverflow: TextOverflow.ellipsis),
+                        textOverflow: TextOverflow.ellipsis,
+                        margin: EdgeInsets.zero
+                    ),
                     "span": Style(
                         color: Styles().colors.blackTransparent018,
                         fontFamily: Styles().fontFamilies.regular,
@@ -1212,12 +1212,17 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 GestureDetector(
                   onTap: widget.onCardTap ?? _onTapCard,
                   child: Container(
+                    padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
-                      Expanded(child: Container()),
-                      Container(
+                      Expanded(
+                          child: Container(
+                            child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),),
+                      Expanded(child: Container(
                         child: Text("$visibleRepliesCount $repliesLabel",
-                           style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline)
-                        )
+                            textAlign: TextAlign.right,
+                            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline,)
+                      )),
                       )
                 ],),)))
             ])));
