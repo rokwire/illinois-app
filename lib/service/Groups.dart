@@ -480,11 +480,26 @@ class Groups /* with Service */ {
     }
   }
 
-  Future<List<GroupPost>> loadGroupPosts(String groupId) async {
+  Future<List<GroupPost>> loadGroupPosts(String groupId, {int offset, int limit, GroupSortOrder order}) async {
     if (AppString.isStringEmpty(groupId)) {
       return null;
     }
-    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
+    
+    String urlParams = "";
+    if (offset != null) {
+      urlParams = urlParams.isEmpty ? "?" : "$urlParams&";
+      urlParams += "offset=$offset";
+    }
+    if (limit != null) {
+      urlParams = urlParams.isEmpty ? "?" : "$urlParams&";
+      urlParams += "limit=$limit";
+    }
+    if (order != null) {
+      urlParams = urlParams.isEmpty ? "?" : "$urlParams&";
+      urlParams += "order=${groupSortOrderToString(order)}";
+    }
+    
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts$urlParams';
     Response response = await Network().get(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     String responseString = response?.body;
@@ -496,4 +511,26 @@ class Groups /* with Service */ {
       return null;
     }
   }
+}
+
+enum GroupSortOrder { asc, desc }
+
+GroupSortOrder groupSortOrderFromString(String value) {
+  if (value == 'asc') {
+    return GroupSortOrder.asc;
+  }
+  else if (value == 'desc') {
+    return GroupSortOrder.desc;
+  }
+  else {
+    return null;
+  }
+}
+
+String groupSortOrderToString(GroupSortOrder value) {
+  switch(value) {
+    case GroupSortOrder.asc:  return 'asc';
+    case GroupSortOrder.desc: return 'desc';
+  }
+  return null;
 }

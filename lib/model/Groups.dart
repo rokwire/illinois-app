@@ -775,14 +775,6 @@ class GroupPost {
       for (dynamic jsonEntry in jsonList) {
         posts.add(GroupPost.fromJson(jsonEntry));
       }
-      // Sort descending by date created
-      posts.sort((GroupPost first, GroupPost second) {
-        if (first.dateCreatedUtc == null || second.dateCreatedUtc == null) {
-          return 0;
-        } else {
-          return (first.dateCreatedUtc.compareTo(second.dateCreatedUtc));
-        }
-      });
     }
     return posts;
   }
