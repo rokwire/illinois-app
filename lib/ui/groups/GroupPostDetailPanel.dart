@@ -35,11 +35,12 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
   final GroupPost focusedReply;
+  final List<GroupPost> replyThread;
   final Group group;
   final bool hidePostOptions;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.focusedReply, this.hidePostOptions = false});
+      {@required this.group, this.post, this.focusedReply, this.hidePostOptions = false, this.replyThread});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
@@ -258,7 +259,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildPostContent() {
     List<GroupPost> replies;
     if (_focusedReply != null) {
-      replies = [_focusedReply];
+      replies = _generateFocusedThreadList();
     }
     else if (_editingPost != null) {
       replies = [_editingPost];
@@ -291,11 +292,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           _onTapPostLink(url))),
               Padding(
                   padding: EdgeInsets.only(
-                      left: _outerPadding,
-                      right: _outerPadding,
                       bottom: _outerPadding),
-                  child: _buildRepliesWidget(replies: replies, buildSubReplies: _focusedReply != null, showRepliesCount: _focusedReply == null))
+                  child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null))
             ])));
+  }
+  
+  List<GroupPost> _generateFocusedThreadList(){
+    List<GroupPost> result = [];
+    if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
+      result.addAll(widget.replyThread);
+    }
+    if(_focusedReply!=null){
+      result.add(_focusedReply);
+    }
+    
+    return result;
   }
 
   Widget _buildPostEdit() {
@@ -420,8 +431,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       {List<GroupPost> replies,
       double leftPaddingOffset = 0,
       bool nestedReply = false,
-      bool buildSubReplies = false,
-      bool showRepliesCount = true}) {
+      bool showRepliesCount = true,
+      String focusedReplyId,
+      }) {
     List<GroupPost> visibleReplies = _getVisibleReplies(replies);
     if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
@@ -438,21 +450,47 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         optionsIconPath = 'images/icon-groups-options-orange.png';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
-      replyWidgetList.add(Padding(
-          padding: EdgeInsets.only(left: leftPaddingOffset),
-          child: GroupReplyCard(
-              reply: reply,
-              post: widget.post,
-              group: widget.group,
-              iconPath: optionsIconPath,
-              semanticsLabel: "options",
-              showRepliesCount: showRepliesCount,
-              onIconTap: optionsFunctionTap,
-          )));
-      if(buildSubReplies) {
+      replyWidgetList.add(
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: _outerPadding),
+            child: Padding(
+              padding: EdgeInsets.only(left: leftPaddingOffset),
+              child: GroupReplyCard(
+                reply: reply,
+                post: widget.post,
+                group: widget.group,
+                iconPath: optionsIconPath,
+                semanticsLabel: "options",
+                showRepliesCount: showRepliesCount,
+                onIconTap: optionsFunctionTap,
+                onCardTap: (){_onTapReplyCard(reply);},
+            ))));
+      if(reply?.id == focusedReplyId) {
+        if(AppCollection.isCollectionNotEmpty(reply?.replies)){
+          replyWidgetList.add(Container(height: 8,));
+          replyWidgetList.add(
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
+                    color: Styles().colors.fillColorPrimary,
+                    child: Text("Replies",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontFamily: Styles().fontFamilies.medium,
+                          color: Styles().colors.white)
+                    ),
+                  )
+                )
+              ],
+            )
+
+          );
+        }
         replyWidgetList.add(_buildRepliesWidget(
             replies: reply?.replies,
-            leftPaddingOffset: (leftPaddingOffset + 5),
+            leftPaddingOffset: (leftPaddingOffset /*+ 5*/),
             nestedReply: true));
       }
     }
@@ -461,6 +499,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: replyWidgetList));
+  }
+
+  void _onTapReplyCard(GroupPost reply){
+    List<GroupPost> thread = [];
+    if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
+      thread.addAll(widget.replyThread);
+    }
+    if(_focusedReply!=null) {
+      thread.add(_focusedReply);
+    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
 
   List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {

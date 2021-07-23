@@ -1132,9 +1132,10 @@ class GroupReplyCard extends StatefulWidget {
   final String iconPath;
   final String semanticsLabel;
   final Function onIconTap;
+  final Function onCardTap;
   final bool showRepliesCount;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1209,15 +1210,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 visible: isRepliesLabelVisible,
                 child:
                 GestureDetector(
-                  onTap: _onTapCard,
+                  onTap: widget.onCardTap ?? _onTapCard,
                   child: Container(
-                  child: Row(children: [
-                    Expanded(child: Container()),
-                    Container(
-                      child: Text("$visibleRepliesCount $repliesLabel",
-                         style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline)
+                    child: Row(children: [
+                      Expanded(child: Container()),
+                      Container(
+                        child: Text("$visibleRepliesCount $repliesLabel",
+                           style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline)
+                        )
                       )
-                    )
                 ],),)))
             ])));
   }
