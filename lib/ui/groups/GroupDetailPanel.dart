@@ -230,7 +230,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    _postBuildCallBack();
     Widget content;
     if (_isLoading) {
       content = _buildLoadingContent();
@@ -991,9 +990,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTab(_DetailTab tab) {
-    setState(() {
-      _currentTab = tab;
-    });
+    if (_currentTab != tab) {
+      setState(() {
+        _currentTab = tab;
+      });
+      
+      if ((_currentTab == _DetailTab.Posts) && AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
+        _schedulePostsScroll();
+      }
+    }
   }
 
   void _onTapLeave() {
@@ -1085,18 +1090,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group)));
   }
 
-  void _postBuildCallBack() {
+  void _schedulePostsScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToPosts();
+      _scrollToLastPost();
     });
   }
 
-  void _scrollToPosts() {
-    if ((_currentTab == _DetailTab.Posts) && AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
-      BuildContext currentContext = _lastPostKey?.currentContext ?? _postsKey?.currentContext;
-      if (currentContext != null) {
-        Scrollable.ensureVisible(currentContext);
-      }
+  void _scrollToLastPost() {
+    BuildContext currentContext = _lastPostKey?.currentContext ?? _postsKey?.currentContext;
+    if (currentContext != null) {
+      Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
     }
   }
 
