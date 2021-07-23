@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show GroupPost reply thread [#581](https://github.com/rokwire/illinois-app/issues/581).
 - Show group post dates as time interval since now [#580](https://github.com/rokwire/illinois-app/issues/580).
 - Reply widget clean up [#584](https://github.com/rokwire/illinois-app/issues/584).
+- Enhanced scrolling on group reply [#587](https://github.com/rokwire/illinois-app/issues/587).
 
 ## [2.6.8] - 2021-07-22
 ### Changed
