@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Groups.dart';
@@ -30,7 +33,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class GroupPostDetailPanel extends StatefulWidget {
   final GroupPost post;
@@ -55,14 +57,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
-  final ItemScrollController _positionedScrollController =
-      ItemScrollController();
+  ScrollController _scrollController = ScrollController();
   String _selectedReplyId;
   GroupPost _editingPost;
 
   bool _loading = false;
 
   final GlobalKey _sliverHeaderKey = GlobalKey();
+  final GlobalKey _postEditKey = GlobalKey();
+  final GlobalKey _scrollContainerKey = GlobalKey();
   double _sliverHeaderHeight;
 
   @override
@@ -108,11 +111,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         bottomNavigationBar: TabBarWidget(),
         body: Stack(children: [
           Stack(alignment: Alignment.topCenter, children: [
-            ScrollablePositionedList.builder(
-                itemCount: 2,
-                itemBuilder: (context, index) =>
-                    _buildPositionedItem(context, index),
-                itemScrollController: _positionedScrollController),
+            SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
+              Column(children: [
+                _buildPostContent(),
+                _buildPostEdit(),
+            ],)),
             Visibility(
                 visible: !_isCreatePost,
                 child: Container(
@@ -245,17 +248,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]));
   }
 
-  Widget _buildPositionedItem(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        return _buildPostContent();
-      case 1:
-        return _buildPostEdit();
-      default:
-        return Container();
-    }
-  }
-
   Widget _buildPostContent() {
     List<GroupPost> replies;
     if (_focusedReply != null) {
@@ -313,6 +305,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     bool currentUserIsMemberOrAdmin =
         widget.group?.currentUserIsMemberOrAdmin ?? false;
     return Visibility(
+        key: _postEditKey,
         visible: currentUserIsMemberOrAdmin,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
@@ -977,9 +970,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _scrollToPostEdit() {
-    // index = 1 is the index of the post edit control
-    _positionedScrollController.scrollTo(
-        index: 1, duration: Duration(milliseconds: 10));
+
+    BuildContext postEditContext = _postEditKey?.currentContext;
+    //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
+    RenderObject renderObject = postEditContext?.findRenderObject();
+    RenderAbstractViewport viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
+    double postEditTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
+
+    BuildContext scrollContainerContext = _scrollContainerKey?.currentContext;
+    RenderObject scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
+    double scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size?.height : null;
+
+    if ((scrollContainerHeight != null) && (postEditTop != null)) {
+      double offset = postEditTop - scrollContainerHeight + 120;
+      offset = max(offset, _scrollController.position.minScrollExtent);
+      offset = min(offset, _scrollController.position.maxScrollExtent);
+      _scrollController.animateTo(offset, duration: Duration(milliseconds: 1), curve: Curves.easeIn);
+    }
+
   }
 
   void _clearSelectedReplyId() {
