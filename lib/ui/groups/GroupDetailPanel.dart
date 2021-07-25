@@ -82,14 +82,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   GlobalKey          _firstPostKey = GlobalKey();
   GlobalKey          _lastPostKey = GlobalKey();
   ScrollController   _scrollController;
+  
   BuildContext       _firstPostContext;
   double             _firstPostTop;
-  double             _firstPostBottom;
-  bool               _lastPostReached;
+  double             _firstPostHeight;
+  
   BuildContext       _scrollContainerContext;
   double             _scrollContainerHeight;
-  bool               _loadingPostsPage;
+  
+  bool               _lastPostReached;
   double             _lastScrollOffset;
+
+  bool               _loadingPostsPage;
 
   bool get _isMember {
     if(_group?.members?.isNotEmpty ?? false){
@@ -1183,7 +1187,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       RenderObject renderObject = firstPostContext?.findRenderObject();
       RenderAbstractViewport viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
       _firstPostTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
-      _firstPostBottom = viewport?.getOffsetToReveal(renderObject, 1.0)?.offset;
+      _firstPostHeight = (renderObject is RenderBox) ? renderObject.size?.height : null;
       _firstPostContext = firstPostContext;
     }
 
@@ -1194,8 +1198,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _scrollContainerContext = scrollContainerContext;
     }
 
-    if ((_currentTab == _DetailTab.Posts) && (_firstPostTop != null) && (_firstPostBottom != null) && (_lastPostReached == true) && (_scrollContainerHeight != null) && (_lastScrollOffset != null) && (_scrollController.offset < _lastScrollOffset)) {
-      bool firstPostVisible = (_scrollController.offset < (_firstPostTop + _firstPostBottom)) && (_firstPostTop < (_scrollController.offset + _scrollContainerHeight));
+    if ((_currentTab == _DetailTab.Posts) && (_firstPostTop != null) && (_firstPostHeight != null) && (_lastPostReached == true) && (_scrollContainerHeight != null) && (_lastScrollOffset != null) && (_scrollController.offset < _lastScrollOffset)) {
+      bool firstPostVisible = (_scrollController.offset < (_firstPostTop + _firstPostHeight)) && (_firstPostTop < (_scrollController.offset + _scrollContainerHeight));
       if (firstPostVisible && (_loadingPostsPage != true)) {
         _loadNextPostsPage();
       }
