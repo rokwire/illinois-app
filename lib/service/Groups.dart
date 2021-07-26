@@ -439,7 +439,7 @@ class Groups /* with Service */ {
     Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, null);
+      NotificationService().notify(notifyGroupPostsUpdated, 1);
       return true;
     } else {
       Log.e('Failed to create group post. Response: ${response?.body}');
@@ -456,7 +456,7 @@ class Groups /* with Service */ {
     Response response = await Network().put(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, null);
+      NotificationService().notify(notifyGroupPostsUpdated, 0);
       return true;
     } else {
       Log.e('Failed to update group post. Response: ${response?.body}');
@@ -472,7 +472,7 @@ class Groups /* with Service */ {
     Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, null);
+      NotificationService().notify(notifyGroupPostsUpdated, -1);
       return true;
     } else {
       Log.e('Failed to delete group post. Response: ${response?.body}');

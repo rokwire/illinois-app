@@ -1487,6 +1487,7 @@
     "panel.group_detail.button.browse.title":  "Browse",
     "panel.group_detail.button.create_event.title":  "Create event",
     "panel.group_detail.button.all_posts.title": "See more",
+    "panel.group_detail.button.show_older.title": "Show older",
     "panel.group_detail.label.posts": "Posts",
     "panel.group_detail.label.about_us":  "About us",
     "panel.group_detail.label.title.public":  "This is a Public Group",
