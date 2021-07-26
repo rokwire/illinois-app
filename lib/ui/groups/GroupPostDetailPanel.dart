@@ -210,36 +210,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                               true,
                                                         ))))))
                                   ])),
-                          Semantics(
-                              sortKey: OrdinalSortKey(2),
-                              container: true,
-                              child: Padding(
-                                  padding: EdgeInsets.only(top: 4, right: _outerPadding),
-                                  child: Text(
-                                      AppString.getDefaultEmptyString(
-                                          value: _post?.member?.name ),
-                                      style: TextStyle(
-                                          fontFamily:
-                                              Styles().fontFamilies.medium,
-                                          fontSize: 20,
-                                          color: Styles()
-                                              .colors
-                                              .fillColorPrimary)))),
-                          Semantics(
-                              sortKey: OrdinalSortKey(3),
-                              container: true,
-                              child: Padding(
-                                  padding: EdgeInsets.only(top: 3, right: _outerPadding),
-                                  child: Text(
-                                      AppString.getDefaultEmptyString(
-                                          value: _post?.displayDateTime),
-                                      style: TextStyle(
-                                          fontFamily:
-                                              Styles().fontFamilies.medium,
-                                          fontSize: 16,
-                                          color: Styles()
-                                              .colors
-                                              .fillColorPrimary)))),
                         ])))
           ]),
           Visibility(
@@ -272,16 +242,51 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       left: _outerPadding,
                       top: _sliverHeaderHeight ?? 0,
                       right: _outerPadding),
-                  child: Html(
-                      data: AppString.getDefaultEmptyString(value: _post?.body),
-                      style: {
-                        "body": Style(
-                            color: Styles().colors.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies.regular,
-                            fontSize: FontSize(20))
-                      },
-                      onLinkTap: (url, context, attributes, element) =>
-                          _onTapPostLink(url))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Semantics(
+                          sortKey: OrdinalSortKey(2),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      value: _post?.member?.name ),
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies.medium,
+                                      fontSize: 20,
+                                      color: Styles()
+                                          .colors
+                                          .fillColorPrimary)))),
+                      Semantics(
+                          sortKey: OrdinalSortKey(3),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      value: _post?.displayDateTime),
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies.medium,
+                                      fontSize: 16,
+                                      color: Styles()
+                                          .colors
+                                          .fillColorPrimary)))),
+                      Html(
+                          data: AppString.getDefaultEmptyString(value: _post?.body),
+                          style: {
+                            "body": Style(
+                                color: Styles().colors.fillColorPrimary,
+                                fontFamily: Styles().fontFamilies.regular,
+                                fontSize: FontSize(20))
+                          },
+                          onLinkTap: (url, context, attributes, element) =>
+                              _onTapPostLink(url))
+                    ],
+                  )),
               Padding(
                   padding: EdgeInsets.only(
                       bottom: _outerPadding),
@@ -434,6 +439,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     List<Widget> replyWidgetList = [];
     if(AppString.isStringEmpty(focusedReplyId) && AppCollection.isCollectionNotEmpty(visibleReplies) ){
       replyWidgetList.add(_buildRepliesHeader());
+      replyWidgetList.add(Container(height: 8,));
     }
 
     for (int i = 0; i < visibleReplies.length; i++) {
@@ -465,9 +471,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       if(reply?.id == focusedReplyId) {
         if(AppCollection.isCollectionNotEmpty(reply?.replies)){
           replyWidgetList.add(Container(height: 8,));
-          replyWidgetList.add(
-              _buildRepliesHeader()
-          );
+          replyWidgetList.add(_buildRepliesHeader());
         }
         replyWidgetList.add(_buildRepliesWidget(
             replies: reply?.replies,
