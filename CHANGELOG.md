@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
 - GroupsDetailPanel: load older posts with a button [#591](https://github.com/rokwire/illinois-app/issues/591).
 - Updated group posts display time [#593](https://github.com/rokwire/illinois-app/issues/593).
+### Fixed
+- Fixed replies count update [#595](https://github.com/rokwire/illinois-app/issues/595).
 
 ## [2.6.9] - 2021-07-23
 ### Changed
