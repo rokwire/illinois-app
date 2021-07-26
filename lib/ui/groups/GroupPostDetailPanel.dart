@@ -74,6 +74,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     _focusedReply = widget.focusedReply;
+    _sortReplies(_post.replies);
+    _sortReplies(_focusedReply?.replies);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
@@ -210,36 +212,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                               true,
                                                         ))))))
                                   ])),
-                          Semantics(
-                              sortKey: OrdinalSortKey(2),
-                              container: true,
-                              child: Padding(
-                                  padding: EdgeInsets.only(top: 4, right: _outerPadding),
-                                  child: Text(
-                                      AppString.getDefaultEmptyString(
-                                          value: _post?.member?.name ),
-                                      style: TextStyle(
-                                          fontFamily:
-                                              Styles().fontFamilies.medium,
-                                          fontSize: 20,
-                                          color: Styles()
-                                              .colors
-                                              .fillColorPrimary)))),
-                          Semantics(
-                              sortKey: OrdinalSortKey(3),
-                              container: true,
-                              child: Padding(
-                                  padding: EdgeInsets.only(top: 3, right: _outerPadding),
-                                  child: Text(
-                                      AppString.getDefaultEmptyString(
-                                          value: _post?.displayDateTime),
-                                      style: TextStyle(
-                                          fontFamily:
-                                              Styles().fontFamilies.medium,
-                                          fontSize: 16,
-                                          color: Styles()
-                                              .colors
-                                              .fillColorPrimary)))),
                         ])))
           ]),
           Visibility(
@@ -272,16 +244,51 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       left: _outerPadding,
                       top: _sliverHeaderHeight ?? 0,
                       right: _outerPadding),
-                  child: Html(
-                      data: AppString.getDefaultEmptyString(value: _post?.body),
-                      style: {
-                        "body": Style(
-                            color: Styles().colors.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies.regular,
-                            fontSize: FontSize(20))
-                      },
-                      onLinkTap: (url, context, attributes, element) =>
-                          _onTapPostLink(url))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Semantics(
+                          sortKey: OrdinalSortKey(2),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      value: _post?.member?.name ),
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies.medium,
+                                      fontSize: 20,
+                                      color: Styles()
+                                          .colors
+                                          .fillColorPrimary)))),
+                      Semantics(
+                          sortKey: OrdinalSortKey(3),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      value: _post?.displayDateTime),
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies.medium,
+                                      fontSize: 16,
+                                      color: Styles()
+                                          .colors
+                                          .fillColorPrimary)))),
+                      Html(
+                          data: AppString.getDefaultEmptyString(value: _post?.body),
+                          style: {
+                            "body": Style(
+                                color: Styles().colors.fillColorPrimary,
+                                fontFamily: Styles().fontFamilies.regular,
+                                fontSize: FontSize(20))
+                          },
+                          onLinkTap: (url, context, attributes, element) =>
+                              _onTapPostLink(url))
+                    ],
+                  )),
               Padding(
                   padding: EdgeInsets.only(
                       bottom: _outerPadding),
@@ -432,6 +439,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       return Container();
     }
     List<Widget> replyWidgetList = [];
+    if(AppString.isStringEmpty(focusedReplyId) && AppCollection.isCollectionNotEmpty(visibleReplies) ){
+      replyWidgetList.add(_buildRepliesHeader());
+      replyWidgetList.add(Container(height: 8,));
+    }
+
     for (int i = 0; i < visibleReplies.length; i++) {
       if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
@@ -461,30 +473,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       if(reply?.id == focusedReplyId) {
         if(AppCollection.isCollectionNotEmpty(reply?.replies)){
           replyWidgetList.add(Container(height: 8,));
-          replyWidgetList.add(
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-                    color: Styles().colors.fillColorPrimary,
-                    child: Text("Replies",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: Styles().fontFamilies.medium,
-                          color: Styles().colors.white)
-                    ),
-                  )
-                )
-              ],
-            )
-
-          );
+          replyWidgetList.add(_buildRepliesHeader());
         }
         replyWidgetList.add(_buildRepliesWidget(
             replies: reply?.replies,
             leftPaddingOffset: (leftPaddingOffset /*+ 5*/),
-            nestedReply: true));
+            nestedReply: true,
+            focusedReplyId: focusedReplyId
+        ));
       }
     }
     return Padding(
@@ -492,6 +488,34 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: replyWidgetList));
+  }
+
+  Widget _buildRepliesHeader(){
+    return Row(
+      children: [
+        Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
+              color: Styles().colors.fillColorPrimary,
+              child: Text("Replies",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: Styles().fontFamilies.medium,
+                      color: Styles().colors.white)
+              ),
+            )
+        )
+      ],
+    );
+  }
+
+  void _sortReplies(List<GroupPost> replies){
+    if(AppCollection.isCollectionNotEmpty(replies)) {
+      try {
+        replies.sort((post1, post2) =>
+            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
+      } catch (e) {}
+    }
   }
 
   void _onTapReplyCard(GroupPost reply){
@@ -700,10 +724,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
         _post = posts.firstWhere((post) => (post.id == _post?.id));
+        _sortReplies(_post.replies);
         GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
           setState(() {
             _focusedReply = updatedReply;
+            _sortReplies(_focusedReply?.replies);
           });
         }
       } else {
@@ -765,18 +791,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             context,
             Localization().getStringEx(
                 'panel.group.detail.post.create.validation.subject.msg',
-                "Please, populate 'Subject' field"));
+                "Post subject required"));
         return;
       }
     }
     
     String body = _bodyController.text;
     if (AppString.isStringEmpty(body)) {
-      AppAlert.showDialogResult(
-          context,
-          Localization().getStringEx(
-              'panel.group.detail.post.create.validation.body.msg',
-              "Please, populate 'Body' field"));
+      String validationMsg = (_isCreatePost || (_editingPost != null))
+          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
+          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
+      AppAlert.showDialogResult(context, validationMsg);
       return;
     }
     String htmlModifiedBody = _replaceNewLineSymbols(body);
