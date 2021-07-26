@@ -943,10 +943,11 @@ class GroupCard extends StatelessWidget {
     List<Widget> rightContent = <Widget>[];
 
     String privacyStatus;
-    if (group?.hidden == true) {
+    /*if (group?.hidden == true) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.hidden', 'Hidden') ;
     }
-    else if (group?.privacy == GroupPrivacy.private) {
+    else */
+    if (group?.privacy == GroupPrivacy.private) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
     }
 
