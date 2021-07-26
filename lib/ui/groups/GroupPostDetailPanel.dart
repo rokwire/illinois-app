@@ -74,7 +74,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     _focusedReply = widget.focusedReply;
-    _sortReplies(_post.replies);
+    _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
@@ -724,7 +724,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
         _post = posts.firstWhere((post) => (post.id == _post?.id));
-        _sortReplies(_post.replies);
+        _sortReplies(_post?.replies);
         GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
           setState(() {
