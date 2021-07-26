@@ -137,7 +137,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void initState() {
     super.initState();
 
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated, Groups.notifyGroupPostsUpdated]);
+    NotificationService().subscribe(this, [
+      Groups.notifyUserMembershipUpdated,
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupEventsUpdated,
+      Groups.notifyGroupPostsUpdated]);
 
     _loadGroup();
     _loadEvents();
