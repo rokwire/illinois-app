@@ -15,8 +15,6 @@
  */
 
 
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -197,9 +195,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  void _refreshCurrentPosts() {
+  void _refreshCurrentPosts({int delta}) {
     if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
-      int limit = max(_visibleGroupPosts.length, _postsPageSize);
+      int limit = _visibleGroupPosts.length + (delta ?? 0);
       Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost> posts) {
         if (posts != null) {
           setState(() {
@@ -321,7 +319,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadGroup();
       _loadEvents();
     } else if (name == Groups.notifyGroupPostsUpdated) {
-      _refreshCurrentPosts();
+      _refreshCurrentPosts(delta: param is int ? param : null);
     }
   }
 
