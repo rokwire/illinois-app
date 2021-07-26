@@ -432,6 +432,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       return Container();
     }
     List<Widget> replyWidgetList = [];
+    if(AppString.isStringEmpty(focusedReplyId) && AppCollection.isCollectionNotEmpty(visibleReplies) ){
+      replyWidgetList.add(_buildRepliesHeader());
+    }
+
     for (int i = 0; i < visibleReplies.length; i++) {
       if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
@@ -462,29 +466,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         if(AppCollection.isCollectionNotEmpty(reply?.replies)){
           replyWidgetList.add(Container(height: 8,));
           replyWidgetList.add(
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-                    color: Styles().colors.fillColorPrimary,
-                    child: Text("Replies",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: Styles().fontFamilies.medium,
-                          color: Styles().colors.white)
-                    ),
-                  )
-                )
-              ],
-            )
-
+              _buildRepliesHeader()
           );
         }
         replyWidgetList.add(_buildRepliesWidget(
             replies: reply?.replies,
             leftPaddingOffset: (leftPaddingOffset /*+ 5*/),
-            nestedReply: true));
+            nestedReply: true,
+            focusedReplyId: focusedReplyId
+        ));
       }
     }
     return Padding(
@@ -492,6 +482,25 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: replyWidgetList));
+  }
+
+  Widget _buildRepliesHeader(){
+    return Row(
+      children: [
+        Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
+              color: Styles().colors.fillColorPrimary,
+              child: Text("Replies",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: Styles().fontFamilies.medium,
+                      color: Styles().colors.white)
+              ),
+            )
+        )
+      ],
+    );
   }
 
   void _onTapReplyCard(GroupPost reply){
