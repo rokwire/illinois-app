@@ -35,7 +35,7 @@ class Group {
 	String              type;
 	String              title;
   String              description;
-  GroupPrivacy        privacy;
+  GroupPrivacy        _privacy;
 	bool                certified;
 	bool                hidden;
   DateTime            dateCreatedUtc;
@@ -71,7 +71,7 @@ class Group {
     try { type            = json['type'];       } catch(e) { print(e.toString()); }
     try { title           = json['title'];      } catch(e) { print(e.toString()); }
     try { description     = json['description'];  } catch(e) { print(e.toString()); }
-    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
+    try { _privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
     try { certified       = json['certified']; } catch(e) { print(e.toString()); }
     try { hidden          = json['hidden']; } catch(e) { print(e.toString()); }
     try { dateCreatedUtc  = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
@@ -93,7 +93,7 @@ class Group {
     json['type']                 = type;
     json['title']                = title;
     json['description']          = description;
-    json['privacy']              = groupPrivacyToString(privacy);
+    json['privacy']              = groupPrivacyToString(_privacy);
     json['certified']            = certified;
     json['hidden']               = hidden;
     json['date_created']         = groupUtcDateTimeToString(dateCreatedUtc);
@@ -113,7 +113,7 @@ class Group {
     type            = other?.type;
     title           = other?.title;
     description     = other?.description;
-    privacy         = other?.privacy;
+    _privacy        = other?._privacy;
     certified       = other?.certified;
     hidden          = other?.hidden;
     dateCreatedUtc  = other?.dateCreatedUtc;
@@ -124,6 +124,15 @@ class Group {
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
     questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
     membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
+  }
+
+  GroupPrivacy get privacy {
+    return _privacy;
+  }
+
+  set privacy(GroupPrivacy value) {
+    _privacy = value;
+    hidden = (value == GroupPrivacy.private);
   }
 
   List<Member> getMembersByStatus(GroupMemberStatus status){
