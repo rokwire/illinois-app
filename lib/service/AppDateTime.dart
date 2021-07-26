@@ -267,35 +267,6 @@ class AppDateTime with Service {
     }
   }
 
-  static String formatTimeIntervalSinceNow(DateTime date) {
-    if (date != null) {
-      DateTime now = DateTime.now();
-      if (date.compareTo(now) < 0) {
-        Duration difference = DateTime.now().difference(date);
-        if (difference.inSeconds < 60) {
-          return "now";
-        }
-        else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes}min";
-        }
-        else if (difference.inHours < 24) {
-          return "${difference.inHours}h";
-        }
-        else if (difference.inDays < 30) {
-          return "${difference.inDays}d";
-        }
-        else {
-          int differenceInMonths = difference.inDays ~/ 30;
-          if (differenceInMonths < 12) {
-            return "${differenceInMonths}m";
-          }
-        }
-      }
-      return DateFormat("MMM dd, yyyy H:mm a").format(date);
-    }
-    return null;
-  }
-
   timezone.TZDateTime changeTimeZoneToDate(DateTime time, timezone.Location location){
     try{
      return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
