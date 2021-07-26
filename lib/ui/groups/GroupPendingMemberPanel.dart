@@ -102,7 +102,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                         color: Styles().colors.fillColorPrimary
                     ),
                   ),
-                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget?.member?.dateCreated, format: "MMM dd, yyyy")??""),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget?.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: 14,
