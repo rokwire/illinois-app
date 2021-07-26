@@ -1492,7 +1492,7 @@
     "panel.group_detail.label.title.public":  "This is a Public Group",
     "panel.group_detail.label.description.public":  "Only admins can see members.\nOnly members can see posts.\nAll users can see group events, unless they are marked private.\nAll users can see admins.",
     "panel.group_detail.label.title.private":  "This is a Private Group",
-    "panel.group_detail.label.description.private":  "Only admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.",
+    "panel.group_detail.label.description.private":  "This group is only visible to members.\nAnyone can search for the group with the exact name.\nOnly admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.",
     "panel.group_detail.label.title.hidden":  "This is a Hidden Group",
     "panel.group_detail.label.description.hidden":  "Only admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.",
     "panel.group_detail.label.admins":  "Admins",
