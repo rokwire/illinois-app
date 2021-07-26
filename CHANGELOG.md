@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupsDetailPanel: load older posts with a button [#591](https://github.com/rokwire/illinois-app/issues/591).
 - Updated group posts display time [#593](https://github.com/rokwire/illinois-app/issues/593).
 - Validation messages for Group Posts / Replies [#600](https://github.com/rokwire/illinois-app/issues/600).
-- Update GroupPostDetailPanel[#590](https://github.com/rokwire/illinois-app/issues/590).
+- Update GroupPostDetailPanel [#590](https://github.com/rokwire/illinois-app/issues/590).
+- Remove hidden group attribute, treat private groups as hidden [#599](https://github.com/rokwire/illinois-app/issues/599).
 ### Fixed
 - Fixed replies count update [#595](https://github.com/rokwire/illinois-app/issues/595).
 - Display the right group update time [#597](https://github.com/rokwire/illinois-app/issues/597).
