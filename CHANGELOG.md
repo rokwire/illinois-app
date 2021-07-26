@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed replies count update [#595](https://github.com/rokwire/illinois-app/issues/595).
 - Display the right group update time [#597](https://github.com/rokwire/illinois-app/issues/597).
+- Refresh StudentGuide on pull to refresh from Campus Reminders [#605](https://github.com/rokwire/illinois-app/issues/605).
 
 ## [2.6.9] - 2021-07-23
 ### Changed
