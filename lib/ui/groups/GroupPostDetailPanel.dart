@@ -561,7 +561,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _deletePost() {
     _setLoading(true);
-    Groups().deletePost(widget.group?.id, _post?.id).then((succeeded) {
+    Groups().deletePost(widget.group?.id, _post).then((succeeded) {
       _setLoading(false);
       if (succeeded) {
         Navigator.of(context).pop();
@@ -638,7 +638,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
-                _deleteReply(reply?.id);
+                _deleteReply(reply);
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
@@ -646,10 +646,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]);
   }
 
-  void _deleteReply(String replyId) {
+  void _deleteReply(GroupPost reply) {
     _setLoading(true);
     _clearSelectedReplyId();
-    Groups().deletePost(widget.group?.id, replyId).then((succeeded) {
+    Groups().deletePost(widget.group?.id, reply).then((succeeded) {
       _setLoading(false);
       if (!succeeded) {
         AppAlert.showDialogResult(

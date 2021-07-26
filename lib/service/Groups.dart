@@ -439,7 +439,7 @@ class Groups /* with Service */ {
     Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, 1);
+      NotificationService().notify(notifyGroupPostsUpdated, (post.parentId == null) ? 1 : null);
       return true;
     } else {
       Log.e('Failed to create group post. Response: ${response?.body}');
@@ -448,7 +448,7 @@ class Groups /* with Service */ {
   }
 
   Future<bool> updatePost(String groupId, GroupPost post) async {
-    if (AppString.isStringEmpty(groupId) || (post == null)) {
+    if (AppString.isStringEmpty(groupId) || AppString.isStringEmpty(post?.id)) {
       return false;
     }
     String requestBody = AppJson.encode(post.toJson(update: true));
@@ -456,7 +456,7 @@ class Groups /* with Service */ {
     Response response = await Network().put(requestUrl, auth: NetworkAuth.User, body: requestBody);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, 0);
+      NotificationService().notify(notifyGroupPostsUpdated);
       return true;
     } else {
       Log.e('Failed to update group post. Response: ${response?.body}');
@@ -464,15 +464,15 @@ class Groups /* with Service */ {
     }
   }
 
-  Future<bool> deletePost(String groupId, String postId) async {
-    if (AppString.isStringEmpty(groupId) || AppString.isStringEmpty(postId)) {
+  Future<bool> deletePost(String groupId, GroupPost post) async {
+    if (AppString.isStringEmpty(groupId) || AppString.isStringEmpty(post?.id)) {
       return false;
     }
-    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/$postId';
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post.id}';
     Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupPostsUpdated, -1);
+      NotificationService().notify(notifyGroupPostsUpdated, (post.parentId == null) ? -1 : null);
       return true;
     } else {
       Log.e('Failed to delete group post. Response: ${response?.body}');
