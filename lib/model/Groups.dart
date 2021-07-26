@@ -23,6 +23,7 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:intl/intl.dart';
 
 //////////////////////////////
 // Group
@@ -762,7 +763,32 @@ class GroupPost {
   String get displayDateTime {
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
-    return AppDateTime.formatTimeIntervalSinceNow(deviceDateTime);
+    if (deviceDateTime != null) {
+      DateTime now = DateTime.now();
+      if (deviceDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(deviceDateTime);
+        if (difference.inSeconds < 60) {
+          return "now";
+        }
+        else if (difference.inMinutes < 60) {
+          return "${difference.inMinutes}min";
+        }
+        else if (difference.inHours < 24) {
+          return "${difference.inHours}h";
+        }
+        else if (difference.inDays < 30) {
+          return "${difference.inDays}d";
+        }
+        else {
+          int differenceInMonths = difference.inDays ~/ 30;
+          if (differenceInMonths < 12) {
+            return "${differenceInMonths}m";
+          }
+        }
+      }
+      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+    }
+    return null;
   }
 
   bool get isUpdated {
