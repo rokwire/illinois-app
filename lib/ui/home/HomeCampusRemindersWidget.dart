@@ -61,7 +61,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        _updateReminderItems();
+        StudentGuide().refresh();
       });
     }
 
