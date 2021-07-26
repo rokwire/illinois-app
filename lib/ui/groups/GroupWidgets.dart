@@ -993,7 +993,7 @@ class GroupCard extends StatelessWidget {
   }
 
   String get _timeUpdatedText {
-    return "Updated about 2 hours ago"; //TBD
+    return group.displayUpdateTime ?? '';
   }
 }
 

@@ -791,18 +791,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             context,
             Localization().getStringEx(
                 'panel.group.detail.post.create.validation.subject.msg',
-                "Please, populate 'Subject' field"));
+                "Post subject required"));
         return;
       }
     }
     
     String body = _bodyController.text;
     if (AppString.isStringEmpty(body)) {
-      AppAlert.showDialogResult(
-          context,
-          Localization().getStringEx(
-              'panel.group.detail.post.create.validation.body.msg',
-              "Please, populate 'Body' field"));
+      String validationMsg = (_isCreatePost || (_editingPost != null))
+          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
+          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
+      AppAlert.showDialogResult(context, validationMsg);
       return;
     }
     String htmlModifiedBody = _replaceNewLineSymbols(body);
