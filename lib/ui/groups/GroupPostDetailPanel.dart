@@ -74,6 +74,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     _focusedReply = widget.focusedReply;
+    _sortReplies(_post.replies);
+    _sortReplies(_focusedReply?.replies);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
@@ -507,6 +509,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     );
   }
 
+  void _sortReplies(List<GroupPost> replies){
+    if(AppCollection.isCollectionNotEmpty(replies)) {
+      try {
+        replies.sort((post1, post2) =>
+            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
+      } catch (e) {}
+    }
+  }
+
   void _onTapReplyCard(GroupPost reply){
     List<GroupPost> thread = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
@@ -713,10 +724,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
         _post = posts.firstWhere((post) => (post.id == _post?.id));
+        _sortReplies(_post.replies);
         GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
           setState(() {
             _focusedReply = updatedReply;
+            _sortReplies(_focusedReply?.replies);
           });
         }
       } else {
