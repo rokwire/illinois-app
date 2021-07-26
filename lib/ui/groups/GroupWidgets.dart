@@ -943,17 +943,18 @@ class GroupCard extends StatelessWidget {
     List<Widget> rightContent = <Widget>[];
 
     String privacyStatus;
-    if (group?.hidden == true) {
-      privacyStatus = "Hidden";
+    /*if (group?.hidden == true) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.hidden', 'Hidden') ;
     }
-    else if (group?.privacy == GroupPrivacy.private) {
-      privacyStatus = "Private";
+    else */
+    if (group?.privacy == GroupPrivacy.private) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
     }
 
     if (privacyStatus != null) {
       rightContent.add(
         Semantics(
-          label: "status: $privacyStatus ,for: ",
+          label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [privacyStatus]),
           excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

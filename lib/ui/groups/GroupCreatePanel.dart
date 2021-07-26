@@ -29,7 +29,6 @@ import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -150,8 +149,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             Container(height: 1, color: Styles().colors.surfaceAccent,),
                             Container(height: 24,),
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY"), null)),
-                            _buildHideGroupSection(),
+                            //Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: _buildSectionTitle( Localization().getStringEx("panel.groups_create.privacy.title", "PRIVACY"), null)),
+                            //_buildHideGroupSection(),
                             Container(height: 8),
                             _buildPrivacyDropDown(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
@@ -277,7 +276,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
   //
   //Hidden Group
-  Widget _buildHideGroupSection(){
+  /*Widget _buildHideGroupSection(){
     return Semantics(container: true, child:
       Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -304,7 +303,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     } else if (mounted) {
       setState(() {});
     }
-  }
+  }*/
 
   //Description
   //Name
@@ -364,6 +363,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
               buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
               items: _groupCategories,
+              initialSelectedValue: _group?.category,
               constructTitle: (item) => item,
               onValueChanged: (value) {
                 setState(() {
@@ -498,7 +498,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:  GroupDropDownButton(
-              enabled: !(_group?.hidden ?? false),
+              enabled: true /*!(_group?.hidden ?? false)*/,
               emptySelectionText: Localization().getStringEx("panel.groups_create.privacy.hint.default","Select privacy setting.."),
               buttonHint: Localization().getStringEx("panel.groups_create.privacy.hint", "Double tap to show privacy options"),
               items: _groupPrivacyOptions,

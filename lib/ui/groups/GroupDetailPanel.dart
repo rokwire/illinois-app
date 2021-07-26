@@ -760,13 +760,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildPrivacyDescription() {
     String title, description;
-    if (_group?.hidden == true) {
+    /*if (_group?.hidden == true) {
       title = Localization().getStringEx("panel.group_detail.label.title.hidden", 'This is a Hidden Group');
       description = Localization().getStringEx("panel.group_detail.label.description.hidden", 'Only admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.');
     }
-    else if (_group?.privacy == GroupPrivacy.private) {
+    else */
+    if (_group?.privacy == GroupPrivacy.private) {
       title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
-      description = Localization().getStringEx("panel.group_detail.label.description.private", 'Only admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.');
+      description = Localization().getStringEx("panel.group_detail.label.description.private", 'This group is only visible to members.\nAnyone can search for the group with the exact name.\nOnly admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.');
     }
     else if (_group?.privacy == GroupPrivacy.public) {
       title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');

@@ -24,7 +24,6 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
-import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -101,10 +100,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildTagsLayout(),
                             Container(color: Styles().colors.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"), "images/icon-privacy.png"),
-                              _buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null, topPadding: 12)
+                              //_buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null)
                             ]))),
-                            _buildHideGroupSection(),
-                            Container(height: 8, color: Styles().colors.background),
+                            //_buildHideGroupSection(),
+                            Container(height: 12, color: Styles().colors.background),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
                             Container(height: 24,  color: Styles().colors.background,),
@@ -275,7 +274,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
   //
   //Hidden Group
-  Widget _buildHideGroupSection(){
+  /*Widget _buildHideGroupSection(){
     return Semantics(container: true, child:
       Container(
         color: Styles().colors.background,
@@ -303,7 +302,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     } else if (mounted) {
       setState(() {});
     }
-  }
+  }*/
   //
 
   //Description
@@ -588,7 +587,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           explicitChildNodes: true,
           child: Container(
               child:  GroupDropDownButton(
-                  enabled: !(_group?.hidden ?? false),
+                  enabled: true /*!(_group?.hidden ?? false)*/,
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
