@@ -1209,9 +1209,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         maxLines: 1,
                         textOverflow: TextOverflow.ellipsis)
                   }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
-              Visibility(
-                visible: isRepliesLabelVisible,
-                child:
                 GestureDetector(
                   onTap: widget.onCardTap ?? _onTapCard,
                   child: Container(
@@ -1221,13 +1218,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: Container(
                             child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
                                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),),
-                      Expanded(child: Container(
-                        child: Text("$visibleRepliesCount $repliesLabel",
-                            textAlign: TextAlign.right,
-                            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline,)
-                      )),
-                      )
-                ],),)))
+                      Visibility(
+                        visible: isRepliesLabelVisible,
+                        child: Expanded(child: Container(
+                          child: Text("$visibleRepliesCount $repliesLabel",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline,)
+                        )),
+                      ))
+                ],),))
             ])));
   }
 
