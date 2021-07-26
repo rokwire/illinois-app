@@ -1012,20 +1012,19 @@ class GroupPostCard extends StatefulWidget {
 }
 
 class _GroupPostCardState extends State<GroupPostCard> {
-  int _visibleRepliesCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _calculateVisibleRepliesCount(widget.post?.replies);
   }
 
   @override
   Widget build(BuildContext context) {
     String memberName = widget.post?.member?.name;
     String htmlBody = widget.post?.body;
-    bool isRepliesLabelVisible = (_visibleRepliesCount > 0);
-    String repliesLabel = (_visibleRepliesCount == 1)
+    int visibleRepliesCount = getVisibleRepliesCount();
+    bool isRepliesLabelVisible = (visibleRepliesCount > 0);
+    String repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
     return Stack(alignment: Alignment.topRight, children: [
@@ -1051,7 +1050,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(value: _visibleRepliesCount.toString()),
+                                child: Text(AppString.getDefaultEmptyString(value: visibleRepliesCount.toString()),
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
@@ -1109,16 +1108,20 @@ class _GroupPostCardState extends State<GroupPostCard> {
     }
   }
 
-  void _calculateVisibleRepliesCount(List<GroupPost> replies) {
-    if (AppCollection.isCollectionNotEmpty(replies)) {
-      bool currentUserIsMemberOrAdmin = widget.group?.currentUserIsMemberOrAdmin ?? false;
+  int getVisibleRepliesCount() {
+    return evalVisibleRepliesCount(widget.post?.replies, widget.group?.currentUserIsMemberOrAdmin);
+  }
+
+  static int evalVisibleRepliesCount(List<GroupPost> replies, bool memberOrAdmin) {
+    int result = 0;
+    if (replies != null) {
       for (GroupPost reply in replies) {
-        if ((reply.private == false) || (reply.private == null) || currentUserIsMemberOrAdmin) {
-          _visibleRepliesCount++;
+        if ((reply.private != true) || (memberOrAdmin == true)) {
+          result += 1 + evalVisibleRepliesCount(reply.replies, memberOrAdmin);
         }
-        _calculateVisibleRepliesCount(reply?.replies);
       }
     }
+    return result;
   }
 }
 
