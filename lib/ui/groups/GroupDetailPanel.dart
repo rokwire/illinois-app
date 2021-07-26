@@ -77,8 +77,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   _DetailTab         _currentTab = _DetailTab.Events;
 
   GlobalKey          _lastPostKey = GlobalKey();
+  bool               _refreshingPosts;
   bool               _loadingPostsPage;
   bool               _hasMorePosts;
+  bool               _shouldScrollToLastAfterRefresh;
 
   bool get _isMember {
     if(_group?.members?.isNotEmpty ?? false){
@@ -198,7 +200,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _refreshCurrentPosts({int delta}) {
     if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
       int limit = _visibleGroupPosts.length + (delta ?? 0);
+      _refreshingPosts = true;
       Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost> posts) {
+        _refreshingPosts = false;
         if (posts != null) {
           setState(() {
             _visibleGroupPosts = posts;
@@ -206,7 +210,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               _hasMorePosts = false;
             }
           });
+          if (_shouldScrollToLastAfterRefresh == true) {
+            _scheduleLastPostScroll();
+          }
         }
+        _shouldScrollToLastAfterRefresh = null;
       });
     }
   }
@@ -1054,7 +1062,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       
       if ((_currentTab == _DetailTab.Posts)) {
         if (AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
-          _schedulePostsScroll();
+          _scheduleLastPostScroll();
         }
       }
     }
@@ -1146,10 +1154,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group))).then((result) {
+      if (result == true) {
+        if (_refreshingPosts == true) {
+          _shouldScrollToLastAfterRefresh = true;
+        }
+        else {
+          _scheduleLastPostScroll();
+        }
+      }
+    });
   }
 
-  void _schedulePostsScroll() {
+  void _scheduleLastPostScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToLastPost();
     });

@@ -812,7 +812,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       _clearSelectedReplyId();
       _clearBodyControllerContent();
       if (_isCreatePost) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true);
       } else {
         _reloadPost();
       }
