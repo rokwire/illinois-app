@@ -145,7 +145,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _isMyGroupsLoading = true;
     });
     Groups().loadGroups(myGroups: true).then((List<Group> groups){
-      if(AppCollection.isCollectionNotEmpty(groups)) {
+      if(groups != null) {
         List<Group> sortedGroups = _sortGroups(groups);
         _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
         _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();

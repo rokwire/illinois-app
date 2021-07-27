@@ -35,9 +35,8 @@ class Group {
 	String              type;
 	String              title;
   String              description;
-  GroupPrivacy        _privacy;
+  GroupPrivacy        privacy;
 	bool                certified;
-	bool                hidden;
   DateTime            dateCreatedUtc;
   DateTime            dateUpdatedUtc;
 
@@ -71,9 +70,8 @@ class Group {
     try { type            = json['type'];       } catch(e) { print(e.toString()); }
     try { title           = json['title'];      } catch(e) { print(e.toString()); }
     try { description     = json['description'];  } catch(e) { print(e.toString()); }
-    try { _privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
+    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
     try { certified       = json['certified']; } catch(e) { print(e.toString()); }
-    try { hidden          = json['hidden']; } catch(e) { print(e.toString()); }
     try { dateCreatedUtc  = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
     try { dateUpdatedUtc  = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
     try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
@@ -93,9 +91,8 @@ class Group {
     json['type']                 = type;
     json['title']                = title;
     json['description']          = description;
-    json['privacy']              = groupPrivacyToString(_privacy);
+    json['privacy']              = groupPrivacyToString(privacy);
     json['certified']            = certified;
-    json['hidden']               = hidden;
     json['date_created']         = groupUtcDateTimeToString(dateCreatedUtc);
     json['date_updated']         = groupUtcDateTimeToString(dateUpdatedUtc);
     json['image_url']            = imageURL;
@@ -113,9 +110,8 @@ class Group {
     type            = other?.type;
     title           = other?.title;
     description     = other?.description;
-    _privacy        = other?._privacy;
+    privacy         = other?.privacy;
     certified       = other?.certified;
-    hidden          = other?.hidden;
     dateCreatedUtc  = other?.dateCreatedUtc;
     dateUpdatedUtc  = other?.dateUpdatedUtc;
     imageURL        = other?.imageURL;
@@ -124,15 +120,6 @@ class Group {
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
     questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
     membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
-  }
-
-  GroupPrivacy get privacy {
-    return _privacy;
-  }
-
-  set privacy(GroupPrivacy value) {
-    _privacy = value;
-    hidden = (value == GroupPrivacy.private);
   }
 
   List<Member> getMembersByStatus(GroupMemberStatus status){
@@ -244,10 +231,6 @@ class Group {
     return membersCount;
   }
 
-  bool get isHidden{
-    return hidden ?? false;
-  }
-
   String get displayUpdateTime {
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateUpdatedUtc);
     //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
@@ -292,6 +275,29 @@ class Group {
         [value]);
     }
     return null;
+  }
+
+  static List<Group> listFromJson(List<dynamic> json) {
+    List<Group> values;
+    if (json != null) {
+      values = <Group>[];
+      for (dynamic entry in json) {
+          try { values.add(Group.fromJson((entry as Map)?.cast<String, dynamic>())); }
+          catch(e) { print(e?.toString()); }
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic> listToJson(List<Group> values) {
+    List<dynamic> json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (Group value in values) {
+        json.add(value?.toJson());
+      }
+    }
+    return json;
   }
 }
 
