@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Typo in Student Guide feature Bus Pass [#609](https://github.com/rokwire/illinois-app/issues/609).
 ### Changed
+- Completely removed group's hidden attribute and all related stuff [#611](https://github.com/rokwire/illinois-app/issues/611).
 - GroupsDetailPanel: refresh posts when getting back from posts detail panel [#613](https://github.com/rokwire/illinois-app/issues/613).
 
 ## [2.6.10] - 2021-07-26
