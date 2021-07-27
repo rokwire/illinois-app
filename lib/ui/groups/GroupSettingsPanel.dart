@@ -102,7 +102,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"), "images/icon-privacy.png"),
                               //_buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null)
                             ]))),
-                            //_buildHideGroupSection(),
                             Container(height: 12, color: Styles().colors.background),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
@@ -272,38 +271,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             )
         ));
   }
-  //
-  //Hidden Group
-  /*Widget _buildHideGroupSection(){
-    return Semantics(container: true, child:
-      Container(
-        color: Styles().colors.background,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Semantics(label:Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
-            hint: Localization().getStringEx("panel.groups_create.button.hide.hint",""), toggled: _group?.hidden ?? false, excludeSemantics: true, child:
-            ToggleRibbonButton(
-              height: null,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              label: Localization().getStringEx("panel.groups_create.button.hide.title","Hide this group"),
-              toggled: _group?.hidden ?? false,
-              onTap: _onHideToggled,
-              context: context,
-              border: Border.all(color: Styles().colors.surfaceAccent),
-              borderRadius:
-              BorderRadius.all(Radius.circular(4)),
-            ))));
-
-  }
-
-  void _onHideToggled() {
-    _group.hidden = !(_group?.hidden ?? false);
-    if (_group.hidden) {
-      _onPrivacyChanged(GroupPrivacy.private);
-    } else if (mounted) {
-      setState(() {});
-    }
-  }*/
-  //
 
   //Description
   Widget _buildDescriptionField() {
@@ -587,7 +554,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           explicitChildNodes: true,
           child: Container(
               child:  GroupDropDownButton(
-                  enabled: true /*!(_group?.hidden ?? false)*/,
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
