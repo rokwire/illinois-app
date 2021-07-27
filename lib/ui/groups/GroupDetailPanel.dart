@@ -21,7 +21,9 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -82,6 +84,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _hasMorePosts;
   bool               _shouldScrollToLastAfterRefresh;
 
+  DateTime           _pausedDateTime;
+
   bool get _isMember {
     if(_group?.members?.isNotEmpty ?? false){
       for(Member member in _group.members){
@@ -138,6 +142,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     super.initState();
 
     NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
       Groups.notifyUserMembershipUpdated,
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
@@ -158,13 +163,28 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _loadGroup() {
     _increaseProgress();
     Groups().loadGroup(widget.groupId).then((Group group) {
-      if (group != null) {
-        _group = group;
-        _loadInitialPosts();
-        _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+      if (mounted) {
+        if (group != null) {
+          _group = group;
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+          _loadInitialPosts();
+          _loadMembershipStepEvents();
+        }
+        _decreaseProgress();
+      }
+    });
+  }
+
+  void _refreshGroup() {
+    Groups().loadGroup(widget.groupId).then((Group group) {
+      if (mounted && (group != null)) {
+        setState(() {
+          _group = group;
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+        });
+        _refreshCurrentPosts();
         _loadMembershipStepEvents();
       }
-      _decreaseProgress();
     });
   }
 
@@ -180,6 +200,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _groupEvents = hasEventsMap ? eventsMap.values.first : null;
           _applyStepEvents(_groupEvents);
           _updatingEvents = false;
+        });
+      }
+    });
+  }
+
+  void _refreshEvents(){
+    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+      if (mounted) {
+        setState(() {
+          bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
+          _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
+          _groupEvents = hasEventsMap ? eventsMap.values.first : null;
+          _applyStepEvents(_groupEvents);
         });
       }
     });
@@ -203,12 +236,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshCurrentPosts({int delta}) {
-    if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
       int limit = _visibleGroupPosts.length + (delta ?? 0);
       _refreshingPosts = true;
       Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost> posts) {
         _refreshingPosts = false;
-        if (posts != null) {
+        if (mounted && (posts != null)) {
           setState(() {
             _visibleGroupPosts = posts;
             if (posts.length < limit) {
@@ -230,9 +263,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _loadingPostsPage = true;
       });
       _loadPostsPage().then((_) {
-        setState(() {
-          _loadingPostsPage = false;
-        });
+        if (mounted) {
+          setState(() {
+            _loadingPostsPage = false;
+          });
+        }
       });
     }
   }
@@ -333,6 +368,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadEvents();
     } else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshGroup();
+          _refreshEvents();
+        }
+      }
     }
   }
 
