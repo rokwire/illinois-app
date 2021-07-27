@@ -32,7 +32,7 @@ import 'package:illinois/utils/Utils.dart';
 class Groups /* with Service */ {
 
   static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
-  static const String notifyGroupEventsUpdated   = "edu.illinois.rokwire.groups.events.updated";
+  static const String notifyGroupEventsUpdated      = "edu.illinois.rokwire.groups.events.updated";
   static const String notifyGroupCreated            = "edu.illinois.rokwire.group.created";
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
   static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
