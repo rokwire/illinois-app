@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Typo in Student Guide feature Bus Pass [#609](https://github.com/rokwire/illinois-app/issues/609).
+### Changed
+- GroupsDetailPanel: refresh posts when getting back from posts detail panel [#613](https://github.com/rokwire/illinois-app/issues/613).
 
 ## [2.6.10] - 2021-07-26
 ### Changed
