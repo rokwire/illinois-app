@@ -279,8 +279,8 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     if (feature == 'athletics') {
       return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
     }
-    else if (feature == 'buss-pass') {
-      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.buss_pass.title", "Buss Pass"), icon: "images/icon-student-guide-buss-pass.png", onTap: _navigateBussPass,);
+    else if (feature == 'bus-pass') {
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,);
     }
     else if (feature == 'dining') {
       return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
@@ -328,8 +328,8 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
-  void _navigateBussPass() {
-    Analytics.instance.logSelect(target: "Buss Pass");
+  void _navigateBusPass() {
+    Analytics.instance.logSelect(target: "Bus Pass");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
   }
 
