@@ -1156,13 +1156,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group))).then((result) {
+      if (_refreshingPosts != true) {
+        _refreshCurrentPosts();
+      }
       if (result == true) {
-        if (_refreshingPosts == true) {
-          _shouldScrollToLastAfterRefresh = true;
-        }
-        else {
-          _scheduleLastPostScroll();
-        }
+        _shouldScrollToLastAfterRefresh = true;
       }
     });
   }
