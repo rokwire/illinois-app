@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Completely removed group's hidden attribute and all related stuff [#611](https://github.com/rokwire/illinois-app/issues/611).
 - GroupsDetailPanel: refresh posts when getting back from posts detail panel [#613](https://github.com/rokwire/illinois-app/issues/613).
+- Do not require user to input event end date for all day events. Calculate it based on start date [#616](https://github.com/rokwire/illinois-app/issues/616).
 
 ## [2.6.10] - 2021-07-26
 ### Changed
