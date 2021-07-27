@@ -101,14 +101,12 @@ class Groups /* with Service */ {
       Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App,);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
-      List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-      if(AppCollection.isCollectionNotEmpty(groupsJson)){
-        return groupsJson.map((e) => Group.fromJson(e)).toList();
-      }
+      List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+      return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
     } catch (e) {
       print(e);
     }
-    return [];
+    return null;
   }
 
   Future<List<Group>> searchGroups(String searchText) async {

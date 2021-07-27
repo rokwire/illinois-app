@@ -293,6 +293,29 @@ class Group {
     }
     return null;
   }
+
+  static List<Group> listFromJson(List<dynamic> json) {
+    List<Group> values;
+    if (json != null) {
+      values = <Group>[];
+      for (dynamic entry in json) {
+          try { values.add(Group.fromJson((entry as Map)?.cast<String, dynamic>())); }
+          catch(e) { print(e?.toString()); }
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic> listToJson(List<Group> values) {
+    List<dynamic> json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (Group value in values) {
+        json.add(value?.toJson());
+      }
+    }
+    return json;
+  }
 }
 
 //////////////////////////////
