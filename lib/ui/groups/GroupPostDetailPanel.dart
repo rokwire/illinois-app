@@ -128,15 +128,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Semantics(
-                              sortKey: OrdinalSortKey(1),
-                              container: true,
-                              child: Row(
+                              Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Expanded(
-                                        child: Text(
+                                        child: Semantics(
+                                          sortKey: OrdinalSortKey(1),
+                                          container: true,
+                                          child: Text(
                                             AppString.getDefaultEmptyString(
                                                 value: _post?.subject),
                                             maxLines: 5,
@@ -147,7 +147,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                 fontSize: 24,
                                                 color: Styles()
                                                     .colors
-                                                    .fillColorPrimary))),
+                                                    .fillColorPrimary)))),
                                     Visibility(
                                         visible: _isDeletePostVisible && !widget.hidePostOptions,
                                         child: Semantics(
@@ -211,7 +211,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                           excludeFromSemantics:
                                                               true,
                                                         ))))))
-                                  ])),
+                                  ]),
                         ])))
           ]),
           Visibility(
@@ -270,6 +270,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   AppString.getDefaultEmptyString(
                                       value: _post?.displayDateTime),
+                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies.medium,
@@ -277,7 +278,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       color: Styles()
                                           .colors
                                           .fillColorPrimary)))),
-                      Html(
+                      Semantics(
+                        container: true,
+                        child: Html(
                           data: AppString.getDefaultEmptyString(value: _post?.body),
                           style: {
                             "body": Style(
@@ -286,7 +289,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 fontSize: FontSize(20))
                           },
                           onLinkTap: (url, context, attributes, element) =>
-                              _onTapPostLink(url))
+                              _onTapPostLink(url)))
                     ],
                   )),
               Padding(
@@ -491,22 +494,26 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildRepliesHeader(){
-    return Row(
-      children: [
-        Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-              color: Styles().colors.fillColorPrimary,
-              child: Text("Replies",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: Styles().fontFamilies.medium,
-                      color: Styles().colors.white)
-              ),
-            )
+    return
+      Semantics(
+        container: true,
+        hint: "Heading",
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
+                color: Styles().colors.fillColorPrimary,
+                child: Text("Replies",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: Styles().fontFamilies.medium,
+                        color: Styles().colors.white)
+                ),
+              )
         )
       ],
-    );
+    ));
   }
 
   void _sortReplies(List<GroupPost> replies){

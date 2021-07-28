@@ -1073,7 +1073,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         children: [
                           Expanded(
                             flex: 3,
-                            child:Padding(
+                            child:Container(
                               padding: EdgeInsets.only(right: 6),
                               child:Text(AppString.getDefaultEmptyString(value: memberName),
                                 textAlign: TextAlign.left,
@@ -1081,12 +1081,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           )),
                           Expanded(
                             flex: 2,
-                            child: Padding(
+                            child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
                               child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
-                          ),
+                          )),
                         ],
                       )
                     )
@@ -1167,7 +1168,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
     }
-    return Container(
+    return Semantics(container: true,
+      child:Container(
         decoration: BoxDecoration(
             color: Styles().colors.white,
             boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
@@ -1176,11 +1178,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
+                Semantics( child:
+                  Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
                     style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                ),
                 Visibility(
                     visible: AppString.isStringNotEmpty(widget.iconPath),
-                    child: Semantics(container: true, child:Container(
+                    child: Semantics( child:Container(
                     child: Semantics(label: widget.semanticsLabel??"", button: true,
                     child: GestureDetector(
                         onTap: widget.onIconTap,
@@ -1188,6 +1192,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                             padding: EdgeInsets.only(left: 10, top: 3),
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
               ]),
+              Semantics( child:
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Html(data: bodyText, style: {
@@ -1205,7 +1210,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         fontSize: FontSize(16),
                         maxLines: 1,
                         textOverflow: TextOverflow.ellipsis)
-                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
+                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
                 GestureDetector(
                   onTap: widget.onCardTap ?? _onTapCard,
                   child: Container(
@@ -1213,18 +1218,19 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                       Expanded(
                           child: Container(
-                            child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
-                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),),
+                            child: Semantics(child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
+                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,
                         child: Expanded(child: Container(
-                          child: Text("$visibleRepliesCount $repliesLabel",
+                          child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
                               textAlign: TextAlign.right,
                               style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline,)
-                        )),
+                        ))),
                       ))
                 ],),))
-            ])));
+            ]))));
   }
 
   void _onLinkTap(String url) {

@@ -77,7 +77,7 @@ class SectionTitlePrimary extends StatelessWidget{
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 2),
-              child: Semantics(label:title, header: true, excludeSemantics: true, child:Row(
+              child: Row(
                 children: <Widget>[
                   iconPath != null ? Padding(
                     padding: EdgeInsets.only(
@@ -86,11 +86,13 @@ class SectionTitlePrimary extends StatelessWidget{
                         iconPath, excludeFromSemantics: true,),
                   ) : Container(),
                   Expanded(child:
-                    Text(
-                      title,
-                      style: TextStyle(
+                    Semantics(label:title, header: true, excludeSemantics: true, child:
+                      Text(
+                        title,
+                        style: TextStyle(
                           color: textColor ?? Styles().colors.textColorPrimary,
                           fontSize: 20),
+                      )
                     )
                   ),
                   rightIconPath != null ?
@@ -106,7 +108,7 @@ class SectionTitlePrimary extends StatelessWidget{
                           rightIconPath, excludeFromSemantics: true,),
                       ))): Container(),
                 ],
-              )),
+              ),
             ),
             Visibility(visible: hasSubTitle,
                 child: Semantics(
