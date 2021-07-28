@@ -450,7 +450,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   void _onFindPollTapped() {
-    Analytics().logPage(name:"Find Poll");
+    Analytics().logSelect(target:"Find Poll");
     double topOffset = kToolbarHeight + 18 + _bleDescriptionTextHeight + 5;
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePinPanel(topOffset:topOffset))).then((dynamic poll){
       if (poll is Poll) {
