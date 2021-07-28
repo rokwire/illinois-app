@@ -519,6 +519,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void onTagTap(String tag){
+    Analytics().logSelect(target: "Group tag: $tag");
     if(_group!=null) {
       if (_group.tags == null) {
         _group.tags =  [];
@@ -702,6 +703,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onUpdateTap(){
+    Analytics().logSelect(target: 'Update Settings');
     setState(() {
       _loading = true;
     });

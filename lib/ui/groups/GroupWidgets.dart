@@ -305,7 +305,10 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           borderColor: Styles().colors.white,
                           backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          onTap: ()=>Navigator.pop(context),
+                          onTap: (){
+                            Analytics.instance.logAlert(text: message, selection: "Back");
+                            Navigator.pop(context);
+                          },
                         )),
                       Container(width: 16,),
                       Expanded(child:
@@ -317,6 +320,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
+                            Analytics.instance.logAlert(text: message, selection: buttonTitle);
                             onConfirmTap();
                           },
                       )),
@@ -360,7 +364,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
               padding: EdgeInsets.symmetric(vertical: 16),
               child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
                   onTap: (){
-                    Analytics().logPage(name: "Add post");
+                    Analytics().logSelect(target: "Add post");
                     //TBD: remove if not used
                     // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
                   }))
@@ -385,6 +389,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
               button: true,
               child: GestureDetector(
                 onTap: (){
+                  Analytics().logSelect(target: "See previous posts");
                   setState(() {
                     _showAllComments = true;
                   });},
@@ -554,7 +559,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
-        Analytics().logPage(name: "Group Settings");
+        Analytics().logSelect(target: "Group Settings");
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, groupId: widget.group?.id,previewMode: widget.isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
@@ -620,6 +625,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     leftIcon: "images/icon-leave-group.png",
                     label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
                     onTap: (){
+                      Analytics().logSelect(target: "Remove group event");
                       showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
                     },
                   ),
@@ -653,7 +659,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onEditEventTap(BuildContext context){
-    Analytics().logPage(name: "Create Event");
+    Analytics().logSelect(target: "Create Event");
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event,onEditTap: (Event event) {
       Groups().updateGroupEvents(event).then((String id) {
@@ -985,7 +991,7 @@ class GroupCard extends StatelessWidget {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics.instance.logSelect(target: "${group.title}");
+    Analytics.instance.logSelect(target: "Group: ${group.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
   }
 
@@ -1095,6 +1101,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onTapCard() {
+    Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
   }
 
@@ -1235,6 +1242,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
   }
 
   void _onTapCard(){
+    Analytics().logSelect(target: "Group reply");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply, hidePostOptions: true,)));
   }
 

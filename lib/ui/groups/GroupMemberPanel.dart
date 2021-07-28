@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -88,6 +89,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   void _updateMemberStatus() {
+    Analytics().logSelect(target: 'Admin');
     if (!_updating) {
 
       setState(() {
@@ -244,6 +246,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
           borderColor: Styles().colors.fillColorPrimary,
           borderWidth: 2,
           onTap: (){
+            Analytics().logSelect(target: 'Remove from Group');
             showDialog(context: context, builder: _buildRemoveFromGroupDialog);
           }
         ),
@@ -278,7 +281,10 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      onTap: ()=>Navigator.pop(context),
+                      onTap: (){
+                        Analytics().logAlert(text: "Remove member from this group?", selection: "Back");
+                        Navigator.pop(context);
+                      },
                     ),
                     Container(width: 16,),
                     Stack(
@@ -292,6 +298,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                           backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
+                            Analytics().logAlert(text: "Remove member from this group?", selection: "Remove");
                             if(!_removing) {
                               if (mounted) {
                                 setStateEx(() {

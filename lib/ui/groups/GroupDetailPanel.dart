@@ -521,7 +521,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
           leftIcon: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: onTapMembers,
+          onTap: _onTapMembers,
         ));
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
         commands.add(RibbonButton(
@@ -530,7 +530,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           hint: Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIcon: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: onTapSettings,
+          onTap: _onTapSettings,
         ));
       }
     } else {
@@ -928,7 +928,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      onTap: () => Navigator.pop(context)),
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
+                        Navigator.pop(context);
+                      }),
                   Container(width: 16),
                   Stack(alignment: Alignment.center, children: [
                     RoundedButton(
@@ -938,7 +941,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
-                      onTap: onPositiveTap,
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                        onPositiveTap();
+                      },
                     ),
                     _confirmationLoading
                         ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary))
@@ -950,6 +956,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onGroupOptionsTap() {
+    Analytics().logSelect(target: 'Group Options');
     int membersCount = _group?.membersCount ?? 0;
     String confirmMsg = (membersCount > 1)
         ? sprintf(
@@ -988,6 +995,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIcon: "images/icon-leave-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
+                          Analytics().logSelect(target: "Leave group");
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1003,6 +1011,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIcon: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
+                          Analytics().logSelect(target: "Delete group");
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1036,6 +1045,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapEventOptions() {
+    Analytics().logSelect(target: "Event options");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1074,6 +1084,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTab(_DetailTab tab) {
+    Analytics().logSelect(target: "Tab: $tab");
     if (_currentTab != tab) {
       setState(() {
         _currentTab = tab;
@@ -1088,6 +1099,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapLeave() {
+    Analytics().logSelect(target: "Leave Group");
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1112,23 +1124,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onWebsite() {
+    Analytics().logSelect(target: 'Group url');
     String url = _group?.webURL;
     if (AppString.isStringNotEmpty(url)) {
       launch(url);
     }
   }
 
-  void onTapMembers(){
+  void _onTapMembers(){
     Analytics().logSelect(target: "Group Members");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
   }
 
-  void onTapSettings(){
+  void _onTapSettings(){
     Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
   void _onMembershipRequest() {
+    Analytics().logSelect(target: "Request to join");
     if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {
@@ -1147,6 +1161,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onCancelMembershipRequest() {
+    Analytics().logSelect(target: "Cancel membership request");
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(

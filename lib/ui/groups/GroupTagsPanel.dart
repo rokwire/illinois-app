@@ -126,6 +126,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
   }
 
   void _onTapDone() {
+    Analytics().logSelect(target: 'Done');
     _hideKeyboard();
     Navigator.of(context).pop(_groupTags);
   }
