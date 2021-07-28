@@ -170,7 +170,7 @@ class AppDateTime with Service {
       DateTime nowToCompare = useDeviceLocalTime ? nowDevice : nowUniLocal;
       int calendarDaysDiff = dateTimeToCompare.day - nowToCompare.day;
       int timeDaysDiff = dateTimeToCompare.difference(nowToCompare).inDays;
-      if ((calendarDaysDiff != 0) && (nowToCompare.hour > dateTimeToCompare.hour)) {
+      if ((calendarDaysDiff != 0) && (calendarDaysDiff > timeDaysDiff)) {
         timeDaysDiff += 1;
       }
       if (timeDaysDiff == 0) {
