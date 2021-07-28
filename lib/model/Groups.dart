@@ -934,11 +934,12 @@ class GroupError {
 
   Map<String, dynamic> toJson() {
     return {
-      "question": question,
-      "answer": answer,
+      "code": code,
+      "text": text,
     };
   }
 }
+
 DateTime groupUtcDateTimeFromString(String dateTimeString) {
   return AppDateTime().dateTimeFromString(dateTimeString, format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true);
 }
