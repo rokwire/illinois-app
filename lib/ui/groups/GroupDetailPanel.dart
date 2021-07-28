@@ -146,8 +146,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupPostsUpdated]);
 
-    _loadGroup();
-    _loadEvents();
+    _loadGroup(loadEvents: true);
   }
 
   @override
@@ -157,7 +156,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroup() {
+  void _loadGroup({bool loadEvents = false}) {
     _increaseProgress();
     Groups().loadGroup(widget.groupId).then((Group group) {
       if (mounted) {
@@ -166,16 +165,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
           _loadInitialPosts();
         }
+        if (loadEvents) {
+          _loadEvents();
+        }
         _decreaseProgress();
       }
     });
   }
 
-  void _refreshGroup() {
+  void _refreshGroup({bool refreshEvents = false}) {
     Groups().loadGroup(widget.groupId).then((Group group) {
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
+          if (refreshEvents) {
+            _refreshEvents();
+          }
           _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
         });
         _refreshCurrentPosts();
@@ -183,11 +188,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
-  void _loadEvents(){
+  void _loadEvents() {
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
@@ -199,8 +204,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
-  void _refreshEvents(){
-    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+  void _refreshEvents() {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
@@ -290,7 +295,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Groups().leaveGroup(widget.groupId).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
-        _loadGroup();
+        _loadGroup(loadEvents: true);
       }
     });
   }
@@ -357,8 +362,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadEvents();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
-      _loadGroup();
-      _loadEvents();
+      _loadGroup(loadEvents: true);
     } else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
     }
@@ -375,8 +379,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshGroup();
-          _refreshEvents();
+          _refreshGroup(refreshEvents: true);
         }
       }
     }
