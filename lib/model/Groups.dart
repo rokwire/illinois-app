@@ -916,6 +916,30 @@ class GroupPost {
   }
 }
 
+//////////////////////////////
+// GroupError
+
+class GroupError {
+  int       code;
+  String    text;
+
+  GroupError({this.code, this.text});
+
+  factory GroupError.fromJson(Map<String, dynamic> json){
+    return json != null ? GroupError(
+      code: AppJson.intValue(json['code']),
+      text: AppJson.stringValue(json['text'])
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "code": code,
+      "text": text,
+    };
+  }
+}
+
 DateTime groupUtcDateTimeFromString(String dateTimeString) {
   return AppDateTime().dateTimeFromString(dateTimeString, format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true);
 }
@@ -927,3 +951,4 @@ String groupUtcDateTimeToString(DateTime dateTime) {
   }
   return null;
 }
+

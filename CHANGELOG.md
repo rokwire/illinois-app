@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Require user to input event end date for all day events [#627](https://github.com/rokwire/illinois-app/issues/627).
 - Event display date time [#626](https://github.com/rokwire/illinois-app/issues/626).
+### Changed
+- Removed inline group name validation in create group panel, extened error processing on create/update group [#630](https://github.com/rokwire/illinois-app/issues/630).
 
 ## [2.6.11] - 2021-07-27
 ### Fixed

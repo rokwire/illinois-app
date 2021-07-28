@@ -31,6 +31,7 @@ import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupSettingsPanel extends StatefulWidget {
   final Group group;
@@ -704,18 +705,23 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _loading = true;
     });
-    Groups().updateGroup(_group).then((_){
-      setState(() {
-        _loading = false;
-      });
-
-      Navigator.pop(context);
-    }).catchError((e){
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.groups_create.tags.label.update_error", "Unable to update the group"));
-      //error
-      setState(() {
-        _loading = false;
-      });
+    Groups().updateGroup(_group).then((GroupError error){
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+        if (error == null) { //ok
+          Navigator.pop(context);
+        } else { //not ok
+          String message;
+          switch (error.code) {
+            case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
+            case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
+            default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s."), [error.text ?? 'unknwon error occured']); break;
+          }
+          AppAlert.showDialogResult(context, message);
+        }
+      }
     });
   }
   //
