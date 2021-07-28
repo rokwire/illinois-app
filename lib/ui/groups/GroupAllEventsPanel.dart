@@ -24,7 +24,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
   //TBD Localization
   @override
   void initState() {
-    Groups().loadEvents(widget.group?.id).then((Map<int, List<GroupEvent>> eventsMap) {
+    Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
           _groupEvents = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap.values.first : null;
