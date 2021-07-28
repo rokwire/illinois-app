@@ -870,6 +870,14 @@ class GroupPost {
   }
 
   String get displayDateTime {
+    return getDisplayDateTime();
+  }
+
+  bool get isUpdated {
+    return (dateUpdatedUtc != null) && (dateCreatedUtc != dateUpdatedUtc);
+  }
+
+  String getDisplayDateTime({bool fullLabels = false}){
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
     if (deviceDateTime != null) {
@@ -880,28 +888,24 @@ class GroupPost {
           return "now";
         }
         else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes}min";
+          return "${difference.inMinutes}${fullLabels? " minutes": "min"}";
         }
         else if (difference.inHours < 24) {
-          return "${difference.inHours}h";
+          return "${difference.inHours}${fullLabels? " hours": "h"}";
         }
         else if (difference.inDays < 30) {
-          return "${difference.inDays}d";
+          return "${difference.inDays}${fullLabels? " days": "d"}";
         }
         else {
           int differenceInMonths = difference.inDays ~/ 30;
           if (differenceInMonths < 12) {
-            return "${differenceInMonths}m";
+            return "$differenceInMonths${fullLabels? " months": "m"}";
           }
         }
       }
       return DateFormat("MMM dd, yyyy").format(deviceDateTime);
     }
     return null;
-  }
-
-  bool get isUpdated {
-    return (dateUpdatedUtc != null) && (dateCreatedUtc != dateUpdatedUtc);
   }
 
   static List<GroupPost> fromJsonList(List<dynamic> jsonList) {
