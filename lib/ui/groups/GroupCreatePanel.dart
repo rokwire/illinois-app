@@ -553,19 +553,21 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _creating = true;
       });
       Groups().createGroup(_group).then((GroupError error) {
-        setState(() {
-          _creating = false;
-        });
-        if (error == null) { //ok
-          Navigator.pop(context);
-        } else { //not ok
-          String message;
-          switch (error.code) {
-            case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
-            case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
-            default: message = sprintf(Localization().getStringEx("panel.groups_create.failed.msg", "Failed to create group: %s."), [error.text ?? 'unknwon error occured']); break;
+        if (mounted) {
+          setState(() {
+            _creating = false;
+          });
+          if (error == null) { //ok
+            Navigator.pop(context);
+          } else { //not ok
+            String message;
+            switch (error.code) {
+              case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
+              case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
+              default: message = sprintf(Localization().getStringEx("panel.groups_create.failed.msg", "Failed to create group: %s."), [error.text ?? 'unknwon error occured']); break;
+            }
+            AppAlert.showDialogResult(context, message);
           }
-          AppAlert.showDialogResult(context, message);
         }
       });
     }
