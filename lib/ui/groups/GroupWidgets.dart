@@ -991,7 +991,7 @@ class GroupCard extends StatelessWidget {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics.instance.logSelect(target: "group: ${group.title}");
+    Analytics.instance.logSelect(target: "Group: ${group.title}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
   }
 
@@ -1101,7 +1101,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   void _onTapCard() {
-    Analytics().logSelect(target: "group post");
+    Analytics().logSelect(target: "Group post");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
   }
 
@@ -1242,7 +1242,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
   }
 
   void _onTapCard(){
-    Analytics().logSelect(target: "group reply");
+    Analytics().logSelect(target: "Group reply");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply, hidePostOptions: true,)));
   }
 
