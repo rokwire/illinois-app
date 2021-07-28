@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -252,6 +253,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   }
 
   void _addStep() {
+    Analytics().logSelect(target: 'Add step');
     setState(() {
       GroupMembershipStep step = GroupMembershipStep();
       _steps.add(step);
@@ -264,6 +266,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   }
 
   void _removeStep({int index}) {
+    Analytics().logSelect(target: 'Remove step');
     setState(() {
       _steps.removeAt(index);
       _controllers.removeAt(index);
@@ -272,6 +275,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   }
 
   void _addEvent({int stepIndex}) {
+    Analytics().logSelect(target: 'Connect event');
     GroupMembershipStep step = _steps[stepIndex];
     if (step.eventIds == null) {
       step.eventIds = <String>[];
@@ -291,6 +295,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   }
 
   void _removeEvent({int stepIndex, int eventIndex}) {
+    Analytics().logSelect(target: 'Remove event');
     setState(() {
       GroupMembershipStep step = _steps[stepIndex];
       step?.eventIds?.removeAt(eventIndex);
@@ -298,6 +303,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   }
 
   void _onSubmit() {
+    Analytics().logSelect(target: 'Save Steps');
     for (int index = 0; index < _steps.length; index++) {
       GroupMembershipStep step = _steps[index];
 

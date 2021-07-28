@@ -433,6 +433,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onSettingsTap(BuildContext context, Event event){
+    Analytics.instance.logSelect(target: "Settings");
     showDialog(
         context: context,
         builder: (_) => Material(
@@ -512,6 +513,7 @@ class _EventCard extends StatelessWidget {
   }
 
   void _onDeleteTap(BuildContext context, GroupEvent event){
+    Analytics.instance.logSelect(target: "Delete");
     showDialog(
         context: context,
         builder: (_) => Material(
@@ -537,6 +539,7 @@ class _EventCard extends StatelessWidget {
                             height: 42,
                             borderWidth: 2,
                             onTap: (){
+                              Analytics().logAlert(text: 'Remove event', selection: 'OK');
                               _removeEvent(context, event);
                             },
                           ),
@@ -551,6 +554,7 @@ class _EventCard extends StatelessWidget {
                             height: 42,
                             borderWidth: 2,
                             onTap: (){
+                              Analytics().logAlert(text: 'Remove event', selection: 'Cancel');
                               Navigator.pop(context);
                             },
                           ),

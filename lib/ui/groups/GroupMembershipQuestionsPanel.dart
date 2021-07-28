@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -210,6 +211,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   void _addQuestion() {
+    Analytics().logSelect(target: 'Add question');
     setState(() {
       _questions.add(GroupMembershipQuestion());
       _controllers.add(TextEditingController());
@@ -221,6 +223,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   void _removeQuestion({int index}) {
+    Analytics().logSelect(target: 'Remove question');
     setState(() {
       _questions.removeAt(index);
       _controllers.removeAt(index);
@@ -229,6 +232,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   void _onSubmit() {
+    Analytics().logSelect(target: 'Update questions');
     for (int index = 0; index < _questions.length; index++) {
       String question = _controllers[index].text;
       if ((question != null) && (0 < question.length)) {

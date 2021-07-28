@@ -386,6 +386,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void onTagTap(String tag){
+    Analytics.instance.logSelect(target: "Tag: $tag");
     if(_group!=null) {
       if (_group.tags == null) {
         _group.tags =  [];
@@ -548,6 +549,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onCreateTap() {
+    Analytics.instance.logSelect(target: "Create Group");
     if(!_creating && _canSave) {
       setState(() {
         _creating = true;

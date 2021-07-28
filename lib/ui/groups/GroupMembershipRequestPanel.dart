@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -165,6 +166,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   }
 
   void _onSubmit() {
+    Analytics().logSelect(target: 'Submit request');
     if (_submitting != true) {
       List<GroupMembershipAnswer> answers = [];
       for (int index = 0; index < _questions.length; index++) {
