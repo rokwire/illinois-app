@@ -178,9 +178,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
           child: SmallRoundedButton(
             label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests").replaceAll("#", _pendingMembers.length.toString()),
             hint: Localization().getStringEx("panel.manage_members.button.see_all_requests.hint", ""),
-            onTap: (){setState(() {
-              _showAllRequestVisibility = false;
-            });},
+            onTap: () {
+              Analytics().logSelect(target: 'See all requests');
+              setState(() {
+                _showAllRequestVisibility = false;
+              });
+            },
           ),
         ));
       }
