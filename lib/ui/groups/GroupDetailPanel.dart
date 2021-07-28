@@ -18,13 +18,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Network.dart';
@@ -74,7 +72,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   List<GroupEvent>   _groupEvents;
   List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>       _groupAdmins;
-  Map<String, Event> _stepsEvents = Map<String, Event>();
 
   _DetailTab         _currentTab = _DetailTab.Events;
 
@@ -168,7 +165,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _group = group;
           _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
           _loadInitialPosts();
-          _loadMembershipStepEvents();
         }
         _decreaseProgress();
       }
@@ -183,7 +179,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
         });
         _refreshCurrentPosts();
-        _loadMembershipStepEvents();
       }
     });
   }
@@ -198,7 +193,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
           _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
           _groupEvents = hasEventsMap ? eventsMap.values.first : null;
-          _applyStepEvents(_groupEvents);
           _updatingEvents = false;
         });
       }
@@ -212,7 +206,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
           _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
           _groupEvents = hasEventsMap ? eventsMap.values.first : null;
-          _applyStepEvents(_groupEvents);
         });
       }
     });
@@ -951,37 +944,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 ])
               ]));
         }));
-  }
-
-  void _loadMembershipStepEvents() {
-    Set<String> stepEventIds = Set<String>();
-    List<GroupMembershipStep> steps = _group?.membershipQuest?.steps;
-    if (0 < (steps?.length ?? 0)) {
-      for (GroupMembershipStep step in steps) {
-        if (step.eventIds != null) {
-          stepEventIds.addAll(step.eventIds);
-        }
-      }
-
-      ExploreService().loadEventsByIds(stepEventIds).then((List<Event> events){
-        if (mounted) {
-          setState(() {
-            _applyStepEvents(events);
-          });
-        }
-    
-      });
-    }
-  }
-
-  void _applyStepEvents(List<Event> events) {
-    if (events != null) {
-      for (Event event in events) {
-        if ((event.id != null) && !_stepsEvents.containsKey(event.id)) {
-          _stepsEvents[event.id] = event;
-        }
-      }
-    }
   }
 
   void _onGroupOptionsTap() {
