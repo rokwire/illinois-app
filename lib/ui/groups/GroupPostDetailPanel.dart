@@ -529,6 +529,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapReplyCard(GroupPost reply){
+    Analytics().logSelect(target: 'Reply Card');
     List<GroupPost> thread = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
       thread.addAll(widget.replyThread);
@@ -574,6 +575,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapDeletePost() {
+    Analytics().logSelect(target: 'Delete Post');
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: Text(Localization().getStringEx(
@@ -610,6 +612,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapReplyOptions(GroupPost reply) {
+    Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
         context: context,
         backgroundColor: Styles().colors.white,
@@ -661,6 +664,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapDeleteReply(GroupPost reply) {
+    Analytics().logSelect(target: 'Delete Reply');
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: Text(Localization().getStringEx(
@@ -671,12 +675,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               child:
                   Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
+                Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-              onPressed: () => Navigator.of(context).pop())
+              onPressed: () {
+                Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
+                Navigator.of(context).pop();
+              })
         ]);
   }
 
@@ -696,11 +704,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapHeaderReply() {
+    Analytics().logSelect(target: 'Reply');
     _clearBodyControllerContent();
     _scrollToPostEdit();
   }
 
   void _onTapPostReply({GroupPost reply}) {
+    Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
     if (mounted) {
       setState(() {
@@ -712,6 +722,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapEditPost({GroupPost reply}) {
+    Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
       setState(() {
         _editingPost = reply;
@@ -722,7 +733,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapPostLink(String url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics.instance.logSelect(target: 'link');
     if (AppString.isStringNotEmpty(url)) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -779,6 +790,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapCancel() {
+    Analytics().logSelect(target: 'Cancel');
     if (_editingPost != null) {
       setState(() {
         _editingPost = null;
@@ -791,6 +803,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapSend() {
+    Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
     String subject;
@@ -876,18 +889,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapBold() {
+    Analytics().logSelect(target: 'Bold');
     _wrapBodySelection('<b>', '</b>');
   }
 
   void _onTapItalic() {
+    Analytics().logSelect(target: 'Italic');
     _wrapBodySelection('<i>', '</i>');
   }
 
   void _onTapUnderline() {
+    Analytics().logSelect(target: 'Underline');
     _wrapBodySelection('<u>', '</u>');
   }
 
   void _onTapEditLink() {
+    Analytics().logSelect(target: 'Edit Link');
     int linkStartPosition = _bodyController.selection.start;
     int linkEndPosition = _bodyController.selection.end;
     _linkTextController.text = AppString.getDefaultEmptyString(
@@ -897,10 +914,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         contentWidget: _buildLinkDialog(),
         actions: [
           TextButton(
-              onPressed: () => _onTapOkLink(linkStartPosition, linkEndPosition),
+              onPressed: () {
+                Analytics().logSelect(target: 'Set Link Url');
+                _onTapOkLink(linkStartPosition, linkEndPosition);
+              },
               child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
           TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Analytics().logSelect(target: 'Cancel');
+                Navigator.of(context).pop();
+              },
               child: Text(
                   Localization().getStringEx('dialog.cancel.title', 'Cancel')))
         ]);

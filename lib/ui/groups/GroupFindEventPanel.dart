@@ -369,6 +369,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             label: _time[index],
             selected: (_selectedTime == _time[index]),
             onTap: (){
+              Analytics().logSelect(target: 'Time: ${_time[index]}');
               setState(() {
                 _selectedTime = _time[index];
                 _activeFilterType = FilterType.none;
@@ -388,6 +389,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             label: _tags[index],
             selected: (_selectedTag == _tags[index]),
             onTap: (){
+              Analytics().logSelect(target: 'Tag: ${_tags[index]}');
               setState(() {
                 _selectedTag = _tags[index];
                 _activeFilterType = FilterType.none;
@@ -407,6 +409,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
             label: _eventCategories[index],
             selected: (_selectedEventCategory == _eventCategories[index]),
             onTap: (){
+              Analytics().logSelect(target: 'Category: ${_eventCategories[index]}');
               setState(() {
                 _selectedEventCategory = _eventCategories[index];
                 _activeFilterType = FilterType.none;
@@ -514,6 +517,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onTapAddEvents(){
+    Analytics().logSelect(target: 'Add events');
     if(_selectedEvents.isEmpty){
       if(mounted ) {
         AppAlert.showDialogResult(context, Localization().getStringEx("panel.find_event.error.please_select.title", "Please select at least one event")).then((value) {
@@ -636,6 +640,7 @@ class _EventCardState extends State<_EventCard>{
   }
 
   void _onTapEvent(BuildContext context){
+    Analytics().logSelect(target: 'Event');
     Navigator.push(context, CupertinoPageRoute(builder: (context)=>ExploreEventDetailPanel(event: widget.event,)));
   }
 }

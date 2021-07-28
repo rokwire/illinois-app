@@ -146,8 +146,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupPostsUpdated]);
 
-    _loadGroup();
-    _loadEvents();
+    _loadGroup(loadEvents: true);
   }
 
   @override
@@ -157,7 +156,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroup() {
+  void _loadGroup({bool loadEvents = false}) {
     _increaseProgress();
     Groups().loadGroup(widget.groupId).then((Group group) {
       if (mounted) {
@@ -166,16 +165,22 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
           _loadInitialPosts();
         }
+        if (loadEvents) {
+          _loadEvents();
+        }
         _decreaseProgress();
       }
     });
   }
 
-  void _refreshGroup() {
+  void _refreshGroup({bool refreshEvents = false}) {
     Groups().loadGroup(widget.groupId).then((Group group) {
       if (mounted && (group != null)) {
         setState(() {
           _group = group;
+          if (refreshEvents) {
+            _refreshEvents();
+          }
           _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
         });
         _refreshCurrentPosts();
@@ -183,11 +188,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
-  void _loadEvents(){
+  void _loadEvents() {
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
@@ -199,8 +204,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
-  void _refreshEvents(){
-    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+  void _refreshEvents() {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
@@ -290,7 +295,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Groups().leaveGroup(widget.groupId).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
-        _loadGroup();
+        _loadGroup(loadEvents: true);
       }
     });
   }
@@ -357,8 +362,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _loadEvents();
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
-      _loadGroup();
-      _loadEvents();
+      _loadGroup(loadEvents: true);
     } else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
     }
@@ -375,8 +379,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshGroup();
-          _refreshEvents();
+          _refreshGroup(refreshEvents: true);
         }
       }
     }
@@ -518,7 +521,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
           leftIcon: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: onTapMembers,
+          onTap: _onTapMembers,
         ));
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
         commands.add(RibbonButton(
@@ -527,7 +530,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           hint: Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIcon: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: onTapSettings,
+          onTap: _onTapSettings,
         ));
       }
     } else {
@@ -925,7 +928,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      onTap: () => Navigator.pop(context)),
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
+                        Navigator.pop(context);
+                      }),
                   Container(width: 16),
                   Stack(alignment: Alignment.center, children: [
                     RoundedButton(
@@ -935,7 +941,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
-                      onTap: onPositiveTap,
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                        onPositiveTap();
+                      },
                     ),
                     _confirmationLoading
                         ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary))
@@ -947,6 +956,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onGroupOptionsTap() {
+    Analytics().logSelect(target: 'Group Options');
     int membersCount = _group?.membersCount ?? 0;
     String confirmMsg = (membersCount > 1)
         ? sprintf(
@@ -985,6 +995,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIcon: "images/icon-leave-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
+                          Analytics().logSelect(target: "Leave group");
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1000,6 +1011,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIcon: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
+                          Analytics().logSelect(target: "Delete group");
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1033,6 +1045,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapEventOptions() {
+    Analytics().logSelect(target: "Event options");
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1071,6 +1084,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTab(_DetailTab tab) {
+    Analytics().logSelect(target: "Tab: $tab");
     if (_currentTab != tab) {
       setState(() {
         _currentTab = tab;
@@ -1085,6 +1099,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapLeave() {
+    Analytics().logSelect(target: "Leave Group");
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1109,23 +1124,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onWebsite() {
+    Analytics().logSelect(target: 'Group url');
     String url = _group?.webURL;
     if (AppString.isStringNotEmpty(url)) {
       launch(url);
     }
   }
 
-  void onTapMembers(){
+  void _onTapMembers(){
     Analytics().logSelect(target: "Group Members");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
   }
 
-  void onTapSettings(){
+  void _onTapSettings(){
     Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
   void _onMembershipRequest() {
+    Analytics().logSelect(target: "Request to join");
     if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {
@@ -1144,6 +1161,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onCancelMembershipRequest() {
+    Analytics().logSelect(target: "Cancel membership request");
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
