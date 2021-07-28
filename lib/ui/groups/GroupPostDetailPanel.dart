@@ -360,16 +360,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       children: [
                         _FontIcon(
                             onTap: _onTapBold,
+                            buttonLabel: "Bold",
                             iconPath: 'images/icon-bold.png'),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: _FontIcon(
                                 onTap: _onTapItalic,
+                                buttonLabel: "Italic",
                                 iconPath: 'images/icon-italic.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
                             child: _FontIcon(
                                 onTap: _onTapUnderline,
+                                buttonLabel: "Underline",
                                 iconPath: 'images/icon-underline.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
@@ -1090,11 +1093,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 class _FontIcon extends StatelessWidget {
   final Function onTap;
   final String iconPath;
-  _FontIcon({@required this.onTap, @required this.iconPath});
+  final String buttonLabel;
+  _FontIcon({@required this.onTap, @required this.iconPath, this.buttonLabel});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18));
+    return Semantics(label: buttonLabel,
+      child:GestureDetector(
+        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18)));
   }
 }
