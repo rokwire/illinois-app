@@ -161,7 +161,7 @@ class Groups /* with Service */ {
         if (responseCode == 200) {
           Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
           String groupId = (jsonData != null) ? AppJson.stringValue(jsonData['inserted_id']) : null;
-          if (AppString.isStringEmpty(groupId)) {
+          if (AppString.isStringNotEmpty(groupId)) {
             NotificationService().notify(notifyGroupCreated, group.id);
             return null; // succeeded
           }
