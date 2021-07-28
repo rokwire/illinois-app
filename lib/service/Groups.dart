@@ -147,7 +147,7 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<String> createGroup(Group group) async {
+  Future<GroupError> createGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups';
       try {
@@ -158,18 +158,25 @@ class Groups /* with Service */ {
         String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
         int responseCode = response?.statusCode ?? -1;
-        String responseBody = response?.body;
-        Map<String, dynamic> jsonData = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeMap(responseBody) : null;
-        if(jsonData != null){
-          String groupId = jsonData['inserted_id'];
-          NotificationService().notify(notifyGroupCreated, group.id);
-          return groupId;
+        Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
+        if (responseCode == 200) {
+          String groupId = (jsonData != null) ? AppJson.stringValue(jsonData['inserted_id']) : null;
+          if (AppString.isStringEmpty(groupId)) {
+            NotificationService().notify(notifyGroupCreated, group.id);
+            return null; // succeeded
+          }
+        }
+        else if (responseCode == 400) {
+          Map<String, dynamic> jsonError = (jsonData != null) ? AppJson.mapValue(jsonData['error']) : null;
+          if (jsonError != null) {
+            return GroupError.fromJson(jsonError); // error descrition
+          }
         }
       } catch (e) {
         print(e);
       }
     }
-    return null;
+    return GroupError(); // general error
   }
 
   Future<bool> updateGroup(Group group) async {

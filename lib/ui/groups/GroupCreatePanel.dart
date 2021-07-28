@@ -30,6 +30,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupCreatePanel extends StatefulWidget {
   _GroupCreatePanelState createState() => _GroupCreatePanelState();
@@ -551,15 +552,20 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       setState(() {
         _creating = true;
       });
-      Groups().createGroup(_group).then((detail) {
+      Groups().createGroup(_group).then((GroupError error) {
         setState(() {
           _creating = false;
         });
-        if (detail != null) { //ok
+        if (error == null) { //ok
           Navigator.pop(context);
         } else { //not ok
-          AppAlert.showDialogResult(context, Localization().getStringEx(
-              "panel.groups_create.failed.msg", "Failed to create group."));
+          String message;
+          switch (error.code) {
+            case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
+            case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
+            default: message = sprintf(Localization().getStringEx("panel.groups_create.failed.msg", "Failed to create group: %s."), [error.text ?? 'unknwon error occured']); break;
+          }
+          AppAlert.showDialogResult(context, message);
         }
       });
     }

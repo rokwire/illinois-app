@@ -1423,6 +1423,7 @@
     "panel.groups_create.name.field": "NAME FIELD",
     "panel.groups_create.name.field.hint": "",
     "panel.groups_create.name.error.message": "A group with this name already exists. Please try a different name.",
+    "panel.groups_create.permission.error.message": "You do not have permission to perform this operation.",
     "panel.groups_create.description.title": "DESCRIPTION",
     "panel.groups_create.description.description": "What’s the purpose of your group? Who should join? What will you do at your events?",
     "panel.groups_create.description.field": "DESCRIPTION FIELD",
@@ -1446,7 +1447,7 @@
     "panel.groups_create.tags.label.update_error": "Unable to update the group",
     "panel.groups_create.button.tags.title": "Tags",
     "panel.groups_create.button.tags.hint": "",
-    "panel.groups_create.failed.msg": "Failed to create group.",
+    "panel.groups_create.failed.msg": "Failed to create group: %s.",
     "panel.groups_create.membership.section.title": "Membership",
     "panel.groups_create.questions.existing.label": "Question(s)",
     "panel.groups_create..questions.missing.label": "No question",
@@ -2002,6 +2003,7 @@
     "logic.polls.multiple_polls_with_pin": "Hay varias encuestas abiertas con esta encuesta de 4 dígitos #",
 
     "logic.general.internal_error": "Error interno ocurrido",
+    "logic.general.unknown_error": "Ocurrió un error desconocido",
     "logic.general.invalid_response": "Servidor inválido",
     "logic.general.response_error": "Error de respuesta: %s %s",
 
