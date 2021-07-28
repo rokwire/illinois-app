@@ -362,6 +362,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               textColor: Styles().colors.fillColorPrimary,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
+                Analytics().logSelect(target: 'Event website');
                 _onTapWebButton(titleUrl, analyticsName: 'Website');
               }),
       ),),],),);
@@ -441,6 +442,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapEdit(){
+    Analytics().logSelect(target: 'Edit Event');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String id) {
         if (AppString.isStringNotEmpty(id)) {
@@ -454,6 +456,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapDelete(){
+    Analytics().logSelect(target: 'Delete Event');
     showDialog(context: context, builder: (context)=>
         GroupsConfirmationDialog(
           message: Localization().getStringEx("panel.group_detail.message.delete_event.title",  "Are you sure you want to delete this event?"),
@@ -488,6 +491,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onLocationDetailTapped(){
+    Analytics().logSelect(target: 'Event location/url');
     if((_event?.isVirtual?? false) == true){
       String url = _event?.location?.description;
       if(AppString.isStringNotEmpty(url)) {
@@ -500,6 +504,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onOptionsTap(){
+    Analytics().logSelect(target: 'Event options');
     if(_isPrivateGroupEvent){
       return;
     }
@@ -569,6 +574,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   borderColor: Styles().colors.fillColorSecondary,
                   textColor: Styles().colors.fillColorPrimary,
                   onTap: (){
+                    Analytics().logSelect(target: 'Add');
                     setState(() {
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
