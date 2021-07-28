@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:collection';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
@@ -45,38 +43,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
-  LinkedHashSet<String> _groupsNames;
 
-  bool _nameIsValid = true;
-  bool _groupNamesLoading = false;
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
   bool get _canSave => AppString.isStringNotEmpty(_group.title)
       && AppString.isStringNotEmpty(_group.category);
-  bool get _loading => _groupCategoeriesLoading || _groupNamesLoading;
+  bool get _loading => _groupCategoeriesLoading;
 
   @override
   void initState() {
     _group = Group();
-    _initGroupNames();
     _initPrivacyData();
     _initCategories();
     super.initState();
   }
 
   //Init
-  void _initGroupNames(){
-    _groupNamesLoading = true;
-    Groups().loadGroups().then((groups){
-      _groupsNames = groups?.map((group) => group?.title?.toLowerCase()?.trim())?.toSet();
-    }).catchError((error){
-      print(error);
-    }).whenComplete((){
-      setState(() {
-        _groupNamesLoading = false;
-      });
-    });
-  }
 
   void _initPrivacyData(){
     _groupPrivacyOptions = GroupPrivacy.values;
@@ -137,7 +119,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           child: Column(children: <Widget>[
                             _buildImageSection(),
                             _buildNameField(),
-                            _buildNameError(),
                             _buildDescriptionField(),
                             Container(height: 24,),
                             Container(height: 1, color: Styles().colors.surfaceAccent,),
@@ -242,35 +223,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       ),
 
     );
-  }
-
-  Widget _buildNameError(){
-    String errorMessage = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name.");
-
-    return Visibility(visible: !_nameIsValid,
-        child: Container( padding: EdgeInsets.only(left:16, right:16,top: 6),
-          child:Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          decoration: BoxDecoration(
-              color: Styles().colors.fillColorSecondaryVariant,
-              border: Border.all(
-                  color: Styles().colors.fillColorSecondary,
-                  width: 1),
-              borderRadius:
-              BorderRadius.all(Radius.circular(4))),
-            child: Row(
-              children: <Widget>[
-                Image.asset('images/warning-orange.png'),
-                Expanded(child:
-                    Container(
-                        padding: EdgeInsets.only(left: 12, right: 4),
-                        child:Text(errorMessage,
-                              style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular))
-                ))
-              ],
-            ),
-        )
-    ));
   }
 
   //Description
@@ -681,13 +633,5 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void onNameChanged(String name){
     _group.title = name;
-     validateName(name);
-  }
-
-  void validateName(String name){
-    LinkedHashSet<String> takenNames = _groupsNames ?? [];
-    setState(() {
-      _nameIsValid = !(takenNames?.contains(name?.toLowerCase()?.trim())??false);
-    });
   }
 }
