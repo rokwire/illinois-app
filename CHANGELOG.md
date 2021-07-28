@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not show private events to non-members [#621](https://github.com/rokwire/illinois-app/issues/621).
 ### Changed
 - Removed inline group name validation in create group panel, extened error processing on create/update group [#630](https://github.com/rokwire/illinois-app/issues/630).
+### Added
+- Added missing analytics events in groups [#631](https://github.com/rokwire/illinois-app/issues/631).
 
 ## [2.6.11] - 2021-07-27
 ### Fixed
