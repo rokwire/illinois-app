@@ -358,7 +358,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       ],
                                     ),
                                   ),
-                                  Visibility(visible: !_allDay, child: Padding(
+                                  Padding(
                                     padding: EdgeInsets.only(bottom: 16),
                                     child: Row(
                                       mainAxisAlignment:
@@ -413,7 +413,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                               )
                                           ),
                                         ),
-                                        Container(width: 10,),
+                                        Visibility(visible: !_allDay, child: Container(width: 10)),
                                         Visibility(visible: !_allDay, child: Expanded(
                                             flex: 1,
                                             child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
@@ -475,7 +475,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         )),
                                       ],
                                     ),
-                                  )),
+                                  ),
                                   Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _allDay, excludeSemantics: true, child:
                                   ToggleRibbonButton(
@@ -1821,9 +1821,6 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           utcTTime?.toUtc(), format: AppDateTime.eventsServerCreateDateTimeFormat, ignoreTimeZone: true);
       event.startDateGmt = utcTTime?.toUtc();
     }
-    if (_allDay && (_startDate != null)) {
-      _endDate = _startDate.add(Duration(days: 1)).subtract(Duration(minutes: 1));
-    }
     if(_endDate!=null) {
       timezone.TZDateTime startTime = AppDateTime().changeTimeZoneToDate(_endDate, timezone.getLocation(_selectedTimeZone));
       timezone.TZDateTime utcTTime = startTime?.toUtc();
@@ -1957,7 +1954,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     bool _titleValidation = AppString.isStringNotEmpty(_eventTitleController.text);
     bool _startDateValidation = _startDate != null;
     bool _startTimeValidation = _startTime != null || _allDay;
-    bool _endDateValidation = _endDate != null || _allDay;
+    bool _endDateValidation = _endDate != null;
     bool _endTimeValidation = _endTime != null || _allDay;
     bool _propperStartEndTimeInterval = (_endDate != null) ? !(_startDate?.isAfter(_endDate) ?? true) : true;
     return _categoryValidation && _titleValidation && _startDateValidation && _startTimeValidation &&
@@ -1970,7 +1967,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         AppString.isStringNotEmpty(_eventTitleController.text);
     bool _startDateValidation = _startDate != null;
     bool _startTimeValidation = _startTime != null || _allDay;
-    bool _endDateValidation = _endDate != null || _allDay;
+    bool _endDateValidation = _endDate != null;
     bool _endTimeValidation = _endTime != null || _allDay;
     bool _propperStartEndTimeInterval = (_endDate != null) ? !(_startDate?.isAfter(_endDate) ?? true) : true;
 //    bool subCategoryIsValid = _subCategoryController.text?.isNotEmpty;
