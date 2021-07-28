@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [2.6.12] - 2021-07-27
 ### Fixed
 - Require user to input event end date for all day events [#627](https://github.com/rokwire/illinois-app/issues/627).
 - Event display date time [#626](https://github.com/rokwire/illinois-app/issues/626).
 - Do not show private events to non-members [#621](https://github.com/rokwire/illinois-app/issues/621).
+- Improved Accessibility for Groups Panels [#618](https://github.com/rokwire/illinois-app/issues/618).
 ### Changed
 - Removed inline group name validation in create group panel, extened error processing on create/update group [#630](https://github.com/rokwire/illinois-app/issues/630).
 ### Added
