@@ -206,12 +206,12 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
   }
 
   void onTapMembers(){
-    Analytics().logPage(name: "Group Members");
+    Analytics().logSelect(target: "Group Members");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: widget.group.id)));
   }
 
   void onTapSettings(){
-    Analytics().logPage(name: "Group Settings");
+    Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: widget.group,)));
   }
 }
@@ -281,13 +281,13 @@ class _NoUpcomingEvents extends StatelessWidget{
   }
 
   void _onTapCreateEvent(BuildContext context){
-    Analytics().logPage(name: "Create Event");
+    Analytics().logSelect(target: "Create Event");
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel()));
     // TBD Notify service for Create Event
   }
 
   void _onTapFindEvent(BuildContext context){
-    Analytics().logPage(name: "Find Event");
+    Analytics().logSelect(target: "Find Event");
     GroupEventsContext groupContext = GroupEventsContext(events: <Event>[]);
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupFindEventPanel(groupContext: groupContext,)));
   }
@@ -382,7 +382,7 @@ class _EventCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16),
           child:_buildAddPostButton(photoUrl: Groups().getUserMembership(groupId)?.photoURL,
           onTap: (){
-            Analytics().logPage(name: "Add post");
+            Analytics().logSelect(target: "Add post");
             // TBD: remove if not used
             // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: groupEvent,groupId: groupId,)));
         })));
