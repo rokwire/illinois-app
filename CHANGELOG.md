@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Show public/private event in Event detail panel [#622](https://github.com/rokwire/illinois-app/issues/622).
 - Pop to Group Detail Panel when user replies on a post [#623](https://github.com/rokwire/illinois-app/issues/623).
+- Fixed miscelanious issue related to analytics logging [#638](https://github.com/rokwire/illinois-app/issues/638).
 
 ## [2.6.12] - 2021-07-27
 ### Fixed
