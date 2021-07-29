@@ -32,7 +32,7 @@ class StudentGuideDetailPanel extends StatefulWidget implements AnalyticsPageAtt
     Map<String, dynamic> guideEntry = StudentGuide().entryById(guideEntryId);
     return {
       Analytics.LogAttributeStudentGuideId : guideEntryId,
-      Analytics.LogAttributeStudentGuideName : AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'title')),
+      Analytics.LogAttributeStudentGuideTitle : AppJson.stringValue(StudentGuide().entryTitle(guideEntry, stripHtmlTags: true)),
       Analytics.LogAttributeStudentGuideCategory :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category')),
       Analytics.LogAttributeStudentGuideSection :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
     };
@@ -436,7 +436,10 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
   void _onTapFavorite() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.guideEntryId}");
-    User().switchFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+    User().switchFavorite(StudentGuideFavorite(
+      id: StudentGuide().entryId(_guideEntry),
+      title: StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true),
+    ));
   }
 
   void _onTapLink(String url) {

@@ -563,7 +563,9 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Analytics.instance.logSelect(target: "MultipleEventsDetailPanel mark favorite event: ${widget.parentEvent?.id ?? 'all recurring events'}");
     Event event = widget.parentEvent;
     if (event?.isRecurring ?? false) {
-      if (User().isExploreFavorite(event)) {
+      bool isFavorite = User().isExploreFavorite(event);
+      Analytics().logFavorite(event, !isFavorite);
+      if (isFavorite) {
         User().removeAllFavorites(event.recurringEvents);
       } else {
         User().addAllFavorites(event.recurringEvents);

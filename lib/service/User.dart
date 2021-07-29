@@ -22,6 +22,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
@@ -373,13 +374,15 @@ class User with Service implements NotificationsListener {
 
   //Favorites
   void switchFavorite(Favorite favorite) {
-    if(isFavorite(favorite))
-      removeFavorite(favorite);
+    bool isFavoriteItem = isFavorite(favorite);
+    Analytics().logFavorite(favorite, !isFavoriteItem);
+    if(isFavoriteItem)
+      _removeFavorite(favorite);
     else
-      addFavorite(favorite);
+      _addFavorite(favorite);
   }
 
-  void addFavorite(Favorite favorite) {
+  void _addFavorite(Favorite favorite) {
     if(favorite==null || _userData==null)
       return;
 
@@ -405,7 +408,7 @@ class User with Service implements NotificationsListener {
     });
   }
 
-  void removeFavorite(Favorite favorite) {
+  void _removeFavorite(Favorite favorite) {
     if(favorite==null || _userData==null)
       return;
 

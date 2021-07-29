@@ -116,7 +116,10 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
 
   void _onTapFavorite() {
     Analytics.instance.logSelect(target: "Favorite: $guideEntryId");
-    User().switchFavorite(StudentGuideFavorite(id: guideEntryId));
+    User().switchFavorite(StudentGuideFavorite(
+      id: guideEntryId,
+      title: StudentGuide().entryTitle(widget.guideEntry, stripHtmlTags: true),
+    ));
   }
 
   void _onTapEntry() {

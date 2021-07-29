@@ -367,7 +367,10 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       User().switchFavorite(originalItem);
     }
     else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
+      User().switchFavorite(StudentGuideFavorite(
+        id: StudentGuide().entryId(originalItem),
+        title: StudentGuide().entryTitle(originalItem)
+      ));
     }
   }
 

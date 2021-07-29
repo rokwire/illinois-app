@@ -140,6 +140,14 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogHttpRequestMethodName           = "http_request_method";
   static const String   LogHttpResponseCodeName            = "http_response_code";
 
+  // Favorite Event
+  // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
+  static const String   LogFavoriteEventName                = "favorite";
+  static const String   LogFavoriteActionName               = "action";
+  static const String   LogFavoriteTypeName                 = "type";
+  static const String   LogFavoriteIdName                   = "id";
+  static const String   LogFavoriteTitleName                = "title";
+
   // Map Route
   static const String   LogMapRouteEventName               = "map_route";
   static const String   LogMapRouteAction                  = "action";
@@ -195,7 +203,7 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAttributeGroupId                = "group_id";
   static const String   LogAttributeGroupName              = "group_name";
   static const String   LogAttributeStudentGuideId         = "student_guide_id";
-  static const String   LogAttributeStudentGuideName       = "student_guide_name";
+  static const String   LogAttributeStudentGuideTitle      = "student_guide_title";
   static const String   LogAttributeStudentGuideCategory   = "student_guide_category";
   static const String   LogAttributeStudentGuideSection    = "student_guide_section";
   static const String   LogAttributeLocation               = "location";
@@ -743,6 +751,16 @@ class Analytics with Service implements NotificationsListener {
       LogHttpResponseCodeName         : response?.statusCode
     };
     logEvent(httpResponseEvent);
+  }
+
+  void logFavorite(Favorite favorite, bool on) {
+    logEvent({
+      LogEventName          : LogFavoriteEventName,
+      LogFavoriteActionName : (on != null) ? (on ? 'on' : 'off') : null,
+      LogFavoriteTypeName   : favorite?.favoriteKey,
+      LogFavoriteIdName     : favorite?.favoriteId,
+      LogFavoriteTitleName  : favorite?.favoriteTitle,
+    });
   }
 
   void logMapRoute({String action, Map<String, dynamic> params}) {

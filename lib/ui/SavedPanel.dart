@@ -323,8 +323,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (favoriteGuideIds != null) {
       for (dynamic contentEntry in StudentGuide().contentList) {
         String guideEntryId = StudentGuide().entryId(AppJson.mapValue(contentEntry));
+        
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
-          guideItems.add(StudentGuideFavorite(id: guideEntryId));
+          guideItems.add(StudentGuideFavorite(
+            id: guideEntryId,
+            title: StudentGuide().entryTitle(AppJson.mapValue(contentEntry), stripHtmlTags: true),
+          ));
         }
       }
     }
