@@ -760,13 +760,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildPosts() {
-    if (AppCollection.isCollectionEmpty(_visibleGroupPosts)) {
-      return Container();
-    }
     List<Widget> postsContent = [];
 
     EdgeInsetsGeometry listPadding;
 
+    if (AppCollection.isCollectionEmpty(_visibleGroupPosts)) {
+      if(_isMember){
+        Column(children: <Widget>[
+          SectionTitlePrimary(
+              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+              iconPath: 'images/icon-calendar.png',
+              listPadding: listPadding,
+              rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
+              rightIconAction: _canCreatePost ? _onTapCreatePost : null,
+              rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
+              children: postsContent)
+        ]);
+      } else {
+        return Container();
+      }
+    }
+    
     if (_hasMorePosts != false) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
       listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16);
