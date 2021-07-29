@@ -859,11 +859,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (succeeded) {
       _clearSelectedReplyId();
       _clearBodyControllerContent();
-      if (_isCreatePost) {
-        Navigator.of(context).pop(true);
-      } else {
-        _reloadPost();
-      }
+      Navigator.of(context).pop(true);
     } else {
       AppAlert.showDialogResult(
           context,
