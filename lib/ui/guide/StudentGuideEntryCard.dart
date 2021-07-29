@@ -104,7 +104,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapLink(String url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics.instance.logSelect(target: 'Link: $url');
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -120,7 +120,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapEntry() {
-    Analytics.instance.logSelect(target: guideEntryId);
+    Analytics.instance.logSelect(target: "Guide Entry: $guideEntryId");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 

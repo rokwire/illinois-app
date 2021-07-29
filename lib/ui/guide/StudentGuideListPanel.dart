@@ -26,7 +26,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class StudentGuideListPanel extends StatefulWidget {
+class StudentGuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String category;
   final StudentGuideSection section;
   final List<dynamic> contentList;
@@ -34,7 +34,16 @@ class StudentGuideListPanel extends StatefulWidget {
 
   StudentGuideListPanel({ this.category, this.section, this.contentList, this.contentTitle});
 
+  @override
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return {
+      Analytics.LogAttributeStudentGuideCategory : category,
+      Analytics.LogAttributeStudentGuideSection : section?.name,
+    };
+  }
 }
 
 class _StudentGuideListPanelState extends State<StudentGuideListPanel> implements NotificationsListener {

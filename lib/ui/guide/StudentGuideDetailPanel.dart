@@ -20,11 +20,23 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentGuideDetailPanel extends StatefulWidget {
+class StudentGuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String guideEntryId;
   StudentGuideDetailPanel({ this.guideEntryId });
 
+  @override
   _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    Map<String, dynamic> guideEntry = StudentGuide().entryById(guideEntryId);
+    return {
+      Analytics.LogAttributeStudentGuideId : guideEntryId,
+      Analytics.LogAttributeStudentGuideName : AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'title')),
+      Analytics.LogAttributeStudentGuideCategory :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category')),
+      Analytics.LogAttributeStudentGuideSection :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
+    };
+  }
 }
 
 class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> implements NotificationsListener {
