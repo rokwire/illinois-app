@@ -343,7 +343,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
   }
 
   void _navigateDining() {
-    Analytics.instance.logSelect(target: "Dinings");
+    Analytics.instance.logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
   }
 
