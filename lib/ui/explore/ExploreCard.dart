@@ -499,7 +499,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   void _onTapExploreCardStar() {
-    Analytics.instance.logSelect(target: "ExploreCard mark favorite explore: ${widget.explore.exploreId}");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
     Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
     if (event?.isRecurring ?? false) {
       if (User().isExploreFavorite(event)) {
@@ -585,8 +585,7 @@ class _EventSmallCard extends StatelessWidget {
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          String favoriteId = favorite?.favoriteId;
-                          Analytics.instance.logSelect(target: "ExploreCard mark favorite explore: $favoriteId");
+                          Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
                           User().switchFavorite(favorite);
                         },
                         child: Semantics(

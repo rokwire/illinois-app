@@ -435,11 +435,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.guideEntryId}");
-    User().switchFavorite(StudentGuideFavorite(
-      id: StudentGuide().entryId(_guideEntry),
-      title: StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true),
-    ));
+    String title = StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true);
+    Analytics.instance.logSelect(target: "Favorite: $title");
+    User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(_guideEntry), title: title, ));
   }
 
   void _onTapLink(String url) {

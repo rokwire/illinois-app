@@ -208,7 +208,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
-                  Analytics.instance.logSelect(target: "Favorite");
+                  Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
                   User().switchFavorite(widget.event);
                 },
                 child: Semantics(

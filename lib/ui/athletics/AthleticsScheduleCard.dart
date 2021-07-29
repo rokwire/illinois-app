@@ -277,7 +277,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   void _onTapSaveGame() {
-    Analytics.instance.logSelect(target: "AthleticsScheduleCard: " + widget._game.title + " -Favorite");
+    Analytics.instance.logSelect(target: "Favorite: ${widget._game?.title}");
     User().switchFavorite(widget._game);
   }
 

@@ -649,7 +649,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite : $title");
+                                  Analytics.instance.logSelect(target: "Favorite: $title");
                                   User().switchFavorite(item);
                                 },
                                 child: Semantics(

@@ -414,7 +414,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Analytics.instance.logSelect(target: "Favorite");
+            Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
             User().switchFavorite(_event);
             setState(() {});
           },

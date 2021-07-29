@@ -598,7 +598,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics.instance.logSelect(target: "Favorite");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
     User().switchFavorite(widget.event);
   }
 
