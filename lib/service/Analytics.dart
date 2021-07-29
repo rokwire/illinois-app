@@ -192,6 +192,8 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAttributeGameName               = "game_name";
   static const String   LogAttributeLaundryId              = "laundry_id";
   static const String   LogAttributeLaundryName            = "laundry_name";
+  static const String   LogAttributeGroupId                = "group_id";
+  static const String   LogAttributeGroupName              = "group_name";
   static const String   LogAttributeLocation               = "location";
 
 
