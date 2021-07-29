@@ -216,7 +216,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
             Visibility(visible: starVisible,child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: (){
-                  Analytics.instance.logSelect(target: "Favorite");
+                  Analytics.instance.logSelect(target: "Favorite: ${dining?.title}");
                   User().switchFavorite(dining);},
                 child: Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),

@@ -1113,8 +1113,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  String event = widget.event.id;
-                                  Analytics.instance.logSelect(target: "Favorite Event: $event");
+                                  Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
                                   User().switchFavorite(widget.event);
                                 },
                                 child: Semantics(

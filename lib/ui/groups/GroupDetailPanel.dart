@@ -50,14 +50,23 @@ import 'GroupSettingsPanel.dart';
 
 enum _DetailTab { Events, Posts, About }
 
-class GroupDetailPanel extends StatefulWidget {
+class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
-  final String groupId;
+  final Group group;
 
-  GroupDetailPanel({this.groupId});
+  GroupDetailPanel({this.group});
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return group?.analyticsAttributes;
+  }
+
+  String get groupId {
+    return group?.id;
+  }
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {

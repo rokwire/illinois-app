@@ -418,5 +418,6 @@ class UserRole{
 
 abstract class Favorite{
   String get favoriteId;
+  String get favoriteTitle;
   String get favoriteKey;
 }

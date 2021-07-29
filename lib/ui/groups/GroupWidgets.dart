@@ -598,7 +598,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics.instance.logSelect(target: "Favorite");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
     User().switchFavorite(widget.event);
   }
 
@@ -992,7 +992,7 @@ class GroupCard extends StatelessWidget {
 
   void _onTapCard(BuildContext context) {
     Analytics.instance.logSelect(target: "Group: ${group.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
   }
 
   String get _timeUpdatedText {

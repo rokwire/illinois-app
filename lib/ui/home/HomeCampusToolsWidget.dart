@@ -177,7 +177,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
     
   void _onTapDining() {
-    Analytics.instance.logSelect(target: "Dinings");
+    Analytics.instance.logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,); } ));
   }
 

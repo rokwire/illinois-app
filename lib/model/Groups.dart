@@ -18,6 +18,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Event.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
@@ -120,6 +121,13 @@ class Group {
     tags            = (other?.tags != null) ? List.from(other?.tags) : null;
     questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
     membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
+  }
+
+  Map<String, dynamic> get analyticsAttributes {
+    return {
+      Analytics.LogAttributeGroupId : id,
+      Analytics.LogAttributeGroupName : title
+    };
   }
 
   List<Member> getMembersByStatus(GroupMemberStatus status){

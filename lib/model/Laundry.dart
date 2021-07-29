@@ -92,6 +92,9 @@ class LaundryRoom implements Favorite{
   String get favoriteId => id;
 
   @override
+  String get favoriteTitle => title;
+
+  @override
   String get favoriteKey =>  favoriteKeyName;
 
   static String favoriteKeyName = "laundryPlaceIds";

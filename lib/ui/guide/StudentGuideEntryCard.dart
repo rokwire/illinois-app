@@ -104,7 +104,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapLink(String url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics.instance.logSelect(target: 'Link: $url');
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -115,12 +115,13 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: $guideEntryId");
-    User().switchFavorite(StudentGuideFavorite(id: guideEntryId));
+    String title = StudentGuide().entryTitle(widget.guideEntry, stripHtmlTags: true);
+    Analytics.instance.logSelect(target: "Favorite: $title");
+    User().switchFavorite(StudentGuideFavorite(id: guideEntryId, title: title,));
   }
 
   void _onTapEntry() {
-    Analytics.instance.logSelect(target: guideEntryId);
+    Analytics.instance.logSelect(target: "Guide Entry: $guideEntryId");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 

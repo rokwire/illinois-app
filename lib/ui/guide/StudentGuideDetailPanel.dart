@@ -20,11 +20,23 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentGuideDetailPanel extends StatefulWidget {
+class StudentGuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String guideEntryId;
   StudentGuideDetailPanel({ this.guideEntryId });
 
+  @override
   _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    Map<String, dynamic> guideEntry = StudentGuide().entryById(guideEntryId);
+    return {
+      Analytics.LogAttributeStudentGuideId : guideEntryId,
+      Analytics.LogAttributeStudentGuideTitle : AppJson.stringValue(StudentGuide().entryTitle(guideEntry, stripHtmlTags: true)),
+      Analytics.LogAttributeStudentGuideCategory :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category')),
+      Analytics.LogAttributeStudentGuideSection :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
+    };
+  }
 }
 
 class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> implements NotificationsListener {
@@ -423,8 +435,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.guideEntryId}");
-    User().switchFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+    String title = StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true);
+    Analytics.instance.logSelect(target: "Favorite: $title");
+    User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(_guideEntry), title: title, ));
   }
 
   void _onTapLink(String url) {

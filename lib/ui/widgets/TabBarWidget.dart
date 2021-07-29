@@ -18,6 +18,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -118,7 +119,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             iconResource: 'images/tab-home.png',
             iconResourceSelected: 'images/tab-home-selected.png',
             selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
-            onTap: ()=>_onSwitchTab(context, tabIndex),
+            onTap: ()=>_onSwitchTab(tabIndex, 'Home'),
           ),
         ));
       }
@@ -130,7 +131,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             iconResource: 'images/tab-explore.png',
             iconResourceSelected: 'images/tab-explore-selected.png',
             selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
-            onTap: ()=>_onSwitchTab(context, tabIndex),
+            onTap: ()=>_onSwitchTab(tabIndex, 'Explore'),
           )
         ));
       }
@@ -141,7 +142,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.wallet.hint', ''),
             iconResource: 'images/tab-wallet.png',
             selected: false,
-            onTap: ()=>_onShowWalletSheet(context),
+            onTap: ()=>_onShowWalletSheet('Wallet'),
           )
         ));
       }
@@ -153,7 +154,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             iconResource: 'images/tab-browse.png',
             iconResourceSelected: 'images/tab-browse-selected.png',
             selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
-            onTap: ()=>_onSwitchTab(context, tabIndex),
+            onTap: ()=>_onSwitchTab(tabIndex, 'Browse'),
           ),
         ));
       }
@@ -165,16 +166,17 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
     setState(() {});
   }
 
-  void _onSwitchTab(BuildContext context, int tabIndex){
+  void _onSwitchTab(int tabIndex, String tabName){
+    Analytics().logSelect(target: tabName);
+
     Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-    var rootPanel = App.instance?.panelState?.rootPanel;
-    if (rootPanel != null) {
-      RootTab tab = rootPanel.panelState?.getRootTabByIndex(tabIndex);
-      rootPanel.selectTab(rootTab: tab);
-    }
+    RootPanel rootPanel = App.instance?.panelState?.rootPanel;
+    RootTab tab = rootPanel?.panelState?.getRootTabByIndex(tabIndex);
+    rootPanel?.selectTab(rootTab: tab);
   }
 
-  void _onShowWalletSheet(BuildContext context){
+  void _onShowWalletSheet(String tabName){
+    Analytics().logSelect(target: tabName);
     showModalBottomSheet(context: context,
         isScrollControlled: true,
         isDismissible: true,

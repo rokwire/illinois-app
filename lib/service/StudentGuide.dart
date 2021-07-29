@@ -205,6 +205,12 @@ class StudentGuide with Service implements NotificationsListener {
     return AppJson.stringValue(entryValue(entry, '_id'));
   }
 
+  String entryTitle(Map<String, dynamic> entry, { bool stripHtmlTags = true }) {
+    String result = AppJson.stringValue(entryValue(entry, 'title')) ?? AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'detail_title'));
+    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    // Bidi.stripHtmlIfNeeded(result);
+  }
+
   String entryListTitle(Map<String, dynamic> entry, { bool stripHtmlTags }) {
     String result = AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
     return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
@@ -628,7 +634,8 @@ class StudentGuideSection {
 class StudentGuideFavorite implements Favorite {
   
   final String id;
-  StudentGuideFavorite({this.id});
+  final String title;
+  StudentGuideFavorite({this.id, this.title});
 
   bool operator == (o) => o is StudentGuideFavorite && o.id == id;
 
@@ -636,6 +643,9 @@ class StudentGuideFavorite implements Favorite {
 
   @override
   String get favoriteId => id;
+
+  @override
+  String get favoriteTitle => title;
 
   @override
   String get favoriteKey => favoriteKeyName;
