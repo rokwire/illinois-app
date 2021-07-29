@@ -820,11 +820,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String title, description;
     if (_group?.privacy == GroupPrivacy.private) {
       title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
-      description = Localization().getStringEx("panel.group_detail.label.description.private", 'This group is only visible to members.\nAnyone can search for the group with the exact name.\nOnly admins can see members.\nOnly members can see posts and group events.\nAll users can see group events if they are marked public.\nAll users can see admins.');
+      description = Localization().getStringEx("panel.group_detail.label.description.private", '\u2022 This group is only visible to members.\n\u2022 Anyone can search for the group with the exact name.\n\u2022 Only admins can see members.\n\u2022 Only members can see posts and group events.\n\u2022 All users can see group events if they are marked public.\n\u2022 All users can see admins.');
     }
     else if (_group?.privacy == GroupPrivacy.public) {
       title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');
-      description = Localization().getStringEx("panel.group_detail.label.description.public", 'Only admins can see members.\nOnly members can see posts.\nAll users can see group events, unless they are marked private.\nAll users can see admins.');
+      description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
     }
     
     return (AppString.isStringNotEmpty(title) && AppString.isStringNotEmpty(description)) ?
