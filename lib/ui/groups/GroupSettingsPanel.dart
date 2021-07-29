@@ -548,6 +548,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Privacy
   Widget _buildPrivacyDropDown() {
+
+    String longDescription;
+    switch(_group?.privacy) {
+      case GroupPrivacy.private: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.private", "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group."); break;
+      case GroupPrivacy.public: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.public", "Anyone who uses the app will see this group. Only admins can see who is in the group."); break;
+    }
+
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         color: Styles().colors.background,
@@ -560,14 +567,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
                   initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
-                  constructDescription:
-                      (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events") :
-                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events"),
                   constructTitle:
                       (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_title.private", "Private") :
-                        Localization().getStringEx("panel.common.privacy_title.public",  "Public"),
+                        Localization().getStringEx("panel.groups.common.privacy.title.private", "Private") :
+                        Localization().getStringEx("panel.groups.common.privacy.title.public",  "Public"),
+                  constructDropdownDescription:
+                      (item) => item == GroupPrivacy.private?
+                        Localization().getStringEx("panel.groups.common.privacy.description.short.private", "Only members can see group events and posts, unless an event is marked public.") :
+                        Localization().getStringEx("panel.groups.common.privacy.description.short.public",  "Only members can see group events and posts, unless an event is marked public."),
                   onValueChanged: (value) => _onPrivacyChanged(value)
               )
           )),
@@ -575,8 +582,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             explicitChildNodes: true,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
-              child:Text(
-                Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+              child:Text(longDescription ?? '',
                 style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
             ),)),
           Container(height: 8,)
