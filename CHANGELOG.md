@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pop to Group Detail Panel when user replies on a post [#623](https://github.com/rokwire/illinois-app/issues/623).
 - Fixed miscelanious issue related to analytics logging [#638](https://github.com/rokwire/illinois-app/issues/638).
 - Crash when editing group event [#643](https://github.com/rokwire/illinois-app/issues/643).
+- Add bullets in group "About" section [#645](https://github.com/rokwire/illinois-app/issues/645).
 
 ## [2.6.12] - 2021-07-27
 ### Fixed
