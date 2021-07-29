@@ -859,11 +859,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (succeeded) {
       _clearSelectedReplyId();
       _clearBodyControllerContent();
-      if (_isCreatePost) {
-        Navigator.of(context).pop(true);
-      } else {
-        _reloadPost();
-      }
+      Navigator.of(context).pop(true);
     } else {
       AppAlert.showDialogResult(
           context,
@@ -880,9 +876,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onUpdateFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
-      _editingPost = null;
-      _clearBodyControllerContent();
-      _reloadPost();
+      Navigator.of(context).pop(true);
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.update.reply.failed.msg', 'Failed to edit reply.'));
     }
