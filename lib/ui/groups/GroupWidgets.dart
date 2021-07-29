@@ -661,7 +661,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   void _onEditEventTap(BuildContext context){
     Analytics().logSelect(target: "Update Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event,onEditTap: (Event event) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String id) {
         if (AppString.isStringNotEmpty(id)) {
           Navigator.pop(context);
