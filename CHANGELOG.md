@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Show public/private event in Event detail panel [#622](https://github.com/rokwire/illinois-app/issues/622).
+
 ## [2.6.12] - 2021-07-27
 ### Fixed
 - Require user to input event end date for all day events [#627](https://github.com/rokwire/illinois-app/issues/627).

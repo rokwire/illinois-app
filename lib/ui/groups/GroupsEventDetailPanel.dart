@@ -108,6 +108,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       _eventLocationDetail(),
                       Container(height: 8,),
                       _eventPriceDetail(),
+                      _eventPrivacyDetail(),
                       Container(height: 20,),
                       _buildPreviewButtons(),
                       Container(height: 20,),
@@ -327,6 +328,25 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     } else {
       return Container();
     }
+  }
+
+  Widget _eventPrivacyDetail() {
+    String privacyText = _isPrivateGroupEvent
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+    return Semantics(
+        label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
+        value: privacyText,
+        excludeSemantics: true,
+        child: Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Column(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png')),
+                Expanded(
+                    child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)))
+              ])
+            ])));
   }
 
   Widget _eventDescription() {
