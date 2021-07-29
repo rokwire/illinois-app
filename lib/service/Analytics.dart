@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as Http;
 import 'package:illinois/model/GeoFence.dart';
+import 'package:illinois/model/Poll.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth.dart';
@@ -147,6 +148,21 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogFavoriteTypeName                 = "type";
   static const String   LogFavoriteIdName                   = "id";
   static const String   LogFavoriteTitleName                = "title";
+
+  static const String   LogFavoriteOnActionName             = "on";
+  static const String   LogFavoriteOffActionName            = "off";
+
+  // Poll Event
+  // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
+  static const String   LogPollEventName                    = "poll";
+  static const String   LogPollActionName                   = "action";
+  static const String   LogPollIdName                       = "id";
+  static const String   LogPollTitleName                    = "title";
+
+  static const String   LogPollCreateActionName             = "create";
+  static const String   LogPollOpenActionName               = "open";
+  static const String   LogPollCloseActionName              = "close";
+  static const String   LogPollVoteActionName               = "vote";
 
   // Map Route
   static const String   LogMapRouteEventName               = "map_route";
@@ -756,10 +772,19 @@ class Analytics with Service implements NotificationsListener {
   void logFavorite(Favorite favorite, bool on) {
     logEvent({
       LogEventName          : LogFavoriteEventName,
-      LogFavoriteActionName : (on != null) ? (on ? 'on' : 'off') : null,
+      LogFavoriteActionName : (on != null) ? (on ? LogFavoriteOnActionName : LogFavoriteOffActionName) : null,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
       LogFavoriteTitleName  : favorite?.favoriteTitle,
+    });
+  }
+
+  void logPoll(Poll poll, String action) {
+    logEvent({
+      LogEventName          : LogPollEventName,
+      LogPollActionName     : action,
+      LogPollIdName         : poll?.pollId,
+      LogPollTitleName      : poll?.title,
     });
   }
 

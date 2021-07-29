@@ -20,6 +20,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Poll.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
@@ -216,6 +217,8 @@ class Polls with Service implements NotificationsListener {
             if (pollId != null) {
               poll.pollId = pollId;
 
+              Analytics().logPoll(poll, Analytics.LogPollCreateActionName);
+
               _addPollToChunks(poll);
 
               if (poll.status == PollStatus.opened) {
@@ -260,6 +263,7 @@ class Polls with Service implements NotificationsListener {
           if ((response != null) && (response.statusCode == 200)) {
             _onPollStarted(pollId).then((Poll poll) {
               if (poll != null) {
+                Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
                 if (poll.isBluetooth) {
                   PollsPlugin().openPoll(pollId);
                 }
@@ -296,6 +300,7 @@ class Polls with Service implements NotificationsListener {
           String voteString = json.encode(voteJson);
           Response response = await Network().post(url, body: voteString, auth: NetworkAuth.App);
           if ((response != null) && (response.statusCode == 200)) {
+            Analytics().logPoll(getPoll(pollId: pollId), Analytics.LogPollVoteActionName);
             _updatePollVote(pollId, vote);
           }
           else {
@@ -319,6 +324,7 @@ class Polls with Service implements NotificationsListener {
           String url = '${Config().quickPollsUrl}/pollend/$pollId';
           Response response = await Network().put(url, auth: NetworkAuth.App);
           if ((response != null) && (response.statusCode == 200)) {
+            Analytics().logPoll(getPoll(pollId: pollId), Analytics.LogPollCloseActionName);
             _updatePollStatus(pollId, PollStatus.closed);
             NotificationService().notify(notifyStatusChanged, pollId);
           }
