@@ -466,6 +466,11 @@ class Analytics with Service implements NotificationsListener {
     else if (route is MaterialPageRoute) {
       builder = route.builder;
     }
+    else {
+      // _ModalBottomSheetRoute presented by showModalBottomSheet
+      try { builder = (route as dynamic).builder; }
+      catch(e) { print(e?.toString()); }
+    }
 
     if (builder != null) {
       Widget panel = builder(null);
