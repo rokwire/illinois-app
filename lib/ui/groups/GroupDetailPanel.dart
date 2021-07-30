@@ -93,25 +93,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   DateTime           _pausedDateTime;
 
   bool get _isMember {
-    if(_group?.members?.isNotEmpty ?? false){
-      for(Member member in _group.members){
-        if(member.email == Auth()?.authInfo?.email){
-          return true;
-        }
-      }
-    }
-    return false;
+    return _group?.currentUserAsMember?.isMember ?? false;
   }
-  
+
   bool get _isAdmin {
-    if(_group?.members?.isNotEmpty ?? false){
-      for(Member member in _group.members){
-        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.admin){
-          return true;
-        }
-      }
-    }
-    return false;
+    return _group?.currentUserAsMember?.isAdmin ?? false;
+  }
+
+  bool get _isMemberOrAdmin {
+    return _isMember || _isAdmin;
   }
 
   bool get _isPublic {
@@ -433,7 +423,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _buildImageHeader(),
       _buildGroupInfo()
     ];
-    if (_isMember) {
+    if (_isMemberOrAdmin) {
       content.add(_buildTabs());
       if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
@@ -451,7 +441,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildAdmins());
       if (_isPublic) {
         content.add(_buildEvents());
-        content.add(_buildPosts());
       }
     }
 
@@ -522,7 +511,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       pendingMembers = "";
     }
 
-    if(_isMember){
+    if (_isMemberOrAdmin) {
       if(_isAdmin){
         commands.add(RibbonButton(
           height: null,
@@ -594,14 +583,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _isMember? Container():
+              _isMemberOrAdmin ? Container():
                 Padding(padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(children: <Widget>[
                     Expanded(child:
                       Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
                     ),
                   ],),),
-              (!_isMember)? Container():
+              (!_isMemberOrAdmin)? Container():
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(
@@ -765,7 +754,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     EdgeInsetsGeometry listPadding;
 
     if (AppCollection.isCollectionEmpty(_visibleGroupPosts)) {
-      if(_isMember){
+      if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionTitlePrimary(
               title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
