@@ -314,10 +314,10 @@ class Auth with Service implements NotificationsListener {
     return true;
   }
 
-  Future<void> _syncProfilePiiDataIfNeed() async{
-    if(isShibbolethLoggedIn){
+  Future<void> _syncProfilePiiDataIfNeed() async {
+    if (isShibbolethLoggedIn) {
       UserPiiData piiData = userPiiData;
-      if(piiData.updateFromAuthInfo(authInfo)){
+      if ((piiData != null) && piiData.updateFromAuthInfo(authInfo)) {
         storeUserPiiData(piiData);
       }
     }
