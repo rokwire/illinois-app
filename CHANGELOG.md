@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Do not evaluate number of group replies recursively [#651](https://github.com/rokwire/illinois-app/issues/651).
+- Do not show group content for members to pending members [#654](https://github.com/rokwire/illinois-app/issues/654).
 
 ## [2.6.13] - 2021-07-29
 ### Fixed
