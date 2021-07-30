@@ -114,7 +114,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return false;
   }
 
-  bool get isPublic {
+  bool get _isPublic {
     return _group?.privacy == GroupPrivacy.public;
   }
 
@@ -449,7 +449,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildAbout());
       content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
-      if (isPublic) {
+      if (_isPublic) {
         content.add(_buildEvents());
         content.add(_buildPosts());
       }
