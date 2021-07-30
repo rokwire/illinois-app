@@ -24,13 +24,17 @@ class SectionTitlePrimary extends StatelessWidget{
   final String subTitle;
   final String iconPath;
   final List<Widget> children;
+  final EdgeInsetsGeometry listPadding;
   final String slantImageRes;
   final Color backgroundColor;
   final Color slantColor;
   final Color textColor;
+  final String rightIconPath;
+  final String rightIconLabel;
+  final Function rightIconAction;
 
-  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.children,
-    this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor});
+  SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children, this.listPadding,
+    this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor, this.rightIconAction, this.rightIconLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +77,7 @@ class SectionTitlePrimary extends StatelessWidget{
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 2),
-              child: Semantics(label:title, header: true, excludeSemantics: true, child:Row(
+              child: Row(
                 children: <Widget>[
                   iconPath != null ? Padding(
                     padding: EdgeInsets.only(
@@ -82,15 +86,29 @@ class SectionTitlePrimary extends StatelessWidget{
                         iconPath, excludeFromSemantics: true,),
                   ) : Container(),
                   Expanded(child:
-                    Text(
-                      title,
-                      style: TextStyle(
+                    Semantics(label:title, header: true, excludeSemantics: true, child:
+                      Text(
+                        title,
+                        style: TextStyle(
                           color: textColor ?? Styles().colors.textColorPrimary,
                           fontSize: 20),
+                      )
                     )
                   ),
+                  rightIconPath != null ?
+                  Semantics(
+                    button: true,
+                    label: rightIconLabel,
+                    child: GestureDetector(
+                      onTap: rightIconAction ?? (){},
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 16),
+                        child: Image.asset(
+                          rightIconPath, excludeFromSemantics: true,),
+                      ))): Container(),
                 ],
-              )),
+              ),
             ),
             Visibility(visible: hasSubTitle,
                 child: Semantics(
@@ -107,7 +125,7 @@ class SectionTitlePrimary extends StatelessWidget{
                       Expanded(child: Container(),)
                     ],),),)),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: listPadding ?? EdgeInsets.all(16),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

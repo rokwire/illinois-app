@@ -108,6 +108,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       _eventLocationDetail(),
                       Container(height: 8,),
                       _eventPriceDetail(),
+                      _eventPrivacyDetail(),
                       Container(height: 20,),
                       _buildPreviewButtons(),
                       Container(height: 20,),
@@ -329,6 +330,25 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
   }
 
+  Widget _eventPrivacyDetail() {
+    String privacyText = _isPrivateGroupEvent
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+    return Semantics(
+        label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
+        value: privacyText,
+        excludeSemantics: true,
+        child: Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Column(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png')),
+                Expanded(
+                    child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)))
+              ])
+            ])));
+  }
+
   Widget _eventDescription() {
     String longDescription = _event.exploreLongDescription;
     bool showDescription = AppString.isStringNotEmpty(longDescription);
@@ -362,6 +382,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               textColor: Styles().colors.fillColorPrimary,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
+                Analytics().logSelect(target: 'Event website');
                 _onTapWebButton(titleUrl, analyticsName: 'Website');
               }),
       ),),],),);
@@ -393,7 +414,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Analytics.instance.logSelect(target: "Favorite");
+            Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
             User().switchFavorite(_event);
             setState(() {});
           },
@@ -441,6 +462,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapEdit(){
+    Analytics().logSelect(target: 'Edit Event');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel(editEvent: _event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String id) {
         if (AppString.isStringNotEmpty(id)) {
@@ -454,6 +476,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onTapDelete(){
+    Analytics().logSelect(target: 'Delete Event');
     showDialog(context: context, builder: (context)=>
         GroupsConfirmationDialog(
           message: Localization().getStringEx("panel.group_detail.message.delete_event.title",  "Are you sure you want to delete this event?"),
@@ -488,6 +511,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onLocationDetailTapped(){
+    Analytics().logSelect(target: 'Event location/url');
     if((_event?.isVirtual?? false) == true){
       String url = _event?.location?.description;
       if(AppString.isStringNotEmpty(url)) {
@@ -500,6 +524,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _onOptionsTap(){
+    Analytics().logSelect(target: 'Event options');
     if(_isPrivateGroupEvent){
       return;
     }
@@ -569,6 +594,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   borderColor: Styles().colors.fillColorSecondary,
                   textColor: Styles().colors.fillColorPrimary,
                   onTap: (){
+                    Analytics().logSelect(target: 'Add');
                     setState(() {
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");

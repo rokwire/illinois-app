@@ -130,6 +130,6 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
 
   void _showAll() {
     Analytics.instance.logSelect(target: "HomeStudentGuideHighlightsWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(promotedList: _promotedItems,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights'))));
   }
 }

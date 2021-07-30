@@ -83,7 +83,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           SliverHeaderBar(
             context: context,
             backVisible: false,
-            onBackPressed: () => Navigator.pop(context),
+            onBackPressed: () {
+              Analytics().logSelect(target: 'Close');
+              Navigator.pop(context);
+            } ,
             backgroundColor: Styles().colors.surface,
             titleWidget: Text(
               Localization().getStringEx( "panel.wallet.label.title", "Wallet"),
@@ -99,7 +102,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
                 child: Semantics(button: true,excludeSemantics: true,label: Localization().getStringEx("panel.wallet.button.close.title", "close"), child:
                   IconButton(
                     icon: Image.asset('images/close-orange.png',excludeFromSemantics: true,),
-                    onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+                    onPressed: () {
+                      Analytics().logSelect(target: 'Close');
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
                   ),
                 )
               )

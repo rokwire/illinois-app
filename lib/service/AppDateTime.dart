@@ -38,6 +38,7 @@ class AppDateTime with Service {
   static final eventFilterDisplayDateFormat = 'MM/dd';
   static final voterDateFormat = "yyyy/MM/dd";
   static final parkingEventDateFormat = "yyyy-MM-ddTHH:mm:ssZ";
+  static final groupPostDateTimeFormat = "MMM dd, HH:mm a";
 
   factory AppDateTime() {
     return _instance;
@@ -127,7 +128,7 @@ class AppDateTime with Service {
   }
 
   String formatDateTime(DateTime dateTime,
-      {String format, bool ignoreTimeZone = false, bool showTzSuffix = false}) {
+      {String format, String locale, bool ignoreTimeZone = false, bool showTzSuffix = false}) {
     if (dateTime == null) {
       return null;
     }
@@ -136,7 +137,7 @@ class AppDateTime with Service {
     }
     bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
     String formattedDateTime;
-    DateFormat dateFormat = DateFormat(format);
+    DateFormat dateFormat = DateFormat(format, locale);
     if (ignoreTimeZone || useDeviceLocalTimeZone) {
       try { formattedDateTime = dateFormat.format(dateTime); }
       catch (e) { print(e?.toString()); }
@@ -169,7 +170,7 @@ class AppDateTime with Service {
       DateTime nowToCompare = useDeviceLocalTime ? nowDevice : nowUniLocal;
       int calendarDaysDiff = dateTimeToCompare.day - nowToCompare.day;
       int timeDaysDiff = dateTimeToCompare.difference(nowToCompare).inDays;
-      if ((calendarDaysDiff != 0) && (nowToCompare.hour > dateTimeToCompare.hour)) {
+      if ((calendarDaysDiff != 0) && (calendarDaysDiff > timeDaysDiff)) {
         timeDaysDiff += 1;
       }
       if (timeDaysDiff == 0) {

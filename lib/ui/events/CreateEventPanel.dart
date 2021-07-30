@@ -59,9 +59,10 @@ class CreateEventPanel extends StatefulWidget {
 
 class _CreateEventPanelState extends State<CreateEventPanel> {
   static const String defaultEventTimeZone = "US/Central";
-  static const String defaulPrivacy = "PUBLIC";
+  static const String eventPrivacyPublic = "PUBLIC";
+  static const String eventPrivacyPrivate = "PRIVATE";
   final List<dynamic> _eventTimeZones = ["US/Pacific", "US/Mountain", "US/Central", "US/Eastern"];
-  final List<dynamic> _privacyTypes = ["PUBLIC", "PRIVATE"];
+  final List<dynamic> _privacyTypes = [eventPrivacyPublic, eventPrivacyPrivate];
 
   final double _imageHeight = 208;
 
@@ -78,7 +79,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   Location _location;
   bool _isOnline = false;
   bool _isFree = false;
-  String _selectedPrivacy = defaulPrivacy;
+  String _selectedPrivacy = eventPrivacyPublic;
   //TMP: bool _isAttendanceRequired = false;
 
   bool _loading = false;
@@ -96,6 +97,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
   @override
   void initState() {
+    _populateDefaultValues();
     _loadEventCategories();
     _prepopulateWithUpdateEvent();
     super.initState();
@@ -295,7 +297,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                              )
                                          ),
                                        ),
-                                    Container(width: 10),
+                                    Visibility(visible: !_allDay, child: Container(width: 10)),
                                     Visibility(visible: !_allDay, child: Expanded(
                                       flex: 1,
                                       child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.start_time.title",'START TIME'),
@@ -411,7 +413,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                               )
                                           ),
                                         ),
-                                        Container(width: 10,),
+                                        Visibility(visible: !_allDay, child: Container(width: 10)),
                                         Visibility(visible: !_allDay, child: Expanded(
                                             flex: 1,
                                             child: Semantics(label:Localization().getStringEx("panel.create_event.date_time.end_time.title",'END TIME'),
@@ -1496,7 +1498,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventPurchaseUrlController.text = event.registrationUrl;
       _eventWebsiteController.text = event.titleUrl;
       _eventPriceController.text = event.cost;
-      _selectedPrivacy = (event?.isGroupPrivate??false) ? "PRIVATE" : "PUBLIC";
+      _selectedPrivacy = (event?.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
       if(event.location!=null){
         if (_isOnline) {
           _eventCallUrlController?.text = _location.description;
@@ -1507,6 +1509,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         _eventLatitudeController.text = event.location?.latitude?.toString()??"";
         _eventLongitudeController.text = event.location?.longitude?.toString()??"";
       }
+    }
+  }
+
+  void _populateDefaultValues(){
+    if(widget?.group?.privacy!=null){
+      _selectedPrivacy = (widget.group.privacy == GroupPrivacy.private) ? eventPrivacyPrivate : eventPrivacyPublic;
     }
   }
 
@@ -1995,7 +2003,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }*/
 
   bool get _isPrivateEvent{
-   return _selectedPrivacy == "PRIVATE";
+   return _selectedPrivacy == eventPrivacyPrivate;
   }
 
   /*bool get _isEditMode{

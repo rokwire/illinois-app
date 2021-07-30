@@ -15,7 +15,6 @@
  */
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:core';
 
 import 'package:http/http.dart';
@@ -33,10 +32,11 @@ import 'package:illinois/utils/Utils.dart';
 class Groups /* with Service */ {
 
   static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
-  static const String notifyGroupEventsUpdated   = "edu.illinois.rokwire.groups.events.updated";
+  static const String notifyGroupEventsUpdated      = "edu.illinois.rokwire.groups.events.updated";
   static const String notifyGroupCreated            = "edu.illinois.rokwire.group.created";
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
   static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
+  static const String notifyGroupPostsUpdated       = "edu.illinois.rokwire.group.posts.updated";
 
   Map<String, Member> _userMembership;
 
@@ -100,14 +100,12 @@ class Groups /* with Service */ {
       Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App,);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
-      List<dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-      if(AppCollection.isCollectionNotEmpty(groupsJson)){
-        return groupsJson.map((e) => Group.fromJson(e)).toList();
-      }
+      List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
+      return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
     } catch (e) {
       print(e);
     }
-    return [];
+    return null;
   }
 
   Future<List<Group>> searchGroups(String searchText) async {
@@ -140,7 +138,7 @@ class Groups /* with Service */ {
         Response response = await Network().get(url, auth: Auth().isShibbolethLoggedIn ? NetworkAuth.User : NetworkAuth.App,);
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
-        Map<String, dynamic> groupsJson = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
+        Map<String, dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeMap(responseBody) : null;
         return groupsJson != null ? Group.fromJson(groupsJson) : null;
       } catch (e) {
         print(e);
@@ -149,7 +147,7 @@ class Groups /* with Service */ {
     return null;
   }
 
-  Future<String> createGroup(Group group) async {
+  Future<GroupError> createGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups';
       try {
@@ -157,39 +155,55 @@ class Groups /* with Service */ {
         json["creator_email"] = Auth()?.authInfo?.email ?? "";
         json["creator_name"] = Auth()?.authInfo?.fullName ?? "";
         json["creator_photo_url"] = "";
-        String body = jsonEncode(json);
+        String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
         int responseCode = response?.statusCode ?? -1;
-        String responseBody = response?.body;
-        Map<String, dynamic> jsonData = ((response != null) && (responseCode == 200)) ? jsonDecode(responseBody) : null;
-        if(jsonData != null){
-          String groupId = jsonData['inserted_id'];
-          NotificationService().notify(notifyGroupCreated, group.id);
-          return groupId;
+        if (responseCode == 200) {
+          Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
+          String groupId = (jsonData != null) ? AppJson.stringValue(jsonData['inserted_id']) : null;
+          if (AppString.isStringNotEmpty(groupId)) {
+            NotificationService().notify(notifyGroupCreated, group.id);
+            return null; // succeeded
+          }
+        }
+        else if (responseCode == 400) {
+          Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
+          Map<String, dynamic> jsonError = (jsonData != null) ? AppJson.mapValue(jsonData['error']) : null;
+          if (jsonError != null) {
+            return GroupError.fromJson(jsonError); // error descrition
+          }
         }
       } catch (e) {
         print(e);
       }
     }
-    return null;
+    return GroupError(); // generic error
   }
 
-  Future<bool> updateGroup(Group group) async {
+  Future<GroupError> updateGroup(Group group) async {
     if(group != null) {
       String url = '${Config().groupsUrl}/groups/${group.id}';
       try {
         Map<String, dynamic> json = group.toJson();
-        String body = jsonEncode(json);
+        String body = AppJson.encode(json);
         Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
-        if((response?.statusCode ?? -1) == 200){
+        int responseCode = response?.statusCode ?? -1;
+        if(responseCode == 200){
           NotificationService().notify(notifyGroupUpdated, group.id);
-          return true;
+          return null;
+        }
+        else if (responseCode == 400) {
+          Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
+          Map<String, dynamic> jsonError = (jsonData != null) ? AppJson.mapValue(jsonData['error']) : null;
+          if (jsonError != null) {
+            return GroupError.fromJson(jsonError); // error descrition
+          }
         }
       } catch (e) {
         print(e);
       }
     }
-    return false;
+    return GroupError(); // generic error
   }
 
   Future<bool> deleteGroup(String groupId) async {
@@ -220,7 +234,7 @@ class Groups /* with Service */ {
         json["creator_photo_url"] = "";
         json["member_answers"] = AppCollection.isCollectionNotEmpty(answers) ? answers.map((e) => e.toJson()).toList() : [];
 
-        String body = jsonEncode(json);
+        String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
         if((response?.statusCode ?? -1) == 200){
           NotificationService().notify(notifyGroupUpdated, group.id);
@@ -270,7 +284,7 @@ class Groups /* with Service */ {
   Future<bool> acceptMembership(String groupId, String memberId, bool decision, String reason) async{
     if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId) && decision != null) {
       Map<String, dynamic> bodyMap = {"approve": decision, "reject_reason": reason};
-      String body = jsonEncode(bodyMap);
+      String body = AppJson.encode(bodyMap);
       String url = '${Config().groupsUrl}/memberships/$memberId/approval';
       try {
         Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
@@ -288,7 +302,7 @@ class Groups /* with Service */ {
   Future<bool> updateMembership(String groupId, String memberId, GroupMemberStatus status) async{
     if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId)) {
       Map<String, dynamic> bodyMap = {"status":groupMemberStatusToString(status)};
-      String body = jsonEncode(bodyMap);
+      String body = AppJson.encode(bodyMap);
       String url = '${Config().groupsUrl}/memberships/$memberId';
       try {
         Response response = await Network().put(url, auth: NetworkAuth.User, body: body);
@@ -328,8 +342,9 @@ class Groups /* with Service */ {
         Response response = await Network().get(url, auth: NetworkAuth.User);
         if((response?.statusCode ?? -1) == 200){
           //Successfully loaded ids
+          int responseCode = response?.statusCode ?? -1;
           String responseBody = response?.body;
-          List<dynamic> eventIdsJson = (response != null) ? jsonDecode(responseBody) : null;
+          List<dynamic> eventIdsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
           return eventIdsJson;
         }
       } catch (e) {
@@ -339,23 +354,35 @@ class Groups /* with Service */ {
     return null; // fail
   }
 
-  ///
+  /// 
+  /// Loads group events based on the current user membership
+  /// 
   /// Returns Map with single element:
   ///
   /// key - all events count ignoring the limit,
   /// 
   /// value - events (limited or not)
   ///
-  Future<Map<int, List<GroupEvent>>> loadEvents(String groupId, {int limit = -1}) async {
-    List<dynamic> eventIds = await loadEventIds(groupId);
-    List<Event> events = AppCollection.isCollectionNotEmpty(eventIds) ? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
-    if (AppCollection.isCollectionNotEmpty(events)) {
-      int eventsCount = events.length;
-      ExploreService().sortEvents(events);
-      //limit the result count // limit available events
-      List<Event> visibleEvents = ((limit > 0) && (eventsCount > limit)) ? events.sublist(0, limit) : events;
-      List<GroupEvent> groupEvents = visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
-      return {eventsCount: groupEvents};
+  Future<Map<int, List<GroupEvent>>> loadEvents(Group group, {int limit = -1}) async {
+    if (group != null) {
+      List<dynamic> eventIds = await loadEventIds(group.id);
+      List<Event> allEvents = AppCollection.isCollectionNotEmpty(eventIds) ? await ExploreService().loadEventsByIds(Set<String>.from(eventIds)) : null;
+      if (AppCollection.isCollectionNotEmpty(allEvents)) {
+        List<Event> currentUserEvents = [];
+        bool isCurrentUserMemberOrAdmin = group.currentUserIsMemberOrAdmin;
+        for (Event event in allEvents) {
+          bool isPrivate = event.isGroupPrivate;
+          if (!isPrivate || isCurrentUserMemberOrAdmin) {
+            currentUserEvents.add(event);
+          }
+        }
+        int eventsCount = currentUserEvents.length;
+        ExploreService().sortEvents(currentUserEvents);
+        //limit the result count // limit available events
+        List<Event> visibleEvents = ((limit > 0) && (eventsCount > limit)) ? currentUserEvents.sublist(0, limit) : currentUserEvents;
+        List<GroupEvent> groupEvents = visibleEvents?.map((Event event) => GroupEvent.fromJson(event?.toJson()))?.toList();
+        return {eventsCount: groupEvents};
+      }
     }
     return null;
   }
@@ -365,7 +392,7 @@ class Groups /* with Service */ {
       String url = '${Config().groupsUrl}/group/$groupId/events';
       try {
         Map<String, dynamic> bodyMap = {"event_id":eventId};
-        String body = jsonEncode(bodyMap);
+        String body = AppJson.encode(bodyMap);
         Response response = await Network().post(url, auth: NetworkAuth.User,body: body);
         if((response?.statusCode ?? -1) == 200){
           NotificationService().notify(notifyGroupUpdated, groupId);
@@ -426,4 +453,110 @@ class Groups /* with Service */ {
   Future<bool> postEventComment(String groupId, String eventId, GroupEventComment comment) {
     return Future<bool>.delayed(Duration(seconds: 1), (){ return true; });
   }
+
+  // Group Posts and Replies
+
+  Future<bool> createPost(String groupId, GroupPost post) async {
+    if (AppString.isStringEmpty(groupId) || (post == null)) {
+      return false;
+    }
+    String requestBody = AppJson.encode(post.toJson(create: true));
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts';
+    Response response = await Network().post(requestUrl, auth: NetworkAuth.User, body: requestBody);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostsUpdated, (post.parentId == null) ? 1 : null);
+      return true;
+    } else {
+      Log.e('Failed to create group post. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<bool> updatePost(String groupId, GroupPost post) async {
+    if (AppString.isStringEmpty(groupId) || AppString.isStringEmpty(post?.id)) {
+      return false;
+    }
+    String requestBody = AppJson.encode(post.toJson(update: true));
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post.id}';
+    Response response = await Network().put(requestUrl, auth: NetworkAuth.User, body: requestBody);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostsUpdated);
+      return true;
+    } else {
+      Log.e('Failed to update group post. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<bool> deletePost(String groupId, GroupPost post) async {
+    if (AppString.isStringEmpty(groupId) || AppString.isStringEmpty(post?.id)) {
+      return false;
+    }
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts/${post.id}';
+    Response response = await Network().delete(requestUrl, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    if (responseCode == 200) {
+      NotificationService().notify(notifyGroupPostsUpdated, (post.parentId == null) ? -1 : null);
+      return true;
+    } else {
+      Log.e('Failed to delete group post. Response: ${response?.body}');
+      return false;
+    }
+  }
+
+  Future<List<GroupPost>> loadGroupPosts(String groupId, {int offset, int limit, GroupSortOrder order}) async {
+    if (AppString.isStringEmpty(groupId)) {
+      return null;
+    }
+    
+    String urlParams = "";
+    if (offset != null) {
+      urlParams = urlParams.isEmpty ? "?" : "$urlParams&";
+      urlParams += "offset=$offset";
+    }
+    if (limit != null) {
+      urlParams = urlParams.isEmpty ? "?" : "$urlParams&";
+      urlParams += "limit=$limit";
+    }
+    if (order != null) {
+      urlParams = urlParams.isEmpty ? "?" : "$urlParams&";
+      urlParams += "order=${groupSortOrderToString(order)}";
+    }
+    
+    String requestUrl = '${Config().groupsUrl}/group/$groupId/posts$urlParams';
+    Response response = await Network().get(requestUrl, auth: NetworkAuth.User);
+    int responseCode = response?.statusCode ?? -1;
+    String responseString = response?.body;
+    if (responseCode == 200) {
+      List<GroupPost> posts = GroupPost.fromJsonList(AppJson.decodeList(responseString));
+      return posts;
+    } else {
+      Log.e('Failed to retrieve group posts. Response: ${response?.body}');
+      return null;
+    }
+  }
+}
+
+enum GroupSortOrder { asc, desc }
+
+GroupSortOrder groupSortOrderFromString(String value) {
+  if (value == 'asc') {
+    return GroupSortOrder.asc;
+  }
+  else if (value == 'desc') {
+    return GroupSortOrder.desc;
+  }
+  else {
+    return null;
+  }
+}
+
+String groupSortOrderToString(GroupSortOrder value) {
+  switch(value) {
+    case GroupSortOrder.asc:  return 'asc';
+    case GroupSortOrder.desc: return 'desc';
+  }
+  return null;
 }

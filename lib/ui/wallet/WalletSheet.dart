@@ -17,6 +17,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -153,7 +154,10 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
         tabs.add(Expanded(
             child: Semantics(button: true,label: Localization().getStringEx("panel.wallet.button.close.title", "close"), child:
               GestureDetector(
-                onTap: ()=>Navigator.pop(context),
+                onTap: (){
+                  Analytics().logSelect(target: 'Close');
+                  Navigator.pop(context);
+                },
                 behavior: HitTestBehavior.translucent,
                 child: Center(
                   child: Image.asset('images/icon-close-big.png', excludeFromSemantics: true,),

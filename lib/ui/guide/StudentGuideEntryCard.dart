@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
@@ -55,6 +56,8 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   Widget build(BuildContext context) {
     String titleHtml = StudentGuide().entryListTitle(widget.guideEntry);
     String descriptionHtml = StudentGuide().entryListDescription(widget.guideEntry);
+    bool isReminder = StudentGuide().isEntryReminder(widget.guideEntry);
+    String reminderDate = isReminder ? AppDateTime().formatDateTime(StudentGuide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -71,10 +74,13 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
                 Html(data: titleHtml ?? '',
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
                   style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),),
-                Container(height: 8,),
-                Html(data: descriptionHtml ?? '',
-                  onLinkTap: (url, context, attributes, element) => _onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                Container(height: isReminder ? 4 : 8,),
+                isReminder ?
+                  Text(reminderDate ?? '',
+                    style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.medium),) :
+                  Html(data: descriptionHtml ?? '',
+                    onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+                    style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
               ],),
           ),)),
         Container(color: Styles().colors.accentColor3, height: 4),
@@ -98,7 +104,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapLink(String url) {
-    Analytics.instance.logSelect(target: url);
+    Analytics.instance.logSelect(target: 'Link: $url');
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -109,12 +115,13 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: $guideEntryId");
-    User().switchFavorite(StudentGuideFavorite(id: guideEntryId));
+    String title = StudentGuide().entryTitle(widget.guideEntry, stripHtmlTags: true);
+    Analytics.instance.logSelect(target: "Favorite: $title");
+    User().switchFavorite(StudentGuideFavorite(id: guideEntryId, title: title,));
   }
 
   void _onTapEntry() {
-    Analytics.instance.logSelect(target: guideEntryId);
+    Analytics.instance.logSelect(target: "Guide Entry: $guideEntryId");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 

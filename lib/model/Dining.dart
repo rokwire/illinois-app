@@ -150,6 +150,7 @@ class Dining with Explore implements Favorite {
 
   static String favoriteKeyName = "diningPlaceIds";
   @override String get favoriteId => exploreId;
+  @override String get favoriteTitle => title;
   @override String get favoriteKey => favoriteKeyName;
 
   String get displayWorkTime {

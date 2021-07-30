@@ -28,7 +28,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Reminders.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/StudentGuide.dart';
@@ -36,7 +35,6 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Reminder.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -79,7 +77,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   List<Favorite> _athletics;
   List<Favorite> _news;
   List<Favorite> _laundries;
-  List<Favorite> _reminders;
   List<Favorite> _guideItems;
 
   bool _showNotificationPermissionPrompt = false;
@@ -91,7 +88,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Assets.notifyChanged,
       User.notifyFavoritesUpdated,
-      Reminders.notifyChanged,
       StudentGuide.notifyChanged
     ]);
     _laundryAvailable = (IlliniCash().ballance?.housingResidenceStatus ?? false);
@@ -187,10 +183,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                               headingIconResource: 'images/icon-news.png',
                               items: _laundries,),),
                             _buildItemsSection(
-                              headingTitle: Localization().getStringEx('panel.saved.label.reminders', 'Reminders'),
-                              headingIconResource: 'images/reminder.png',
-                              items: _reminders,),
-                            _buildItemsSection(
                               headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Student Guide'),
                               headingIconResource: 'images/icon-news.png',
                               items: _guideItems,),
@@ -218,7 +210,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     _loadAthletics();
     _loadNews();
     _loadLaundries();
-    _loadReminders();
     _loadGuideItems();
   }
 
@@ -325,21 +316,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
   }
 
-  void _loadReminders() {
-    Set<String> favoriteReminderIds = User().getFavorites(Reminder.favoriteKeyName);
-    if (AppCollection.isCollectionNotEmpty(favoriteReminderIds) && Connectivity().isNotOffline) {
-      List<Reminder> items = Reminders().getAllReminders();
-      setState(() {
-        _reminders = _buildFilteredItems(items, favoriteReminderIds);
-      });
-    }
-    else if (AppCollection.isCollectionNotEmpty(_reminders)) {
-      setState(() {
-        _reminders = null;
-      });
-    }
-  }
-
   void _loadGuideItems() {
 
     Set<String> favoriteGuideIds = User().getFavorites(StudentGuideFavorite.favoriteKeyName);
@@ -347,8 +323,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (favoriteGuideIds != null) {
       for (dynamic contentEntry in StudentGuide().contentList) {
         String guideEntryId = StudentGuide().entryId(AppJson.mapValue(contentEntry));
+        
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
-          guideItems.add(StudentGuideFavorite(id: guideEntryId));
+          guideItems.add(StudentGuideFavorite(
+            id: guideEntryId,
+            title: StudentGuide().entryTitle(AppJson.mapValue(contentEntry), stripHtmlTags: true),
+          ));
         }
       }
     }
@@ -537,7 +517,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           !AppCollection.isCollectionNotEmpty(_athletics) &&
           !AppCollection.isCollectionNotEmpty(_news) &&
           !AppCollection.isCollectionNotEmpty(_laundries) &&
-          !AppCollection.isCollectionNotEmpty(_reminders) &&
           !AppCollection.isCollectionNotEmpty(_guideItems);
   }
 
@@ -563,9 +542,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == User.notifyFavoritesUpdated) {
       setState(() { _loadSavedItems(); });
-    }
-    else if (name == Reminders.notifyChanged) {
-      setState(() { _loadReminders(); });
     }
     else if (name == StudentGuide.notifyChanged) {
       setState(() { _loadGuideItems(); });
@@ -673,7 +649,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Analytics.instance.logSelect(target: "Favorite : $title");
+                                  Analytics.instance.logSelect(target: "Favorite: $title");
                                   User().switchFavorite(item);
                                 },
                                 child: Semantics(
@@ -760,8 +736,6 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.title;
     } else if (item is LaundryRoom) {
       return item.title;
-    } else if (item is Reminder) {
-      return item.label;
     } else if (item is StudentGuideFavorite) {
       return StudentGuide().entryListTitle(StudentGuide().entryById(item.id), stripHtmlTags: true);
     } else {
@@ -778,8 +752,6 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.displayTime;
     } else if (item is News) {
       return item.getDisplayTime();
-    } else if (item is Reminder) {
-      return item.displayDate;
     } else if (item is StudentGuideFavorite) {
       return StudentGuide().entryListDescription(StudentGuide().entryById(item.id), stripHtmlTags: true);
     } else

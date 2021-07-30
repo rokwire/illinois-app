@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -102,7 +103,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                         color: Styles().colors.fillColorPrimary
                     ),
                   ),
-                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget?.member?.dateCreated, format: "MMM dd, yyyy")??""),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")+(AppDateTime().formatDateTime(widget?.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: 14,
@@ -181,6 +182,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                 toggled: _approved,
                 context: context,
                 onTap: () {
+                  Analytics().logSelect(target: 'Aprove');
                   setState(() {
                     _approved = !_approved;
                     _denied = !_approved;
@@ -203,6 +205,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                       toggled: _denied,
                       context: context,
                       onTap: () {
+                        Analytics().logSelect(target: 'Deny');
                         setState(() {
                           _denied = !_denied;
                           _approved = !_denied;
@@ -270,7 +273,10 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                   textColor: _canContinue? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
                   fontFamily: Styles().fontFamilies.bold,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                  onTap: () { _processMembership(); },
+                  onTap: () {
+                    Analytics().logSelect(target: 'Apply');
+                    _processMembership();
+                  },
                 ),
                 Visibility(visible: _updating, child:
                   Center(child:

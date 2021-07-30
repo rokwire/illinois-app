@@ -26,14 +26,24 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class StudentGuideListPanel extends StatefulWidget {
+class StudentGuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String category;
-  final String section;
-  final List<dynamic> promotedList;
+  final StudentGuideSection section;
+  final List<dynamic> contentList;
+  final String contentTitle;
 
-  StudentGuideListPanel({ this.category, this.section, this.promotedList});
+  StudentGuideListPanel({ this.category, this.section, this.contentList, this.contentTitle});
 
+  @override
   _StudentGuideListPanelState createState() => _StudentGuideListPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return {
+      Analytics.LogAttributeStudentGuideCategory : category,
+      Analytics.LogAttributeStudentGuideSection : section?.name,
+    };
+  }
 }
 
 class _StudentGuideListPanelState extends State<StudentGuideListPanel> implements NotificationsListener {
@@ -70,25 +80,34 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
   void _buildGuideContent() {
     if ((widget.category != null) && (widget.section != null) && (StudentGuide().contentList != null)) {
       _guideItems = <Map<String, dynamic>>[];
+
       for (dynamic contentEntry in StudentGuide().contentList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
         if (guideEntry != null) {
           String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          String section = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section'));
+          StudentGuideSection section = StudentGuideSection.fromGuideEntry(guideEntry);
           if ((widget.category == category) && (widget.section == section)) {
             _guideItems.add(guideEntry);
           }
         }
       }
     }
-    else if (widget.promotedList != null) {
-      _guideItems = List.from(widget.promotedList);
+    else if (widget.contentList != null) {
+      _guideItems = List.from(widget.contentList);
     }
     else {
       _guideItems = null;
     }
 
     if (_guideItems != null) {
+
+        _guideItems.sort((dynamic entry1, dynamic entry2) {
+          return AppSort.compareIntegers(
+            (entry1 is Map) ? AppJson.intValue(entry1['sort_order']) : null,
+            (entry2 is Map) ? AppJson.intValue(entry2['sort_order']) : null
+          );
+        });
+
       _features = LinkedHashSet<String>();
       for (Map<String, dynamic> guideEntry in _guideItems) {
         List<dynamic> features = AppJson.listValue(StudentGuide().entryValue(guideEntry, 'features'));
@@ -113,7 +132,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     if (widget.category != null) {
       title = widget.category;
     }
-    else if (widget.promotedList != null) {
+    else if (widget.contentList != null) {
       title = Localization().getStringEx('panel.student_guide_list.label.highlights.heading', 'Student Guide');
     }
     
@@ -137,10 +156,10 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       }
 
       if (widget.section != null) {
-        contentList.add(_buildSectionHeading(widget.section));
+        contentList.add(_buildSectionHeading(widget.section.name));
       }
-      else if (widget.promotedList != null) {
-        contentList.add(_buildSectionHeading(Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights')));
+      else if (widget.contentList != null) {
+        contentList.add(_buildSectionHeading(widget.contentTitle));
       }
 
       List<Widget> cardsList = <Widget>[];
@@ -184,13 +203,13 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     return contentList;
   }
 
-  Widget _buildSectionHeading(String section) {
+  Widget _buildSectionHeading(String title) {
     return Container(color: Styles().colors.fillColorPrimary, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(section ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
             )
           ),
         )
@@ -269,8 +288,8 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     if (feature == 'athletics') {
       return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,);
     }
-    else if (feature == 'buss-pass') {
-      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.buss_pass.title", "Buss Pass"), icon: "images/icon-student-guide-buss-pass.png", onTap: _navigateBussPass,);
+    else if (feature == 'bus-pass') {
+      return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,);
     }
     else if (feature == 'dining') {
       return StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining);
@@ -318,13 +337,13 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
-  void _navigateBussPass() {
-    Analytics.instance.logSelect(target: "Buss Pass");
+  void _navigateBusPass() {
+    Analytics.instance.logSelect(target: "Bus Pass");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
   }
 
   void _navigateDining() {
-    Analytics.instance.logSelect(target: "Dinings");
+    Analytics.instance.logSelect(target: "Dining");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
   }
 

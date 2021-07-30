@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/model/ImageType.dart';
@@ -27,9 +28,10 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
-import 'package:illinois/ui/groups/GroupCreatePostPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -50,13 +52,16 @@ class GroupDropDownButton<T> extends StatefulWidget{
   final List<T> items;
   final GroupDropDownDescriptionDataBuilder<T> constructTitle;
   final GroupDropDownDescriptionDataBuilder<T> constructDescription;
+  final GroupDropDownDescriptionDataBuilder<T> constructDropdownDescription;
+  final GroupDropDownDescriptionDataBuilder<T> constructListItemDescription;
   final Function onValueChanged;
+  final bool enabled;
 
   final EdgeInsets padding;
   final BoxDecoration decoration;
 
-  GroupDropDownButton({Key key, this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.onValueChanged,
-    this.constructTitle, this.constructDescription, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
+  GroupDropDownButton({Key key, this.emptySelectionText,this.buttonHint, this.initialSelectedValue, this.items, this.onValueChanged, this.enabled = true,
+    this.constructTitle, this.constructDescription, this.constructDropdownDescription, this.constructListItemDescription, this.padding = const EdgeInsets.only(left: 12, right: 8), this.decoration}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -65,13 +70,6 @@ class GroupDropDownButton<T> extends StatefulWidget{
 }
 
 class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
-  T selectedValue;
-
-  @override
-  void initState() {
-    selectedValue = widget.initialSelectedValue;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,13 +112,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                       isExpanded: true,
                       focusColor: Styles().colors.white,
                       underline: Container(),
-                      hint: Text(buttonTitle ?? "", style: selectedValue == null?hintStyle:valueStyle),
+                      hint: Text(buttonTitle ?? "", style: (widget.initialSelectedValue == null ? hintStyle : valueStyle)),
                       items: _constructItems(),
-                      onChanged: (value){
-                        selectedValue = value;
-                        widget.onValueChanged(value);
-                        setState(() {});
-                      }),
+                      onChanged: (widget.enabled ? (value) => _onValueChanged(value) : null)),
                 ),
               ),
               buttonDescription==null? Container():
@@ -180,9 +174,15 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     );
   }
 
+  void _onValueChanged(dynamic value) {
+    widget.onValueChanged(value);
+    setState(() {});
+  }
+
   String _getButtonDescriptionText(){
-    if(selectedValue!=null){
-      return widget.constructDescription!=null? widget.constructDescription(selectedValue) : null;
+    if (widget.initialSelectedValue != null) {
+      GroupDropDownDescriptionDataBuilder<T> constructDescriptionFn = widget.constructDropdownDescription ?? widget.constructDescription;
+      return constructDescriptionFn!=null? constructDescriptionFn(widget.initialSelectedValue) : null;
     } else {
       //empty null for now
       return null;
@@ -190,8 +190,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
   }
 
   String _getButtonTitleText(){
-    if(selectedValue!=null){
-      return widget.constructTitle!=null? widget.constructTitle(selectedValue) : selectedValue.toString();
+    if (widget.initialSelectedValue != null) {
+      return widget.constructTitle != null ? widget.constructTitle(widget.initialSelectedValue) : widget.initialSelectedValue?.toString();
     } else {
       return widget.emptySelectionText;
     }
@@ -204,8 +204,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
     }
     return widget.items.map((Object item) {
       String name = widget.constructTitle!=null? widget.constructTitle(item) : item?.toString();
-      String description = widget.constructDescription!=null? widget.constructDescription(item) : null;
-      bool isSelected = selectedValue!=null && selectedValue == item;
+      GroupDropDownDescriptionDataBuilder<T> constructDescriptionFn = widget.constructListItemDescription ?? widget.constructDescription;
+      String description = constructDescriptionFn!=null? constructDescriptionFn(item) : null;
+      bool isSelected = (widget.initialSelectedValue != null) && (widget.initialSelectedValue == item);
       return DropdownMenuItem<dynamic>(
         value: item,
         child: item!=null? _buildDropDownItem(name,description,isSelected): Container(),
@@ -308,7 +309,10 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           borderColor: Styles().colors.white,
                           backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          onTap: ()=>Navigator.pop(context),
+                          onTap: (){
+                            Analytics.instance.logAlert(text: message, selection: "Back");
+                            Navigator.pop(context);
+                          },
                         )),
                       Container(width: 16,),
                       Expanded(child:
@@ -320,6 +324,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                           backgroundColor: Styles().colors.white,
                           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           onTap: (){
+                            Analytics.instance.logAlert(text: message, selection: buttonTitle);
                             onConfirmTap();
                           },
                       )),
@@ -363,8 +368,9 @@ class _GroupEventCardState extends State<GroupEventCard>{
               padding: EdgeInsets.symmetric(vertical: 16),
               child:_buildAddPostButton(photoUrl: Groups().getUserMembership(widget.group?.id)?.photoURL,
                   onTap: (){
-                    Analytics().logPage(name: "Add post");
-                    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
+                    Analytics().logSelect(target: "Add post");
+                    //TBD: remove if not used
+                    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupCreatePostPanel(groupEvent: widget.groupEvent,groupId: widget.group?.id,)));
                   }))
       );
     }
@@ -387,6 +393,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
               button: true,
               child: GestureDetector(
                 onTap: (){
+                  Analytics().logSelect(target: "See previous posts");
                   setState(() {
                     _showAllComments = true;
                   });},
@@ -556,7 +563,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
-        Analytics().logPage(name: "Group Settings");
+        Analytics().logSelect(target: "Group Event");
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, groupId: widget.group?.id,previewMode: widget.isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
@@ -595,7 +602,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onFavoriteTap() {
-    Analytics.instance.logSelect(target: "Favorite");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
     User().switchFavorite(widget.event);
   }
 
@@ -622,6 +629,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     leftIcon: "images/icon-leave-group.png",
                     label:Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
                     onTap: (){
+                      Analytics().logSelect(target: "Remove group event");
                       showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
                     },
                   ),
@@ -655,9 +663,9 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   }
 
   void _onEditEventTap(BuildContext context){
-    Analytics().logPage(name: "Create Event");
+    Analytics().logSelect(target: "Update Event");
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event,onEditTap: (Event event) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: widget.group, editEvent: widget.event, onEditTap: (BuildContext context, Event event) {
       Groups().updateGroupEvents(event).then((String id) {
         if (AppString.isStringNotEmpty(id)) {
           Navigator.pop(context);
@@ -917,29 +925,66 @@ class GroupCard extends StatelessWidget {
   }
 
   Widget _buildHeading() {
-    bool showMember = group?.currentUserAsMember?.status != null;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-      Visibility(visible: showMember, child: _buildMember()),
-      Visibility(visible: showMember, child: Container(height: 6)),
-      Text(AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")),
-          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
-    ]);
-  }
-
-  Widget _buildMember() {
-    return Row(children: <Widget>[
-      Semantics(
-          label: "status: " + (group?.currentUserStatusText?.toLowerCase() ?? "") + " ,for: ",
+    List<Widget> leftContent = <Widget>[];
+    
+    if (group?.currentUserAsMember?.status != null) {
+      leftContent.add(
+        Semantics(
+          label: "status: ${group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
           excludeSemantics: true,
           child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(color: group.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
-              child: Center(
-                  child: Text(group.currentUserStatusText.toUpperCase(),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white))))),
-      Expanded(child: Container())
-    ]);
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: group.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Text(group.currentUserStatusText.toUpperCase(),
+              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white)))),
+      );
+    }
+
+    String groupCategory = AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    if (AppString.isStringNotEmpty(groupCategory)) {
+      if (leftContent.isNotEmpty) {
+        leftContent.add(Container(height: 6,));
+      }
+      leftContent.add(
+        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+      );
+    }
+
+    List<Widget> rightContent = <Widget>[];
+
+    String privacyStatus;
+    if (group?.privacy == GroupPrivacy.private) {
+      privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') ;
+    }
+
+    if (privacyStatus != null) {
+      rightContent.add(
+        Semantics(
+          label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [privacyStatus]),
+          excludeSemantics: true,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Text(privacyStatus.toUpperCase(),
+              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.white)))),
+      );
+    }
+
+    List<Widget> content = <Widget>[];
+    if (leftContent.isNotEmpty) {
+      content.add(Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: leftContent,)));
+    }
+    
+    if (rightContent.isNotEmpty) {
+      if (leftContent.isEmpty) {
+        content.add(Expanded(child: Container()));
+      }
+      content.add(Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: rightContent,));
+    }
+
+    return content.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: content,) : Container(width: 0, height: 0);
   }
+
 
   Widget _buildUpdateTime() {
     return Container(
@@ -950,11 +995,270 @@ class GroupCard extends StatelessWidget {
   }
 
   void _onTapCard(BuildContext context) {
-    Analytics.instance.logSelect(target: "${group.title}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupId: group.id)));
+    Analytics.instance.logSelect(target: "Group: ${group.title}");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
   }
 
   String get _timeUpdatedText {
-    return "Updated about 2 hours ago"; //TBD
+    return group.displayUpdateTime ?? '';
+  }
+}
+
+//////////////////////////////////////
+// GroupPostCard
+
+class GroupPostCard extends StatefulWidget {
+  final GroupPost post;
+  final Group group;
+
+  GroupPostCard({Key key, @required this.post, @required this.group}) :
+    super(key: key);
+
+  @override
+  _GroupPostCardState createState() => _GroupPostCardState();
+}
+
+class _GroupPostCardState extends State<GroupPostCard> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String memberName = widget.post?.member?.name;
+    String htmlBody = widget.post?.body;
+    int visibleRepliesCount = getVisibleRepliesCount();
+    bool isRepliesLabelVisible = (visibleRepliesCount > 0);
+    String repliesLabel = (visibleRepliesCount == 1)
+        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
+        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+    return Stack(alignment: Alignment.topRight, children: [
+      Semantics(button:true,
+        child:GestureDetector(
+          onTap: _onTapCard,
+          child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors.white,
+                  boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                      Expanded(
+                          child: Text(AppString.getDefaultEmptyString(value: widget.post.subject),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary))),
+                      Visibility(
+                          visible: isRepliesLabelVisible,
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                            Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Text(AppString.getDefaultEmptyString(value: visibleRepliesCount.toString()),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14))),
+                            Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: Text(AppString.getDefaultEmptyString(value: repliesLabel),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14)))
+                          ])),
+                    ]),
+                    Container(
+                        padding: EdgeInsets.only(top: 10, bottom: 10),
+                        child: Html(data: htmlBody, style: {
+                          "body": Style(
+                              color: Styles().colors.fillColorPrimary,
+                              fontFamily: Styles().fontFamilies.regular,
+                              fontSize: FontSize(16),
+                              maxLines: 3,
+                              textOverflow: TextOverflow.ellipsis,
+                              margin: EdgeInsets.zero,
+                          ),
+                        }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
+                    Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child:Container(
+                              padding: EdgeInsets.only(right: 6),
+                              child:Text(AppString.getDefaultEmptyString(value: memberName),
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary)),
+                          )),
+                          Expanded(
+                            flex: 2,
+                            child: Semantics(child: Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
+                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
+                          )),
+                        ],
+                      )
+                    )
+                  ]))))),
+    ]);
+  }
+
+  void _onTapCard() {
+    Analytics().logSelect(target: "Group post");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group)));
+  }
+
+  void _onLinkTap(String url) {
+    Analytics.instance.logSelect(target: url);
+    if (AppString.isStringNotEmpty(url)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
+  }
+
+  int getVisibleRepliesCount() {
+    int result = 0;
+    List<GroupPost> replies = widget.post?.replies;
+    if (replies != null) {
+      bool memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
+      for (GroupPost reply in replies) {
+        if ((reply.private != true) || (memberOrAdmin == true)) {
+          result++;
+        }
+      }
+    }
+    return result;
+  }
+}
+
+//////////////////////////////////////
+// GroupReplyCard
+
+class GroupReplyCard extends StatefulWidget {
+  final GroupPost reply;
+  final GroupPost post;
+  final Group group;
+  final String iconPath;
+  final String semanticsLabel;
+  final Function onIconTap;
+  final Function onCardTap;
+  final bool showRepliesCount;
+
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
+
+  @override
+  _GroupReplyCardState createState() => _GroupReplyCardState();
+}
+
+class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int visibleRepliesCount = widget?.reply?.replies?.length ?? 0;
+    bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
+    String repliesLabel = (visibleRepliesCount == 1)
+        ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
+        : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
+    String bodyText = AppString.getDefaultEmptyString(value: widget.reply?.body);
+    if (widget.reply?.isUpdated ?? false) {
+      bodyText +=
+          ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
+    }
+    return Semantics(container: true,
+      child:Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Semantics( child:
+                  Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name),
+                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                ),
+                Visibility(
+                    visible: AppString.isStringNotEmpty(widget.iconPath),
+                    child: Semantics( child:Container(
+                    child: Semantics(label: widget.semanticsLabel??"", button: true,
+                    child: GestureDetector(
+                        onTap: widget.onIconTap,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10, top: 3),
+                            child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
+              ]),
+              Semantics( child:
+              Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Html(data: bodyText, style: {
+                    "body": Style(
+                        color: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies.regular,
+                        fontSize: FontSize(16),
+                        maxLines: 3000,
+                        textOverflow: TextOverflow.ellipsis,
+                        margin: EdgeInsets.zero
+                    ),
+                    "span": Style(
+                        color: Styles().colors.blackTransparent018,
+                        fontFamily: Styles().fontFamilies.regular,
+                        fontSize: FontSize(16),
+                        maxLines: 1,
+                        textOverflow: TextOverflow.ellipsis)
+                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+              Semantics( button: true, child:
+                GestureDetector(
+                  onTap: widget.onCardTap ?? _onTapCard,
+                  child: Container(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Row(children: [
+                      Expanded(
+                          child: Container(
+                            child: Semantics(child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
+                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),)),
+                      Visibility(
+                        visible: isRepliesLabelVisible,
+                        child: Expanded(child: Container(
+                          child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline,)
+                        ))),
+                      ))
+                ],),)))
+            ]))));
+  }
+
+  void _onLinkTap(String url) {
+    Analytics.instance.logSelect(target: url);
+    if (AppString.isStringNotEmpty(url)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    }
+  }
+
+  void _onTapCard(){
+    Analytics().logSelect(target: "Group reply");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: widget.reply, hidePostOptions: true,)));
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Groups.notifyGroupPostsUpdated) {
+      setState(() {});
+    }
   }
 }

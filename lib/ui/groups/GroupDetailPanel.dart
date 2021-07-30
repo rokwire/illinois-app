@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Event.dart';
+import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
-import 'package:illinois/service/ExploreService.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Network.dart';
@@ -29,6 +31,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
+import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -45,54 +48,63 @@ import 'package:url_launcher/url_launcher.dart';
 import 'GroupMembersPanel.dart';
 import 'GroupSettingsPanel.dart';
 
-enum _DetailTab { Events, About }
+enum _DetailTab { Events, Posts, About }
 
-class GroupDetailPanel extends StatefulWidget {
+class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
-  final String groupId;
+  final Group group;
 
-  GroupDetailPanel({this.groupId});
+  GroupDetailPanel({this.group});
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return group?.analyticsAttributes;
+  }
+
+  String get groupId {
+    return group?.id;
+  }
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
 
+  final int          _postsPageSize = 8;
+
   Group              _group;
-  bool               _loading = false;
+  int                _progress = 0;
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
   List<GroupEvent>   _groupEvents;
+  List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
   List<Member>       _groupAdmins;
-  Map<String, Event> _stepsEvents = Map<String, Event>();
 
-  _DetailTab       _currentTab = _DetailTab.Events;
+  _DetailTab         _currentTab = _DetailTab.Events;
+
+  GlobalKey          _lastPostKey = GlobalKey();
+  bool               _refreshingPosts;
+  bool               _loadingPostsPage;
+  bool               _hasMorePosts;
+  bool               _shouldScrollToLastAfterRefresh;
+
+  DateTime           _pausedDateTime;
 
   bool get _isMember {
-    if(_group?.members?.isNotEmpty ?? false){
-      for(Member member in _group.members){
-        if(member.email == Auth()?.authInfo?.email){
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  
-  bool get _isAdmin {
-    if(_group?.members?.isNotEmpty ?? false){
-      for(Member member in _group.members){
-        if(member.email == Auth()?.authInfo?.email && member.status == GroupMemberStatus.admin){
-          return true;
-        }
-      }
-    }
-    return false;
+    return _group?.currentUserAsMember?.isMember ?? false;
   }
 
-  bool get isPublic {
+  bool get _isAdmin {
+    return _group?.currentUserAsMember?.isAdmin ?? false;
+  }
+
+  bool get _isMemberOrAdmin {
+    return _isMember || _isAdmin;
+  }
+
+  bool get _isPublic {
     return _group?.privacy == GroupPrivacy.public;
   }
 
@@ -117,12 +129,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin;
   }
 
+  bool get _canCreatePost {
+    return _isAdmin || _isMember;
+  }
+
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupEventsUpdated]);
-    _loadGroup();
-    _loadEvents();
+
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      Groups.notifyUserMembershipUpdated,
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupEventsUpdated,
+      Groups.notifyGroupPostsUpdated]);
+
+    _loadGroup(loadEvents: true);
   }
 
   @override
@@ -132,39 +155,128 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroup(){
-    setState(() {
-      _loading = true;
-    });
-    Groups().loadGroup(widget.groupId).then((Group group){
+  void _loadGroup({bool loadEvents = false}) {
+    _increaseProgress();
+    Groups().loadGroup(widget.groupId).then((Group group) {
       if (mounted) {
-        setState(() {
-          _loading = false;
-          if(group != null) {
-            _group = group;
-            _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
-            _loadMembershipStepEvents();
-          }
-        });
+        if (group != null) {
+          _group = group;
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+          _loadInitialPosts();
+        }
+        if (loadEvents) {
+          _loadEvents();
+        }
+        _decreaseProgress();
       }
     });
   }
 
-  void _loadEvents(){
+  void _refreshGroup({bool refreshEvents = false}) {
+    Groups().loadGroup(widget.groupId).then((Group group) {
+      if (mounted && (group != null)) {
+        setState(() {
+          _group = group;
+          if (refreshEvents) {
+            _refreshEvents();
+          }
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+        });
+        _refreshCurrentPosts();
+      }
+    });
+  }
+
+  void _loadEvents() {
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(widget.groupId, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
           _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
           _groupEvents = hasEventsMap ? eventsMap.values.first : null;
-          _applyStepEvents(_groupEvents);
           _updatingEvents = false;
         });
       }
     });
+  }
+
+  void _refreshEvents() {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>> eventsMap) {
+      if (mounted) {
+        setState(() {
+          bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
+          _allEventsCount = hasEventsMap ? eventsMap.keys.first : 0;
+          _groupEvents = hasEventsMap ? eventsMap.values.first : null;
+        });
+      }
+    });
+  }
+
+  void _loadInitialPosts() {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin) {
+      setState(() {
+        _progress++;
+        _loadingPostsPage = true;
+      });
+      _loadPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _progress--;
+            _loadingPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _refreshCurrentPosts({int delta}) {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
+      int limit = _visibleGroupPosts.length + (delta ?? 0);
+      _refreshingPosts = true;
+      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost> posts) {
+        _refreshingPosts = false;
+        if (mounted && (posts != null)) {
+          setState(() {
+            _visibleGroupPosts = posts;
+            if (posts.length < limit) {
+              _hasMorePosts = false;
+            }
+          });
+          if (_shouldScrollToLastAfterRefresh == true) {
+            _scheduleLastPostScroll();
+          }
+        }
+        _shouldScrollToLastAfterRefresh = null;
+      });
+    }
+  }
+
+  void _loadNextPostsPage() {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_loadingPostsPage != true)) {
+      setState(() {
+        _loadingPostsPage = true;
+      });
+      _loadPostsPage().then((_) {
+        if (mounted) {
+          setState(() {
+            _loadingPostsPage = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadPostsPage() async {
+    List<GroupPost> postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _visibleGroupPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    if (postsPage != null) {
+      _visibleGroupPosts.addAll(postsPage);
+      if (postsPage.length < _postsPageSize) {
+        _hasMorePosts = false;
+      }
+    }
   }
 
   void _cancelMembershipRequest() {
@@ -182,7 +294,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Groups().leaveGroup(widget.groupId).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
-        _loadGroup();
+        _loadGroup(loadEvents: true);
       }
     });
   }
@@ -205,7 +317,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   Widget build(BuildContext context) {
     Widget content;
-    if (_loading == true) {
+    if (_isLoading) {
       content = _buildLoadingContent();
     }
     else if (_group != null) {
@@ -215,10 +327,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content = _buildErrorContent();
     }
 
+    bool optionsMenuVisible = _canLeaveGroup || _canDeleteGroup || _canCreatePost;
     return Scaffold(
         appBar: AppBar(leading: HeaderBackButton(), actions: [
           Visibility(
-              visible: (_canLeaveGroup || _canDeleteGroup),
+              visible: optionsMenuVisible,
               child: Semantics(
                   label: Localization().getStringEx("panel.group_detail.label.options", 'Options'),
                   button: true,
@@ -240,14 +353,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Groups.notifyUserMembershipUpdated) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
       _loadEvents();
     }
-    else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
-      _loadGroup();
-      _loadEvents();
+    else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
+      _loadGroup(loadEvents: true);
+    } else if (name == Groups.notifyGroupPostsUpdated) {
+      _refreshCurrentPosts(delta: param is int ? param : null);
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshGroup(refreshEvents: true);
+        }
+      }
     }
   }
 
@@ -290,20 +423,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _buildImageHeader(),
       _buildGroupInfo()
     ];
-    if (_isMember) {
+    if (_isMemberOrAdmin) {
       content.add(_buildTabs());
-      if (_currentTab == _DetailTab.Events) {
+      if (_currentTab != _DetailTab.About) {
         content.add(_buildEvents());
+        content.add(_buildPosts());
       }
       else if (_currentTab == _DetailTab.About) {
         content.add(_buildAbout());
+        content.add(_buildPrivacyDescription());
         content.add(_buildAdmins());
       }
     }
     else {
       content.add(_buildAbout());
+      content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
-      if (isPublic) {
+      if (_isPublic) {
         content.add(_buildEvents());
       }
     }
@@ -375,7 +511,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       pendingMembers = "";
     }
 
-    if(_isMember){
+    if (_isMemberOrAdmin) {
       if(_isAdmin){
         commands.add(RibbonButton(
           height: null,
@@ -383,7 +519,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
           leftIcon: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: onTapMembers,
+          onTap: _onTapMembers,
         ));
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent,));
         commands.add(RibbonButton(
@@ -392,7 +528,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           hint: Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIcon: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: onTapSettings,
+          onTap: _onTapSettings,
         ));
       }
     } else {
@@ -447,14 +583,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _isMember? Container():
+              _isMemberOrAdmin ? Container():
                 Padding(padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(children: <Widget>[
                     Expanded(child:
                       Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
                     ),
                   ],),),
-              (!_isMember)? Container():
+              (!_isMemberOrAdmin)? Container():
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(
@@ -512,6 +648,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       switch (tab) {
         case _DetailTab.Events:
           title = Localization().getStringEx("panel.group_detail.button.events.title", 'Events');
+          break;
+        case _DetailTab.Posts:
+          title = Localization().getStringEx("panel.group_detail.button.posts.title", 'Posts');
           break;
         case _DetailTab.About:
           title = Localization().getStringEx("panel.group_detail.button.about.title", 'About');
@@ -572,7 +711,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       for (GroupEvent groupEvent in _groupEvents) {
         content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
       }
-      
+
       content.add(Padding(
           padding: EdgeInsets.only(top: 16),
           child: ScalableSmallRoundedButton(
@@ -595,6 +734,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         SectionTitlePrimary(
             title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
             iconPath: 'images/icon-calendar.png',
+            rightIconPath: _canAddEvent ? "images/icon-add-20x18.png" : null,
+            rightIconAction: _canAddEvent ? _onTapEventOptions : null,
+            rightIconLabel: _canAddEvent ? Localization().getStringEx("panel.group_detail.button.create_event.title", "Create Event") : null,
             children: content)
       ]),
       _updatingEvents
@@ -606,75 +748,97 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     ]);
   }
 
-  /*Widget _buildAdminEventOptions(){
-    bool haveEvents = _groupEvents?.isNotEmpty ?? false;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-        decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
-            borderRadius: BorderRadius.all(Radius.circular(8))
-        ),
-        child: Column(children: [
-          haveEvents? Container():
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                Text(Localization().getStringEx("panel.group_detail.label.upcoming_events.empty", "No upcoming events"), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.textBackground, ), textAlign: TextAlign.left,),
-                Container(height: 8,),
-                Text(Localization().getStringEx("panel.group_detail.label.upcoming_events.hint", "Create a new event or share an existing event with your members. "), style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, )),
-                Container(height: 16,),
-              ],),
-          Row(
-            children: [
-              Expanded(child:
-                ScalableRoundedButton(
-                    label: Localization().getStringEx("panel.group_detail.button.browse.title",  "Browse"),
-                    backgroundColor: Styles().colors.white,
-                    textColor: Styles().colors.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 16,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    borderWidth: 2,
-                    onTap:_onTapBrowseEvents
-                ),
-              ),
-              Visibility(
-                visible: _canCreateEvent,
-                child: Container(width: 16,)),
-              Visibility(
-                visible: _canCreateEvent,
-                child: Expanded(child:
-                  ScalableRoundedButton(
-                    label:  Localization().getStringEx("panel.group_detail.button.create_event.title",  "Create event"),
-                    backgroundColor: Styles().colors.white,
-                    textColor: Styles().colors.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies.bold,
-                    fontSize: 16,
-                    borderColor: Styles().colors.fillColorSecondary,
-                    borderWidth: 2,
-                    rightIcon: Image.asset('images/icon-add-20x18.png'),
-                    onTap: _onTapCreateEvent,),
-                )
-              )
-            ],
-          ),
-        ],)
-      ),
-    );
-  }*/
+  Widget _buildPosts() {
+    List<Widget> postsContent = [];
+
+    EdgeInsetsGeometry listPadding;
+
+    if (AppCollection.isCollectionEmpty(_visibleGroupPosts)) {
+      if (_isMemberOrAdmin) {
+        Column(children: <Widget>[
+          SectionTitlePrimary(
+              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+              iconPath: 'images/icon-calendar.png',
+              listPadding: listPadding,
+              rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
+              rightIconAction: _canCreatePost ? _onTapCreatePost : null,
+              rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
+              children: postsContent)
+        ]);
+      } else {
+        return Container();
+      }
+    }
+    
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16);
+      postsContent.add(Semantics(label: title, button: true, excludeSemantics: true,
+        child: InkWell(onTap: _loadNextPostsPage,
+          child: Container(height: 36,
+            child: Align(alignment: Alignment.topCenter,
+              child: (_loadingPostsPage == true) ?
+                SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white), )) :
+                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.textColorPrimary, fontSize: 16, decoration: TextDecoration.underline ),),
+            ),
+          )
+        )
+      )
+      );
+    }
+    
+    int last = _visibleGroupPosts.length - 1;
+    for (int i = last; i >= 0; i--) {
+      GroupPost post = _visibleGroupPosts[i];
+      if (i < last) {
+        postsContent.add(Container(height: 16));
+      }
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
+    }
+
+    return Column(children: <Widget>[
+      SectionTitlePrimary(
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+          iconPath: 'images/icon-calendar.png',
+          listPadding: listPadding,
+          rightIconPath: _canCreatePost ? "images/icon-add-20x18.png" : null,
+          rightIconAction: _canCreatePost ? _onTapCreatePost : null,
+          rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
+          children: postsContent)
+    ]);
+  }
 
   Widget _buildAbout() {
     String description = _group?.description ?? '';
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 16), child:
+        Padding(padding: EdgeInsets.only(bottom: 4), child:
           Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
         ),
         ExpandableText(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), trimLines: 4, iconColor: Styles().colors.fillColorPrimary,),
       ],),);
+  }
+
+  Widget _buildPrivacyDescription() {
+    String title, description;
+    if (_group?.privacy == GroupPrivacy.private) {
+      title = Localization().getStringEx("panel.group_detail.label.title.private", 'This is a Private Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.private", '\u2022 This group is only visible to members.\n\u2022 Anyone can search for the group with the exact name.\n\u2022 Only admins can see members.\n\u2022 Only members can see posts and group events.\n\u2022 All users can see group events if they are marked public.\n\u2022 All users can see admins.');
+    }
+    else if (_group?.privacy == GroupPrivacy.public) {
+      title = Localization().getStringEx("panel.group_detail.label.title.public", 'This is a Public Group');
+      description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
+    }
+    
+    return (AppString.isStringNotEmpty(title) && AppString.isStringNotEmpty(description)) ?
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(bottom: 4), child:
+            Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Color(0xff494949), ),),
+          ),
+          Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), ),
+        ],),) :
+      Container(width: 0, height: 0);
   }
 
   Widget _buildAdmins() {
@@ -776,7 +940,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      onTap: () => Navigator.pop(context)),
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: negativeButtonLabel);
+                        Navigator.pop(context);
+                      }),
                   Container(width: 16),
                   Stack(alignment: Alignment.center, children: [
                     RoundedButton(
@@ -786,7 +953,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                       borderColor: Styles().colors.white,
                       backgroundColor: Styles().colors.white,
                       padding: EdgeInsets.symmetric(vertical: 8, horizontal: positiveBtnHorizontalPadding),
-                      onTap: onPositiveTap,
+                      onTap: () {
+                        Analytics().logAlert(text: confirmationTextMsg, selection: positiveButtonLabel);
+                        onPositiveTap();
+                      },
                     ),
                     _confirmationLoading
                         ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary))
@@ -797,38 +967,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         }));
   }
 
-  void _loadMembershipStepEvents() {
-    Set<String> stepEventIds = Set<String>();
-    List<GroupMembershipStep> steps = _group?.membershipQuest?.steps;
-    if (0 < (steps?.length ?? 0)) {
-      for (GroupMembershipStep step in steps) {
-        if (step.eventIds != null) {
-          stepEventIds.addAll(step.eventIds);
-        }
-      }
-
-      ExploreService().loadEventsByIds(stepEventIds).then((List<Event> events){
-        if (mounted) {
-          setState(() {
-            _applyStepEvents(events);
-          });
-        }
-    
-      });
-    }
-  }
-
-  void _applyStepEvents(List<Event> events) {
-    if (events != null) {
-      for (Event event in events) {
-        if ((event.id != null) && !_stepsEvents.containsKey(event.id)) {
-          _stepsEvents[event.id] = event;
-        }
-      }
-    }
-  }
-
   void _onGroupOptionsTap() {
+    Analytics().logSelect(target: 'Group Options');
     int membersCount = _group?.membersCount ?? 0;
     String confirmMsg = (membersCount > 1)
         ? sprintf(
@@ -851,12 +991,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   height: 24,
                 ),
                 Visibility(
+                    visible: _canCreatePost,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-add-20x18.png",
+                        label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onTapCreatePost();
+                        })),
+                Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-leave-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
+                          Analytics().logSelect(target: "Leave group");
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -869,9 +1020,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     visible: _canDeleteGroup,
                     child: RibbonButton(
                         height: null,
-                        leftIcon: "images/icon-leave-group.png",
+                        leftIcon: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
+                          Analytics().logSelect(target: "Delete group");
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -904,13 +1056,62 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         });
   }
 
+  void _onTapEventOptions() {
+    Analytics().logSelect(target: "Event options");
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (context) {
+          return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Container(
+                  height: 24,
+                ),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-edit.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapBrowseEvents();
+                        })),
+                Visibility(
+                    visible: _canAddEvent,
+                    child: RibbonButton(
+                        height: null,
+                        leftIcon: "images/icon-edit.png",
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        onTap: (){
+                          Navigator.pop(context);
+                          _onTapCreateEvent();
+                        })),
+              ]));
+        });
+  }
+
   void _onTab(_DetailTab tab) {
-    setState(() {
-      _currentTab = tab;
-    });
+    Analytics().logSelect(target: "Tab: $tab");
+    if (_currentTab != tab) {
+      setState(() {
+        _currentTab = tab;
+      });
+      
+      if ((_currentTab == _DetailTab.Posts)) {
+        if (AppCollection.isCollectionNotEmpty(_visibleGroupPosts)) {
+          _scheduleLastPostScroll();
+        }
+      }
+    }
   }
 
   void _onTapLeave() {
+    Analytics().logSelect(target: "Leave Group");
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -935,23 +1136,25 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onWebsite() {
+    Analytics().logSelect(target: 'Group url');
     String url = _group?.webURL;
     if (AppString.isStringNotEmpty(url)) {
       launch(url);
     }
   }
 
-  void onTapMembers(){
+  void _onTapMembers(){
     Analytics().logSelect(target: "Group Members");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
   }
 
-  void onTapSettings(){
+  void _onTapSettings(){
     Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
   void _onMembershipRequest() {
+    Analytics().logSelect(target: "Request to join");
     if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {
@@ -960,24 +1163,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _requestMembership() {
-    if (mounted) {
-      setState(() {
-        _loading = true;
-      });
+      _increaseProgress();
       Groups().requestMembership(_group, null).then((succeeded) {
-        if (mounted) {
-          setState(() {
-            _loading = false;
-          });
-        }
+        _decreaseProgress();
         if (!succeeded) {
           AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.alert.request_failed.msg", 'Failed to send request.'));
         }
       });
-    }
   }
 
   void _onCancelMembershipRequest() {
+    Analytics().logSelect(target: "Cancel membership request");
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1002,6 +1198,48 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 
+  void _onTapCreatePost() {
+    Analytics().logSelect(target: "Create Post");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group))).then((result) {
+      if (_refreshingPosts != true) {
+        _refreshCurrentPosts();
+      }
+      if (result == true) {
+        _shouldScrollToLastAfterRefresh = true;
+      }
+    });
+  }
+
+  void _scheduleLastPostScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToLastPost();
+    });
+  }
+
+  void _scrollToLastPost() {
+    BuildContext currentContext = _lastPostKey?.currentContext;
+    if (currentContext != null) {
+      Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
+    }
+  }
+
+  void _increaseProgress() {
+    _progress++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _progress--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return _progress > 0;
+  }
 }
 
 class _OfficerCard extends StatelessWidget {

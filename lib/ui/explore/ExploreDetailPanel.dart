@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Event.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 
@@ -24,12 +25,17 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:location/location.dart';
 
-class ExploreDetailPanel extends StatelessWidget {
+class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttributes {
   final Explore explore;
   final LocationData initialLocationData;
   final String browseGroupId;
 
   ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return explore?.analyticsAttributes;
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as Http;
 import 'package:illinois/model/GeoFence.dart';
+import 'package:illinois/model/Poll.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppNavigation.dart';
 import 'package:illinois/service/Auth.dart';
@@ -140,6 +141,29 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogHttpRequestMethodName           = "http_request_method";
   static const String   LogHttpResponseCodeName            = "http_response_code";
 
+  // Favorite Event
+  // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
+  static const String   LogFavoriteEventName                = "favorite";
+  static const String   LogFavoriteActionName               = "action";
+  static const String   LogFavoriteTypeName                 = "type";
+  static const String   LogFavoriteIdName                   = "id";
+  static const String   LogFavoriteTitleName                = "title";
+
+  static const String   LogFavoriteOnActionName             = "on";
+  static const String   LogFavoriteOffActionName            = "off";
+
+  // Poll Event
+  // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
+  static const String   LogPollEventName                    = "poll";
+  static const String   LogPollActionName                   = "action";
+  static const String   LogPollIdName                       = "id";
+  static const String   LogPollTitleName                    = "title";
+
+  static const String   LogPollCreateActionName             = "create";
+  static const String   LogPollOpenActionName               = "open";
+  static const String   LogPollCloseActionName              = "close";
+  static const String   LogPollVoteActionName               = "vote";
+
   // Map Route
   static const String   LogMapRouteEventName               = "map_route";
   static const String   LogMapRouteAction                  = "action";
@@ -192,6 +216,12 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAttributeGameName               = "game_name";
   static const String   LogAttributeLaundryId              = "laundry_id";
   static const String   LogAttributeLaundryName            = "laundry_name";
+  static const String   LogAttributeGroupId                = "group_id";
+  static const String   LogAttributeGroupName              = "group_name";
+  static const String   LogAttributeStudentGuideId         = "student_guide_id";
+  static const String   LogAttributeStudentGuideTitle      = "student_guide_title";
+  static const String   LogAttributeStudentGuideCategory   = "student_guide_category";
+  static const String   LogAttributeStudentGuideSection    = "student_guide_section";
   static const String   LogAttributeLocation               = "location";
 
 
@@ -435,6 +465,11 @@ class Analytics with Service implements NotificationsListener {
     }
     else if (route is MaterialPageRoute) {
       builder = route.builder;
+    }
+    else {
+      // _ModalBottomSheetRoute presented by showModalBottomSheet
+      try { builder = (route as dynamic).builder; }
+      catch(e) { print(e?.toString()); }
     }
 
     if (builder != null) {
@@ -737,6 +772,25 @@ class Analytics with Service implements NotificationsListener {
       LogHttpResponseCodeName         : response?.statusCode
     };
     logEvent(httpResponseEvent);
+  }
+
+  void logFavorite(Favorite favorite, bool on) {
+    logEvent({
+      LogEventName          : LogFavoriteEventName,
+      LogFavoriteActionName : (on != null) ? (on ? LogFavoriteOnActionName : LogFavoriteOffActionName) : null,
+      LogFavoriteTypeName   : favorite?.favoriteKey,
+      LogFavoriteIdName     : favorite?.favoriteId,
+      LogFavoriteTitleName  : favorite?.favoriteTitle,
+    });
+  }
+
+  void logPoll(Poll poll, String action) {
+    logEvent({
+      LogEventName          : LogPollEventName,
+      LogPollActionName     : action,
+      LogPollIdName         : poll?.pollId,
+      LogPollTitleName      : poll?.title,
+    });
   }
 
   void logMapRoute({String action, Map<String, dynamic> params}) {

@@ -361,13 +361,16 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "HomeRecentItemCard  Favorite: "+widget?.item?.recentTitle);
+    Analytics.instance.logSelect(target: "Favorite: ${widget?.item?.recentTitle}");
     Object originalItem = widget.item.fromOriginalJson();
     if (originalItem is Favorite) {
       User().switchFavorite(originalItem);
     }
     else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
+      User().switchFavorite(StudentGuideFavorite(
+        id: StudentGuide().entryId(originalItem),
+        title: StudentGuide().entryTitle(originalItem)
+      ));
     }
   }
 

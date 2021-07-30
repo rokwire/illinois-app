@@ -560,10 +560,12 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onTapHeaderStar() {
-    Analytics.instance.logSelect(target: "MultipleEventsDetailPanel mark favorite event: ${widget.parentEvent?.id ?? 'all recurring events'}");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.parentEvent?.title}");
     Event event = widget.parentEvent;
     if (event?.isRecurring ?? false) {
-      if (User().isExploreFavorite(event)) {
+      bool isFavorite = User().isExploreFavorite(event);
+      Analytics().logFavorite(event, !isFavorite);
+      if (isFavorite) {
         User().removeAllFavorites(event.recurringEvents);
       } else {
         User().addAllFavorites(event.recurringEvents);
@@ -748,7 +750,7 @@ class _EventEntry extends StatelessWidget {
               child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    Analytics.instance.logSelect(target: "Favorite");
+                    Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
                     User().switchFavorite(event);
                   },
                   child: Semantics(

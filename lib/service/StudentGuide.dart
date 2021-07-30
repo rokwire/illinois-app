@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
@@ -24,6 +25,7 @@ class StudentGuide with Service implements NotificationsListener {
   static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
 
   static const String _cacheFileName = "student.guide.json";
+  static const String campusReminderContentType = "campus-reminder";
 
   List<dynamic> _contentList;
   LinkedHashMap<String, Map<String, dynamic>> _contentMap;
@@ -203,6 +205,12 @@ class StudentGuide with Service implements NotificationsListener {
     return AppJson.stringValue(entryValue(entry, '_id'));
   }
 
+  String entryTitle(Map<String, dynamic> entry, { bool stripHtmlTags = true }) {
+    String result = AppJson.stringValue(entryValue(entry, 'title')) ?? AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'detail_title'));
+    return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
+    // Bidi.stripHtmlIfNeeded(result);
+  }
+
   String entryListTitle(Map<String, dynamic> entry, { bool stripHtmlTags }) {
     String result = AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
     return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
@@ -213,6 +221,19 @@ class StudentGuide with Service implements NotificationsListener {
     String result = AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
     return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
+  }
+
+  bool isEntryReminder(Map<String, dynamic> entry) {
+    return AppJson.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+  }
+
+  DateTime reminderDate(Map<String, dynamic> entry) {
+    return AppDateTime().dateTimeFromString(AppJson.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
+  }
+
+  DateTime reminderSectionDate(Map<String, dynamic> entry) {
+    DateTime entryDate = StudentGuide().reminderDate(entry);
+    return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
   }
 
   List<dynamic> get promotedList {
@@ -279,6 +300,30 @@ class StudentGuide with Service implements NotificationsListener {
       }
     }
     return true;
+  }
+  
+  List<dynamic> get remindersList {
+    if (_contentList != null) {
+      List<dynamic> remindersList = <dynamic>[];
+      DateTime nowUtc = DateTime.now().toUtc();
+      DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
+      for (dynamic entry in _contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
+        if (isEntryReminder(guideEntry)) {
+          DateTime entryDate = reminderDate(guideEntry);
+          if ((entryDate != null) && (entryDate.month == midnightUtc.month) && (midnightUtc.compareTo(entryDate) <= 0)) {
+            remindersList.add(entry);
+          }
+        }
+      }
+
+      remindersList.sort((dynamic entry1, dynamic entry2) {
+        return AppSort.compareDateTimes(StudentGuide().reminderDate(entry1), StudentGuide().reminderDate(entry2));
+      });
+
+      return remindersList;
+    }
+    return null;
   }
 
   // Debug
@@ -534,10 +579,63 @@ class StudentGuide with Service implements NotificationsListener {
 
 }
 
+class StudentGuideSection {
+  final String name;
+  final DateTime date;
+  
+  StudentGuideSection({this.name, this.date});
+
+  factory StudentGuideSection.fromGuideEntry(Map<String, dynamic> guideEntry) {
+    return (guideEntry != null) ? StudentGuideSection(
+        name: AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
+        date: StudentGuide().isEntryReminder(guideEntry) ? StudentGuide().reminderSectionDate(guideEntry) : null,
+    ) : null;
+  }
+
+  bool operator ==(o) =>
+    (o is StudentGuideSection) &&
+      (o.name == name) &&
+      (o.date == date);
+
+  int get hashCode =>
+    (name?.hashCode ?? 0) ^
+    (date?.hashCode ?? 0);
+
+  int compareTo(StudentGuideSection section) {
+    if (date != null) {
+      if (section.date != null) {
+        return date.compareTo(section.date);
+      }
+      else {
+        return -1;
+      }
+    }
+    else if (section.date != null) {
+      return 1;
+    }
+    else if (name != null) {
+      if (section.name != null) {
+        return name.compareTo(section.name);
+      }
+      else {
+        return -1;
+      }
+    }
+    else if (section.name != null) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+}
+
+
 class StudentGuideFavorite implements Favorite {
   
   final String id;
-  StudentGuideFavorite({this.id});
+  final String title;
+  StudentGuideFavorite({this.id, this.title});
 
   bool operator == (o) => o is StudentGuideFavorite && o.id == id;
 
@@ -545,6 +643,9 @@ class StudentGuideFavorite implements Favorite {
 
   @override
   String get favoriteId => id;
+
+  @override
+  String get favoriteTitle => title;
 
   @override
   String get favoriteKey => favoriteKeyName;

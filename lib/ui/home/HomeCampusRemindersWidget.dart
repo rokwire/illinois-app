@@ -15,17 +15,24 @@
  */
 
 import 'dart:async';
+import 'dart:math';
 
+import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Reminder.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Reminders.dart';
-import 'package:illinois/service/User.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:illinois/utils/Utils.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
+import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
   final StreamController<void> refreshController;
@@ -37,19 +44,28 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 }
 
 class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
-  List<Reminder> _reminders;
-  bool _showAll = false;
+  static const int _maxItems = 3;
+
+  List<dynamic> _reminderItems;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Reminders.notifyChanged);
+
+    NotificationService().subscribe(this, [
+      StudentGuide.notifyChanged,
+      User.notifyRolesUpdated,
+      AppLivecycle.notifyStateChanged,
+      Auth.notifyCardChanged,
+    ]);
+
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        _loadReminders();
+        StudentGuide().refresh();
       });
     }
-    _loadReminders();
+
+    _reminderItems = StudentGuide().remindersList;
   }
 
   @override
@@ -58,242 +74,77 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     NotificationService().unsubscribe(this);
   }
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == StudentGuide.notifyChanged) {
+      _updateReminderItems();
+    }
+    else if (name == User.notifyRolesUpdated) {
+      _updateReminderItems();
+    }
+    else if (name == Auth.notifyCardChanged) {
+      _updateReminderItems();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      if (param == AppLifecycleState.resumed) {
+        _updateReminderItems(); // update on each resume for time interval filtering
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: AppCollection.isCollectionNotEmpty(_reminders),
-      child: Container(
-          child: Column(children: [
-            _SectionListLayout(
-              title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'CAMPUS REMINDERS'),
-              titlePadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              titleStyle: TextStyle(color: Styles().colors.white, fontSize: 14, letterSpacing: 1.0, fontFamily: Styles().fontFamilies.bold),
-              widgets: _buildReminders(),
-            ),
-            Padding(padding: EdgeInsets.only(top: 24, bottom: 32), child:
-
-            ScalableSmallRoundedButton(
-              label: _showAll
-                  ? Localization().getStringEx("widget.section_list.button.show_less.label", "Show less")
-                  : Localization().getStringEx("widget.section_list.button.show_more.label", "Show more"),
-              backgroundColor: Styles().colors.white,
-              textColor: Styles().colors.fillColorPrimary,
-              borderColor: Styles().colors.fillColorSecondary,
-              onTap: () => _onShowMoreTap(),
-            ),)
-          ])),
+    return Visibility(visible: AppCollection.isCollectionNotEmpty(_reminderItems), child:
+      Column(children: [
+          SectionTitlePrimary(
+            title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'CAMPUS REMINDERS'),
+            iconPath: 'images/campus-tools.png',
+            children: _buildRemindersList()
+          ),
+        ]),
     );
   }
 
-  List<Widget> _buildReminders() {
-    List<Widget> widgets =  [];
-    if (_reminders?.isNotEmpty ?? false) {
-      _reminders.forEach((Reminder reminder) {
-        widgets.add(_reminders.last != reminder
-            ? _HomeReminderItemCard(reminder: reminder)
-            : _HomeReminderItemCard(reminder: reminder, borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))));
+  void _updateReminderItems() {
+    List<dynamic> reminderItems = StudentGuide().remindersList;
+    if (!DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
+      setState(() {
+        _reminderItems = reminderItems;
       });
     }
-
-    return widgets;
   }
 
-  void _onShowMoreTap() {
-    Analytics.instance.logSelect(target: "Campus Reminders Show " + (_showAll ? "less" : "more"));
-    _showAll = !_showAll;
-    _loadReminders();
-  }
-
-  void _loadReminders() {
-    _reminders = _showAll ? Reminders().getAllUpcomingReminders() : Reminders().getReminders();
-    setState(() {});
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Reminders.notifyChanged) {
-      _loadReminders();
-    }
-  }
-}
-
-class _SectionListLayout extends StatelessWidget {
-  final List<Widget> widgets;
-  final String title;
-  final TextStyle titleStyle;
-  final EdgeInsetsGeometry titlePadding;
-  final Function viewMoreTap;
-
-  const _SectionListLayout({
-    Key key,
-    this.widgets,
-    this.title,
-    this.viewMoreTap,
-    this.titleStyle,
-    this.titlePadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-        onTap: viewMoreTap,
-        child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-              //Header
-              Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))),
-                  child: Semantics(
-                      label: title,
-                      header: true,
-                      excludeSemantics: true,
-                      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-                        Expanded(
-                            child: Padding(
-                              padding: titlePadding,
-                              child: Text(
-                                title,
-                                style: titleStyle ?? TextStyle(color: Styles().colors.white, fontSize: 24),
-                              ),
-                            )),
-                        viewMoreTap == null
-                            ? Container()
-                            : Container(
-                            child: Text(Localization().getStringEx("widget.section_list.button.view_more.label", "View more"),
-                                style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.regular))),
-                        viewMoreTap == null
-                            ? Container()
-                            : Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Image.asset('images/chevron-right.png'))
-                      ]))),
-
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Styles().colors.white,
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
-                ),
-                child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),
-              )
-            ])));
-  }
-}
-
-class _HomeReminderItemCard extends StatefulWidget {
-  final Reminder _reminder;
-  final BorderRadius _borderRadius;
-  final bool _showHeader;
-  final Color _headerColor;
-
-  const _HomeReminderItemCard({Key key, Reminder reminder, BorderRadius borderRadius, bool showHeader = false, Color headerColor})
-      : _reminder = reminder,
-        _borderRadius = borderRadius,
-        _showHeader = showHeader,
-        _headerColor = headerColor,
-        super(key: key);
-
-  @override
-  _HomeReminderItemCardState createState() => _HomeReminderItemCardState();
-}
-
-class _HomeReminderItemCardState extends State<_HomeReminderItemCard> implements NotificationsListener {
-  @override
-  void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
-      setState(() {});
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget._reminder == null) {
-      return Container();
-    }
-    bool favorite = User().isFavorite(widget._reminder);
-    double headerHeight = 7;
-
-    return Semantics(
-        label: Localization().getStringEx('widget.reminder_item_card.text.reminder', 'Reminder'),
-        child: Column(
-          children: <Widget>[
-            Visibility(
-              visible: widget._showHeader,
-              child: Container(
-                height: headerHeight,
-                color: widget._headerColor ?? Styles().colors.fillColorSecondary,
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 0), borderRadius: widget._borderRadius),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Flex(
-                    direction: Axis.vertical,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              widget._reminder.label,
-                              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
-                            ),
-                          ),
-                          Visibility(
-                            visible: User().favoritesStarVisible,
-                            child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  String reminder = widget._reminder.id;
-                                  Analytics.instance.logSelect(target: "Favorite Reminder: $reminder");
-                                  User().switchFavorite(widget._reminder);
-                                },
-                                child: Semantics(
-                                    label: favorite
-                                        ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                                        : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                                    hint: favorite
-                                        ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                                        : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-                                    button: true,
-                                    excludeSemantics: true,
-                                    child: Container(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(left: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'))))),
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text(widget._reminder.displayDate, style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.medium)),
-                  )
-                ]),
-              ),
-            )
-          ],
+  List<Widget> _buildRemindersList() {
+    List<Widget> contentList = <Widget>[];
+    if (_reminderItems != null) {
+      int remindersCount = min(_reminderItems.length, _maxItems);
+      for (int index = 0; index < remindersCount; index++) {
+        dynamic reminderItem = _reminderItems[index];
+        if (contentList.isNotEmpty) {
+          contentList.add(Container(height: 8,));
+        }
+        contentList.add(StudentGuideEntryCard(AppJson.mapValue(reminderItem)));
+      }
+      if (_maxItems < _reminderItems.length) {
+        contentList.add(Container(height: 16,));
+        contentList.add(ScalableRoundedButton(
+          label: Localization().getStringEx('widget.home_campus_reminders.button.more.title', 'View All'),
+          hint: Localization().getStringEx('widget.home_campus_reminders.button.more.hint', 'Tap to view all reminders'),
+          borderColor: Styles().colors.fillColorSecondary,
+          textColor: Styles().colors.fillColorPrimary,
+          backgroundColor: Styles().colors.white,
+          onTap: () => _showAll(),
         ));
+      }
+    }
+    return contentList;
+  }
+
+  void _showAll() {
+    Analytics.instance.logSelect(target: "HomeCampusRemindersWidget View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.student_guide_list.label.campus_reminders.section', 'Campus Reminders'))));
   }
 }
+

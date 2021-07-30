@@ -229,6 +229,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     }
     _setLoading(true);
     Groups().searchGroups(searchValue).then((groups) {
+
       _groups = groups;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;

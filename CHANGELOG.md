@@ -6,6 +6,130 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.14] - 2021-07-30
+### Fixed
+- Do not evaluate number of group replies recursively [#651](https://github.com/rokwire/illinois-app/issues/651).
+- Do not show group content for members to pending members [#654](https://github.com/rokwire/illinois-app/issues/654).
+
+## [2.6.13] - 2021-07-29
+### Fixed
+- Fixed miscelanious issue related to analytics logging [#638](https://github.com/rokwire/illinois-app/issues/638).
+- Crash when editing group event [#643](https://github.com/rokwire/illinois-app/issues/643).
+### Changed
+- Show public/private event in Event detail panel [#622](https://github.com/rokwire/illinois-app/issues/622).
+- Pop to Group Detail Panel when user replies on a post [#623](https://github.com/rokwire/illinois-app/issues/623).
+- Add the posts bar with the + sign for members and admins even if there are no posts [#649](https://github.com/rokwire/illinois-app/issues/649).
+### Added
+- Add bullets in group "About" section [#645](https://github.com/rokwire/illinois-app/issues/645).
+### Fixed
+- Updated group privacy descriptions [#647](https://github.com/rokwire/illinois-app/issues/647).
+
+## [2.6.12] - 2021-07-28
+### Fixed
+- Require user to input event end date for all day events [#627](https://github.com/rokwire/illinois-app/issues/627).
+- Event display date time [#626](https://github.com/rokwire/illinois-app/issues/626).
+- Do not show private events to non-members [#621](https://github.com/rokwire/illinois-app/issues/621).
+- Improved Accessibility for Groups Panels [#618](https://github.com/rokwire/illinois-app/issues/618).
+### Changed
+- Removed inline group name validation in create group panel, extened error processing on create/update group [#630](https://github.com/rokwire/illinois-app/issues/630).
+### Added
+- Added missing analytics events in groups [#631](https://github.com/rokwire/illinois-app/issues/631).
+
+## [2.6.11] - 2021-07-27
+### Fixed
+- Typo in Student Guide feature Bus Pass [#609](https://github.com/rokwire/illinois-app/issues/609).
+### Changed
+- Completely removed group's hidden attribute and all related stuff [#611](https://github.com/rokwire/illinois-app/issues/611).
+- GroupsDetailPanel: refresh posts when getting back from posts detail panel [#613](https://github.com/rokwire/illinois-app/issues/613).
+- Do not require user to input event end date for all day events. Calculate it based on start date [#616](https://github.com/rokwire/illinois-app/issues/616).
+
+## [2.6.10] - 2021-07-26
+### Changed
+- GroupsDetailPanel: load older posts with a button [#591](https://github.com/rokwire/illinois-app/issues/591).
+- Updated group posts display time [#593](https://github.com/rokwire/illinois-app/issues/593).
+- Validation messages for Group Posts / Replies [#600](https://github.com/rokwire/illinois-app/issues/600).
+- Update GroupPostDetailPanel [#590](https://github.com/rokwire/illinois-app/issues/590).
+- Remove hidden group attribute, treat private groups as hidden [#599](https://github.com/rokwire/illinois-app/issues/599).
+### Fixed
+- Fixed replies count update [#595](https://github.com/rokwire/illinois-app/issues/595).
+- Display the right group update time [#597](https://github.com/rokwire/illinois-app/issues/597).
+- Refresh StudentGuide on pull to refresh from Campus Reminders [#605](https://github.com/rokwire/illinois-app/issues/605).
+
+## [2.6.9] - 2021-07-23
+### Changed
+- GroupsDetailPanel: implement posts paging [#572](https://github.com/rokwire/illinois-app/issues/572).
+- Show GroupPost reply thread [#581](https://github.com/rokwire/illinois-app/issues/581).
+- Show group post dates as time interval since now [#580](https://github.com/rokwire/illinois-app/issues/580).
+- Reply widget clean up [#584](https://github.com/rokwire/illinois-app/issues/584).
+- Enhanced scrolling on group reply [#587](https://github.com/rokwire/illinois-app/issues/587).
+
+## [2.6.8] - 2021-07-22
+### Changed
+- Scroll to edit controls when loading group post replies [#570](https://github.com/rokwire/illinois-app/issues/570).
+- GroupsDetailPanel: show all posts [#572](https://github.com/rokwire/illinois-app/issues/572).
+### Added
+- Added post edit functionality [#566](https://github.com/rokwire/illinois-app/issues/566).
+- Added options dropdown in events section header in GroupDetailPanel [#575](https://github.com/rokwire/illinois-app/issues/575).
+
+
+## [2.6.7] - 2021-07-21
+### Changed
+- Remove "Private" checkbox for Group Posts and Replies [#549](https://github.com/rokwire/illinois-app/issues/549).
+- Changes for hidden groups [#551](https://github.com/rokwire/illinois-app/issues/551).
+- Only Admin or Member can see Group posts and replies [#558](https://github.com/rokwire/illinois-app/issues/558).
+- Repies are opened in separate panel [#565](https://github.com/rokwire/illinois-app/issues/565).
+### Fixed
+- Fixed vertical overflow of GroupPostDetailPanel header [#552](https://github.com/rokwire/illinois-app/issues/552).
+- Allow group members to reply [#561](https://github.com/rokwire/illinois-app/issues/561).
+- Update Event Creation - Private/Public Checkbox default value [#563](https://github.com/rokwire/illinois-app/issues/563). 
+### Added
+- Add group privacy description in group detail panel [#554](https://github.com/rokwire/illinois-app/issues/554).
+- Show group privacy status in group card [#556](https://github.com/rokwire/illinois-app/issues/556).
+ 
+## [2.6.6] - 2021-07-20
+### Added
+- Possibility for changing highlighted link text in group post/reply body [#536](https://github.com/rokwire/illinois-app/issues/536).
+### Fixed
+- Links in Group Post/Reply do not work [#534](https://github.com/rokwire/illinois-app/issues/534).
+### Changed
+- "Reply" and "Delete" buttons order for post a reply [#532](https://github.com/rokwire/illinois-app/issues/532).
+- Show Illini Cash button on home without Shibboleth login session [#252](https://github.com/rokwire/illinois-app/issues/252).
+- Group replies UI items [#538](https://github.com/rokwire/illinois-app/issues/538).
+- Groups List panel - default it to My Groups [#543](https://github.com/rokwire/illinois-app/issues/543).
+
+## [2.6.5] - 2021-07-19
+### Added
+- Scroll to edit control on post reply (point 2.3) [#516](https://github.com/rokwire/illinois-app/issues/516).
+- Replace symbols for new lines in Group Post [#521](https://github.com/rokwire/illinois-app/issues/521).
+- Adjust Post Card UI[#524](https://github.com/rokwire/illinois-app/issues/524).
+- Expand group reply card [#523](https://github.com/rokwire/illinois-app/issues/523).
+- Allow Cut, Copy and Paste options in group post [#528](https://github.com/rokwire/illinois-app/issues/528).
+- Sort post replies (without scrolling) [#530](https://github.com/rokwire/illinois-app/issues/530).
+
+## [2.6.4] - 2021-07-16
+### Added
+- Group posts updates - part 2 (without point 2.3) [#516](https://github.com/rokwire/illinois-app/issues/516).
+### Fixed
+- Fixed Accessibility for Post panels [#517](https://github.com/rokwire/illinois-app/issues/517).
+
+## [2.6.3] - 2021-07-15
+### Added
+- Group posts updates [#507](https://github.com/rokwire/illinois-app/issues/507).
+- Emergency home widget / launch popup [#508](https://github.com/rokwire/illinois-app/issues/508).
+
+## [2.6.2] - 2021-07-14
+### Added
+- Group posts and replies [#496](https://github.com/rokwire/illinois-app/issues/496).
+- Groups ability to hide group [#400](https://github.com/rokwire/illinois-app/issues/499).
+
+## [2.6.1] - 2021-07-13
+### Changed
+- Update campus reminders content [#500](https://github.com/rokwire/illinois-app/issues/500).
+
+## [2.6.0] - 2021-07-12
+### Changed
+- Build campus reminders from Student Guide [#497](https://github.com/rokwire/illinois-app/issues/497).
+
 ## [2.5.9] - 2021-07-09
 ### Changed
 - Show Visit website and Registration buttons underneath each other [#483](https://github.com/rokwire/illinois-app/issues/483).

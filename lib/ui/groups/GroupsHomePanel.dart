@@ -45,7 +45,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isFilterLoading = false;
   bool _isAllGroupsLoading = false;
   bool _isMyGroupsLoading = false;
-  bool _myGroupsSelected = false;
+  bool _myGroupsSelected = true;
+  bool _initMyGroupsPassed = false;
 
   List<Group> _allGroups;
   List<Group> _myGroups;
@@ -114,7 +115,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
     _loadFilters();
-    _loadGroups();
+    _loadMyGroups();
   }
 
   @override
@@ -139,12 +140,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  void _loadMyGroups(){
+  void _loadMyGroups() {
     setState(() {
       _isMyGroupsLoading = true;
     });
     Groups().loadGroups(myGroups: true).then((List<Group> groups){
-      if(AppCollection.isCollectionNotEmpty(groups)) {
+      if(groups != null) {
         List<Group> sortedGroups = _sortGroups(groups);
         _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
         _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
@@ -153,7 +154,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _myGroups = [];
         _myPendingGroups = [];
       }
-    }).whenComplete((){
+    }).whenComplete(() {
+      if (!_initMyGroupsPassed) {
+        _initMyGroupsPassed = true;
+        _switchToAllGroupsIfNeeded();
+      }
       setState(() {
         _isMyGroupsLoading = false;
       });
@@ -275,12 +280,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               child: IntrinsicWidth(child:
                 Row(
                   children: <Widget>[
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All groups'), hint: '', selected: !_myGroupsSelected ,onTap: onTapAllGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All groups'), hint: '', selected: !_myGroupsSelected ,onTap: _onTapAllGroups),
                     Container(width: 15,),
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My groups'), hint: '', selected: _myGroupsSelected, onTap: onTapMyGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My groups'), hint: '', selected: _myGroupsSelected, onTap: _onTapMyGroups),
                     Container(width: 15,),
                     Flexible(child: Container()),
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: onTapCreate),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10,), selected: false, onTap: _onTapCreate),
                   ],
                 ),
               )
@@ -553,6 +558,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     _loadContentFromNet();
   }
 
+  void _switchToAllGroupsIfNeeded() {
+    if (AppCollection.isCollectionEmpty(_myGroups) &&
+        AppCollection.isCollectionEmpty(_myPendingGroups)) {
+      switchTabSelection();
+    }
+  }
+
   void _onTapFilterEntry(dynamic entry) {
     String analyticsTarget;
     switch (_activeFilterType) {
@@ -573,19 +585,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  void onTapAllGroups(){
+  void _onTapAllGroups(){
+    Analytics.instance.logSelect(target: "All Groups");
     if(_myGroupsSelected){
       switchTabSelection();
     }
   }
 
-  void onTapMyGroups(){
+  void _onTapMyGroups(){
+    Analytics.instance.logSelect(target: "My Groups");
     if(!_myGroupsSelected){
       switchTabSelection();
     }
   }
 
-  void onTapCreate(){
+  void _onTapCreate(){
+    Analytics.instance.logSelect(target: "Create Group");
     Navigator.push(context, MaterialPageRoute(builder: (context)=>GroupCreatePanel()));
   }
 

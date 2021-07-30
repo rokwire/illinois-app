@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -19,11 +20,23 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentGuideDetailPanel extends StatefulWidget {
+class StudentGuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String guideEntryId;
   StudentGuideDetailPanel({ this.guideEntryId });
 
+  @override
   _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    Map<String, dynamic> guideEntry = StudentGuide().entryById(guideEntryId);
+    return {
+      Analytics.LogAttributeStudentGuideId : guideEntryId,
+      Analytics.LogAttributeStudentGuideTitle : AppJson.stringValue(StudentGuide().entryTitle(guideEntry, stripHtmlTags: true)),
+      Analytics.LogAttributeStudentGuideCategory :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category')),
+      Analytics.LogAttributeStudentGuideSection :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
+    };
+  }
 }
 
 class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> implements NotificationsListener {
@@ -147,6 +160,16 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       ),);
     }
     
+    DateTime date = StudentGuide().isEntryReminder(_guideEntry) ? StudentGuide().reminderDate(_guideEntry) : null;
+    if (date != null) {
+      String dateString = AppDateTime().formatDateTime(StudentGuide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
+      contentList.add(
+        Padding(padding: EdgeInsets.zero, child:
+          Text(dateString ?? '',
+            style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.medium),),
+      ),);
+    }
+
     String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_description')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'description'));
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
@@ -412,8 +435,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.guideEntryId}");
-    User().switchFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+    String title = StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true);
+    Analytics.instance.logSelect(target: "Favorite: $title");
+    User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(_guideEntry), title: title, ));
   }
 
   void _onTapLink(String url) {

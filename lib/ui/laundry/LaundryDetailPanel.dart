@@ -130,7 +130,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Visibility(visible: User().favoritesStarVisible,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Analytics.instance.logSelect(target: "Favorite");
+                                              Analytics.instance.logSelect(target: "Favorite: ${widget.room?.title}");
                                               User()
                                                   .switchFavorite(widget.room);
                                             },

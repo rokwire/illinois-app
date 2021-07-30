@@ -913,10 +913,8 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapSave() {
-    Analytics.instance.logSelect(
-        target: "AthleticsCard:Item:" + widget?.game?.title + " -Favorite");
-    User().switchFavorite(
-        widget.game);
+    Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
+    User().switchFavorite(widget.game);
   }
 
   void _onTapSportCategory(SportDefinition sport) {

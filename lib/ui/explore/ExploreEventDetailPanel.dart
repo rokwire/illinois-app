@@ -208,7 +208,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
-                  Analytics.instance.logSelect(target: "Favorite");
+                  Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
                   User().switchFavorite(widget.event);
                 },
                 child: Semantics(
@@ -282,6 +282,11 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     Widget price = _eventPriceDetail();
     if (price != null) {
       details.add(price);
+    }
+
+    Widget privacy = _eventPrivacyDetail();
+    if (privacy != null) {
+      details.add(privacy);
     }
 
     Widget converge = _buildConvergeContent();
@@ -404,6 +409,25 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           )
         ),
       );
+  }
+
+  Widget _eventPrivacyDetail() {
+    String privacyText = (widget.event?.isGroupPrivate ?? false)
+        ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')
+        : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event');
+    return Semantics(
+        label: Localization().getStringEx('panel.explore_detail.label.privacy.title', 'Privacy'),
+        value: privacyText,
+        excludeSemantics: true,
+        child: Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Column(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png')),
+                Expanded(
+                    child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)))
+              ])
+            ])));
   }
   
   Widget _eventPriceDetail() {

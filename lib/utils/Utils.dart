@@ -47,6 +47,16 @@ class AppString {
     return value;
   }
 
+  static String wrapRange(String s, String firstValue, String secondValue, int startPosition, int endPosition) {
+    if ((s == null) || (firstValue == null) || (secondValue == null) || (startPosition < 0) || (endPosition < 0)) {
+      return s;
+    }
+    String word = s.substring(startPosition, endPosition);
+    String wrappedWord = firstValue + word + secondValue;
+    String updatedString = s.replaceRange(startPosition, endPosition, wrappedWord);
+    return updatedString;
+  }
+
   static String getMaskedPhoneNumber(String phoneNumber) {
     if(AppString.isStringEmpty(phoneNumber)) {
       return "*********";
@@ -544,6 +554,42 @@ class AppSemantics {
       ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
       child: child );
     }
+}
+
+class AppSort {
+  static int compareIntegers(int v1, int v2) {
+    if (v1 != null) {
+      if (v2 != null) {
+        return v1.compareTo(v2);
+      }
+      else {
+        return -1;
+      }
+    }
+    else if (v2 != null) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  static int compareDateTimes(DateTime v1, DateTime v2) {
+    if (v1 != null) {
+      if (v2 != null) {
+        return v1.compareTo(v2);
+      }
+      else {
+        return -1;
+      }
+    }
+    else if (v2 != null) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
 }
 
 class AppDeviceOrientation {

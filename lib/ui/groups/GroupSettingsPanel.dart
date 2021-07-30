@@ -31,6 +31,7 @@ import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupSettingsPanel extends StatefulWidget {
   final Group group;
@@ -98,8 +99,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             ),
                             _buildCategoryDropDown(),
                             _buildTagsLayout(),
+                            Container(color: Styles().colors.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"), "images/icon-privacy.png"),
+                              //_buildInfoHeader(Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"), null)
+                            ]))),
+                            Container(height: 12, color: Styles().colors.background),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
+                            Container(height: 24,  color: Styles().colors.background,),
                           ],),)
                       ]),
                     ),
@@ -265,7 +272,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             )
         ));
   }
-  //
 
   //Description
   Widget _buildDescriptionField() {
@@ -513,6 +519,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void onTagTap(String tag){
+    Analytics().logSelect(target: "Group tag: $tag");
     if(_group!=null) {
       if (_group.tags == null) {
         _group.tags =  [];
@@ -541,14 +548,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Privacy
   Widget _buildPrivacyDropDown() {
+
+    String longDescription;
+    switch(_group?.privacy) {
+      case GroupPrivacy.private: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.private", "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group."); break;
+      case GroupPrivacy.public: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.public", "Anyone who uses the app will see this group. Only admins can see who is in the group."); break;
+    }
+
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         color: Styles().colors.background,
         child:Column(children: <Widget>[
-          Container(
-              child:  _buildSectionTitle( Localization().getStringEx("panel.groups_settings.privacy.title", "Privacy"),"images/icon-privacy.png")),
-          Container(
-              child:  _buildInfoHeader( Localization().getStringEx("panel.groups_settings.privacy.title.description", "SELECT PRIVACY"),null, topPadding: 12)),
           Semantics(
           explicitChildNodes: true,
           child: Container(
@@ -557,32 +567,35 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
                   initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions[0] : null),
-                  constructDescription:
-                      (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_description.private", "Only members can see group events") :
-                        Localization().getStringEx("panel.common.privacy_description.public",  "Anyone can see group events"),
                   constructTitle:
                       (item) => item == GroupPrivacy.private?
-                        Localization().getStringEx("panel.common.privacy_title.private", "Private") :
-                        Localization().getStringEx("panel.common.privacy_title.public",  "Public"),
-                  onValueChanged: (value) {
-                    setState(() {
-                      _group?.privacy = value;
-                    });
-                  }
+                        Localization().getStringEx("panel.groups.common.privacy.title.private", "Private") :
+                        Localization().getStringEx("panel.groups.common.privacy.title.public",  "Public"),
+                  constructDropdownDescription:
+                      (item) => item == GroupPrivacy.private?
+                        Localization().getStringEx("panel.groups.common.privacy.description.short.private", "Only members can see group events and posts, unless an event is marked public.") :
+                        Localization().getStringEx("panel.groups.common.privacy.description.short.public",  "Only members can see group events and posts, unless an event is marked public."),
+                  onValueChanged: (value) => _onPrivacyChanged(value)
               )
           )),
           Semantics(
             explicitChildNodes: true,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
-              child:Text(
-                Localization().getStringEx("panel.groups_settings.privacy.description", "Anyone who uses the Illinois app can find this group. Only admins can see whose in the group."),
+              child:Text(longDescription ?? '',
                 style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular, letterSpacing: 1),
             ),)),
           Container(height: 8,)
       ],));
   }
+
+  void _onPrivacyChanged(dynamic value) {
+    _group?.privacy = value;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //
   //Membership
   Widget _buildMembershipLayout(){
@@ -696,21 +709,27 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onUpdateTap(){
+    Analytics().logSelect(target: 'Update Settings');
     setState(() {
       _loading = true;
     });
-    Groups().updateGroup(_group).then((_){
-      setState(() {
-        _loading = false;
-      });
-
-      Navigator.pop(context);
-    }).catchError((e){
-      AppAlert.showDialogResult(context, Localization().getStringEx("panel.groups_create.tags.label.update_error", "Unable to update the group"));
-      //error
-      setState(() {
-        _loading = false;
-      });
+    Groups().updateGroup(_group).then((GroupError error){
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+        if (error == null) { //ok
+          Navigator.pop(context);
+        } else { //not ok
+          String message;
+          switch (error.code) {
+            case 1: message = Localization().getStringEx("panel.groups_create.permission.error.message", "You do not have permission to perform this operation."); break;
+            case 5: message = Localization().getStringEx("panel.groups_create.name.error.message", "A group with this name already exists. Please try a different name."); break;
+            default: message = sprintf(Localization().getStringEx("panel.groups_update.failed.msg", "Failed to update group: %s."), [error.text ?? 'unknwon error occured']); break;
+          }
+          AppAlert.showDialogResult(context, message);
+        }
+      }
     });
   }
   //

@@ -18,11 +18,14 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Event.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:intl/intl.dart';
+import 'package:sprintf/sprintf.dart';
 
 //////////////////////////////
 // Group
@@ -32,14 +35,16 @@ class Group {
 	String              category;
 	String              type;
 	String              title;
+  String              description;
+  GroupPrivacy        privacy;
 	bool                certified;
+  DateTime            dateCreatedUtc;
+  DateTime            dateUpdatedUtc;
 
-  GroupPrivacy         privacy;
-  String               description;
-  String               imageURL;
-  String               webURL;
-  List<Member>         members;
-  List<String>         tags;
+  String              imageURL;
+  String              webURL;
+  List<Member>        members;
+  List<String>        tags;
   List<GroupMembershipQuestion>  questions;
   GroupMembershipQuest membershipQuest; // MD: Looks as deprecated. Consider and remove if need!
 
@@ -52,48 +57,6 @@ class Group {
     }
   }
 
-  void _initFromJson(Map<String, dynamic> json) {
-    try { id              = json['id'];         } catch(e) { print(e.toString()); }
-    try { category        = json['category'];   } catch(e) { print(e.toString()); }
-    try { type            = json['type'];       } catch(e) { print(e.toString()); }
-    try { title           = json['title'];      } catch(e) { print(e.toString()); }
-    try { certified       = json['certified']; } catch(e) { print(e.toString()); }
-    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
-    try { description     = json['description'];  } catch(e) { print(e.toString()); }
-    try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
-    try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
-    try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
-    try {
-      List<dynamic> _members    = json['members'];
-      if(AppCollection.isCollectionNotEmpty(_members)){
-        members = _members.map((memberJson) => Member.fromJson(memberJson)).toList();
-      }
-    } catch(e) { print(e.toString()); }
-    try {
-      List<dynamic> _questions    = json['membership_questions'];
-      if(AppCollection.isCollectionNotEmpty(_questions)){
-        questions =  _questions.map((e) => GroupMembershipQuestion.fromString(e.toString())).toList();
-      }
-    } catch(e) { print(e.toString()); }
-  }
-
-  void _initFromOther(Group other) {
-    id              = other?.id;
-    category        = other?.category;
-    type            = other?.type;
-    title           = other?.title;
-    certified       = other?.certified;
-    privacy         = other?.privacy;
-    description     = other?.description;
-    imageURL        = other?.imageURL;
-    webURL          = other?.webURL;
-    members         = other?.members;
-    tags            = (other?.tags != null) ? List.from(other?.tags) : null;
-    questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
-    membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
-  }
-
   factory Group.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Group(json: json) : null;
   }
@@ -102,24 +65,69 @@ class Group {
     return (other != null) ? Group(other: other) : null;
   }
 
+  void _initFromJson(Map<String, dynamic> json) {
+    try { id              = json['id'];         } catch(e) { print(e.toString()); }
+    try { category        = json['category'];   } catch(e) { print(e.toString()); }
+    try { type            = json['type'];       } catch(e) { print(e.toString()); }
+    try { title           = json['title'];      } catch(e) { print(e.toString()); }
+    try { description     = json['description'];  } catch(e) { print(e.toString()); }
+    try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
+    try { certified       = json['certified']; } catch(e) { print(e.toString()); }
+    try { dateCreatedUtc  = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
+    try { dateUpdatedUtc  = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
+    try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
+    try { webURL          = json['web_url'];       } catch(e) { print(e.toString()); }
+    try { tags            = (json['tags'] as List)?.cast<String>(); } catch(e) { print(e.toString()); }
+    try { membershipQuest = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
+    try { members         = Member.listFromJson(json['members']); } catch(e) { print(e.toString()); }
+    try { questions       = GroupMembershipQuestion.listFromStringList((json['membership_questions'] as List)?.cast<String>()); } catch(e) { print(e.toString()); }
+  }
+
   Map<String, dynamic> toJson({bool withId = true}) {
     Map<String, dynamic> json = {};
     if(withId){
-      json['id'] = id;
+      json['id']                 = id;
     }
-    json['category']          = category;
-    json['type']              = type;
-    json['title']             = title;
-    json['certified']         = certified;
-    json['privacy']           = groupPrivacyToString(privacy);
-    json['description']       = description;
-    json['image_url']         = imageURL;
-    json['web_url']           = webURL;
-    json['tags']              = tags;
-    json['members']           = AppCollection.isCollectionNotEmpty(members) ? members.map((e) => e?.toJson()).toList() : null;
-    json['membership_questions']= AppCollection.isCollectionNotEmpty(questions) ? questions.map((e) => e?.question ?? "").toList() : null;
+    json['category']             = category;
+    json['type']                 = type;
+    json['title']                = title;
+    json['description']          = description;
+    json['privacy']              = groupPrivacyToString(privacy);
+    json['certified']            = certified;
+    json['date_created']         = groupUtcDateTimeToString(dateCreatedUtc);
+    json['date_updated']         = groupUtcDateTimeToString(dateUpdatedUtc);
+    json['image_url']            = imageURL;
+    json['web_url']              = webURL;
+    json['tags']                 = tags;
+    json['members']              = Member.listToJson(members);
+    json['membership_questions'] = GroupMembershipQuestion.listToStringList(questions);
 
     return json;
+  }
+
+  void _initFromOther(Group other) {
+    id              = other?.id;
+    category        = other?.category;
+    type            = other?.type;
+    title           = other?.title;
+    description     = other?.description;
+    privacy         = other?.privacy;
+    certified       = other?.certified;
+    dateCreatedUtc  = other?.dateCreatedUtc;
+    dateUpdatedUtc  = other?.dateUpdatedUtc;
+    imageURL        = other?.imageURL;
+    webURL          = other?.webURL;
+    members         = other?.members;
+    tags            = (other?.tags != null) ? List.from(other?.tags) : null;
+    questions       = (other?.questions != null) ? other.questions.map((e) => GroupMembershipQuestion.fromString(e.question)).toList()  : null;
+    membershipQuest = GroupMembershipQuest.fromOther(other?.membershipQuest);
+  }
+
+  Map<String, dynamic> get analyticsAttributes {
+    return {
+      Analytics.LogAttributeGroupId : id,
+      Analytics.LogAttributeGroupName : title
+    };
   }
 
   List<Member> getMembersByStatus(GroupMemberStatus status){
@@ -230,6 +238,75 @@ class Group {
     }
     return membersCount;
   }
+
+  String get displayUpdateTime {
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateUpdatedUtc);
+    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
+    if (deviceDateTime != null) {
+      DateTime now = DateTime.now();
+      if (deviceDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(deviceDateTime);
+        if (difference.inSeconds < 60) {
+          return Localization().getStringEx('model.group.updated.now', 'Updated now');
+        }
+        else if (difference.inMinutes < 60) {
+          return sprintf((difference.inMinutes != 1) ?
+            Localization().getStringEx('model.group.updated.minutes', 'Updated about %s minutes ago') :
+            Localization().getStringEx('model.group.updated.minute', 'Updated about a minute ago'),
+            [difference.inMinutes]);
+        }
+        else if (difference.inHours < 24) {
+          return sprintf((difference.inHours != 1) ?
+            Localization().getStringEx('model.group.updated.hours', 'Updated about %s hours ago') :
+            Localization().getStringEx('model.group.updated.hour', 'Updated about an hour ago'),
+            [difference.inHours]);
+        }
+        else if (difference.inDays < 30) {
+          return sprintf((difference.inDays != 1) ?
+            Localization().getStringEx('model.group.updated.days', 'Updated about %s days ago') :
+            Localization().getStringEx('model.group.updated.day', 'Updated about a day ago'),
+            [difference.inDays]);
+        }
+        else {
+          int differenceInMonths = difference.inDays ~/ 30;
+          if (differenceInMonths < 12) {
+            return sprintf((differenceInMonths != 1) ?
+              Localization().getStringEx('model.group.updated.months', 'Updated about %s months ago') :
+              Localization().getStringEx('model.group.updated.month', 'Updated about a month ago'),
+              [differenceInMonths]);
+          }
+        }
+      }
+      String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      return sprintf(
+        Localization().getStringEx('model.group.updated.date', 'Updated on %s'),
+        [value]);
+    }
+    return null;
+  }
+
+  static List<Group> listFromJson(List<dynamic> json) {
+    List<Group> values;
+    if (json != null) {
+      values = <Group>[];
+      for (dynamic entry in json) {
+          try { values.add(Group.fromJson((entry as Map)?.cast<String, dynamic>())); }
+          catch(e) { print(e?.toString()); }
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic> listToJson(List<Group> values) {
+    List<dynamic> json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (Group value in values) {
+        json.add(value?.toJson());
+      }
+    }
+    return json;
+  }
 }
 
 //////////////////////////////
@@ -272,8 +349,8 @@ class Member {
   GroupMemberStatus status;
   String            officerTitle;
   
-  DateTime          dateCreated;
-  DateTime          dateUpdated;
+  DateTime          dateCreatedUtc;
+  DateTime          dateUpdatedUtc;
 
   List<GroupMembershipAnswer> answers;
 
@@ -300,20 +377,20 @@ class Member {
       print(e.toString());
     }
 
-    try { dateCreated    = AppDateTime().dateTimeFromString(json['date_created'], format: AppDateTime.parkingEventDateFormat, isUtc: true); } catch(e) { print(e.toString()); }
-    try { dateUpdated    = AppDateTime().dateTimeFromString(json['date_updated'], format: AppDateTime.parkingEventDateFormat, isUtc: true); } catch(e) { print(e.toString()); }
+    try { dateCreatedUtc    = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
+    try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(Member other) {
-    id            = other?.id;
-    name          = other?.name;
-    email         = other?.email;
-    photoURL      = other?.photoURL;
-    status        = other?.status;
-    officerTitle  = other?.officerTitle;
-    answers       = other?.answers;
-    dateCreated   = other?.dateCreated;
-    dateUpdated   = other?.dateUpdated;
+    id             = other?.id;
+    name           = other?.name;
+    email          = other?.email;
+    photoURL       = other?.photoURL;
+    status         = other?.status;
+    officerTitle   = other?.officerTitle;
+    answers        = other?.answers;
+    dateCreatedUtc = other?.dateCreatedUtc;
+    dateUpdatedUtc = other?.dateUpdatedUtc;
   }
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -333,8 +410,8 @@ class Member {
     json['status']              = groupMemberStatusToString(status);
     json['officerTitle']        = officerTitle;
     json['answers']             = AppCollection.isCollectionNotEmpty(answers) ? answers.map((answer) => answer.toJson()).toList() : null;
-    json['date_created']        = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.parkingEventDateFormat);
-    json['date_updated']        = AppDateTime().formatDateTime(dateCreated, format: AppDateTime.parkingEventDateFormat);
+    json['date_created']        = groupUtcDateTimeToString(dateCreatedUtc);
+    json['date_updated']        = groupUtcDateTimeToString(dateUpdatedUtc);
 
     return json;
   }
@@ -347,8 +424,8 @@ class Member {
            (o.photoURL == photoURL) &&
            (o.status == status) &&
            (o.officerTitle == officerTitle) &&
-           (o.dateCreated == dateCreated) &&
-           (o.dateUpdated == dateUpdated) &&
+           (o.dateCreatedUtc == dateCreatedUtc) &&
+           (o.dateUpdatedUtc == dateUpdatedUtc) &&
             DeepCollectionEquality().equals(o.answers, answers);
   }
 
@@ -359,8 +436,8 @@ class Member {
            (photoURL?.hashCode ?? 0) ^
            (status?.hashCode ?? 0) ^
            (officerTitle?.hashCode ?? 0) ^
-           (dateCreated?.hashCode ?? 0) ^
-           (dateUpdated?.hashCode ?? 0) ^
+           (dateCreatedUtc?.hashCode ?? 0) ^
+           (dateUpdatedUtc?.hashCode ?? 0) ^
            (answers?.hashCode ?? 0);
   }
 
@@ -368,6 +445,29 @@ class Member {
   bool get isMember          => status == GroupMemberStatus.member;
   bool get isPendingMember   => status == GroupMemberStatus.pending;
   bool get isRejected        => status == GroupMemberStatus.rejected;
+
+  static List<Member> listFromJson(List<dynamic> json) {
+    List<Member> values;
+    if (json != null) {
+      values = <Member>[];
+      for (dynamic entry in json) {
+          try { values.add(Member.fromJson((entry as Map)?.cast<String, dynamic>())); }
+          catch(e) { print(e?.toString()); }
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic> listToJson(List<Member> values) {
+    List<dynamic> json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (Member value in values) {
+        json.add(value?.toJson());
+      }
+    }
+    return json;
+  }
 }
 
 //////////////////////////////
@@ -560,6 +660,10 @@ class GroupMembershipQuestion {
     return (question != null) ? GroupMembershipQuestion(question: question) : null;
   }
 
+  String toStirng() {
+    return question;
+  }
+
   static List<GroupMembershipQuestion> listFromOthers(List<GroupMembershipQuestion> others) {
     List<GroupMembershipQuestion> values;
     if (others != null) {
@@ -569,6 +673,28 @@ class GroupMembershipQuestion {
       }
     }
     return values;
+  }
+
+  static List<GroupMembershipQuestion> listFromStringList(List<String> strings) {
+    List<GroupMembershipQuestion> values;
+    if (strings != null) {
+      values = <GroupMembershipQuestion>[];
+      for (String string in strings) {
+        values.add(GroupMembershipQuestion.fromString(string));
+      }
+    }
+    return values;
+  }
+
+  static List<String> listToStringList(List<GroupMembershipQuestion> values) {
+    List<String> strings;
+    if (values != null) {
+      strings = <String>[];
+      for (GroupMembershipQuestion value in values) {
+        strings.add(value.toString());
+      }
+    }
+    return strings;
   }
 }
 
@@ -703,3 +829,138 @@ class GroupEventComment {
     return json;
   }
 }
+
+//////////////////////////////
+// GroupPost
+
+class GroupPost {
+  final String id;
+  final String parentId;
+  final Member member;
+  final String subject;
+  final String body;
+  final DateTime dateCreatedUtc;
+  final DateTime dateUpdatedUtc;
+  final bool private;
+  final List<GroupPost> replies;
+
+  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.replies});
+
+  factory GroupPost.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
+    return GroupPost(
+        id: json['id'],
+        parentId: json['parent_id'],
+        member: Member.fromJson(json['member']),
+        subject: json['subject'],
+        body: json['body'],
+        dateCreatedUtc: groupUtcDateTimeFromString(json['date_created']),
+        dateUpdatedUtc: groupUtcDateTimeFromString(json['date_updated']),
+        private: json['private'],
+        replies: GroupPost.fromJsonList(json['replies']));
+  }
+
+  Map<String, dynamic> toJson({bool create = false, bool update = false}) {
+    // MV: This does not look well at all!
+    Map<String, dynamic> json = {'body': body, 'private': private};
+    if ((parentId != null) && create) {
+      json['parent_id'] = parentId;
+    }
+    if ((id != null) && update) {
+      json['id'] = id;
+    }
+    if (subject != null) {
+      json['subject'] = subject;
+    }
+    return json;
+  }
+
+  String get displayDateTime {
+    return getDisplayDateTime();
+  }
+
+  bool get isUpdated {
+    return (dateUpdatedUtc != null) && (dateCreatedUtc != dateUpdatedUtc);
+  }
+
+  String getDisplayDateTime({bool fullLabels = false}){
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
+    //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
+    if (deviceDateTime != null) {
+      DateTime now = DateTime.now();
+      if (deviceDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(deviceDateTime);
+        if (difference.inSeconds < 60) {
+          return "now";
+        }
+        else if (difference.inMinutes < 60) {
+          return "${difference.inMinutes}${fullLabels? " minutes": "min"}";
+        }
+        else if (difference.inHours < 24) {
+          return "${difference.inHours}${fullLabels? " hours": "h"}";
+        }
+        else if (difference.inDays < 30) {
+          return "${difference.inDays}${fullLabels? " days": "d"}";
+        }
+        else {
+          int differenceInMonths = difference.inDays ~/ 30;
+          if (differenceInMonths < 12) {
+            return "$differenceInMonths${fullLabels? " months": "m"}";
+          }
+        }
+      }
+      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+    }
+    return null;
+  }
+
+  static List<GroupPost> fromJsonList(List<dynamic> jsonList) {
+    List<GroupPost> posts;
+    if (jsonList != null) {
+      posts = [];
+      for (dynamic jsonEntry in jsonList) {
+        posts.add(GroupPost.fromJson(jsonEntry));
+      }
+    }
+    return posts;
+  }
+}
+
+//////////////////////////////
+// GroupError
+
+class GroupError {
+  int       code;
+  String    text;
+
+  GroupError({this.code, this.text});
+
+  factory GroupError.fromJson(Map<String, dynamic> json){
+    return json != null ? GroupError(
+      code: AppJson.intValue(json['code']),
+      text: AppJson.stringValue(json['text'])
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "code": code,
+      "text": text,
+    };
+  }
+}
+
+DateTime groupUtcDateTimeFromString(String dateTimeString) {
+  return AppDateTime().dateTimeFromString(dateTimeString, format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true);
+}
+
+String groupUtcDateTimeToString(DateTime dateTime) {
+  if (dateTime != null) {
+    try { return DateFormat("yyyy-MM-ddTHH:mm:ss").format(dateTime) + 'Z'; }
+    catch (e) { print(e?.toString()); }
+  }
+  return null;
+}
+

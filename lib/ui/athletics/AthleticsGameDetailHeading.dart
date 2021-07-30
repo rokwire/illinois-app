@@ -432,7 +432,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _onTapSaveGame() {
-    Analytics.instance.logSelect(target: "Favorite");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
     User().switchFavorite(widget.game);
   }
 
