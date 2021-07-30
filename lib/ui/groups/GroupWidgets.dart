@@ -1118,15 +1118,13 @@ class _GroupPostCardState extends State<GroupPostCard> {
   }
 
   int getVisibleRepliesCount() {
-    return evalVisibleRepliesCount(widget.post?.replies, widget.group?.currentUserIsMemberOrAdmin);
-  }
-
-  static int evalVisibleRepliesCount(List<GroupPost> replies, bool memberOrAdmin) {
     int result = 0;
+    List<GroupPost> replies = widget.post?.replies;
     if (replies != null) {
+      bool memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
       for (GroupPost reply in replies) {
         if ((reply.private != true) || (memberOrAdmin == true)) {
-          result += 1 + evalVisibleRepliesCount(reply.replies, memberOrAdmin);
+          result++;
         }
       }
     }
