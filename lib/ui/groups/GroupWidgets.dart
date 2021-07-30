@@ -1220,6 +1220,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         maxLines: 1,
                         textOverflow: TextOverflow.ellipsis)
                   }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+              Semantics( button: true, child:
                 GestureDetector(
                   onTap: widget.onCardTap ?? _onTapCard,
                   child: Container(
@@ -1238,7 +1239,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, decoration: TextDecoration.underline,)
                         ))),
                       ))
-                ],),))
+                ],),)))
             ]))));
   }
 
