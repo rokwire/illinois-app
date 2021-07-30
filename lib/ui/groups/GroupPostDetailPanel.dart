@@ -376,7 +376,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 iconPath: 'images/icon-underline.png')),
                         Padding(
                             padding: EdgeInsets.only(left: 20),
-                            child: GestureDetector(
+                            child: Semantics(button: true, child:
+                              GestureDetector(
                                 onTap: _onTapEditLink,
                                 child: Text(
                                     Localization().getStringEx(
@@ -386,7 +387,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                         fontSize: 20,
                                         color: Colors.black,
                                         fontFamily:
-                                            Styles().fontFamilies.medium))))
+                                            Styles().fontFamilies.medium)))))
                       ])),
               Padding(
                   padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
@@ -1115,8 +1116,8 @@ class _FontIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: buttonLabel,
+    return Semantics(button: true, label: buttonLabel,
       child:GestureDetector(
-        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18)));
+        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
   }
 }
