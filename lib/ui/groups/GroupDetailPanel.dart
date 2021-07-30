@@ -781,7 +781,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
     
-    if (_hasMorePosts != false) {
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
       String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
       listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16);
       postsContent.add(Semantics(label: title, button: true, excludeSemantics: true,
