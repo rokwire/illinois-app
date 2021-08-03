@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.0] - 2021-08-03
 ### Fixed
 - Do not allow editing events for non-group events [#658](https://github.com/rokwire/illinois-app/issues/658).
+### Added
+- Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).
 
 ## [2.6.14] - 2021-07-30
 ### Fixed
