@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.0] - 2021-08-03
+
 ## [2.6.14] - 2021-07-30
 ### Fixed
 - Do not evaluate number of group replies recursively [#651](https://github.com/rokwire/illinois-app/issues/651).
