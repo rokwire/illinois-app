@@ -443,11 +443,6 @@ class Groups /* with Service */ {
     return deleteResult;
   }
 
-  Future<Event> createGroupEvent(String groupId, Event event) async {
-    //TBD
-    return Future<Event>.delayed(Duration(seconds: 1), (){ return event; });
-  }
-
   // Event Comments
 
   Future<bool> postEventComment(String groupId, String eventId, GroupEventComment comment) {
