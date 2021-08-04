@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Fixed
-- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
 
-## [2.6.15] - 2021-08-03
+## [3.0.0] #TODO: update date when the version is built
 ### Fixed
 - Do not allow editing events for non-group events [#658](https://github.com/rokwire/illinois-app/issues/658).
+- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
+
+### Added
+- Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).
 
 ## [2.6.14] - 2021-07-30
 ### Fixed
