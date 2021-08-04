@@ -631,6 +631,13 @@ class User with Service implements NotificationsListener {
     return roles.contains(UserRole.student) || roles.contains(UserRole.employee);
   }
 
+  bool get isEmployee {
+    if (AppCollection.isCollectionEmpty(roles)) {
+      return false;
+    }
+    return roles.contains(UserRole.employee);
+  }
+
   // Voter Registration
 
   void updateVoterRegistration({@required bool registeredVoter}) {
