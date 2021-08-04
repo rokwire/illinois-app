@@ -1425,7 +1425,7 @@
     "panel.groups_create.name.field": "NAME FIELD",
     "panel.groups_create.name.field.hint": "",
     "panel.groups_create.name.error.message": "A group with this name already exists. Please try a different name.",
-    "panel.groups_create.permission.error.message": "You do not have permission to perform this operation.",
+    "panel.groups_create.permission.error.message": "Creating Groups is only available to Faculty and Staff.",
     "panel.groups_create.description.title": "DESCRIPTION",
     "panel.groups_create.description.description": "What’s the purpose of your group? Who should join? What will you do at your events?",
     "panel.groups_create.description.field": "DESCRIPTION FIELD",
