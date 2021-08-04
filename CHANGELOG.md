@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
 
 ## [2.6.15] - 2021-08-03
 ### Fixed
