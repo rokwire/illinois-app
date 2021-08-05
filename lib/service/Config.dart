@@ -103,6 +103,7 @@ class Config with Service implements NotificationsListener {
   String get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
 
+  String get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
   String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
   String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
   String get rokwireAuthUrl         { return platformBuildingBlocks['rokwire_auth_url']; }            // "https://api-dev.rokwire.illinois.edu/authentication"
@@ -353,6 +354,10 @@ class Config with Service implements NotificationsListener {
   }
 
   // Upgrade
+
+  String get orgId {
+    return null;
+  }
 
   String get appId {
     return _packageInfo?.packageName;

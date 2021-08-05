@@ -16,6 +16,7 @@
 
 import 'dart:convert';
 import 'package:illinois/model/Auth.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Log.dart';
@@ -727,6 +728,29 @@ class Storage with Service {
 
   set studentGuideContentSource(String value) {
     _setStringWithName(_studentGuideContentSourceKey, value);
+  }
+
+  //////////////////
+  // Auth2
+
+  static const String _auth2TokenKey = 'auth2Token';
+
+  Auth2Token get auth2Token {
+    return Auth2Token.fromJson(AppJson.decodeMap(_getStringWithName(_auth2TokenKey)));
+  }
+
+  set auth2Token(Auth2Token value) {
+    _setStringWithName(_auth2TokenKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2UserKey = 'auth2User';
+
+  Auth2User get auth2User {
+    return Auth2User.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UserKey)));
+  }
+
+  set auth2User(Auth2User value) {
+    _setStringWithName(_auth2UserKey, AppJson.encode(value?.toJson()));
   }
 
   /////////////

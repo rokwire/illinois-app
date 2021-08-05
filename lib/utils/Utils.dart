@@ -397,6 +397,17 @@ class AppJson {
     catch(e) { print(e?.toString()); }
     return null;
   }
+
+  static List<String> stringListValue(dynamic value) {
+    List<String> result;
+    if (value is List) {
+      result = <String>[];
+      for (dynamic entry in value) {
+        result.add(entry?.toString());
+      }
+    }
+    return result;
+  }
 }
 
 class AppToast {
