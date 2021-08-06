@@ -63,8 +63,9 @@ class Auth with Service implements NotificationsListener {
 
   static final Auth _auth = Auth._internal();
 
-  final List<Completer<bool>> _loginCompleters = [];
-  Timer _loginTimer;
+  List<Completer<bool>> _shibbolethAuthenticationCompleters;
+  bool _processingShibbolethAuthentication;
+  Timer _shibbolethAuthenticationTimer;
 
   AuthToken _authToken;
   AuthToken get authToken{ return _authToken; }
@@ -173,6 +174,9 @@ class Auth with Service implements NotificationsListener {
   }
 
   void logout(){
+    _cancelShibbolethAuthenticationTimer();
+    _completeShibbolethAuthentication(false);
+
     _clear(true);
   }
 
@@ -198,33 +202,48 @@ class Auth with Service implements NotificationsListener {
   ////////////////////////
   // Shibboleth Oauth
 
-  Future<bool> authenticateWithShibboleth() async{
-
-    if (_loginCompleters.isEmpty && (Config().shibbolethOauthHostUrl != null) && (Config().shibbolethOauthPathUrl != null) && (Config().shibbolethClientId != null)) {
-      Uri uri = Uri.https(
-        Config().shibbolethOauthHostUrl,
-        Config().shibbolethOauthPathUrl,
-        {
-          'scope': "openid profile email offline_access",
-          'response_type': 'code',
-          'redirect_uri': REDIRECT_URI,
-          'client_id': Config().shibbolethClientId,
-          'claims': json.jsonEncode({
-            'userinfo': {
-              'uiucedu_uin': {'essential': true},
-            },
-          }),
-        },
-      );
-      var uriStr = uri.toString();
-      _launchUrl(uriStr);
+  Future<bool> authenticateWithShibboleth() async {
+    if ((Config().shibbolethOauthHostUrl != null) && (Config().shibbolethOauthPathUrl != null) && (Config().shibbolethClientId != null)) {
+      if (_shibbolethAuthenticationCompleters == null) {
+        _shibbolethAuthenticationCompleters = <Completer<bool>>[];
+        
+        Uri uri = Uri.https(
+          Config().shibbolethOauthHostUrl,
+          Config().shibbolethOauthPathUrl,
+          {
+            'scope': "openid profile email offline_access",
+            'response_type': 'code',
+            'redirect_uri': REDIRECT_URI,
+            'client_id': Config().shibbolethClientId,
+            'claims': json.jsonEncode({
+              'userinfo': {
+                'uiucedu_uin': {'essential': true},
+              },
+            }),
+          },
+        );
+        var uriStr = uri.toString();
+        await _launchUrl(uriStr);
+      }
+      
+      Completer<bool> completer = Completer<bool>();
+      _shibbolethAuthenticationCompleters.add(completer);
+      return completer.future;
     }
 
-    return _createLoginCompleter();
+    return false;
   }
 
   Future<bool> _handleShibbolethAuthentication(code) async {
+    _cancelShibbolethAuthenticationTimer();
+    _processingShibbolethAuthentication = true;
+    bool result = await _processShibbolethAuthentication(code);
+    _processingShibbolethAuthentication = null;
+    _completeShibbolethAuthentication(result);
+    return result;
+  }
 
+  Future<bool> _processShibbolethAuthentication(code) async {
     _notifyAuthStarted();
 
     NativeCommunicator().dismissSafariVC();
@@ -233,7 +252,6 @@ class Auth with Service implements NotificationsListener {
     AuthToken newAuthToken = await _loadShibbolethAuthTokenWithCode(code);
     if(newAuthToken == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      _completeLoginWithResult(false);
       return false;
     }
 
@@ -241,7 +259,6 @@ class Auth with Service implements NotificationsListener {
     AuthInfo newAuthInfo = await _loadAuthInfo(optAuthToken: newAuthToken);
     if(newAuthInfo == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      _completeLoginWithResult(false);
       return false;
     }
 
@@ -249,7 +266,6 @@ class Auth with Service implements NotificationsListener {
     String newUserPiiPid = await _loadPidWithShibbolethAuth(email: newAuthInfo?.email, optAuthToken: newAuthToken);
     if(newUserPiiPid == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      _completeLoginWithResult(false);
       return false;
     }
 
@@ -258,7 +274,6 @@ class Auth with Service implements NotificationsListener {
     UserPiiData newUserPiiData = _userPiiDataFromJsonString(newUserPiiDataString);
     if(newUserPiiData == null || AppCollection.isCollectionEmpty(newUserPiiData?.uuidList)){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      _completeLoginWithResult(false);
       return false;
     }
 
@@ -269,7 +284,6 @@ class Auth with Service implements NotificationsListener {
     } on UserNotFoundException catch (_) {}
     if(newUserData == null){
       _notifyAuthLoginFailed(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
-      _completeLoginWithResult(false);
       return false;
     }
     
@@ -314,7 +328,6 @@ class Auth with Service implements NotificationsListener {
 
     _notifyAuthLoginSucceeded(analyticsAction: Analytics.LogAuthLoginNetIdActionName);
 
-    _completeLoginWithResult(true);
     return true;
   }
 
@@ -367,7 +380,7 @@ class Auth with Service implements NotificationsListener {
     return null;
   }
 
-  void _launchUrl(urlStr) async {
+  Future<void> _launchUrl(urlStr) async {
     try {
       if (await url_launcher.canLaunch(urlStr)) {
         await url_launcher.launch(urlStr);
@@ -875,6 +888,7 @@ class Auth with Service implements NotificationsListener {
       if (param == AppLifecycleState.resumed) {
         _reloadAuthCardIfNeeded();
         _reloadUserPiiDataIfNeeded();
+        _createShibbolethAuthenticationTimerIfNeeded();
       }
     }
     else if (name == User.notifyPrivacyLevelChanged) {
@@ -909,36 +923,34 @@ class Auth with Service implements NotificationsListener {
     }
   }
 
-  void _createLoginTimer(){
-    if(_loginTimer != null){
-      _loginTimer.cancel();
+  void _createShibbolethAuthenticationTimerIfNeeded() {
+    if ((_shibbolethAuthenticationCompleters != null) && (_processingShibbolethAuthentication != true)) {
+      if (_shibbolethAuthenticationTimer != null) {
+        _shibbolethAuthenticationTimer.cancel();
+      }
+      _shibbolethAuthenticationTimer = Timer(Duration(milliseconds: 100), () {
+        _completeShibbolethAuthentication(null);
+        _shibbolethAuthenticationTimer = null;
+      });
     }
-    _loginTimer = Timer(Duration(minutes: 10), (){
-      _completeLoginWithResult(false);
-      _loginTimer = null;
-    });
   }
 
-  void _cancelLoginTimer(){
-    if(_loginTimer != null){
-      _loginTimer.cancel();
+  void _cancelShibbolethAuthenticationTimer() {
+    if(_shibbolethAuthenticationTimer != null){
+      _shibbolethAuthenticationTimer.cancel();
+      _shibbolethAuthenticationTimer = null;
     }
-    _loginTimer = null;
   }
 
-  Future<bool> _createLoginCompleter(){
-    Completer<bool> completer = Completer<bool>();
-    _loginCompleters.add(completer);
-    _createLoginTimer();
-    return completer.future;
-  }
+  void _completeShibbolethAuthentication(bool success){
+    if (_shibbolethAuthenticationCompleters != null) {
+      List<Completer<bool>> loginCompleters = _shibbolethAuthenticationCompleters;
+      _shibbolethAuthenticationCompleters = null;
 
-  void _completeLoginWithResult(bool success){
-    for(Completer<void> completer in _loginCompleters){
-      completer.complete(success);
+      for(Completer<void> completer in loginCompleters){
+        completer.complete(success);
+      }
     }
-    _cancelLoginTimer();
-    _loginCompleters.clear();
   }
 
 }
