@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional fix which prevents UI blocking if the user cancels the login process[#357](https://github.com/rokwire/illinois-app/issues/357).
 ### Changed
 - Removed refreshToken parameter from Network calls (not really needed).
+- Repeat 401 failed request only if refreshToken succeeded.
 
 ## [3.0.0] #TODO: update date when the version is built
 ### Fixed

@@ -136,8 +136,9 @@ class Network  {
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
+        if (await Auth().refreshToken() != null) {
+          response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
+        }
       }
     } catch (e) { 
       Log.d(e?.toString());
@@ -174,8 +175,9 @@ class Network  {
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+        if (await Auth().refreshToken() != null) {
+          response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
@@ -218,8 +220,9 @@ class Network  {
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
+        if (await Auth().refreshToken() != null) {
+          response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
@@ -256,8 +259,9 @@ class Network  {
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+        if (await Auth().refreshToken() != null) {
+          response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
@@ -293,8 +297,9 @@ class Network  {
       response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
+        if (await Auth().refreshToken() != null) {
+          response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());

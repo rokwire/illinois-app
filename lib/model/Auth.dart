@@ -32,7 +32,7 @@ abstract class AuthToken {
       if(json.containsKey("phone")){
         return PhoneToken.fromJson(json);
       }
-      else{
+      else if(json.containsKey("id_token")||json.containsKey("access_token")||json.containsKey("refresh_token")){
         return ShibbolethToken.fromJson(json);
       }
     }
@@ -53,13 +53,13 @@ class ShibbolethToken with AuthToken {
   ShibbolethToken({this.idToken, this.accessToken, this.refreshToken, this.tokenType, this.expiresIn});
 
   factory ShibbolethToken.fromJson(Map<String, dynamic> json) {
-    return ShibbolethToken(
+    return (json != null) ? ShibbolethToken(
       idToken: json['id_token'],
       accessToken: json['access_token'],
       refreshToken: json['refresh_token'],
       tokenType: json['token_type'],
       expiresIn: json['expires_in'],
-    );
+    ) : null;
   }
 
   toJson() {
@@ -96,10 +96,10 @@ class PhoneToken with AuthToken{
   PhoneToken({this.phone, this.idToken});
 
   factory PhoneToken.fromJson(Map<String, dynamic> json) {
-    return PhoneToken(
+    return (json != null) ? PhoneToken(
       phone: json['phone'],
       idToken: json['id_token'],
-    );
+    ) : null;
   }
 
   toJson() {
@@ -191,7 +191,7 @@ class AuthCard {
   AuthCard({this.uin, this.cardNumber, this.libraryNumber, this.expirationDate, this.fullName, this.role, this.studentLevel, this.magTrack2, this.photoBase64});
 
   factory AuthCard.fromJson(Map<String, dynamic> json) {
-    return AuthCard(
+    return (json != null) ? AuthCard(
       uin: json['UIN'],
       fullName: json['full_name'],
       role: json['role'],
@@ -201,7 +201,7 @@ class AuthCard {
       libraryNumber: json['library_number'],
       magTrack2: json['mag_track2'],
       photoBase64: json['photo_base64'],
-    );
+    ) : null;
   }
 
   toJson() {
