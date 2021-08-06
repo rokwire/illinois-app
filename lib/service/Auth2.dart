@@ -2,6 +2,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -21,6 +22,7 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
 
   _OidcLogin _oidcLogin;
+  Future<Response> _refreshTokenFuture;
   
   Auth2Token _token;
   Auth2User _user;
@@ -81,6 +83,9 @@ class Auth2 with Service implements NotificationsListener {
 
   // Implementation
 
+  Auth2Token get token => _token;
+  Auth2User get user => _user;
+
   Future<bool> authenticateWithOidc() async {
     _OidcLogin oidcLogin = await _getOidcData();
     if (oidcLogin?.loginUrl != null) {
@@ -95,7 +100,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<void> _handleOidcAuthentication(Uri uri) async {
     if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
-      String url = "${Config().coreUrl}/login";
+      String url = "${Config().coreUrl}/services/auth/login";
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidc),
         'org_id': Config().orgId,
@@ -128,7 +133,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<_OidcLogin> _getOidcData() async {
     if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
 
-      String url = "${Config().coreUrl}/login-url";
+      String url = "${Config().coreUrl}/services/auth/login-url";
       String redirectUrl = "$REDIRECT_URI/${DateTime.now().millisecondsSinceEpoch}";
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidc),
@@ -161,6 +166,47 @@ class Auth2 with Service implements NotificationsListener {
       NotificationService().notify(notifyLogout);
       NotificationService().notify(notifyLoginChanged);
     }
+  }
+
+  Future<Auth2Token> refreshToken() async {
+    if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
+      if (_refreshTokenFuture != null){
+        Log.d("Auth2: will await refresh token");
+        await _refreshTokenFuture;
+        Log.d("Auth2: did await refresh token");
+      }
+      else {
+        try {
+          Log.d("Auth2: will refresh token");
+
+          String url = "${Config().coreUrl}/services/auth/refresh";
+
+          _refreshTokenFuture = Network().post(url, body: _token?.refreshToken);
+          Response refreshTokenResponse = await _refreshTokenFuture;
+          _refreshTokenFuture = null;
+
+          if (refreshTokenResponse?.statusCode == 200) {
+            Auth2Token token = Auth2Token.fromJson(AppJson.decodeMap(refreshTokenResponse?.body));
+            if ((token != null) && token.isValid) {
+              Log.d("Auth: did refresh token: ${token?.accessToken}");
+              Storage().auth2Token = _token = token;
+              return token;
+            }
+            else {
+              Log.d("Auth: failed to refresh token: ${refreshTokenResponse?.body}");
+            }
+          }
+          else if(refreshTokenResponse?.statusCode == 400 || refreshTokenResponse?.statusCode == 401 || refreshTokenResponse?.statusCode == 403){
+            logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
+          }
+        }
+        catch(e) {
+          print(e.toString());
+          _refreshTokenFuture = null; // make sure to clear this in case something went wrong.
+        }
+      }
+    }
+    return null;
   }
 
 }

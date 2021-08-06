@@ -21,6 +21,7 @@ import 'dart:typed_data';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:http/http.dart' as Http;
 import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -29,9 +30,10 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/utils/Utils.dart';
 
 enum NetworkAuth {
-  App,
-  User,
-  Access,
+  App,      // Config.rokwireApiKey
+  User,     // Auth.idToken
+  Access,   // Auth.accessToken
+  Auth2     // Auth2.accessToken
 }
 
 class Network  {
@@ -136,7 +138,7 @@ class Network  {
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await Auth().refreshToken() != null) {
+        if (await _refreshToken(auth)) {
           response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
         }
       }
@@ -175,7 +177,7 @@ class Network  {
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await Auth().refreshToken() != null) {
+        if (await _refreshToken(auth)) {
           response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
         }
       }
@@ -220,7 +222,7 @@ class Network  {
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await Auth().refreshToken() != null) {
+        if (await _refreshToken(auth)) {
           response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
         }
       }
@@ -259,7 +261,7 @@ class Network  {
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await Auth().refreshToken() != null) {
+        if (await _refreshToken(auth)) {
           response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
         }
       }
@@ -297,7 +299,7 @@ class Network  {
       response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await Auth().refreshToken() != null) {
+        if (await _refreshToken(auth)) {
           response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
         }
       }
@@ -414,6 +416,16 @@ class Network  {
         headers['access_token'] = accessToken;
       }
     }
+    else if (auth == NetworkAuth.Auth2) {
+      String accessToken = Auth2().token?.accessToken;
+      String tokenType = Auth2().token?.tokenType ?? 'Bearer';
+      if ((accessToken != null) && accessToken.isNotEmpty) {
+        if (headers == null) {
+          headers = new Map();
+        }
+        headers[HttpHeaders.authorizationHeader] = "$tokenType $accessToken";
+      }
+    }
 
     return headers;
   }
@@ -425,7 +437,19 @@ class Network  {
             response.statusCode == 401
         )
         && Auth().isLoggedIn
-        && (NetworkAuth.User == auth || NetworkAuth.Access == auth));
+        && (NetworkAuth.User == auth || NetworkAuth.Access == auth || NetworkAuth.Auth2 == auth));
+  }
+
+  Future<bool> _refreshToken(NetworkAuth auth) async {
+    if (NetworkAuth.User == auth || NetworkAuth.Access == auth) {
+      return (await Auth().refreshToken() != null);
+    }
+    else if (NetworkAuth.Auth2 == auth) {
+      return (await Auth2().refreshToken() != null);
+    }
+    else {
+      return null;
+    }
   }
 
   Http.Response _responseTimeoutHandler() {
