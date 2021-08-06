@@ -65,6 +65,7 @@ class Auth with Service implements NotificationsListener {
 
   final List<Completer<bool>> _loginCompleters = [];
   Timer _loginTimer;
+  bool _onShibbolethDeepLinkProgress = false;
 
   AuthToken _authToken;
   AuthToken get authToken{ return _authToken; }
@@ -199,8 +200,8 @@ class Auth with Service implements NotificationsListener {
   // Shibboleth Oauth
 
   Future<bool> authenticateWithShibboleth() async{
-
-    if (_loginCompleters.isEmpty && (Config().shibbolethOauthHostUrl != null) && (Config().shibbolethOauthPathUrl != null) && (Config().shibbolethClientId != null)) {
+    _onShibbolethDeepLinkProgress = false;
+    if ((Config().shibbolethOauthHostUrl != null) && (Config().shibbolethOauthPathUrl != null) && (Config().shibbolethClientId != null)) {
       Uri uri = Uri.https(
         Config().shibbolethOauthHostUrl,
         Config().shibbolethOauthPathUrl,
@@ -224,6 +225,8 @@ class Auth with Service implements NotificationsListener {
   }
 
   Future<bool> _handleShibbolethAuthentication(code) async {
+    _onShibbolethDeepLinkProgress = true;
+    _cancelLoginTimer();
 
     _notifyAuthStarted();
 
@@ -869,12 +872,18 @@ class Auth with Service implements NotificationsListener {
   @override
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
+      if(_loginCompleters.isNotEmpty){
+        _createLoginTimer();
+      }
       _onDeepLinkUri(param);
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         _reloadAuthCardIfNeeded();
         _reloadUserPiiDataIfNeeded();
+        if(_loginCompleters.isNotEmpty){
+          _createLoginTimer();
+        }
       }
     }
     else if (name == User.notifyPrivacyLevelChanged) {
@@ -910,13 +919,14 @@ class Auth with Service implements NotificationsListener {
   }
 
   void _createLoginTimer(){
-    if(_loginTimer != null){
-      _loginTimer.cancel();
+    if(!_onShibbolethDeepLinkProgress) {
+      if (_loginTimer != null) {
+        _loginTimer.cancel();
+      }
+      _loginTimer = Timer(Duration(milliseconds: 2000), () {
+        _completeLoginWithResult(false);
+      });
     }
-    _loginTimer = Timer(Duration(minutes: 10), (){
-      _completeLoginWithResult(false);
-      _loginTimer = null;
-    });
   }
 
   void _cancelLoginTimer(){
@@ -928,16 +938,19 @@ class Auth with Service implements NotificationsListener {
 
   Future<bool> _createLoginCompleter(){
     Completer<bool> completer = Completer<bool>();
+    if(_loginCompleters.isNotEmpty){
+      _completeLoginWithResult(false);
+    }
     _loginCompleters.add(completer);
-    _createLoginTimer();
     return completer.future;
   }
 
   void _completeLoginWithResult(bool success){
+    _onShibbolethDeepLinkProgress = false;
+    _cancelLoginTimer();
     for(Completer<void> completer in _loginCompleters){
       completer.complete(success);
     }
-    _cancelLoginTimer();
     _loginCompleters.clear();
   }
 
