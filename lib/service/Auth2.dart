@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Log.dart';
@@ -22,6 +26,10 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
 
   _OidcLogin _oidcLogin;
+  List<Completer<bool>> _oidcAuthenticationCompleters;
+  bool _processingOidcAuthentication;
+  Timer _oidcAuthenticationTimer;
+
   Future<Response> _refreshTokenFuture;
   
   Auth2Token _token;
@@ -42,6 +50,7 @@ class Auth2 with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
+      AppLivecycle.notifyStateChanged,
     ]);
   }
 
@@ -68,6 +77,11 @@ class Auth2 with Service implements NotificationsListener {
     if (name == DeepLink.notifyUri) {
       _onDeepLinkUri(param);
     }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      if (param == AppLifecycleState.resumed) {
+        _createOidcAuthenticationTimerIfNeeded();
+      }
+    }
   }
 
   void _onDeepLinkUri(Uri uri) {
@@ -87,18 +101,35 @@ class Auth2 with Service implements NotificationsListener {
   Auth2User get user => _user;
 
   Future<bool> authenticateWithOidc() async {
-    _OidcLogin oidcLogin = await _getOidcData();
-    if (oidcLogin?.loginUrl != null) {
-      _oidcLogin = oidcLogin;
-      _launchUrl(_oidcLogin?.loginUrl);
-      return true;
+    if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
+      if (_oidcAuthenticationCompleters == null) {
+        _oidcAuthenticationCompleters = <Completer<bool>>[];
+
+        _OidcLogin oidcLogin = await _getOidcData();
+        if (oidcLogin?.loginUrl != null) {
+          _oidcLogin = oidcLogin;
+          await _launchUrl(_oidcLogin?.loginUrl);
+        }
+      }
+
+      Completer<bool> completer = Completer<bool>();
+      _oidcAuthenticationCompleters.add(completer);
+      return completer.future;
     }
-    else {
-      return false;
-    }
+    
+    return false;
   }
 
-  Future<void> _handleOidcAuthentication(Uri uri) async {
+  Future<bool> _handleOidcAuthentication(Uri uri) async {
+    _cancelOidcAuthenticationTimer();
+    _processingOidcAuthentication = true;
+    bool result = await _processOidcAuthentication(uri);
+    _processingOidcAuthentication = false;
+    _completeOidcAuthentication(result);
+    return result;
+  }
+
+  Future<bool> _processOidcAuthentication(Uri uri) async {
     if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       String post = AppJson.encode({
@@ -121,6 +152,7 @@ class Auth2 with Service implements NotificationsListener {
         Storage().auth2User = _user = user;
         NotificationService().notify(notifyLoginSucceeded);
         NotificationService().notify(notifyLoginChanged);
+        return true;
       }
       else {
         NotificationService().notify(notifyLoginFailed);
@@ -128,6 +160,7 @@ class Auth2 with Service implements NotificationsListener {
 
       NotificationService().notify(notifyLoginFinished);
     }
+    return false;
   }
 
   Future<_OidcLogin> _getOidcData() async {
@@ -148,7 +181,7 @@ class Auth2 with Service implements NotificationsListener {
     return null;
   }
 
-  void _launchUrl(urlStr) async {
+  Future<void> _launchUrl(urlStr) async {
     try {
       if (await canLaunch(urlStr)) {
         await launch(urlStr);
@@ -156,6 +189,36 @@ class Auth2 with Service implements NotificationsListener {
     }
     catch(e) {
       print(e);
+    }
+  }
+
+  void _createOidcAuthenticationTimerIfNeeded() {
+    if ((_oidcAuthenticationCompleters != null) && (_processingOidcAuthentication != true)) {
+      if (_oidcAuthenticationTimer != null) {
+        _oidcAuthenticationTimer.cancel();
+      }
+      _oidcAuthenticationTimer = Timer(Duration(milliseconds: 100), () {
+        _completeOidcAuthentication(null);
+        _oidcAuthenticationTimer = null;
+      });
+    }
+  }
+
+  void _cancelOidcAuthenticationTimer() {
+    if(_oidcAuthenticationTimer != null){
+      _oidcAuthenticationTimer.cancel();
+      _oidcAuthenticationTimer = null;
+    }
+  }
+
+  void _completeOidcAuthentication(bool success){
+    if (_oidcAuthenticationCompleters != null) {
+      List<Completer<bool>> loginCompleters = _oidcAuthenticationCompleters;
+      _oidcAuthenticationCompleters = null;
+
+      for(Completer<void> completer in loginCompleters){
+        completer.complete(success);
+      }
     }
   }
 
