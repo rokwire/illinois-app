@@ -166,7 +166,7 @@ class LiveStats with Service implements NotificationsListener {
     var response = Network().get(url, auth: NetworkAuth.App);
     response.then((response) {
       if ((response != null) && (response.statusCode == 200)) {
-        Log.d("Succesfully loaded live games");
+        Log.d("Successfully loaded live games");
         String responseBody = response.body;
         List<dynamic> gamesList = AppJson.decode(responseBody);
         List<LiveGame> result = [];
@@ -179,7 +179,7 @@ class LiveStats with Service implements NotificationsListener {
         _liveGames = result;
         NotificationService().notify(notifyLiveGamesLoaded, null);
       } else {
-        Log.e("Error occured on loading live games");
+        Log.e("Error occurred on loading live games");
       }
     });
   }
