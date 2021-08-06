@@ -785,7 +785,7 @@ class Auth with Service implements NotificationsListener {
       "grant_type": "refresh_token",
     };
     _refreshTokenFuture = Network().post(
-        tokenUriStr, body: body, refreshToken: false)
+        tokenUriStr, body: body)
         .then((tokenResponse){
       _refreshTokenFuture = null;
       try {
