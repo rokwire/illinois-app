@@ -5,14 +5,16 @@ import 'package:illinois/utils/Utils.dart';
 // Auth2Token
 
 class Auth2Token {
+  final String idToken;
   final String accessToken;
   final String refreshToken;
   final String tokenType;
   
-  Auth2Token({this.accessToken, this.refreshToken, this.tokenType});
+  Auth2Token({this.accessToken, this.refreshToken, this.idToken, this.tokenType});
 
   factory Auth2Token.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2Token(
+      idToken: AppJson.stringValue(json['id_token']),
       accessToken: AppJson.stringValue(json['access_token']),
       refreshToken: AppJson.stringValue(json['refresh_token']),
       tokenType: AppJson.stringValue(json['token_type']),
@@ -21,6 +23,7 @@ class Auth2Token {
 
   Map<String, dynamic> toJson() {
     return {
+      'id_token' : idToken,
       'access_token' : accessToken,
       'refresh_token': refreshToken,
       'token_type': tokenType
@@ -29,6 +32,10 @@ class Auth2Token {
 
   bool get isValid {
     return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(refreshToken) && AppString.isStringNotEmpty(tokenType);
+  }
+
+  bool get isValidUiuc {
+    return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(idToken) && AppString.isStringNotEmpty(tokenType);
   }
 }
 

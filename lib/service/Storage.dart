@@ -743,6 +743,16 @@ class Storage with Service {
     _setStringWithName(_auth2TokenKey, AppJson.encode(value?.toJson()));
   }
 
+  static const String _auth2UiucTokenKey = 'auth2UiucToken';
+
+  Auth2Token get auth2UiucToken {
+    return Auth2Token.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UiucTokenKey)));
+  }
+
+  set auth2UiucToken(Auth2Token value) {
+    _setStringWithName(_auth2UiucTokenKey, AppJson.encode(value?.toJson()));
+  }
+
   static const String _auth2UserKey = 'auth2User';
 
   Auth2User get auth2User {

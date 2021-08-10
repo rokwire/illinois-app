@@ -33,6 +33,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<Response> _refreshTokenFuture;
   
   Auth2Token _token;
+  Auth2Token _uiucToken;
   Auth2User _user;
 
   // Singletone instance
@@ -57,6 +58,7 @@ class Auth2 with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _token = Storage().auth2Token;
+    _uiucToken = Storage().auth2UiucToken;
     _user = Storage().auth2User;
   }
 
@@ -98,6 +100,7 @@ class Auth2 with Service implements NotificationsListener {
   // Implementation
 
   Auth2Token get token => _token;
+  Auth2Token get uiucToken => _uiucToken;
   Auth2User get user => _user;
 
   Future<bool> authenticateWithOidc() async {
@@ -152,13 +155,20 @@ class Auth2 with Service implements NotificationsListener {
       
       Response response = await Network().post(url, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      Auth2Token token = (responseJson != null) ? Auth2Token.fromJson(responseJson) : null;
-      Auth2User user = (responseJson != null) ? Auth2User.fromJson(AppJson.mapValue(responseJson['user'])) : null;
-      if ((token != null) && token.isValid && (user != null) && user.isValid) {
-        Storage().auth2Token = _token = token;
-        Storage().auth2User = _user = user;
-        NotificationService().notify(notifyLoginChanged);
-        return true;
+      if (responseJson != null) {
+        Auth2Token token = Auth2Token.fromJson(responseJson);
+        Auth2User user = Auth2User.fromJson(AppJson.mapValue(responseJson['user']));
+
+        if ((token != null) && token.isValid && (user != null) && user.isValid) {
+          Storage().auth2Token = _token = token;
+          Storage().auth2User = _user = user;
+
+          Auth2Token uiucToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['params']));
+          Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
+          NotificationService().notify(notifyLoginChanged);
+          return true;
+        }
       }
     }
     return false;
@@ -259,17 +269,22 @@ class Auth2 with Service implements NotificationsListener {
           _refreshTokenFuture = null;
 
           if (refreshTokenResponse?.statusCode == 200) {
-            Auth2Token token = Auth2Token.fromJson(AppJson.decodeMap(refreshTokenResponse?.body));
+            Map<String, dynamic> responseJson = AppJson.decodeMap(refreshTokenResponse?.body);
+            Auth2Token token = Auth2Token.fromJson(responseJson);
             if ((token != null) && token.isValid) {
               Log.d("Auth: did refresh token: ${token?.accessToken}");
               Storage().auth2Token = _token = token;
+
+              Auth2Token uiucToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['params']));
+              Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
               return token;
             }
             else {
               Log.d("Auth: failed to refresh token: ${refreshTokenResponse?.body}");
             }
           }
-          else if(refreshTokenResponse?.statusCode == 400 || refreshTokenResponse?.statusCode == 401 || refreshTokenResponse?.statusCode == 403){
+          else if(refreshTokenResponse?.statusCode == 400 || refreshTokenResponse?.statusCode == 401 || refreshTokenResponse?.statusCode == 403) {
             logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
           }
         }
