@@ -246,6 +246,7 @@ class Auth2 with Service implements NotificationsListener {
     if ((_token != null) || (_user != null)) {
       _token = null;
       _user = null;
+      _uiucToken = null;
       NotificationService().notify(notifyLoginChanged);
       NotificationService().notify(notifyLogout);
     }
