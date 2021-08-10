@@ -267,6 +267,10 @@ class AppDateTime with Service {
     }
   }
 
+  static DateTime midnight(DateTime date) {
+    return (date != null) ? DateTime(date.year, date.month, date.day) : null;
+  }
+
   timezone.TZDateTime changeTimeZoneToDate(DateTime time, timezone.Location location){
     try{
      return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);

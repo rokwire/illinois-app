@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -28,6 +29,7 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLoginChanged   = "edu.illinois.rokwire.auth2.login.changed";
   static const String notifyLoginFinished  = "edu.illinois.rokwire.auth2.login.finished";
   static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
+  static const String notifyCardChanged    = "edu.illinois.rokwire.auth2.card.changed";
 
   static const String _authCardName        = "idCard.json";
 
@@ -93,6 +95,7 @@ class Auth2 with Service implements NotificationsListener {
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
+        _refreshAuthCardIfNeeded();
         _createOidcAuthenticationTimerIfNeeded();
       }
     }
@@ -183,7 +186,9 @@ class Auth2 with Service implements NotificationsListener {
 
           String authCardString = await _loadAuthCardStringFromNet();
           _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
+          Storage().authCardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
           await _saveAuthCardStringToCache(authCardString);
+          NotificationService().notify(notifyCardChanged);
 
           NotificationService().notify(notifyLoginChanged);
           return true;
@@ -254,14 +259,16 @@ class Auth2 with Service implements NotificationsListener {
 
   void logout() {
     if ((_token != null) || (_user != null)) {
-      _token = null;
-      _user = null;
+      Storage().auth2Token = _token = null;
+      Storage().auth2User = _user = null;
       
-      _uiucToken = null;
+      Storage().auth2UiucToken = _uiucToken = null;
       
       _authCard = null;
       _saveAuthCardStringToCache(null);
+      Storage().authCardTime = null;
       
+      NotificationService().notify(notifyCardChanged);
       NotificationService().notify(notifyLoginChanged);
       NotificationService().notify(notifyLogout);
     }
@@ -367,6 +374,33 @@ class Auth2 with Service implements NotificationsListener {
       return (response?.statusCode == 200) ? response.body : null;
     }
     return null;
+  }
+
+  Future<void> _refreshAuthCardIfNeeded() async {
+    int lastCheckTime = Storage().authCardTime;
+    DateTime lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
+    DateTime lastCheckMidnight = AppDateTime.midnight(lastCheckDate);
+
+    DateTime now = DateTime.now();
+    DateTime todayMidnight = AppDateTime.midnight(now);
+
+    // Do it one per day
+    if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight) < 0)) {
+      if (await _refreshAuthCard() != null) {
+        Storage().authCardTime = now.millisecondsSinceEpoch;
+      }
+    }
+  }
+
+  Future<AuthCard> _refreshAuthCard() async {
+    String authCardString = await _loadAuthCardStringFromNet();
+    AuthCard authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
+    if ((authCard != null) && (authCard != _authCard)) {
+      _authCard = authCard;
+      await _saveAuthCardStringToCache(authCardString);
+      NotificationService().notify(notifyCardChanged);
+    }
+    return authCard;
   }
 
   // Helpers
