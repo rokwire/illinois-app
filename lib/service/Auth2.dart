@@ -19,10 +19,10 @@ class Auth2 with Service implements NotificationsListener {
   static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/oidc-auth';
 
   static const String notifyLoginStarted   = "edu.illinois.rokwire.auth2.login.started";
-  static const String notifyLoginSucceeded = "edu.illinois.rokwire.auth2.login.finished";
-  static const String notifyLoginFailed    = "edu.illinois.rokwire.auth2.login.finished";
-  static const String notifyLoginChanged   = "edu.illinois.rokwire.auth2.login.finished";
-  static const String notifyLoginFinished   = "edu.illinois.rokwire.auth2.login.finished";
+  static const String notifyLoginSucceeded = "edu.illinois.rokwire.auth2.login.succeeded";
+  static const String notifyLoginFailed    = "edu.illinois.rokwire.auth2.login.failed";
+  static const String notifyLoginChanged   = "edu.illinois.rokwire.auth2.login.changed";
+  static const String notifyLoginFinished  = "edu.illinois.rokwire.auth2.login.finished";
   static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
 
   _OidcLogin _oidcLogin;
@@ -102,14 +102,23 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> authenticateWithOidc() async {
     if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
+
+      NotificationService().notify(notifyLoginStarted);
+      
       if (_oidcAuthenticationCompleters == null) {
-        _oidcAuthenticationCompleters = <Completer<bool>>[];
 
         _OidcLogin oidcLogin = await _getOidcData();
         if (oidcLogin?.loginUrl != null) {
           _oidcLogin = oidcLogin;
           await _launchUrl(_oidcLogin?.loginUrl);
         }
+        else {
+          NotificationService().notify(notifyLoginFailed);
+          NotificationService().notify(notifyLoginFinished);
+          return false;
+        }
+
+        _oidcAuthenticationCompleters = <Completer<bool>>[];
       }
 
       Completer<bool> completer = Completer<bool>();
@@ -141,8 +150,6 @@ class Auth2 with Service implements NotificationsListener {
       });
       _oidcLogin = null;
       
-      NotificationService().notify(notifyLoginStarted);
-      
       Response response = await Network().post(url, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       Auth2Token token = (responseJson != null) ? Auth2Token.fromJson(responseJson) : null;
@@ -150,15 +157,9 @@ class Auth2 with Service implements NotificationsListener {
       if ((token != null) && token.isValid && (user != null) && user.isValid) {
         Storage().auth2Token = _token = token;
         Storage().auth2User = _user = user;
-        NotificationService().notify(notifyLoginSucceeded);
         NotificationService().notify(notifyLoginChanged);
         return true;
       }
-      else {
-        NotificationService().notify(notifyLoginFailed);
-      }
-
-      NotificationService().notify(notifyLoginFinished);
     }
     return false;
   }
@@ -211,7 +212,16 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
-  void _completeOidcAuthentication(bool success){
+  void _completeOidcAuthentication(bool success) {
+    
+    if (success == true) {
+      NotificationService().notify(notifyLoginSucceeded);
+    }
+    else if (success == false) {
+      NotificationService().notify(notifyLoginFailed);
+    }
+    NotificationService().notify(notifyLoginFinished);
+
     if (_oidcAuthenticationCompleters != null) {
       List<Completer<bool>> loginCompleters = _oidcAuthenticationCompleters;
       _oidcAuthenticationCompleters = null;
@@ -226,8 +236,8 @@ class Auth2 with Service implements NotificationsListener {
     if ((_token != null) || (_user != null)) {
       _token = null;
       _user = null;
-      NotificationService().notify(notifyLogout);
       NotificationService().notify(notifyLoginChanged);
+      NotificationService().notify(notifyLogout);
     }
   }
 
