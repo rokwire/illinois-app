@@ -83,6 +83,17 @@ class Auth2User {
       (account != null) && account.isValid &&
       (profile != null) && profile.isValid;
   }
+
+  Auth2OrgMembership getOrgMembership(String orgId) {
+    if (orgMemberships != null) {
+      for (Auth2OrgMembership membership in orgMemberships) {
+        if (membership.orgId == orgId) {
+          return membership;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 ////////////////////////////////
@@ -302,6 +313,10 @@ class Auth2OrgMembership {
       'roles': Auth2Role.listToJson(roles),
       'groups': Auth2Group.listToJson(groups),
     };
+  }
+
+  dynamic getUserData(String key) {
+    return (userData != null) ? userData[key] : null;
   }
 
   static List<Auth2OrgMembership> listFromJson(List<dynamic> jsonList) {

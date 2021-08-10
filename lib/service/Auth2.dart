@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
@@ -12,6 +14,8 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
@@ -25,6 +29,8 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLoginFinished  = "edu.illinois.rokwire.auth2.login.finished";
   static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
 
+  static const String _authCardName        = "idCard.json";
+
   _OidcLogin _oidcLogin;
   List<Completer<bool>> _oidcAuthenticationCompleters;
   bool _processingOidcAuthentication;
@@ -35,6 +41,9 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token _token;
   Auth2Token _uiucToken;
   Auth2User _user;
+  
+  AuthCard  _authCard;
+  File _authCardCacheFile;
 
   // Singletone instance
 
@@ -60,6 +69,9 @@ class Auth2 with Service implements NotificationsListener {
     _token = Storage().auth2Token;
     _uiucToken = Storage().auth2UiucToken;
     _user = Storage().auth2User;
+    
+    _authCardCacheFile = await _getAuthCardCacheFile();
+    _authCard = await _loadAuthCardFromCache();
   }
 
   @override
@@ -97,11 +109,14 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
-  // Implementation
+  // Getters
 
   Auth2Token get token => _token;
   Auth2Token get uiucToken => _uiucToken;
   Auth2User get user => _user;
+  AuthCard get authCard => _authCard;
+
+  // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {
     if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
@@ -166,6 +181,10 @@ class Auth2 with Service implements NotificationsListener {
           Auth2Token uiucToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['params']));
           Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
+          String authCardString = await _loadAuthCardStringFromNet();
+          _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
+          await _saveAuthCardStringToCache(authCardString);
+
           NotificationService().notify(notifyLoginChanged);
           return true;
         }
@@ -190,17 +209,6 @@ class Auth2 with Service implements NotificationsListener {
       return (oidcLogin != null) ? _OidcLogin.fromOther(oidcLogin, redirectUrl: redirectUrl) : null;
     }
     return null;
-  }
-
-  Future<void> _launchUrl(urlStr) async {
-    try {
-      if (await canLaunch(urlStr)) {
-        await launch(urlStr);
-      }
-    }
-    catch(e) {
-      print(e);
-    }
   }
 
   void _createOidcAuthenticationTimerIfNeeded() {
@@ -242,15 +250,24 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
+  // Logout
+
   void logout() {
     if ((_token != null) || (_user != null)) {
       _token = null;
       _user = null;
+      
       _uiucToken = null;
+      
+      _authCard = null;
+      _saveAuthCardStringToCache(null);
+      
       NotificationService().notify(notifyLoginChanged);
       NotificationService().notify(notifyLogout);
     }
   }
+
+  // Refresh
 
   Future<Auth2Token> refreshToken() async {
     if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
@@ -296,6 +313,73 @@ class Auth2 with Service implements NotificationsListener {
       }
     }
     return null;
+  }
+
+  // Auth Card
+
+  Future<File> _getAuthCardCacheFile() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, _authCardName);
+    return File(cacheFilePath);
+  }
+
+  Future<String> _loadAuthCardStringFromCache() async {
+    try {
+      return ((_authCardCacheFile != null) && await _authCardCacheFile.exists()) ? await _authCardCacheFile.readAsString() : null;
+    }
+    on Exception catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<void> _saveAuthCardStringToCache(String value) async {
+    try {
+      if (_authCardCacheFile != null) {
+        if (value != null) {
+          await _authCardCacheFile.writeAsString(value, flush: true);
+        }
+        else if (await _authCardCacheFile.exists()) {
+          await _authCardCacheFile.delete();
+        }
+      }
+    }
+    on Exception catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<AuthCard> _loadAuthCardFromCache() async {
+    return AuthCard.fromJson(AppJson.decodeMap(await _loadAuthCardStringFromCache()));
+  }
+
+  Future<String> _loadAuthCardStringFromNet() async {
+    String url = Config().iCardUrl;
+    String uin = _user?.getOrgMembership(Config().orgId)?.getUserData('uin');
+    String accessToken = _uiucToken?.accessToken;
+
+    if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
+      Response response = await Network().post(url, headers: {
+        'UIN': uin,
+        'access_token': accessToken
+      });
+      return (response?.statusCode == 200) ? response.body : null;
+    }
+    return null;
+  }
+
+  // Helpers
+
+  static Future<void> _launchUrl(urlStr) async {
+    try {
+      if (await canLaunch(urlStr)) {
+        await launch(urlStr);
+      }
+    }
+    catch(e) {
+      print(e);
+    }
   }
 
 }
