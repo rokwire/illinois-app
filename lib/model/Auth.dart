@@ -17,7 +17,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/Utils.dart';
 
 abstract class AuthToken {
