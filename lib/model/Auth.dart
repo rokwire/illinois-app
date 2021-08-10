@@ -259,11 +259,8 @@ class AuthCard {
     return (photoBase64 != null) ? await compute(base64Decode, photoBase64) : null;
   }
 
-  String get roleDisplayString {
-    if(role == "Undergraduate" && studentLevel != "1U"){
-      return Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card");
-    }
-    return role;
+  bool get needsUpdate {
+    return (role == "Undergraduate") && (studentLevel != "1U");
   }
 }
 
