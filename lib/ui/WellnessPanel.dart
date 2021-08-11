@@ -133,6 +133,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                 ),
               ),
             ),
+            _buildDescriptionButtons(),
             Visibility(
               visible: AppString.isStringNotEmpty(bullet),
               child: Padding(
@@ -160,6 +161,14 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       ),
       bottomNavigationBar: TabBarWidget(),
     );
+  }
+
+  Widget _buildDescriptionButtons() {
+    List<dynamic> ribbonButtonsContent = AppMapPathKey.entry(_jsonContent, 'description.ribbon_buttons');
+    List<Widget> ribbonButtons = _buildRibbonButtons(ribbonButtonsContent);
+    return Visibility(
+        visible: AppCollection.isCollectionNotEmpty(ribbonButtons),
+        child: Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(children: ribbonButtons)));
   }
 
   Widget _buildActivities() {
@@ -376,31 +385,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   }
 
   List<Widget> _buildResourceRibbonButtons(Map<String, dynamic> resourceItem) {
-    List<Widget> ribbonButtons = [];
     List<dynamic> ribbonButtonsContent = AppMapPathKey.entry(resourceItem, 'ribbon_buttons');
-    if (AppCollection.isCollectionNotEmpty(ribbonButtonsContent)) {
-      for (Map<String, dynamic> ribbonButtonSource in ribbonButtonsContent) {
-        String titleKey = AppMapPathKey.entry(ribbonButtonSource, 'title');
-        String title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
-        String icon = AppMapPathKey.entry(ribbonButtonSource, 'icon');
-        String iconValue = AppString.getDefaultEmptyString(value: icon, defaultValue: 'chevron-right.png');
-        String hint = AppMapPathKey.entry(ribbonButtonSource, 'hint');
-        String hintKey = hint != null
-            ? AppString.getDefaultEmptyString(value: hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint")
-            : null;
-        String hintValue = AppString.isStringNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
-        RibbonButton button = RibbonButton(
-          height: null,
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          label: title,
-          hint: hintValue,
-          icon: 'images/$iconValue',
-          onTap: () => _onTapRibbonButton(ribbonButtonSource),
-        );
-        ribbonButtons.add(button);
-      }
-    }
+    List<Widget> ribbonButtons = _buildRibbonButtons(ribbonButtonsContent);
     return ribbonButtons;
   }
 
@@ -475,6 +461,33 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       }
     }
     return socialWidgets;
+  }
+
+  List<Widget> _buildRibbonButtons(List<dynamic> buttonsContent) {
+    List<Widget> buttonWidgets = [];
+    if (AppCollection.isCollectionNotEmpty(buttonsContent)) {
+      for (Map<String, dynamic> ribbonButtonSource in buttonsContent) {
+        String titleKey = AppMapPathKey.entry(ribbonButtonSource, 'title');
+        String title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
+        String icon = AppMapPathKey.entry(ribbonButtonSource, 'icon');
+        String iconValue = AppString.getDefaultEmptyString(value: icon, defaultValue: 'chevron-right.png');
+        String hint = AppMapPathKey.entry(ribbonButtonSource, 'hint');
+        String hintKey =
+            hint != null ? AppString.getDefaultEmptyString(value: hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
+        String hintValue = AppString.isStringNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
+        RibbonButton button = RibbonButton(
+          height: null,
+          border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          label: title,
+          hint: hintValue,
+          icon: 'images/$iconValue',
+          onTap: () => _onTapRibbonButton(ribbonButtonSource),
+        );
+        buttonWidgets.add(button);
+      }
+    }
+    return buttonWidgets;
   }
 
   void _onTapSocialMedia(Map<String, dynamic> socialMedia) {
