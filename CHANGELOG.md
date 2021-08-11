@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Additional fix which prevents UI blocking if the user cancels the login process[#357](https://github.com/rokwire/illinois-app/issues/357).
+- Display start time for events from Athletics category [#636](https://github.com/rokwire/illinois-app/issues/636).
 
 ## [2.6.16] - 2021-08-04
 ### Fixed
