@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display options menu in GroupAllEventsPanel for group admins [#637](https://github.com/rokwire/illinois-app/issues/637).
 ### Added
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
+### Changed
+- Updated Dining Dollars icon [#669](https://github.com/rokwire/illinois-app/issues/669).
 
 ## [2.6.16] - 2021-08-04
 ### Fixed
