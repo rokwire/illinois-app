@@ -83,7 +83,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth().authCard.photoBytes;
+    Uint8List photoBytes = await  Auth().authCard?.photoBytes;
     return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
@@ -155,8 +155,9 @@ class _IDCardPanelState extends State<IDCardPanel>
   Widget _buildCardContent() {
     
     String cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
-    String expirationDate = Auth().authCard.expirationDate;
+    String expirationDate = Auth().authCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
+    String roleDisplayString = (Auth().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth().authCard?.role ?? "");
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
@@ -194,7 +195,7 @@ class _IDCardPanelState extends State<IDCardPanel>
                 child: Container(decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
-                  image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth().authCard.photoBytes),),    
+                  image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth().authCard?.photoBytes),),    
                 )),
               )
             ),
@@ -209,15 +210,15 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Container(height: 10,),
       
-      Text(Auth().authCard.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
-      Text(Auth().authCard.roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
+      Text(Auth().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
+      Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
       
       Container(height: 20,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
-          Text((0 < (Auth().authCard.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
-          Text(Auth().authCard.uin ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 28)),
+          Text((0 < (Auth().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
+          Text(Auth().authCard?.uin ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 28)),
         ],),
       ),
       Text(cardExpiresText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
@@ -225,13 +226,13 @@ class _IDCardPanelState extends State<IDCardPanel>
       Container(height: 20,),
       
       Visibility(
-        visible: (0 < (Auth().authCard.cardNumber?.length ?? 0)),
+        visible: (0 < (Auth().authCard?.cardNumber?.length ?? 0)),
         child: QrImage(
-          data: Auth().authCard.magTrack2 ?? '',
+          data: Auth().authCard?.magTrack2 ?? '',
           version: QrVersions.auto,
           size: MediaQuery.of(context).size.width / 4 + 10,
           padding: const EdgeInsets.all(10.0),),),
-      Text(Auth().authCard.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
+      Text(Auth().authCard?.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
 
     ],)    );
   }

@@ -310,11 +310,11 @@ class Sports with Service implements NotificationsListener {
 
   List<Game> getTopScheduleGamesFromList(List<Game> gamesList){
     if(_enabled) {
-      List<String> preferedSports = User().getSportsInterestSubCategories();
+      List<String> preferredSports = User().getSportsInterestSubCategories();
 
       // Step 1: Group games by sport
       Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
-      List<Game> preferedGames = [];
+      List<Game> preferredGames = [];
       for (Game game in gamesList) {
         if (!gamesMap.containsKey(game.sport.shortName)) {
           gamesMap[game.sport.shortName] = [];
@@ -322,48 +322,48 @@ class Sports with Service implements NotificationsListener {
         gamesMap[game.sport.shortName].add(game);
       }
 
-      // Step 2: Add all prefered games
-      if (preferedSports != null && preferedSports.isNotEmpty) {
-        for (String preferedSport in preferedSports) {
-          List<Game> subList = gamesMap[preferedSport];
+      // Step 2: Add all preferred games
+      if (preferredSports != null && preferredSports.isNotEmpty) {
+        for (String preferredSport in preferredSports) {
+          List<Game> subList = gamesMap[preferredSport];
           if (subList != null) {
-            preferedGames.addAll(subList);
+            preferredGames.addAll(subList);
           }
         }
       }
 
       // Step 3: In case of multiple preferences - show only the top upcoming game per sport
       Set<String> limitedSports = Set<String>();
-      if (preferedGames.isNotEmpty) {
-        preferedGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
+      if (preferredGames.isNotEmpty) {
+        preferredGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
         List<Game> limitedGames = [];
-        for (Game game in preferedGames) {
+        for (Game game in preferredGames) {
           if (!limitedSports.contains(game.sport.shortName)) {
             limitedGames.add(game);
             limitedSports.add(game.sport.shortName);
           }
-          else if (preferedSports.length == 1 && limitedGames.length < 3) {
+          else if (preferredSports.length == 1 && limitedGames.length < 3) {
             // In case of single preference - show 3 games
             limitedGames.add(game);
           }
         }
-        preferedGames = limitedGames;
+        preferredGames = limitedGames;
       }
       else {
         // Step 3.1: Show first 3 games (top one per sport)
         for (Game game in gamesList) {
-          if (preferedGames.length >= 3) {
+          if (preferredGames.length >= 3) {
             break;
           }
 
           if (!limitedSports.contains(game.sport.shortName)) {
-            preferedGames.add(game);
+            preferredGames.add(game);
             limitedSports.add(game.sport.shortName);
           }
         }
       }
 
-      return preferedGames;
+      return preferredGames;
     }
     return null;
   }

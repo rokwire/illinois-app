@@ -129,15 +129,16 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
+  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response;
 
     try {
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
       
-      if (refreshToken && (response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
+      if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
+        if (await Auth().refreshToken() != null) {
+          response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
+        }
       }
     } catch (e) { 
       Log.d(e?.toString());
@@ -167,15 +168,16 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async{
+  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async{
     Http.Response response;
     
     try {
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if (refreshToken && (response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+      if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
+        if (await Auth().refreshToken() != null) {
+          response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
@@ -211,15 +213,16 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
+  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response;
     
     try {    
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       
-      if (refreshToken && (response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
+      if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
+        if (await Auth().refreshToken() != null) {
+          response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
@@ -249,15 +252,16 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
+  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response;
     
     try {    
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
-      if (refreshToken && (response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+      if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
+        if (await Auth().refreshToken() != null) {
+          response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
@@ -287,14 +291,15 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl }) async {
+  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response;
     try {
       response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
       
-      if (refreshToken && (response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        await Auth().doRefreshToken();
-        response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
+      if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
+        if (await Auth().refreshToken() != null) {
+          response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
