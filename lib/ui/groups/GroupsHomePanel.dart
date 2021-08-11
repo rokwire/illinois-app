@@ -624,7 +624,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _canCreateGroup {
-    return Auth().isGroupsAccess && User().isEmployee;
+    return Auth().isGroupsAccess;
   }
 
   ///////////////////////////////////
