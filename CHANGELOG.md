@@ -9,13 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional fix which prevents UI blocking if the user cancels the login process[#357](https://github.com/rokwire/illinois-app/issues/357).
 - Display start time for events from Athletics category [#636](https://github.com/rokwire/illinois-app/issues/636).
 
-## [2.6.16] - 2021-08-04
-### Fixed
-- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
+### Changed
+- Removed refreshToken parameter from Network calls (not really needed).
+- Repeat 401 failed request only if refreshToken succeeded.
 
-## [2.6.15] - 2021-08-03
+## [3.0.0] #TODO: update date when the version is built
 ### Fixed
 - Do not allow editing events for non-group events [#658](https://github.com/rokwire/illinois-app/issues/658).
+- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
+
+### Added
+- Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).
 
 ## [2.6.14] - 2021-07-30
 ### Fixed

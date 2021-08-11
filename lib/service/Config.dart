@@ -41,6 +41,7 @@ class Config with Service implements NotificationsListener {
 
   static const String notifyUpgradeRequired     = "edu.illinois.rokwire.config.upgrade.required";
   static const String notifyUpgradeAvailable    = "edu.illinois.rokwire.config.upgrade.available";
+  static const String notifyOnboardingRequired  = "edu.illinois.rokwire.config.onboarding.required";
   static const String notifyConfigChanged       = "edu.illinois.rokwire.config.changed";
   static const String notifyEnvironmentChanged  = "edu.illinois.rokwire.config.environment.changed";
 
@@ -79,10 +80,11 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get secretLaundry           { return secretKeys['laundry'] ?? {}; }
   Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
   
-  Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
-
   Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
-  List<dynamic> get supportedLocales                { return (_config != null) ? (_config['languages']) : null; }
+  List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
+  Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
+  Map<String, dynamic> get onboardingInfo          { return (_config != null) ? (_config['onboarding'] ?? {}) : {}; }
+
 
 //NA: String get redirectAuthUrl        { return otherUniversityServices['redirect_auth_url']; }      // "edu.illinois.ncsa.rokwireauthpoc:rokwireauthpoc.ncsa.illinois.edu/oauth2-cb"
   String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
@@ -299,10 +301,12 @@ class Config with Service implements NotificationsListener {
         NotificationService().notify(notifyConfigChanged, null);
         
         _checkUpgrade();
+        _checkOnboarding();
       }
     }
     else {
       _checkUpgrade();
+      _checkOnboarding();
       _updateFromNet();
     }
   }
@@ -316,6 +320,7 @@ class Config with Service implements NotificationsListener {
         NotificationService().notify(notifyConfigChanged, null);
 
         _checkUpgrade();
+        _checkOnboarding();
       }
     });
   }
@@ -417,6 +422,23 @@ class Config with Service implements NotificationsListener {
     }
     else {
       return null;
+    }
+  }
+
+  // Onboarding
+
+  String get onboardingRequiredVersion {
+    dynamic requiredVersion = onboardingInfo['required_version'];
+    if ((requiredVersion is String) && (AppVersion.compareVersions(requiredVersion, appVersion) <= 0)) {
+      return requiredVersion;
+    }
+    return null;
+  }
+
+  void _checkOnboarding() {
+    String value;
+    if ((value = this.onboardingRequiredVersion) != null) {
+      NotificationService().notify(notifyOnboardingRequired, value);
     }
   }
 

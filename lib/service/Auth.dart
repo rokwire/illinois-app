@@ -760,56 +760,54 @@ class Auth with Service implements NotificationsListener {
 
   // Refresh Token
 
-  Future<void> doRefreshToken() async {
+  Future<AuthToken> refreshToken() async {
 
-    if(!isShibbolethLoggedIn){
-      return; // Execute only if the user is loggedin
-    }
+    if ((_authToken is ShibbolethToken) && (Config().shibbolethAuthTokenUrl != null) && (Config().shibbolethClientId != null) && (Config().shibbolethClientSecret != null)) {
+      if (_refreshTokenFuture != null){
+        Log.d("Auth: will await refresh token");
+        await _refreshTokenFuture;
+        Log.d("Auth: did await refresh token");
+      }
+      else {
+        try {
+          Log.d("Auth: will refresh token");
 
-    if((Config().shibbolethAuthTokenUrl == null) || (Config().shibbolethClientId == null) || (Config().shibbolethClientSecret == null)) {
-      return;
-    }
+          String tokenUriStr = Config().shibbolethAuthTokenUrl
+              .replaceAll("{shibboleth_client_id}", Config().shibbolethClientId)
+              .replaceAll("{shibboleth_client_secret}", Config().shibbolethClientSecret);
+          Map<String, String> body = {
+            "refresh_token": authToken?.refreshToken,
+            "grant_type": "refresh_token",
+          };
 
-    if(_refreshTokenFuture != null){
-      await Future.wait([_refreshTokenFuture]);
-      return;
-    }
+          _refreshTokenFuture = Network().post(tokenUriStr, body: body);
+          Response tokenResponse = await _refreshTokenFuture;
+          _refreshTokenFuture = null;
 
-    Log.d("Auth: will refresh token");
-
-    String tokenUriStr = Config().shibbolethAuthTokenUrl
-        .replaceAll("{shibboleth_client_id}", Config().shibbolethClientId)
-        .replaceAll("{shibboleth_client_secret}", Config().shibbolethClientSecret);
-    Map<String, String> body = {
-      "refresh_token": authToken?.refreshToken,
-      "grant_type": "refresh_token",
-    };
-    _refreshTokenFuture = Network().post(
-        tokenUriStr, body: body, refreshToken: false)
-        .then((tokenResponse){
-      _refreshTokenFuture = null;
-      try {
-        if((tokenResponse?.body != null) && (tokenResponse.statusCode == 200)){
-          String tokenResponseBody =  tokenResponse.body;
-          var bodyMap = (tokenResponseBody != null) ? AppJson.decode(tokenResponseBody) : null;
-          _authToken = ShibbolethToken.fromJson(bodyMap);
-          if(authToken?.idToken != null) {
-            Log.d("Auth: did refresh token: ${authToken?.idToken}");
-            _saveAuthToken();
-            _notifyAuthTokenChanged();
+          if (tokenResponse?.statusCode == 200) {
+            ShibbolethToken token = ShibbolethToken.fromJson(AppJson.decodeMap(tokenResponse?.body));
+            if (token?.idToken != null) {
+              Log.d("Auth: did refresh token: ${authToken?.idToken}");
+              _authToken = token;
+              _saveAuthToken();
+              _notifyAuthTokenChanged();
+              return token;
+            }
+            else {
+              Log.d("Auth: failed to refresh token: ${tokenResponse?.body}");
+            }
+          }
+          else if(tokenResponse?.statusCode == 400 || tokenResponse?.statusCode == 401 || tokenResponse?.statusCode == 403){
+            logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
           }
         }
-        else if(tokenResponse.statusCode == 400 || tokenResponse.statusCode == 401 || tokenResponse.statusCode == 403){
-          logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
+        catch(e) {
+          print(e.toString());
+          _refreshTokenFuture = null; // make sure to clear this in case something went wrong.
         }
       }
-      catch(e) {
-        print(e.toString());
-      }
-
-      return;
-    });
-    return _refreshTokenFuture;
+    }
+    return null;
   }
 
   // Utils

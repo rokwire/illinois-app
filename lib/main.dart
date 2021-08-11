@@ -142,11 +142,12 @@ class App extends StatefulWidget {
 class _AppState extends State<App> implements NotificationsListener {
 
   Key _key = UniqueKey();
-  RootPanel rootPanel;
+  String _lastRunVersion;
   String _upgradeRequiredVersion;
   String _upgradeAvailableVersion;
   Widget _launchPopup;
   DateTime _pausedDateTime;
+  RootPanel rootPanel;
 
   @override
   void initState() {
@@ -156,6 +157,7 @@ class _AppState extends State<App> implements NotificationsListener {
       Onboarding2.notifyFinished,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
+      Config.notifyOnboardingRequired,
       Storage.notifySettingChanged,
       User.notifyUserDeleted,
       User.notifyPrivacyLevelChanged,
@@ -166,12 +168,14 @@ class _AppState extends State<App> implements NotificationsListener {
     AppLivecycle.instance.ensureBinding();
 
     rootPanel = RootPanel();
+
+    _lastRunVersion = Storage().lastRunVersion;
     _upgradeRequiredVersion = Config().upgradeRequiredVersion;
     _upgradeAvailableVersion = Config().upgradeAvailableVersion;
-    
-    // This is just a placeholder to take some action on app upgrade.
-    String lastRunVersion = Storage().lastRunVersion;
-    if ((lastRunVersion == null) || (lastRunVersion != Config().appVersion)) {
+
+    _checkForceOnboarding();
+
+    if ((_lastRunVersion == null) || (_lastRunVersion != Config().appVersion)) {
       Storage().lastRunVersion = Config().appVersion;
     }
 
@@ -243,6 +247,20 @@ class _AppState extends State<App> implements NotificationsListener {
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
   }
 
+  bool _checkForceOnboarding() {
+    // Action: Force unboarding to concent vaccination (#651, #681)
+    String onboardingRequiredVersion = Config().onboardingRequiredVersion;
+    if ((Storage().onBoardingPassed == true) &&
+        (_lastRunVersion != null) &&
+        (onboardingRequiredVersion != null) &&
+        (AppVersion.compareVersions(_lastRunVersion, onboardingRequiredVersion) < 0) &&
+        (AppVersion.compareVersions(onboardingRequiredVersion, Config().appVersion) <= 0)) {
+      Storage().onBoardingPassed = false;
+      return true;
+    }
+    return false;
+  }
+
   void _presentLaunchPopup(BuildContext context) {
     if ((_launchPopup == null) && (context != null)) {
       dynamic launch = FlexUI()['launch'];
@@ -289,6 +307,11 @@ class _AppState extends State<App> implements NotificationsListener {
       setState(() {
         _upgradeAvailableVersion = param;
       });
+    }
+    else if (name == Config.notifyOnboardingRequired) {
+      if (_checkForceOnboarding()) {
+        _resetUI();
+      }
     }
     else if (name == User.notifyUserDeleted) {
       _resetUI();
