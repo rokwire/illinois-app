@@ -585,23 +585,22 @@ class Event with Explore implements Favorite {
   ///
   /// Specific for Events with 'Athletics' category
   ///
-  /// Requirement 1:
+  /// Requirement 1 (Deprecated! since 08/11/2021):
   /// 'When in explore/events and the category is athletics, do not show the time anymore, just the date. Also do not process it for timezone (now we go to athletics detail panel we will rely on how detail already deals with any issues)'
   ///
   /// Requirement 2: 'If an event is longer than 1 day, then please show the Date as (for example) Sep 26 - Sep 29.'
+  ///
+  /// Requirement 3 (Since 08/11/2021): Display start time for Athletics events
+  ///
   String get displayDateTime {
     final String dateFormat = 'MMM dd';
-    final bool isAthleticsCategory = (category == 'Athletics');
     int eventDays = (endDateGmt?.difference(startDateGmt)?.inDays ?? 0).abs();
     bool eventIsMoreThanOneDay = (eventDays >= 1);
     if (eventIsMoreThanOneDay) {
-      String startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat, ignoreTimeZone: isAthleticsCategory);
-      String endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat, ignoreTimeZone: isAthleticsCategory);
+      String startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat);
+      String endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat);
       return '$startDateFormatted - $endDateFormatted';
     } else {
-      if (isAthleticsCategory) {
-        return AppDateTime().formatDateTime(startDateGmt, format: dateFormat, ignoreTimeZone: true);
-      }
       return AppDateTime().getDisplayDateTime(startDateGmt, allDay: allDay);
     }
   }
