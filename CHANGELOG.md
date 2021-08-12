@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
 ### Fixed
 - Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
+- Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
 
 ## [2.6.17] - 2021-08-11
 ### Fixed
