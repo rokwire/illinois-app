@@ -94,9 +94,9 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
     _animationController.dispose();
+    super.dispose();
   }
 
   // NotificationsListener
