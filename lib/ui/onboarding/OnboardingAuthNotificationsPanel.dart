@@ -42,97 +42,100 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context) ,
             onSwipeRight: () => _goBack(context),
-            child: ScalableScrollView(
-            scrollableChild:Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Stack(children: <Widget>[
-                  Image.asset(
-                    'images/allow-notifications-header.png',
-                    fit: BoxFit.fitWidth,
-                    width: MediaQuery.of(context).size.width,
-                    excludeFromSemantics: true,
-                  ),
-                  OnboardingBackButton(
-                    padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                    onTap:() {
-                      Analytics.instance.logSelect(target: "Back");
-                      _goBack(context);
-                    }),
-                ]),
-                Semantics(
-                    label: titleText,
-                    hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'),
-                    excludeSemantics: true,
-                    child:
-                    Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        titleText,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies.bold,
-                            fontSize: 32,
-                            color: Styles().colors.fillColorPrimary),
-                      ),
-                    ))),
-                Container(height: 12,),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.regular,
-                        fontSize: 20,
-                        color: Styles().colors.fillColorPrimary),
-                  )),
-                ),]),
-                bottomNotScrollableWidget: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        ScalableRoundedButton(
-                          label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
-                          hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
-                          borderColor: Styles().colors.fillColorSecondary,
-                          backgroundColor: Styles().colors.background,
-                          textColor: Styles().colors.fillColorPrimary,
-                          onTap: () => _onReceiveNotifications(context),
+            child: Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Stack(children: <Widget>[
+                        Image.asset(
+                          'images/allow-notifications-header.png',
+                          fit: BoxFit.fitWidth,
+                          width: MediaQuery.of(context).size.width,
+                          excludeFromSemantics: true,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Analytics.instance.logSelect(target: 'Not right now') ;
-                            return _goNext(context);
-                          },
-                          child: Semantics(
-                            label:notRightNow,
-                            hint:Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.hint', ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child:Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
+                        OnboardingBackButton(
+                          padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                          onTap:() {
+                            Analytics.instance.logSelect(target: "Back");
+                            _goBack(context);
+                          }),
+                      ]),
+                      Semantics(
+                          label: titleText,
+                          hint: Localization().getStringEx('panel.onboarding.notifications.label.title.hint', 'Header 1'),
+                          excludeSemantics: true,
+                          child:
+                          Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Align(
+                            alignment: Alignment.center,
                             child: Text(
-                                notRightNow,
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.medium,
-                                    fontSize: 16,
-                                    color: Styles().colors.fillColorPrimary,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
-                                    decorationThickness: 1,
-                                    decorationStyle: TextDecorationStyle.solid),
-                              ))),
-                        )
-                      ],
-                    ),
+                              titleText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontSize: 32,
+                                  color: Styles().colors.fillColorPrimary),
+                            ),
+                          ))),
+                      Container(height: 12,),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Text(
+                          Localization().getStringEx('panel.onboarding.notifications.label.description', 'Get notified about your “starred” events.'),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies.regular,
+                              fontSize: 20,
+                              color: Styles().colors.fillColorPrimary),
+                        )),
+                      ),]),
+              )),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      ScalableRoundedButton(
+                        label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
+                        hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
+                        borderColor: Styles().colors.fillColorSecondary,
+                        backgroundColor: Styles().colors.background,
+                        textColor: Styles().colors.fillColorPrimary,
+                        onTap: () => _onReceiveNotifications(context),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Analytics.instance.logSelect(target: 'Not right now') ;
+                          return _goNext(context);
+                        },
+                        child: Semantics(
+                          label:notRightNow,
+                          hint:Localization().getStringEx('panel.onboarding.notifications.button.dont_allow.hint', ''),
+                          button: true,
+                          excludeSemantics: true,
+                          child:Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                              notRightNow,
+                              style: TextStyle(
+                                  fontFamily: Styles().fontFamilies.medium,
+                                  fontSize: 16,
+                                  color: Styles().colors.fillColorPrimary,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Styles().colors.fillColorSecondary,
+                                  decorationThickness: 1,
+                                  decorationStyle: TextDecorationStyle.solid),
+                            ))),
+                      )
+                    ],
                   ),
                 ),
+            ],)
             ));
   }
 

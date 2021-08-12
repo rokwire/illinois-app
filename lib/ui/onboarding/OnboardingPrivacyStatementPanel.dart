@@ -78,78 +78,80 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
             child:
-            ScalableScrollView(
-              scrollableChild:Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Stack(children: <Widget>[
-                    Image.asset("images/privacy-header.png", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true, ),
-                    Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
-                      Image.asset("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),                        
-                    ),
-                    OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                    onTap:() {
-                      Analytics.instance.logSelect(target: "Back");
-                      _goBack(context);
-                    }),
-                  ],),
-                  Semantics(
-                    label: titleText,
-                    hint: Localization().getStringEx('panel.onboarding.privacy.label.title.hint', ''),
-                    excludeSemantics: true,
-                    child: Padding(
-                        padding: EdgeInsets.only(
-                            left: 40, right: 40, top: 21, bottom: 12),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            titleText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 32,
-                                color: Styles().colors.fillColorPrimary),
-                          ),
-                        )),
-                  ),
-                  Semantics(
-                      label: descriptionText,
-                      excludeSemantics: true,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              descriptionText,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.regular,
-                                  fontSize: 20,
-                                  color: Styles().colors.fillColorPrimary),
+            Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Stack(children: <Widget>[
+                        Image.asset("images/privacy-header.png", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true, ),
+                        Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
+                          Image.asset("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),                        
+                        ),
+                        OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                        onTap:() {
+                          Analytics.instance.logSelect(target: "Back");
+                          _goBack(context);
+                        }),
+                      ],),
+                      Semantics(
+                        label: titleText,
+                        hint: Localization().getStringEx('panel.onboarding.privacy.label.title.hint', ''),
+                        excludeSemantics: true,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                left: 40, right: 40, top: 21, bottom: 12),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                titleText,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontSize: 32,
+                                    color: Styles().colors.fillColorPrimary),
+                              ),
                             )),
-                      )),
-                ]),
-                bottomNotScrollableWidget:
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(
-                              bottom: 24),
-                          child: ScalableRoundedButton(
-                            label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
-                            hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
-                            backgroundColor: Styles().colors.background,
-                            borderColor: Styles().colors.fillColorSecondaryVariant,
-                            textColor: Styles().colors.fillColorPrimary,
-                            onTap: () => _goNext(context),
-                          ),),
-                      ],
-                    ),
-                  ),
-            )));
+                      ),
+                      Semantics(
+                          label: descriptionText,
+                          excludeSemantics: true,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  descriptionText,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontFamily: Styles().fontFamilies.regular,
+                                      fontSize: 20,
+                                      color: Styles().colors.fillColorPrimary),
+                                )),
+                          )),
+                    ]),
+              )),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: 24),
+                      child: ScalableRoundedButton(
+                        label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
+                        hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
+                        backgroundColor: Styles().colors.background,
+                        borderColor: Styles().colors.fillColorSecondaryVariant,
+                        textColor: Styles().colors.fillColorPrimary,
+                        onTap: () => _goNext(context),
+                      ),),
+                  ],
+                ),
+              ),
+            ])));
   }
 
 

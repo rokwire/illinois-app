@@ -36,30 +36,32 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
     return Scaffold(body: SafeArea(child:
             Container(
               color: Styles().colors.background,
-              child:ScalableScrollView(
-              scrollableChild: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Semantics(
-                    hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
-                    header: true,
-                    child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A smart campus in your pocket",)),
-                  ),
-                  Container(height: 14,),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontFamily: Styles().fontFamilies.regular,
-                            fontSize: 16,
-                            color: Styles().colors.fillColorPrimary,
-                            ),
-                    ),
-                  ),
-              ]),
-              bottomNotScrollableWidget:
+              child: Column(children: [
+                Expanded(child:
+                  SingleChildScrollView(child:
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Semantics(
+                          hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                          header: true,
+                          child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A smart campus in your pocket",)),
+                        ),
+                        Container(height: 14,),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: Styles().fontFamilies.regular,
+                                  fontSize: 16,
+                                  color: Styles().colors.fillColorPrimary,
+                                  ),
+                          ),
+                        ),
+                    ]),
+                )),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
                 child: Column(
@@ -83,7 +85,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   ],
                 ),
               ),
-            )))
+            ])))
     );
   }
 
