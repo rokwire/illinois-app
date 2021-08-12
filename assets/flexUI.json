@@ -9,7 +9,7 @@
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone"],
 		"wallet.content": ["illini_cash", "meal_plan"],
-		"wallet.cards":["buss_pass", "illini_id", "library_card"],
+		"wallet.cards":["bus_pass", "illini_id", "library_card"],
 
 		"browse": ["all", "content"],
 		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "student_guide", "privacy_center"],
@@ -29,7 +29,7 @@
 
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "bluetooth_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
-		"student_guide.features":["athletics", "buss_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
+		"student_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
 		"features": ["converge", "create_poll", "mtd_bus_number", "parking_lot_directions"],
 		
@@ -60,7 +60,7 @@
 
 			"onboarding.sport_prefs"          : ["fan"],
 
-			"buss_pass"                       : ["NOT",["resident"]]
+			"bus_pass"                        : ["NOT",["resident"]]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -102,7 +102,7 @@
 			"wallet.cards"                    : { "loggedIn": true },
 			"illini_id"                       : { "iCardNum": true },
 			"library_card"                    : { "iCardLibraryNum": true },
-			"buss_pass"            	          : { "shibbolethLoggedIn": true },
+			"bus_pass"                        : { "shibbolethLoggedIn": true },
 
 			"settings.user_info"              : { "loggedIn": true },
 			"settings.connect"                : { "loggedIn": false },

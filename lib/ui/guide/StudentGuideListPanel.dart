@@ -295,7 +295,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       return features.contains('athletics') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,) : null;
     }
     else if (feature == 'bus-pass') {
-      return features.contains('buss_pass') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,) : null;
+      return features.contains('bus_pass') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,) : null;
     }
     else if (feature == 'dining') {
       return features.contains('dining') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining) : null;
