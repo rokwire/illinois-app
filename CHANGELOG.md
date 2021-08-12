@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
+### Fixed
+- Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
 
 ## [2.6.17] - 2021-08-11
 ### Fixed
