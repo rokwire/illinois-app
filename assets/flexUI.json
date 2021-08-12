@@ -11,7 +11,7 @@
 		"wallet.content": ["illini_cash", "meal_plan"],
 		"wallet.cards":["mtd", "id", "library"],
 
-		"browse": ["browse.all", "browse.content"],
+		"browse": ["all", "content"],
 		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "student_guide", "privacy_center"],
 		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 

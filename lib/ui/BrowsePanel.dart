@@ -91,10 +91,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
     for (String code in codes) {
-      if (code == 'browse.all') {
+      if (code == 'all') {
         contentList.add(_buildBrowseAll());
       }
-      else if (code == 'browse.content') {
+      else if (code == 'content') {
         contentList.addAll(_buildBrowseContent());
       }
     }
