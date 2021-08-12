@@ -54,107 +54,111 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(),
             onSwipeRight: () => _goBack(),
-            child: ScalableScrollView( scrollableChild: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Stack(children: <Widget>[
-                  Image.asset(
-                    'images/enable-bluetooth-header.png',
-                    fit: BoxFit.fitWidth,
-                    width: MediaQuery.of(context).size.width,
-                    excludeFromSemantics: true,
-                  ),
-                  OnboardingBackButton(
-                    padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                    onTap:() {
-                      Analytics.instance.logSelect(target: "Back");
-                      _goBack();
-                    }),
-                ]),
-                Semantics(
-                    label: getTitleText(),
-                    hint: getTitleHint(),
-                    excludeSemantics: true,
-                    child:
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Text(getTitleText(),
+            child: Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Stack(children: <Widget>[
+                      Image.asset(
+                        'images/enable-bluetooth-header.png',
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width,
+                        excludeFromSemantics: true,
+                      ),
+                      OnboardingBackButton(
+                        padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                        onTap:() {
+                          Analytics.instance.logSelect(target: "Back");
+                          _goBack();
+                        }),
+                    ]),
+                    Semantics(
+                        label: getTitleText(),
+                        hint: getTitleHint(),
+                        excludeSemantics: true,
+                        child:
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: Text(getTitleText(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontSize: 32,
+                                    color: Styles().colors.fillColorPrimary),
+                              )),
+                        )),
+                      Container(
+                        height: 12,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Text(
+                            Localization().getStringEx(
+                                'panel.onboarding.bluetooth.label.description',
+                                "Use Bluetooth to navigate campus buildings, find polls from friends, and board MTD buses."),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 32,
+                                fontFamily: Styles().fontFamilies.regular,
+                                fontSize: 20,
                                 color: Styles().colors.fillColorPrimary),
-                          )),
-                    )),
-                  Container(
-                    height: 12,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        Localization().getStringEx(
-                            'panel.onboarding.bluetooth.label.description',
-                            "Use Bluetooth to navigate campus buildings, find polls from friends, and board MTD buses."),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies.regular,
-                            fontSize: 20,
-                            color: Styles().colors.fillColorPrimary),
-                  ))),
-                ]),
-                bottomNotScrollableWidget:
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx(
-                            'panel.onboarding.bluetooth.button.allow.title',
-                            'Share my location'),
-                        hint: Localization().getStringEx(
-                            'panel.onboarding.bluetooth.button.allow.hint',
-                            ''),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.background,
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: () => _requestBluetooth(context),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Analytics.instance.logSelect(target: 'Not right now') ;
-                         return  _goNext();
-                        },
-                        child: Semantics(
-                            label: notRightNow,
-                            hint: Localization().getStringEx(
-                                'panel.onboarding.bluetooth.button.dont_allow.hint',
-                                ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20),
-                                child: Text(
-                                  notRightNow,
-                                  style: TextStyle(
-                                      fontFamily: Styles().fontFamilies.medium,
-                                      fontSize: 16,
-                                      color: Styles().colors.fillColorPrimary,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Styles().colors.fillColorSecondary,
-                                      decorationThickness: 1,
-                                      decorationStyle:
-                                          TextDecorationStyle.solid),
-                                ))),
-                      )
-                    ],
-                  ),
+                      ))),
+                    ]),
+              )),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ScalableRoundedButton(
+                      label: Localization().getStringEx(
+                          'panel.onboarding.bluetooth.button.allow.title',
+                          'Share my location'),
+                      hint: Localization().getStringEx(
+                          'panel.onboarding.bluetooth.button.allow.hint',
+                          ''),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.background,
+                      textColor: Styles().colors.fillColorPrimary,
+                      onTap: () => _requestBluetooth(context),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Analytics.instance.logSelect(target: 'Not right now') ;
+                        return  _goNext();
+                      },
+                      child: Semantics(
+                          label: notRightNow,
+                          hint: Localization().getStringEx(
+                              'panel.onboarding.bluetooth.button.dont_allow.hint',
+                              ''),
+                          button: true,
+                          excludeSemantics: true,
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                notRightNow,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontSize: 16,
+                                    color: Styles().colors.fillColorPrimary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Styles().colors.fillColorSecondary,
+                                    decorationThickness: 1,
+                                    decorationStyle:
+                                        TextDecorationStyle.solid),
+                              ))),
+                    )
+                  ],
                 ),
-            )));
+              ),
+            ],)
+          ));
   }
 
   void _requestBluetooth(BuildContext context) {
