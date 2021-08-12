@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
 - Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
 - Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Parsing group membership questions to json [#417](https://github.com/rokwire/illinois-app/issues/417).
 ### Added
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
 ### Changed
