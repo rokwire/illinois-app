@@ -471,7 +471,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
-                image: DecorationImage(fit: BoxFit.fill, image:_libraryBarcode ,),    
+                image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode ,) : null,    
               )),
             
             Container(height: 5,),
