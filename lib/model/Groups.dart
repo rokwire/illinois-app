@@ -691,7 +691,7 @@ class GroupMembershipQuestion {
     if (values != null) {
       strings = <String>[];
       for (GroupMembershipQuestion value in values) {
-        strings.add(value.toString());
+        strings.add(value.question);
       }
     }
     return strings;
