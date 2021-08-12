@@ -677,8 +677,8 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     })));
   }
 
-  bool get _canEdit{
-    return widget.isAdmin;
+  bool get _canEdit {
+    return widget.isAdmin && AppString.isStringNotEmpty(widget.event?.createdByGroupId);
   }
 
   bool get _canDelete{

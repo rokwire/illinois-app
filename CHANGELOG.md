@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.18] - 2021-08-12
+### Changed
+- Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
+### Fixed
+- Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
+- Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Parsing group membership questions to json [#417](https://github.com/rokwire/illinois-app/issues/417).
+- Fixed onboarding screens that used ScaleableScrollView [#679](https://github.com/rokwire/illinois-app/issues/679).
+
+## [2.6.17] - 2021-08-11
+### Fixed
+- Additional fix which prevents UI blocking if the user cancels the login process[#357](https://github.com/rokwire/illinois-app/issues/357).
+- Display start time for events from Athletics category [#636](https://github.com/rokwire/illinois-app/issues/636).
+- Display options menu in GroupAllEventsPanel for group admins [#637](https://github.com/rokwire/illinois-app/issues/637).
+- Remove check if user is employee when creating group and change permissions error message [#663](https://github.com/rokwire/illinois-app/issues/663).
+### Added
+- Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
+### Changed
+- Updated Dining Dollars icon [#669](https://github.com/rokwire/illinois-app/issues/669).
+
+## [2.6.16] - 2021-08-04
+### Fixed
+- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
+
+## [2.6.15] - 2021-08-03
+### Fixed
+- Do not allow editing events for non-group events [#658](https://github.com/rokwire/illinois-app/issues/658).
+
 ## [2.6.14] - 2021-07-30
 ### Fixed
 - Do not evaluate number of group replies recursively [#651](https://github.com/rokwire/illinois-app/issues/651).

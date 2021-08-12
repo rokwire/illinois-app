@@ -555,8 +555,8 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateGroups() {
+    Analytics.instance.logSelect(target: "Groups");
     if(Auth().isShibbolethLoggedIn) {
-      Analytics.instance.logSelect(target: "Groups");
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
     } else {
@@ -564,18 +564,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         setState(() {
           _groupsLogin = true;
         });
-        Analytics.instance.logSelect(target: "Groups Login");
         Auth().authenticateWithShibboleth().then((success) {
           setState(() {
             _groupsLogin = false;
           });
           if (success == true) {
-            Analytics.instance.logSelect(target: "Groups");
             Navigator.push(
                 context,
                 CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
-          } else {
-            Analytics.instance.logSelect(target: "Groups Login Failed");
+          } else if (success == false) {
             AppAlert.showDialogResult(context, Localization().getStringEx("panel.browse.button.groups.login.error", "Unable to login"));
           }
         });

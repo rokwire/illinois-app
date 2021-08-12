@@ -1335,6 +1335,26 @@
 				},
 				"description": {
 					"main_text": "panel.wellness.mental.description.main_text",
+					"ribbon_buttons": [
+						{
+							"title": "panel.wellness.mental.description.buttons.appointment",
+							"url": "https://wellness.web.illinois.edu/help/i-want-to-make-an-appointment/",
+							"icon": "link-out.png",
+							"hint": ""
+						},
+						{
+							"title": "panel.wellness.mental.description.buttons.help_friend",
+							"url": "https://wellness.web.illinois.edu/help/i-want-to-help-a-friend-student-or-coworker/",
+							"icon": "link-out.png",
+							"hint": ""
+						},
+						{
+							"title": "panel.wellness.mental.description.buttons.where_to_start",
+							"url": "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start",
+							"icon": "link-out.png",
+							"hint": ""
+						}
+					],
 					"bullet": "panel.wellness.common.description.bullet",
 					"secondary_text": "panel.wellness.mental.description.secondary_text"
 				},

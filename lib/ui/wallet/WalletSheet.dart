@@ -31,6 +31,10 @@ class WalletSheet extends StatelessWidget{
 
   static const String initialRouteName = "initial";
 
+  final String ensureVisibleCard;
+
+  WalletSheet({Key key, this.ensureVisibleCard}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -55,7 +59,7 @@ class WalletSheet extends StatelessWidget{
                         )
                     ),
                     Expanded(
-                      child:WalletPanel(scrollController: scrollController,),
+                      child:WalletPanel(scrollController: scrollController, ensureVisibleCard: ensureVisibleCard),
                     ),
                     _WalletTabBarWidget(),
                     //CloseSheetButton(onTap: ()=>Navigator.of(context, rootNavigator: true).pop(),),

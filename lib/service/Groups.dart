@@ -158,19 +158,18 @@ class Groups /* with Service */ {
         String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
         int responseCode = response?.statusCode ?? -1;
+        Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
         if (responseCode == 200) {
-          Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
           String groupId = (jsonData != null) ? AppJson.stringValue(jsonData['inserted_id']) : null;
           if (AppString.isStringNotEmpty(groupId)) {
             NotificationService().notify(notifyGroupCreated, group.id);
             return null; // succeeded
           }
         }
-        else if (responseCode == 400) {
-          Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
+        else {
           Map<String, dynamic> jsonError = (jsonData != null) ? AppJson.mapValue(jsonData['error']) : null;
           if (jsonError != null) {
-            return GroupError.fromJson(jsonError); // error descrition
+            return GroupError.fromJson(jsonError); // error description
           }
         }
       } catch (e) {
@@ -192,11 +191,11 @@ class Groups /* with Service */ {
           NotificationService().notify(notifyGroupUpdated, group.id);
           return null;
         }
-        else if (responseCode == 400) {
+        else {
           Map<String, dynamic> jsonData = AppJson.decodeMap(response?.body);
           Map<String, dynamic> jsonError = (jsonData != null) ? AppJson.mapValue(jsonData['error']) : null;
           if (jsonError != null) {
-            return GroupError.fromJson(jsonError); // error descrition
+            return GroupError.fromJson(jsonError); // error description
           }
         }
       } catch (e) {
@@ -441,11 +440,6 @@ class Groups /* with Service */ {
     }
     NotificationService().notify(Groups.notifyGroupEventsUpdated);
     return deleteResult;
-  }
-
-  Future<Event> createGroupEvent(String groupId, Event event) async {
-    //TBD
-    return Future<Event>.delayed(Duration(seconds: 1), (){ return event; });
   }
 
   // Event Comments
