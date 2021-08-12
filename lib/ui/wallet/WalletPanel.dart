@@ -347,13 +347,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     contentList.add(Container(width: 8,));
     for (String code in codes) {
       Widget widget;
-      if (code == 'mtd') {
+      if (code == 'buss_pass') {
         widget = _buildMTDBussCard();
       }
-      else if (code == 'id') {
+      else if (code == 'illini_id') {
         widget = _buildIlliniIdCard();
       }
-      else if (code == 'library') {
+      else if (code == 'library_card') {
         widget = _buildLibraryCard();
       }
 

@@ -9,7 +9,7 @@
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone"],
 		"wallet.content": ["illini_cash", "meal_plan"],
-		"wallet.cards":["mtd", "id", "library"],
+		"wallet.cards":["buss_pass", "illini_id", "library_card"],
 
 		"browse": ["all", "content"],
 		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "student_guide", "privacy_center"],
@@ -58,7 +58,7 @@
 
 			"onboarding.sport_prefs"          : ["fan"],
 
-			"wallet.cards.mtd"                : ["NOT",["resident"]]
+			"buss_pass"                       : ["NOT",["resident"]]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -98,9 +98,9 @@
 			"wallet.connect"                  : { "loggedIn": false },
 			"wallet.content"                  : { "loggedIn": true },
 			"wallet.cards"                    : { "loggedIn": true },
-			"wallet.cards.id"                 : { "iCardNum": true },
-			"wallet.cards.library"            : { "iCardLibraryNum": true },
-			"wallet.cards.mtd"            	  : { "shibbolethLoggedIn": true },
+			"illini_id"                       : { "iCardNum": true },
+			"library_card"                    : { "iCardLibraryNum": true },
+			"buss_pass"            	          : { "shibbolethLoggedIn": true },
 
 			"settings.user_info"              : { "loggedIn": true },
 			"settings.connect"                : { "loggedIn": false },

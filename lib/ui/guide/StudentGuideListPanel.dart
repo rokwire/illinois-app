@@ -294,7 +294,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,) : null;
     }
     else if (feature == 'bus-pass') {
-      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'mtd') ?
+      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'buss_pass') ?
         StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,) : null;
     }
     else if (feature == 'dining') {
@@ -314,7 +314,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_cash.title", "Illini Cash"), icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash) : null;
     }
     else if (feature == 'illini-id') {
-      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'id') ?
+      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'illini_id') ?
         StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_id.title", "Illini ID"), icon: "images/icon-student-guide-illini-id.png", onTap: _navigateIlliniId) : null;
     }
     else if (feature == 'laundry') {
@@ -322,7 +322,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
         StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.laundry.title", "Laundry"), icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,) : null;
     }
     else if (feature == 'library-card') {
-      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'library') ?
+      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'library_card') ?
         StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.library_card.title", "Library Card"), icon: "images/icon-student-guide-library-card.png", onTap: _navigateLibraryCard) : null;
     }
     else if (feature == 'meal-plan') {
