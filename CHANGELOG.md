@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
 ### Changed
 - Updated Dining Dollars icon [#669](https://github.com/rokwire/illinois-app/issues/669).
+- Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
 
 ### Added
 - Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).
