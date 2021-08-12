@@ -42,8 +42,9 @@ import 'package:illinois/service/Styles.dart';
 class WalletPanel extends StatefulWidget{
 
   final ScrollController scrollController;
+  final String ensureVisibleCard;
 
-  WalletPanel({this.scrollController});
+  WalletPanel({this.scrollController, this.ensureVisibleCard});
 
   _WalletPanelState createState() => _WalletPanelState();
 }
@@ -53,6 +54,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   bool _authLoading = false;
   String        _libraryCode;
   MemoryImage   _libraryBarcode;
+  GlobalKey     _mtdCardKey = GlobalKey();
+  GlobalKey     _illiniIdCardKey = GlobalKey();
+  GlobalKey     _libraryCardKey = GlobalKey();
 
   @override
   void initState() {
@@ -65,6 +69,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       Storage.notifySettingChanged,
     ]);
     _loadLibraryBarcode();
+
+    if (widget.ensureVisibleCard != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _ensureVisibleCard(widget.ensureVisibleCard);
+      });
+    }
+
   }
 
   @override
@@ -362,9 +373,28 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     );
   }
 
+  void _ensureVisibleCard(String code) {
+    GlobalKey cardKey;
+    if (code == 'mtd') {
+      cardKey = _mtdCardKey;
+    }
+    else if (code == 'id') {
+      cardKey = _illiniIdCardKey;
+    }
+    else if (code == 'library') {
+      cardKey = _libraryCardKey;
+    }
+
+    BuildContext buildContext = cardKey?.currentContext;
+    if (buildContext != null) {
+      Scrollable.ensureVisible(buildContext, duration: Duration(milliseconds: 10));
+    }
+  }
+
   Widget _buildMTDBussCard(){
     String expires = Auth()?.authCard?.expirationDate ?? "";
     return _Card(
+      key: _mtdCardKey,
       title: Localization().getStringEx("panel.wallet.label.mtd.title", "MTD",),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -412,6 +442,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
   Widget _buildIlliniIdCard(){
     return _Card(
+      key: _illiniIdCardKey,
       title: Localization().getStringEx("panel.wallet.label.illini_id.title", "Illini ID",),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -459,6 +490,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
   Widget _buildLibraryCard(){
     return _Card(
+      key: _libraryCardKey,
       title: Localization().getStringEx("panel.wallet.label.library.title", "Library Card",),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -645,7 +677,7 @@ class _Card extends StatelessWidget{
   final Color _defaultTitleTextColor = Styles().colors.white;
   final Color _defaultTitleBackColor = Styles().colors.fillColorPrimary;
 
-  _Card({@required this.title, this.titleBackColor, this.titleTextColor, this.titleIconColor,  @required this.child});
+  _Card({Key key, @required this.title, this.titleBackColor, this.titleTextColor, this.titleIconColor,  @required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
