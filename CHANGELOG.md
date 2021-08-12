@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
 - Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
 - Parsing group membership questions to json [#417](https://github.com/rokwire/illinois-app/issues/417).
+- Fixed onboarding screens that used ScaleableScrollView [#679](https://github.com/rokwire/illinois-app/issues/679).
 
 ## [2.6.17] - 2021-08-11
 ### Fixed
