@@ -28,6 +28,8 @@
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
 		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "bluetooth_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
+
+		"student_guide.features":["athletics", "buss_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
 		"features": ["converge", "create_poll", "mtd_bus_number", "parking_lot_directions"],
 		

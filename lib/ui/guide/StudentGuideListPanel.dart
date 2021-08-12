@@ -288,70 +288,54 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
   }
 
   StudentGuideFeatureButton _buildFeatureButton(String feature) {
+
+    List<dynamic> features = AppJson.listValue(FlexUI()['student_guide.features']) ?? [];
     
     if (feature == 'athletics') {
-      return _isFeatureAvailable(FlexUI()['browse.all'], 'athletics') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,) : null;
+      return features.contains('athletics') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.athletics.title", "Athletics"), icon: "images/icon-student-guide-athletics.png", onTap: _navigateAthletics,) : null;
     }
     else if (feature == 'bus-pass') {
-      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'buss_pass') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,) : null;
+      return features.contains('buss_pass') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.bus_pass.title", "Bus Pass"), icon: "images/icon-student-guide-bus-pass.png", onTap: _navigateBusPass,) : null;
     }
     else if (feature == 'dining') {
-      return _isFeatureAvailable(FlexUI()['browse.all'], 'dining') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining) : null;
+      return features.contains('dining') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.dining.title", "Dining"), icon: "images/icon-student-guide-dining.png", onTap: _navigateDining) : null;
     }
     else if (feature == 'events') {
-      return _isFeatureAvailable(FlexUI()['browse.all'], 'events') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.events.title", "Events"), icon: "images/icon-student-guide-events.png", onTap: _navigateEvents) : null;
+      return features.contains('events') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.events.title", "Events"), icon: "images/icon-student-guide-events.png", onTap: _navigateEvents) : null;
     }
     else if (feature == 'groups') {
-      return _isFeatureAvailable(FlexUI()['browse.all'], 'groups') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.groups.title", "Groups"), icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups) : null;
+      return features.contains('groups') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.groups.title", "Groups"), icon: "images/icon-student-guide-groups.png", onTap: _navigateGroups) : null;
     }
     else if (feature == 'illini-cash') {
-      return _isFeatureAvailable(FlexUI()['browse.content'], 'illini_cash') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_cash.title", "Illini Cash"), icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash) : null;
+      return features.contains('illini_cash') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_cash.title", "Illini Cash"), icon: "images/icon-student-guide-illini-cash.png", onTap: _navigateIlliniCash) : null;
     }
     else if (feature == 'illini-id') {
-      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'illini_id') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_id.title", "Illini ID"), icon: "images/icon-student-guide-illini-id.png", onTap: _navigateIlliniId) : null;
+      return features.contains('illini_id') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.illini_id.title", "Illini ID"), icon: "images/icon-student-guide-illini-id.png", onTap: _navigateIlliniId) : null;
     }
     else if (feature == 'laundry') {
-      return _isFeatureAvailable(FlexUI()['browse.content'], 'laundry') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.laundry.title", "Laundry"), icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,) : null;
+      return features.contains('laundry') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.laundry.title", "Laundry"), icon: "images/icon-student-guide-laundry.png", onTap: _navigateLaundry,) : null;
     }
     else if (feature == 'library-card') {
-      return _isFeatureAvailable(FlexUI()['wallet.cards'], 'library_card') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.library_card.title", "Library Card"), icon: "images/icon-student-guide-library-card.png", onTap: _navigateLibraryCard) : null;
+      return features.contains('library_card') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.library_card.title", "Library Card"), icon: "images/icon-student-guide-library-card.png", onTap: _navigateLibraryCard) : null;
     }
     else if (feature == 'meal-plan') {
-      return _isFeatureAvailable(FlexUI()['browse.content'], 'meal_plan') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.meal_plan.title", "Meal Plan"), icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,) : null;
+      return features.contains('meal_plan') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.meal_plan.title", "Meal Plan"), icon: "images/icon-student-guide-meal-plan.png", onTap: _navigateMealPlan,) : null;
     }
     else if (feature == 'my-illini') {
-      return _isFeatureAvailable(FlexUI()['browse.content'], 'my_illini') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.my_illini.title", "My Illini"), icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini) : null;
+      return features.contains('my_illini') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.my_illini.title", "My Illini"), icon: "images/icon-student-guide-my-illini.png", onTap: _navigateMyIllini) : null;
     }
     else if (feature == 'parking') {
-      return _isFeatureAvailable(FlexUI()['browse.content'], 'parking') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.parking.title", "Parking"), icon: "images/icon-student-guide-parking.png", onTap: _navigateParking) : null;
+      return features.contains('parking') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.parking.title", "Parking"), icon: "images/icon-student-guide-parking.png", onTap: _navigateParking) : null;
     }
     else if (feature == 'quick-polls') {
-      return _isFeatureAvailable(FlexUI()['browse.all'], 'quick_polls') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.quick_polls.title", "Quick Polls"), icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls) : null;
+      return features.contains('quick_polls') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.quick_polls.title", "Quick Polls"), icon: "images/icon-student-guide-quick-polls.png", onTap: _navigateQuickPolls) : null;
     }
     else if (feature == 'saved') {
-      return _isFeatureAvailable(FlexUI()['browse.all'], 'saved') ?
-        StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.saved.title", "Saved"), icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved) : null;
+      return features.contains('saved') ? StudentGuideFeatureButton(title: Localization().getStringEx("panel.student_guide_list.button.saved.title", "Saved"), icon: "images/icon-student-guide-saved.png", onTap: _navigateSaved) : null;
     }
     else {
       return null;
     }
-  }
-
-  bool _isFeatureAvailable(dynamic features, String feature) {
-    return (features is List) && features.contains(feature);
   }
 
   void _navigateAthletics() {
