@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display start time for events from Athletics category [#636](https://github.com/rokwire/illinois-app/issues/636).
 - Display options menu in GroupAllEventsPanel for group admins [#637](https://github.com/rokwire/illinois-app/issues/637).
 - Remove check if user is employee when creating group and change permissions error message [#663](https://github.com/rokwire/illinois-app/issues/663).
+- Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
 ### Added
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
 ### Changed
