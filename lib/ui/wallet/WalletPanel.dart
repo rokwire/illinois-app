@@ -149,13 +149,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     List<dynamic> codes = FlexUI()['wallet'] ?? [];
     for (String code in codes) {
       dynamic widget;
-      if (code == 'wallet.connect') {
+      if (code == 'connect') {
         widget = _buildConnect();
       }
-      else if (code == 'wallet.content') {
+      else if (code == 'content') {
         widget = _buildContent();
       }
-      else if (code == 'wallet.cards') {
+      else if (code == 'cards') {
         widget = _buildCards();
       }
 

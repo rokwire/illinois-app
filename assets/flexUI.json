@@ -6,7 +6,7 @@
 		"home.connect": ["netid", "phone"],
 		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
 
-		"wallet": ["wallet.connect", "wallet.content", "wallet.cards"],
+		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone"],
 		"wallet.content": ["illini_cash", "meal_plan"],
 		"wallet.cards":["mtd", "id", "library"],
