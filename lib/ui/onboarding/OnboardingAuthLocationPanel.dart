@@ -40,108 +40,111 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
-            child: ScalableScrollView( scrollableChild: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Stack(children: <Widget>[
-                  Image.asset(
-                    'images/share-location-header.png',
-                    fit: BoxFit.fitWidth,
-                    width: MediaQuery.of(context).size.width,
-                    excludeFromSemantics: true,
-                  ),
-                  OnboardingBackButton(
-                    padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                    onTap:() {
-                      Analytics.instance.logSelect(target: "Back");
-                      _goBack(context);
-                    }),
-                ]),
-                Semantics(
-                    label: titleText,
-                    hint: Localization().getStringEx('panel.onboarding.location.label.title.hint', 'Header 1'),
-                    excludeSemantics: true,
-                    child:
+            child: Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Stack(children: <Widget>[
+                      Image.asset(
+                        'images/share-location-header.png',
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width,
+                        excludeFromSemantics: true,
+                      ),
+                      OnboardingBackButton(
+                        padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                        onTap:() {
+                          Analytics.instance.logSelect(target: "Back");
+                          _goBack(context);
+                        }),
+                    ]),
+                    Semantics(
+                        label: titleText,
+                        hint: Localization().getStringEx('panel.onboarding.location.label.title.hint', 'Header 1'),
+                        excludeSemantics: true,
+                        child:
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: Text(titleText,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontSize: 32,
+                                    color: Styles().colors.fillColorPrimary),
+                              )),
+                        )),
+                    Container(
+                      height: 12,
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Align(
-                          alignment: Alignment.center,
-                          child: Text(titleText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
-                                fontSize: 32,
-                                color: Styles().colors.fillColorPrimary),
-                          )),
-                    )),
-                Container(
-                  height: 12,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Text(
-                      Localization().getStringEx(
-                          'panel.onboarding.location.label.description',
-                          "Share your location to know what's nearest to you while on campus. Bluetooth-enabled features such as Quick Polls require permission to access your location in the background."),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies.regular,
-                          fontSize: 20,
-                          color: Styles().colors.fillColorPrimary),
+                        alignment: Alignment.topCenter,
+                        child: Text(
+                          Localization().getStringEx(
+                              'panel.onboarding.location.label.description',
+                              "Share your location to know what's nearest to you while on campus. Bluetooth-enabled features such as Quick Polls require permission to access your location in the background."),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontFamily: Styles().fontFamilies.regular,
+                              fontSize: 20,
+                              color: Styles().colors.fillColorPrimary),
+                        ),
+                      )),
+                    ]),
+              )),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ScalableRoundedButton(
+                      label: Localization().getStringEx(
+                          'panel.onboarding.location.button.allow.title',
+                          'Share my Location'),
+                      hint: Localization().getStringEx(
+                          'panel.onboarding.location.button.allow.hint',
+                          ''),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.background,
+                      textColor: Styles().colors.fillColorPrimary,
+                      onTap: () => _requestLocation(context),
                     ),
-                  )),
-                ]),
-                bottomNotScrollableWidget:
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx(
-                            'panel.onboarding.location.button.allow.title',
-                            'Share my Location'),
-                        hint: Localization().getStringEx(
-                            'panel.onboarding.location.button.allow.hint',
-                            ''),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.background,
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: () => _requestLocation(context),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Analytics.instance.logSelect(target: 'Not right now') ;
-                         return  _goNext(context);
-                        },
-                        child: Semantics(
-                            label: notRightNow,
-                            hint: Localization().getStringEx(
-                                'panel.onboarding.location.button.dont_allow.hint',
-                                ''),
-                            button: true,
-                            excludeSemantics: true,
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20),
-                                child: Text(
-                                  notRightNow,
-                                  style: TextStyle(
-                                      fontFamily: Styles().fontFamilies.medium,
-                                      fontSize: 16,
-                                      color: Styles().colors.fillColorPrimary,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Styles().colors.fillColorSecondary,
-                                      decorationThickness: 1,
-                                      decorationStyle:
-                                          TextDecorationStyle.solid),
-                                ))),
-                      )
-                    ],
-                  ),
+                    GestureDetector(
+                      onTap: () {
+                        Analytics.instance.logSelect(target: 'Not right now') ;
+                        return  _goNext(context);
+                      },
+                      child: Semantics(
+                          label: notRightNow,
+                          hint: Localization().getStringEx(
+                              'panel.onboarding.location.button.dont_allow.hint',
+                              ''),
+                          button: true,
+                          excludeSemantics: true,
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                notRightNow,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontSize: 16,
+                                    color: Styles().colors.fillColorPrimary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Styles().colors.fillColorSecondary,
+                                    decorationThickness: 1,
+                                    decorationStyle:
+                                        TextDecorationStyle.solid),
+                              ))),
+                    )
+                  ],
                 ),
-            )));
+              ),
+            ],),
+          ));
   }
 
   void _requestLocation(BuildContext context) async {

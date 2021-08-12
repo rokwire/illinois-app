@@ -56,76 +56,77 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
         backgroundColor: Styles().colors.background,
         body: Stack(
           children: <Widget>[
-        ScalableScrollView(
-        scrollableChild:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    Image.asset(
-                      "images/login-header.png",
-                      fit: BoxFit.fitWidth,
-                      width: MediaQuery.of(context).size.width,
-                      excludeFromSemantics: true,
-                    ),
-                    OnboardingBackButton(
-                        padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                        onTap: () {
-                          Analytics.instance.logSelect(target: "Back");
-                          Navigator.pop(context);
-                        }),
-                  ],
-                ),
-                Container(
-                  height: 24,
-                ),
-                Semantics(
-                  label: titleString,
-                  hint: Localization().getStringEx('panel.onboarding.login.netid.label.title.hint', ''),
-                  excludeSemantics: true,
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 18),
-                      child: Center(
-                        child: Text(titleString,
-                            textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
-                      )),
-                ),
-                Container(
-                  height: 24,
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Log in with your NetID to use academic and residence hall specific features.'),
-                        textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
-                Container(
-                  height: 32,
-                ),
-                ]),
-                bottomNotScrollableWidget:
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        Column(children: [
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Stack(
                     children: <Widget>[
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
-                        hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
-                        fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: _onLoginTapped,
+                      Image.asset(
+                        "images/login-header.png",
+                        fit: BoxFit.fitWidth,
+                        width: MediaQuery.of(context).size.width,
+                        excludeFromSemantics: true,
                       ),
-                      Onboarding2UnderlinedButton(
-                        title: skipTitle,
-                        hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
-                        onTap: (){_onSkipTapped();},
-                      )
+                      OnboardingBackButton(
+                          padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                          onTap: () {
+                            Analytics.instance.logSelect(target: "Back");
+                            Navigator.pop(context);
+                          }),
                     ],
                   ),
+                  Container(
+                    height: 24,
+                  ),
+                  Semantics(
+                    label: titleString,
+                    hint: Localization().getStringEx('panel.onboarding.login.netid.label.title.hint', ''),
+                    excludeSemantics: true,
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 18),
+                        child: Center(
+                          child: Text(titleString,
+                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                        )),
+                  ),
+                  Container(
+                    height: 24,
+                  ),
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(Localization().getStringEx('panel.onboarding.login.netid.label.description', 'Log in with your NetID to use academic and residence hall specific features.'),
+                          textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                  Container(
+                    height: 32,
+                  ),
+                  ]),
+            )),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ScalableRoundedButton(
+                  label: Localization().getStringEx('panel.onboarding.login.netid.button.continue.title', 'Sign in with NetID'),
+                  hint: Localization().getStringEx('panel.onboarding.login.netid.button.continue.hint', ''),
+                  fontSize: 16,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
+                  textColor: Styles().colors.fillColorPrimary,
+                  onTap: _onLoginTapped,
+                ),
+                Onboarding2UnderlinedButton(
+                  title: skipTitle,
+                  hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
+                  onTap: (){_onSkipTapped();},
                 )
+              ],
+            ),
+          )
 /*                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -170,7 +171,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> i
                       ],
                     )
                 ]),*/
-            ),
+          ]),
             _progress
             ? Container(
             alignment: Alignment.center,

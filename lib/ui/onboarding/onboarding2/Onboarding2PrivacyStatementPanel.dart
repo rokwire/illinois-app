@@ -61,59 +61,60 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
         body: SafeArea(child: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
-            child:
-            ScalableScrollView(
-              scrollableChild:Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Row(children: [
-                      Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 19, right: 20, bottom: 8),
-                          onTap:() {
-                            Analytics.instance.logSelect(target: "Back");
-                            _goBack(context);
-                          }),
-                    ],),
-                    Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
-                    Semantics(
-                      label: titleText + titleText2,
-                      hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
-                      header: true,
-                      excludeSemantics: true,
-                      child: Padding(
-                          padding: EdgeInsets.only(
-                              left: 40, right: 40, top: 12, bottom: 12),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                children: <TextSpan>[
-                                  TextSpan(text:titleText , style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies.bold, fontWeight: FontWeight.w700, height: 1.25)),
-                                  TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
-                                ]
-                              )
-                            ),
-                          )),
-                    ),
-                    Semantics(
-                        label: descriptionText,
+            child: Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Row(children: [
+                        Onboarding2BackButton( padding: const EdgeInsets.only(left: 17, top: 19, right: 20, bottom: 8),
+                            onTap:() {
+                              Analytics.instance.logSelect(target: "Back");
+                              _goBack(context);
+                            }),
+                      ],),
+                      Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
+                      Semantics(
+                        label: titleText + titleText2,
+                        hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                        header: true,
                         excludeSemantics: true,
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: Align(
-                              alignment: Alignment.topCenter,
-                              child: Text(
-                            descriptionText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                height: 1.4,
-                                fontFamily: Styles().fontFamilies.regular,
-                                fontSize: 16,
-                                color: Styles().colors.fillColorPrimary),
+                            padding: EdgeInsets.only(
+                                left: 40, right: 40, top: 12, bottom: 12),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: <TextSpan>[
+                                    TextSpan(text:titleText , style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies.bold, fontWeight: FontWeight.w700, height: 1.25)),
+                                    TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
+                                  ]
+                                )
+                              ),
+                            )),
+                      ),
+                      Semantics(
+                          label: descriptionText,
+                          excludeSemantics: true,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                              descriptionText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  height: 1.4,
+                                  fontFamily: Styles().fontFamilies.regular,
+                                  fontSize: 16,
+                                  color: Styles().colors.fillColorPrimary),
+                            )),
                           )),
-                        )),
-                  ]),
-              bottomNotScrollableWidget:
+                    ]),
+              ),),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
@@ -165,7 +166,9 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                   ],
                 ),
               ),
-            ))));
+
+            ],)
+          )));
   }
 
   void _openPrivacyPolicy(){
