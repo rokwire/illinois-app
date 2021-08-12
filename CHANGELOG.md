@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display options menu in GroupAllEventsPanel for group admins [#637](https://github.com/rokwire/illinois-app/issues/637).
 - Remove check if user is employee when creating group and change permissions error message [#663](https://github.com/rokwire/illinois-app/issues/663).
 - Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
+- Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
 ### Added
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
 ### Changed
