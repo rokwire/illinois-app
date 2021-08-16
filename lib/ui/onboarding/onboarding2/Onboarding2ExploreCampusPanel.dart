@@ -55,116 +55,116 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
         body: SafeArea(child:SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
-            child:
-            ScalableScrollView(
-              scrollableChild:
-              Container(
-                color: Styles().colors.white,
-                child:Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      height: 8,
-                      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                      child:Row(children: [
-                        Expanded(
-                          flex:1,
-                          child: Container(color: Styles().colors.fillColorPrimary,)
-                        ),
-                        Container(width: 2,),
-                        Expanded(
-                            flex:1,
-                            child: Container(color: Styles().colors.backgroundVariant,)
-                        ),
-                        Container(width: 2,),
-                        Expanded(
-                            flex:1,
-                            child: Container(color: Styles().colors.backgroundVariant,)
-                        ),
-                      ],)
-                    ),
-                    Row(children:[
-                      Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27),
-                          onTap: () {
-                            Analytics.instance.logSelect(target: "Back");
-                            _goBack(context);
-                          }),
-                    ],),
-                    Semantics(
-                        label: _title,
-                        hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
-                        header: true,
-                        excludeSemantics: true,
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              left: 17, right: 17, top: 0, bottom: 12),
-                          child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                _title,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Styles().colors.fillColorPrimary,
-                                    fontSize: 24,
-                                    fontFamily: Styles().fontFamilies.bold,
-                                    height: 1.4
-                              ))
-                          ),
-                        )),
-                    Semantics(
-                        label: _description,
-                        excludeSemantics: true,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Align(
-                              alignment: Alignment.topCenter,
-                              child: Text(
-                                _description,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.regular,
-                                    fontSize: 16,
-                                    color: Styles().colors.fillColorPrimary),
-                              )),
-                        )),
-                    Container(height: 10,),
-                    Onboarding2UnderlinedButton(
-                      title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
-                      fontSize: 14,
-                      onTap: _onTapLearnMore,
-                    ),
-                    Container(height: 24,),
-                    Container(
-                      height: 180,
-                      child: Stack(
-                        children: [
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 100,
-                                  child:Column(
-                                  children:[
-                                    CustomPaint(
-                                      painter: TrianglePainter(painterColor: Styles().colors.background,),
-                                      child: Container(
-                                        height: 80,
-                                      ),
-                                    ),
-                                    Container(height: 20, color: Styles().colors.background,)
-                                ]),
-                              ),
+            child: Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Container(
+                    color: Styles().colors.white,
+                    child:Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          height: 8,
+                          padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                          child:Row(children: [
+                            Expanded(
+                              flex:1,
+                              child: Container(color: Styles().colors.fillColorPrimary,)
                             ),
-                          Align(
-                            alignment: Alignment.center,
-                            child:Container(
-                              child: Image.asset("images/explore_illustration.png", excludeFromSemantics: true,width: 250, fit: BoxFit.fitWidth,),
-                            )
+                            Container(width: 2,),
+                            Expanded(
+                                flex:1,
+                                child: Container(color: Styles().colors.backgroundVariant,)
+                            ),
+                            Container(width: 2,),
+                            Expanded(
+                                flex:1,
+                                child: Container(color: Styles().colors.backgroundVariant,)
+                            ),
+                          ],)
+                        ),
+                        Row(children:[
+                          Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27),
+                              onTap: () {
+                                Analytics.instance.logSelect(target: "Back");
+                                _goBack(context);
+                              }),
+                        ],),
+                        Semantics(
+                            label: _title,
+                            hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                            header: true,
+                            excludeSemantics: true,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 17, right: 17, top: 0, bottom: 12),
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    _title,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Styles().colors.fillColorPrimary,
+                                        fontSize: 24,
+                                        fontFamily: Styles().fontFamilies.bold,
+                                        height: 1.4
+                                  ))
+                              ),
+                            )),
+                        Semantics(
+                            label: _description,
+                            excludeSemantics: true,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Text(
+                                    _description,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontFamily: Styles().fontFamilies.regular,
+                                        fontSize: 16,
+                                        color: Styles().colors.fillColorPrimary),
+                                  )),
+                            )),
+                        Container(height: 10,),
+                        Onboarding2UnderlinedButton(
+                          title: Localization().getStringEx('panel.onboarding2.improve.button.title.learn_more', 'Learn more'),
+                          fontSize: 14,
+                          onTap: _onTapLearnMore,
+                        ),
+                        Container(height: 24,),
+                        Container(
+                          height: 180,
+                          child: Stack(
+                            children: [
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      height: 100,
+                                      child:Column(
+                                      children:[
+                                        CustomPaint(
+                                          painter: TrianglePainter(painterColor: Styles().colors.background,),
+                                          child: Container(
+                                            height: 80,
+                                          ),
+                                        ),
+                                        Container(height: 20, color: Styles().colors.background,)
+                                    ]),
+                                  ),
+                                ),
+                              Align(
+                                alignment: Alignment.center,
+                                child:Container(
+                                  child: Image.asset("images/explore_illustration.png", excludeFromSemantics: true,width: 250, fit: BoxFit.fitWidth,),
+                                )
+                              )
+                            ],
                           )
-                        ],
-                      )
-                    )
-                  ])),
-              bottomNotScrollableWidget:
+                        )
+                      ])),
+                )),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                 child: Column(
@@ -194,8 +194,9 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                     )
                   ],
                 ),
-              ),
-            ))));
+              ),                
+            ],)
+          )));
   }
 
   void _onToggleTap(){

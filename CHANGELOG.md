@@ -14,6 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display start time for events from Athletics category [#636](https://github.com/rokwire/illinois-app/issues/636).
 - Display options menu in GroupAllEventsPanel for group admins [#637](https://github.com/rokwire/illinois-app/issues/637).
 - Remove check if user is employee when creating group and change permissions error message [#663](https://github.com/rokwire/illinois-app/issues/663).
+- Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
+- Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Defined separate section in Flex UI for Student Guide features [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Parsing group membership questions to json [#417](https://github.com/rokwire/illinois-app/issues/417).
+- Fixed onboarding screens that used ScaleableScrollView [#679](https://github.com/rokwire/illinois-app/issues/679).
 ### Added
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
 ### Changed

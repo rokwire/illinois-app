@@ -531,7 +531,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           onTap: _onTapSettings,
         ));
       }
+      if (AppString.isStringNotEmpty(_group?.webURL)) {
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        commands.add(_buildWebsiteLink());
+      }
     } else {
+      if (AppString.isStringNotEmpty(_group?.webURL)) {
+        commands.add(_buildWebsiteLink());
+      }
+
       String tags = "";
       if (_group?.tags?.isNotEmpty ?? false) {
         for (String tag in _group.tags) {
@@ -539,16 +547,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             tags+=((tags.isNotEmpty? ", ": "") + tag ?? '');
           }
         }
-      }
-
-      if (AppString.isStringNotEmpty(_group?.webURL)) {
-        commands.add(
-          RibbonButton(label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-            icon: 'images/external-link.png',
-            leftIcon: 'images/globe.png',
-            padding: EdgeInsets.symmetric(horizontal: 0),
-            onTap: (){ _onWebsite(); },)
-        );
       }
 
       if(tags?.isNotEmpty ?? false) {
@@ -839,6 +837,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground, ), ),
         ],),) :
       Container(width: 0, height: 0);
+  }
+
+  Widget _buildWebsiteLink() {
+    return RibbonButton(
+        label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
+        icon: 'images/external-link.png',
+        leftIcon: 'images/globe.png',
+        padding: EdgeInsets.symmetric(horizontal: 0),
+        onTap: _onWebsite);
   }
 
   Widget _buildAdmins() {

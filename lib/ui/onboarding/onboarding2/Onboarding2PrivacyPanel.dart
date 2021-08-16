@@ -61,144 +61,145 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
             child:
-            ScalableScrollView(
-              scrollableChild:
-              Column(
-                children:[
-                Container(
-                    color: Styles().colors.fillColorPrimary,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
+            Column(children: [
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(
+                    children:[
+                    Container(
+                        color: Styles().colors.fillColorPrimary,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
 
-                          Container(
-//                            padding: EdgeInsets.symmetric(vertical: 19),
-                            child: Row(children: [
-                            Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
-                                color: Styles().colors.white,
-                                onTap: () {
-                                  Analytics.instance.logSelect(target: "Back");
-                                  _goBack(context);
-                                }),
-                            Expanded(child: Container()),
+                              Container(
+//                                padding: EdgeInsets.symmetric(vertical: 19),
+                                child: Row(children: [
+                                Onboarding2BackButton(padding: const EdgeInsets.only(top:19,left: 17, right: 20, bottom: 19),
+                                    color: Styles().colors.white,
+                                    onTap: () {
+                                      Analytics.instance.logSelect(target: "Back");
+                                      _goBack(context);
+                                    }),
+                                Expanded(child: Container()),
 
-//                            GestureDetector(
-//                              onTap: () {
-//                                Analytics.instance.logSelect(target: 'Privacy Policy') ;
-//                                _onTapPrivacyPolicy(context);
-//                              },
-//                              child:
-                              Semantics(
-                                  label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
-                                  hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
-                                  button: true,
-                                  excludeSemantics: true,
-                                  child:
-//                                  Padding(
-//                                      padding: EdgeInsets.symmetric(vertical: 0),
-//                                      child: Text(
-//                                        "Skip",
-//                                        style: TextStyle(
-//                                            fontFamily: Styles().fontFamilies.regular,
-//                                            fontSize: 16,
-//                                            color: Styles().colors.white,
-//                                            decoration: TextDecoration.underline,
-//                                            decorationColor: Styles().colors.fillColorSecondary,
-//                                            decorationThickness: 1,
-//                                            decorationStyle:
-//                                            TextDecorationStyle.solid),
-//                                      ))
-                                _buildPrivacyPolicyButton()
-                              ),
-//                            ),
-                            Container(width: 16,)
-                          ],)),
-//                          Semantics(
-//                              label: titleText,
-//                              hint: Localization().getStringEx(
-//                                  'panel.onboarding2.privacy.label.title.hint',
-//                                  ''),
-//                              excludeSemantics: true,
-//                              child: Padding(
-//                                padding: EdgeInsets.only(
-//                                    left: 17, right: 17, top: 0, bottom: 12),
-//                                child: Align(
-//                                    alignment: Alignment.center,
-//                                    child: Text(
-//                                        titleText,
-//                                        style: TextStyle(
-//                                            color: Styles().colors.white,
-//                                            fontSize: 24,
-//                                            fontFamily: Styles().fontFamilies.bold
-//                                        ))
-//                                ),
-//                              )),
-//                          _buildPrivacySlider(),
-                          Container(height: 18,),
-                          Semantics(
-                              label: _privacyDescription,
-                              hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
-                              header: true,
-                              excludeSemantics: true,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                child: Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Text(
-                                      _privacyDescription,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontFamily: Styles().fontFamilies.bold,
-                                          fontSize: 32,
-                                          color: Styles().colors.white),
-                                    )),
-                              )),
-                          Container(height: 35,),
-                          Container(
-                              height: 90,
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Container(
-                                      height: 90,
-                                      child: Column(
-                                          children: [
-                                            CustomPaint(
-                                              painter: TrianglePainter(
-                                                painterColor: Styles().colors
-                                                    .background,),
-                                              child: Container(
-                                                height: 90,
-                                              ),
-                                            ),
-                                            Container(height: 0,
-                                              color: Styles().colors.background,)
-                                          ]),
-                                    ),
+//                                GestureDetector(
+//                                  onTap: () {
+//                                    Analytics.instance.logSelect(target: 'Privacy Policy') ;
+//                                    _onTapPrivacyPolicy(context);
+//                                  },
+//                                  child:
+                                  Semantics(
+                                      label: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy notice "),
+                                      hint: Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.hint', ''),
+                                      button: true,
+                                      excludeSemantics: true,
+                                      child:
+//                                      Padding(
+//                                          padding: EdgeInsets.symmetric(vertical: 0),
+//                                          child: Text(
+//                                            "Skip",
+//                                            style: TextStyle(
+//                                                fontFamily: Styles().fontFamilies.regular,
+//                                                fontSize: 16,
+//                                                color: Styles().colors.white,
+//                                                decoration: TextDecoration.underline,
+//                                                decorationColor: Styles().colors.fillColorSecondary,
+//                                                decorationThickness: 1,
+//                                                decorationStyle:
+//                                                TextDecorationStyle.solid),
+//                                          ))
+                                    _buildPrivacyPolicyButton()
                                   ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: _buildPrivacyBadge(),
+//                                ),
+                                Container(width: 16,)
+                              ],)),
+//                              Semantics(
+//                                  label: titleText,
+//                                  hint: Localization().getStringEx(
+//                                      'panel.onboarding2.privacy.label.title.hint',
+//                                      ''),
+//                                  excludeSemantics: true,
+//                                  child: Padding(
+//                                    padding: EdgeInsets.only(
+//                                        left: 17, right: 17, top: 0, bottom: 12),
+//                                    child: Align(
+//                                        alignment: Alignment.center,
+//                                        child: Text(
+//                                            titleText,
+//                                            style: TextStyle(
+//                                                color: Styles().colors.white,
+//                                                fontSize: 24,
+//                                                fontFamily: Styles().fontFamilies.bold
+//                                            ))
+//                                    ),
+//                                  )),
+//                              _buildPrivacySlider(),
+                              Container(height: 18,),
+                              Semantics(
+                                  label: _privacyDescription,
+                                  hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                                  header: true,
+                                  excludeSemantics: true,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 16),
+                                    child: Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Text(
+                                          _privacyDescription,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontFamily: Styles().fontFamilies.bold,
+                                              fontSize: 32,
+                                              color: Styles().colors.white),
+                                        )),
+                                  )),
+                              Container(height: 35,),
+                              Container(
+                                  height: 90,
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Container(
+                                          height: 90,
+                                          child: Column(
+                                              children: [
+                                                CustomPaint(
+                                                  painter: TrianglePainter(
+                                                    painterColor: Styles().colors
+                                                        .background,),
+                                                  child: Container(
+                                                    height: 90,
+                                                  ),
+                                                ),
+                                                Container(height: 0,
+                                                  color: Styles().colors.background,)
+                                              ]),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: _buildPrivacyBadge(),
+                                      )
+                                    ],
                                   )
-                                ],
                               )
-                          )
-                ])),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child:
-                  Text(
-                    _privacyLongDescription,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies.regular,
-                        fontSize: 16,
-                        color: Styles().colors.fillColorPrimary),
-                  )
-                )
-              ]),
-              bottomNotScrollableWidget:
+                    ])),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child:
+                      Text(
+                        _privacyLongDescription,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies.regular,
+                            fontSize: 16,
+                            color: Styles().colors.fillColorPrimary),
+                      )
+                    )
+                  ]),
+              )),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
@@ -230,7 +231,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                   ],
                 ),
               ),
-            ))));
+            ]))));
   }
 
   /*Widget _buildPrivacySlider(){

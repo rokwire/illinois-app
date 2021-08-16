@@ -56,76 +56,78 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
         backgroundColor: Styles().colors.background,
         body: Stack(
           children: <Widget>[
-            ScalableScrollView(scrollableChild:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Stack(
+            Column(children:[
+              Expanded(child:
+                SingleChildScrollView(child:
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          Image.asset(
+                            "images/login-header.png",
+                            fit: BoxFit.fitWidth,
+                            width: MediaQuery.of(context).size.width,
+                            excludeFromSemantics: true,
+                          ),
+                          OnboardingBackButton(
+                              padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
+                              onTap: () {
+                                Analytics.instance.logSelect(target: "Back");
+                                Navigator.pop(context);
+                              }),
+                        ],
+                      ),
+                      Container(
+                        height: 24,
+                      ),
+                      Semantics(
+                        label: titleString,
+                        hint: Localization().getStringEx('panel.onboarding.login.phone.label.title.hint', ''),
+                        excludeSemantics: true,
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 18),
+                            child: Center(
+                              child: Text(titleString,
+                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                            )),
+                      ),
+                      Container(
+                        height: 24,
+                      ),
+                      Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
+                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                      Container(
+                        height: 32,
+                      ),
+                      ]),
+              )),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset(
-                      "images/login-header.png",
-                      fit: BoxFit.fitWidth,
-                      width: MediaQuery.of(context).size.width,
-                      excludeFromSemantics: true,
+                    ScalableRoundedButton(
+                      label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
+                      hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
+                      fontSize: 16,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      borderColor: Styles().colors.fillColorSecondary,
+                      backgroundColor: Styles().colors.white,
+                      textColor: Styles().colors.fillColorPrimary,
+                      onTap: _onLoginTapped,
                     ),
-                    OnboardingBackButton(
-                        padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
-                        onTap: () {
-                          Analytics.instance.logSelect(target: "Back");
-                          Navigator.pop(context);
-                        }),
+                    Onboarding2UnderlinedButton(
+                      title: skipTitle,
+                      hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
+                      onTap: (){_onSkipTapped();},
+                    )
                   ],
                 ),
-                Container(
-                  height: 24,
-                ),
-                Semantics(
-                  label: titleString,
-                  hint: Localization().getStringEx('panel.onboarding.login.phone.label.title.hint', ''),
-                  excludeSemantics: true,
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 18),
-                      child: Center(
-                        child: Text(titleString,
-                            textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
-                      )),
-                ),
-                Container(
-                  height: 24,
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
-                        textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
-                Container(
-                  height: 32,
-                ),
-                ]),
-                bottomNotScrollableWidget:
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ScalableRoundedButton(
-                        label: Localization().getStringEx('panel.onboarding.login.phone.button.continue.title', 'Verify My Phone Number'),
-                        hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
-                        fontSize: 16,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.white,
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: _onLoginTapped,
-                      ),
-                      Onboarding2UnderlinedButton(
-                        title: skipTitle,
-                        hint: Localization().getStringEx('panel.onboarding.login.netid.button.dont_continue.hint', 'Skip verification'),
-                        onTap: (){_onSkipTapped();},
-                      )
-                    ],
-                  ),
-                )
-            ),
+              )
+          ]),
                     _progress
                     ? Container(
                     alignment: Alignment.center,
