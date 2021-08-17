@@ -350,12 +350,13 @@ class Auth2 with Service implements NotificationsListener {
 
           if (refreshTokenResponse?.statusCode == 200) {
             Map<String, dynamic> responseJson = AppJson.decodeMap(refreshTokenResponse?.body);
-            Auth2Token token = Auth2Token.fromJson(responseJson);
+            Auth2Token token = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
             if ((token != null) && token.isValid) {
               Log.d("Auth: did refresh token: ${token?.accessToken}");
               Storage().auth2Token = _token = token;
 
-              Auth2Token uiucToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['params']));
+              Map<String, dynamic> params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
+              Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
               Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
               return token;
