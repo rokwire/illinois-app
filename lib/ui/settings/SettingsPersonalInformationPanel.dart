@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
@@ -177,7 +177,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   }
 
   bool get isLoggedIn{
-    return Auth().isLoggedIn;
+    return Auth2().isLoggedIn;
   }
 
   //Option keys

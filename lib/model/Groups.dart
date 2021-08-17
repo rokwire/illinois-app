@@ -20,7 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -149,9 +149,9 @@ class Group {
   }
 
   Member get currentUserAsMember{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
+    if(Auth2().isOidcLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
       for (Member member in members) {
-        if (member.email == Auth()?.authInfo?.email) {
+        if (member.email == Auth2().user.uiucAccount?.email) {
           return member;
         }
       }
@@ -177,9 +177,9 @@ class Group {
   }
 
   bool get currentUserIsUserMember{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
+    if(Auth2().isOidcLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
-        if(member.email == Auth()?.authInfo?.email && member.status != GroupMemberStatus.pending){
+        if(member.email == Auth2()?.user?.uiucAccount?.email && member.status != GroupMemberStatus.pending){
           return true;
         }
       }

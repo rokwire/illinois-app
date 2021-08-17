@@ -17,7 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -556,7 +556,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateGroups() {
     Analytics.instance.logSelect(target: "Groups");
-    if(Auth().isShibbolethLoggedIn) {
+    if(Auth2().isOidcLoggedIn) {
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
     } else {
@@ -564,7 +564,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         setState(() {
           _groupsLogin = true;
         });
-        Auth().authenticateWithShibboleth().then((success) {
+        Auth2().authenticateWithOidc().then((success) {
           setState(() {
             _groupsLogin = false;
           });
@@ -594,9 +594,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth().userPiiData?.email;
-      String name =  Auth().userPiiData?.fullName;
-      String phone = Auth().userPiiData?.phone;
+      String email = Auth2().user?.account?.email;
+      String name =  Auth2().user?.profile?.fullName;
+      String phone = Auth2().user?.account?.phone;
       String params = _constructFeedbackParams(email, phone, name);
       String feedbackUrl = Config().feedbackUrl + params;
 

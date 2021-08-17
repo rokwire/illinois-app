@@ -255,3 +255,4 @@ class AuthCard {
   }
 }
 
+enum AuthPhoneVerificationMethod { call, sms }

@@ -1,7 +1,9 @@
 
 import 'package:illinois/model/Auth.dart';
+import 'package:illinois/model/UserPiiData.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:uuid/uuid.dart';
 
 ////////////////////////////////
 // Auth2Token
@@ -87,6 +89,21 @@ class Auth2User {
       (account != null) && account.isValid &&
       (profile != null) && profile.isValid;
   }
+
+  UserPiiData get pii {
+    return (uiucAccount != null) ? UserPiiData(
+        pid: Uuid().v1(),
+        uin: uiucAccount?.uin,
+        netId: uiucAccount?.username,
+        firstName: uiucAccount?.firstName,
+        lastName: uiucAccount?.lastName,
+        middleName: uiucAccount.middleName,
+        userName: uiucAccount?.username,
+        email: account?.email,
+        phone: account?.phone,
+        imageUrl: profile?.photoUrl
+    ) : null;
+  }
 }
 
 ////////////////////////////////
@@ -154,6 +171,10 @@ class Auth2UserProfile {
 
   bool get isValid {
     return AppString.isStringNotEmpty(id);
+  }
+
+  String get fullName {
+    return AppString.fullName([firstName, lastName]);
   }
 }
 

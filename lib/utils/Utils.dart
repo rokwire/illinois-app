@@ -88,6 +88,23 @@ class AppString {
     return value?.replaceAll(RegExp(r'<[^>]*>'), '')?.replaceAll(RegExp(r'&[^;]+;'), ' ');
   }
 
+  static String fullName(List<String> names) {
+    String fullName;
+    if (names != null) {
+      for (String name in names) {
+        if ((name != null) && (0 < name.length)) {
+          if (fullName == null) {
+            fullName = '$name';
+          }
+          else {
+            fullName += ' $name';
+          }
+        }
+      }
+    }
+    return fullName;
+  }
+
   /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
 
   static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120

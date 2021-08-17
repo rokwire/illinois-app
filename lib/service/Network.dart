@@ -20,7 +20,6 @@ import 'dart:typed_data';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:http/http.dart' as Http;
-import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -398,8 +397,8 @@ class Network  {
       }
     }
     else if (auth == NetworkAuth.User) {
-      String idToken = Auth().authToken?.idToken;
-      String tokenType = Auth().authToken?.tokenType ?? 'Bearer';
+      String idToken = Auth2().uiucToken?.idToken;
+      String tokenType = Auth2().uiucToken?.tokenType ?? 'Bearer';
       if ((idToken != null) && idToken.isNotEmpty) {
         if (headers == null) {
           headers = new Map();
@@ -408,7 +407,7 @@ class Network  {
       }
     }
     else if (auth == NetworkAuth.Access) {
-      String accessToken = Auth().authToken?.accessToken;
+      String accessToken = Auth2().uiucToken?.accessToken;
       if ((accessToken != null) && accessToken.isNotEmpty) {
         if (headers == null) {
           headers = new Map();
@@ -436,13 +435,13 @@ class Network  {
 //          response.statusCode == 400 || 
             response.statusCode == 401
         )
-        && Auth().isLoggedIn
+        && Auth2().isLoggedIn
         && (NetworkAuth.User == auth || NetworkAuth.Access == auth || NetworkAuth.Auth2 == auth));
   }
 
   Future<bool> _refreshToken(NetworkAuth auth) async {
     if (NetworkAuth.User == auth || NetworkAuth.Access == auth) {
-      return (await Auth().refreshToken() != null);
+      return (await Auth2().refreshToken() != null);
     }
     else if (NetworkAuth.Auth2 == auth) {
       return (await Auth2().refreshToken() != null);

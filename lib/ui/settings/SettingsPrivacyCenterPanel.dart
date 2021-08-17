@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -46,7 +46,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Auth.notifyLoginSucceeded, Auth.notifyLoginFailed, Auth.notifyStarted]);
+    NotificationService().subscribe(this, [ Auth2.notifyLoginChanged ]);
     _loadVersionInfo();
     super.initState();
   }
@@ -437,15 +437,15 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
-    bool piiDeleted = await Auth().deleteUserPiiData();
+    bool piiDeleted = await Auth2().deleteUser();
     if(piiDeleted) {
       await User().deleteUser();
     }
-    Auth().logout();
+    Auth2().logout();
   }
 
   bool get _showFinishSetupWidget{
-    return !(Auth().isLoggedIn);
+    return !(Auth2().isLoggedIn);
   }
 
   void _onTapBack() {
@@ -455,7 +455,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth.notifyLoginChanged) {
+    if (name == Auth2.notifyLoginChanged) {
       setState(() {});
     }
   }

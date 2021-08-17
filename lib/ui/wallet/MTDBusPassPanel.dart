@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
@@ -57,7 +57,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     super.initState();
 
     NotificationService().subscribe(this, [
-      Auth.notifyCardChanged,
+      Auth2.notifyCardChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
       FlexUI.notifyChanged,
@@ -66,7 +66,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     _updateRangingRegions();
     _loadBussPass();
     _loadPhotoImage();
-    // Auth().updateAuthCard();
+    // Auth2().updateAuthCard();
   }
 
   @override
@@ -84,7 +84,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth().authCard.photoBytes;
+    Uint8List photoBytes = await  Auth2().authCard.photoBytes;
     return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
@@ -92,7 +92,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyCardChanged) {
+    if (name == Auth2.notifyCardChanged) {
       if (mounted) {
         _loadPhotoImage();
       }
@@ -111,7 +111,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    Widget contentWidget = (Auth().authCard != null) ? _buildBussContent() : Container();
+    Widget contentWidget = (Auth2().authCard != null) ? _buildBussContent() : Container();
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -176,7 +176,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBussContent() {
-    String role = Auth().authCard?.role;
+    String role = Auth2().authCard?.role;
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(
         children: <Widget>[

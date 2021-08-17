@@ -30,7 +30,7 @@ import 'package:http/http.dart';
 import 'package:crypto/crypto.dart';
 import 'package:convert/convert.dart';
 
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
@@ -64,7 +64,7 @@ class IlliniCash with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
-      Auth.notifyInfoChanged,
+      Auth2.notifyLoginChanged,
     ]);
   }
 
@@ -83,7 +83,7 @@ class IlliniCash with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), Auth()]);
+    return Set.from([Storage(), Config(), Auth2()]);
   }
   // NotificationsListener
 
@@ -93,7 +93,7 @@ class IlliniCash with Service implements NotificationsListener {
       if (name == AppLivecycle.notifyStateChanged) {
         _onAppLivecycleStateChanged(param);
       }
-      else if (name == Auth.notifyInfoChanged) {
+      else if (name == Auth2.notifyLoginChanged) {
         updateBalance();
       }
     }
@@ -124,7 +124,7 @@ class IlliniCash with Service implements NotificationsListener {
     if(_enabled) {
       bool eligible = await _isEligible();
       if (eligible == true) {
-        String url = "${Config().illiniCashBaseUrl}/Balances/${Auth().authInfo?.uin}";
+        String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().user?.uiucAccount?.uin}";
         String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${AuthInfo.analyticsUin}";
         Response response = await Network().get(url, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
         if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
@@ -143,9 +143,9 @@ class IlliniCash with Service implements NotificationsListener {
   }
 
   Future<bool> _isEligible({String uin, String firstName, String lastName}) async {
-    uin = AppString.isStringNotEmpty(uin) ? uin : Auth().authInfo?.uin;
-    firstName =  AppString.isStringNotEmpty(firstName) ? firstName : Auth().authInfo?.firstName;
-    lastName = AppString.isStringNotEmpty(lastName) ? lastName : Auth().authInfo?.lastName;
+    uin = AppString.isStringNotEmpty(uin) ? uin : Auth2().user?.uiucAccount?.uin;
+    firstName =  AppString.isStringNotEmpty(firstName) ? firstName : Auth2().user?.uiucAccount?.firstName;
+    lastName = AppString.isStringNotEmpty(lastName) ? lastName : Auth2().user?.uiucAccount?.lastName;
 
     if ((Config().illiniCashBaseUrl != null) && !AppString.isStringEmpty(uin) && !AppString.isStringEmpty(firstName) && !AppString.isStringEmpty(lastName)) {
       String url =  "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
@@ -187,7 +187,7 @@ class IlliniCash with Service implements NotificationsListener {
       return null;
     }
     
-    String uin = Auth().authInfo?.uin ?? "";
+    String uin = Auth2().user?.uiucAccount?.uin ?? "";
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
@@ -215,7 +215,7 @@ class IlliniCash with Service implements NotificationsListener {
     if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
       return null;
     }
-    String uin = Auth().authInfo?.uin ?? "";
+    String uin = Auth2().user?.uiucAccount?.uin ?? "";
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
@@ -246,7 +246,7 @@ class IlliniCash with Service implements NotificationsListener {
     if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
       return null;
     }
-    String uin = Auth().authInfo?.uin ?? "";
+    String uin = Auth2().user?.uiucAccount?.uin ?? "";
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";

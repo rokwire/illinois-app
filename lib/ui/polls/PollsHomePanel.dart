@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
@@ -73,8 +73,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Polls.notifyResultsChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
-      Auth.notifyStarted,
-      Auth.notifyInfoChanged,
     ]);
 
     _scrollController = ScrollController();
@@ -467,7 +465,12 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   void _onLoginTapped() {
     if (!_loggingIn) {
-      Auth().authenticateWithShibboleth();
+      setState(() { _loggingIn = true; });
+      Auth2().authenticateWithOidc().then((bool result) {
+        if (mounted) {
+          setState(() { _loggingIn = false; });
+        }
+      });
     }
   }
 
@@ -496,7 +499,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   bool get _canCreatePoll {
-    return _couldCreatePoll && Auth().isLoggedIn;
+    return _couldCreatePoll && Auth2().isLoggedIn;
   }
 
   void _loadPolls() {
@@ -649,16 +652,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
     else if (name == FlexUI.notifyChanged) {
       setState(() { });
-    }
-    else if (name == Auth.notifyStarted) {
-      setState(() {
-        _loggingIn = true;
-      });
-    }
-    else if (name == Auth.notifyInfoChanged) {
-      setState(() {
-        _loggingIn = false;
-      });
     }
   }
 }

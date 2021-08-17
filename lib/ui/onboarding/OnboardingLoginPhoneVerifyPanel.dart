@@ -17,7 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/model/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -47,7 +48,7 @@ class OnboardingLoginPhoneVerifyPanel extends StatefulWidget with OnboardingPane
 class _OnboardingLoginPhoneVerifyPanelState
     extends State<OnboardingLoginPhoneVerifyPanel> {
   TextEditingController _phoneNumberController = TextEditingController();
-  VerificationMethod _verificationMethod = VerificationMethod.sms;
+  AuthPhoneVerificationMethod _verificationMethod = AuthPhoneVerificationMethod.sms;
   String _validationErrorMsg;
 
   bool _isLoading = false;
@@ -150,11 +151,11 @@ class _OnboardingLoginPhoneVerifyPanelState
                             excludeSemantics: true,
                             label: Localization().getStringEx("panel.onboarding.verify_phone.text_me.label", "Text me"),
                             hint: Localization().getStringEx("panel.onboarding.verify_phone.text_me.hint", ""),
-                            selected: _verificationMethod == VerificationMethod.sms,
+                            selected: _verificationMethod == AuthPhoneVerificationMethod.sms,
                             button: true,
                             child: Radio(
                               activeColor: Styles().colors.fillColorSecondary,
-                              value: VerificationMethod.sms,
+                              value: AuthPhoneVerificationMethod.sms,
                               groupValue: _verificationMethod,
                               onChanged: _onMethodChanged,
                             ),
@@ -243,22 +244,17 @@ class _OnboardingLoginPhoneVerifyPanelState
       }
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-    Auth()
-        .initiatePhoneNumber(phoneNumber, _verificationMethod)
-        .then((success) => {_onPhoneInitiated(phoneNumber, success)})
-        .whenComplete(() {
+    setState(() { _isLoading = true; });
+    
+    Auth2().authenticateWithPhone(phoneNumber).then((success) {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() { _isLoading = false; });
+        _onPhoneInitiated(phoneNumber, success);
       }
     });
   }
 
-  void _onMethodChanged(VerificationMethod method) {
+  void _onMethodChanged(AuthPhoneVerificationMethod method) {
     Analytics.instance.logSelect(target: method?.toString());
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {

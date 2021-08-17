@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -59,7 +59,6 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth.notifyInfoChanged,
       IlliniCash.notifyPaymentSuccess,
       IlliniCash.notifyBallanceUpdated,
     ]);
@@ -187,7 +186,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildSettingsHeader(String title, String iconSrc){
-    if (!Auth().isLoggedIn) {
+    if (!Auth2().isLoggedIn) {
       return Container();
     }
     return Semantics(
@@ -223,7 +222,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildMealPlanSection() {
-    bool isSignedIn = Auth().isLoggedIn;
+    bool isSignedIn = Auth2().isLoggedIn;
     List<Widget> widgets = [];
     widgets.add(Padding(padding: EdgeInsets.only(top: 16)));
     if (!isSignedIn) {
@@ -286,7 +285,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildBalancePeriodViewPicker() {
-    if (!Auth().isLoggedIn) {
+    if (!Auth2().isLoggedIn) {
       return Container();
     }
     return Padding(
@@ -341,7 +340,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction> transactionList) {
-    if(Auth().isLoggedIn) {
+    if(Auth2().isLoggedIn) {
       if (loadingFlag) {
         return Center(child: Padding(padding: EdgeInsets.only(bottom: 20),
           child: CircularProgressIndicator(),),);
@@ -637,8 +636,21 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   void _onTapLogIn() {
     Analytics.instance.logSelect(target: "Log in");
-    _showAuthProgress(true);
-    Auth().authenticateWithShibboleth();
+    setState(() { _authLoading = true; });
+    Auth2().authenticateWithOidc().then((bool result) {
+      if (mounted) {
+        setState(() { _authLoading = false; });
+        if (result == true) {
+          _loadCafeCreditTransactions();
+          _loadMealPlanTransactions();
+        }
+        else if (result == false) {
+          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
+        }
+      }
+    });
+
+
   }
 
   void _onStartDateChanged(DateTime startDate) {
@@ -658,14 +670,6 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   // Helpers
-
-  void _showAuthProgress(bool loading) {
-    if (mounted) {
-      setState(() {
-        _authLoading = loading;
-      });
-    }
-  }
 
   void _showMealPlanTransactionsProgress(bool loading, {bool changeState = true}) {
     _mealPlanTransactionsLoading = loading;
@@ -694,10 +698,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyInfoChanged) {
-      _onAuthInfoChanged();
-    }
-    else if (name == IlliniCash.notifyBallanceUpdated) {
+    if (name == IlliniCash.notifyBallanceUpdated) {
       setState(() {});
       _loadCafeCreditTransactions();
       _loadMealPlanTransactions();
@@ -705,18 +706,6 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     else if (name == IlliniCash.notifyPaymentSuccess) {
       _loadCafeCreditTransactions();
       _loadMealPlanTransactions();
-    }
-  }
-  
-  void _onAuthInfoChanged() {
-    _showAuthProgress(false);
-    if (Auth().isLoggedIn) {
-      _loadCafeCreditTransactions();
-      _loadMealPlanTransactions();
-    }
-    else{
-      showDialog(
-          context: context, builder: (context) => _buildDialogWidget(context));
     }
   }
 }

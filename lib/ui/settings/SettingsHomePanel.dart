@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -66,7 +66,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth.notifyUserPiiDataChanged,
+      Auth2.notifyLoginChanged,
       User.notifyUserUpdated,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
@@ -87,7 +87,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyUserPiiDataChanged) {
+    if (name == Auth2.notifyLoginChanged) {
       _updateState();
     } else if (name == User.notifyUserUpdated){
       _updateState();
@@ -230,7 +230,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // User Info
 
   Widget _buildUserInfo() {
-    String fullName = Auth()?.userPiiData?.fullName ?? "";
+    String fullName = Auth2()?.user?.profile?.fullName ?? "";
     bool hasFullName =  AppString.isStringNotEmpty(fullName);
     String welcomeMessage = AppString.isStringNotEmpty(fullName)
         ? AppDateTime().getDayGreeting() + ","
@@ -327,7 +327,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onConnectNetIdClicked() {
     Analytics.instance.logSelect(target: "Connect netId");
-    Auth().authenticateWithShibboleth();
+    Auth2().authenticateWithOidc();
   }
 
   void _onPhoneVerClicked() {
@@ -441,7 +441,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as "),
                     style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
-                Text(Auth().userPiiData?.fullName ?? "",
+                Text(Auth2().user?.profile?.fullName ?? "",
                     style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ]))));
       }
@@ -469,7 +469,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   List<Widget> _buildConnectedPhoneLayout() {
     List<Widget> contentList = [];
 
-    String fullName = Auth()?.userPiiData?.fullName ?? "";
+    String fullName = Auth2()?.user?.profile?.fullName ?? "";
     bool hasFullName = AppString.isStringNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.phone'] ?? [];
@@ -486,7 +486,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as "),
                     style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
                 Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
-                Text(Auth().phoneToken?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+                Text(Auth2().user?.account?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ]))));
       }
       else if (code == 'verify') {
@@ -510,7 +510,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onDisconnectNetIdClicked() {
-    if(Auth().isShibbolethLoggedIn) {
+    if(Auth2().isOidcLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect netId");
     } else {
       Analytics.instance.logSelect(target: "Disconnect phone");
@@ -544,7 +544,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
-                      Auth().logout();
+                      Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
                 TextButton(
@@ -812,11 +812,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
-    bool piiDeleted = await Auth().deleteUserPiiData();
+    bool piiDeleted = await Auth2().deleteUser();
     if(piiDeleted) {
       await User().deleteUser();
     }
-    Auth().logout();
+    Auth2().logout();
   }
 
   // Account
@@ -845,7 +845,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onPersonalInfoClicked() {
     Analytics.instance.logSelect(target: "Personal Info");
-    if (Auth().isLoggedIn) {
+    if (Auth2().isLoggedIn) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
     }
   }
@@ -906,9 +906,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth().userPiiData?.email;
-      String name =  Auth().userPiiData?.fullName;
-      String phone = Auth().phoneToken?.phone;
+      String email = Auth2().user?.account?.email;
+      String name =  Auth2().user?.profile?.fullName;
+      String phone = Auth2().user?.account?.phone;
       String params = _constructFeedbackParams(email, phone, name);
       String feedbackUrl = Config().feedbackUrl + params;
 
@@ -1086,7 +1086,7 @@ class _DebugContainerState extends State<_DebugContainer> {
         _clickedCount++;
 
         if (_clickedCount == 7) {
-          if (Auth().isDebugManager) {
+          if (Auth2().isDebugManager) {
             Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;

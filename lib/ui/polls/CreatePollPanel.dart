@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Poll.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Polls.dart';
@@ -117,7 +117,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildNameLabel() {
-    String name = Auth()?.userPiiData?.fullName ?? "Someone";
+    String name = Auth2()?.user?.profile?.fullName ?? "Someone";
     String wantToKnowText = Localization().getStringEx("panel.create_poll.text.wants_to_know", "wants to know…");
     return
       Semantics(label: name +","+wantToKnowText , excludeSemantics: true,child:
@@ -453,7 +453,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         options: options,
         settings: PollSettings(allowMultipleOptions: _selectedMultichoice, hideResultsUntilClosed: _selectedHideResult, allowRepeatOptions: _selectedRepeatVotes),
         creatorUserUuid: User().uuid,
-        creatorUserName: Auth().userPiiData?.fullName ?? 'Someone',
+        creatorUserName: Auth2().user?.profile?.fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,
       );

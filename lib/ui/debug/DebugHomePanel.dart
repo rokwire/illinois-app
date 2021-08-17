@@ -20,7 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
@@ -108,7 +108,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   String get _userDebugData{
     String userDataText = AppJson.encode(User()?.data?.toJson(), prettify: true);
-    String authInfoText = AppJson.encode(Auth()?.authInfo?.toJson(), prettify: true);
+    String authInfoText = AppJson.encode(Auth2()?.user?.uiucAccount?.toJson(), prettify: true);
     String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
         "AuthInfo: " + (authInfoText ?? "unknown");
     return userData;
@@ -525,7 +525,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onUserCardInfoClicked() {
-    String cardInfo = AppJson.encode(Auth().authCard?.toShortJson(), prettify: true);
+    String cardInfo = AppJson.encode(Auth2().authCard?.toShortJson(), prettify: true);
     if (AppString.isStringNotEmpty(cardInfo)) {
       showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
     }

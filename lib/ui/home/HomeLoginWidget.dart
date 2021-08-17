@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -112,7 +112,7 @@ class HomeLoginNetIdWidget extends StatelessWidget{
   void _onTapConnectNetIdClicked(BuildContext context) {
     Analytics.instance.logSelect(target: "Connect netId");
     if (Connectivity().isNotOffline) {
-      Auth().authenticateWithShibboleth();
+      Auth2().authenticateWithOidc();
     } else {
       AppAlert.showOfflineMessage(context,"");
     }

@@ -126,13 +126,17 @@ class Auth2 with Service implements NotificationsListener {
   bool get isLoggedIn => (_token != null);
   bool get isOidcLoggedIn => (_user?.uiucAccount != null);
   bool get isPhoneLoggedIn => false;
-  bool get hasUin => (0 < _user?.uiucAccount?.uin?.length ?? 0);
+
+  bool get hasUin => (0 < uin?.length ?? 0);
+  String get uin => _user?.uiucAccount?.uin;
+
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
   bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
   bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
 
   bool isMemberOf(String group) => _user?.uiucAccount?.userGroupMembership?.contains(group) ?? false;
+
 
   // OIDC Authentication
 
@@ -285,6 +289,16 @@ class Auth2 with Service implements NotificationsListener {
     }
   }
 
+  // Phone Authentication
+
+  Future<bool> authenticateWithPhone(String phoneNumber) async {
+    return false;
+  }
+
+  Future<bool> handlePhoneAuthentication(String phoneNumber, String code) async {
+    return false;
+  }
+
   // Logout
 
   void logout() {
@@ -304,6 +318,12 @@ class Auth2 with Service implements NotificationsListener {
       NotificationService().notify(notifyLoginChanged);
       NotificationService().notify(notifyLogout);
     }
+  }
+
+  // Delete
+
+  Future<bool> deleteUser() async {
+    return false;
   }
 
   // Refresh

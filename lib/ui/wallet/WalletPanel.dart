@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
@@ -62,9 +62,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Auth.notifyStarted,
-      Auth.notifyAuthTokenChanged,
-      Auth.notifyCardChanged,
+      Auth2.notifyCardChanged,
       FlexUI.notifyChanged,
       Storage.notifySettingChanged,
     ]);
@@ -208,7 +206,12 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       borderColor: Styles().colors.fillColorSecondary,
       onTap: () {
         Analytics.instance.logSelect(target: "Log in");
-        Auth().authenticateWithShibboleth();
+        setState(() { _authLoading = true; });
+        Auth2().authenticateWithOidc().then((bool result) {
+          if (mounted) {
+            setState(() { _authLoading = false; });
+          }
+        });
       },
     );
   }
@@ -392,7 +395,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   Widget _buildMTDBussCard(){
-    String expires = Auth()?.authCard?.expirationDate ?? "";
+    String expires = Auth2()?.authCard?.expirationDate ?? "";
     return _Card(
       key: _mtdCardKey,
       title: Localization().getStringEx("panel.wallet.label.mtd.title", "MTD",),
@@ -403,7 +406,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Auth()?.authCard?.role ?? "",
+              Auth2()?.authCard?.role ?? "",
               style: TextStyle(
                 color: Styles().colors.fillColorPrimary,
                 fontFamily: Styles().fontFamilies.extraBold,
@@ -459,7 +462,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Auth()?.authCard?.uin ?? "",
+              Auth2()?.authCard?.uin ?? "",
               style: TextStyle(
                 color: Styles().colors.fillColorPrimary,
                 fontFamily: Styles().fontFamilies.extraBold,
@@ -508,7 +511,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             
             Container(height: 5,),
             Text(
-              Auth()?.authCard?.libraryNumber ?? "",
+              Auth2()?.authCard?.libraryNumber ?? "",
               style: TextStyle(
                   fontFamily: Styles().fontFamilies.light,
                   fontSize: 12,
@@ -524,10 +527,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _loadLibraryBarcode() {
-    String libraryCode = Auth().authCard?.libraryNumber;
+    String libraryCode = Auth2().authCard?.libraryNumber;
     if (0 < (libraryCode?.length ?? 0)) {
       NativeCommunicator().getBarcodeImageData({
-        'content': Auth().authCard?.libraryNumber,
+        'content': Auth2().authCard?.libraryNumber,
         'format': 'codabar',
         'width': 161 * 3,
         'height': 50
@@ -545,7 +548,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _updateLibraryBarcode() {
-    String libraryCode = Auth().authCard?.libraryNumber;
+    String libraryCode = Auth2().authCard?.libraryNumber;
     if (((_libraryCode == null) && (libraryCode != null)) ||
         ((_libraryCode != null) && (_libraryCode != libraryCode)))
     {
@@ -556,13 +559,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   // NotificationsListener
 
   void onNotification(String name, dynamic param){
-    if( name == Auth.notifyStarted){
-      setState(() {_authLoading = true;});
-    }
-    else if( name == Auth.notifyAuthTokenChanged){
-      setState(() {_authLoading = false;});
-    }
-    else if (name == Auth.notifyCardChanged) {
+    if (name == Auth2.notifyCardChanged) {
       _updateLibraryBarcode();
     }
     else if(name == FlexUI.notifyChanged){

@@ -21,7 +21,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 //import 'package:flutter/services.dart' show rootBundle;
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Log.dart';
@@ -97,7 +97,7 @@ class Groups /* with Service */ {
   Future<List<Group>> loadGroups({bool myGroups = false}) async {
     String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
     try {
-      Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App,);
+      Response response = await Network().get(url, auth: myGroups ? NetworkAuth.User : (Auth2().isOidcLoggedIn) ? NetworkAuth.User : NetworkAuth.App,);
       int responseCode = response?.statusCode ?? -1;
       String responseBody = response?.body;
       List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
@@ -114,7 +114,7 @@ class Groups /* with Service */ {
     }
     String encodedTExt = Uri.encodeComponent(searchText);
     String url = '${Config().groupsUrl}/groups?title=$encodedTExt';
-    Response response = await Network().get(url, auth: (Auth().isShibbolethLoggedIn) ? NetworkAuth.User : NetworkAuth.App);
+    Response response = await Network().get(url, auth: (Auth2().isOidcLoggedIn) ? NetworkAuth.User : NetworkAuth.App);
     int responseCode = response?.statusCode ?? -1;
     String responseBody = response?.body;
     if (responseCode == 200) {
@@ -135,7 +135,7 @@ class Groups /* with Service */ {
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
-        Response response = await Network().get(url, auth: Auth().isShibbolethLoggedIn ? NetworkAuth.User : NetworkAuth.App,);
+        Response response = await Network().get(url, auth: Auth2().isOidcLoggedIn ? NetworkAuth.User : NetworkAuth.App,);
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
         Map<String, dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeMap(responseBody) : null;
@@ -152,8 +152,8 @@ class Groups /* with Service */ {
       String url = '${Config().groupsUrl}/groups';
       try {
         Map<String, dynamic> json = group.toJson(withId: false);
-        json["creator_email"] = Auth()?.authInfo?.email ?? "";
-        json["creator_name"] = Auth()?.authInfo?.fullName ?? "";
+        json["creator_email"] = Auth2().user?.uiucAccount?.email ?? "";
+        json["creator_name"] = Auth2().user?.uiucAccount?.fullName ?? "";
         json["creator_photo_url"] = "";
         String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
@@ -228,8 +228,8 @@ class Groups /* with Service */ {
       String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
       try {
         Map<String, dynamic> json = {};
-        json["email"] = Auth()?.authInfo?.email ?? "";
-        json["name"] = Auth()?.authInfo?.fullName ?? "";
+        json["email"] = Auth2().user?.uiucAccount?.email ?? "";
+        json["name"] = Auth2().user?.uiucAccount?.fullName ?? "";
         json["creator_photo_url"] = "";
         json["member_answers"] = AppCollection.isCollectionNotEmpty(answers) ? answers.map((e) => e.toJson()).toList() : [];
 

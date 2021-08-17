@@ -27,7 +27,7 @@ import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
@@ -697,10 +697,10 @@ class Analytics with Service implements NotificationsListener {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
         else if(attributeName == LogStdAuthCardRoleName){
-          analyticsEvent[LogStdAuthCardRoleName] = Auth()?.authCard?.role;
+          analyticsEvent[LogStdAuthCardRoleName] = Auth2()?.authCard?.role;
         }
         else if(attributeName == LogStdAuthCardStudentLevel){
-          analyticsEvent[LogStdAuthCardStudentLevel] = Auth()?.authCard?.studentLevel;
+          analyticsEvent[LogStdAuthCardStudentLevel] = Auth2()?.authCard?.studentLevel;
         }
       }
 

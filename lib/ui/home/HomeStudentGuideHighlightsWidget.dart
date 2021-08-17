@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
@@ -42,7 +42,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
       StudentGuide.notifyChanged,
       User.notifyRolesUpdated,
       AppLivecycle.notifyStateChanged,
-      Auth.notifyCardChanged,
+      Auth2.notifyCardChanged,
     ]);
 
     if (widget.refreshController != null) {
@@ -70,7 +70,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
     else if (name == User.notifyRolesUpdated) {
       _updatePromotedItems();
     }
-    else if (name == Auth.notifyCardChanged) {
+    else if (name == Auth2.notifyCardChanged) {
       _updatePromotedItems();
     }
     else if (name == AppLivecycle.notifyStateChanged) {

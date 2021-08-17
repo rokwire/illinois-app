@@ -24,7 +24,7 @@ import 'package:collection/collection.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Log.dart';
@@ -70,9 +70,8 @@ class FlexUI with Service implements NotificationsListener {
       User.notifyUserUpdated,
       User.notifyRolesUpdated,
       User.notifyPrivacyLevelChanged,
-      Auth.notifyAuthTokenChanged,
-      Auth.notifyCardChanged,
-      Auth.notifyUserPiiDataChanged,
+      Auth2.notifyLoginChanged,
+      Auth2.notifyCardChanged,
       IlliniCash.notifyBallanceUpdated,
       AppLivecycle.notifyStateChanged,
     ]);
@@ -99,7 +98,7 @@ class FlexUI with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), User(), Auth(), IlliniCash(), Assets()]);
+    return Set.from([Config(), User(), Auth2(), IlliniCash(), Assets()]);
   }
 
   // NotificationsListener
@@ -109,9 +108,8 @@ class FlexUI with Service implements NotificationsListener {
     if ((name == User.notifyUserUpdated) ||
         (name == User.notifyRolesUpdated) ||
         (name == User.notifyPrivacyLevelChanged) ||
-        (name == Auth.notifyAuthTokenChanged) ||
-        (name == Auth.notifyCardChanged) || 
-        (name == Auth.notifyUserPiiDataChanged) ||
+        (name == Auth2.notifyLoginChanged) ||
+        (name == Auth2.notifyCardChanged) || 
         (name == IlliniCash.notifyBallanceUpdated))
     {
       _updateFromNet();
@@ -170,10 +168,10 @@ class FlexUI with Service implements NotificationsListener {
     
     Map<String, dynamic> post = {
       'user': User().data?.toShortJson(),
-      'auth_token': Auth().authToken?.toJson(),
-      'auth_user': Auth().authInfo?.toJson(),
-      'card': Auth().authCard?.toShortJson(),
-      'pii': Auth().userPiiData?.toShortJson(),
+      'auth_token': Auth2().uiucToken?.toJson(),
+      'auth_user': Auth2().user?.uiucAccount?.toJson(),
+      'card': Auth2().authCard?.toShortJson(),
+      'pii': Auth2().user?.pii?.toShortJson(),
       'illini_cash': IlliniCash().ballance?.toJson(),
       'platform': platformJson,
     };
@@ -370,33 +368,33 @@ class FlexUI with Service implements NotificationsListener {
       authRule.forEach((dynamic key, dynamic value) {
         if (key is String) {
           if ((key == 'loggedIn') && (value is bool)) {
-            result = result && (Auth().isLoggedIn == value);
+            result = result && (Auth2().isLoggedIn == value);
           }
           else if ((key == 'shibbolethLoggedIn') && (value is bool)) {
-            result = result && (Auth().isShibbolethLoggedIn == value);
+            result = result && (Auth2().isOidcLoggedIn == value);
           }
           else if ((key == 'phoneLoggedIn') && (value is bool)) {
-            result = result && (Auth().isPhoneLoggedIn == value);
+            result = result && (Auth2().isPhoneLoggedIn == value);
           }
           
           else if ((key == 'shibbolethMemberOf') && (value is String)) {
-            result = result && Auth().isMemberOf(value);
+            result = result && Auth2().isMemberOf(value);
           }
           else if ((key == 'eventEditor') && (value is bool)) {
-            result = result && (Auth().isEventEditor == value);
+            result = result && (Auth2().isEventEditor == value);
           }
           else if ((key == 'stadiumPollManager') && (value is bool)) {
-            result = result && (Auth().isStadiumPollManager == value);
+            result = result && (Auth2().isStadiumPollManager == value);
           }
           
           else if ((key == 'iCard') && (value is bool)) {
-            result = result && ((Auth().authCard != null) == value);
+            result = result && ((Auth2().authCard != null) == value);
           }
           else if ((key == 'iCardNum') && (value is bool)) {
-            result = result && ((0 < (Auth().authCard?.cardNumber?.length ?? 0)) == value);
+            result = result && ((0 < (Auth2().authCard?.cardNumber?.length ?? 0)) == value);
           }
           else if ((key == 'iCardLibraryNum') && (value is bool)) {
-            result = result && ((0 < (Auth().authCard?.libraryNumber?.length ?? 0)) == value);
+            result = result && ((0 < (Auth2().authCard?.libraryNumber?.length ?? 0)) == value);
           }
         }
       });

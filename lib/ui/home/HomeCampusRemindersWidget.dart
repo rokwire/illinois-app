@@ -22,7 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
@@ -56,7 +56,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       StudentGuide.notifyChanged,
       User.notifyRolesUpdated,
       AppLivecycle.notifyStateChanged,
-      Auth.notifyCardChanged,
+      Auth2.notifyCardChanged,
     ]);
 
     if (widget.refreshController != null) {
@@ -84,7 +84,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     else if (name == User.notifyRolesUpdated) {
       _updateReminderItems();
     }
-    else if (name == Auth.notifyCardChanged) {
+    else if (name == Auth2.notifyCardChanged) {
       _updateReminderItems();
     }
     else if (name == AppLivecycle.notifyStateChanged) {

@@ -19,7 +19,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:location/location.dart' as Core;
 
@@ -529,6 +529,6 @@ class ExploreService /* with Service */ {
       && AppString.isStringNotEmpty(Config().eventsUrl);
 
   NetworkAuth get _userOrAppAuth{
-    return Auth().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
+    return Auth2().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
   }
 }

@@ -19,7 +19,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
@@ -101,7 +100,7 @@ class Services {
     Localization(),
     Assets(),
     Styles(),
-    Auth(),
+//  Auth(),
     Auth2(),
     User(),
     Analytics(),

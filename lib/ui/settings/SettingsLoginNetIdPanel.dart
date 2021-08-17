@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -35,7 +35,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Auth.notifyLoginSucceeded, Auth.notifyLoginFailed, Auth.notifyStarted]);
+    NotificationService().subscribe(this, []);
     super.initState();
   }
 
@@ -190,7 +190,22 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
 
   void _onLoginTapped() {
     Analytics.instance.logSelect(target: 'Log in with NetID');
-    Auth().authenticateWithShibboleth();
+    setState(() { _progress = true; });
+    Auth2().authenticateWithOidc().then((bool result) {
+      if (mounted) {
+        if (result == true) {
+          FlexUI().update().then((_){
+            setState(() { _progress = false; });
+            Navigator.pop(context,true);
+          });
+        } else if (result == false) {
+          setState(() { _progress = false; });
+          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
+        } else {
+          setState(() { _progress = false; });
+        }
+      }
+    });
   }
 
   void _onSkipTapped() {
@@ -202,30 +217,7 @@ class _SettingsLoginNetIdPanelState extends State<SettingsLoginNetIdPanel> imple
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyStarted) {
-      _onLoginStarted();
-    } else if (name == Auth.notifyLoginSucceeded) {
-      onLoginResult(true);
-    } else if (name == Auth.notifyLoginFailed) {
-      onLoginResult(false);
-    }
   }
 
-  void _onLoginStarted() {
-    setState(() { _progress = true; });
-  }
-  void onLoginResult(bool success) {
-    if (mounted) {
-      if (success) {
-        FlexUI().update().then((_){
-          setState(() { _progress = false; });
-          Navigator.pop(context,true);
-        });
-      } else {
-        setState(() { _progress = false; });
-        showDialog(context: context, builder: (context) => _buildDialogWidget(context));
-      }
-    }
-  }
 
 }

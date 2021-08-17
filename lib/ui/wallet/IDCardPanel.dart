@@ -18,7 +18,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -55,7 +55,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Auth.notifyCardChanged);
+    NotificationService().subscribe(this, Auth2.notifyCardChanged);
     
     _loadPhotoImage();
     
@@ -70,7 +70,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       setState(() {});
     });
     
-    // Auth().updateAuthCard();
+    // Auth2().updateAuthCard();
 
     _loadPhotoImage();
   }
@@ -83,7 +83,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth().authCard?.photoBytes;
+    Uint8List photoBytes = await  Auth2().authCard?.photoBytes;
     return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
@@ -103,7 +103,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyCardChanged) {
+    if (name == Auth2.notifyCardChanged) {
       _loadPhotoImage();
     }
   }
@@ -119,7 +119,7 @@ class _IDCardPanelState extends State<IDCardPanel>
             Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
           ],),
           Column(children: <Widget>[
-            Expanded(child: (Auth().authCard != null) ? _buildCardContent() : Container(),),
+            Expanded(child: (Auth2().authCard != null) ? _buildCardContent() : Container(),),
 
             SafeArea(child: Align(alignment: Alignment.bottomCenter, child:
               Padding(padding: EdgeInsets.only(bottom: 10), child:
@@ -155,9 +155,9 @@ class _IDCardPanelState extends State<IDCardPanel>
   Widget _buildCardContent() {
     
     String cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
-    String expirationDate = Auth().authCard?.expirationDate;
+    String expirationDate = Auth2().authCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
-    String roleDisplayString = (Auth().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth().authCard?.role ?? "");
+    String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
@@ -195,7 +195,7 @@ class _IDCardPanelState extends State<IDCardPanel>
                 child: Container(decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
-                  image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth().authCard?.photoBytes),),    
+                  image: DecorationImage(fit: BoxFit.cover, image: MemoryImage(Auth2().authCard?.photoBytes),),    
                 )),
               )
             ),
@@ -210,15 +210,15 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Container(height: 10,),
       
-      Text(Auth().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
+      Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
       Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
       
       Container(height: 20,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
-          Text((0 < (Auth().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
-          Text(Auth().authCard?.uin ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 28)),
+          Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
+          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 28)),
         ],),
       ),
       Text(cardExpiresText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
@@ -226,13 +226,13 @@ class _IDCardPanelState extends State<IDCardPanel>
       Container(height: 20,),
       
       Visibility(
-        visible: (0 < (Auth().authCard?.cardNumber?.length ?? 0)),
+        visible: (0 < (Auth2().authCard?.cardNumber?.length ?? 0)),
         child: QrImage(
-          data: Auth().authCard?.magTrack2 ?? '',
+          data: Auth2().authCard?.magTrack2 ?? '',
           version: QrVersions.auto,
           size: MediaQuery.of(context).size.width / 4 + 10,
           padding: const EdgeInsets.all(10.0),),),
-      Text(Auth().authCard?.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
+      Text(Auth2().authCard?.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
 
     ],)    );
   }

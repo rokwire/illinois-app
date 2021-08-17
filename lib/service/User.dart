@@ -24,7 +24,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -68,7 +68,7 @@ class User with Service implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifyToken,
       User.notifyPrivacyLevelChanged,
-      Auth.notifyLoggedOut,
+      Auth2.notifyLogout,
     ]);
   }
 
@@ -105,7 +105,7 @@ class User with Service implements NotificationsListener {
     else if(name == AppLivecycle.notifyStateChanged && param == AppLifecycleState.resumed){
       //_loadUser();
     }
-    else if(name == Auth.notifyLoggedOut){
+    else if(name == Auth2.notifyLogout){
       _recreateUser(); // Always create userData on logout. // https://github.com/rokwire/illinois-app/issues/29
     }
   }
@@ -286,7 +286,7 @@ class User with Service implements NotificationsListener {
   void _clearStoredUserData(){
     _userData = null;
     Storage().userData = null;
-    Auth().logout();
+    Auth2().logout();
     Storage().onBoardingPassed = false;
   }
 

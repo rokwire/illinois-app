@@ -17,9 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/model/UserPiiData.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -51,19 +50,19 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
 
-    bool piiDeleted = await Auth().deleteUserPiiData();
+    bool piiDeleted = await Auth2().deleteUser();
     if(piiDeleted) {
       await User().deleteUser();
     }
-    Auth().logout();
+    Auth2().logout();
   }
 
   void _initTextControllers(){
     _nameController = TextEditingController();
     _emailController = TextEditingController();
 
-    _nameController.text = _initialName = Auth().userPiiData?.fullName ?? "";
-    _emailController.text = _initialEmail = Auth().userPiiData?.email ?? "";
+    _nameController.text = _initialName = Auth2().user?.profile?.fullName ?? "";
+    _emailController.text = _initialEmail = Auth2().user?.account?.email ?? "";
   }
 
   @override
@@ -105,20 +104,20 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
         children: <Widget>[
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.net_id.title', 'NetID'),
-              value: Auth().userPiiData?.netId ?? ""
+              value: Auth2().user?.uiucAccount?.username ?? ""
           ),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
-              value: Auth().userPiiData?.fullName ?? ""),
+              value: Auth2().user?.uiucAccount?.fullName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
-              value: Auth().userPiiData?.middleName ?? ""),
+              value: Auth2().user?.uiucAccount?.middleName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.last_name.title', 'Last Name'),
-              value:  Auth().userPiiData?.lastName ?? ""),
+              value:  Auth2().user?.uiucAccount?.lastName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
-              value: Auth().userPiiData?.email ?? ""),
+              value: Auth2().user?.uiucAccount?.email ?? ""),
         ],
       ),
     );
@@ -210,9 +209,9 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
               )
           ),
           _PersonalInfoEntry(
-              visible: Auth().isPhoneLoggedIn,
+              visible: Auth2().isPhoneLoggedIn,
               title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
-              value: Auth().userPiiData?.phone ?? ""),
+              value: Auth2().user?.account?.phone ?? ""),
         ],
       ),
     );
@@ -313,7 +312,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
-                      Auth().logout();
+                      Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes"))),
                 TextButton(
@@ -355,12 +354,13 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   }
 
   _onSaveChangesClicked() async{
+    /* TBD: update user profile in Auth2
     bool piiDataUpdated = false;
     setState(() {
       _isSaving = true;
     });
     UserPiiData updatedUserPiiData;
-    UserPiiData userPiiData = UserPiiData.fromObject(await Auth().reloadUserPiiData());
+    UserPiiData userPiiData = UserPiiData.fromObject(await Auth2().reloadUserPiiData());
     if (userPiiData != null) {
       if(_isEmailChanged){
         userPiiData.email = _customEmail;
@@ -404,7 +404,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
       }
 
       if(piiDataUpdated) {
-        updatedUserPiiData = await Auth().storeUserPiiData(userPiiData);
+        updatedUserPiiData = await Auth2().storeUserPiiData(userPiiData);
       }
     }
     setState(() {
@@ -414,7 +414,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
       Navigator.pop(context);
     } else {
       AppToast.show("Unable to perform save");
-    }
+    }*/
   }
 
   bool get _canSave{
@@ -438,7 +438,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   }
   
   bool get _showShibbolethInfo{
-    return Auth().isShibbolethLoggedIn;
+    return Auth2().isOidcLoggedIn;
   }
 
 }

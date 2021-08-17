@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
@@ -34,10 +34,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      Auth.notifyStarted,
-      Auth.notifyInfoChanged,
-    ]);
+    NotificationService().subscribe(this, []);
     super.initState();
   }
 
@@ -144,30 +141,21 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   bool get _canCreatePoll {
-    return Auth().isLoggedIn;
+    return Auth2().isLoggedIn;
   }
 
   void _onLogin(){
     if (!_authLoading) {
-      Auth().authenticateWithShibboleth();
-    }
-  }
-
-  void _showAuthProgress(bool loading) {
-    if (mounted) {
-      setState(() {
-        _authLoading = loading;
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((_) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+        }
       });
     }
   }
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth.notifyStarted) {
-      _showAuthProgress(true);
-    }
-    else if (name == Auth.notifyInfoChanged) {
-      _showAuthProgress(false);
-    }
   }
 }

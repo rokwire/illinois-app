@@ -21,7 +21,7 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -883,7 +883,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRequest() {
     return
-      Auth().isShibbolethLoggedIn && _group.currentUserCanJoin
+      Auth2().isOidcLoggedIn && _group.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
                   child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
@@ -903,7 +903,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildCancelMembershipRequest() {
     return
-      Auth().isShibbolethLoggedIn && _group.currentUserIsPendingMember
+      Auth2().isOidcLoggedIn && _group.currentUserIsPendingMember
           ? Stack(
             alignment: Alignment.center,
             children: [
