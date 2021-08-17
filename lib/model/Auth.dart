@@ -138,7 +138,7 @@ class AuthInfo {
     this.username, this.uin, this.sub, this.email, this.userGroupMembership});
 
   factory AuthInfo.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? AuthInfo(
+    AuthInfo result = (json != null) ? AuthInfo(
         fullName: AppJson.stringValue(json['name']),
         firstName: AppJson.stringValue(json['given_name']),
         middleName: AppJson.stringValue(json['middle_name']),
@@ -147,8 +147,9 @@ class AuthInfo {
         uin: AppJson.stringValue(json['uiucedu_uin']),
         sub: AppJson.stringValue(json['sub']),
         email: AppJson.stringValue(json['email']),
-        userGroupMembership: AppJson.stringSetValue('uiucedu_is_member_of'),
+        userGroupMembership: AppJson.stringSetValue(json['uiucedu_is_member_of']),
     ) : null;
+    return result;
   }
 
   toJson() {
