@@ -21,7 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
   
-  static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/oidc-auth';
+  static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/shib-auth';
 
   static const String notifyLoginStarted   = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded = "edu.illinois.rokwire.auth2.login.succeeded";
@@ -102,13 +102,15 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   void _onDeepLinkUri(Uri uri) {
-    Uri redirectUri = (_oidcLogin?.redirectUrl != null) ? Uri.tryParse(_oidcLogin.redirectUrl) : null;
-    if ((redirectUri != null) && (uri != null) &&
-        (redirectUri.scheme == uri.scheme) &&
-        (redirectUri.authority == uri.authority) &&
-        (redirectUri.path == uri.path))
-    {
-      _handleOidcAuthentication(uri);
+    if (uri != null) {
+      Uri redirectUri = (_oidcLogin?.redirectUrl != null) ? Uri.tryParse(_oidcLogin.redirectUrl) : null;
+      if ((redirectUri != null) &&
+          (redirectUri.scheme == uri.scheme) &&
+          (redirectUri.authority == uri.authority) &&
+          (redirectUri.path == uri.path))
+      {
+        _handleOidcAuthentication(uri);
+      }
     }
   }
 
@@ -122,7 +124,7 @@ class Auth2 with Service implements NotificationsListener {
   // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {
-    if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
 
       NotificationService().notify(notifyLoginStarted);
       
@@ -160,28 +162,32 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> _processOidcAuthentication(Uri uri) async {
-    if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidc),
-        'org_id': Config().orgId,
-        'app_id': Config().appId,
+        'org_id': Config().coreOrgId,
+        'app_id': Config().appCanonicalId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params
       });
       _oidcLogin = null;
       
-      Response response = await Network().post(url, body: post);
+      Response response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
-        Auth2Token token = Auth2Token.fromJson(responseJson);
+        Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
         Auth2User user = Auth2User.fromJson(AppJson.mapValue(responseJson['user']));
 
         if ((token != null) && token.isValid && (user != null) && user.isValid) {
           Storage().auth2Token = _token = token;
           Storage().auth2User = _user = user;
 
-          Auth2Token uiucToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['params']));
+          Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
+          Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
           Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
           String authCardString = await _loadAuthCardStringFromNet();
@@ -199,19 +205,22 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<_OidcLogin> _getOidcData() async {
-    if ((Config().coreUrl != null) && (Config().appId != null) && (Config().orgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
 
       String url = "${Config().coreUrl}/services/auth/login-url";
-      String redirectUrl = "$REDIRECT_URI/${DateTime.now().millisecondsSinceEpoch}";
+      //String redirectUrl = "$REDIRECT_URI/${DateTime.now().millisecondsSinceEpoch}";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidc),
-        'org_id': Config().orgId,
-        'app_id': Config().appId,
-        'redirect_uri': redirectUrl,
+        'org_id': Config().coreOrgId,
+        'app_id': Config().appCanonicalId,
+        'redirect_uri': REDIRECT_URI,
       });
-      Response response = await Network().post(url, body: post);
+      Response response = await Network().post(url, headers: headers, body: post);
       _OidcLogin oidcLogin = (response?.statusCode == 200) ? _OidcLogin.fromJson(AppJson.decodeMap(response?.body)) : null;
-      return (oidcLogin != null) ? _OidcLogin.fromOther(oidcLogin, redirectUrl: redirectUrl) : null;
+      return (oidcLogin != null) ? _OidcLogin.fromOther(oidcLogin, redirectUrl: REDIRECT_URI) : null;
     }
     return null;
   }
@@ -288,8 +297,11 @@ class Auth2 with Service implements NotificationsListener {
           Log.d("Auth2: will refresh token");
 
           String url = "${Config().coreUrl}/services/auth/refresh";
+          Map<String, String> headers = {
+            'Content-Type': 'text/plain'
+          };
 
-          _refreshTokenFuture = Network().post(url, body: _token?.refreshToken);
+          _refreshTokenFuture = Network().post(url, headers: headers, body: _token?.refreshToken);
           Response refreshTokenResponse = await _refreshTokenFuture;
           _refreshTokenFuture = null;
 
@@ -363,7 +375,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
-    String uin = _user?.getOrgMembership(Config().orgId)?.getUserData('uin');
+    String uin = _user?.getOrgMembership(Config().coreOrgId)?.getUserData('uin');
     String accessToken = _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
@@ -435,14 +447,14 @@ class _OidcLogin {
 
   factory _OidcLogin.fromJson(Map<String, dynamic> json) {
     return (json != null) ? _OidcLogin(
-      loginUrl: AppJson.stringValue(json['url']),
+      loginUrl: AppJson.stringValue(json['login_url']),
       params: AppJson.mapValue(json['params'])
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'url' : loginUrl,
+      'login_url' : loginUrl,
       'params': params
     };
   }  
