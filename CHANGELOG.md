@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Dining Dollars icon [#669](https://github.com/rokwire/illinois-app/issues/669).
 - Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
 - Do not notify for null uri in DeepLink service.
+- Cache canonical app id in Config service.
 
 ### Added
 - Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).

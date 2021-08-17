@@ -50,6 +50,7 @@ class Config with Service implements NotificationsListener {
   ConfigEnvironment    _configEnvironment;
   PackageInfo          _packageInfo;
   Directory            _appDocumentsDir; 
+  String               _appCanonicalId;
   DateTime             _pausedDateTime;
   
   final Set<String>    _reportedUpgradeVersions = Set<String>();
@@ -359,12 +360,15 @@ class Config with Service implements NotificationsListener {
   }
 
   String get appCanonicalId {
-    final String iosSuffix = '.ios';
-    String result = appId;
-    if (Platform.isIOS && (result?.endsWith(iosSuffix) ?? false)) {
-      result = result.substring(0, result.length - iosSuffix.length);
+    if (_appCanonicalId == null) {
+      _appCanonicalId = appId;
+      
+      final String iosSuffix = '.ios';
+      if (Platform.isIOS && (_appCanonicalId != null) && _appCanonicalId.endsWith(iosSuffix)) {
+        _appCanonicalId = _appCanonicalId.substring(0, _appCanonicalId.length - iosSuffix.length);
+      }
     }
-    return result;
+    return _appCanonicalId;
   }
 
   String get appVersion {
