@@ -408,6 +408,17 @@ class AppJson {
     }
     return result;
   }
+
+  static Set<String> stringSetValue(dynamic value) {
+    Set<String> result;
+    if (value is List) {
+      result = Set<String>();
+      for (dynamic entry in value) {
+        result.add(entry?.toString());
+      }
+    }
+    return result;
+  }
 }
 
 class AppToast {

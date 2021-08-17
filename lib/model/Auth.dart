@@ -138,29 +138,20 @@ class AuthInfo {
     this.username, this.uin, this.sub, this.email, this.userGroupMembership});
 
   factory AuthInfo.fromJson(Map<String, dynamic> json) {
-    dynamic groupMembershipJson = json != null
-        ? json['uiucedu_is_member_of']
-        : null;
-    Set<String> userGroupMembership = groupMembershipJson != null ? Set.from(
-        groupMembershipJson) : null;
-
     return (json != null) ? AuthInfo(
-        fullName: AppString.isStringNotEmpty(json["name"]) ? json["name"] : "",
-        firstName: AppString.isStringNotEmpty(json["given_name"]) ? json["given_name"] : "",
-        middleName: AppString.isStringNotEmpty(json["middle_name"]) ? json["middle_name"] : "",
-        lastName: AppString.isStringNotEmpty(json["family_name"]) ? json["family_name"] : "",
-        username: AppString.isStringNotEmpty(json["preferred_username"]) ? json["preferred_username"] : "",
-        uin: AppString.isStringNotEmpty(json["uiucedu_uin"]) ? json["uiucedu_uin"] : "",
-        sub: AppString.isStringNotEmpty(json["sub"]) ? json["sub"] : "",
-        email: AppString.isStringNotEmpty(json["email"]) ? json["email"] : "",
-        userGroupMembership: userGroupMembership
+        fullName: AppJson.stringValue(json['name']),
+        firstName: AppJson.stringValue(json['given_name']),
+        middleName: AppJson.stringValue(json['middle_name']),
+        lastName: AppJson.stringValue(json['family_name']),
+        username: AppJson.stringValue(json['preferred_username']),
+        uin: AppJson.stringValue(json['uiucedu_uin']),
+        sub: AppJson.stringValue(json['sub']),
+        email: AppJson.stringValue(json['email']),
+        userGroupMembership: AppJson.stringSetValue('uiucedu_is_member_of'),
     ) : null;
   }
 
   toJson() {
-    List<dynamic> userGroupsToJson = (userGroupMembership != null) ?
-    userGroupMembership.toList() : null;
-
     return {
       "name": fullName,
       "given_name": firstName,
@@ -170,7 +161,7 @@ class AuthInfo {
       "uiucedu_uin": uin,
       "sub": sub,
       "email": email,
-      "uiucedu_is_member_of": userGroupsToJson
+      "uiucedu_is_member_of": userGroupMembership?.toList()
     };
   }
 }

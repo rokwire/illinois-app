@@ -1,4 +1,6 @@
 
+import 'package:illinois/model/Auth.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/utils/Utils.dart';
 
 ////////////////////////////////
@@ -50,9 +52,11 @@ class Auth2User {
   final List<Auth2Role> roles;
   final List<Auth2Group> groups;
   final List<Auth2OrgMembership> orgMemberships;
+  final AuthInfo uiucAccount;
   
   
-  Auth2User({this.id, this.account, this.profile, this.permissions, this.roles, this.groups, this.orgMemberships});
+  Auth2User({this.id, this.account, this.profile, this.permissions, this.roles, this.groups, this.orgMemberships}) :
+    uiucAccount = AuthInfo.fromJson(Auth2OrgMembership.findInList(orgMemberships, orgId: Config().coreOrgId)?.userData);
 
   factory Auth2User.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2User(
@@ -82,17 +86,6 @@ class Auth2User {
     return (id != null) && id.isNotEmpty &&
       (account != null) && account.isValid &&
       (profile != null) && profile.isValid;
-  }
-
-  Auth2OrgMembership getOrgMembership(String orgId) {
-    if (orgMemberships != null) {
-      for (Auth2OrgMembership membership in orgMemberships) {
-        if (membership.orgId == orgId) {
-          return membership;
-        }
-      }
-    }
-    return null;
   }
 }
 
@@ -315,8 +308,15 @@ class Auth2OrgMembership {
     };
   }
 
-  dynamic getUserData(String key) {
-    return (userData != null) ? userData[key] : null;
+  static Auth2OrgMembership findInList(List<Auth2OrgMembership> authList, {String orgId }) {
+    if (authList != null) {
+      for (Auth2OrgMembership authEntry in authList) {
+        if ((orgId != null) && (authEntry.orgId == orgId)) {
+          return authEntry;
+        }
+      }
+    }
+    return null;
   }
 
   static List<Auth2OrgMembership> listFromJson(List<dynamic> jsonList) {
@@ -340,6 +340,7 @@ class Auth2OrgMembership {
     }
     return jsonList;
   }
+
 }
 
 ////////////////////////////////
