@@ -76,13 +76,14 @@ class Config with Service implements NotificationsListener {
 
   Map<String, dynamic> get secretKeys              { return (_config != null) ? (_config['secretKeys'] ?? {}) : {}; }
   Map<String, dynamic> get secretRokwire           { return secretKeys['rokwire'] ?? {}; }
-  Map<String, dynamic> get secretIlliniCash        { return secretKeys['illini_cash'] ?? {}; }
+  Map<String, dynamic> get secretCore              { return secretKeys['core'] ?? {}; }
   Map<String, dynamic> get secretShibboleth        { return secretKeys['shibboleth'] ?? {}; }
+  Map<String, dynamic> get secretIlliniCash        { return secretKeys['illini_cash'] ?? {}; }
   Map<String, dynamic> get secretLaundry           { return secretKeys['laundry'] ?? {}; }
   Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
   
   Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
-  List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
+  List<dynamic>        get supportedLocales        { return (_config != null) ? (_config['languages']) : null; }
   Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
   Map<String, dynamic> get onboardingInfo          { return (_config != null) ? (_config['onboarding'] ?? {}) : {}; }
 
@@ -144,6 +145,8 @@ class Config with Service implements NotificationsListener {
   String get gameDayTrackFieldUrl   { return thirdPartyServices['gameday_track_field_url']; }   // "https://fightingillini.com/sports/2015/3/24/armory.aspx#eventinfo"
   String get gameDayAllUrl          { return thirdPartyServices['gameday_all_url']; }           // "https://fightingillini.com/sports/2015/7/25/gameday.aspx"
   String get convergeUrl            { return thirdPartyServices['converge_url']; }              // "https://api.converge-engine.com/v1/rokwire"
+
+  String get coreOrgId              { return secretCore['org_id']; }
 
   String get shibbolethClientId     { return secretShibboleth['client_id']; }
   String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
@@ -355,10 +358,6 @@ class Config with Service implements NotificationsListener {
   }
 
   // Upgrade
-
-  String get orgId {
-    return null;
-  }
 
   String get appId {
     return _packageInfo?.packageName;
