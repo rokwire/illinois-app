@@ -366,7 +366,6 @@ class Auth2 with Service implements NotificationsListener {
     on Exception catch (e) {
       print(e.toString());
     }
-    return null;
   }
 
   Future<AuthCard> _loadAuthCardFromCache() async {
@@ -375,7 +374,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
-    String uin = _user?.getOrgMembership(Config().coreOrgId)?.getUserData('uin');
+    String uin = _user?.uiucAccount?.uin;
     String accessToken = _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
