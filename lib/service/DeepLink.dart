@@ -34,12 +34,16 @@ class DeepLink with Service {
 
     // 1. Initial Uri
     getInitialUri().then((uri) {
-      NotificationService().notify(notifyUri, uri);
+      if (uri != null) {
+        NotificationService().notify(notifyUri, uri);
+      }
     });
 
     // 2. Updated uri
     uriLinkStream.listen((Uri uri) async {
-      NotificationService().notify(notifyUri, uri);
+      if (uri != null) {
+        NotificationService().notify(notifyUri, uri);
+      }
     });
   }
 }
