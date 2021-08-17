@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Defined separate section in Flex UI for Student Guide features [#684](https://github.com/rokwire/illinois-app/issues/684).
 - Parsing group membership questions to json [#417](https://github.com/rokwire/illinois-app/issues/417).
 - Fixed onboarding screens that used ScaleableScrollView [#679](https://github.com/rokwire/illinois-app/issues/679).
+- Handle new line symbols in the html widget [#692](https://github.com/rokwire/illinois-app/issues/692).
 ### Added
 - Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
 ### Changed
