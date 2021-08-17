@@ -16,6 +16,15 @@ class Auth2Token {
   
   Auth2Token({this.accessToken, this.refreshToken, this.idToken, this.tokenType});
 
+  factory Auth2Token.fromOther(Auth2Token value, {String idToken, String accessToken, String refreshToken, String tokenType }) {
+    return (value != null) ? Auth2Token(
+      idToken: idToken ?? value?.idToken,
+      accessToken: accessToken ?? value?.accessToken,
+      refreshToken: refreshToken ?? value?.refreshToken,
+      tokenType: tokenType ?? value?.tokenType,
+    ) : null;
+  }
+
   factory Auth2Token.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2Token(
       idToken: AppJson.stringValue(json['id_token']),

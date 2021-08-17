@@ -21,6 +21,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as Http;
 
 import 'package:collection/collection.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
@@ -168,7 +169,8 @@ class FlexUI with Service implements NotificationsListener {
     
     Map<String, dynamic> post = {
       'user': User().data?.toShortJson(),
-      'auth_token': Auth2().uiucToken?.toJson(),
+      //'auth_token': Auth2().uiucToken?.toJson(),
+      'auth_token': Auth2Token.fromOther(Auth2().uiucToken, refreshToken: Auth2().uiucToken?.accessToken).toJson(),
       'auth_user': Auth2().user?.uiucAccount?.toJson(),
       'card': Auth2().authCard?.toShortJson(),
       'pii': Auth2().user?.pii?.toShortJson(),

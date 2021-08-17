@@ -480,11 +480,11 @@ class _OidcLogin {
   _OidcLogin({this.loginUrl, this.redirectUrl, this.params});
 
   factory _OidcLogin.fromOther(_OidcLogin value, { String loginUrl, String redirectUrl, Map<String, dynamic> params}) {
-    return _OidcLogin(
+    return (value != null) ? _OidcLogin(
       loginUrl: loginUrl ?? value?.loginUrl,
       redirectUrl: redirectUrl ?? value?.redirectUrl,
       params: params ?? value?.params
-    );
+    ) : null;
   }
 
   factory _OidcLogin.fromJson(Map<String, dynamic> json) {
