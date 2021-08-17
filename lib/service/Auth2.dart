@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
@@ -122,6 +123,17 @@ class Auth2 with Service implements NotificationsListener {
   Auth2User get user => _user;
   AuthCard get authCard => _authCard;
 
+  bool get isLoggedIn => (_token != null);
+  bool get isOidcLoggedIn => (_user?.uiucAccount != null);
+  bool get isPhoneLoggedIn => false;
+  bool get hasUin => (0 < _user?.uiucAccount?.uin?.length ?? 0);
+  bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
+  bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
+  bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
+  bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
+
+  bool isMemberOf(String group) => _user?.uiucAccount?.userGroupMembership?.contains(group) ?? false;
+
   // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {
@@ -161,10 +173,12 @@ class Auth2 with Service implements NotificationsListener {
     _processingOidcAuthentication = true;
     
     bool result = await _processOidcAuthentication(uri);
-    
+
+    Analytics().logAuth(action: Analytics.LogAuthLoginNetIdActionName, result: result);
+
     _processingOidcAuthentication = false;
     _completeOidcAuthentication(result);
-    
+
     return result;
   }
 
@@ -283,6 +297,8 @@ class Auth2 with Service implements NotificationsListener {
       _authCard = null;
       _saveAuthCardStringToCache(null);
       Storage().authCardTime = null;
+
+      Analytics().logAuth(action: Analytics.LogAuthLogoutActionName);
       
       NotificationService().notify(notifyCardChanged);
       NotificationService().notify(notifyLoginChanged);
