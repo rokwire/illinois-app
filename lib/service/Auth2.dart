@@ -10,6 +10,7 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -153,11 +154,17 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> _handleOidcAuthentication(Uri uri) async {
+    
+    NativeCommunicator().dismissSafariVC();
+    
     _cancelOidcAuthenticationTimer();
     _processingOidcAuthentication = true;
+    
     bool result = await _processOidcAuthentication(uri);
+    
     _processingOidcAuthentication = false;
     _completeOidcAuthentication(result);
+    
     return result;
   }
 
