@@ -170,7 +170,7 @@ class FlexUI with Service implements NotificationsListener {
     Map<String, dynamic> post = {
       'user': User().data?.toShortJson(),
       //'auth_token': Auth2().uiucToken?.toJson(),
-      'auth_token': Auth2Token.fromOther(Auth2().uiucToken, refreshToken: Auth2().uiucToken?.accessToken).toJson(),
+      'auth_token': Auth2Token.fromOther(Auth2().uiucToken, refreshToken: Auth2().uiucToken?.accessToken)?.toJson(),
       'auth_user': Auth2().user?.uiucAccount?.toJson(),
       'card': Auth2().authCard?.toShortJson(),
       'pii': Auth2().user?.pii?.toShortJson(),
