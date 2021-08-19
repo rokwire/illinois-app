@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not notify for null uri in DeepLink service.
 - Cache canonical app id in Config service.
 - Update MTD logo [#694](https://github.com/rokwire/illinois-app/issues/694).
+- FlexUI does not use talent chooser service any more, it loads content & rules from app assets [#696](https://github.com/rokwire/illinois-app/issues/696).
 
 ### Added
 - Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).
