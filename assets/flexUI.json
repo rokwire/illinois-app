@@ -129,7 +129,7 @@
 			"converge"                      : true,
 			"mtd_bus_number"                : true,
 			"parking_lot_directions"        : true,
-			"emergency"                     : true
+			"emergency"                     : false
 		}
 	}
 }
