@@ -49,6 +49,7 @@ class IlliniCashBallance {
     return (o is IlliniCashBallance) &&
       (o.mealPlanName == mealPlanName) &&
       (o.balance == balance) &&
+      (o.mealBalance == mealBalance) &&
       (o.cafeCreditBalance == cafeCreditBalance) &&
       (o.status == status) &&
       (o.housingResidenceStatus == housingResidenceStatus);
