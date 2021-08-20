@@ -157,6 +157,7 @@ class ExplorePanelState extends State<ExplorePanel>
   //Maps
   static const double MapBarHeight = 114;
 
+  bool _mapAllowed;
   MapController _nativeMapController;
   ListMapDisplayType _displayType = ListMapDisplayType.List;
   dynamic _selectedMapExplore;
@@ -238,61 +239,38 @@ class ExplorePanelState extends State<ExplorePanel>
               letterSpacing: 1.0),
         ),
       ),
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ExploreDisplayTypeHeader(
-              displayType: _displayType,
-              searchVisible: (_selectedTab != ExploreTab.Dining),
-              onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-              onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    children: _buildTabWidgets(),
-                  )),
-            ),
-              Expanded(
-                child: Stack(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: 12, right: 12, bottom: 12),
-                              child: Row(
-                                children: _buildFilterWidgets(),
-                              )),
-                        ),
-                        Expanded(
-                            child: Container(
-                          color: Styles().colors.background,
-                          child: Center(
-                            child: Stack(
-                              children: <Widget>[
-                                _buildMapView(context),
-                                _buildListView(),
-                                _buildDimmedContainer()
-                              ],
-                            ),
-                          ),
-                        ))
-                      ],
-                    ),
-                    _buildFilterValuesContainer()
-                  ],
-                ),
-              )
-            ]),
-            backgroundColor: Styles().colors.background,
-            bottomNavigationBar: _showTabBar ? TabBarWidget() : null,
-          );
-
+      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        ExploreDisplayTypeHeader(
+          displayType: _displayType,
+          searchVisible: (_selectedTab != ExploreTab.Dining),
+          onTapList: () => _selectDisplayType(ListMapDisplayType.List),
+          onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
+        SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+          Padding(padding: EdgeInsets.all(12), child:
+            Row(children: _buildTabWidgets(),
+        ),),),
+        Expanded(child:
+          Stack(children: <Widget>[
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
+                  Row(children: _buildFilterWidgets(),
+              ),),),
+              Expanded(child:
+                Container(color: Styles().colors.background, child:
+                  Stack(children: <Widget>[
+                    _buildMapView(),
+                    _buildListView(),
+                  ]),
+              ),),
+            ],),
+            _buildFilterValuesContainer()
+          ],),
+        ),
+      ]),
+      backgroundColor: Styles().colors.background,
+      bottomNavigationBar: _showTabBar ? TabBarWidget() : null,
+    );
   }
 
   void _initTabs() {
@@ -524,7 +502,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _refresh(() {
         _loadingTask = null;
         _displayExplores = explores;
-        _placeExploresOnMap(_displayExplores);
+        _placeExploresOnMap();
       });
   }
 
@@ -752,10 +730,12 @@ class ExplorePanelState extends State<ExplorePanel>
       exploresContent = _buildEmpty();
     }
 
-    return Visibility(
-        visible: (_displayType == ListMapDisplayType.List),
-        child: Container(
-            color: Styles().colors.background, child: exploresContent));
+    return Visibility(visible: (_displayType == ListMapDisplayType.List), child:
+      Stack(children: [
+        Container(color: Styles().colors.background, child: exploresContent),
+        _buildDimmedContainer(),
+      ]),
+    );
   }
 
   Widget _buildExploreEntry(BuildContext context, int index){
@@ -783,7 +763,7 @@ class ExplorePanelState extends State<ExplorePanel>
         child: exploreView);
   }
 
-  Widget _buildMapView(BuildContext context) {
+  Widget _buildMapView() {
     String title, description;
     Color exploreColor = Colors.white;
     if (_selectedMapExplore is Explore) {
@@ -801,10 +781,10 @@ class ExplorePanelState extends State<ExplorePanel>
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
-      MapWidget(
+      (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled" : _userLocationEnabled()},
-      ),
+      ) : Container(),
       Positioned(
           bottom: _mapExploreBarAnimationController.value,
           left: 0,
@@ -948,9 +928,13 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreTab.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       default:                message =  ''; break;
     }
-    return Container(child: Align(alignment: Alignment.center,
-      child: Text(message, textAlign: TextAlign.center,),
-    ));
+    return Center(child:
+      Column(children: <Widget>[
+        Expanded(child: Container(), flex: 1),
+        Text(message, textAlign: TextAlign.center,),
+        Expanded(child: Container(), flex: 3),
+      ]),
+    );
   }
 
   Widget _buildOffline() {
@@ -962,13 +946,14 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreTab.Dining: message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       default:                message =  ''; break;
     }
-    return Column(children: <Widget>[
-      Expanded(child: Container(), flex: 1),
-      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
-      Container(height:8),
-      Text(message),
-      Expanded(child: Container(), flex: 3),
-    ],);
+    return Center(child:
+      Column(children: <Widget>[
+        Expanded(child: Container(), flex: 1),
+        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+        Container(height:8),
+        Text(message),
+        Expanded(child: Container(), flex: 3),
+      ],),);
   }
 
   Widget _buildDimmedContainer() {
@@ -982,6 +967,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_displayType != displayType) {
       _refresh((){
         _displayType = displayType;
+        _mapAllowed = (_displayType == ListMapDisplayType.Map) || (_mapAllowed == true);
         _enableMap(_displayType == ListMapDisplayType.Map);
       });
     }
@@ -1007,9 +993,10 @@ class ExplorePanelState extends State<ExplorePanel>
     List<String> filterSubLabels = (selectedFilter.type ==
         ExploreFilterType.event_time) ? _buildFilterEventDateSubLabels() : null;
     bool hasSubLabels = AppCollection.isCollectionNotEmpty(filterSubLabels);
-    return Semantics(sortKey: _ExploreSortKey.filterLayout, child:Visibility(
-      visible: _filterOptionsVisible,
-      child: Padding(
+    return Semantics(sortKey: _ExploreSortKey.filterLayout,
+      child: Visibility(
+        visible: _filterOptionsVisible,
+        child: Padding(
           padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40),
           child: Semantics(child:Container(
             decoration: BoxDecoration(
@@ -1236,14 +1223,14 @@ class ExplorePanelState extends State<ExplorePanel>
   ///
   void _onNativeMapCreated(mapController) {
     _nativeMapController = mapController;
-    _placeExploresOnMap(_displayExplores);
+    _placeExploresOnMap();
     _enableMap(_displayType == ListMapDisplayType.Map);
     _enableMyLocationOnMap();
   }
 
-  void _placeExploresOnMap(List<Explore> explores) {
-    if (_nativeMapController != null) {
-      _nativeMapController.placePOIs(explores);
+  void _placeExploresOnMap() {
+    if ((_nativeMapController != null) && (_displayExplores != null))   {
+      _nativeMapController.placePOIs(_displayExplores);
     }
   }
 
