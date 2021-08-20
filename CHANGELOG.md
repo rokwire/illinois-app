@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+-Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
+### Changed
+- Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
 
 ## [3.0.0] 2021-08-19
 ### Fixed
