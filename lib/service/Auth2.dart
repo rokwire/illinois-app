@@ -23,7 +23,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
   
-  static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/shib-auth';
+  static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/oidc-auth';
 
   static const String notifyLoginStarted   = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded = "edu.illinois.rokwire.auth2.login.succeeded";
@@ -105,7 +105,7 @@ class Auth2 with Service implements NotificationsListener {
 
   void _onDeepLinkUri(Uri uri) {
     if (uri != null) {
-      Uri redirectUri = (_oidcLogin?.redirectUrl != null) ? Uri.tryParse(_oidcLogin.redirectUrl) : null;
+      Uri redirectUri = Uri.tryParse(REDIRECT_URI);
       if ((redirectUri != null) &&
           (redirectUri.scheme == uri.scheme) &&
           (redirectUri.authority == uri.authority) &&
@@ -233,7 +233,6 @@ class Auth2 with Service implements NotificationsListener {
     if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
 
       String url = "${Config().coreUrl}/services/auth/login-url";
-      //String redirectUrl = "$REDIRECT_URI/${DateTime.now().millisecondsSinceEpoch}";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
@@ -244,8 +243,7 @@ class Auth2 with Service implements NotificationsListener {
         'redirect_uri': REDIRECT_URI,
       });
       Response response = await Network().post(url, headers: headers, body: post);
-      _OidcLogin oidcLogin = (response?.statusCode == 200) ? _OidcLogin.fromJson(AppJson.decodeMap(response?.body)) : null;
-      return (oidcLogin != null) ? _OidcLogin.fromOther(oidcLogin, redirectUrl: REDIRECT_URI) : null;
+      return _OidcLogin.fromJson(AppJson.decodeMap(response?.body));
     }
     return null;
   }
@@ -475,18 +473,9 @@ class Auth2 with Service implements NotificationsListener {
 
 class _OidcLogin {
   final String loginUrl;
-  final String redirectUrl;
   final Map<String, dynamic> params;
   
-  _OidcLogin({this.loginUrl, this.redirectUrl, this.params});
-
-  factory _OidcLogin.fromOther(_OidcLogin value, { String loginUrl, String redirectUrl, Map<String, dynamic> params}) {
-    return (value != null) ? _OidcLogin(
-      loginUrl: loginUrl ?? value?.loginUrl,
-      redirectUrl: redirectUrl ?? value?.redirectUrl,
-      params: params ?? value?.params
-    ) : null;
-  }
+  _OidcLogin({this.loginUrl, this.params});
 
   factory _OidcLogin.fromJson(Map<String, dynamic> json) {
     return (json != null) ? _OidcLogin(
