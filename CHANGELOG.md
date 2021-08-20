@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.21] - 2021-08-20
+### Fixed
+- Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
+### Changed
+- Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
+
+## [2.6.20] - 2021-08-18
+### Changed
+- Update MTD logo [#694](https://github.com/rokwire/illinois-app/issues/694).
+
+## [2.6.19] - 2021-08-16
+### Fixed
+- Handle new line symbols in the html widget [#692](https://github.com/rokwire/illinois-app/issues/692).
+
 ## [2.6.18] - 2021-08-12
 ### Changed
 - Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
