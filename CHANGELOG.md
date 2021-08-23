@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
 
+## [2.6.22] - 2021-08-23
+### Fixed
+- Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
+### Changed
+- Delay creating MapWidget  until needed in Laundry Home, Laundry Detail and Event Schedule panels [#706](https://github.com/rokwire/illinois-app/issues/706).
+
 ## [2.6.21] - 2021-08-20
 ### Fixed
 - Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).

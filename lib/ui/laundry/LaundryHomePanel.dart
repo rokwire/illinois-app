@@ -48,6 +48,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   List<LaundryRoom> _rooms;
   bool _loading = false;
   _DisplayType _displayType = _DisplayType.List;
+  bool _mapAllowed;
   MapController _nativeMapController;
   LocationServicesStatus _locationServicesStatus;
   dynamic _selectedMapLaundry;
@@ -302,10 +303,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
 
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
-      MapWidget(
+      (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled": _userLocationEnabled()},
-      ),
+      ) : Container(),
       Positioned(
           bottom: _mapLaundryBarAnimationController.value,
           left: 0,
@@ -402,6 +403,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_displayType != displayType) {
       setState(() {
         _displayType = displayType;
+        _mapAllowed = (_displayType == _DisplayType.Map) || (_mapAllowed == true);
         _enableMap(_displayType == _DisplayType.Map);
       });
     }
