@@ -84,6 +84,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   //Maps
   static const double MapBarHeight = 114;
 
+  bool _mapAllowed;
   MapController _nativeMapController;
   ListMapDisplayType _displayType = ListMapDisplayType.List;
   dynamic _selectedMapExplore;
@@ -177,7 +178,6 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                 children: <Widget>[
                                   _buildMapView(context),
                                   _buildListView(),
-                                  _buildDimmedContainer()
                                 ],
                               ),
                             ),
@@ -216,12 +216,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       exploresContent = _buildEmpty();
     }
 
-    return Visibility(
-        visible: (_displayType == ListMapDisplayType.List),
-        child: Container(
-            color: Styles().colors.background, child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                exploresContent)));
+    return Visibility(visible: (_displayType == ListMapDisplayType.List), child:
+      Stack(children: [
+        Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors.background, child: exploresContent),
+        _buildDimmedContainer(),
+      ])
+    );
   }
 
   List<Widget> _constructListContent() {
@@ -290,6 +290,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     if (_displayType != displayType) {
       _refresh(() {
         _displayType = displayType;
+        _mapAllowed = (_displayType == ListMapDisplayType.Map) || (_mapAllowed == true);
         _enableMap(_displayType == ListMapDisplayType.Map);
       });
     }
@@ -615,10 +616,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
-      MapWidget(
+      (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
         creationParams: { "myLocationEnabled" : _userLocationEnabled()},
-      ),
+      ) : Container(),
       Positioned(
           bottom: _mapExploreBarAnimationController.value,
           left: 0,

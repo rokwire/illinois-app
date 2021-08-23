@@ -52,6 +52,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   //Maps
   MapController _nativeMapController;
   bool _detailVisible = true;
+  bool _mapAllowed = false;
 
   @override
   void initState() {
@@ -87,9 +88,9 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
       appBar: _buildHeaderBar(),
       body: Stack(
         children: <Widget>[
-          MapWidget(
+          _mapAllowed ? MapWidget(
             onMapCreated: _onNativeMapCreated,
-          ),
+          ) : Container(),
           Visibility(
               visible: _detailVisible,
               child: Column(
@@ -380,6 +381,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     if (_detailVisible) {
       setState(() {
         _detailVisible = false;
+        _mapAllowed = true;
       });
     }
   }
