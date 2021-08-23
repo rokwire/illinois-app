@@ -30,20 +30,16 @@ import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /*
-	"widgets": {
-		"home":{
-			"widget1": {
-				"title": "UIUC Wednesday 2020/03/18",
-				"text": "7 Dobromir, can we have 3 widgets made like we hacked voter widget for c o v i d. Stored in assets.json. They will be hidden by talent chooser/assets until needed.",
-				"can_close": true,
-				"buttons":[
-					{"title":"Yes", "link": {"url": "https://illinois.edu", "options": { "target": "internal", "title": "Yes Web Panel" } } },
-					{"title":"No", "link": {"url": "https://illinois.edu", "options": { "target": "external" } } },
-					{"title":"Maybe", "link": {"url": "https://illinois.edu", "options": { "target": { "ios": "internal", "android": "external" } } } }
-				]
-			}
-		}
-	},
+  "emergency": {
+    "title": "Emergency",
+    "text": "Something urgent happened.",
+    "can_close": true,
+    "buttons":[
+      {"title":"Yes", "link": {"url": "https://illinois.edu", "options": { "target": "internal", "title": "Yes Web Panel" } } },
+      {"title":"No", "link": {"url": "https://illinois.edu", "options": { "target": "external" } } },
+      {"title":"Maybe", "link": {"url": "https://illinois.edu", "options": { "target": { "ios": "internal", "android": "external" } } } }
+    ]
+  }
 */
 
 class FlexContentWidget extends StatefulWidget {
