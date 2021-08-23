@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
 - Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
+- Unwanted display of test emergency widget [#710](https://github.com/rokwire/illinois-app/issues/710).
 ### Changed
 - Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
 - Delay creating MapWidget  until needed in Laundry Home, Laundry Detail and Event Schedule panels [#706](https://github.com/rokwire/illinois-app/issues/706).
