@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
--Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
+- Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
+- Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
 ### Changed
 - Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
 
