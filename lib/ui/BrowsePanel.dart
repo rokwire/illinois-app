@@ -292,6 +292,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateStudentGuide(),
       );
     }
+    else if (code == 'inbox') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
+        icon: 'images/icon-browse-inbox.png',
+        color: Styles().colors.fillColorSecondary,
+        onTap: () => _navigateInbox(),
+      );
+    }
     else if (code == 'privacy_center') {
       return _GridSquareButton(
         title: Localization().getStringEx('panel.browse.button.privacy_center.title', 'Privacy Center'),
@@ -583,6 +592,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   void _navigateStudentGuide() {
     Analytics.instance.logSelect(target: "Student Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+  }
+
+  void _navigateInbox() {
+    Analytics.instance.logSelect(target: "Inbox");
   }
 
   void _navigatePrivacyCenter() {
