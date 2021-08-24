@@ -33,6 +33,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -596,6 +597,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateInbox() {
     Analytics.instance.logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 
   void _navigatePrivacyCenter() {
