@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
 - Delay creating MapWidget  until needed in Laundry Home, Laundry Detail and Event Schedule panels [#706](https://github.com/rokwire/illinois-app/issues/706).
+### Added
+- Added sample wellness panels in embedded student guide content [#715](https://github.com/rokwire/illinois-app/issues/715).
 
 ## [3.0.0] 2021-08-19
 ### Fixed

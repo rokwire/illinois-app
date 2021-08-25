@@ -444,6 +444,8 @@ class UiFontFamilies{
   String get semiBoldIt   => _familyMap["semi_bold_italic"];
   String get thin         => _familyMap["thin"];
   String get thinIt       => _familyMap["thin_italic"];
+
+  String fromCode(String code) => _familyMap[code];
 }
 
 class UiStyles {
