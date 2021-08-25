@@ -22,6 +22,7 @@ import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -398,7 +399,11 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     }
 
     String url = AppMapPathKey.entry(ribbonButton, 'url');
-    if (AppString.isStringNotEmpty(url)) {
+    String guideId = AppMapPathKey.entry(ribbonButton, 'guide_id');
+    if (AppString.isStringNotEmpty(guideId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideId,)));
+    }
+    else if (AppString.isStringNotEmpty(url)) {
       if(AppUrl.launchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
