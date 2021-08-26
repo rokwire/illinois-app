@@ -20,8 +20,8 @@ class InboxHomePanel extends StatefulWidget {
 
 class _InboxHomePanelState extends State<InboxHomePanel> implements NotificationsListener {
 
-  List<_FilterEntry> _types = [
-    _FilterEntry(value: null, name: "Any Type"),
+  List<_FilterEntry> _categories = [
+    _FilterEntry(value: null, name: "Any Category"),
     _FilterEntry(value: "Admin"),
     _FilterEntry(value: "Academic"),
     _FilterEntry(value: "Athletics"),
@@ -41,7 +41,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     _FilterEntry(name: "Last Month", value: _TimeFilter.LastMonth),
   ];
 
-  String _selectedType;
+  String _selectedCategory;
   _TimeFilter _selectedTime;
   _FilterType _selectedFilter;
   
@@ -151,7 +151,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     dynamic selectedFilterValue;
     List<String> subLabels;
     switch(_selectedFilter) {
-      case _FilterType.Type: filterValues = _types; selectedFilterValue = _selectedType; subLabels = null; break;
+      case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
       default: filterValues = []; break;
     }
@@ -237,14 +237,41 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     return timeDates;
   }
 
+  static List<DateTime> _getTimeDates(_TimeFilter timeFilter) {
+    DateTime now = DateTime.now();
+    switch(timeFilter) {
+      case _TimeFilter.Today:             return [ DateTime(now.year, now.month, now.day) ];
+      case _TimeFilter.TodayAndYesterday: return [ DateTime(now.year, now.month, now.day - 1)];
+      case _TimeFilter.ThisWeek:          return [ DateTime(now.year, now.month, now.day - now.weekday + 1) ];
+      case _TimeFilter.LastWeek:          return [ DateTime(now.year, now.month, now.day - now.weekday + 1 - 7), DateTime(now.year, now.month, now.day - now.weekday)];
+      case _TimeFilter.ThisMonth:         return [ DateTime(now.year, now.month, 1)];
+      case _TimeFilter.LastMonth:         return [ DateTime(now.year, now.month - 1, 1), DateTime(now.year, now.month, 0)];
+    }
+    return null;
+  }
+
   void _onFilterValue(_FilterType filterType, _FilterEntry filterEntry) {
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
     setState(() {
       switch(filterType) {
-        case _FilterType.Type: _selectedType = filterEntry?.value; break;
+        case _FilterType.Category: _selectedCategory = filterEntry?.value; break;
         case _FilterType.Time: _selectedTime = filterEntry?.value; break;
       }
       _selectedFilter = null;
+      _loading = true;
+    });
+
+    List<DateTime> dates = _getTimeDates(_selectedTime);
+    DateTime startDate = ((dates != null) && (0 < dates.length)) ? dates[0] : null;
+    DateTime endDate = ((dates != null) && (1 < dates.length)) ? dates[1] : null;
+
+    Inbox().loadMessages(category: _selectedCategory, startDate: startDate, endDate: endDate).then((List<InboxMessage> messages) {
+      if (mounted) {
+        setState(() {
+          _messages = messages;
+          _loading = false;
+        });
+      }
     });
   }
 
@@ -255,10 +282,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
         Row(children: <Widget>[
           FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_types, _selectedType)?.name ?? '',
-            active: _selectedFilter == _FilterType.Type,
+            label: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
+            active: _selectedFilter == _FilterType.Category,
             visible: true,
-            onTap: () { _onFilter(_FilterType.Type); }
+            onTap: () { _onFilter(_FilterType.Category); }
           ),
           FilterSelectorWidget(
             label: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
@@ -306,7 +333,7 @@ enum _TimeFilter {
 }
 
 enum _FilterType {
-  Type, Time
+  Category, Time
 }
 
 class _InboxMessageCard extends StatefulWidget {

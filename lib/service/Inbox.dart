@@ -16,7 +16,7 @@ class Inbox /* with Service */ {
 
   Inbox._internal();
 
-  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String type, int offset, int limit }) async {
+  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, int offset, int limit }) async {
     String url = "${Config().notificationsUrl}/api/messages";
     Map<String, String> headers = {
       Network.RokwireApiKey : Config().rokwireApiKey
