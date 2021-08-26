@@ -10,6 +10,7 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class InboxHomePanel extends StatefulWidget {
   InboxHomePanel();
@@ -345,22 +346,33 @@ class _InboxMessageCardState extends State<_InboxMessageCard> {
         child: Stack(children: [
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Text(widget.message?.category ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
-            Container(height: 3),
-            Row(children: [
-              Expanded(child:
-                Text(widget.message?.subject ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
-            )]),
-            Container(height: 4),
-            Row(children: [
-              Expanded(child:
-                Text(widget.message?.body ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
-            )]),
-            Container(height: 6),
+            AppString.isStringNotEmpty(widget.message?.category) ?
+              Padding(padding: EdgeInsets.only(bottom: 3), child:
+                Row(children: [
+                  Expanded(child:
+                    Text(widget.message?.category ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+              )])) : Container(),
+            
+
+            AppString.isStringNotEmpty(widget.message?.subject) ?
+              Padding(padding: EdgeInsets.only(bottom: 4), child:
+                Row(children: [
+                  Expanded(child:
+                    Text(widget.message?.subject ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
+              )])) : Container(),
+
+            AppString.isStringNotEmpty(widget.message?.body) ?
+              Padding(padding: EdgeInsets.only(bottom: 6), child:
+                Row(children: [
+                  Expanded(child:
+                    Text(widget.message?.body ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
+              )])) : Container(),
+
             Row(children: [
               Expanded(child:
                 Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface))
             )]),
+          
           ])),
           Container(color: Styles().colors.fillColorSecondary, height: 4),
           Visibility(visible: User().favoritesStarVisible, child:
