@@ -1,6 +1,9 @@
-import 'dart:math';
 
+import 'package:http/http.dart';
 import 'package:illinois/model/Inbox.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Network.dart';
+import 'package:illinois/utils/Utils.dart';
 
 /// Inbox service does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
 class Inbox /* with Service */ {
@@ -14,7 +17,17 @@ class Inbox /* with Service */ {
   Inbox._internal();
 
   Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String type, int offset, int limit }) async {
-    return Future.delayed(Duration(seconds: 3), () {
+    String url = "${Config().notificationsUrl}/api/messages";
+    Map<String, String> headers = {
+      Network.RokwireApiKey : Config().rokwireApiKey
+    };
+
+    Response response = await Network().get(url, auth: NetworkAuth.User, headers: headers);
+    return (response?.statusCode == 200) ? InboxMessage.listFromJson(AppJson.decodeList(response?.body)) : null;
+  }
+
+  /*return Future.delayed(Duration(seconds: 3), () { return _buildRandomMessages(); });
+  List<InboxMessage> _buildRandomMessages() {
       List<String> subjects = ['Important!', 'Exclusive News', 'Disappointing News', 'Attention Required', 'Silent Notification', 'Test Message', 'Incredible Event'];
       List<String> categories = ['Admin', 'Academic', 'Athletics', 'Community', 'Entertainment', 'Recreation', 'Other'];
       List<String> bodies = [
@@ -36,7 +49,6 @@ class Inbox /* with Service */ {
           sender: InboxSender(type: InboxSenderType.User, user: InboxSenderUser(email: 'misho@inabyte.bg'))));
       }
       return result;
-    });
-  }
+  }*/
 
 }
