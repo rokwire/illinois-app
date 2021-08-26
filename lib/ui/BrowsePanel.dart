@@ -742,6 +742,8 @@ class _GridSquareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const int contentHeight = 80;
+    double scaleFactorAdditionalHeight = MediaQuery.of(context).textScaleFactor * 30 ;
     return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -751,7 +753,7 @@ class _GridSquareButton extends StatelessWidget {
           button: true,
           excludeSemantics: true,
           child: Container(
-            height: 100,
+            height: contentHeight + scaleFactorAdditionalHeight,
             decoration: BoxDecoration(
                           color: color,
                           //border: Border.all(color: Colors.grey, width: 1),
