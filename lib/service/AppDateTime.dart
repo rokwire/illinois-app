@@ -22,6 +22,7 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart' as timezone;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
@@ -93,6 +94,10 @@ class AppDateTime with Service {
       Log.e(e.toString());
     }
     return dateTime;
+  }
+
+  String utcDateTimeToString(DateTime dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 
   DateTime getUtcTimeFromDeviceTime(DateTime dateTime) {

@@ -1,0 +1,257 @@
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/Utils.dart';
+import 'package:intl/intl.dart';
+import 'package:sprintf/sprintf.dart';
+
+class InboxMessage {
+  final String   messageId;
+  final int      priority;
+  final String   topic;
+  final String   category;
+  
+  final DateTime dateCreatedUtc;
+  final DateTime dateUpdatedUtc;
+  final DateTime dateSentUtc;
+
+  final String   subject;
+  final String   body;
+  
+  final InboxSender          sender;
+  final List<InboxRecepient> recepients;
+
+  InboxMessage({this.messageId, this.priority, this.topic, this.category,
+    this.dateCreatedUtc, this.dateUpdatedUtc, this.dateSentUtc,
+    this.subject, this.body,
+    this.sender, this.recepients
+  });
+
+  factory InboxMessage.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? InboxMessage(
+      messageId: AppJson.stringValue(json['id']),
+      priority: AppJson.intValue(json['priority']),
+      topic: AppJson.stringValue(json['topic']),
+      category: AppJson.stringValue(json['category']),
+
+      dateCreatedUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['date_created'])),
+      dateUpdatedUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['date_updated'])),
+      dateSentUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['date_sent'])),
+
+      subject: AppJson.stringValue(json['subject']),
+      body: AppJson.stringValue(json['body']),
+
+      sender: InboxSender.fromJson(AppJson.mapValue(json['sender'])),
+      recepients: InboxRecepient.listFromJson(AppJson.listValue(json['recipients']))
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': messageId,
+      'priority': priority,
+      'topic': topic,
+
+      'date_created': AppDateTime().utcDateTimeToString(dateCreatedUtc),
+      'date_updated': AppDateTime().utcDateTimeToString(dateUpdatedUtc),
+      'date_sent': AppDateTime().utcDateTimeToString(dateSentUtc),
+
+      'subject': subject,
+      'body': body,
+
+      'sender': sender?.toJson(),
+      'recipients': InboxRecepient.listToJson(recepients),
+    };
+  }
+
+  String get displaySender {
+    if (sender?.type == InboxSenderType.System) {
+      return 'System';
+    }
+    else if (sender?.type == InboxSenderType.User) {
+      return sender?.user?.email ?? 'Unkown';
+    }
+    else {
+      return 'Unkown';
+    }
+  }
+
+  String get displayInfo {
+    
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
+    if (deviceDateTime != null) {
+      DateTime now = DateTime.now();
+      if (deviceDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(deviceDateTime);
+        if (difference.inSeconds < 60) {
+          return 'Sent by $displaySender now.';
+        }
+        else if (difference.inMinutes < 60) {
+          return sprintf((difference.inMinutes != 1) ?
+            'Sent by %s about %s minutes ago.' :
+            'Sent by %s about a minute ago.',
+            [displaySender, difference.inMinutes]);
+        }
+        else if (difference.inHours < 24) {
+          return sprintf((difference.inHours != 1) ?
+            'Sent by %s about %s hours ago.' :
+            'Sent by %s about an hour ago.',
+            [displaySender, difference.inHours]);
+        }
+        else if (difference.inDays < 30) {
+          return sprintf((difference.inDays != 1) ?
+            'Sent by %s about %s days ago.' :
+            'Sent by %s about a day ago.',
+            [displaySender, difference.inDays]);
+        }
+        else {
+          int differenceInMonths = difference.inDays ~/ 30;
+          if (differenceInMonths < 12) {
+            return sprintf((differenceInMonths != 1) ?
+              'Sent by %s about %s months ago.' :
+              'Sent by %s about a month ago.',
+              [displaySender, differenceInMonths]);
+          }
+        }
+      }
+      String value = DateFormat("MMM dd, yyyy").format(deviceDateTime);
+      return sprintf(
+        'Sent by %s on %s.',
+        [displaySender, value]);
+    }
+    else {
+      return "Sent by $displaySender";
+    }
+  }
+
+  static List<InboxMessage> listFromJson(List<dynamic> jsonList) {
+    List<InboxMessage> result;
+    if (jsonList != null) {
+      result = [];
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is Map) ? InboxMessage.fromJson(jsonEntry) : null);
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic> listToJson(List<InboxMessage> messagesList) {
+    List<dynamic> result;
+    if (messagesList != null) {
+      result = [];
+      for (dynamic message in messagesList) {
+        result.add(message?.toJson());
+      }
+    }
+    return result;
+  }
+}
+
+class InboxRecepient {
+  final String userId;
+  
+  InboxRecepient({this.userId});
+
+  factory InboxRecepient.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? InboxRecepient(
+      userId: AppJson.stringValue(json['user_id'])
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user_id': userId,
+    };
+  }
+
+  static List<InboxRecepient> listFromJson(List<dynamic> jsonList) {
+    List<InboxRecepient> result;
+    if (jsonList != null) {
+      result = [];
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is Map) ? InboxRecepient.fromJson(jsonEntry) : null);
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic> listToJson(List<InboxRecepient> recepientsList) {
+    List<dynamic> result;
+    if (recepientsList != null) {
+      result = [];
+      for (dynamic recepient in recepientsList) {
+        result.add(recepient?.toJson());
+      }
+    }
+    return result;
+  }
+}
+
+class InboxSender {
+  final InboxSenderType type;
+  final InboxSenderUser user;
+
+  InboxSender({this.type, this.user});
+
+  factory InboxSender.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? InboxSender(
+      type: inboxSenderTypeFromString(AppJson.stringValue(json['type'])),
+      user: InboxSenderUser.fromJson(AppJson.mapValue(json['user'])),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': inboxSenderTypeToString(type),
+      'user': user?.toJson(),
+    };
+  }  
+}
+
+class InboxSenderUser {
+  final String uin;
+  final String email;
+  final String phone;
+  final List<String> groupsMembership;
+
+  InboxSenderUser({this.uin, this.email, this.phone, this.groupsMembership});
+
+  factory InboxSenderUser.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? InboxSenderUser(
+      uin: AppJson.stringValue(json['uiucedu_uin']),
+      email: AppJson.stringValue(json['email']),
+      phone: AppJson.stringValue(json['phone']),
+      groupsMembership: AppJson.listStringsValue(json['uiucedu_is_member_of']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uiucedu_uin': uin,
+      'email': email,
+      'phone': phone,
+      'uiucedu_is_member_of': groupsMembership,
+    };
+  }
+}
+
+enum InboxSenderType { System, User }
+
+InboxSenderType inboxSenderTypeFromString(String value) {
+  if (value == 'system') {
+    return InboxSenderType.System;
+  }
+  else if (value == 'user') {
+    return InboxSenderType.User;
+  }
+  else {
+    return null;
+  }
+}
+
+String inboxSenderTypeToString(InboxSenderType value) {
+  switch(value) {
+    case InboxSenderType.System: return 'system';
+    case InboxSenderType.User: return 'user';
+  }
+  return null;
+}

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -40,11 +43,25 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   String _selectedType;
   _TimeFilter _selectedTime;
   _FilterType _selectedFilter;
+  
+  bool _loading;
+  List<InboxMessage> _messages;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, []);
+    
+    _loading = true;
+    Inbox().loadMessages().then((List<InboxMessage> messages) {
+      if (mounted) {
+        setState(() {
+          _messages = messages;
+          _loading = false;
+        });
+      }
+    });
   }
   @override
   void dispose() {
@@ -78,8 +95,15 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   Widget _buildContent() {
     return Stack(children: [
-      Padding(padding: EdgeInsets.only(top: 12), child:
-        Container()
+      Visibility(visible: (_loading != true), child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
+          _buildMessagesContent()
+        ),
+      ),
+      Visibility(visible: (_loading == true), child:
+        Align(alignment: Alignment.center, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), )
+        )
       ),
       Visibility(visible: (_selectedFilter != null), child:
         Stack(children:<Widget>[
@@ -88,6 +112,28 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         ]),
       ),
     ]);
+  }
+
+  Widget _buildMessagesContent() {
+    if (_messages == null) {
+      return Container();
+    }
+    else if (_messages.length == 0) {
+      return Column(children: <Widget>[
+        Expanded(child: Container(), flex: 1),
+        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
+        Expanded(child: Container(), flex: 3),
+      ]);
+    }
+    else {
+      return ListView.separated(
+        separatorBuilder: (context, index) => Container(height: 24),
+        itemCount: _messages.length,
+        itemBuilder: (BuildContext context, int index){
+          return _InboxMessageCard(message: _messages[index]);
+        },
+        controller: _scrollController);
+    }
   }
 
   Widget _buildDisabledContentLayer() {
@@ -260,4 +306,86 @@ enum _TimeFilter {
 
 enum _FilterType {
   Type, Time
+}
+
+class _InboxMessageCard extends StatefulWidget {
+  final InboxMessage message;
+  _InboxMessageCard({this.message});
+
+  @override
+  _InboxMessageCardState createState() {
+    return _InboxMessageCardState();
+  }
+}
+
+class _InboxMessageCardState extends State<_InboxMessageCard> {
+
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+      Container(
+        decoration: BoxDecoration(
+          color: Styles().colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+        ),
+        clipBehavior: Clip.none,
+        child: Stack(children: [
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Text(widget.message?.category ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+            Container(height: 3),
+            Row(children: [
+              Expanded(child:
+                Text(widget.message?.subject ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
+            )]),
+            Container(height: 4),
+            Row(children: [
+              Expanded(child:
+                Text(widget.message?.body ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
+            )]),
+            Container(height: 6),
+            Row(children: [
+              Expanded(child:
+                Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface))
+            )]),
+          ])),
+          Container(color: Styles().colors.fillColorSecondary, height: 4),
+          Visibility(visible: User().favoritesStarVisible, child:
+            Align(alignment: Alignment.topRight, child:
+            Semantics(
+              label: _isFavorite
+                  ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                  : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+              hint: _isFavorite
+                  ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                  : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+              button: true,
+              child:
+              GestureDetector(onTap: _onTapFavorite, child:
+                Container(padding: EdgeInsets.all(9), child:
+                  Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+            ),)),),),
+        ],)
+    ),);
+  }
+
+  void _onTapFavorite() {
+    Analytics.instance.logSelect(target: "Favorite: ${widget.message.subject}");
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+  }
 }
