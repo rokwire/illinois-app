@@ -22,7 +22,6 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:timezone/timezone.dart' as timezone;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 

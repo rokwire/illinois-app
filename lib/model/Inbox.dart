@@ -1,5 +1,4 @@
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
