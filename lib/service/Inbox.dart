@@ -1,6 +1,4 @@
 
-import 'dart:io';
-
 import 'package:http/http.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Config.dart';
