@@ -20,7 +20,7 @@ class InboxHomePanel extends StatefulWidget {
 
 class _InboxHomePanelState extends State<InboxHomePanel> implements NotificationsListener {
 
-  List<_FilterEntry> _categories = [
+  final List<_FilterEntry> _categories = [
     _FilterEntry(value: null, name: "Any Category"),
     _FilterEntry(value: "Admin"),
     _FilterEntry(value: "Academic"),
@@ -31,7 +31,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     _FilterEntry(value: "Other"),
   ];
 
-  List<_FilterEntry> _times = [
+  final List<_FilterEntry> _times = [
     _FilterEntry(name: "Any Time", value: null),
     _FilterEntry(name: "Today", value: _TimeFilter.Today),
     _FilterEntry(name: "Today and Yesterday", value: _TimeFilter.TodayAndYesterday),
@@ -41,29 +41,27 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     _FilterEntry(name: "Last Month", value: _TimeFilter.LastMonth),
   ];
 
+  final int _messagesPageSize = 8;
+
   String _selectedCategory;
   _TimeFilter _selectedTime;
   _FilterType _selectedFilter;
+  bool _hasMoreMessages;
   
-  bool _loading;
-  List<InboxMessage> _messages;
+  bool _loading, _loadingMore;
+  List<InboxMessage> _messages = <InboxMessage>[];
   ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, []);
-    
-    _loading = true;
-    Inbox().loadMessages().then((List<InboxMessage> messages) {
-      if (mounted) {
-        setState(() {
-          _messages = messages;
-          _loading = false;
-        });
-      }
-    });
+
+    _scrollController.addListener(_scrollListener);
+
+    _loadinInitialContent();
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -116,10 +114,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildMessagesContent() {
-    if (_messages == null) {
-      return Container();
-    }
-    else if (_messages.length == 0) {
+    if (_messages.length == 0) {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
         Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
@@ -127,14 +122,22 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       ]);
     }
     else {
+      int count = _messages.length + ((_loadingMore == true) ? 1 : 0);
       return ListView.separated(
         separatorBuilder: (context, index) => Container(height: 24),
-        itemCount: _messages.length,
+        itemCount: count,
         itemBuilder: (BuildContext context, int index){
-          return _InboxMessageCard(message: _messages[index]);
+          return (index < _messages.length) ? _InboxMessageCard(message: _messages[index]) : _buildListLoadingIndicator();
         },
         controller: _scrollController);
     }
+  }
+
+  Widget _buildListLoadingIndicator() {
+    return Container(padding: EdgeInsets.all(6), child:
+      Align(alignment: Alignment.center, child:
+        SizedBox(width: 24, height: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),),),),);
   }
 
   Widget _buildDisabledContentLayer() {
@@ -258,21 +261,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         case _FilterType.Time: _selectedTime = filterEntry?.value; break;
       }
       _selectedFilter = null;
-      _loading = true;
     });
 
-    List<DateTime> dates = _getTimeDates(_selectedTime);
-    DateTime startDate = ((dates != null) && (0 < dates.length)) ? dates[0] : null;
-    DateTime endDate = ((dates != null) && (1 < dates.length)) ? dates[1] : null;
-
-    Inbox().loadMessages(category: _selectedCategory, startDate: startDate, endDate: endDate).then((List<InboxMessage> messages) {
-      if (mounted) {
-        setState(() {
-          _messages = messages;
-          _loading = false;
-        });
-      }
-    });
+    _loadinInitialContent();
   }
 
   // Filters
@@ -303,6 +294,61 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     });
   }
 
+  // Content
+
+  void _loadinInitialContent() {
+    List<DateTime> dates = _getTimeDates(_selectedTime);
+    DateTime startDate = ((dates != null) && (0 < dates.length)) ? dates[0] : null;
+    DateTime endDate = ((dates != null) && (1 < dates.length)) ? dates[1] : null;
+
+    setState(() {
+      _loading = true;
+    });
+
+    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: startDate, endDate: endDate).then((List<InboxMessage> messages) {
+      if (mounted) {
+        setState(() {
+          if (messages != null) {
+            _messages = messages;
+            _hasMoreMessages = (_messagesPageSize <= messages.length);
+          }
+          else {
+            _messages.clear();
+            _hasMoreMessages = null;
+          }
+          _loading = false;
+        });
+      }
+    });
+  }
+
+  void _loadinMoreContent() {
+    List<DateTime> dates = _getTimeDates(_selectedTime);
+    DateTime startDate = ((dates != null) && (0 < dates.length)) ? dates[0] : null;
+    DateTime endDate = ((dates != null) && (1 < dates.length)) ? dates[1] : null;
+
+    setState(() {
+      _loadingMore = true;
+    });
+
+    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: startDate, endDate: endDate).then((List<InboxMessage> messages) {
+      if (mounted) {
+        setState(() {
+          if (messages != null) {
+            _messages.addAll(messages);
+            _hasMoreMessages = (_messagesPageSize <= messages.length);
+          }
+          _loadingMore = false;
+        });
+      }
+    });
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
+      _loadinMoreContent();
+    }
+  }
 }
 
 class _FilterEntry {
