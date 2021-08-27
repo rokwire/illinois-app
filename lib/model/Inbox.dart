@@ -76,7 +76,7 @@ class InboxMessage {
 
   String get displayInfo {
     
-    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc);
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc ?? dateCreatedUtc);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {
