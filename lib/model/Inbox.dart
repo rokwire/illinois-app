@@ -1,9 +1,10 @@
+import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
-class InboxMessage {
+class InboxMessage with Favorite {
   final String   messageId;
   final int      priority;
   final String   topic;
@@ -61,6 +62,30 @@ class InboxMessage {
       'recipients': InboxRecepient.listToJson(recepients),
     };
   }
+
+  static List<InboxMessage> listFromJson(List<dynamic> jsonList) {
+    List<InboxMessage> result;
+    if (jsonList != null) {
+      result = [];
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is Map) ? InboxMessage.fromJson(jsonEntry) : null);
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic> listToJson(List<InboxMessage> messagesList) {
+    List<dynamic> result;
+    if (messagesList != null) {
+      result = [];
+      for (dynamic message in messagesList) {
+        result.add(message?.toJson());
+      }
+    }
+    return result;
+  }
+
+  // Accessies
 
   String get displaySender {
     if (sender?.type == InboxSenderType.System) {
@@ -122,27 +147,18 @@ class InboxMessage {
     }
   }
 
-  static List<InboxMessage> listFromJson(List<dynamic> jsonList) {
-    List<InboxMessage> result;
-    if (jsonList != null) {
-      result = [];
-      for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? InboxMessage.fromJson(jsonEntry) : null);
-      }
-    }
-    return result;
-  }
+  // Favorite
 
-  static List<dynamic> listToJson(List<InboxMessage> messagesList) {
-    List<dynamic> result;
-    if (messagesList != null) {
-      result = [];
-      for (dynamic message in messagesList) {
-        result.add(message?.toJson());
-      }
-    }
-    return result;
-  }
+  @override
+  String get favoriteId => messageId;
+
+  @override
+  String get favoriteTitle => subject;
+
+  @override
+  String get favoriteKey => favoriteKeyName;
+
+  static String favoriteKeyName = "InboxMessageIds";
 }
 
 class InboxRecepient {

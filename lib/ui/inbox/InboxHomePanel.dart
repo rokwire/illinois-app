@@ -392,18 +392,34 @@ class _InboxMessageCard extends StatefulWidget {
   }
 }
 
-class _InboxMessageCardState extends State<_InboxMessageCard> {
+class _InboxMessageCardState extends State<_InboxMessageCard> implements NotificationsListener {
 
-  bool _isFavorite = false;
+  bool _isFavorite;
 
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [
+      User.notifyFavoritesUpdated,
+    ]);
+    _isFavorite = User().isFavorite(widget.message);
   }
 
   @override
   void dispose() {
     super.dispose();
+    NotificationService().unsubscribe(this);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == User.notifyFavoritesUpdated) {
+      setState(() {
+        _isFavorite = User().isFavorite(widget.message);
+      });
+    }
   }
 
   @override
@@ -470,7 +486,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> {
   void _onTapFavorite() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.message.subject}");
     setState(() {
-      _isFavorite = !_isFavorite;
+      User().switchFavorite(widget.message);
     });
   }
 }

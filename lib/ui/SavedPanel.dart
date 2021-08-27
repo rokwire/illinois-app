@@ -20,12 +20,14 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Sports.dart';
@@ -78,6 +80,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   List<Favorite> _news;
   List<Favorite> _laundries;
   List<Favorite> _guideItems;
+  List<Favorite> _inboxMessageItems;
 
   bool _showNotificationPermissionPrompt = false;
   bool _laundryAvailable = false;
@@ -186,6 +189,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                               headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Student Guide'),
                               headingIconResource: 'images/icon-news.png',
                               items: _guideItems,),
+                            _buildItemsSection(
+                              headingTitle: Localization().getStringEx('panel.saved.label.inbox', 'Inbox'),
+                              headingIconResource: 'images/icon-news.png',
+                              items: _inboxMessageItems,),
                           ],
                         ),
                       ]),
@@ -211,6 +218,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     _loadNews();
     _loadLaundries();
     _loadGuideItems();
+    _loadInboxMessages();
   }
 
   void _loadEvents() {
@@ -341,6 +349,23 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else if (AppCollection.isCollectionNotEmpty(_guideItems)) {
       setState(() {
         _guideItems = null;
+      });
+    }
+  }
+
+  void _loadInboxMessages() {
+    Set<String> favoriteMessageIds = User().getFavorites(InboxMessage.favoriteKeyName);
+    if (favoriteMessageIds != null) {
+      setState(() {
+        _progress++;
+      });
+      Inbox().loadMessages().then((List<InboxMessage> messages) {
+        if (mounted) {
+          setState(() {
+            _progress--;
+            _inboxMessageItems = _buildFilteredItems(messages, favoriteMessageIds);
+          });
+        }
       });
     }
   }
@@ -702,6 +727,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: item,)));
     } else if (item is StudentGuideFavorite) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: item.id,)));
+    } else if (item is InboxMessage) {
     }
   }
 
@@ -722,6 +748,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return Styles().colors.accentColor2;
     } else if (item is StudentGuideFavorite) {
       return Styles().colors.accentColor3;
+    } else if (item is InboxMessage) {
+      return Styles().colors.fillColorSecondary;
     } else {
       return Styles().colors.fillColorSecondary;
     }
@@ -738,6 +766,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.title;
     } else if (item is StudentGuideFavorite) {
       return StudentGuide().entryListTitle(StudentGuide().entryById(item.id), stripHtmlTags: true);
+    } else if (item is InboxMessage) {
+      return item.subject;
     } else {
       return null;
     }
@@ -754,12 +784,14 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.getDisplayTime();
     } else if (item is StudentGuideFavorite) {
       return StudentGuide().entryListDescription(StudentGuide().entryById(item.id), stripHtmlTags: true);
+    } else if (item is InboxMessage) {
+      return item.body;
     } else
       return null;
   }
 
   String _cardDetailImageResource(Favorite item) {
-    if (item is StudentGuideFavorite) {
+    if (item is StudentGuideFavorite || item is InboxMessage) {
       return null;
     } else if (item is Event || item is Game || item is News) {
       return 'images/icon-calendar.png';

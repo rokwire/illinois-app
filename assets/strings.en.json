@@ -828,6 +828,7 @@
     "panel.saved.label.news": "News",
     "panel.saved.label.laundry": "Laundry",
     "panel.saved.label.student_guide": "Student Guide",
+    "panel.saved.label.inbox": "Inbox",
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
     "panel.saved.notifications.skip.label": "Not right now",
