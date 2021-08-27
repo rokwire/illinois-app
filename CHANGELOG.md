@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Fixed
+-  AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
 - BrowsePanel: improve Large Text support [#511](https://github.com/rokwire/illinois-app/issues/511).
 
 ## [3.0.1] 2021-08-25
