@@ -429,6 +429,12 @@ class AppJson {
     catch(e) { print(e?.toString()); }
     return null;
   }
+
+  static List<dynamic> listStringsValue(dynamic value) {
+    try { return (value is List) ? value.cast<String>() : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
+  }
 }
 
 class AppToast {
