@@ -618,7 +618,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                         ? Positioned(
                         child: Image.network(
                           widget.game.imageUrl,
-                          excludeFromSemantics: true,
+                          semanticLabel: "Sports",
                         ))
                         : Container(height: 0),
                     showImage
