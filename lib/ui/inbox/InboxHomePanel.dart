@@ -192,7 +192,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     List<String> timeDates = <String>[];
     for (_FilterEntry timeEntry in _times) {
       String timeDate;
-      _DateInterval interval = intervals[timeEntry];
+      _DateInterval interval = intervals[timeEntry.value];
       if (interval != null) {
         DateTime startDate = interval.startDate;
         String startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);
