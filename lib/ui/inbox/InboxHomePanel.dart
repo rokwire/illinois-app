@@ -32,13 +32,13 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   ];
 
   final List<_FilterEntry> _times = [
-    _FilterEntry(name: "Any Time", value: null),
-    _FilterEntry(name: "Today", value: _TimeFilter.Today),
-    _FilterEntry(name: "Yesterday", value: _TimeFilter.Yesterday),
-    _FilterEntry(name: "This week", value: _TimeFilter.ThisWeek),
-    _FilterEntry(name: "Last week", value: _TimeFilter.LastWeek),
-    _FilterEntry(name: "This month", value: _TimeFilter.ThisMonth),
-    _FilterEntry(name: "Last Month", value: _TimeFilter.LastMonth),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.any", "Any Time"), value: null),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.today", "Today"), value: _TimeFilter.Today),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.yesterday", "Yesterday"), value: _TimeFilter.Yesterday),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.this_week", "This week"), value: _TimeFilter.ThisWeek),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.last_week", "Last week"), value: _TimeFilter.LastWeek),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.this_month", "This month"), value: _TimeFilter.ThisMonth),
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.last_month", "Last Month"), value: _TimeFilter.LastMonth),
   ];
 
   final int _messagesPageSize = 8;
@@ -192,7 +192,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     List<String> timeDates = <String>[];
     for (_FilterEntry timeEntry in _times) {
       String timeDate;
-      _DateInterval interval = intervals[timeEntry];
+      _DateInterval interval = intervals[timeEntry.value];
       if (interval != null) {
         DateTime startDate = interval.startDate;
         String startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);

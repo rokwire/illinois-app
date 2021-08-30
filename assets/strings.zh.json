@@ -1732,6 +1732,13 @@
 
 	"panel.inbox.label.heading": "收件箱",
 	"panel.inbox.label.content.empty": "沒有消息",
+	"panel.inbox.label.time.any": "任何時間",
+	"panel.inbox.label.time.today": "今天",
+	"panel.inbox.label.time.yesterday": "昨天",
+	"panel.inbox.label.time.this_week": "本星期",
+	"panel.inbox.label.time.last_week": "上個星期",
+	"panel.inbox.label.time.this_month": "這個月",
+	"panel.inbox.label.time.last_month": "上個月",
 
 	"panel.student_guide_list.label.highlights.heading": "學生指南",
 	"panel.student_guide_list.label.highlights.section": "強調",

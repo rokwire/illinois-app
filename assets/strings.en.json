@@ -1735,6 +1735,13 @@
 
     "panel.inbox.label.heading": "Inbox",
     "panel.inbox.label.content.empty": "No messages",
+    "panel.inbox.label.time.any": "Any Time",
+    "panel.inbox.label.time.today": "Today",
+    "panel.inbox.label.time.yesterday": "Yesterday",
+    "panel.inbox.label.time.this_week": "This week",
+    "panel.inbox.label.time.last_week": "Last week",
+    "panel.inbox.label.time.this_month": "This month",
+    "panel.inbox.label.time.last_month": "Last month",
 
     "panel.student_guide_list.label.highlights.heading": "Student Guide",
     "panel.student_guide_list.label.highlights.section": "Highlights",

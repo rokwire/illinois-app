@@ -1734,6 +1734,13 @@
 
     "panel.inbox.label.heading": "Bandeja de entrada",
     "panel.inbox.label.content.empty": "Ningún mensaje",
+    "panel.inbox.label.time.any": "Cualquier momento",
+    "panel.inbox.label.time.today": "Hoy dia",
+    "panel.inbox.label.time.yesterday": "El dia de ayer",
+    "panel.inbox.label.time.this_week": "Esta semana",
+    "panel.inbox.label.time.last_week": "La semana pasada",
+    "panel.inbox.label.time.this_month": "Este mes",
+    "panel.inbox.label.time.last_month": "El mes pasado",
 
     "panel.student_guide_list.label.highlights.heading": "Guía de estudiante",
     "panel.student_guide_list.label.highlights.section": "Reflejos",
