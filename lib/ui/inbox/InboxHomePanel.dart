@@ -143,7 +143,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildDisabledContentLayer() {
     return Padding(padding: EdgeInsets.only(top: 12), child:
       BlockSemantics(child:
-        Container(color: Color(0x99000000))
+        GestureDetector(onTap: (){ _onFilter(null); }, child:
+          Container(color: Color(0x99000000))
+        ),
       ),
     );
   }
