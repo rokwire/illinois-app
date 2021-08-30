@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.3] 2021-08-30
 ### Changed
 - Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
 - Hide the "Categories" drop down in Inbox panel [#721](https://github.com/rokwire/illinois-app/issues/721).
