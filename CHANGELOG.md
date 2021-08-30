@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.6.23] - 2021-08-30
 ### Fixed
 - Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
--  AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
+- AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
 - BrowsePanel: improve Large Text support [#511](https://github.com/rokwire/illinois-app/issues/511).
 
 ## [2.6.22] - 2021-08-23
