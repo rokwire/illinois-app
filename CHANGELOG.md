@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
 - Hide the "Categories" drop down in Inbox panel [#721](https://github.com/rokwire/illinois-app/issues/721).
 - Replace "Today and Yesterday" with only "Yesterday" in time dropdown in Inbox panel [#723](https://github.com/rokwire/illinois-app/issues/723).
+- Group inbox messages by date [#725](https://github.com/rokwire/illinois-app/issues/725).
 
 ## [3.0.2] 2021-08-27
 ### Fixed
