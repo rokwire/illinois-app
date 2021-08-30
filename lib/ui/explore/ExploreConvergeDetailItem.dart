@@ -40,12 +40,15 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         ),
       ),
       onTap: () {
-        if (hasConvergeUrl()) {
-          Navigator.push(context, CupertinoPageRoute(
-              builder: (context) => WebPanel(url:eventConvergeUrl)));
-        }
+        onTap(context);
       },
     );
+  }
+
+  void onTap(BuildContext context){
+    if (hasConvergeUrl()) {
+      //No action fro now
+    }
   }
 
   List<Widget> content(){
@@ -121,7 +124,7 @@ class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
       ),
       Text( Localization().getString("widget.card.label.converge")),
       Container(width: 5,),
-      Image.asset('images/chevron-right.png')
+//      Image.asset('images/chevron-right.png')
 
     ];
   }
