@@ -50,6 +50,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   
   bool _loading, _loadingMore;
   List<InboxMessage> _messages = <InboxMessage>[];
+  List<dynamic> _contentList;
   ScrollController _scrollController = ScrollController();
 
   @override
@@ -114,23 +115,41 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildMessagesContent() {
-    if (_messages.length == 0) {
+    if ((_contentList != null) && (0 < _contentList.length)) {
+      int count = _contentList.length + ((_loadingMore == true) ? 1 : 0);
+      return ListView.separated(
+        separatorBuilder: (context, index) => Container(height: 24),
+        itemCount: count,
+        itemBuilder: _buildListEntry,
+        controller: _scrollController);
+    }
+    else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
         Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
         Expanded(child: Container(), flex: 3),
       ]);
     }
-    else {
-      int count = _messages.length + ((_loadingMore == true) ? 1 : 0);
-      return ListView.separated(
-        separatorBuilder: (context, index) => Container(height: 24),
-        itemCount: count,
-        itemBuilder: (BuildContext context, int index){
-          return (index < _messages.length) ? _InboxMessageCard(message: _messages[index]) : _buildListLoadingIndicator();
-        },
-        controller: _scrollController);
+  }
+
+  Widget _buildListEntry(BuildContext context, int index) {
+    dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
+    if (entry is InboxMessage) {
+      return _InboxMessageCard(message: entry);
     }
+    else if (entry is String) {
+      return _buildListHeading(text: entry);
+    }
+    else {
+      return _buildListLoadingIndicator();
+    }
+  }
+
+  Widget _buildListHeading({String text}) {
+    return Container(padding: EdgeInsets.symmetric(horizontal: 32), child:
+      Align(alignment: Alignment.center, child:
+        Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Styles().colors.fillColorPrimary),)
+    ),);
   }
 
   Widget _buildListLoadingIndicator() {
@@ -285,6 +304,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
             _messages.clear();
             _hasMoreMessages = null;
           }
+          _contentList = _buildContentList();
           _loading = false;
         });
       }
@@ -303,11 +323,62 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           if (messages != null) {
             _messages.addAll(messages);
             _hasMoreMessages = (_messagesPageSize <= messages.length);
+            _contentList = _buildContentList();
           }
           _loadingMore = false;
         });
       }
     });
+  }
+
+  List<dynamic> _buildContentList() {
+    Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
+    Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
+    List<InboxMessage> otherList;
+    for (InboxMessage message in _messages) {
+      _TimeFilter timeFilter = _filterTypeFromDate(message.dateCreatedUtc?.toLocal(), intervals: intervals);
+      if (timeFilter != null) {
+        List<InboxMessage> timeList = timesMap[timeFilter];
+        if (timeList == null) {
+          timesMap[timeFilter] = timeList = <InboxMessage>[];
+        }
+        timeList.add(message);
+      }
+      else {
+        if (otherList == null) {
+          otherList = <InboxMessage>[];
+        }
+        otherList.add(message);
+      }
+    }
+
+    List<dynamic> contentList = <dynamic>[];
+    for (_FilterEntry timeEntry in _times) {
+      _TimeFilter timeFilter = timeEntry.value;
+      List<InboxMessage> timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
+      if (timeList != null) {
+        contentList.add(timeEntry.name.toUpperCase());
+        contentList.addAll(timeList);
+      }
+    }
+    
+    if (otherList != null) {
+      contentList.add(_FilterEntry.entryInList(_times, null)?.name?.toUpperCase() ?? '');
+      contentList.addAll(otherList);
+    }
+    
+    return contentList;
+  }
+
+  _TimeFilter _filterTypeFromDate(DateTime dateTime, { Map<_TimeFilter, _DateInterval> intervals }) {
+    for (_FilterEntry timeEntry in _times) {
+      _TimeFilter timeFilter = timeEntry.value;
+      _DateInterval timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
+      if ((timeInterval != null) && (timeInterval.contains(dateTime))) {
+        return timeFilter;
+      }
+    }
+    return null;
   }
 
   void _scrollListener() {
@@ -345,6 +416,21 @@ class _DateInterval {
   final DateTime endDate;
   
   _DateInterval({this.startDate, this.endDate});
+
+  bool contains(DateTime dateTime) {
+    if (dateTime == null) {
+      return false;
+    }
+    else if ((startDate != null) && startDate.isAfter(dateTime)) {
+      return false;
+    }
+    else if ((endDate != null) && endDate.isBefore(dateTime)) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
 }
 
 enum _TimeFilter {
