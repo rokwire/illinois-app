@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
+
+## [3.0.2] 2021-08-27
+### Fixed
+- AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
+- BrowsePanel: improve Large Text support [#511](https://github.com/rokwire/illinois-app/issues/511).
+### Added
+- Created initial Inbox functionality and UI [#714](https://github.com/rokwire/illinois-app/issues/714).
+
+## [3.0.1] 2021-08-25
 ### Fixed
 - Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
 - Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
@@ -12,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
 - Delay creating MapWidget  until needed in Laundry Home, Laundry Detail and Event Schedule panels [#706](https://github.com/rokwire/illinois-app/issues/706).
+### Added
+- Added sample wellness panels in embedded student guide content [#715](https://github.com/rokwire/illinois-app/issues/715).
 
 ## [3.0.0] 2021-08-19
 ### Fixed

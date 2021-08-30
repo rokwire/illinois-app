@@ -12,7 +12,7 @@
 		"wallet.cards":["bus_pass", "illini_id", "library_card"],
 
 		"browse": ["all", "content"],
-		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "student_guide", "privacy_center"],
+		"browse.all": ["athletics", "saved", "safer", "dining", "events", "quick_polls", "wellness", "groups", "student_guide", "inbox", "privacy_center"],
 		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 
 		"settings": ["user_info", "privacy_center", "connect", "connected", "privacy", "feedback"],
@@ -103,6 +103,7 @@
 			"illini_id"                       : { "iCardNum": true },
 			"library_card"                    : { "iCardLibraryNum": true },
 			"bus_pass"                        : { "shibbolethLoggedIn": true },
+			"inbox"                           : { "shibbolethLoggedIn": true },
 
 			"settings.user_info"              : { "loggedIn": true },
 			"settings.connect"                : { "loggedIn": false },

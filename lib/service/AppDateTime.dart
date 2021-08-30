@@ -95,6 +95,10 @@ class AppDateTime with Service {
     return dateTime;
   }
 
+  String utcDateTimeToString(DateTime dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
+  }
+
   DateTime getUtcTimeFromDeviceTime(DateTime dateTime) {
     if (dateTime == null) {
       return null;

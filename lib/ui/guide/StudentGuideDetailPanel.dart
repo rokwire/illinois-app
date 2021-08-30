@@ -18,6 +18,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StudentGuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -81,8 +82,10 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
   @override
   Widget build(BuildContext context) {
+    String headerTitle;
     Widget contentWidget;
     if (_guideEntry != null) {
+      headerTitle = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'header_title'));
       contentWidget = SingleChildScrollView(child:
         SafeArea(child:
           Stack(children: [
@@ -119,7 +122,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text('', style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(headerTitle ?? '', style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -284,7 +287,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           String sectionHtml = AppJson.stringValue(subDetail['section']);
           if (AppString.isStringNotEmpty(sectionHtml)) {
             contentList.add(
-              Padding(padding: EdgeInsets.only(top: 16), child:
+              Padding(padding: EdgeInsets.only(top: 16, bottom: 8), child:
                 Html(data: sectionHtml,
                   onLinkTap: (url, context, attributes, element) => _onTapLink(url),
                   style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
@@ -298,7 +301,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
                 String headingHtml = AppJson.stringValue(entry['heading']);
                 if (AppString.isStringNotEmpty(headingHtml)) {
                   contentList.add(
-                    Padding(padding: EdgeInsets.only(top: 12, bottom: 8), child:
+                    Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
                       Html(data: headingHtml,
                         onLinkTap: (url, context, attributes, element) => _onTapLink(url),
                         style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
@@ -307,14 +310,30 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
                 List<dynamic> numbers = AppJson.listValue(entry['numbers']);
                 if (numbers != null) {
+
+                  Map<String, dynamic> number = AppJson.mapValue(entry['number']);
+                  String numberTextFormat = ((number != null) ? AppJson.stringValue(number['text']) : null) ?? '%d.';
+                  Color numberColor = ((number != null) ? AppColor.fromHex(AppJson.stringValue(number['color'])) : null) ?? Styles().colors.textBackground;
+                  
+                  Map<String, dynamic> numberFont = (number != null) ? AppJson.mapValue(number['font']) : null;
+                  double numberFontSize = ((numberFont != null) ? AppJson.doubleValue(numberFont['size']) : null) ?? 20;
+                  String numberFontFamilyCode = (numberFont != null) ? AppJson.stringValue(numberFont['family']) : null;
+                  String numberFontFamily = Styles().fontFamilies.fromCode(numberFontFamilyCode) ?? Styles().fontFamilies.regular;
+
+                  Map<String, dynamic> numberPadding = (number != null) ? AppJson.mapValue(number['padding']) : null;
+                  double numberLeftPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['left']) : null) ?? 16;
+                  double numberRightPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['right']) : null) ?? 8;
+                  double numberTopPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['top']) : null) ?? 2;
+                  double numberBottomPadding = ((numberPadding != null) ? AppJson.doubleValue(numberPadding['bottom']) : null) ?? 2;
+
                   for (int numberIndex = 0; numberIndex < numbers.length; numberIndex++) {
                     dynamic numberHtml = numbers[numberIndex];
                     if ((numberHtml is String) && (0 < numberHtml.length)) {
                       contentList.add(
-                        Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
+                        Padding(padding: EdgeInsets.only(top: numberTopPadding, bottom: numberBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
-                              Text('${numberIndex + 1}.', style: TextStyle(color: Styles().colors.textBackground, fontSize: 20, fontFamily: Styles().fontFamilies.regular),),),
+                            Padding(padding: EdgeInsets.only(left: numberLeftPadding, right: numberRightPadding), child:
+                              Text(sprintf(numberTextFormat, numberIndex + 1), style: TextStyle(color: numberColor, fontSize: numberFontSize, fontFamily: numberFontFamily),),),
                             Expanded(child:
                               Html(data: numberHtml,
                               onLinkTap: (url, context, attributes, element) => _onTapLink(url),
@@ -329,13 +348,28 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
                 List<dynamic> bullets = AppJson.listValue(entry['bullets']);
                 if (bullets != null) {
+                  Map<String, dynamic> bullet = AppJson.mapValue(entry['bullet']);
+                  String bulletText = ((bullet != null) ? AppJson.stringValue(bullet['text']) : null) ?? '\u2022';
+                  Color bulletColor = ((bullet != null) ? AppColor.fromHex(AppJson.stringValue(bullet['color'])) : null) ?? Styles().colors.textBackground;
+                  
+                  Map<String, dynamic> bulletFont = (bullet != null) ? AppJson.mapValue(bullet['font']) : null;
+                  double bulletFontSize = ((bulletFont != null) ? AppJson.doubleValue(bulletFont['size']) : null) ?? 20;
+                  String bulletFontFamilyCode = (bulletFont != null) ? AppJson.stringValue(bulletFont['family']) : null;
+                  String bulletFontFamily = Styles().fontFamilies.fromCode(bulletFontFamilyCode) ?? Styles().fontFamilies.regular;
+
+                  Map<String, dynamic> bulletPadding = (bullet != null) ? AppJson.mapValue(bullet['padding']) : null;
+                  double bulletLeftPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['left']) : null) ?? 16;
+                  double bulletRightPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['right']) : null) ?? 8;
+                  double bulletTopPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['top']) : null) ?? 2;
+                  double bulletBottomPadding = ((bulletPadding != null) ? AppJson.doubleValue(bulletPadding['bottom']) : null) ?? 2;
+
                   for (dynamic bulletHtml in bullets) {
                     if ((bulletHtml is String) && (0 < bulletHtml.length)) {
                       contentList.add(
-                        Padding(padding: EdgeInsets.symmetric(vertical: 2), child:
+                        Padding(padding: EdgeInsets.only(top: bulletTopPadding, bottom: bulletBottomPadding), child:
                           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
-                              Text('\u2022', style: TextStyle(color: Styles().colors.textBackground, fontSize: 20, fontFamily: Styles().fontFamilies.regular),),),
+                            Padding(padding: EdgeInsets.only(left: bulletLeftPadding, right: bulletRightPadding), child:
+                              Text(bulletText, style: TextStyle(color: bulletColor, fontSize: bulletFontSize, fontFamily: bulletFontFamily),),),
                             Expanded(child:
                               Html(data: bulletHtml,
                               onLinkTap: (url, context, attributes, element) => _onTapLink(url),

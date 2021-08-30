@@ -174,6 +174,8 @@
 	"panel.browse.button.add_illini_cash.hint": "",
 	"panel.browse.button.student_guide.title":"學生指南",
 	"panel.browse.button.student_guide.hint":"",
+	"panel.browse.button.inbox.title":"收件箱",
+	"panel.browse.button.inbox.hint":"",
 	"panel.browse.button.privacy_center.title": "隱私中心",
 	"panel.browse.button.privacy_center.hint":"",
 
@@ -827,6 +829,7 @@
 	"panel.saved.label.news":"新聞",
 	"panel.saved.label.laundry": "洗衣房",
 	"panel.saved.label.student_guide": "學生指南",
+	"panel.saved.label.inbox": "收件箱",
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
 	"panel.saved.notifications.skip.label": "不是现在",
@@ -1726,6 +1729,9 @@
 
 	"panel.student_guide_categories.label.heading": "學生指南",
 	"panel.student_guide_categories.label.content.empty": "空的指南內容",
+
+	"panel.inbox.label.heading": "收件箱",
+	"panel.inbox.label.content.empty": "沒有消息",
 
 	"panel.student_guide_list.label.highlights.heading": "學生指南",
 	"panel.student_guide_list.label.highlights.section": "強調",

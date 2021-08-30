@@ -1964,4 +1964,91 @@
   "title":"A Campus Reminder",
   "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in est et ante maximus dignissim.",
   "sub_details_description":"Duis vestibulum nunc vel efficitur elementum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur ultrices convallis lectus a tempor. Quisque faucibus dui magna, id lacinia velit rutrum a. Donec neque orci, dictum ut sapien quis, dapibus posuere est. Pellentesque gravida enim vel lobortis ultricies. Nulla consectetur, nisl sit amet malesuada lacinia, sem ipsum eleifend lectus, vitae blandit erat arcu ut felis. Aenean ultricies risus mi, sed euismod massa gravida vestibulum."
+  },{
+    "_id": "wellness.spiritual.programs",
+    "guide": "Wellness",
+    "category": null,
+    "section": null,
+    "header_title": "Spiritual Wellness",
+    "detail_title": "Programs",
+    "image": "https://oiir.illinois.edu/sites/prod/files/styles/basic_page_banner/public/Programs_banner.png?itok=mBoo-QRF",
+    "sub_details": [{
+      "section": "<span style='color: #F38231; font-size: 24px;'>Five Days For Change</span>",
+      "entries": [{ "heading": "Five Days for Change is an intensive training program designed to provide university staff members with the opportunity to acquire and strengthen cultural competencies, awareness, and skills. This training will increase the visibility, skill, and effectiveness of allies in the cause of social justice and campus civility as critical campus incidents arise. <a href='https://oiir.illinois.edu/programs/5-days-for-change'>Learn more about Five Days for Change.</a>" }]
+    },{
+      "section": "<span style='color: #F38231; font-size: 24px;'>RISE: Readying Illinois Students For Excellence</span>",
+      "entries": [{ "heading": "Readying Illinois Students for Excellence (RISE) is a FREE program for select first-year students, so that they may register for Fall 2016 courses, gain leadership skills, and locate valuable resources about where to go for help, advice, and fun at Illinois. <a href='https://oiir.illinois.edu/RISE2016'>Learn more about RISE.</a>" }]
+    },{
+      "section": "<span style='color: #F38231; font-size: 24px;'>FYCARE: First Year Campus Acquaintance Rape Education Workshop</span>",
+      "entries": [{ "heading": "First Year Campus Acquaintance Rape Education (FYCARE) workshop is an interactive discussion on campus sexual assault. FYCARE workshops focus on the dynamics of sexual assault, ways to support a survivor, understanding consent, and campus and community resources. <a href='https://oiir.illinois.edu/womens-center/our-programs/fycare'>Learn more about FYCARE.</a>" }]
+    },{
+      "section": "<span style='color: #F38231; font-size: 24px;'>I-Connect Diversity & Inclusion Workshop</span>",
+      "entries": [{ "heading": "I-Connect is an experiential training designed to help incoming students embrace differences and recognize shared experiences in order to build a welcoming and engaged campus community. Facilitated by fellow students, I-Connect uses collaborative exercises and engaging discussion to build participants’ communication skills and their ability to collaborate, learn, and work in diverse environments. <a href='https://oiir.illinois.edu/diversityed/i-connect-diversity-inclusion-workshop'>Learn more about I-Connect.</a>" }]
+    },{
+      "section": "<span style='color: #F38231; font-size: 24px;'>Latina/o Resilience Network</span>",
+      "entries": [{ "heading": "The Latina/o Resilience Network provides support for Latinx students on campus, increases mental health wellness and awareness, and works as a space for students to share their campus climate experiences to build resilience. <a href='https://oiir.illinois.edu/LatinoResilienceUIUC'>Learn more about Latina/o Resilience Network.</a>" }]
+    },{
+      "section": "<span style='color: #F38231; font-size: 24px;'>LGBT Ally Network</span>",
+      "entries": [{ "heading": "Being an ally on gay/lesbian/bisexual/transgender issues is the process of working to develop individual attitudes, institutions, and culture in which gay, lesbian, bisexual, and transgender people feel they matter. In doing so, allies also work to end homophobia, biphobia, transphobia, and heterosexism. <a href='https://oiir.illinois.edu/lgbt-resource-center/our-programs/lgbt-ally-network'>Learn more about LGBT Ally Network.</a>" }]
+    },{
+      "section": "<span style='color: #F38231; font-size: 24px;'>Global Leaders: Orange and Blue Engagement (GLOBE)</span>",
+      "entries": [{ "heading": "GLOBE connects Blue members (experienced domestic and international students) with Orange members (new international students) and teams them up in small groups to participate in various activities and events. The goal of GLOBE is provide opportunities for domestic and international students to network and develop leadership skills, and “help all students develop global awareness and cultural competency. <a href='https://oiir.illinois.edu/node/11620/'>Learn more about GLOBE.</a>" }]
+    }]
+  },{
+    "_id": "wellness.financial.budget_and_finance",
+    "guide": "Wellness",
+    "category": null,
+    "section": null,
+    "header_title": "Financial Wellness",
+    "detail_title": "Budget & Finance",
+    "image": "http://mhcwellness.illinois.edu/sites/default/files/wellthy.jpg",
+    "sub_details_title": null,
+    "sub_details_description": "Decisions you make about handling your money before and during college can have a huge impact on your future. Be sure to educate yourself about options and be consistent in making informed financial decisions.",
+    "sub_details": [
+      {
+        "section": "<span style='color: #4299D1'>Budgeting Tips</span>",
+        "entries": [
+          {
+            "bullet": { "text": "\u2713", "color": "#4299D1", "font": {"size": 28, "family": "bold"}, "padding": { "left": 0 }},
+            "bullets": [
+              "List sources of income such as scholarships, loans, money from jobs, cash from parents, etc.",
+              "Determine expenses such as tuition, books, groceries, rent/utilities, entertainment, etc.",
+              "Organize your expenses per month, per semester, and categorize them by flexible (entertainment, groceries) and fixed (tuition, rent).",
+              "Prioritize your spending needs.",
+              "Check monthly bank statements and balance your accounts so you avoid spending when you don’t have the means, and stay away from those non-sufficient funds (NSF) fees.",
+              "Ask other students about unforeseen expenses so you can make adjustments accordingly.",
+              "Budget carefully knowing how long your money needs to stretch i.e. a month, semester, year, etc.",
+              "Be willing to sacrifice that dinner out, new clothing, or that weekend road trip if you need funds for an area of higher priority.",
+              "As money comes in allocate it to different areas such as spending, saving, investing, and/or giving."
+            ]
+          }
+        ]
+      }, {
+        "section": "<span style='color: #4299D1'>Save Money!</span>",
+        "entries": [
+          {
+            "bullet": { "text": "\u2713", "color": "#4299D1", "font": {"size": 28, "family": "bold"}, "padding": { "left": 0, "top": 8, "bottom": 0 }},
+            "bullets": [
+              "Avoid carrying around too much spare cash. It has a habit of disappearing.",
+              "Buy used textbooks where possible and investigate resources before making your purchase.",
+              "If you can save by limiting your data usage, look into that.",
+              "Don’t pay dues to join an organization unless you plan to be active in it.",
+              "Cut back on gas. Use the MTD buses, a bicycle, or some other form of transportation.",
+              "Stock up on snacks at the grocery store to avoid using vending machines. If you have a meal plan maximize it as best as you can.",
+              "Take advantage of student discounts where possible. Some places may include restaurants, theaters, insurance, etc.",
+              "Clip coupons and check out daily deals. Wherever you can save, do it!",
+              "Get organized so you can avoid late fees for credit cards, rentals, book returns, etc.",
+              "Be careful with credit cards. Only charge what you can pay. Many cards come with annual fees so be sure to investigate hidden costs."
+            ]
+          }
+        ]
+      }, {
+        "section": "<span style='color: #4299D1'>Resources</span>",
+        "entries": [
+          { "heading": "<b><a style='color: #f67f3f' href='http://go.illinois.edu/financialwellness'>University of Illinois Extension Office</a> – <a href='tel:+1-217-333-7672'>217-333-7672</a></b><p>Trained professionals and peers are available to address any money management concerns or advice you may need to become more financially fit.</p>"},
+          { "heading": "<p><b>Office of Student Financial Aid – <a href='tel:+1-217-333-0100'>217-333-0100</a></b></p>"}
+        ]
+      }
+    ]
 }]
+  

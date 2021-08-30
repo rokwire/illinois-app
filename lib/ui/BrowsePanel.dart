@@ -33,6 +33,7 @@ import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -290,6 +291,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         icon: 'images/icon-browse-student-guide.png',
         color: Styles().colors.accentColor3,
         onTap: () => _navigateStudentGuide(),
+      );
+    }
+    else if (code == 'inbox') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
+        icon: 'images/icon-browse-inbox.png',
+        color: Styles().colors.fillColorSecondary,
+        onTap: () => _navigateInbox(),
       );
     }
     else if (code == 'privacy_center') {
@@ -585,6 +595,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
   }
 
+  void _navigateInbox() {
+    Analytics.instance.logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+  }
+
   void _navigatePrivacyCenter() {
     Analytics.instance.logSelect(target: "Privacy Center");
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>SettingsPrivacyCenterPanel()));
@@ -742,6 +757,8 @@ class _GridSquareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const int contentHeight = 80;
+    double scaleFactorAdditionalHeight = MediaQuery.of(context).textScaleFactor * 30 ;
     return GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -751,7 +768,7 @@ class _GridSquareButton extends StatelessWidget {
           button: true,
           excludeSemantics: true,
           child: Container(
-            height: 100,
+            height: contentHeight + scaleFactorAdditionalHeight,
             decoration: BoxDecoration(
                           color: color,
                           //border: Border.all(color: Colors.grey, width: 1),

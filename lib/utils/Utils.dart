@@ -152,6 +152,38 @@ class AppCollection {
   }
 }
 
+class AppColor {
+  static Color fromHex(String strValue) {
+    if (strValue != null) {
+      if (strValue.startsWith("#")) {
+        strValue = strValue.substring(1);
+      }
+      
+      int intValue = int.tryParse(strValue, radix: 16);
+      if (intValue != null) {
+        if (strValue.length <= 6) {
+          intValue += 0xFF000000;
+        }
+        
+        return Color(intValue);
+      }
+    }
+    return null;
+  }
+
+  static String toHex(Color value) {
+    if (value == null) {
+      return null;
+    }
+    else if (value.alpha < 0xFF) {
+      return "#${value.alpha.toRadixString(16)}${value.red.toRadixString(16)}${value.green.toRadixString(16)}${value.blue.toRadixString(16)}";
+    }
+    else {
+      return "#${value.red.toRadixString(16)}${value.green.toRadixString(16)}${value.blue.toRadixString(16)}";
+    }
+  }
+}
+
 class AppVersion {
 
   static int compareVersions(String versionString1, String versionString2) {
@@ -435,6 +467,12 @@ class AppJson {
       }
     }
     return result;
+  }
+  
+  static List<dynamic> listStringsValue(dynamic value) {
+    try { return (value is List) ? value.cast<String>() : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
   }
 }
 
