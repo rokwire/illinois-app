@@ -43,6 +43,13 @@
     "headerbar.saved.title":"Guardado",
     "headerbar.saved.hint":"",
     "headerbar.teams.title":"Equipos",
+    "headerbar.teams.hint":"",
+    "headerbar.edit.title":"Editar",
+    "headerbar.edit.hint":"",
+    "headerbar.cancel.title":"Cancelar",
+    "headerbar.cancel.hint":"",
+    "headerbar.done.title":"Hecho",
+    "headerbar.done.hint":"",
 
     "toggle_button.status.checked": "marcado",
     "toggle_button.status.unchecked": "sin marcar",

@@ -43,6 +43,13 @@
 	"headerbar.saved.title":"已保存",
 	"headerbar.saved.hint":"",
 	"headerbar.teams.title":"队伍",
+	"headerbar.teams.hint":"",
+	"headerbar.edit.title":"編輯",
+	"headerbar.edit.hint":"",
+	"headerbar.cancel.title":"取消",
+	"headerbar.cancel.hint":"",
+	"headerbar.done.title":"完畢",
+	"headerbar.done.hint":"",
 
 	"toggle_button.status.checked":"选中",
 	"toggle_button.status.unchecked":"未选中",

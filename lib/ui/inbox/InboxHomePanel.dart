@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -8,7 +9,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -53,6 +53,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   List<dynamic> _contentList;
   ScrollController _scrollController = ScrollController();
 
+  bool _isEditMode;
+
   @override
   void initState() {
     super.initState();
@@ -78,10 +80,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleHeaderBarWithBack(
-        context: context,
-        titleWidget: Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
-      ),
+      appBar: _buildHeaderBar(),
+      // Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           _buildFilters(),
           Expanded(child:
@@ -92,6 +92,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       backgroundColor: Styles().colors.background,
     );
   }
+
+  // Messages
 
   Widget _buildContent() {
     return Stack(children: [
@@ -157,6 +159,37 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         SizedBox(width: 24, height: 24, child:
           CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),),),),);
   }
+
+  // Filters
+
+  Widget _buildFilters() {
+    return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+      Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
+        Row(children: <Widget>[
+          // Hide the "Categories" drop down in Inbox panel (#721)
+          /*FilterSelectorWidget(
+            label: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
+            active: _selectedFilter == _FilterType.Category,
+            visible: true,
+            onTap: () { _onFilter(_FilterType.Category); }
+          ),*/
+          FilterSelectorWidget(
+            label: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
+            active: _selectedFilter == _FilterType.Time,
+            visible: true,
+            onTap: () { _onFilter(_FilterType.Time); }
+          ),
+        ],
+    ),),);
+  }
+
+  void _onFilter(_FilterType filterType) {
+    setState(() {
+      _selectedFilter = (filterType != _selectedFilter) ? filterType : null;
+    });
+  }
+
+  // Filters Dropdowns
 
   Widget _buildDisabledContentLayer() {
     return Padding(padding: EdgeInsets.only(top: 12), child:
@@ -255,32 +288,63 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     _loadInitialContent();
   }
 
-  // Filters
+  // Header bar
 
-  Widget _buildFilters() {
-    return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-      Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12), child:
-        Row(children: <Widget>[
-          // Hide the "Categories" drop down in Inbox panel (#721)
-          /*FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
-            active: _selectedFilter == _FilterType.Category,
-            visible: true,
-            onTap: () { _onFilter(_FilterType.Category); }
-          ),*/
-          FilterSelectorWidget(
-            label: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
-            active: _selectedFilter == _FilterType.Time,
-            visible: true,
-            onTap: () { _onFilter(_FilterType.Time); }
-          ),
-        ],
-    ),),);
+  Widget _buildHeaderBar() {
+    return PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child:
+      Semantics(sortKey: const OrdinalSortKey(1), child:
+        AppBar(
+          title: _buildTitle(),
+          centerTitle: true,
+          backgroundColor: Styles().colors.fillColorPrimaryVariant,
+          leading: _buildBackButton(),
+          actions: <Widget>[
+            (_isEditMode == true) ? _buildDoneButton() : _buildEditButton()
+          ]
+        )
+      ),
+    );
   }
 
-  void _onFilter(_FilterType filterType) {
+  Widget _buildTitle() {
+    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),);
+  }
+
+  Widget _buildBackButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/chevron-left-white.png'), onPressed: _onBack),);
+  }
+
+  Widget _buildEditButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
+      TextButton(onPressed: _onEdit, child:
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+      ));
+  }
+
+  Widget _buildDoneButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
+      TextButton(onPressed: _onDone, child:
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+      ));
+  }
+
+  void _onBack() {
+    Analytics.instance.logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+
+  void _onEdit() {
+    Analytics.instance.logSelect(target: "Edit");
     setState(() {
-      _selectedFilter = (filterType != _selectedFilter) ? filterType : null;
+      _isEditMode = true;
+    });
+  }
+
+  void _onDone() {
+    Analytics.instance.logSelect(target: "Done");
+    setState(() {
+      _isEditMode = false;
     });
   }
 

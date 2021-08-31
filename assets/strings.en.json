@@ -43,6 +43,13 @@
     "headerbar.saved.title":"Saved",
     "headerbar.saved.hint":"",
     "headerbar.teams.title":"Teams",
+    "headerbar.teams.hint":"",
+    "headerbar.edit.title":"Edit",
+    "headerbar.edit.hint":"",
+    "headerbar.cancel.title":"Cancel",
+    "headerbar.cancel.hint":"",
+    "headerbar.done.title":"Done",
+    "headerbar.done.hint":"",
 
     "toggle_button.status.checked": "checked",
     "toggle_button.status.unchecked": "unchecked",
