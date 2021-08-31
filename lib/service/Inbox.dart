@@ -16,36 +16,56 @@ class Inbox /* with Service */ {
 
   Inbox._internal();
 
-  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, int offset, int limit }) async {
+  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, Iterable messageIds, int offset, int limit }) async {
+    
     String urlParams = "";
+    
     if (offset != null) {
       if (urlParams.isNotEmpty) {
         urlParams += "&";
       }
       urlParams += "offset=$offset";
     }
+    
     if (limit != null) {
       if (urlParams.isNotEmpty) {
         urlParams += "&";
       }
       urlParams += "limit=$limit";
     }
+
+    if (startDate != null) {
+      if (urlParams.isNotEmpty) {
+        urlParams += "&";
+      }
+      urlParams += "start_date=${startDate.millisecondsSinceEpoch}";
+    }
+
+    if (endDate != null) {
+      if (urlParams.isNotEmpty) {
+        urlParams += "&";
+      }
+      urlParams += "end_date=${endDate.millisecondsSinceEpoch}";
+    }
+
     if (urlParams.isNotEmpty) {
       urlParams = "?$urlParams";
     }
 
-    String url = "${Config().notificationsUrl}/api/messages$urlParams";
-    Map<String, String> headers = {
-      Network.RokwireApiKey : Config().rokwireApiKey,
-    };
+    dynamic body = (messageIds != null) ? AppJson.encode({ "ids": List.from(messageIds) }) : null;
 
-    Response response = await Network().get(url, auth: NetworkAuth.User, headers: headers);
+    String url = "${Config().notificationsUrl}/api/messages$urlParams";
+    Response response = await Network().get(url, body: body, auth: NetworkAuth.User);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
 
   Future<bool> deleteMessages(Iterable messageIds) async {
-    return Future.delayed(Duration(seconds: 3), (){
-      return false;
+    String url = "${Config().notificationsUrl}/api/messages";
+    String body = AppJson.encode({
+      "ids": (messageIds != null) ? List.from(messageIds) : null
     });
+
+    Response response = await Network().delete(url, body: body, auth: NetworkAuth.User);
+    return (response?.statusCode == 200);
   }
 }

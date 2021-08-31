@@ -359,11 +359,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      Inbox().loadMessages().then((List<InboxMessage> messages) {
+      Inbox().loadMessages(messageIds: favoriteMessageIds).then((List<InboxMessage> messages) {
         if (mounted) {
           setState(() {
             _progress--;
-            _inboxMessageItems = _buildFilteredItems(messages, favoriteMessageIds);
+            _inboxMessageItems = messages;
           });
         }
       });
