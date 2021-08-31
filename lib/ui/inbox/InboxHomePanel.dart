@@ -53,7 +53,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   List<dynamic> _contentList;
   ScrollController _scrollController = ScrollController();
 
-  bool _isEditMode;
+  bool _isEditMode = false;
+  Set<String> _selectedMessageIds = Set<String>();
 
   @override
   void initState() {
@@ -137,7 +138,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildListEntry(BuildContext context, int index) {
     dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
     if (entry is InboxMessage) {
-      return _InboxMessageCard(message: entry);
+      return _InboxMessageCard(
+        message: entry,
+        selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
+        onTap: () => _onSelectMessage(entry));
     }
     else if (entry is String) {
       return _buildListHeading(text: entry);
@@ -158,6 +162,19 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       Align(alignment: Alignment.center, child:
         SizedBox(width: 24, height: 24, child:
           CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),),),),);
+  }
+
+  void _onSelectMessage(InboxMessage message) {
+    if (_isEditMode == true) {
+      setState(() {
+        if (_selectedMessageIds.contains(message.messageId)) {
+          _selectedMessageIds.remove(message.messageId);
+        }
+        else {
+          _selectedMessageIds.add(message.messageId);
+        }
+      });
+    }
   }
 
   // Filters
@@ -291,16 +308,20 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   // Header bar
 
   Widget _buildHeaderBar() {
+    List<Widget> actions = (_isEditMode == true) ? <Widget>[
+      _isAllMessagesSelected ? _buildDeselectAllButton() : _buildSelectAllButton(),
+      _buildDoneButton()
+    ] : <Widget>[
+      _buildEditButton()
+    ];
     return PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child:
       Semantics(sortKey: const OrdinalSortKey(1), child:
         AppBar(
           title: _buildTitle(),
           centerTitle: true,
           backgroundColor: Styles().colors.fillColorPrimaryVariant,
-          leading: _buildBackButton(),
-          actions: <Widget>[
-            (_isEditMode == true) ? _buildDoneButton() : _buildEditButton()
-          ]
+          leading: ((_isEditMode == true) && _isAnyMessageSelected) ? _buildOptionsButton() : _buildBackButton(),
+          actions: actions
         )
       ),
     );
@@ -313,6 +334,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
       IconButton(icon: Image.asset('images/chevron-left-white.png'), onPressed: _onBack),);
+  }
+
+   Widget _buildOptionsButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/groups-more-inactive.png'), onPressed: _onOptions),);
   }
 
   Widget _buildEditButton() {
@@ -329,6 +355,20 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       ));
   }
 
+  Widget _buildSelectAllButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
+      TextButton(onPressed: _onSelectAll, child:
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+      ));
+  }
+
+  Widget _buildDeselectAllButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
+      TextButton(onPressed: _onDeselectAll, child:
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+      ));
+  }
+
   void _onBack() {
     Analytics.instance.logSelect(target: "Back");
     Navigator.pop(context);
@@ -338,6 +378,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     Analytics.instance.logSelect(target: "Edit");
     setState(() {
       _isEditMode = true;
+      _selectedMessageIds.clear();
     });
   }
 
@@ -345,7 +386,36 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     Analytics.instance.logSelect(target: "Done");
     setState(() {
       _isEditMode = false;
+      _selectedMessageIds.clear();
     });
+  }
+
+  void _onSelectAll() {
+    Analytics.instance.logSelect(target: "Select All");
+    setState(() {
+      for (InboxMessage message in _messages) {
+        _selectedMessageIds.add(message.messageId);
+      }
+    });
+  }
+
+  void _onDeselectAll() {
+    Analytics.instance.logSelect(target: "Deselect All");
+    setState(() {
+      _selectedMessageIds.clear();
+    });
+  }
+
+  void _onOptions() {
+    Analytics.instance.logSelect(target: "Options");
+  }
+
+  bool get _isAllMessagesSelected {
+    return _selectedMessageIds.length == _messages.length;
+  }
+
+  bool get _isAnyMessageSelected {
+    return 0 < _selectedMessageIds.length;
   }
 
   // Content
@@ -506,7 +576,10 @@ enum _FilterType {
 
 class _InboxMessageCard extends StatefulWidget {
   final InboxMessage message;
-  _InboxMessageCard({this.message});
+  final bool selected;
+  final Function onTap;
+  
+  _InboxMessageCard({this.message, this.selected, this.onTap });
 
   @override
   _InboxMessageCardState createState() {
@@ -546,6 +619,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
 
   @override
   Widget build(BuildContext context) {
+    double leftPadding = (widget.selected != null) ? 12 : 16;
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
       Container(
         decoration: BoxDecoration(
@@ -555,36 +629,47 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
         ),
         clipBehavior: Clip.none,
         child: Stack(children: [
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            AppString.isStringNotEmpty(widget.message?.category) ?
-              Padding(padding: EdgeInsets.only(bottom: 3), child:
-                Row(children: [
-                  Expanded(child:
-                    Text(widget.message?.category ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
-              )])) : Container(),
-            
+          InkWell(onTap: widget.onTap, child:
+            Padding(padding: EdgeInsets.only(left: leftPadding, right: 16, top: 16, bottom: 16), child:
+              Row(children: <Widget>[
+                Visibility(visible: (widget.selected != null), child:
+                  Padding(padding: EdgeInsets.only(right: leftPadding), child:
+                    Image.asset((widget.selected == true) ? 'images/deselected-dark.png' : 'images/deselected.png'),
+                  ),
+                ),
+                
+                Expanded(child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    AppString.isStringNotEmpty(widget.message?.category) ?
+                      Padding(padding: EdgeInsets.only(bottom: 3), child:
+                        Row(children: [
+                          Expanded(child:
+                            Text(widget.message?.category ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+                      )])) : Container(),
+                    
+                    AppString.isStringNotEmpty(widget.message?.subject) ?
+                      Padding(padding: EdgeInsets.only(bottom: 4), child:
+                        Row(children: [
+                          Expanded(child:
+                            Text(widget.message?.subject ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
+                      )])) : Container(),
 
-            AppString.isStringNotEmpty(widget.message?.subject) ?
-              Padding(padding: EdgeInsets.only(bottom: 4), child:
-                Row(children: [
-                  Expanded(child:
-                    Text(widget.message?.subject ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
-              )])) : Container(),
+                    AppString.isStringNotEmpty(widget.message?.body) ?
+                      Padding(padding: EdgeInsets.only(bottom: 6), child:
+                        Row(children: [
+                          Expanded(child:
+                            Text(widget.message?.body ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
+                      )])) : Container(),
 
-            AppString.isStringNotEmpty(widget.message?.body) ?
-              Padding(padding: EdgeInsets.only(bottom: 6), child:
-                Row(children: [
-                  Expanded(child:
-                    Text(widget.message?.body ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
-              )])) : Container(),
-
-            Row(children: [
-              Expanded(child:
-                Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface))
-            )]),
-          
-          ])),
+                    Row(children: [
+                      Expanded(child:
+                        Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface))
+                    )]),
+                  ])
+                ),
+              ],)
+            ),
+          ),
           Container(color: Styles().colors.fillColorSecondary, height: 4),
           Visibility(visible: User().favoritesStarVisible, child:
             Align(alignment: Alignment.topRight, child:

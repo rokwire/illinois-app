@@ -50,6 +50,12 @@
 	"headerbar.cancel.hint":"",
 	"headerbar.done.title":"完畢",
 	"headerbar.done.hint":"",
+	"headerbar.select.all.title":"全選",
+	"headerbar.select.all.hint":"",
+	"headerbar.deselect.all.title":"取消全選",
+	"headerbar.deselect.all.hint":"",
+	"headerbar.options.title":"選項",
+	"headerbar.options.hint":"",
 
 	"toggle_button.status.checked":"选中",
 	"toggle_button.status.unchecked":"未选中",

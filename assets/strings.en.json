@@ -50,6 +50,12 @@
     "headerbar.cancel.hint":"",
     "headerbar.done.title":"Done",
     "headerbar.done.hint":"",
+    "headerbar.select.all.title":"Select All",
+    "headerbar.select.all.hint":"",
+    "headerbar.deselect.all.title":"Deselect All",
+    "headerbar.deselect.all.hint":"",
+    "headerbar.options.title":"Options",
+    "headerbar.options.hint":"",
 
     "toggle_button.status.checked": "checked",
     "toggle_button.status.unchecked": "unchecked",
