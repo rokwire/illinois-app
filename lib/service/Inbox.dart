@@ -16,7 +16,7 @@ class Inbox /* with Service */ {
 
   Inbox._internal();
 
-  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, int offset, int limit }) async {
+  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, Iterable messageIds, int offset, int limit }) async {
     
     String urlParams = "";
     
@@ -52,18 +52,20 @@ class Inbox /* with Service */ {
       urlParams = "?$urlParams";
     }
 
+    dynamic body = (messageIds != null) ? AppJson.encode({ "ids": List.from(messageIds) }) : null;
+
     String url = "${Config().notificationsUrl}/api/messages$urlParams";
-    Response response = await Network().get(url, auth: NetworkAuth.User);
+    Response response = await Network().get(url, body: body, auth: NetworkAuth.User);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
 
   Future<bool> deleteMessages(Iterable messageIds) async {
     String url = "${Config().notificationsUrl}/api/messages";
-    String post = AppJson.encode({
+    String body = AppJson.encode({
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
 
-    Response response = await Network().delete(url, body: post, auth: NetworkAuth.User);
+    Response response = await Network().delete(url, body: body, auth: NetworkAuth.User);
     return (response?.statusCode == 200);
   }
 }
