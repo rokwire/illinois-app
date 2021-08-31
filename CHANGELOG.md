@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated date headers style in Inbox panel [#728](https://github.com/rokwire/illinois-app/issues/728).
+### Added
+- Implement Delete functionality in Inbox panel [#730](https://github.com/rokwire/illinois-app/issues/730).
 
 ## [3.0.3] 2021-08-30
 ### Changed
