@@ -17,6 +17,7 @@ class Inbox /* with Service */ {
   Inbox._internal();
 
   Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, int offset, int limit }) async {
+    
     String urlParams = "";
     if (offset != null) {
       if (urlParams.isNotEmpty) {
@@ -35,11 +36,7 @@ class Inbox /* with Service */ {
     }
 
     String url = "${Config().notificationsUrl}/api/messages$urlParams";
-    Map<String, String> headers = {
-      Network.RokwireApiKey : Config().rokwireApiKey,
-    };
-
-    Response response = await Network().get(url, auth: NetworkAuth.User, headers: headers);
+    Response response = await Network().get(url, auth: NetworkAuth.User);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
 
