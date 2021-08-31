@@ -19,18 +19,35 @@ class Inbox /* with Service */ {
   Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, int offset, int limit }) async {
     
     String urlParams = "";
+    
     if (offset != null) {
       if (urlParams.isNotEmpty) {
         urlParams += "&";
       }
       urlParams += "offset=$offset";
     }
+    
     if (limit != null) {
       if (urlParams.isNotEmpty) {
         urlParams += "&";
       }
       urlParams += "limit=$limit";
     }
+
+    if (startDate != null) {
+      if (urlParams.isNotEmpty) {
+        urlParams += "&";
+      }
+      urlParams += "start_date=${startDate.millisecondsSinceEpoch}";
+    }
+
+    if (endDate != null) {
+      if (urlParams.isNotEmpty) {
+        urlParams += "&";
+      }
+      urlParams += "end_date=${endDate.millisecondsSinceEpoch}";
+    }
+
     if (urlParams.isNotEmpty) {
       urlParams = "?$urlParams";
     }
