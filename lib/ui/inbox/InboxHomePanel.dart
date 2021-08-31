@@ -553,6 +553,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           _processingOption = false;
           if (result == true) {
             _selectedMessageIds.clear();
+            _isEditMode = false;
           }
         });
         if (result == true) {
