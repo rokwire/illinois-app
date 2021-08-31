@@ -58,8 +58,12 @@ class Inbox /* with Service */ {
   }
 
   Future<bool> deleteMessages(Iterable messageIds) async {
-    return Future.delayed(Duration(seconds: 3), (){
-      return false;
+    String url = "${Config().notificationsUrl}/api/messages";
+    String post = AppJson.encode({
+      "ids": (messageIds != null) ? List.from(messageIds) : null
     });
+
+    Response response = await Network().delete(url, body: post, auth: NetworkAuth.User);
+    return (response?.statusCode == 200);
   }
 }
