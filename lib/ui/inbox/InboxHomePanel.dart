@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Inbox.dart';
@@ -9,6 +11,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -48,7 +51,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   _FilterType _selectedFilter;
   bool _hasMoreMessages;
   
-  bool _loading, _loadingMore;
+  bool _loading, _loadingMore, _processingOption;
   List<InboxMessage> _messages = <InboxMessage>[];
   List<dynamic> _contentList;
   ScrollController _scrollController = ScrollController();
@@ -314,6 +317,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     ] : <Widget>[
       _buildEditButton()
     ];
+    
     return PreferredSize(preferredSize: Size.fromHeight(kToolbarHeight), child:
       Semantics(sortKey: const OrdinalSortKey(1), child:
         AppBar(
@@ -336,9 +340,19 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       IconButton(icon: Image.asset('images/chevron-left-white.png'), onPressed: _onBack),);
   }
 
-   Widget _buildOptionsButton() {
+  Widget _buildOptionsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.options.title', 'Options'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/groups-more-inactive.png'), onPressed: _onOptions),);
+      Stack(children: [
+        IconButton(icon: Image.asset('images/groups-more-inactive.png'), onPressed: _onOptions),
+        Visibility(visible: (_processingOption == true), child:
+          Container(padding: EdgeInsets.all(13), child:
+            SizedBox(width: 22, height: 22, child:
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white),),
+            ),
+          ),
+        ),
+      ],)
+    );
   }
 
   Widget _buildEditButton() {
@@ -367,6 +381,102 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       TextButton(onPressed: _onDeselectAll, child:
         Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
       ));
+  }
+
+  Widget _buildOptions(BuildContext context) {
+    String headingText = (_selectedMessageIds.length == 1) ?
+      '1 message selected' :
+      '${_selectedMessageIds.length} messages selected';
+
+    return Container(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), child:
+      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Padding(padding: EdgeInsets.only(bottom: 16), child:
+          Row(children:<Widget>[Expanded(child:
+            Text(headingText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+          )]),
+        ),
+
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+
+        InkWell(onTap: () => _onDelete(context), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+            Row(children:<Widget>[
+              Padding(padding: EdgeInsets.only(right: 8), child:
+                Image.asset('images/icon-delete-group.png')
+              ),
+              Expanded(child:
+                Text("Delete", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.bold),)
+              ),
+            ]),
+          )
+        ),
+
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+
+        InkWell(onTap: () => _onCancelOptions(context), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+            Row(children:<Widget>[
+              Padding(padding: EdgeInsets.only(right: 8), child:
+                Image.asset('images/close-orange.png', width: 18, height: 18)
+              ),
+              Expanded(child:
+                Text("Cancel", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.bold),)
+              ),
+            ]),
+          )
+        ),
+
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+      ]),
+    );
+  }
+
+  Widget _buildConfirmationDialog(BuildContext context, {String title, String message, String positiveButtonTitle, String negativeButtonTitle, Function onPositive}) {
+    return StatefulBuilder(builder: (context, setState) {
+      return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+        Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), ), child:
+          Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Row(children: <Widget>[
+              Expanded(child:
+                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Row(children: <Widget>[
+                      Expanded(child:
+                        Text(title, style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: Styles().fontFamilies.bold),),
+                      ),
+                      GestureDetector(onTap: () => Navigator.pop(context), child:
+                        Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
+                          Center(child:
+                            Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold),),
+                          ),
+                        ),
+                      ),
+                    ],),
+                  ),
+                ),
+              ),
+            ],),
+
+            Padding(padding: const EdgeInsets.all(16), child:
+              Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Container(height: 16),
+                Text(message, textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary),),
+                Container(height: 32),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                  Expanded(child:
+                    RoundedButton(label: negativeButtonTitle, onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors.fillColorPrimary, textColor: Styles().colors.fillColorPrimary,),
+                  ),
+                  Container(width: 8, ),
+                  Expanded(child:
+                    RoundedButton(label: positiveButtonTitle, onTap: onPositive, backgroundColor: Styles().colors.fillColorSecondaryVariant, borderColor: Styles().colors.fillColorSecondaryVariant, textColor: Styles().colors.surface, ),
+                  ),
+                ],)
+              ],)
+            ),
+          ]),
+        ),
+      ); },
+    );
   }
 
   void _onBack() {
@@ -408,6 +518,56 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _onOptions() {
     Analytics.instance.logSelect(target: "Options");
+    showModalBottomSheet(context: context, backgroundColor: Colors.white, isScrollControlled: true, isDismissible: true, builder: _buildOptions);
+  }
+
+  void _onCancelOptions(BuildContext context) {
+    Analytics.instance.logSelect(target: "Cancel");
+    Navigator.pop(context);
+  }
+
+  void _onDelete(BuildContext context) {
+    Analytics.instance.logSelect(target: "Delete");
+    Navigator.pop(context);
+
+    String message = (_selectedMessageIds.length == 1) ?
+      'Delete 1 message?' :
+      'Delete ${_selectedMessageIds.length} messages?';
+    showDialog(context: context, builder: (context) => _buildConfirmationDialog(context,
+      title: 'Delete',
+      message: message,
+      positiveButtonTitle: 'OK',
+      negativeButtonTitle: 'Cancel',
+      onPositive: () => _onDeleteConfirm(context)
+    ));
+  }
+
+  void _onDeleteConfirm(BuildContext context) {
+    Navigator.pop(context);
+    setState(() {
+      _processingOption = true;
+    });
+    Inbox().deleteMessages(_selectedMessageIds).then((bool result) {
+      if (mounted) {
+        setState(() {
+          _processingOption = false;
+          if (result == true) {
+            _selectedMessageIds.clear();
+          }
+        });
+        if (result == true) {
+          _refreshContent();
+        }
+        else {
+          AppAlert.showDialogResult(this.context, "Failed to delete message(s).");
+        }
+      }
+    });
+  }
+
+  void _onCancelConfirmation({String message, String selection}) {
+    Analytics.instance.logAlert(text: "Remove My Information", selection: "No");
+    Navigator.pop(context);
   }
 
   bool get _isAllMessagesSelected {
@@ -459,6 +619,31 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
             _contentList = _buildContentList();
           }
           _loadingMore = false;
+        });
+      }
+    });
+  }
+
+  void _refreshContent({int messagesCount}) {
+    setState(() {
+      _loading = true;
+    });
+
+    int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
+    _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage> messages) {
+      if (mounted) {
+        setState(() {
+          if (messages != null) {
+            _messages = messages;
+            _hasMoreMessages = (_messagesPageSize <= messages.length);
+          }
+          else {
+            _messages.clear();
+            _hasMoreMessages = null;
+          }
+          _contentList = _buildContentList();
+          _loading = false;
         });
       }
     });

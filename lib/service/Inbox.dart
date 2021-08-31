@@ -42,4 +42,10 @@ class Inbox /* with Service */ {
     Response response = await Network().get(url, auth: NetworkAuth.User, headers: headers);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
+
+  Future<bool> deleteMessages(Iterable messageIds) async {
+    return Future.delayed(Duration(seconds: 3), (){
+      return false;
+    });
+  }
 }
