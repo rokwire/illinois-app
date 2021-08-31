@@ -60,7 +60,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
     _scrollController.addListener(_scrollListener);
 
-    _loadinInitialContent();
+    _loadInitialContent();
   }
 
   @override
@@ -146,10 +146,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildListHeading({String text}) {
-    return Container(padding: EdgeInsets.symmetric(horizontal: 32), child:
-      Align(alignment: Alignment.center, child:
-        Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Styles().colors.fillColorPrimary),)
-    ),);
+    return Container(color: Styles().colors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+        Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Styles().colors.white),)
+    );
   }
 
   Widget _buildListLoadingIndicator() {
@@ -253,7 +252,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       _selectedFilter = null;
     });
 
-    _loadinInitialContent();
+    _loadInitialContent();
   }
 
   // Filters
@@ -287,7 +286,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   // Content
 
-  void _loadinInitialContent() {
+  void _loadInitialContent() {
     setState(() {
       _loading = true;
     });
@@ -311,7 +310,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     });
   }
 
-  void _loadinMoreContent() {
+  void _loadMoreContent() {
     setState(() {
       _loadingMore = true;
     });
@@ -383,7 +382,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _scrollListener() {
     if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_hasMoreMessages != false) && (_loadingMore != true) && (_loading != true)) {
-      _loadinMoreContent();
+      _loadMoreContent();
     }
   }
 }
