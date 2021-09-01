@@ -27,16 +27,23 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 
-class GroupEventDetailPanel extends StatefulWidget{
+class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event event;
-  final String groupId;
+  final Group group;
   final bool previewMode;
 
-  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event, this.groupId}) : super(key: key);
+  String get groupId => group?.id;
+
+  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event, this.group}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     return _GroupEventDetailsPanelState();
+  }
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return group?.analyticsAttributes;
   }
 }
 
