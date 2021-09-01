@@ -68,4 +68,12 @@ class Inbox /* with Service */ {
     Response response = await Network().delete(url, body: body, auth: NetworkAuth.User);
     return (response?.statusCode == 200);
   }
+
+  Future<bool> sendMessage(InboxMessage message) async {
+    String url = "${Config().notificationsUrl}/api/messages";
+    String body = AppJson.encode(message?.toJson());
+
+    Response response = await Network().post(url, body: body, auth: NetworkAuth.User);
+    return (response?.statusCode == 200);
+  }
 }
