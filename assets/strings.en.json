@@ -56,6 +56,8 @@
     "headerbar.deselect.all.hint":"",
     "headerbar.options.title":"Options",
     "headerbar.options.hint":"",
+    "headerbar.debug.title":"Debug",
+    "headerbar.debug.hint":"",
 
     "toggle_button.status.checked": "checked",
     "toggle_button.status.unchecked": "unchecked",

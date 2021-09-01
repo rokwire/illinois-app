@@ -104,6 +104,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget build(BuildContext context) {
     
     List<Widget> contentList = [];
+    List<Widget> actionsList = [];
 
     List<dynamic> codes = FlexUI()['settings'] ?? [];
 
@@ -142,6 +143,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     if (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
+      actionsList.add(_buildHeaderBarDebug());
     }
 
     contentList.add(_buildVersionInfo());
@@ -151,24 +153,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: _DebugContainer(
-            child: Container(
-//          height: 40,
-          child: Padding(
-            //PS I know it is ugly..
-            padding: EdgeInsets.only(top: 10),
-            child: Text(
-              Localization().getStringEx("panel.settings.home.settings.header", "Settings"),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        )),
+        titleWidget: _buildHeaderBarTitle(),
+        actions: actionsList,
       ),
       body: Column(
         children: <Widget>[
@@ -189,6 +175,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       bottomNavigationBar: TabBarWidget(),
     );
   }
+
+  //Header Bar
+  Widget _buildHeaderBarTitle() {
+    return _DebugContainer(child:
+      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings"), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
+    );
+  }
+
   //Privacy Center
   Widget _buildPrivacyCenterButton(){
     return GestureDetector(
@@ -933,16 +927,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         fontSize: 16.0,
         textColor: Styles().colors.fillColorPrimary,
         borderColor: Styles().colors.fillColorSecondary,
-        onTap: _onDebugClicked(),
+        onTap: _onDebugClicked,
       ),
     ); 
   }
 
-  Function _onDebugClicked() {
-    return () {
-      Analytics.instance.logSelect(target: "Debug");
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-    };
+  Widget _buildHeaderBarDebug() {
+    return Semantics(label: Localization().getStringEx('headerbar.debug.title', 'Debug'), hint: Localization().getStringEx('headerbar.debug.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/debug-white.png'), onPressed: _onDebugClicked),
+    );
+  }
+
+  void _onDebugClicked() {
+    Analytics.instance.logSelect(target: "Debug");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
   }
 
   //Version Info
