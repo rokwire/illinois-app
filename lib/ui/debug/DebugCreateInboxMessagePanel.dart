@@ -240,7 +240,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
     }
 
     if (recepients.isEmpty) {
-      AppAlert.showDialogResult(context, 'Please enter some recepient');
+      AppAlert.showDialogResult(context, 'Please enter some recepient.');
       return;
     }
 
@@ -264,7 +264,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
         Navigator.of(context).pop();
       }
       else {
-        AppAlert.showDialogResult(context, 'Failed to send message');
+        AppAlert.showDialogResult(context, 'Failed to send message.');
       }
     });
 
