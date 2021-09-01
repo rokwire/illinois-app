@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
+- Added contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
+- Added group attributes ito "Request to join" select analytics event [#737](https://github.com/rokwire/illinois-app/issues/737).
 
 ## [2.6.23] - 2021-08-30
 ### Fixed
