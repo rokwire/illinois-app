@@ -56,6 +56,8 @@
     "headerbar.deselect.all.hint":"",
     "headerbar.options.title":"Opciones",
     "headerbar.options.hint":"",
+    "headerbar.debug.title":"Depurar",
+    "headerbar.debug.hint":"",
 
     "toggle_button.status.checked": "marcado",
     "toggle_button.status.unchecked": "sin marcar",
