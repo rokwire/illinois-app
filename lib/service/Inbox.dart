@@ -70,7 +70,7 @@ class Inbox /* with Service */ {
   }
 
   Future<bool> sendMessage(InboxMessage message) async {
-    String url = "${Config().notificationsUrl}/api/messages";
+    String url = "${Config().notificationsUrl}/api/message";
     String body = AppJson.encode(message?.toJson());
 
     Response response = await Network().post(url, body: body, auth: NetworkAuth.User);
