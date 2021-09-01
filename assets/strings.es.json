@@ -641,6 +641,7 @@
     "panel.explore_detail.time.sunday":"Domingo",
     "panel.explore_detail.label.event_preview":"Vista previa del evento",
     "panel.explore_detail.label.related_tags":"Etiquetas relacionadas:",
+    "panel.explore_detail.label.contacts": "Contactos:",
     "panel.explore_detail.label.accepted_payment":"Pago aceptado",
     "panel.explore_detail.label.accepted_payment_details":"Detalles",
     "panel.explore_detail.recurring_event.schedule.heading.title": "Tiempos Disponibles",
