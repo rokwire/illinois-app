@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
+- Debug create Inbox message functionality [#735](https://github.com/rokwire/illinois-app/issues/735).
 
 ## [3.0.4] 2021-08-31
 ### Changed
