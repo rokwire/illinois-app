@@ -640,6 +640,7 @@
     "panel.explore_detail.time.sunday":"Sunday",
     "panel.explore_detail.label.event_preview":"Event Preview",
     "panel.explore_detail.label.related_tags":"Related Tags:",
+    "panel.explore_detail.label.contacts": "Contacts:",
     "panel.explore_detail.label.accepted_payment":"Accepted payment",
     "panel.explore_detail.label.accepted_payment_details":"Details",
     "panel.explore_detail.recurring_event.schedule.heading.title": "Available Times",

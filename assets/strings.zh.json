@@ -641,6 +641,7 @@
 	"panel.explore_detail.time.sunday":"周日",
 	"panel.explore_detail.label.event_preview":"活动预览",
 	"panel.explore_detail.label.related_tags":"相关标签：",
+	"panel.explore_detail.label.contacts": "聯繫人:",
 	"panel.explore_detail.label.accepted_pa​​yment":"已接受付款",
 	"panel.explore_detail.label.accepted_pa​​yment_details":"详细信息",
 	"panel.explore_detail.recurring_event.schedule.heading.title": "可用時間",
