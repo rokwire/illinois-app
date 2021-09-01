@@ -28,6 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
@@ -237,15 +238,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             _changeDate();
                           },
                         )),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Messaging",
-                            backgroundColor: Styles().colors.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors.fillColorPrimary,
-                            borderColor: Styles().colors.fillColorPrimary,
-                            onTap: _onMessagingClicked())),
+                    Visibility(
+                      visible: true,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Messaging",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onMessagingClicked),),
+                    ),
                     Visibility(
                       visible: true,
                       child: Padding(
@@ -256,7 +260,19 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onCreateEventClicked())),
+                              onTap: _onCreateEventClicked),),
+                    ),
+                    Visibility(
+                      visible: true,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Create Message",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onCreateInboxMessageClicked),),
                     ),
                     Visibility(
                       visible: true,
@@ -268,7 +284,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: () { _onUserProfileInfoClicked(); }
+                              onTap: _onUserProfileInfoClicked
                               )),
                     ),
                     Visibility(
@@ -508,17 +524,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
-  Function _onMessagingClicked() {
-    return () {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugFirebaseMessagingPanel()));
-    };
+  void _onMessagingClicked() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugFirebaseMessagingPanel()));
   }
 
-  Function _onCreateEventClicked() {
-    return () {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
-    };
+  void _onCreateEventClicked() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
   }
+
+  void _onCreateInboxMessageClicked() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugCreateInboxMessagePanel()));
+  }
+  
   
   void _onUserProfileInfoClicked() {
     showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(_userDebugData) );

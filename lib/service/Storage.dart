@@ -602,6 +602,16 @@ class Storage with Service {
     _setBoolWithName(debugMapHideLevelsKey, value);
   }
 
+  static const String debugLastInboxMessageKey  = 'debug_last_inbox_message';
+
+  String get debugLastInboxMessage {
+    return _getStringWithName(debugLastInboxMessageKey);
+  }
+
+  set debugLastInboxMessage(String value) {
+    _setStringWithName(debugLastInboxMessageKey, value);
+  }
+
   //////////////
   // Permanent subscription
 
