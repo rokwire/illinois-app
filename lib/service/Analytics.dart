@@ -741,6 +741,7 @@ class Analytics with Service implements NotificationsListener {
       LogPagePreviousName   : previousPageName
     };
 
+    // Add optional attribute, if applied
     if (attributes != null) {
       event.addAll(attributes);
     }
@@ -749,19 +750,38 @@ class Analytics with Service implements NotificationsListener {
     logEvent(event);
   }
 
-  void logSelect({String target}) {
-    logEvent({
+  void logSelect({String target,  Map<String, dynamic> attributes}) {
+
+    // Build event data
+    Map<String, dynamic> event = {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
-    });
+    };
+
+    // Add optional attribute, if applied
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+
+    // Log the event
+    logEvent(event);
   }
 
-  void logAlert({String text, String selection}) {
-    logEvent({
+  void logAlert({String text, String selection, Map<String, dynamic> attributes}) {
+    // Build event data
+    Map<String, dynamic> event = {
       LogEventName          : LogAlertEventName,
       LogAlertTextName      : text,
       LogAlertSelectionName : selection,
-    });
+    };
+
+    // Add optional attribute, if applied
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+
+    // Log the event
+    logEvent(event);
   }
 
   void logHttpResponse(Http.Response response, {String requestMethod, String requestUrl}) {

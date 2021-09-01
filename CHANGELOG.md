@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
 - Debug create Inbox message functionality [#735](https://github.com/rokwire/illinois-app/issues/735).
+- Group attributes in "Request to join" select analytics event [#737](https://github.com/rokwire/illinois-app/issues/737).
 
 ## [3.0.4] 2021-08-31
 ### Changed

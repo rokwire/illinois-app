@@ -33,12 +33,16 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupSettingsPanel extends StatefulWidget {
+class GroupSettingsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
   
   GroupSettingsPanel({this.group});
 
+  @override
   _GroupSettingsPanelState createState() => _GroupSettingsPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupSettingsPanelState extends State<GroupSettingsPanel> {

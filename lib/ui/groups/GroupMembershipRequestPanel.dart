@@ -25,7 +25,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-class GroupMembershipRequestPanel extends StatefulWidget {
+class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
 
   GroupMembershipRequestPanel({this.group});
@@ -33,6 +33,10 @@ class GroupMembershipRequestPanel extends StatefulWidget {
   @override
   _GroupMembershipRequestPanelState createState() =>
       _GroupMembershipRequestPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes =>
+    group?.analyticsAttributes;
 }
 
 class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPanel> {

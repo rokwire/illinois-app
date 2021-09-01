@@ -33,12 +33,18 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-class GroupMembersPanel extends StatefulWidget{
-  final String groupId;
+class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  final Group group;
 
-  GroupMembersPanel({@required this.groupId});
+  String get groupId => group?.id;
 
+  GroupMembersPanel({@required this.group});
+
+  @override
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener{
@@ -407,6 +413,6 @@ class _GroupMemberCard extends StatelessWidget{
 
   void _onTapMemberCard(BuildContext context)async{
     Analytics().logSelect(target: "Member Detail");
-    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(groupId: group.id, memberId: member.id,)));
+    await Navigator.push(context, CupertinoPageRoute(builder: (context)=> GroupMemberPanel(group: group, member: member,)));
   }
 }
