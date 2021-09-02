@@ -644,6 +644,16 @@ class Storage with Service {
     }
   }
 
+  static const String inboxFirebaseMessagingTokenKey  = 'inbox_firebase_messaging_token';
+
+  String get inboxFirebaseMessagingToken {
+    return _getStringWithName(inboxFirebaseMessagingTokenKey);
+  }
+
+  set inboxFirebaseMessagingToken(String value) {
+    _setStringWithName(inboxFirebaseMessagingTokenKey, value);
+  }
+
   //////////////
   // Polls
 
