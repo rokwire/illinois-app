@@ -54,13 +54,13 @@ class Inbox /* with Service */ {
 
     dynamic body = (messageIds != null) ? AppJson.encode({ "ids": List.from(messageIds) }) : null;
 
-    String url = "${Config().notificationsUrl}/api/messages$urlParams";
+    String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
     Response response = await Network().get(url, body: body, auth: NetworkAuth.User);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
 
   Future<bool> deleteMessages(Iterable messageIds) async {
-    String url = "${Config().notificationsUrl}/api/messages";
+    String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages" : null;
     String body = AppJson.encode({
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
@@ -70,10 +70,11 @@ class Inbox /* with Service */ {
   }
 
   Future<bool> sendMessage(InboxMessage message) async {
-    String url = "${Config().notificationsUrl}/api/message";
+    String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
     String body = AppJson.encode(message?.toJson());
 
     Response response = await Network().post(url, body: body, auth: NetworkAuth.User);
     return (response?.statusCode == 200);
   }
+
 }
