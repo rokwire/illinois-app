@@ -422,7 +422,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Storage().setNotifySetting(name, value);
       NotificationService().notify(notifySettingUpdated, name);
 
-      Set<String> subscribedTopis = Storage().firebaseSubscriptionTopis;
+      Set<String> subscribedTopis = Storage().firebaseMessagingSubscriptionTopis;
       _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopis: subscribedTopis);
       if (name == 'athletic_updates') {
         _processAthleticsSubscriptions(subscribedTopis: subscribedTopis);
@@ -434,7 +434,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _updateSubscriptions() {
     if (hasToken) {
-      Set<String> subscribedTopis = Storage().firebaseSubscriptionTopis;
+      Set<String> subscribedTopis = Storage().firebaseMessagingSubscriptionTopis;
       _processPermanentSubscriptions(subscribedTopis: subscribedTopis);
       _processRolesSubscriptions(subscribedTopis: subscribedTopis);
       _processNotifySettingsSubscriptions(subscribedTopis: subscribedTopis);
@@ -444,19 +444,19 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _updateRolesSubscriptions() {
     if (hasToken) {
-      _processRolesSubscriptions(subscribedTopis: Storage().firebaseSubscriptionTopis);
+      _processRolesSubscriptions(subscribedTopis: Storage().firebaseMessagingSubscriptionTopis);
     }
   }
 
   void _updateNotifySettingsSubscriptions() {
     if (hasToken) {
-      _processNotifySettingsSubscriptions(subscribedTopis: Storage().firebaseSubscriptionTopis);
+      _processNotifySettingsSubscriptions(subscribedTopis: Storage().firebaseMessagingSubscriptionTopis);
     }
   }
 
   void _updateAthleticsSubscriptions() {
     if (hasToken) {
-      _processAthleticsSubscriptions(subscribedTopis: Storage().firebaseSubscriptionTopis);
+      _processAthleticsSubscriptions(subscribedTopis: Storage().firebaseMessagingSubscriptionTopis);
     }
   }
 

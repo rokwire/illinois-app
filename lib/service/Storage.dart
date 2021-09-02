@@ -612,35 +612,35 @@ class Storage with Service {
     _setStringWithName(debugLastInboxMessageKey, value);
   }
 
-  ///////////////////////////////////
-  // Firebase topics subscription
+  //////////////
+  // Firebase
 
-// static const String firebaseSubscriptionTopisKey  = 'firebase_subscription_topis';
-// Replacing "firebase_subscription_topis" with "notifications_firebase_subscription_topis" key ensures that
+// static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
+// Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
 // all subsciptions will be applied again through Notifications BB APIs
-  static const String firebaseSubscriptionTopisKey  = 'notifications_firebase_subscription_topis';
+  static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_messaging_subscription_topis';
   
-  Set<String> get firebaseSubscriptionTopis {
-    List<String> topicsList = _getStringListWithName(firebaseSubscriptionTopisKey);
+  Set<String> get firebaseMessagingSubscriptionTopis {
+    List<String> topicsList = _getStringListWithName(firebaseMessagingSubscriptionTopisKey);
     return (topicsList != null) ? Set.from(topicsList) : null;
   }
 
-  set firebaseSubscriptionTopis(Set<String> value) {
+  set firebaseMessagingSubscriptionTopis(Set<String> value) {
     List<String> topicsList = (value != null) ? List.from(value) : null;
-    _setStringListWithName(firebaseSubscriptionTopisKey, topicsList);
+    _setStringListWithName(firebaseMessagingSubscriptionTopisKey, topicsList);
   }
 
-  void addFirebaseSubscriptionTopic(String value) {
-    Set<String> topis = firebaseSubscriptionTopis ?? Set();
+  void addFirebaseMessagingSubscriptionTopic(String value) {
+    Set<String> topis = firebaseMessagingSubscriptionTopis ?? Set();
     topis.add(value);
-    firebaseSubscriptionTopis = topis;
+    firebaseMessagingSubscriptionTopis = topis;
   }
 
-  void removeFirebaseSubscriptionTopic(String value) {
-    Set<String> topis = firebaseSubscriptionTopis;
+  void removeFirebaseMessagingSubscriptionTopic(String value) {
+    Set<String> topis = firebaseMessagingSubscriptionTopis;
     if (topis != null) {
       topis.remove(value);
-      firebaseSubscriptionTopis = topis;
+      firebaseMessagingSubscriptionTopis = topis;
     }
   }
 
