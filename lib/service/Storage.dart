@@ -612,11 +612,14 @@ class Storage with Service {
     _setStringWithName(debugLastInboxMessageKey, value);
   }
 
-  //////////////
-  // Permanent subscription
+  ///////////////////////////////////
+  // Firebase topics subscription
 
-  static const String firebaseSubscriptionTopisKey  = 'firebase_subscription_topis';
-
+// static const String firebaseSubscriptionTopisKey  = 'firebase_subscription_topis';
+// Replacing "firebase_subscription_topis" with "notifications_firebase_subscription_topis" key ensures that
+// all subsciptions will be applied again through Notifications BB APIs
+  static const String firebaseSubscriptionTopisKey  = 'notifications_firebase_subscription_topis';
+  
   Set<String> get firebaseSubscriptionTopis {
     List<String> topicsList = _getStringListWithName(firebaseSubscriptionTopisKey);
     return (topicsList != null) ? Set.from(topicsList) : null;

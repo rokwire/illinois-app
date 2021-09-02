@@ -20,12 +20,12 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:http/http.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/FirebaseService.dart';
+import 'package:illinois/service/Inbox.dart';
 
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
@@ -214,63 +214,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
   // Subscription APIs
 
   Future<bool> subscribeToTopic(String topic) async {
-    if (topic == null) {
-      return false;
-    }
-
-    if (_token == null) {
-      Log.e("FCM: Unable to subscribe to $topic topic (missing token)");
-      return false;
-    }
-
-    try {
-      if (Config().sportsServiceUrl != null) {
-        String url = "${Config().sportsServiceUrl}/api/subscribe";
-        String body = json.encode({'token': _token, 'topic': topic});
-        Response response = await Network().post(url, body: body, auth: NetworkAuth.App, headers: { Network.RokwireAppId : Config().appCanonicalId });
-        if ((response != null) && (response.statusCode == 200)) {
-          Log.d("FCM: Succesfully subscribed for $topic topic");
-          Storage().addFirebaseSubscriptionTopic(topic);
-          return true;
-        } else {
-          Log.e("FCM: Error occured on subscribing for $topic topic");
-          return false;
-        }
-      }
-    } catch (e) {
-      Log.e(e.toString());
-    }
-    return false;
+    return Inbox().subscribeToTopic(topic: topic, token: _token);
   }
 
   Future<bool> unsubscribeFromTopic(String topic) async {
-    if (topic == null) {
-      return false;
-    }
-
-    if (_token == null) {
-      Log.e("FCM: Unable to unsubscribe to $topic topic (missing token)");
-      return false;
-    }
-
-    try {
-      if (Config().sportsServiceUrl != null) {
-        String url = "${Config().sportsServiceUrl}/api/unsubscribe";
-        String body = json.encode({'token': _token, 'topic': topic});
-        Response response = await Network().post(url, body: body, auth: NetworkAuth.App, headers: { Network.RokwireAppId : Config().appCanonicalId });
-        if ((response != null) && (response.statusCode == 200)) {
-          Log.d("FCM: Succesfully unsubscribed from $topic topic");
-          Storage().removeFirebaseSubscriptionTopic(topic);
-          return true;
-        } else {
-          Log.e("FCM: Error occured on unsubscribe from $topic topic");
-          return false;
-        }
-      }
-    } catch (e) {
-      Log.e(e.toString());
-    }
-    return false;
+    return Inbox().unsubscribeFromTopic(topic: topic, token: _token);
   }
 
   Future<bool> send({String topic, dynamic message}) async {
