@@ -245,17 +245,15 @@ class ExplorePanelState extends State<ExplorePanel>
           searchVisible: (_selectedTab != ExploreTab.Dining),
           onTapList: () => _selectDisplayType(ListMapDisplayType.List),
           onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
-        SingleChildScrollView(scrollDirection: Axis.horizontal, child:
           Padding(padding: EdgeInsets.all(12), child:
-            Row(children: _buildTabWidgets(),
-        ),),),
+            Wrap(children: _buildTabWidgets(),
+            )),
         Expanded(child:
           Stack(children: <Widget>[
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              SingleChildScrollView(scrollDirection: Axis.horizontal, child:
                 Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                  Row(children: _buildFilterWidgets(),
-              ),),),
+                  Wrap(children: _buildFilterWidgets(),
+              ),),
               Expanded(child:
                 Container(color: Styles().colors.background, child:
                   Stack(children: <Widget>[
