@@ -613,32 +613,45 @@ class Storage with Service {
   }
 
   //////////////
-  // Permanent subscription
+  // Firebase
 
-  static const String firebaseSubscriptionTopisKey  = 'firebase_subscription_topis';
-
-  Set<String> get firebaseSubscriptionTopis {
-    List<String> topicsList = _getStringListWithName(firebaseSubscriptionTopisKey);
+// static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
+// Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
+// all subsciptions will be applied again through Notifications BB APIs
+  static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_messaging_subscription_topis';
+  
+  Set<String> get firebaseMessagingSubscriptionTopis {
+    List<String> topicsList = _getStringListWithName(firebaseMessagingSubscriptionTopisKey);
     return (topicsList != null) ? Set.from(topicsList) : null;
   }
 
-  set firebaseSubscriptionTopis(Set<String> value) {
+  set firebaseMessagingSubscriptionTopis(Set<String> value) {
     List<String> topicsList = (value != null) ? List.from(value) : null;
-    _setStringListWithName(firebaseSubscriptionTopisKey, topicsList);
+    _setStringListWithName(firebaseMessagingSubscriptionTopisKey, topicsList);
   }
 
-  void addFirebaseSubscriptionTopic(String value) {
-    Set<String> topis = firebaseSubscriptionTopis ?? Set();
+  void addFirebaseMessagingSubscriptionTopic(String value) {
+    Set<String> topis = firebaseMessagingSubscriptionTopis ?? Set();
     topis.add(value);
-    firebaseSubscriptionTopis = topis;
+    firebaseMessagingSubscriptionTopis = topis;
   }
 
-  void removeFirebaseSubscriptionTopic(String value) {
-    Set<String> topis = firebaseSubscriptionTopis;
+  void removeFirebaseMessagingSubscriptionTopic(String value) {
+    Set<String> topis = firebaseMessagingSubscriptionTopis;
     if (topis != null) {
       topis.remove(value);
-      firebaseSubscriptionTopis = topis;
+      firebaseMessagingSubscriptionTopis = topis;
     }
+  }
+
+  static const String inboxFirebaseMessagingTokenKey  = 'inbox_firebase_messaging_token';
+
+  String get inboxFirebaseMessagingToken {
+    return _getStringWithName(inboxFirebaseMessagingTokenKey);
+  }
+
+  set inboxFirebaseMessagingToken(String value) {
+    _setStringWithName(inboxFirebaseMessagingTokenKey, value);
   }
 
   //////////////
