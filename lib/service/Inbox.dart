@@ -6,6 +6,7 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -164,6 +165,7 @@ class Inbox with Service implements NotificationsListener {
         'token': token
       });
       Response response = await Network().post(url, body: body, auth: NetworkAuth.User);
+      Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
@@ -204,6 +206,7 @@ class Inbox with Service implements NotificationsListener {
         auth = Auth().isLoggedIn ? NetworkAuth.User : NetworkAuth.App;
       }
       Response response = await Network().post(url, body: body, auth: auth);
+      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
