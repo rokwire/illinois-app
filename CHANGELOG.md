@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - ExplorePanel: remove horizontal scrolling for tabs and filters. [#511](https://github.com/rokwire/illinois-app/issues/511).
+- Acknowledged FCM stuff from Notifications BB [#740](https://github.com/rokwire/illinois-app/issues/740).
 
 ## [3.0.5] 2021-09-1
 ### Added
