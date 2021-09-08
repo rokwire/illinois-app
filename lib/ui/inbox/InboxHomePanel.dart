@@ -160,7 +160,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   Widget _buildListHeading({String text}) {
     return Container(color: Styles().colors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
-        Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Styles().colors.white),)
+        Semantics(header: true, child:
+          Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Styles().colors.white),)
+        )
     );
   }
 
@@ -176,9 +178,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       setState(() {
         if (_selectedMessageIds.contains(message.messageId)) {
           _selectedMessageIds.remove(message.messageId);
+          AppSemantics.announceMessage(context, "Deselected");
         }
         else {
           _selectedMessageIds.add(message.messageId);
+          AppSemantics.announceMessage(context, "Selected");
         }
       });
     }
@@ -460,11 +464,13 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
                       Expanded(child:
                         Text(title, style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: Styles().fontFamilies.bold),),
                       ),
-                      GestureDetector(onTap: () => Navigator.pop(context), child:
-                        Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
-                          Center(child:
-                            Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold),),
-                          ),
+                      Semantics(label: "Close", button: true,  child:
+                        GestureDetector(onTap: () => Navigator.pop(context), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
+                            Center(child:
+                              Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold), semanticsLabel: "",),
+                            ),
+                          )
                         ),
                       ),
                     ],),
@@ -843,7 +849,9 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
               Row(children: <Widget>[
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
-                    Image.asset((widget.selected == true) ? 'images/deselected-dark.png' : 'images/deselected.png'),
+                    Semantics(label:(widget.selected == true) ? "Selected" : "Not Selected", child:
+                      Image.asset((widget.selected == true) ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
+                    )
                   ),
                 ),
                 
