@@ -861,21 +861,21 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                       Padding(padding: EdgeInsets.only(bottom: 3), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.category ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
                       )])) : Container(),
                     
                     AppString.isStringNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
+                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
                       )])) : Container(),
 
                     AppString.isStringNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
+                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
                       )])) : Container(),
 
                     Row(children: [
