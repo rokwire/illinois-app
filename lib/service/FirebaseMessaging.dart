@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -214,11 +214,19 @@ class FirebaseMessaging with Service implements NotificationsListener {
   // Subscription APIs
 
   Future<bool> subscribeToTopic(String topic) async {
-    return Inbox().subscribeToTopic(topic: topic, token: _token);
+    if (await Inbox().subscribeToTopic(topic: topic, token: _token)) {
+      Storage().addFirebaseMessagingSubscriptionTopic(topic);
+      return true;
+    }
+    return false;
   }
 
   Future<bool> unsubscribeFromTopic(String topic) async {
-    return Inbox().unsubscribeFromTopic(topic: topic, token: _token);
+    if (await Inbox().unsubscribeFromTopic(topic: topic, token: _token)) {
+      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
+      return true;
+    }
+    return false;
   }
 
   Future<bool> send({String topic, dynamic message}) async {
