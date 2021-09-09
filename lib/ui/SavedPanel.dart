@@ -666,6 +666,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                           Expanded(
                             child: Text(
                               title,
+                              semanticsLabel: "",
                               style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20),
                             ),
                           ),
@@ -678,6 +679,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                                   User().switchFavorite(item);
                                 },
                                 child: Semantics(
+                                    container: true,
                                     label: favorite
                                         ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
                                         : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
@@ -702,10 +704,10 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes),),
                           Expanded(child:
-                            Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                            Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
                           )
                         ],) :
-                        Text(cardDetailLabel, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                        Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
                   )),)
                 ]),
               ),
