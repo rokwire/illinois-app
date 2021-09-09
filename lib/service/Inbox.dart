@@ -174,7 +174,7 @@ class Inbox with Service implements NotificationsListener {
   // FCM Token
 
   void _processFcmToken() {
-    if (_isServiceInitialized) {
+    if (_isServiceInitialized == true) {
       String fcmToken = FirebaseMessaging().token;
       if (Auth().isLoggedIn) {
         if ((fcmToken != null) && (fcmToken != _fcmToken)) {
