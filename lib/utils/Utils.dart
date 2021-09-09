@@ -575,14 +575,11 @@ class AppMapPathKey {
 
 class AppSemantics {
     static void announceCheckBoxStateChange(BuildContext context, bool checked, String name){
-      if(context!=null) {
-        String message = (AppString.isStringNotEmpty(name)?name+", " :"")+
-            (checked ?
-              Localization().getStringEx("toggle_button.status.checked", "checked",) :
-              Localization().getStringEx("toggle_button.status.unchecked", "unchecked"));
-
-        context.findRenderObject().sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr)); // !toggled because we announce before it got changed
-      }
+      String message = (AppString.isStringNotEmpty(name)?name+", " :"")+
+          (checked ?
+            Localization().getStringEx("toggle_button.status.checked", "checked",) :
+            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")); // !toggled because we announce before it got changed
+      announceMessage(context, message);
     }
 
     static Semantics buildCheckBoxSemantics({Widget child, String title, bool selected = false, double sortOrder}){
@@ -591,6 +588,12 @@ class AppSemantics {
       Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
       ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
       child: child );
+    }
+
+    static void announceMessage(BuildContext context, String message){
+        if(context != null){
+          context.findRenderObject().sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
+        }
     }
 }
 
