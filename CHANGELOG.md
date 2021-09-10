@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Acknowledge new field "displayOnlyWithSuperEvent" in events [#744](https://github.com/rokwire/illinois-app/issues/744).
+- Implement Pull to refresh for InboxHomePanel [#746](https://github.com/rokwire/illinois-app/issues/746).
 
 ## [3.0.6] 2021-09-09
 ### Changed

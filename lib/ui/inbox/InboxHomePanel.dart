@@ -90,13 +90,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     return Scaffold(
       appBar: _buildHeaderBar(),
       // Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
-      body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           _buildFilters(),
           Expanded(child:
             _buildContent(),
           ),
           TabBarWidget(),
-        ],),
+        ],)),
       backgroundColor: Styles().colors.background,
     );
   }
@@ -598,6 +599,24 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   void _onCancelConfirmation({String message, String selection}) {
     Analytics.instance.logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    List<InboxMessage> messages = await Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    if (mounted) {
+      setState(() {
+        if (messages != null) {
+          _messages = messages;
+          _hasMoreMessages = (_messagesPageSize <= messages.length);
+        }
+        else {
+          _messages.clear();
+          _hasMoreMessages = null;
+        }
+        _contentList = _buildContentList();
+      });
+    }
   }
 
   bool get _isAllMessagesSelected {
