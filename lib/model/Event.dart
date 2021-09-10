@@ -72,6 +72,7 @@ class Event with Explore implements Favorite {
   List<Event> recurringEvents;
 
   bool isSuperEvent;
+  bool displayOnlyWithSuperEvent;
   bool isVirtual;
   List<Map<String, dynamic>> subEventsMap;
   String track;
@@ -150,6 +151,7 @@ class Event with Explore implements Favorite {
     convergeScore = json['converge_score'];
     convergeUrl = json['converge_url'];
     isSuperEvent = json['isSuperEvent'] ?? false;
+    displayOnlyWithSuperEvent = json['displayOnlyWithSuperEvent'] ?? false;
     this.subEventsMap = subEventsMap;
     track = json['track'];
     isVirtual = json['isVirtual'] ?? false;
@@ -194,6 +196,7 @@ class Event with Explore implements Favorite {
     convergeScore = other?.convergeScore;
     convergeUrl = other?.convergeUrl;
     isSuperEvent = other?.isSuperEvent;
+    displayOnlyWithSuperEvent = other?.displayOnlyWithSuperEvent;
     subEventsMap = other?.subEventsMap;
     track = other?.track;
     isVirtual = other?.isVirtual;
@@ -253,6 +256,7 @@ class Event with Explore implements Favorite {
       "converge_score": convergeScore,
       "converge_url": convergeUrl,
       "isSuperEvent": isSuperEvent,
+      "displayOnlyWithSuperEvent": displayOnlyWithSuperEvent,
       "subEvents": subEventsMap,
       "track": track,
       'isVirtual': isVirtual,
@@ -410,6 +414,9 @@ class Event with Explore implements Favorite {
     }
     if(isSuperEvent!=null) {
       result["isSuperEvent"] = isSuperEvent;
+    }
+    if(displayOnlyWithSuperEvent!=null) {
+      result["displayOnlyWithSuperEvent"] = displayOnlyWithSuperEvent;
     }
     if(subEventsMap!=null) {
       result["subEvents"] = subEventsMap;
