@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.6] 2021-09-09
 ### Changed
 - Improved Accessibility for Inbox panels [#742](https://github.com/rokwire/illinois-app/issues/742).
 - ExplorePanel: remove horizontal scrolling for tabs and filters. [#511](https://github.com/rokwire/illinois-app/issues/511).
 - Acknowledged FCM stuff from Notifications BB [#740](https://github.com/rokwire/illinois-app/issues/740).
 
-## [3.0.5] 2021-09-1
+## [3.0.5] 2021-09-01
 ### Added
 - Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
 - Debug create Inbox message functionality [#735](https://github.com/rokwire/illinois-app/issues/735).
