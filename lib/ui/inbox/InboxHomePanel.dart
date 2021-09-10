@@ -602,8 +602,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Future<void> _onPullToRefresh() async {
+    int limit = max(_messages.length, _messagesPageSize);
     _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage> messages = await Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage> messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
