@@ -527,9 +527,11 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _setLoading(bool loading) {
-    setState(() {
-      _loading = loading;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = loading;
+      });
+    }
   }
 
   // NotificationsListener
