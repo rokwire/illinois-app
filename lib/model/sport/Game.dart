@@ -230,28 +230,6 @@ class Game implements Favorite {
     return attributes;
   }
 
-  // TBD: handle this in Sports BB
-  // String get parkingUrl {
-  //   if (customDisplayField2 == null)
-  //     return null;
-  //   //<a href="https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetEventInfo?ticketCode=GS%3AILLINOIS%3AF19%3A03P%3A&linkID=illinois&shopperContext=&pc=&caller=&appCode=&groupCode=FP&cgc=&dataAccId=863&locale=en_US&siteId=ev_illinois&poolId=pac8-evcluster1&sDomain=ev11.evenue.net" target="_blank">Buy Parking</a>
-  //   bool hasHref = customDisplayField2.startsWith('<a href="');
-  //   if (!hasHref)
-  //     return null;
-  //
-  //   int startQuotesIndex = customDisplayField2.indexOf('"');
-  //   if (startQuotesIndex == -1)
-  //     return null;
-  //
-  //   String url = customDisplayField2.substring(startQuotesIndex + 1, customDisplayField2.length);
-  //
-  //   int endQuotesIndex = url.indexOf('"');
-  //   if (endQuotesIndex == -1)
-  //     return null;
-  //
-  //   url = url.substring(0, endQuotesIndex);
-  //   return url;
-  // }
 
   @override
   String get favoriteId => id;
