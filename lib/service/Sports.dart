@@ -36,7 +36,7 @@ import 'package:illinois/utils/Utils.dart';
 
 import 'package:illinois/service/Network.dart';
 
-class Sports with Service implements NotificationsListener {
+class Sports with Service {
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
@@ -56,19 +56,9 @@ class Sports with Service implements NotificationsListener {
   Sports._internal();
 
   @override
-  void createService() {
-    NotificationService().subscribe(this, Assets.notifyChanged);
-  }
-
-  @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
-  }
-
-  @override
   Future<void> initService() async {
     if(_enabled) {
-      _loadSportTypeConfig();
+      await _loadSportDefinitions();
       _loadSportSocialMedias();
     }
   }
@@ -76,17 +66,6 @@ class Sports with Service implements NotificationsListener {
   @override
   Set<Service> get serviceDependsOn {
     return Set.from([Storage(), Config(), Assets(),]);
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if(_enabled) {
-      if (name == Assets.notifyChanged) {
-        _loadSportTypeConfig();
-      }
-    }
   }
 
   List<SportDefinition> getSports() {
@@ -112,29 +91,38 @@ class Sports with Service implements NotificationsListener {
     return null;
   }
 
-  void _loadSportTypeConfig() {
-    List<dynamic> jsonData = Assets()['sports.types'];
-
-    if (jsonData != null) {
-
-      _sports = [];
-      _menSports = [];
-      _womenSports = [];
-
-      jsonData.forEach((value) {
-        SportDefinition sport = SportDefinition.fromJson(value);
-        if (sport != null) {
-          _sports.add(sport);
-          if ('men' == sport.gender) {
-            _menSports.add(sport);
-          } else if ('women' == sport.gender) {
-            _womenSports.add(sport);
-          }
-        }
-      });
-      _sortSports();
-      NotificationService().notify(notifyChanged, null);
+  Future<void> _loadSportDefinitions() async {
+    String serviceUrl = Config().sportsServiceUrl;
+    if (AppString.isStringEmpty(serviceUrl)) {
+      return;
     }
+    String sportsUrl = serviceUrl + '/api/v2/sports';
+    Response response = await Network().get(sportsUrl, auth: NetworkAuth.App);
+    String responseBody = response?.body;
+    if (response?.statusCode == 200) {
+      List<dynamic> jsonData = AppJson.decode(responseBody);
+      if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        _sports = [];
+        _menSports = [];
+        _womenSports = [];
+        jsonData.forEach((value) {
+          SportDefinition sport = SportDefinition.fromJson(value);
+          if (sport != null) {
+            _sports.add(sport);
+            if ('men' == sport.gender) {
+              _menSports.add(sport);
+            } else if ('women' == sport.gender) {
+              _womenSports.add(sport);
+            }
+          }
+        });
+      }
+    } else {
+      Log.e('Failed to load sport definitions');
+      Log.e(responseBody);
+    }
+    _sortSports();
+    NotificationService().notify(notifyChanged, null);
   }
 
   void _sortSports(){
