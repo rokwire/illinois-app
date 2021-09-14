@@ -100,48 +100,40 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
   final String backIconRes;
   final Function onBackPressed;
   final bool searchVisible;
+  final List<Widget> actions;
 
   final semanticsSortKey;
 
-  SimpleHeaderBarWithBack({@required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1) });
+  SimpleHeaderBarWithBack({@required this.context, this.titleWidget, this.backVisible = true, this.onBackPressed, this.searchVisible = false, this.backIconRes = 'images/chevron-left-white.png', this.semanticsSortKey = const OrdinalSortKey(1), this.actions });
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> actionsList = <Widget>[];
+    if (AppCollection.isCollectionNotEmpty(actions)) {
+      actionsList.addAll(actions);
+    }
+    if (searchVisible) {
+      actionsList.add(_buildSearchButton());
+    }
+
     return Semantics(sortKey:semanticsSortKey,child:AppBar(
-      leading: Visibility(visible: backVisible, child: Semantics(
-          label: Localization().getStringEx('headerbar.back.title', 'Back'),
-          hint: Localization().getStringEx('headerbar.back.hint', ''),
-          button: true,
-          excludeSemantics: true,
-          child: IconButton(
-              icon: Image.asset(backIconRes),
-              onPressed: _onTapBack)),),
+      leading: backVisible ? _buildBackButton() : null,
       title: titleWidget,
       centerTitle: true,
       backgroundColor: Styles().colors.fillColorPrimaryVariant,
-      actions: <Widget>[
-        Visibility(
-            visible: searchVisible,
-            child: Semantics(
-                label: Localization().getStringEx('headerbar.search.title', 'Search'),
-                hint: Localization().getStringEx('headerbar.search.hint', ''),
-                button: true,
-                excludeSemantics: true,
-                child: IconButton(
-                  icon: Image.asset(
-                    'images/icon-search.png',
-                    width: 20,
-                    height: 20,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) => SearchPanel()));
-                  },
-                ))),
-      ],
+      actions: actionsList,
     ));
+  }
+
+  Widget _buildBackButton() {
+    return Semantics(
+      label: Localization().getStringEx('headerbar.back.title', 'Back'),
+      hint: Localization().getStringEx('headerbar.back.hint', ''),
+      button: true,
+      excludeSemantics: true,
+      child: IconButton(
+        icon: Image.asset(backIconRes),
+        onPressed: _onTapBack));
   }
 
   void _onTapBack() {
@@ -151,6 +143,23 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
     } else {
       Navigator.pop(context);
     }
+  }
+
+  Widget _buildSearchButton() {
+    return Semantics(
+      label: Localization().getStringEx('headerbar.search.title', 'Search'),
+      hint: Localization().getStringEx('headerbar.search.hint', ''),
+      button: true,
+      excludeSemantics: true,
+      child: IconButton(
+        icon: Image.asset('images/icon-search.png', width: 20, height: 20, ),
+        onPressed: _onTapSearch,
+      ));
+  }
+
+  void _onTapSearch() {
+    Analytics.instance.logSelect(target: "Search");
+    Navigator.push(context, CupertinoPageRoute( builder: (context) => SearchPanel()));
   }
 
   @override

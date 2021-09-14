@@ -278,11 +278,11 @@ class Network  {
     return response;
   }
 
-  Future<Http.Response> _delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout }) async {
+  Future<Http.Response> _delete(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
         Uri uri = _uriFromUrlString(url);
-        Future<Http.Response> response = (uri != null) ? Http.delete(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
+        Future<Http.Response> response = (uri != null) ? Http.delete(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
         Log.d(e?.toString());
@@ -292,14 +292,14 @@ class Network  {
     return null;
   }
 
-  Future<Http.Response> delete(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
+  Future<Http.Response> delete(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
     Http.Response response;
     try {
-      response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
+      response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
         if (await _refreshToken(auth)) {
-          response = await _delete(url, headers: headers, auth: auth, timeout: timeout);
+          response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
         }
       }
     } catch (e) {

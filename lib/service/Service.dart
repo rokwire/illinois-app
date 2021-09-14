@@ -32,6 +32,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -116,6 +117,7 @@ class Services {
     GeoFence(),
     Voter(),
     StudentGuide(),
+    Inbox(),
     
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),

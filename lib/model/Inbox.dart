@@ -16,13 +16,14 @@ class InboxMessage with Favorite {
 
   final String   subject;
   final String   body;
+  final Map<String, dynamic> data;
   
   final InboxSender          sender;
   final List<InboxRecepient> recepients;
 
   InboxMessage({this.messageId, this.priority, this.topic, this.category,
     this.dateCreatedUtc, this.dateUpdatedUtc, this.dateSentUtc,
-    this.subject, this.body,
+    this.subject, this.body, this.data,
     this.sender, this.recepients
   });
 
@@ -39,6 +40,7 @@ class InboxMessage with Favorite {
 
       subject: AppJson.stringValue(json['subject']),
       body: AppJson.stringValue(json['body']),
+      data: AppJson.mapValue(json['data']),
 
       sender: InboxSender.fromJson(AppJson.mapValue(json['sender'])),
       recepients: InboxRecepient.listFromJson(AppJson.listValue(json['recipients']))
@@ -57,6 +59,7 @@ class InboxMessage with Favorite {
 
       'subject': subject,
       'body': body,
+      'data': data,
 
       'sender': sender?.toJson(),
       'recipients': InboxRecepient.listToJson(recepients),

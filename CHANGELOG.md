@@ -5,7 +5,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.7] 2021-09-10
+### Added
+- Acknowledge new field "displayOnlyWithSuperEvent" in events [#744](https://github.com/rokwire/illinois-app/issues/744).
+- Implement Pull to refresh for InboxHomePanel [#746](https://github.com/rokwire/illinois-app/issues/746).
+
+## [3.0.6] 2021-09-09
+### Changed
+- Improved Accessibility for Inbox panels [#742](https://github.com/rokwire/illinois-app/issues/742).
+- ExplorePanel: remove horizontal scrolling for tabs and filters. [#511](https://github.com/rokwire/illinois-app/issues/511).
+- Acknowledged FCM stuff from Notifications BB [#740](https://github.com/rokwire/illinois-app/issues/740).
+
+## [3.0.5] 2021-09-01
+### Added
+- Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
+- Debug create Inbox message functionality [#735](https://github.com/rokwire/illinois-app/issues/735).
+- Group attributes in "Request to join" select analytics event [#737](https://github.com/rokwire/illinois-app/issues/737).
+
+## [3.0.4] 2021-08-31
+### Changed
+- Updated date headers style in Inbox panel [#728](https://github.com/rokwire/illinois-app/issues/728).
+- Acknowledge latest updates from Notification BB [#732](https://github.com/rokwire/illinois-app/issues/732).
+### Added
+- Implement Delete functionality in Inbox panel [#730](https://github.com/rokwire/illinois-app/issues/730).
+
+## [3.0.3] 2021-08-30
+### Changed
 - Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
+- Hide the "Categories" drop down in Inbox panel [#721](https://github.com/rokwire/illinois-app/issues/721).
+- Replace "Today and Yesterday" with only "Yesterday" in time dropdown in Inbox panel [#723](https://github.com/rokwire/illinois-app/issues/723).
+- Group inbox messages by date [#725](https://github.com/rokwire/illinois-app/issues/725).
 
 ## [3.0.2] 2021-08-27
 ### Fixed

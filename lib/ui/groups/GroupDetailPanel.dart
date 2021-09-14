@@ -1152,7 +1152,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapMembers(){
     Analytics().logSelect(target: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: _group.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
 
   void _onTapSettings(){
@@ -1161,7 +1161,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onMembershipRequest() {
-    Analytics().logSelect(target: "Request to join");
+    Analytics().logSelect(target: "Request to join", attributes: widget.group.analyticsAttributes);
     if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {

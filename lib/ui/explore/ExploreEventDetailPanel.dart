@@ -153,6 +153,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                                                           _eventSponsor(),
                                                           _exploreDetails(),
                                                           _exploreSubTitle(),
+                                                          _exploreContacts()
                                                         ])),
                                                       Container(
                                                         padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
@@ -550,6 +551,44 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               fontSize: 20,
               color: Styles().colors.textBackground),
         ));
+  }
+
+  Widget _exploreContacts() {
+    if (AppCollection.isCollectionEmpty(widget.event?.contacts)) {
+      return Container();
+    }
+    List<Widget> contactList = [];
+    contactList.add(Padding(
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
+    for (Contact contact in widget.event.contacts) {
+      String contactDetails = '';
+      if (AppString.isStringNotEmpty(contact.firstName)) {
+        contactDetails += contact.firstName;
+      }
+      if (AppString.isStringNotEmpty(contact.lastName)) {
+        if (AppString.isStringNotEmpty(contactDetails)) {
+          contactDetails += ' ';
+        }
+        contactDetails += contact.lastName;
+      }
+      if (AppString.isStringNotEmpty(contact.organization)) {
+        contactDetails += ' (${contact.organization})';
+      }
+      if (AppString.isStringNotEmpty(contact.email)) {
+        if (AppString.isStringNotEmpty(contactDetails)) {
+          contactDetails += ', ';
+        }
+        contactDetails += contact.email;
+      }
+      if (AppString.isStringNotEmpty(contact.phone)) {
+        if (AppString.isStringNotEmpty(contactDetails)) {
+          contactDetails += ', ';
+        }
+        contactDetails += contact.phone;
+      }
+      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: TextStyle(fontFamily: Styles().fontFamilies.regular))));
+    }
+    return Padding(padding: EdgeInsets.only(left: 30), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contactList));
   }
 
   Widget _exploreDescription() {

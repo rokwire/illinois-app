@@ -1779,7 +1779,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 context,
                 CupertinoPageRoute(
                     builder: (context) => GroupEventDetailPanel(
-                        event: event, groupId: widget?.group?.id, previewMode: true))).then((dynamic data) {
+                        event: event, group: widget?.group, previewMode: true))).then((dynamic data) {
               Navigator.pop(context);
             });
           });

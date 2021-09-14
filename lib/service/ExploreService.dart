@@ -423,6 +423,7 @@ class ExploreService /* with Service */ {
       Event event = Event.fromJson(jsonEntry);
       if (event != null) {
         bool addEventToList = true;
+        bool displayOnlyWithSuperEvent = event.displayOnlyWithSuperEvent ?? false;
         int recurrenceId = event.recurrenceId;
         int eventIndex = events.length;
         if (excludeRecurringEvents && event.recurringFlag && (recurrenceId != null)) {
@@ -445,7 +446,7 @@ class ExploreService /* with Service */ {
         } else if(event.isSuperEvent) {
           await _buildEventsForSuperEvent(event, eventFilter);
         }
-        if (addEventToList) {
+        if (addEventToList && !displayOnlyWithSuperEvent) {
           events.add(event);
         }
       }

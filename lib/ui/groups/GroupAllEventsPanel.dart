@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
@@ -9,13 +10,16 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class GroupAllEventsPanel extends StatefulWidget{
+class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
 
   const GroupAllEventsPanel({Key key, this.group}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupAllEventsState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupAllEventsState extends State<GroupAllEventsPanel>{

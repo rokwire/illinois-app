@@ -34,7 +34,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class GroupPostDetailPanel extends StatefulWidget {
+class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost post;
   final GroupPost focusedReply;
   final List<GroupPost> replyThread;
@@ -46,6 +46,9 @@ class GroupPostDetailPanel extends StatefulWidget {
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {

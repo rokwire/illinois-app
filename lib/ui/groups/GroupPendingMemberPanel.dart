@@ -28,11 +28,17 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-class GroupPendingMemberPanel extends StatefulWidget {
+class GroupPendingMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Member member;
   final Group group;
+  
   GroupPendingMemberPanel({this.member, this.group});
+  
+  @override
   _GroupPendingMemberPanelState createState() => _GroupPendingMemberPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 

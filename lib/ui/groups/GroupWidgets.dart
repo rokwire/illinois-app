@@ -564,7 +564,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
         Analytics().logSelect(target: "Group Event");
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, groupId: widget.group?.id,previewMode: widget.isAdmin,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
