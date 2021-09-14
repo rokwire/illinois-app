@@ -129,6 +129,8 @@ class Tweet {
 
   TwitterUser get author => _author;
 
+  TwitterMedia get media => AppCollection.isCollectionNotEmpty(attachments?.media) ? attachments?.media?.first : null;
+
   void _applyIncludes(TweetsIncludes includes) {
     _author = TwitterUser.entryInList(includes?.users, id: authorId);
     attachments?._applyIncludes(includes);

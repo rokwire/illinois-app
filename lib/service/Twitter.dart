@@ -142,4 +142,8 @@ class Twitter with Service implements NotificationsListener {
       print(e.toString());
     }
   }
+
+  Future<void> refresh() async {
+    await _updateContentFromNet();
+  }
 }

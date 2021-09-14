@@ -149,6 +149,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       else if (code == 'student_guide_highlights') {
         widget = HomeStudentGuideHighlightsWidget(refreshController: _refreshController);
       }
+      else if (code == 'twitter') {
+        //widget = HomeTwitterWidget(refreshController: _refreshController);
+      }
       else if (code == 'voter_registration') {
         widget = HomeVoterRegistrationWidget();
       }
