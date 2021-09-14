@@ -59,7 +59,7 @@ class Sports with Service {
   Future<void> initService() async {
     if(_enabled) {
       await _loadSportDefinitions();
-      _loadSportSocialMedias();
+      await _loadSportSocialMedias();
     }
   }
 
@@ -81,12 +81,10 @@ class Sports with Service {
   }
 
   SportSocialMedia getSocialMediaForSport(String shortName) {
-    if(_enabled) {
-      if (AppString.isStringEmpty(shortName) ||
-          (_socialMedias == null || _socialMedias.isEmpty)) {
-        return null;
+    if (_enabled) {
+      if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
+        return _socialMedias.firstWhere((socialMedia) => shortName == socialMedia.shortName);
       }
-      return _socialMedias.firstWhere((socialMedia) => shortName == socialMedia.shortName);
     }
     return null;
   }
@@ -170,27 +168,30 @@ class Sports with Service {
     }
   }
 
-  void _loadSportSocialMedias() {
-
+  Future<void> _loadSportSocialMedias() async {
     List<dynamic> jsonList = Storage().sportSocialMediaList;
     _socialMedias = (jsonList != null) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
 
-    Network().get(Config().sportSocialMediaUrl).then((Response response) {
-      String responseBody = response?.body;
-      Map<String, dynamic> jsonData = ((response != null) && (response.statusCode == 200)) ? AppJson.decode(responseBody) : null;
-      List<dynamic> jsonList = (jsonData != null) ?  jsonData['sports'] : null;
-      List<SportSocialMedia> socialMedias = (jsonList != null) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
+    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
+      return;
+    }
+    String socialUrl = Config().sportsServiceUrl + '/api/v2/social';
+    Response response = await Network().get(socialUrl, auth: NetworkAuth.App);
+    String responseBody = response?.body;
+    if (response?.statusCode == 200) {
+      List<dynamic> jsonList = AppJson.decodeList(responseBody);
+      List<SportSocialMedia> socialMedias =
+          AppCollection.isCollectionNotEmpty(jsonList) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
       if ((socialMedias != null) && ((_socialMedias == null) || !DeepCollectionEquality().equals(socialMedias, _socialMedias))) {
         _socialMedias = socialMedias;
         Storage().sportSocialMediaList = jsonList;
         NotificationService().notify(notifyChanged, null);
       }
-      else {
-        Log.e('Failed to load social media');
-        Log.e(responseBody);
-        return null;
-      }
-    });
+    } else {
+      Log.e('Failed to load social media');
+      Log.e(responseBody);
+      return null;
+    }
   }
 
   SportDefinition getSportByShortName(String sportShortName) {
@@ -671,6 +672,5 @@ class Sports with Service {
   // Enabled
 
   bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl)
-      && AppString.isStringNotEmpty(Config().sportSocialMediaUrl)
       && AppString.isStringNotEmpty(Config().sportScheduleUrl);
 }
