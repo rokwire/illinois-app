@@ -764,7 +764,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
             .add(_RosterItem(
           name: roster.name,
           position: roster.position,
-          imageUrl: roster.rosterPhotoUrl,
+          imageUrl: roster.thumbPhotoUrl,
           onTap: () => _onTapRosterItem(context, roster),));
       }
     }
@@ -781,7 +781,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
         coachingWidgets
             .add(_RosterItem(name: coach.name,
           position: coach.title,
-          imageUrl: coach.photoUrl,
+          imageUrl: coach.thumbPhotoUrl,
           onTap: () => _onTapCoachItem(context, coach),));
       }
     }
@@ -880,7 +880,7 @@ class _RosterItem extends StatelessWidget {
             children: <Widget>[
               ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.network(imageUrl, width: 128, height: 144, fit: BoxFit.cover, alignment: Alignment.topCenter,)),
+                  child: _imageContainer()),
               Container(height: 12,),
               Text(
                 name,
@@ -902,6 +902,16 @@ class _RosterItem extends StatelessWidget {
         )
       ),
     );
+  }
+
+  Widget _imageContainer() {
+    double width = 128;
+    double height = 144;
+    if (AppString.isStringNotEmpty(imageUrl)) {
+      return Image.network(imageUrl, width: width, height: height, fit: BoxFit.cover, alignment: Alignment.topCenter);
+    } else {
+      return Container(width: width, height: height, color: Styles().colors.background);
+    }
   }
 }
 

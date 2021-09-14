@@ -207,56 +207,56 @@ class Sports with Service {
     return null;
   }
 
-  Future<List<dynamic>> loadRosters(String sportKey) async {
-    List<Roster> rosters;
-    if(_enabled) {
-      final rostersUrl = (Config().sportRosterUrl != null) ? "${Config().sportRosterUrl}?path=$sportKey&format=json" : null;
-      final response = await Network().get(rostersUrl);
+  Future<List<Roster>> loadRosters(String sportKey) async {
+    if (_enabled && AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+      final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
+      final response = await Network().get(rostersUrl, auth: NetworkAuth.App);
       String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        rosters = [];
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<dynamic> rosterList = jsonData["roster"];
-          for (Map<String, dynamic> jsonEntry in rosterList) {
+      int responseCode = response?.statusCode ?? -1;
+      if (responseCode == 200) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+          List<Roster> rosters = [];
+          for (Map<String, dynamic> jsonEntry in jsonData) {
             Roster roster = Roster.fromJson(jsonEntry);
             if (roster != null) {
               rosters.add(roster);
             }
           }
+          return rosters;
         }
       } else {
         Log.e('Failed to load rosters');
         Log.e(responseBody);
       }
     }
-    return rosters;
+    return null;
   }
 
-  Future<List<dynamic>> loadCoaches(String sportKey) async {
-    List<Coach> coaches;
-    if(_enabled) {
-      final rostersUrl = (Config().sportCoachesUrl != null) ? "${Config().sportCoachesUrl}?path=$sportKey&format=json" : null;
-      final response = await Network().get(rostersUrl);
+  Future<List<Coach>> loadCoaches(String sportKey) async {
+    if (_enabled && AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+      final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
+      final response = await Network().get(coachesUrl, auth: NetworkAuth.App);
       String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        coaches = [];
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<dynamic> rosterList = jsonData["roster"];
-          for (Map<String, dynamic> jsonEntry in rosterList) {
+      int responseCode = response?.statusCode;
+      if (responseCode == 200) {
+        List<dynamic> jsonList = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonList)) {
+          List<Coach> coaches = [];
+          for (Map<String, dynamic> jsonEntry in jsonList) {
             Coach coach = Coach.fromJson(jsonEntry);
             if (coach != null) {
               coaches.add(coach);
             }
           }
+          return coaches;
         }
       } else {
-        Log.e('Failed to load staff info');
+        Log.e('Failed to load coaches.');
         Log.e(responseBody);
       }
     }
-    return coaches;
+    return null;
   }
 
   ///returns Map<String, Schedule> where the key is the season name and the value is the Schedule itself
@@ -671,8 +671,6 @@ class Sports with Service {
   // Enabled
 
   bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl)
-      && AppString.isStringNotEmpty(Config().sportCoachesUrl)
-      && AppString.isStringNotEmpty(Config().sportRosterUrl)
       && AppString.isStringNotEmpty(Config().sportSocialMediaUrl)
       && AppString.isStringNotEmpty(Config().sportScheduleUrl);
 }

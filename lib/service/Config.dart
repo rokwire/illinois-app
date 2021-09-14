@@ -124,8 +124,6 @@ class Config with Service implements NotificationsListener {
   String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
   String get twitterHostUrl         { return thirdPartyServices['twitter_host_url']; }          // "https://twitter.com/"
   String get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
-  String get sportCoachesUrl        { return thirdPartyServices['sport_coaches_url']; }         // "http://fightingillini.com/services/coaches_xml.aspx"
-  String get sportRosterUrl         { return thirdPartyServices['sport_roster_url']; }          // "http://fightingillini.com/services/roster_xml.aspx"
   String get sportScheduleUrl       { return thirdPartyServices['sport_schedule_url']; }        // "http://fightingillini.com/services/schedule_xml_2.aspx"
   String get sportSocialMediaUrl    { return thirdPartyServices['sport_social_media_url']; }    // "http://fightingillini.com/api/assets?operation=sports"
   String get ticketsUrl             { return thirdPartyServices['tickets_url']; }               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"

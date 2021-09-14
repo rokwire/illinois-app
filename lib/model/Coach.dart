@@ -14,50 +14,37 @@
  * limitations under the License.
  */
 
-import 'package:illinois/utils/Utils.dart';
-
-class Coach{
-  final int id;
+class Coach {
+  final String id;
   final String name;
+  final String firstName;
+  final String lastName;
   final String title;
   final String email;
   final String phone;
+  final String fullSizePhotoUrl;
+  final String thumbPhotoUrl;
   final String htmlBio;
-  final Map<String,dynamic> jsonData;
 
-  Coach({this.id, this.name, this.title, this.email, this.phone, this.htmlBio, this.jsonData});
-
-  String get photoUrl{
-    String fullSizeUrl = _photoUrlWithKey("fullsize");
-    return AppString.isStringNotEmpty(fullSizeUrl) ? '$fullSizeUrl?width=256' : "";
-  }
-
-  String get fullSizePhotoUrl{
-    return _photoUrlWithKey("fullsize");
-  }
-
-  String _photoUrlWithKey(String key){
-    if(AppString.isStringNotEmpty(key)){
-      List<dynamic> photos = jsonData['photos'];
-
-      if(photos != null && photos.isNotEmpty){
-        return photos.first[key] != null ? photos.first[key] : "";
-      }
-    }
-    return null;
-  }
+  Coach({this.id, this.name, this.firstName, this.lastName, this.title, this.email, this.phone, this.htmlBio, this.fullSizePhotoUrl, this.thumbPhotoUrl});
 
   factory Coach.fromJson(Map<String, dynamic> json) {
-    Map<String,dynamic> staffInfo = json['staffinfo'];
+    if (json == null) {
+      return null;
+    }
+    Map<String, dynamic> photosJson = json['photos'];
+    String fullSizePhotoUrl = photosJson != null ? photosJson['fullsize'] : null;
+    String thumbPhotoUrl = photosJson != null ? photosJson['thumbnail'] : null;
     return Coach(
-      id: json['id'],
-      name: AppString.isStringNotEmpty(json['name']) ? json['name'] : "",
-      title: AppString.isStringNotEmpty(staffInfo['title']) ? staffInfo['title'] : "",
-      email: AppString.isStringNotEmpty(staffInfo['email']) ? staffInfo['email'] : "",
-      phone: AppString.isStringNotEmpty(staffInfo['phone']) ? staffInfo['phone'] : "",
-      htmlBio: AppString.isStringNotEmpty(json['bio']) ? json['bio'] : "",
-      jsonData: json,
-    );
-
+        id: json['id'],
+        name: json['name'],
+        firstName: json['first_name'],
+        lastName: json['last_name'],
+        email: json['email'],
+        phone: json['phone'],
+        title: json['title'],
+        htmlBio: json['bio'],
+        fullSizePhotoUrl: fullSizePhotoUrl,
+        thumbPhotoUrl: thumbPhotoUrl);
   }
 }
