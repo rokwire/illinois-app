@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -23,6 +24,15 @@ class Tweets {
       'includes': includes?.toJson()
     };
   }
+
+  bool operator ==(o) =>
+    (o is Tweets) &&
+      DeepCollectionEquality().equals(o.tweets, tweets) &&
+      (o.includes == includes);
+
+  int get hashCode =>
+    (DeepCollectionEquality().hash(tweets) ?? 0) ^
+    (includes?.hashCode ?? 0);
 }
 
 ///////////////////////
@@ -43,6 +53,8 @@ class Tweet {
   final TweetPublicMetrics publicMetrics;
   final TweetContextAnotations contextAnotations;
   final TweetAttachments attachments;
+
+  TwitterUser _author;
 
   Tweet({this.id, this.createdAt, this.text, this.lang, this.conversationId, this.authorId, this.source, this.replySettings, this.possiblySensitive,
     this.entities, this.publicMetrics, this.contextAnotations, this.attachments,
@@ -82,6 +94,52 @@ class Tweet {
       'context_annotations': contextAnotations?.toJson(),
       'attachments': attachments?.toJson(),
     };
+  }
+
+  bool operator ==(o) =>
+    (o is Tweet) &&
+      (o.id == id) &&
+      (o.createdAt == createdAt) &&
+      (o.text == text) &&
+      (o.lang == lang) &&
+      (o.conversationId == conversationId) &&
+      (o.authorId == authorId) &&
+      (o.source == source) &&
+      (o.replySettings == replySettings) &&
+      (o.possiblySensitive == possiblySensitive) &&
+      (o.entities == entities) &&
+      (o.publicMetrics == publicMetrics) &&
+      (o.contextAnotations == contextAnotations) &&
+      (o.attachments == attachments);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (createdAt?.hashCode ?? 0) ^
+    (text?.hashCode ?? 0) ^
+    (lang?.hashCode ?? 0) ^
+    (conversationId?.hashCode ?? 0) ^
+    (authorId?.hashCode ?? 0) ^
+    (source?.hashCode ?? 0) ^
+    (replySettings?.hashCode ?? 0) ^
+    (possiblySensitive?.hashCode ?? 0) ^
+    (entities?.hashCode ?? 0) ^
+    (publicMetrics?.hashCode ?? 0) ^
+    (contextAnotations?.hashCode ?? 0) ^
+    (attachments?.hashCode ?? 0);
+
+  TwitterUser get author => _author;
+
+  void _applyIncludes(TweetsIncludes includes) {
+    _author = TwitterUser.entryInList(includes?.users, id: authorId);
+    attachments?._applyIncludes(includes);
+  }
+
+  static void applyIncludesToList(List<Tweet> tweets, TweetsIncludes includes) {
+    if ((tweets != null) && (includes != null)) {
+      for (Tweet tweet in tweets) {
+        tweet._applyIncludes(includes);
+      }
+    }
   }
 
   static List<Tweet> listFromJson(List<dynamic> jsonList) {
@@ -132,6 +190,17 @@ class TweetEntities {
       'hashtags': TweetEntityHashtag.listToJson(hashtags),
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweetEntities) &&
+      DeepCollectionEquality().equals(urls, urls) &&
+      DeepCollectionEquality().equals(annotations, annotations) &&
+      DeepCollectionEquality().equals(hashtags, hashtags);
+
+  int get hashCode =>
+    (DeepCollectionEquality().hash(urls) ?? 0) ^
+    (DeepCollectionEquality().hash(annotations) ?? 0) ^
+    (DeepCollectionEquality().hash(hashtags) ?? 0);
 }
 
 ///////////////////////
@@ -165,6 +234,21 @@ class TweetEntityUrl {
       'display_url': displayUrl,
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweetEntityUrl) &&
+      (o.start == start) &&
+      (o.end == end) &&
+      (o.url == url) &&
+      (o.expandedUrl == expandedUrl) &&
+      (o.displayUrl == displayUrl);
+
+  int get hashCode =>
+    (start?.hashCode ?? 0) ^
+    (end?.hashCode ?? 0) ^
+    (url?.hashCode ?? 0) ^
+    (expandedUrl?.hashCode ?? 0) ^
+    (displayUrl?.hashCode ?? 0);
 
   static List<TweetEntityUrl> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityUrl> result;
@@ -221,6 +305,21 @@ class TweetEntityAnnotation {
     };
   }
 
+  bool operator ==(o) =>
+    (o is TweetEntityAnnotation) &&
+      (o.start == start) &&
+      (o.end == end) &&
+      (o.probability == probability) &&
+      (o.type == type) &&
+      (o.normalizedText == normalizedText);
+
+  int get hashCode =>
+    (start?.hashCode ?? 0) ^
+    (end?.hashCode ?? 0) ^
+    (probability?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+    (normalizedText?.hashCode ?? 0);
+
   static List<TweetEntityAnnotation> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityAnnotation> result;
     if (jsonList != null) {
@@ -270,6 +369,17 @@ class TweetEntityHashtag {
     };
   }
 
+  bool operator ==(o) =>
+    (o is TweetEntityHashtag) &&
+      (o.start == start) &&
+      (o.end == end) &&
+      (o.tag == tag);
+
+  int get hashCode =>
+    (start?.hashCode ?? 0) ^
+    (end?.hashCode ?? 0) ^
+    (tag?.hashCode ?? 0);
+
   static List<TweetEntityHashtag> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityHashtag> result;
     if (jsonList != null) {
@@ -298,6 +408,7 @@ class TweetEntityHashtag {
 
 class TweetAttachments {
   final List<String> mediaKeys;
+  List<TwitterMedia> _media;
 
   TweetAttachments({this.mediaKeys});
 
@@ -311,6 +422,19 @@ class TweetAttachments {
     return {
       'media_keys': mediaKeys,
     };
+  }
+
+  bool operator ==(o) =>
+    (o is TweetAttachments) &&
+      DeepCollectionEquality().equals(o.mediaKeys, mediaKeys);
+
+  int get hashCode =>
+    (DeepCollectionEquality().hash(mediaKeys) ?? 0);
+
+  List<TwitterMedia> get media => _media;
+
+  void _applyIncludes(TweetsIncludes includes) {
+    _media = TwitterMedia.listFromKeys(includes?.media, keys: mediaKeys);
   }
 }
 
@@ -341,6 +465,19 @@ class TweetPublicMetrics {
       'quote_count': quoteCount,
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweetPublicMetrics) &&
+      (o.retweetCount == retweetCount) &&
+      (o.replyCount == replyCount) &&
+      (o.likeCount == likeCount) &&
+      (o.quoteCount == quoteCount);
+
+  int get hashCode =>
+    (retweetCount?.hashCode ?? 0) ^
+    (replyCount?.hashCode ?? 0) ^
+    (likeCount?.hashCode ?? 0) ^
+    (quoteCount?.hashCode ?? 0);
 }
 
 ///////////////////////
@@ -368,30 +505,50 @@ class TweetContextAnotation {
       'description': description,
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweetContextAnotation) &&
+      (o.id == id) &&
+      (o.name == name) &&
+      (o.description== description);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0);
 }
 
 ///////////////////////
 // TweetContextAnotations
 
 class TweetContextAnotations {
-  final TweetContextAnotation domainAnotation;
-  final TweetContextAnotation entityAnotation;
+  final TweetContextAnotation domain;
+  final TweetContextAnotation entity;
 
-  TweetContextAnotations({this.domainAnotation, this.entityAnotation});
+  TweetContextAnotations({this.domain, this.entity});
 
   factory TweetContextAnotations.fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetContextAnotations(
-      domainAnotation: TweetContextAnotation.fromJson(AppJson.mapValue(json['domain'])),
-      entityAnotation: TweetContextAnotation.fromJson(AppJson.mapValue(json['entity'])),
+      domain: TweetContextAnotation.fromJson(AppJson.mapValue(json['domain'])),
+      entity: TweetContextAnotation.fromJson(AppJson.mapValue(json['entity'])),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'domain': domainAnotation?.toJson(),
-      'entity': entityAnotation?.toJson(),
+      'domain': domain?.toJson(),
+      'entity': entity?.toJson(),
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweetContextAnotations) &&
+      (o.domain == domain) &&
+      (o.entity == entity);
+
+  int get hashCode =>
+    (domain?.hashCode ?? 0) ^
+    (entity?.hashCode ?? 0);
 }
 
 ///////////////////////
@@ -416,6 +573,15 @@ class TweetsIncludes {
       'users': TwitterUser.listToJson(users),
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweetsIncludes) &&
+      DeepCollectionEquality().equals(o.media, media) &&
+      DeepCollectionEquality().equals(o.users, users);
+
+  int get hashCode =>
+    (DeepCollectionEquality().hash(media) ?? 0) ^
+    (DeepCollectionEquality().hash(users) ?? 0);
 }
 
 ///////////////////////
@@ -453,6 +619,23 @@ class TwitterMedia {
     };
   }
 
+  bool operator ==(o) =>
+    (o is TwitterMedia) &&
+      (o.key == key) &&
+      (o.type == type) &&
+      (o.url == url) &&
+      (o.altText == altText) &&
+      (o.width == width) &&
+      (o.height == height);
+
+  int get hashCode =>
+    (key?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+    (url?.hashCode ?? 0) ^
+    (altText?.hashCode ?? 0) ^
+    (width?.hashCode ?? 0) ^
+    (height?.hashCode ?? 0);
+
   static List<TwitterMedia> listFromJson(List<dynamic> jsonList) {
     List<TwitterMedia> result;
     if (jsonList != null) {
@@ -484,6 +667,17 @@ class TwitterMedia {
       }
     }
     return null;
+  }
+
+  static List<TwitterMedia> listFromKeys(List<TwitterMedia> contentList, {List<String> keys}) {
+    List<TwitterMedia> result;
+    if ((contentList != null) && (keys != null)) {
+      result = <TwitterMedia>[];
+      for (String key in keys) {
+        result.add(entryInList(contentList, key: key));
+      }
+    }
+    return result;
   }
 }
 
@@ -551,6 +745,35 @@ class TwitterUser {
     };
   }
 
+  bool operator ==(o) =>
+    (o is TwitterUser) &&
+      (o.id == id) &&
+      (o.createdAt == createdAt) &&
+      (o.name == name) &&
+      (o.userName == userName) &&
+      (o.description == description) &&
+      (o.url == url) &&
+      (o.profileImageUrl == profileImageUrl) &&
+      (o.location == location) &&
+      (o.protected == protected) &&
+      (o.verified == verified) &&
+      (o.publicMetrics == publicMetrics) &&
+      DeepCollectionEquality().equals(o.entetityUrls, entetityUrls);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (createdAt?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0) ^
+    (userName?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (url?.hashCode ?? 0) ^
+    (profileImageUrl?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0) ^
+    (protected?.hashCode ?? 0) ^
+    (verified?.hashCode ?? 0) ^
+    (publicMetrics?.hashCode ?? 0) ^
+    DeepCollectionEquality().hash(entetityUrls);
+
   static List<TwitterUser> listFromJson(List<dynamic> jsonList) {
     List<TwitterUser> result;
     if (jsonList != null) {
@@ -612,4 +835,17 @@ class TweeterUserPublicMetrics {
       'listed_count': listedCount,
     };
   }
+
+  bool operator ==(o) =>
+    (o is TweeterUserPublicMetrics) &&
+      (o.followersCount == followersCount) &&
+      (o.followingCount == followingCount) &&
+      (o.tweetCount == tweetCount) &&
+      (o.listedCount == listedCount);
+
+  int get hashCode =>
+    (followersCount?.hashCode ?? 0) ^
+    (followingCount?.hashCode ?? 0) ^
+    (tweetCount?.hashCode ?? 0) ^
+    (listedCount?.hashCode ?? 0);
 }
