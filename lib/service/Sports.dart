@@ -382,13 +382,11 @@ class Sports with Service {
   Future<List<Game>> loadAllScheduleGames() async {
     List<Game> gamesList = [];
     if(_enabled) {
-      String scheduleUrl = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/schedule" : null;
+      String scheduleUrl = "${Config().sportsServiceUrl}/api/v2/games";
       DateTime now = AppDateTime().now;
       if (now != null) {
-        String dateOffsetString = AppDateTime().formatDateTime(
-            now, format: AppDateTime.scheduleServerQueryDateTimeFormat,
-            ignoreTimeZone: true);
-        scheduleUrl = '$scheduleUrl?date=$dateOffsetString';
+        String dateOffsetString = AppDateTime().formatDateTime(now, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+        scheduleUrl = '$scheduleUrl?start=$dateOffsetString';
       }
 
       final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
@@ -408,7 +406,7 @@ class Sports with Service {
           Log.e(responseBody);
         }
       } else {
-        Log.e('Failed to load upcoming upcoming games responce == null');
+        Log.e('Failed to load upcoming upcoming games response == null');
       }
     }
     return gamesList;
