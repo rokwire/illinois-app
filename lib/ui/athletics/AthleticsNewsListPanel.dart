@@ -168,7 +168,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
           News news = _displayNews[index];
 
           Widget newsView = ImageHolderListItem(
-              imageUrl: news.getImageUrl() ,
+              imageUrl: news.imageUrl,
               placeHolderDividerResource: Styles().colors.fillColorPrimaryTransparent03,
               placeHolderSlantResource:  'images/slant-down-right-blue.png',
           child:AthleticsNewsCard(

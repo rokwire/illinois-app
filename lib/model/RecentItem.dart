@@ -96,8 +96,8 @@ class RecentItem{
             recentItemType: RecentItemType.news,
             recentTitle: news.title,
             recentDescripton: news.description,
-            recentTime: news.getDisplayTime(),
-            recentOriginalJson: news.jsonData
+            recentTime: news.displayTime,
+            recentOriginalJson: news.json
         );
         return gameItem;
       }

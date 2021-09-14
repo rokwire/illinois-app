@@ -648,7 +648,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
         News news = _teamNews[index];
         return ImageHolderListItem(
             //Only the first item got image
-            imageUrl: index == 0? news.getImageUrl() : null,
+            imageUrl: index == 0? news.imageUrl : null,
             placeHolderDividerResource: Styles().colors.fillColorPrimaryTransparent03,
             placeHolderSlantResource: 'images/slant-down-right-blue.png',
             child: AthleticsNewsCard(

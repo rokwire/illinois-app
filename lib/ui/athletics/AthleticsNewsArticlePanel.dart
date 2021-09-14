@@ -54,7 +54,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
         slivers: <Widget>[
             SliverToutHeaderBar(
             context: context,
-            imageUrl: article.getImageUrl(),
+            imageUrl: article.imageUrl,
             backColor: Styles().colors.white,
             leftTriangleColor: Styles().colors.white,
             rightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
@@ -117,7 +117,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             children: <Widget>[
                                               Image.asset('images/icon-news.png'),
                                               Container(width: 5,),
-                                              Text(article.getDisplayTime(),
+                                              Text(article.displayTime,
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Styles().colors.textBackground,
@@ -189,7 +189,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
         ),
       ));
     }
-    String fullText = article.getFillText();
+    String fullText = article.fillText;
     if (!AppString.isStringEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),

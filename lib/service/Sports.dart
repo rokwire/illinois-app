@@ -511,28 +511,38 @@ class Sports with Service {
   }
 
   Future<List<News>> loadNews(String sportKey, int count) async {
-    if(_enabled) {
-      String sportQueryParam = AppString.isStringNotEmpty(sportKey) ? "&path=$sportKey" : "";
-      String countQueryParam = (count > 0) ? "&count=$count" : "";
-      String newsUrl = (Config().newsUrl != null) ? "${Config().newsUrl}?format=json$sportQueryParam$countQueryParam" : null;
-      final response = await Network().get(newsUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<News> newsList = [];
-          List<dynamic> storiesList = jsonData["stories"];
-          for (Map<String, dynamic> jsonEntry in storiesList) {
-            News news = News.fromJson(jsonEntry);
-            if (news != null) {
-              newsList.add(news);
-            }
+    if (_enabled) {
+      String sportQueryParam = AppString.isStringNotEmpty(sportKey) ? "&sport=$sportKey" : "";
+      String countQueryParam = (count > 0) ? "&limit=$count" : "";
+      if (Config().sportsServiceUrl != null) {
+        String newsUrl = Config().sportsServiceUrl + '/api/v2/news';
+        if (AppString.isStringNotEmpty(sportQueryParam) || AppString.isStringNotEmpty(countQueryParam)) {
+          newsUrl += "?";
+          if (AppString.isStringNotEmpty(sportQueryParam)) {
+            newsUrl += sportQueryParam;
           }
-          return newsList;
+          if (AppString.isStringNotEmpty(countQueryParam)) {
+            newsUrl += countQueryParam;
+          }
         }
-      } else {
-        Log.e('Failed to load news');
-        Log.e(responseBody);
+        final response = await Network().get(newsUrl, auth: NetworkAuth.App);
+        String responseBody = response?.body;
+        if ((response != null) && (response.statusCode == 200)) {
+          List<dynamic> jsonData = AppJson.decode(responseBody);
+          if (AppCollection.isCollectionNotEmpty(jsonData)) {
+            List<News> newsList = [];
+            for (Map<String, dynamic> jsonEntry in jsonData) {
+              News news = News.fromJson(jsonEntry);
+              if (news != null) {
+                newsList.add(news);
+              }
+            }
+            return newsList;
+          }
+        } else {
+          Log.e('Failed to load news');
+          Log.e(responseBody);
+        }
       }
     }
     return null;

@@ -783,7 +783,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     } else if (item is Game) {
       return item.displayTime;
     } else if (item is News) {
-      return item.getDisplayTime();
+      return item.displayTime;
     } else if (item is StudentGuideFavorite) {
       return StudentGuide().entryListDescription(StudentGuide().entryById(item.id), stripHtmlTags: true);
     } else if (item is InboxMessage) {
