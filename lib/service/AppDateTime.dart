@@ -79,15 +79,11 @@ class AppDateTime with Service {
     if (AppString.isStringEmpty(dateTimeString)) {
       return null;
     }
-    DateFormat dateFormat;
     DateTime dateTime;
-    if (AppString.isStringNotEmpty(format)) {
-      dateFormat = DateFormat(format);
-    }
     try {
-      dateTime =
-      (dateFormat != null) ? dateFormat.parse(dateTimeString, isUtc) : DateTime.parse(
-          dateTimeString);
+      dateTime = AppString.isStringNotEmpty(format) ?
+        DateFormat(format).parse(dateTimeString, isUtc) :
+        DateTime.tryParse(dateTimeString);
     }
     on Exception catch (e) {
       Log.e(e.toString());
@@ -278,5 +274,9 @@ class AppDateTime with Service {
       print(e);
     }
     return null;
+  }
+
+  DateTime copyDateTime(DateTime date){
+    return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
   }
 }
