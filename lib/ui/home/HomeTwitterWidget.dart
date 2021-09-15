@@ -129,9 +129,9 @@ class _TweetWidget extends StatelessWidget {
 
             Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
               Row(children: [
-                Text("@${tweet.author.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                AppString.isStringNotEmpty(tweet?.author?.userName) ? Text("@${tweet?.author?.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),) : Container(),
                 Expanded(child: Container()),
-                Text('34 min', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
               ],)
             )
 /*

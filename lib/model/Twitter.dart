@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:intl/intl.dart';
+import 'package:sprintf/sprintf.dart';
 
 ///////////////////////
 // Tweets
@@ -42,7 +44,7 @@ class Tweets {
 
 class Tweet {
   final String id;
-  final DateTime createdAt;
+  final DateTime createdAtUtc;
   final String text;
   final String lang;
   final String conversationId;
@@ -59,14 +61,14 @@ class Tweet {
 
   TwitterUser _author;
 
-  Tweet({this.id, this.createdAt, this.text, this.lang, this.conversationId, this.authorId, this.source, this.replySettings, this.possiblySensitive,
+  Tweet({this.id, this.createdAtUtc, this.text, this.lang, this.conversationId, this.authorId, this.source, this.replySettings, this.possiblySensitive,
     this.entities, this.publicMetrics, this.contextAnotations, this.attachments, this.referencedTweets,
   });
 
   factory Tweet.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Tweet(
       id: AppJson.stringValue(json['id']),
-      createdAt: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
+      createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
       text: AppJson.stringValue(json['text']),
       lang: AppJson.stringValue(json['lang']),
       conversationId: AppJson.stringValue(json['conversation_id']),
@@ -85,7 +87,7 @@ class Tweet {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime().utcDateTimeToString(createdAt),
+      'created_at': AppDateTime().utcDateTimeToString(createdAtUtc),
       'text': text,
       'lang': lang,
       'conversation_id': conversationId,
@@ -104,7 +106,7 @@ class Tweet {
   bool operator ==(o) =>
     (o is Tweet) &&
       (o.id == id) &&
-      (o.createdAt == createdAt) &&
+      (o.createdAtUtc == createdAtUtc) &&
       (o.text == text) &&
       (o.lang == lang) &&
       (o.conversationId == conversationId) &&
@@ -120,7 +122,7 @@ class Tweet {
 
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (createdAt?.hashCode ?? 0) ^
+    (createdAtUtc?.hashCode ?? 0) ^
     (text?.hashCode ?? 0) ^
     (lang?.hashCode ?? 0) ^
     (conversationId?.hashCode ?? 0) ^
@@ -145,6 +147,41 @@ class Tweet {
     }
     return null;
   }
+
+  String get displayTime {
+    
+    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(createdAtUtc);
+    if (deviceDateTime != null) {
+      DateTime now = DateTime.now();
+      if (deviceDateTime.compareTo(now) < 0) {
+        Duration difference = DateTime.now().difference(deviceDateTime);
+        if (difference.inSeconds < 60) {
+          return 'Now';
+        }
+        else if (difference.inMinutes < 60) {
+          return sprintf("%smin", [difference.inMinutes]);
+        }
+        else if (difference.inHours < 24) {
+          return sprintf("%sh", [difference.inHours]);
+        }
+        else if (difference.inDays < 30) {
+          return sprintf("%sd", [difference.inDays]);
+        }
+        else {
+          int differenceInMonths = difference.inDays ~/ 30;
+          if (differenceInMonths < 12) {
+            return sprintf("%sm", [differenceInMonths]);
+          }
+        }
+      }
+
+      return DateFormat("MMM dd, yyyy").format(deviceDateTime);
+    }
+    else {
+      return null;
+    }
+  }
+
 
   void _applyIncludes(TweetsIncludes includes) {
     _author = TwitterUser.entryInList(includes?.users, id: authorId);
@@ -893,7 +930,7 @@ class TwitterMedia {
 class TwitterUser {
 
   final String id;
-  final DateTime createdAt;
+  final DateTime createdAtUtc;
   final String name;
   final String userName;
   final String description;
@@ -906,7 +943,7 @@ class TwitterUser {
   final TweeterUserPublicMetrics publicMetrics;
   final List<TweetEntityUrl> entetityUrls;
 
-  TwitterUser({this.id, this.createdAt, this.name, this.userName, this.description, this.url, this.profileImageUrl, this.location, this.protected, this.verified, this.publicMetrics, this.entetityUrls});
+  TwitterUser({this.id, this.createdAtUtc, this.name, this.userName, this.description, this.url, this.profileImageUrl, this.location, this.protected, this.verified, this.publicMetrics, this.entetityUrls});
 
   factory TwitterUser.fromJson(Map<String, dynamic> json) {
     if (json != null) {
@@ -914,7 +951,7 @@ class TwitterUser {
       Map<String, dynamic> entitiesUrl = (entities != null) ? AppJson.mapValue(entities['url']) : null;
       return TwitterUser(
         id: AppJson.stringValue(json['id']),
-        createdAt: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
+        createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
         name: AppJson.stringValue(json['name']),
         userName: AppJson.stringValue(json['username']),
         description: AppJson.stringValue(json['description']),
@@ -933,7 +970,7 @@ class TwitterUser {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime().utcDateTimeToString(createdAt),
+      'created_at': AppDateTime().utcDateTimeToString(createdAtUtc),
       'name': name,
       'username': userName,
       'description': description,
@@ -954,7 +991,7 @@ class TwitterUser {
   bool operator ==(o) =>
     (o is TwitterUser) &&
       (o.id == id) &&
-      (o.createdAt == createdAt) &&
+      (o.createdAtUtc == createdAtUtc) &&
       (o.name == name) &&
       (o.userName == userName) &&
       (o.description == description) &&
@@ -968,7 +1005,7 @@ class TwitterUser {
 
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (createdAt?.hashCode ?? 0) ^
+    (createdAtUtc?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
     (userName?.hashCode ?? 0) ^
     (description?.hashCode ?? 0) ^
