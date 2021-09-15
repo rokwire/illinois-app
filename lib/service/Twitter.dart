@@ -23,6 +23,7 @@ class Twitter with Service implements NotificationsListener {
   static const String _userFieldsUrlParam = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld";
   static const String _mediaFieldsUrlParam = "media.fields=duration_ms,height,media_key,preview_image_url,type,url,width,public_metrics,non_public_metrics,organic_metrics,promoted_metrics,alt_text";
   static const String _expansionsUrlParam = "expansions=attachments.poll_ids,attachments.media_keys,author_id,entities.mentions.username,geo.place_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id";
+  static const String _excludeUrlParam = "exclude=retweets,replies";
 
   Tweets        _tweets;
   File          _cacheFile;
@@ -119,7 +120,7 @@ class Twitter with Service implements NotificationsListener {
 
   Future<String> _loadContentStringFromNet() async {
     if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
-      String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&max_results=${Config().twitterTweetsCount}";
+      String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam&max_results=${Config().twitterTweetsCount * 2}";
       Map<String, String> headers = {
         HttpHeaders.authorizationHeader : "${Config().twitterTokenType} ${Config().twitterToken}"
       };
