@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -134,38 +135,47 @@ class _TweetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
-      InkWell(onTap: () => _onTap(context), child:
-        Container(
-          decoration: BoxDecoration(
-              color: Styles().colors.white,
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
-          ),
-          clipBehavior: Clip.none,
-          child:
-            Column(children: <Widget>[
-              
-              Expanded(child: 
-                SingleChildScrollView(child:
-                  Column(children: [
-                    AppString.isStringNotEmpty(tweet?.media?.url) ? Image.network(tweet?.media?.url) : Container(),
-                    Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
-                      Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
-                    ),
-                  ],)
-                ),
-              ),
-
-              Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
-                Row(children: [
-                  AppString.isStringNotEmpty(tweet?.author?.userName) ? Text("@${tweet?.author?.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),) : Container(),
-                  Expanded(child: Container()),
-                  Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+      Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
+        ),
+        clipBehavior: Clip.none,
+        child:
+          Column(children: <Widget>[
+            
+            Expanded(child: 
+              SingleChildScrollView(child:
+                Column(children: [
+                  AppString.isStringNotEmpty(tweet?.media?.url) ?
+                    InkWell(onTap: () => _onTap(context), child:
+                      Image.network(tweet?.media?.url)) :
+                  Container(),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+                    //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
+                    Html(data: tweet.html,
+                      onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                      style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                  ),
                 ],)
-              )
-            ])
-        )
-      ),
+              ),
+            ),
+
+            Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+              Row(children: [
+                Expanded(child: AppString.isStringNotEmpty(tweet?.author?.userName) ?
+                  //Text("@${tweet?.author?.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),) :
+                  Html(data: tweet?.author?.html,
+                    onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                    style: { "body": Style(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: FontSize(14), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },) :
+                  Container(),
+                ),
+                Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+              ],)
+            )
+          ])
+      )
     );
   }
 

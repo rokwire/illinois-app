@@ -59,12 +59,14 @@ class Tweet {
   final TweetAttachments attachments;
   final List<TweetRef> referencedTweets;
 
+  final String html;
   TwitterUser _author;
 
   Tweet({this.id, this.createdAtUtc, this.text, this.lang, this.conversationId, this.authorId, this.source, this.replySettings, this.possiblySensitive,
     this.entities, this.publicMetrics, this.contextAnotations, this.attachments, this.referencedTweets,
-  });
-
+  }) :
+    html = _buildHtml(text, entities);
+ 
   factory Tweet.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Tweet(
       id: AppJson.stringValue(json['id']),
@@ -176,7 +178,6 @@ class Tweet {
           }
         }
       }
-
       return DateFormat("MMM dd, yyyy").format(deviceDateTime);
     }
     else {
@@ -184,6 +185,24 @@ class Tweet {
     }
   }
 
+  static String _buildHtml(String text, TweetEntities entities) {
+    String html = text;
+    if ((html != null) && (entities?.entities != null)) {
+      int firstUpdated = text.length;
+      for (int entityIndex = entities.entities.length - 1; 0 <= entityIndex; entityIndex--) {
+        TweetEntity entetity = entities.entities[entityIndex];
+        if ((entetity != null) && entetity.isValid && (entetity.end <= firstUpdated) && (entetity.end <= text.length)) {
+          String entetityText = text.substring(entetity.start, entetity.end);
+          String entetityHtml = entetity.buildHtml(entetityText);
+          if (entetityHtml != null) {
+            html = html.replaceRange(entetity.start, entetity.end, entetityHtml);
+            firstUpdated = entetity.start;
+          }
+        }
+      }
+    }
+    return html;
+  }
 
   void _applyIncludes(TweetsIncludes includes) {
     _author = TwitterUser.entryInList(includes?.users, id: authorId);
@@ -241,8 +260,11 @@ class TweetEntities {
   final List<TweetEntityAnnotation> annotations;
   final List<TweetEntityHashtag> hashtags;
   final List<TweetEntityMention> mentions;
+  
+  final List<TweetEntity> entities;
 
-  TweetEntities({this.urls, this.annotations, this.hashtags, this.mentions});
+  TweetEntities({this.urls, this.annotations, this.hashtags, this.mentions}) :
+    entities = _buildEntities([urls, annotations, hashtags, mentions]);
 
   factory TweetEntities.fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntities(
@@ -274,12 +296,50 @@ class TweetEntities {
     (DeepCollectionEquality().hash(annotations) ?? 0) ^
     (DeepCollectionEquality().hash(hashtags) ?? 0) ^
     (DeepCollectionEquality().hash(mentions) ?? 0);
+
+  static List<TweetEntity> _buildEntities(List<dynamic> sourceEntities, { int level }) {
+    List<TweetEntity> entities = <TweetEntity>[];
+    if (sourceEntities != null) {
+      for (dynamic sourceEntity in sourceEntities) {
+        if (sourceEntity is TweetEntity) {
+          entities.add(sourceEntity);
+        }
+        else if (sourceEntity is List) {
+          entities.addAll(_buildEntities(sourceEntity, level: (level ?? 0) + 1));
+        }
+      }
+    }
+    if ((level == null) || (level == 0)) {
+      entities.sort();
+    }
+    return entities;
+  }
+}
+
+///////////////////////
+// TweetEntity
+
+abstract class TweetEntity implements Comparable<TweetEntity> {
+  int get start;
+  int get end;
+
+  bool get isValid {
+    return (start != null) && (end != null) && (start < end);
+  }
+
+  int compareTo(TweetEntity other) {
+    return ((end != null) && (other?.end != null)) ? end.compareTo(other?.end) : 0;
+  }
+
+  String buildHtml(String sourceText) {
+    return null;
+  }
 }
 
 ///////////////////////
 // TweetEntityUrl
 
-class TweetEntityUrl {
+class TweetEntityUrl with TweetEntity {
   final int start;
   final int end;
   final String url;
@@ -307,6 +367,8 @@ class TweetEntityUrl {
   }
 
   Map<String, dynamic> toJson() {
+    int a;
+    a.compareTo(22);
     return {
       'start': start,
       'end': end,
@@ -351,6 +413,10 @@ class TweetEntityUrl {
     return null;
   }
 
+  String buildHtml(String sourceText) {
+    return "<a href='$expandedUrl'>$sourceText</a>";
+  }
+
   static String detailUrlFromList(List<TweetEntityUrl> contentList) {
     if (contentList != null) {
       for (int index = contentList.length - 1; 0 <= index; index--) {
@@ -389,7 +455,7 @@ class TweetEntityUrl {
 ///////////////////////
 // TweetEntityAnnotation
 
-class TweetEntityAnnotation {
+class TweetEntityAnnotation with TweetEntity {
   final int start;
   final int end;
   final double probability;
@@ -459,7 +525,7 @@ class TweetEntityAnnotation {
 ///////////////////////
 // TweetEntityHashtag
 
-class TweetEntityHashtag {
+class TweetEntityHashtag with TweetEntity {
   final int start;
   final int end;
   final String tag;
@@ -493,6 +559,10 @@ class TweetEntityHashtag {
     (end?.hashCode ?? 0) ^
     (tag?.hashCode ?? 0);
 
+  String buildHtml(String sourceText) {
+    return "<a href='https://twitter.com/hashtag/$tag'>$sourceText</a>";
+  }
+
   static List<TweetEntityHashtag> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityHashtag> result;
     if (jsonList != null) {
@@ -519,7 +589,7 @@ class TweetEntityHashtag {
 ///////////////////////
 // TweetEntityMention
 
-class TweetEntityMention {
+class TweetEntityMention with TweetEntity {
   final int start;
   final int end;
   final String userName;
@@ -557,6 +627,10 @@ class TweetEntityMention {
     (end?.hashCode ?? 0) ^
     (userName?.hashCode ?? 0) ^
     (id?.hashCode ?? 0);
+
+  String buildHtml(String sourceText) {
+    return "<a href='https://twitter.com/$userName'>$sourceText</a>";
+  }
 
   static List<TweetEntityMention> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityMention> result;
@@ -1039,6 +1113,10 @@ class TwitterUser {
     (publicMetrics?.hashCode ?? 0) ^
     DeepCollectionEquality().hash(entetityUrls);
 
+  String get html {
+    return "<a href='https://twitter.com/$userName'>@$userName</a>";
+  }
+  
   static List<TwitterUser> listFromJson(List<dynamic> jsonList) {
     List<TwitterUser> result;
     if (jsonList != null) {
