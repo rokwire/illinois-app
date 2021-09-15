@@ -9,7 +9,9 @@ class Tweets {
   final List<Tweet> tweets;
   final TweetsIncludes includes;
 
-  Tweets({this.tweets, this.includes});
+  Tweets({this.tweets, this.includes}) {
+    Tweet.applyIncludesToList(tweets, includes);
+  }
 
   factory Tweets.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Tweets(
