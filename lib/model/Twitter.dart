@@ -55,11 +55,12 @@ class Tweet {
   final TweetPublicMetrics publicMetrics;
   final TweetContextAnotations contextAnotations;
   final TweetAttachments attachments;
+  final List<TweetRef> referencedTweets;
 
   TwitterUser _author;
 
   Tweet({this.id, this.createdAt, this.text, this.lang, this.conversationId, this.authorId, this.source, this.replySettings, this.possiblySensitive,
-    this.entities, this.publicMetrics, this.contextAnotations, this.attachments,
+    this.entities, this.publicMetrics, this.contextAnotations, this.attachments, this.referencedTweets,
   });
 
   factory Tweet.fromJson(Map<String, dynamic> json) {
@@ -77,6 +78,7 @@ class Tweet {
       publicMetrics: TweetPublicMetrics.fromJson(AppJson.mapValue(json['public_metrics'])),
       contextAnotations: TweetContextAnotations.fromJson(AppJson.mapValue(json['context_annotations'])),
       attachments: TweetAttachments.fromJson(AppJson.mapValue(json['attachments'])),
+      referencedTweets: TweetRef.listFromJson(AppJson.listValue(json['referenced_tweets'])),
     ) : null;
   }
 
@@ -95,6 +97,7 @@ class Tweet {
       'public_metrics': publicMetrics?.toJson(),
       'context_annotations': contextAnotations?.toJson(),
       'attachments': attachments?.toJson(),
+      'referenced_tweets': TweetRef.listToJson(referencedTweets),
     };
   }
 
@@ -112,7 +115,8 @@ class Tweet {
       (o.entities == entities) &&
       (o.publicMetrics == publicMetrics) &&
       (o.contextAnotations == contextAnotations) &&
-      (o.attachments == attachments);
+      (o.attachments == attachments) &&
+      DeepCollectionEquality().equals(o.referencedTweets, referencedTweets);
 
   int get hashCode =>
     (id?.hashCode ?? 0) ^
@@ -127,15 +131,25 @@ class Tweet {
     (entities?.hashCode ?? 0) ^
     (publicMetrics?.hashCode ?? 0) ^
     (contextAnotations?.hashCode ?? 0) ^
-    (attachments?.hashCode ?? 0);
+    (attachments?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(referencedTweets) ?? 0);
 
   TwitterUser get author => _author;
 
-  TwitterMedia get media => AppCollection.isCollectionNotEmpty(attachments?.media) ? attachments?.media?.first : null;
+  TwitterMedia get media {
+    if (AppCollection.isCollectionNotEmpty(attachments?.media)) {
+      return attachments?.media?.first;
+    }
+    else if (AppCollection.isCollectionNotEmpty(referencedTweets)) {
+      return TweetRef.mediaFromList(referencedTweets);
+    }
+    return null;
+  }
 
   void _applyIncludes(TweetsIncludes includes) {
     _author = TwitterUser.entryInList(includes?.users, id: authorId);
     attachments?._applyIncludes(includes);
+    TweetRef.applyIncludesToList(referencedTweets, includes);
   }
 
   static void applyIncludesToList(List<Tweet> tweets, TweetsIncludes includes) {
@@ -166,6 +180,17 @@ class Tweet {
       }
     }
     return jsonList;
+  }
+
+  static Tweet entryInList(List<Tweet> contentList, {String id}) {
+    if (contentList != null) {
+      for (Tweet contentEntry in contentList) {
+        if (contentEntry?.id == id) {
+          return contentEntry;
+        }
+      }
+    }
+    return null;
   }
 }
 
@@ -498,6 +523,88 @@ class TweetEntityMention {
 }
 
 ///////////////////////
+// TweetRef
+
+class TweetRef {
+  final String id;
+  final String type;
+  Tweet _tweet;
+
+  TweetRef({this.id, this.type});
+
+  factory TweetRef.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? TweetRef(
+      id: AppJson.stringValue(json['id']),
+      type: AppJson.stringValue(json['type']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type,
+    };
+  }
+
+  bool operator ==(o) =>
+    (o is TweetRef) &&
+      (o.id == id) &&
+      (o.type == type);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0);
+
+  Tweet get tweet => _tweet;
+  
+  void _applyIncludes(TweetsIncludes includes) {
+    _tweet = Tweet.entryInList(includes?.tweets, id: id);
+    _tweet?._applyIncludes(includes);
+  }
+
+  static void applyIncludesToList(List<TweetRef> tweetRefs, TweetsIncludes includes) {
+    if ((tweetRefs != null) && (includes != null)) {
+      for (TweetRef tweetRef in tweetRefs) {
+        tweetRef._applyIncludes(includes);
+      }
+    }
+  }
+
+  static TwitterMedia mediaFromList(List<TweetRef> tweetRefs) {
+    if (tweetRefs != null) {
+      for (TweetRef tweetRef in tweetRefs) {
+        if (tweetRef?.tweet?.media != null) {
+          return tweetRef?.tweet?.media;
+        }
+      }
+    }
+    return null;
+  }
+
+  static List<TweetRef> listFromJson(List<dynamic> jsonList) {
+    List<TweetRef> result;
+    if (jsonList != null) {
+      result = [];
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is Map) ? TweetRef.fromJson(jsonEntry) : null);
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic> listToJson(List<TweetRef> contentList) {
+    List<dynamic> jsonList;
+    if (contentList != null) {
+      jsonList = [];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////
 // TweetAttachments
 
 class TweetAttachments {
@@ -651,13 +758,15 @@ class TweetContextAnotations {
 class TweetsIncludes {
   final List<TwitterMedia> media;
   final List<TwitterUser> users;
+  final List<Tweet> tweets;
 
-  TweetsIncludes({this.media, this.users});
+  TweetsIncludes({this.media, this.users, this.tweets});
 
   factory TweetsIncludes.fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetsIncludes(
       media: TwitterMedia.listFromJson(AppJson.listValue(json['media'])),
       users: TwitterUser.listFromJson(AppJson.listValue(json['users'])),
+      tweets: Tweet.listFromJson(AppJson.listValue(json['tweets'])),
     ) : null;
   }
 
@@ -665,17 +774,20 @@ class TweetsIncludes {
     return {
       'media': TwitterMedia.listToJson(media),
       'users': TwitterUser.listToJson(users),
+      'tweets': Tweet.listToJson(tweets)
     };
   }
 
   bool operator ==(o) =>
     (o is TweetsIncludes) &&
       DeepCollectionEquality().equals(o.media, media) &&
-      DeepCollectionEquality().equals(o.users, users);
+      DeepCollectionEquality().equals(o.users, users) &&
+      DeepCollectionEquality().equals(o.tweets, tweets);
 
   int get hashCode =>
     (DeepCollectionEquality().hash(media) ?? 0) ^
-    (DeepCollectionEquality().hash(users) ?? 0);
+    (DeepCollectionEquality().hash(users) ?? 0) ^
+    (DeepCollectionEquality().hash(tweets) ?? 0);
 }
 
 ///////////////////////
