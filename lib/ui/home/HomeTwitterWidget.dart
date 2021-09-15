@@ -115,24 +115,46 @@ class _TweetWidget extends StatelessWidget {
         clipBehavior: Clip.none,
         child:
           Column(children: <Widget>[
+            
+            Expanded(child: 
+              SingleChildScrollView(child:
+                Column(children: [
+                  AppString.isStringNotEmpty(tweet?.media?.url) ? Image.network(tweet?.media?.url) : Container(),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+                    Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
+                  ),
+                ],)
+              ),
+            ),
+
+            Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+              Row(children: [
+                Text("@${tweet.author.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                Expanded(child: Container()),
+                Text('34 min', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+              ],)
+            )
+/*
             AppString.isStringNotEmpty(tweet?.media?.url) ? Image.network(tweet?.media?.url) : Container(),
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                 Column(children: <Widget>[
                   Expanded(child:
-                    Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
+                    SingleChildScrollView(child:
+                      Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
+                    ),
                   ),
                   Padding(padding: EdgeInsets.only(top: 12), child:
                     Row(children: [
-                      Text(tweet.author.name, style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
-                      Container(width: 32),
+                      Text("@${tweet.author.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                      Expanded(child: Container()),
                       Text('34 min', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
                     ],)
                   )
                 ])
               ),
             ),
-
+*/
           ])
       )
     );
