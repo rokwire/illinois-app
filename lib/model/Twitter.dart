@@ -176,14 +176,16 @@ class TweetEntities {
   final List<TweetEntityUrl> urls;
   final List<TweetEntityAnnotation> annotations;
   final List<TweetEntityHashtag> hashtags;
+  final List<TweetEntityMention> mentions;
 
-  TweetEntities({this.urls, this.annotations, this.hashtags});
+  TweetEntities({this.urls, this.annotations, this.hashtags, this.mentions});
 
   factory TweetEntities.fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntities(
         urls: TweetEntityUrl.listFromJson(AppJson.listValue(json['urls'])),
         annotations: TweetEntityAnnotation.listFromJson(AppJson.listValue(json['annotations'])),
         hashtags: TweetEntityHashtag.listFromJson(AppJson.listValue(json['hashtags'])),
+        mentions: TweetEntityMention.listFromJson(AppJson.listValue(json['mentions'])),
     ) : null;
   }
 
@@ -192,6 +194,7 @@ class TweetEntities {
       'urls': TweetEntityUrl.listToJson(urls),
       'annotations': TweetEntityAnnotation.listToJson(annotations),
       'hashtags': TweetEntityHashtag.listToJson(hashtags),
+      'mentions': TweetEntityMention.listToJson(mentions),
     };
   }
 
@@ -199,12 +202,14 @@ class TweetEntities {
     (o is TweetEntities) &&
       DeepCollectionEquality().equals(urls, urls) &&
       DeepCollectionEquality().equals(annotations, annotations) &&
-      DeepCollectionEquality().equals(hashtags, hashtags);
+      DeepCollectionEquality().equals(hashtags, hashtags) &&
+      DeepCollectionEquality().equals(mentions, mentions);
 
   int get hashCode =>
     (DeepCollectionEquality().hash(urls) ?? 0) ^
     (DeepCollectionEquality().hash(annotations) ?? 0) ^
-    (DeepCollectionEquality().hash(hashtags) ?? 0);
+    (DeepCollectionEquality().hash(hashtags) ?? 0) ^
+    (DeepCollectionEquality().hash(mentions) ?? 0);
 }
 
 ///////////////////////
@@ -216,8 +221,12 @@ class TweetEntityUrl {
   final String url;
   final String expandedUrl;
   final String displayUrl;
+  final int status;
+  final String title;
+  final String description;
+  final String unwoundUrl;
 
-  TweetEntityUrl({this.start, this.end, this.url, this.expandedUrl, this.displayUrl});
+  TweetEntityUrl({this.start, this.end, this.url, this.expandedUrl, this.displayUrl, this.status, this.title, this.description, this.unwoundUrl});
 
   factory TweetEntityUrl.fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntityUrl(
@@ -226,6 +235,10 @@ class TweetEntityUrl {
       url: AppJson.stringValue(json['url']),
       expandedUrl: AppJson.stringValue(json['expanded_url']),
       displayUrl: AppJson.stringValue(json['display_url']),
+      status: AppJson.intValue(json['status']),
+      title: AppJson.stringValue(json['title']),
+      description: AppJson.stringValue(json['description']),
+      unwoundUrl: AppJson.stringValue(json['unwound_url']),
     ) : null;
   }
 
@@ -236,6 +249,10 @@ class TweetEntityUrl {
       'url': url,
       'expanded_url': expandedUrl,
       'display_url': displayUrl,
+      'status': status,
+      'title': title,
+      'description': description,
+      'unwound_url': unwoundUrl,
     };
   }
 
@@ -245,14 +262,22 @@ class TweetEntityUrl {
       (o.end == end) &&
       (o.url == url) &&
       (o.expandedUrl == expandedUrl) &&
-      (o.displayUrl == displayUrl);
+      (o.displayUrl == displayUrl) &&
+      (o.status == status) &&
+      (o.title == title) &&
+      (o.description == description) &&
+      (o.unwoundUrl == unwoundUrl);
 
   int get hashCode =>
     (start?.hashCode ?? 0) ^
     (end?.hashCode ?? 0) ^
     (url?.hashCode ?? 0) ^
     (expandedUrl?.hashCode ?? 0) ^
-    (displayUrl?.hashCode ?? 0);
+    (displayUrl?.hashCode ?? 0) ^
+    (status?.hashCode ?? 0) ^
+    (title?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (unwoundUrl?.hashCode ?? 0);
 
   static List<TweetEntityUrl> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityUrl> result;
@@ -396,6 +421,71 @@ class TweetEntityHashtag {
   }
 
   static List<dynamic> listToJson(List<TweetEntityHashtag> contentList) {
+    List<dynamic> jsonList;
+    if (contentList != null) {
+      jsonList = [];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////
+// TweetEntityMention
+
+class TweetEntityMention {
+  final int start;
+  final int end;
+  final String userName;
+  final String id;
+
+  TweetEntityMention({this.start, this.end, this.userName, this.id});
+
+  factory TweetEntityMention.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? TweetEntityMention(
+      start: AppJson.intValue(json['start']),
+      end: AppJson.intValue(json['end']),
+      userName: AppJson.stringValue(json['username']),
+      id: AppJson.stringValue(json['id']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'start': start,
+      'end': end,
+      'username': userName,
+      'id': id,
+    };
+  }
+
+  bool operator ==(o) =>
+    (o is TweetEntityMention) &&
+      (o.start == start) &&
+      (o.end == end) &&
+      (o.userName == userName) &&
+      (o.id == id);
+
+  int get hashCode =>
+    (start?.hashCode ?? 0) ^
+    (end?.hashCode ?? 0) ^
+    (userName?.hashCode ?? 0) ^
+    (id?.hashCode ?? 0);
+
+  static List<TweetEntityMention> listFromJson(List<dynamic> jsonList) {
+    List<TweetEntityMention> result;
+    if (jsonList != null) {
+      result = [];
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is Map) ? TweetEntityMention.fromJson(jsonEntry) : null);
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic> listToJson(List<TweetEntityMention> contentList) {
     List<dynamic> jsonList;
     if (contentList != null) {
       jsonList = [];
