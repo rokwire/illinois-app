@@ -8,6 +8,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,19 +67,33 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
       Semantics(container: true, child:
         Column(children: <Widget>[
           _buildHeader(),
-          _buildContent(),
+          Stack(children:<Widget>[
+            _buildSlant(),
+            _buildContent(),
+          ]),
         ]),
     ));
   }
 
   Widget _buildHeader() {
     return Container(color: Styles().colors.fillColorPrimary, child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Expanded(child: 
-          Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png')),
+          Expanded(child: 
             Text("Twitter", style:
-              TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),),
-      ],),);
+              TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+      ],),),);
+  }
+
+  Widget _buildSlant() {
+    return Column(children: <Widget>[
+      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
+      Container(color: Styles().colors.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, left : true), child:
+          Container(height: 65,),
+        )),
+    ],);
   }
 
   Widget _buildContent() {
@@ -90,12 +105,13 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
     }
 
     double screenWidth = MediaQuery.of(context).size.width;
+    double pageHeight = screenWidth - 20 * 2 + 5;
+    double pageViewport = (screenWidth - 40) / screenWidth;
     
-    return 
-      Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Container(
-        height: screenWidth - 20 * 2 + 5,
-        child:
-          PageView(controller: PageController(viewportFraction: (screenWidth - 40) / screenWidth ), children: pages,)
+    return
+      Padding(padding: EdgeInsets.only(top: 10, bottom: 50), child:
+        Container(height: pageHeight, child:
+          PageView(controller: PageController(viewportFraction: pageViewport), children: pages,)
         )
       );
   }
