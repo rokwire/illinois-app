@@ -1266,11 +1266,11 @@
     "panel.parking_lots.label.empty":"No parking lots available for this event",
     "panel.parking_lots.label.available_spots":"Available Spots: ",
 
-    "panel.buss_pass.header.title": "MTD Bus Pass",
-    "panel.buss_pass.button.close.title": "close",
-    "panel.buss_pass.description.text": "Show this screen to the bus driver as you board.",
-    "panel.buss_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
-    "panel.buss_pass.error.default.text": "Unable to load buss pass",
+    "panel.bus_pass.header.title": "MTD Bus Pass",
+    "panel.bus_pass.button.close.title": "close",
+    "panel.bus_pass.description.text": "Show this screen to the bus driver as you board.",
+    "panel.bus_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
+    "panel.bus_pass.error.default.text": "Unable to load bus pass",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.description.main_text": "Achieving and sustaining wellness is a dynamic process that involves self-reflection and the building of awareness of what well-being is and how individualized the process of addressing it can be.",
@@ -1985,7 +1985,7 @@
     "widget.id_card.header.title": "Illini ID",
     "widget.id_card.header.button.close.title": "close",
     "widget.id_card.label.update_i_card": "Update your i-card",
-	"widget.buss_pass.header.title": "MTD Bus Pass",
+	"widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
     "widget.card.label.expires.title": "Card Expires",
 

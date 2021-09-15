@@ -89,7 +89,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Future<Color> _loadActiveColor() async{
     String deviceId = await NativeCommunicator().getDeviceId();
-    return await TransportationService().loadBussColor(deviceId: deviceId, userId: User().uuid);
+    return await TransportationService().loadBusColor(deviceId: deviceId, userId: User().uuid);
   }
 
   @override

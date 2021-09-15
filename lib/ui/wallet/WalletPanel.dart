@@ -351,7 +351,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     for (String code in codes) {
       Widget widget;
       if (code == 'bus_pass') {
-        widget = _buildMTDBussCard();
+        widget = _buildMTDBusCard();
       }
       else if (code == 'illini_id') {
         widget = _buildIlliniIdCard();
@@ -394,7 +394,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     }
   }
 
-  Widget _buildMTDBussCard(){
+  Widget _buildMTDBusCard(){
     String expires = Auth2()?.authCard?.expirationDate ?? "";
     return _Card(
       key: _mtdCardKey,

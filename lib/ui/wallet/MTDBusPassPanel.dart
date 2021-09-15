@@ -45,7 +45,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   final double _photoSize = 240;
   final double _iconSize = 64;
 
-  Color _activeBussColor;
+  Color _activeBusColor;
   String _activeBusNumber;
   Set<String> _rangingRegionIds = Set();
   GeoFenceBeacon _currentBeacon;
@@ -64,7 +64,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     ]);
 
     _updateRangingRegions();
-    _loadBussPass();
+    _loadBusPass();
     _loadPhotoImage();
     // Auth2().updateAuthCard();
   }
@@ -111,7 +111,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    Widget contentWidget = (Auth2().authCard != null) ? _buildBussContent() : Container();
+    Widget contentWidget = (Auth2().authCard != null) ? _buildBusContent() : Container();
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -142,7 +142,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                   alignment: Alignment.bottomCenter, child:
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
-                      child:Semantics(button: true,label: Localization().getStringEx("panel.buss_pass.button.close.title", "close"), child:
+                      child:Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
                       InkWell(
                         onTap: _onClose,
                         child:  Image.asset('images/close-white-large.png', excludeFromSemantics: true,)
@@ -156,13 +156,13 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 Padding(
                     padding: EdgeInsets.all(16),
                     child:Semantics(header: true, child: Text(
-                      Localization().getStringEx("panel.buss_pass.header.title", "MTD Bus Pass"),
+                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"),
                       style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies.extraBold, fontSize: 20),
                     ),
                     )),
                 Align(
                     alignment: Alignment.topRight,
-                    child:Semantics(button: true,label: Localization().getStringEx("panel.buss_pass.button.close.title", "close"), child:
+                    child:Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
                     InkWell(
                         onTap: _onClose, child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-blue.png', excludeFromSemantics: true,))),
                     )
@@ -175,7 +175,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     );
   }
 
-  Widget _buildBussContent() {
+  Widget _buildBusContent() {
     String role = Auth2().authCard?.role;
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(
@@ -185,8 +185,8 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             role,
             style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 36, color: Styles().colors.white),
           ),
-          BussClockWidget(),
-          Align(alignment: Alignment.center, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildBussNumberContent())),
+          BusClockWidget(),
+          Align(alignment: Alignment.center, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildBusNumberContent())),
           Align(alignment: Alignment.center, child: Padding(padding: EdgeInsets.only(top: 20), child: Image.asset('images/mtd-logo.png', excludeFromSemantics: true,))),
           Align(
               alignment: Alignment.center,
@@ -194,7 +194,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.buss_pass.description.text", "Show this screen to the bus driver as you board."),
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies.regular,
@@ -258,7 +258,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
           ));
   }
 
-  Widget _buildBussNumberContent() {
+  Widget _buildBusNumberContent() {
     bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && AppString.isStringNotEmpty(_busNumber);
     return Visibility(visible: busNumberVisible, child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -284,7 +284,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       height: iconSize-1,
       color: _activeColor,
       child: Image.asset(
-        'images/transparent-buss-icon.png',
+        'images/transparent-bus-icon.png',
         excludeFromSemantics: true,
         width: iconSize,
         height: iconSize,
@@ -292,25 +292,25 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     );
   }
 
-  void _loadBussPass() async {
+  void _loadBusPass() async {
     String deviceId = await NativeCommunicator().getDeviceId(); //TMP: '1234'
     Map<String, dynamic> beaconData = (_currentBeacon != null) ? {
       'uuid': _currentBeacon.uuid,
       'major': _currentBeacon.major.toString(),
       'minor': _currentBeacon.minor.toString(),
     } : null;
-    TransportationService().loadBussPass(deviceId: deviceId, userId: User().uuid, iBeaconData: beaconData).then((dynamic result){
+    TransportationService().loadBusPass(deviceId: deviceId, userId: User().uuid, iBeaconData: beaconData).then((dynamic result){
 
       if (result is Map) {
         setState(() {
-            _activeBussColor = UiColors.fromHex(result["color"]);
+            _activeBusColor = UiColors.fromHex(result["color"]);
             _activeBusNumber = result["bus_number"];
           });
       }
       else {
         String message = ((result is int) && (result == 403)) ?
-          Localization().getStringEx("panel.buss_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
-          Localization().getStringEx("panel.buss_pass.error.default.text", "Unable to load buss pass");
+          Localization().getStringEx("panel.bus_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
+          Localization().getStringEx("panel.bus_pass.error.default.text", "Unable to load bus pass");
         AppAlert.showDialogResult(context, message,).then((result){
           Navigator.pop(context);
         });
@@ -322,7 +322,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     GeoFenceBeacon currentBeacon = _getCurrentBeacon();
     if (((_currentBeacon == null) && (currentBeacon != null)) || ((_currentBeacon != null) && (_currentBeacon != currentBeacon))) {
       _currentBeacon = currentBeacon;
-      _loadBussPass();
+      _loadBusPass();
     }
   }
 
@@ -379,7 +379,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Color get _activeColor {
-    return _activeBussColor??Styles().colors.fillColorSecondary;
+    return _activeBusColor??Styles().colors.fillColorSecondary;
   }
 
   Color get _backgroundColor {
@@ -457,13 +457,13 @@ class _RotatingBorderState extends State<RotatingBorder>
 
 }
 
-class BussClockWidget extends StatefulWidget{
+class BusClockWidget extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() =>_BussClockState();
+  State<StatefulWidget> createState() =>_BusClockState();
 
 }
 
-class _BussClockState extends State<BussClockWidget> {
+class _BusClockState extends State<BusClockWidget> {
   Timer _timer;
 
   @override
