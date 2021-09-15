@@ -20,7 +20,6 @@ class HomeTwitterWidget extends StatefulWidget {
 class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<Tweet> _tweets;
-  PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -61,12 +60,10 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
   Widget build(BuildContext context) {
     return Visibility(visible: AppCollection.isCollectionNotEmpty(_tweets), child:
       Semantics(container: true, child:
-          Row(children: <Widget>[
-            Column(children: <Widget>[
-              _buildHeader(),
-              _buildContent(),
-            ]),
-          ]),
+        Column(children: <Widget>[
+          _buildHeader(),
+          _buildContent(),
+        ]),
     ));
   }
 
@@ -84,17 +81,19 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
     List<Widget> pages = <Widget>[];
     if (_tweets != null) {
       for (Tweet tweet in _tweets) {
-        //pages.add(_TweetWidget(tweet: tweet,));
-        pages.add(Center(
-          child: Text(tweet.text),
-        ));
+        pages.add(_TweetWidget(tweet: tweet,));
       }
     }
 
-    return Container(width: 300, height: 300, child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: 
-        PageView(controller: _pageController, children: pages,)
-      ));
+    double screenWidth = MediaQuery.of(context).size.width;
+    
+    return 
+      Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Container(
+        height: screenWidth - 20 * 2 + 5,
+        child:
+          PageView(controller: PageController(viewportFraction: (screenWidth - 40) / screenWidth ), children: pages,)
+        )
+      );
   }
 }
 
@@ -106,23 +105,36 @@ class _TweetWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Image.network('https://pbs.twimg.com/media/E_AwJXHXMAU2c_X.jpg'),
-      Expanded(child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-          Column(children: <Widget>[
-            Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
-            Padding(padding: EdgeInsets.only(top: 12), child:
-              Row(children: [
-                Text('@illinois_alma', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
-                Container(width: 32),
-                Text('34 min', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
-              ],)
-            )
-          ])
+    return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
+      Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
-      ),
+        clipBehavior: Clip.none,
+        child:
+          Column(children: <Widget>[
+            AppString.isStringNotEmpty(tweet?.media?.url) ? Image.network(tweet?.media?.url) : Container(),
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
+                Column(children: <Widget>[
+                  Expanded(child:
+                    Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 12), child:
+                    Row(children: [
+                      Text(tweet.author.name, style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                      Container(width: 32),
+                      Text('34 min', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                    ],)
+                  )
+                ])
+              ),
+            ),
 
-    ]);
+          ])
+      )
+    );
   }
 }
