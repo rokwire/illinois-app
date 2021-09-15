@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Twitter.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
@@ -36,7 +37,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
       });
     }
 
-    _tweets = Twitter().tweets.tweets;
+    _tweets = _buildTweets();
   }
 
   @override
@@ -51,7 +52,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
   void onNotification(String name, dynamic param) {
     if (name == Twitter.notifyChanged) {
       setState(() {
-        _tweets = Twitter().tweets.tweets;
+        _tweets = _buildTweets();
       });
     }
   }
@@ -94,6 +95,14 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> im
           PageView(controller: PageController(viewportFraction: (screenWidth - 40) / screenWidth ), children: pages,)
         )
       );
+  }
+
+  static List<Tweet> _buildTweets() {
+    List<Tweet> tweets = Twitter().tweets?.tweets;
+    if (tweets != null) {
+      return (Config().twitterTweetsCount < tweets.length) ? tweets.sublist(0, Config().twitterTweetsCount) : tweets;
+    }
+    return null;
   }
 }
 
