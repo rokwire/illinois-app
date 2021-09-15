@@ -148,6 +148,8 @@ class Tweet {
     return null;
   }
 
+  String get detailUrl => TweetEntityUrl.detailUrlFromList(entities?.urls);
+
   String get displayTime {
     
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(createdAtUtc);
@@ -340,6 +342,26 @@ class TweetEntityUrl {
     (title?.hashCode ?? 0) ^
     (description?.hashCode ?? 0) ^
     (unwoundUrl?.hashCode ?? 0);
+
+  String get detailUrl {
+    if ((expandedUrl != null) && expandedUrl.startsWith("https://twitter.com") &&
+        (displayUrl != null) && displayUrl.startsWith("pic.twitter.com")) {
+      return expandedUrl;
+    }
+    return null;
+  }
+
+  static String detailUrlFromList(List<TweetEntityUrl> contentList) {
+    if (contentList != null) {
+      for (int index = contentList.length - 1; 0 <= index; index--) {
+        TweetEntityUrl contentEntry = contentList[index];
+        if (contentEntry?.detailUrl != null) {
+          return contentEntry?.detailUrl;
+        }
+      }
+    }
+    return null;
+  }
 
   static List<TweetEntityUrl> listFromJson(List<dynamic> jsonList) {
     List<TweetEntityUrl> result;
