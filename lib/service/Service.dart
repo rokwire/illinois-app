@@ -23,7 +23,6 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DiningService.dart';
