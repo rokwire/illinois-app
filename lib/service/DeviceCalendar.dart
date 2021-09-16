@@ -18,20 +18,15 @@ class DeviceCalendar with Service {
 
   DeviceCalendar._internal();
 
-  @override
-  Future<void>  initService() async{
-    _deviceCalendarPlugin = new DeviceCalendarPlugin();
-    dynamic storedTable = Storage().calendarEventsTable ?? Map();
-    _calendarEventIdTable = storedTable!=null && storedTable is Map<String, String>? storedTable: null;
-    _loadDefaultCalendar();
-    super.createService();
-  }
-
   Future<bool> addEvent(ExploreEvent.Event event) async{
     String additionalUrl = _extractAdditionalDataUrl(event);
     if(AppString.isStringNotEmpty(additionalUrl)){
       _openAdditionalDataLink(additionalUrl);
       return true;
+    }
+
+    if(_deviceCalendarPlugin == null){
+      await _initDeviceCalendarPlugin();
     }
 
     bool hasPermissions = await _requestPermissions();
@@ -42,32 +37,45 @@ class DeviceCalendar with Service {
           .createOrUpdateEvent(
           calendarEvent);
       if(createEventResult?.data!=null){
-        storeEventId(event.id, createEventResult?.data);
+        _storeEventId(event.id, createEventResult?.data);
       }
 
-      AppToast.show(
-          createEventResult?.data ?? createEventResult?.errorMessages ??
-              "Unable to save Event to calendar");
-      return false;
+      if(!createEventResult.isSuccess) {
+        AppToast.show(
+            createEventResult?.data ?? createEventResult?.errorMessages ??
+                "Unable to save Event to calendar");
+        return false;
+      }
     }
 
     return true;
   }
 
   Future<bool> deleteEvent(event) async{
-    String eventId = event?.id != null ? _calendarEventIdTable[event?.id] : null;
+    if(_deviceCalendarPlugin == null){
+      await _initDeviceCalendarPlugin();
+    }
+
+    String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
     if(AppString.isStringEmpty(eventId)){
       return false;
     }
 
     final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(_defaultCalendarId, eventId);
     if(deleteEventResult.isSuccess){
-      _deleteEventId(event?.id);
+      _eraseEventId(event?.id);
     }
     return deleteEventResult?.isSuccess;
   }
 
-  void _loadDefaultCalendar() async {
+  Future<void> _initDeviceCalendarPlugin() async{
+    _deviceCalendarPlugin = new DeviceCalendarPlugin();
+    dynamic storedTable = Storage().calendarEventsTable ?? Map();
+    _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
+    await _loadDefaultCalendar();
+  }
+
+  Future<void> _loadDefaultCalendar() async {
     bool hasPermissions = await _requestPermissions();
     if(!hasPermissions) {
       return;
@@ -98,12 +106,11 @@ class DeviceCalendar with Service {
   Event _convertEvent(ExploreEvent.Event event){
     Event calendarEvent = new Event(_defaultCalendarId);
 
-//    calendarEvent.eventId = event.id;
     calendarEvent.title = event.title ?? "";
     if(event.startDateLocal!=null) {
       calendarEvent.start = event.startDateLocal;
     }
-    if(event.endDateLocal!=null){ //TBD
+    if(event.endDateLocal!=null){
       calendarEvent.end = event.endDateLocal;
     } else {
       calendarEvent.end = DateTime(event.startDateLocal.year, event.startDateLocal.month, event.startDateLocal.day, 23, 59,);
@@ -124,12 +131,12 @@ class DeviceCalendar with Service {
       await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
   }
 
-  void storeEventId(String exploreId, String calendarEventId){
+  void _storeEventId(String exploreId, String calendarEventId){
     _calendarEventIdTable[exploreId] = calendarEventId;
     Storage().calendarEventsTable = _calendarEventIdTable;
   }
   
-  void _deleteEventId(String id){
+  void _eraseEventId(String id){
     _calendarEventIdTable.removeWhere((key, value) => key == id);
   }
 }
