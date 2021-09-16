@@ -20,10 +20,10 @@ class HomeTwitterWidget extends StatefulWidget {
   HomeTwitterWidget({this.refreshController});
 
   @override
-  _HomeStudentGuideHighlightsWidgetState createState() => _HomeStudentGuideHighlightsWidgetState();
+  _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
 }
 
-class _HomeStudentGuideHighlightsWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
+class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<Tweet> _tweets;
 
