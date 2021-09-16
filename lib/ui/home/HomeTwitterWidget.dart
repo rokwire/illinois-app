@@ -42,7 +42,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        _refresh();
+        _refresh(noCache: true);
       });
     }
 
@@ -182,11 +182,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
   }
 
-  void _refresh({int count}) {
+  void _refresh({int count, bool noCache}) {
     setState(() {
       _loadingPage = true;
     });
-    Twitter().loadTweetsPage(count: count ?? tweetsCount).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: count ?? tweetsCount, noCache: noCache).then((TweetsPage tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
