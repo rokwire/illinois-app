@@ -121,7 +121,7 @@ class Twitter with Service implements NotificationsListener {
 
   Future<String> _loadContentStringFromNet({bool force}) async {
     if (Config().contentUrl != null) {
-      String url = "${Config().contentUrl}//twitter/posts?count=${Config().twitterTweetsCount * 2}${(force == true) ? '&force=true' : ''}";
+      String url = "${Config().contentUrl}/twitter/posts?count=${Config().twitterTweetsCount * 2}${(force == true) ? '&force=true' : ''}";
       Response response = await Network().get(url, auth: NetworkAuth.App);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
