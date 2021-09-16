@@ -29,6 +29,7 @@ class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements Notifi
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
   bool _loadingPage = false;
   DateTime _pausedDateTime;
+  PageController _pageController;
 
   @override
   void initState() {
@@ -81,7 +82,7 @@ class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements Notifi
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refresh();
+          _refresh(count: Config().twitterTweetsCount);
         }
       }
     }
@@ -141,10 +142,14 @@ class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements Notifi
     double pageHeight = screenWidth - 20 * 2 + 5;
     double pageViewport = (screenWidth - 40) / screenWidth;
     
+    if (_pageController == null) {
+      _pageController = PageController(viewportFraction: pageViewport);
+    }
+    
     return
       Padding(padding: EdgeInsets.only(top: 10, bottom: 50), child:
         Container(height: pageHeight, child:
-          PageView(controller: PageController(viewportFraction: pageViewport), onPageChanged: _onPageChanged, children: pages,)
+          PageView(controller: _pageController, onPageChanged: _onPageChanged, children: pages,)
         )
       );
   }
@@ -177,11 +182,11 @@ class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements Notifi
     }
   }
 
-  void _refresh() {
+  void _refresh({int count}) {
     setState(() {
       _loadingPage = true;
     });
-    Twitter().loadTweetsPage(count: tweetsCount).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: count ?? tweetsCount).then((TweetsPage tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
@@ -189,6 +194,7 @@ class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements Notifi
             _tweetsPages = [tweetsPage];
           }
         });
+        _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
       }
     });
   }
@@ -279,7 +285,7 @@ class HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notific
     double screenWidth = MediaQuery.of(context).size.width;
     double pageHeight = screenWidth - 20 * 2 + 5;
     double pageViewport = (screenWidth - 40) / screenWidth;
-    
+
     return
       Padding(padding: EdgeInsets.only(top: 10, bottom: 50), child:
         Container(height: pageHeight, child:
