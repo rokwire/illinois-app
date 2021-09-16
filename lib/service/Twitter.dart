@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Twitter.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
@@ -16,6 +17,12 @@ import 'package:path_provider/path_provider.dart';
 class Twitter with Service implements NotificationsListener {
 
   static const String notifyChanged  = "edu.illinois.rokwire.twitter.changed";
+
+  static const String _tweetFieldsUrlParam = "tweet.fields=attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets,reply_settings,source,text,withheld";
+  static const String _userFieldsUrlParam = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld";
+  static const String _mediaFieldsUrlParam = "media.fields=duration_ms,height,media_key,preview_image_url,type,url,width,public_metrics,non_public_metrics,organic_metrics,promoted_metrics,alt_text";
+  static const String _expansionsUrlParam = "expansions=attachments.poll_ids,attachments.media_keys,author_id,entities.mentions.username,geo.place_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id";
+//static const String _excludeUrlParam = "exclude=retweets,replies";
 
   static const String _cacheFileName = "twitter.json";
 
@@ -121,14 +128,7 @@ class Twitter with Service implements NotificationsListener {
     return null;
   }
 
-  /*
-  static const String _tweetFieldsUrlParam = "tweet.fields=attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets,reply_settings,source,text,withheld";
-  static const String _userFieldsUrlParam = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld";
-  static const String _mediaFieldsUrlParam = "media.fields=duration_ms,height,media_key,preview_image_url,type,url,width,public_metrics,non_public_metrics,organic_metrics,promoted_metrics,alt_text";
-  static const String _expansionsUrlParam = "expansions=attachments.poll_ids,attachments.media_keys,author_id,entities.mentions.username,geo.place_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id";
-  static const String _excludeUrlParam = "exclude=retweets,replies";
-
-  Future<String> _loadContentStringFromNet() async {
+  /*Future<String> _loadContentStringFromNet() async {
     if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
       String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam&max_results=${Config().twitterTweetsCount * 2}";
       Map<String, String> headers = {
@@ -138,8 +138,32 @@ class Twitter with Service implements NotificationsListener {
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     return null;
+  }*/
+
+  Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String token}) async {
+    if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
+      String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam"; // &$_excludeUrlParam
+      if (token != null) {
+        url += "@pagination_token=$token";
+      }
+      if (startTimeUtc != null) {
+        url += "@start_time=${AppDateTime().utcDateTimeToString(startTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
+      }
+      if (endTimeUtc != null) {
+        url += "@end_time=${AppDateTime().utcDateTimeToString(endTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
+      }
+      url += "&max_results=${count ?? Config().twitterTweetsCount}";
+
+      Map<String, String> headers = {
+        HttpHeaders.authorizationHeader : "${Config().twitterTokenType} ${Config().twitterToken}"
+      };
+      
+      Response response = await Network().get(url, headers: headers);
+      String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
+      return TweetsPage.fromJson(AppJson.decodeMap(responseString));
+    }
+    return null;
   }
-  */
   
 
   Future<void> _updateContentFromNet() async {
