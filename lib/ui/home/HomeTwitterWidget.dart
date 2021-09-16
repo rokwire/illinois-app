@@ -21,10 +21,10 @@ class HomeTwitterWidget extends StatefulWidget {
   HomeTwitterWidget({this.refreshController});
 
   @override
-  HomeTwitter2WidgetState createState() => HomeTwitter2WidgetState();
+  _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
 }
 
-class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
+class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
   bool _loadingPage = false;
@@ -200,7 +200,7 @@ class HomeTwitter2WidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 }
 
-class HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
+/*class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<Tweet> _tweets;
 
@@ -301,7 +301,7 @@ class HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notific
     }
     return null;
   }
-}
+}*/
 
 class _TweetWidget extends StatelessWidget {
 

@@ -46,7 +46,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/Twitter.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Voter.dart';
 
@@ -120,7 +119,6 @@ class Services {
     StudentGuide(),
     Inbox(),
     DeviceCalendar(),
-    Twitter(),
     
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),

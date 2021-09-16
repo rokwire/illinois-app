@@ -1,35 +1,28 @@
 
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Service.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
-class Twitter with Service implements NotificationsListener {
-
-  static const String notifyChanged  = "edu.illinois.rokwire.twitter.changed";
+class Twitter /* with Service implements NotificationsListener */ {
 
   static const String _tweetFieldsUrlParam = "tweet.fields=attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets,reply_settings,source,text,withheld";
   static const String _userFieldsUrlParam = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld";
   static const String _mediaFieldsUrlParam = "media.fields=duration_ms,height,media_key,preview_image_url,type,url,width,public_metrics,non_public_metrics,organic_metrics,promoted_metrics,alt_text";
   static const String _expansionsUrlParam = "expansions=attachments.poll_ids,attachments.media_keys,author_id,entities.mentions.username,geo.place_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id";
   static const String _excludeUrlParam = "exclude=retweets,replies";
-
+/*
+  static const String notifyChanged  = "edu.illinois.rokwire.twitter.changed";
   static const String _cacheFileName = "twitter.json";
 
   TweetsPage    _tweets;
   File          _cacheFile;
   DateTime      _pausedDateTime;
-
+*/
   // Singletone instance
 
   static final Twitter _service = Twitter._internal();
@@ -40,7 +33,7 @@ class Twitter with Service implements NotificationsListener {
   }
 
   // Service
-
+/*
   @override
   void createService() {
     NotificationService().subscribe(this, [
@@ -128,7 +121,7 @@ class Twitter with Service implements NotificationsListener {
     return null;
   }
 
-  /*Future<String> _loadContentStringFromNet() async {
+  Future<String> _loadContentStringFromTwitter() async {
     if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
       String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam&max_results=${Config().twitterTweetsCount * 2}";
       Map<String, String> headers = {
@@ -138,7 +131,26 @@ class Twitter with Service implements NotificationsListener {
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     return null;
-  }*/
+  }
+
+  Future<void> _updateContentFromNet() async {
+    try {
+      String contentJsonString = await _loadContentStringFromNet();
+      TweetsPage tweets = TweetsPage.fromJson(AppJson.decodeMap(contentJsonString));
+      if ((tweets != null) && (tweets != _tweets)) {
+        _tweets = tweets;
+        await _saveContentStringToCache(contentJsonString);
+        NotificationService().notify(notifyChanged);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> refresh() async {
+    await _updateContentFromNet();
+  }
+*/
 
   Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String token}) async {
     if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
@@ -164,24 +176,5 @@ class Twitter with Service implements NotificationsListener {
       return TweetsPage.fromJson(AppJson.decodeMap(responseString));
     }
     return null;
-  }
-  
-
-  Future<void> _updateContentFromNet() async {
-    try {
-      String contentJsonString = await _loadContentStringFromNet();
-      TweetsPage tweets = TweetsPage.fromJson(AppJson.decodeMap(contentJsonString));
-      if ((tweets != null) && (tweets != _tweets)) {
-        _tweets = tweets;
-        await _saveContentStringToCache(contentJsonString);
-        NotificationService().notify(notifyChanged);
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<void> refresh() async {
-    await _updateContentFromNet();
   }
 }
