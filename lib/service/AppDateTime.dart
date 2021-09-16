@@ -279,4 +279,8 @@ class AppDateTime with Service {
     }
     return null;
   }
+
+  DateTime copyDateTime(DateTime date){
+    return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
+  }
 }

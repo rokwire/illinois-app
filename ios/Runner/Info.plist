@@ -53,7 +53,7 @@
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Your bluetooth will be used for the maps, to scan for nearby beacons and initiate polls with nearby devices.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Your calendar will be used to let you set reminders for important events.</string>
+	<string>Save favorite events</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Illinois to access Camera.</string>
 	<key>NSContactsUsageDescription</key>

@@ -787,4 +787,18 @@ class Storage with Service {
   }
 
   /////////////
+
+  static const String _calendarEventsTableKey = 'calendar_events_table';
+
+  dynamic get calendarEventsTable {
+    String jsonString = _getStringWithName(_calendarEventsTableKey);
+    dynamic jsonData = AppJson.decode(jsonString);
+    return jsonData;
+  }
+
+  set calendarEventsTable(dynamic table) {
+    String tableToString = (table != null) ? json.encode(table) : null;
+    _setStringWithName(_calendarEventsTableKey, tableToString);
+  }
+
 }

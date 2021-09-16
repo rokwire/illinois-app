@@ -26,6 +26,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Log.dart';
@@ -392,6 +393,8 @@ class User with Service implements NotificationsListener {
       _updateUser().then((_) {
         _notifyUserFavoritesUpdated();
       });
+
+      DeviceCalendar().addEvent(favorite is Event? favorite : null);
     }
   }
 
@@ -418,6 +421,8 @@ class User with Service implements NotificationsListener {
       _updateUser().then((_) {
         _notifyUserFavoritesUpdated();
       });
+
+      DeviceCalendar().deleteEvent(favorite is Event? favorite : null);
     }
   }
 
