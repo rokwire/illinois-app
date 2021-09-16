@@ -1,6 +1,4 @@
 
-import 'dart:io';
-
 import 'package:http/http.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -113,9 +111,12 @@ class Twitter /* with Service implements NotificationsListener */ {
   }
 
   Future<String> _loadContentStringFromNet({bool force}) async {
-    if (Config().contentUrl != null) {
-      String url = "${Config().contentUrl}/twitter/posts?count=${Config().twitterTweetsCount * 2}${(force == true) ? '&force=true' : ''}";
-      Response response = await Network().get(url, auth: NetworkAuth.App);
+    if ((Config().contentUrl != null) && (Config().twitterUserId != null)) {
+      String url = "${Config().contentUrl}/twitter/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam&max_results=${count ?? Config().twitterTweetsCount}";
+      Map<String, String> headers = (noCache == true) ? {
+        "Cache-Control" : "no-cache"
+      } : null;
+      Response response = await Network().get(url, auth: NetworkAuth.App, headers: headers);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     return null;
@@ -152,9 +153,9 @@ class Twitter /* with Service implements NotificationsListener */ {
   }
 */
 
-  Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String token}) async {
-    if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
-      String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
+  Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String token, bool noCache}) async {
+    if ((Config().contentUrl != null) && (Config().twitterUserId != null)) {
+      String url = "${Config().contentUrl}/twitter/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
       if (token != null) {
         url += "&pagination_token=$token";
       }
@@ -166,11 +167,11 @@ class Twitter /* with Service implements NotificationsListener */ {
       }
       url += "&max_results=${count ?? Config().twitterTweetsCount}";
 
-      Map<String, String> headers = {
-        HttpHeaders.authorizationHeader : "${Config().twitterTokenType} ${Config().twitterToken}"
-      };
+      Map<String, String> headers = (noCache == true) ? {
+        "Cache-Control" : "no-cache"
+      } : null;
       
-      Response response = await Network().get(url, headers: headers);
+      Response response = await Network().get(url, auth: NetworkAuth.App, headers: headers);
       String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       print("Twitter Page Load: ${response.statusCode}\n${response.body}");
       return TweetsPage.fromJson(AppJson.decodeMap(responseString));
