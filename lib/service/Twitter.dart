@@ -19,7 +19,7 @@ class Twitter with Service implements NotificationsListener {
 
   static const String _cacheFileName = "twitter.json";
 
-  Tweets        _tweets;
+  TweetsPage    _tweets;
   File          _cacheFile;
   DateTime      _pausedDateTime;
 
@@ -84,7 +84,7 @@ class Twitter with Service implements NotificationsListener {
 
   // Implementation
 
-  Tweets get tweets => _tweets;
+  TweetsPage get tweets => _tweets;
 
   Future<File> _getCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -108,8 +108,8 @@ class Twitter with Service implements NotificationsListener {
     catch(e) { print(e?.toString()); }
   }
 
-  Future<Tweets> _loadContentFromCache() async {
-    return Tweets.fromJson(AppJson.decodeMap(await _loadContentStringFromCache()));
+  Future<TweetsPage> _loadContentFromCache() async {
+    return TweetsPage.fromJson(AppJson.decodeMap(await _loadContentStringFromCache()));
   }
 
   Future<String> _loadContentStringFromNet({bool force}) async {
@@ -140,11 +140,12 @@ class Twitter with Service implements NotificationsListener {
     return null;
   }
   */
+  
 
   Future<void> _updateContentFromNet() async {
     try {
       String contentJsonString = await _loadContentStringFromNet();
-      Tweets tweets = Tweets.fromJson(AppJson.decodeMap(contentJsonString));
+      TweetsPage tweets = TweetsPage.fromJson(AppJson.decodeMap(contentJsonString));
       if ((tweets != null) && (tweets != _tweets)) {
         _tweets = tweets;
         await _saveContentStringToCache(contentJsonString);

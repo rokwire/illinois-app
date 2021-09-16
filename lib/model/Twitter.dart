@@ -5,38 +5,43 @@ import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
 ///////////////////////
-// Tweets
+// TweetsPage
 
-class Tweets {
+class TweetsPage {
   final List<Tweet> tweets;
   final TweetsIncludes includes;
+  final TweetsMeta meta;
 
-  Tweets({this.tweets, this.includes}) {
+  TweetsPage({this.tweets, this.includes, this.meta}) {
     Tweet.applyIncludesToList(tweets, includes);
   }
 
-  factory Tweets.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? Tweets(
+  factory TweetsPage.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? TweetsPage(
       tweets: Tweet.listFromJson(AppJson.listValue(json['data'])),
-      includes: TweetsIncludes.fromJson(AppJson.mapValue(json['includes']))
+      includes: TweetsIncludes.fromJson(AppJson.mapValue(json['includes'])),
+      meta: TweetsMeta.fromJson(AppJson.mapValue(json['meta']))
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'data': Tweet.listToJson(tweets),
-      'includes': includes?.toJson()
+      'includes': includes?.toJson(),
+      'meta': meta?.toJson()
     };
   }
 
   bool operator ==(o) =>
-    (o is Tweets) &&
+    (o is TweetsPage) &&
       DeepCollectionEquality().equals(o.tweets, tweets) &&
-      (o.includes == includes);
+      (o.includes == includes) &&
+      (o.meta == meta);
 
   int get hashCode =>
     (DeepCollectionEquality().hash(tweets) ?? 0) ^
-    (includes?.hashCode ?? 0);
+    (includes?.hashCode ?? 0) ^
+    (meta?.hashCode ?? 0);
 }
 
 ///////////////////////
@@ -1192,3 +1197,46 @@ class TweeterUserPublicMetrics {
     (tweetCount?.hashCode ?? 0) ^
     (listedCount?.hashCode ?? 0);
 }
+
+///////////////////////
+// TweetsMeta
+
+class TweetsMeta {
+  final String oldestId;
+  final String newestId;
+  final String nextToken;
+  final int resultCount;
+  TweetsMeta({this.newestId, this.oldestId, this.nextToken, this.resultCount});
+
+  factory TweetsMeta.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? TweetsMeta(
+      oldestId: AppJson.stringValue(json['oldest_id']),
+      newestId: AppJson.stringValue(json['newest_id']),
+      nextToken: AppJson.stringValue(json['next_token']),
+      resultCount: AppJson.intValue(json['result_count']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'oldest_id': oldestId,
+      'newest_id': newestId,
+      'next_token': nextToken,
+      'result_count': resultCount,
+    };
+  }
+
+  bool operator ==(o) =>
+    (o is TweetsMeta) &&
+      (o.oldestId == oldestId) &&
+      (o.newestId == newestId) &&
+      (o.nextToken == nextToken) &&
+      (o.resultCount == resultCount);
+
+  int get hashCode =>
+    (oldestId?.hashCode ?? 0) ^
+    (newestId?.hashCode ?? 0) ^
+    (nextToken?.hashCode ?? 0) ^
+    (resultCount?.hashCode ?? 0);
+}
+
