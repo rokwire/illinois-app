@@ -320,7 +320,7 @@ class _TweetWidget extends StatelessWidget {
         ),
         clipBehavior: Clip.none,
         child:
-          Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+          Column(children: <Widget>[
             
             Expanded(child: 
               SingleChildScrollView(child:
