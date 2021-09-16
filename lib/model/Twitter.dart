@@ -1205,14 +1205,16 @@ class TweetsMeta {
   final String oldestId;
   final String newestId;
   final String nextToken;
+  final String previousToken;
   final int resultCount;
-  TweetsMeta({this.newestId, this.oldestId, this.nextToken, this.resultCount});
+  TweetsMeta({this.newestId, this.oldestId, this.nextToken, this.previousToken, this.resultCount});
 
   factory TweetsMeta.fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetsMeta(
       oldestId: AppJson.stringValue(json['oldest_id']),
       newestId: AppJson.stringValue(json['newest_id']),
       nextToken: AppJson.stringValue(json['next_token']),
+      previousToken: AppJson.stringValue(json['previous_token']),
       resultCount: AppJson.intValue(json['result_count']),
     ) : null;
   }
@@ -1222,6 +1224,7 @@ class TweetsMeta {
       'oldest_id': oldestId,
       'newest_id': newestId,
       'next_token': nextToken,
+      'previous_token': previousToken,
       'result_count': resultCount,
     };
   }
@@ -1231,12 +1234,14 @@ class TweetsMeta {
       (o.oldestId == oldestId) &&
       (o.newestId == newestId) &&
       (o.nextToken == nextToken) &&
+      (o.previousToken == previousToken) &&
       (o.resultCount == resultCount);
 
   int get hashCode =>
     (oldestId?.hashCode ?? 0) ^
     (newestId?.hashCode ?? 0) ^
     (nextToken?.hashCode ?? 0) ^
+    (previousToken?.hashCode ?? 0) ^
     (resultCount?.hashCode ?? 0);
 }
 
