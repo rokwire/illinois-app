@@ -23,7 +23,6 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -118,7 +117,6 @@ class Services {
     Voter(),
     StudentGuide(),
     Inbox(),
-    DeviceCalendar(),
     
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),

@@ -33,17 +33,13 @@ class DeviceCalendar with Service {
     if(hasPermissions && _defaultCalendarId!=null) {
       Event calendarEvent = _convertEvent(event);
 
-      final createEventResult = await _deviceCalendarPlugin
-          .createOrUpdateEvent(
-          calendarEvent);
+      final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(calendarEvent);
       if(createEventResult?.data!=null){
         _storeEventId(event.id, createEventResult?.data);
       }
 
       if(!createEventResult.isSuccess) {
-        AppToast.show(
-            createEventResult?.data ?? createEventResult?.errorMessages ??
-                "Unable to save Event to calendar");
+        AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
         return false;
       }
     }
