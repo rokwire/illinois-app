@@ -80,9 +80,11 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get secretShibboleth        { return secretKeys['shibboleth'] ?? {}; }
   Map<String, dynamic> get secretLaundry           { return secretKeys['laundry'] ?? {}; }
   Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
+  Map<String, dynamic> get secretTwitter           { return secretKeys['twitter'] ?? {}; }
   
   Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
   List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
+  Map<String, dynamic> get twitter                 { return (_config != null) ? (_config['twitter'] ?? {}) : {}; }
   Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
   Map<String, dynamic> get onboardingInfo          { return (_config != null) ? (_config['onboarding'] ?? {}) : {}; }
 
@@ -143,6 +145,11 @@ class Config with Service implements NotificationsListener {
   String get gameDayAllUrl          { return thirdPartyServices['gameday_all_url']; }           // "https://fightingillini.com/sports/2015/7/25/gameday.aspx"
   String get convergeUrl            { return thirdPartyServices['converge_url']; }              // "https://api.converge-engine.com/v1/rokwire"
 
+  String get twitterUrl             { return twitter['url']; }                                  // "https://api.twitter.com/2"
+  String get twitterUserId          { return twitter['user_id']; }                              // "18165866"
+  String get twitterUserName        { return twitter['username']; }                             // "illinois_alma"
+  int    get twitterTweetsCount     { return twitter['tweets_count']; }                             // "illinois_alma"
+
   String get shibbolethClientId     { return secretShibboleth['client_id']; }
   String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
 
@@ -151,6 +158,9 @@ class Config with Service implements NotificationsListener {
   String get illiniCashSecretKey    { return secretIlliniCash['secret_key']; }
 
   String get laundryApiKey          { return secretLaundry['api_key']; }
+
+  String get twitterToken          { return secretTwitter['token']; }
+  String get twitterTokenType      { return secretTwitter['token_type']; }
 
   String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
     String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
