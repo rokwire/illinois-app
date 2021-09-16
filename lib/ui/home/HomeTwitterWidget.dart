@@ -375,10 +375,21 @@ class _TweetLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: 
-      SizedBox(height: 24, width: 24, child:
-        CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
-      ),
+    return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
+      Container(
+        decoration: BoxDecoration(
+            color: Styles().colors.white,
+            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
+        ),
+        clipBehavior: Clip.none,
+        child:
+          Center(child: 
+            SizedBox(height: 24, width: 24, child:
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+            ),
+          ),
+      )
     );
   }
 }
