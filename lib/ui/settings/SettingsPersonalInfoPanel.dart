@@ -354,7 +354,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   }
 
   _onSaveChangesClicked() async{
-    /* TBD: update user profile in Auth2
+    /* TBD Auth2: update user profile in Auth2
     bool piiDataUpdated = false;
     setState(() {
       _isSaving = true;
