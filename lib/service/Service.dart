@@ -23,7 +23,6 @@ import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -46,7 +45,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/Twitter.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Voter.dart';
 
@@ -119,12 +117,10 @@ class Services {
     Voter(),
     StudentGuide(),
     Inbox(),
-    DeviceCalendar(),
-    Twitter(),
     
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),
-    // ImageService(),
+    // Content(),
     // ExploreService(),
   ];
 

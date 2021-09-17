@@ -20,11 +20,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
@@ -2058,8 +2057,10 @@ class AddImageWidget extends StatefulWidget {
 }
 
 class _AddImageWidgetState extends State<AddImageWidget> {
+  final String _eventImageStoragePath = 'event/tout';
+  final int _eventImageWidth = 1080;
+
   var _imageUrlController = TextEditingController();
-  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
   bool _showUrlProgress = false;
   bool _showGalleryProgress = false;
 
@@ -2192,7 +2193,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
       setState(() {
         _showUrlProgress = true;
       });
-      Future<ImagesResult> result = ImageService().useUrl(_imageType, url);
+      Future<ImagesResult> result = Content().useUrl(storageDir: _eventImageStoragePath, width: _eventImageWidth, url: url);
       result.then((logicResult) {
         setState(() {
           _showUrlProgress = false;
@@ -2224,7 +2225,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
     });
 
     Future<ImagesResult> result =
-    ImageService().chooseFromDevice(_imageType);
+    Content().selectImageFromDevice(storagePath: _eventImageStoragePath, width: _eventImageWidth);
     result.then((logicResult) {
       setState(() {
         _showGalleryProgress = false;
