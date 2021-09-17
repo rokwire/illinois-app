@@ -20,6 +20,7 @@ import 'dart:typed_data';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:http/http.dart' as Http;
+import 'package:http_parser/http_parser.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -358,6 +359,56 @@ class Network  {
     return _readBytes(url, headers: headers, auth: auth, timeout: timeout);
   }
 
+  Future<Http.StreamedResponse> multipartPost({String url, String fileKey, List<int> fileBytes, String fileName, String contentType, Map<String, String> headers, Map<String, String> fields, NetworkAuth auth, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl}) async {
+    Http.StreamedResponse response;
+
+    try {
+      response = await _multipartPost(
+          url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
+
+      if (refreshToken && (response is Http.BaseResponse) && _requiresRefreshToken(response, auth)) {
+        await Auth().doRefreshToken();
+        response = await _multipartPost(
+            url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
+      }
+    } catch (e) {
+      Log.d(e?.toString());
+      FirebaseCrashlytics().recordError(e, null);
+    }
+
+    if (sendAnalytics) {
+      Analytics().logHttpResponse(response, requestMethod: 'POST', requestUrl: analyticsUrl ?? url);
+    }
+
+    _saveCookiesFromResponse(url, response);
+
+    return response;
+  }
+
+  Future<Http.StreamedResponse> _multipartPost({String url, String fileKey, List<int> fileBytes, String fileName, String contentType, Map<String, String> headers, Map<String, String> fields, NetworkAuth auth}) async {
+    if (Connectivity().isNotOffline) {
+      try {
+        Uri uri = _uriFromUrlString(url);
+        Map<String, String> preparedHeaders = await _prepareHeaders(headers, auth, uri);
+        Http.MultipartRequest request = Http.MultipartRequest("POST", uri);
+        if (preparedHeaders != null) {
+          request.headers.addAll(preparedHeaders);
+        }
+        if (fields != null) {
+          request.fields.addAll(fields);
+        }
+        Http.MultipartFile multipartFile = Http.MultipartFile.fromBytes(fileKey, fileBytes, filename: fileName, contentType: MediaType.parse(contentType));
+        request.files.add(multipartFile);
+        Http.StreamedResponse response = await request.send();
+        return response;
+      } catch (e) {
+        Log.d(e?.toString());
+        FirebaseCrashlytics().recordError(e, null);
+      }
+    }
+    return null;
+  }
+
 
   static Map<String, String> get appAuthHeaders {
     return authHeaders(NetworkAuth.App);
@@ -418,7 +469,7 @@ class Network  {
     return headers;
   }
 
-  bool _requiresRefreshToken(Http.Response response, NetworkAuth auth){
+  bool _requiresRefreshToken(Http.BaseResponse response, NetworkAuth auth){
     return (response != null
        && (
 //          response.statusCode == 400 || 
@@ -436,7 +487,7 @@ class Network  {
     return null;
   }
 
-  static void _saveCookiesFromResponse(String url, Http.Response response) {
+  static void _saveCookiesFromResponse(String url, Http.BaseResponse response) {
     Uri uri = _uriFromUrlString(url);
     if ((uri == null) || response == null)
       return;
