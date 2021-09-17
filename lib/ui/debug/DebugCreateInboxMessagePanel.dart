@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Inbox.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
@@ -39,7 +39,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       }
     }
     if (recepients.isEmpty) {
-      recepients = Auth().authInfo?.email ?? Auth().userPiiData?.email ?? '';
+      recepients = Auth2().user?.uiucAccount?.email ?? Auth2().user?.account?.email ?? '';
     }
 
     _recepientsController = TextEditingController(text: recepients);

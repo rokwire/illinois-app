@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Log.dart';
@@ -36,7 +36,7 @@ class Inbox with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifyToken,
-      Auth.notifyLoginChanged,
+      Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
     ]);
   }
@@ -55,7 +55,7 @@ class Inbox with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseMessaging(), Storage(), Config(), Auth()]);
+    return Set.from([FirebaseMessaging(), Storage(), Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -65,7 +65,7 @@ class Inbox with Service implements NotificationsListener {
     if (name == FirebaseMessaging.notifyToken) {
       _processFcmToken();
     }
-    else if (name == Auth.notifyLoginChanged) {
+    else if (name == Auth2.notifyLoginChanged) {
       _processFcmToken();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -176,7 +176,7 @@ class Inbox with Service implements NotificationsListener {
   void _processFcmToken() {
     if (_isServiceInitialized == true) {
       String fcmToken = FirebaseMessaging().token;
-      if (Auth().isLoggedIn) {
+      if (Auth2().isLoggedIn) {
         if ((fcmToken != null) && (fcmToken != _fcmToken)) {
           _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
             if (result) {
@@ -203,7 +203,7 @@ class Inbox with Service implements NotificationsListener {
         'previous_token': previousToken
       });
       if (auth == null) {
-        auth = Auth().isLoggedIn ? NetworkAuth.User : NetworkAuth.App;
+        auth = Auth2().isLoggedIn ? NetworkAuth.User : NetworkAuth.App;
       }
       Response response = await Network().post(url, body: body, auth: auth);
       Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
