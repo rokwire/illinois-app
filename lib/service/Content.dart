@@ -17,7 +17,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -96,15 +95,13 @@ class Content /* with Service */ {
       return ImagesResult.error('Missing media type.');
     }
     String url = "$serviceUrl/image";
-    Uri uri = Uri.parse(url);
-    //TBD: handle this in Network class
-    MultipartRequest request = MultipartRequest("POST", uri);
-    request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
-    request.fields['path'] = storagePath;
-    request.fields['width'] = width.toString();
-    request.fields['quality'] = 100.toString(); // Use maximum quality - 100
-    request.files.add(MultipartFile.fromBytes("fileName", imageBytes, filename: fileName, contentType: MediaType.parse(mediaType)));
-    StreamedResponse response = await request.send();
+    Map<String, String> imageRequestFields = {
+      'path': storagePath,
+      'width': width.toString(),
+      'quality': 100.toString() // Use maximum quality - 100
+    };
+    StreamedResponse response = await Network().multipartPost(
+        url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: NetworkAuth.User);
     int responseCode = response?.statusCode ?? -1;
     String responseString = await response?.stream?.bytesToString();
     if (responseCode == 200) {

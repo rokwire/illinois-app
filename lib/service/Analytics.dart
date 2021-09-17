@@ -784,7 +784,7 @@ class Analytics with Service implements NotificationsListener {
     logEvent(event);
   }
 
-  void logHttpResponse(Http.Response response, {String requestMethod, String requestUrl}) {
+  void logHttpResponse(Http.BaseResponse response, {String requestMethod, String requestUrl}) {
     Map<String, dynamic> httpResponseEvent = {
       LogEventName                    : LogHttpResponseEventName,
       LogHttpRequestUrlName           : requestUrl,
