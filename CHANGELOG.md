@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.9] 2021-09-16
 ### Changed
-- Iplemented Twitter widget paging, removed caching from Twitter service [#759](https://github.com/rokwire/illinois-app/issues/759).
+- Implemented Twitter widget paging, removed caching from Twitter service [#759](https://github.com/rokwire/illinois-app/issues/759).
 
 ## [3.0.8] 2021-09-15
 ### Fixed
