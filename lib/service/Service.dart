@@ -118,7 +118,7 @@ class Services {
     
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),
-    // ImageService(),
+    // Content(),
     // ExploreService(),
   ];
 
