@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Upload images using Content BB. [#763](https://github.com/rokwire/illinois-app/issues/763).
 
-## [2.6.26] - 2021-09-26
+## [2.6.26] - 2021-09-16
 ### Fixed
 - Removed wrong "buss" spelling everywhere (display strings, internal names, resource names) [#756](https://github.com/rokwire/illinois-app/issues/756).
 
