@@ -1,9 +1,6 @@
 
-import 'package:illinois/model/Auth.dart';
-import 'package:illinois/model/UserPiiData.dart';
-import 'package:illinois/service/Config.dart';
+import 'package:collection/collection.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:uuid/uuid.dart';
 
 ////////////////////////////////
 // Auth2Token
@@ -53,100 +50,67 @@ class Auth2Token {
 }
 
 ////////////////////////////////
-// Auth2User
+// Auth2Account
 
-class Auth2User {
+class Auth2Account {
   final String id;
-  final Auth2UserAccount account;
   final Auth2UserProfile profile;
-  final List<String> permissions;
-  final List<Auth2Role> roles;
-  final List<Auth2Group> groups;
-  final List<Auth2OrgMembership> orgMemberships;
-  final AuthInfo uiucAccount;
+  final List<Auth2StringEntry> permissions;
+  final List<Auth2StringEntry> roles;
+  final List<Auth2StringEntry> groups;
+  final List<Auth2Type> authTypes;
   
   
-  Auth2User({this.id, this.account, this.profile, this.permissions, this.roles, this.groups, this.orgMemberships}) :
-    uiucAccount = AuthInfo.fromJson(Auth2OrgMembership.findInList(orgMemberships, orgId: Config().coreOrgId)?.userData);
+  Auth2Account({this.id, this.profile, this.permissions, this.roles, this.groups, this.authTypes});
 
-  factory Auth2User.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? Auth2User(
+  factory Auth2Account.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2Account(
       id: AppJson.stringValue(json['id']),
-      account: Auth2UserAccount.fromJson(AppJson.mapValue(json['account'])),
       profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])),
-      permissions: AppJson.stringListValue(json['permissions']),
-      roles: Auth2Role.listFromJson(AppJson.listValue(json['roles'])),
-      groups: Auth2Group.listFromJson(AppJson.listValue(json['groups'])),
-      orgMemberships: Auth2OrgMembership.listFromJson(AppJson.listValue(json['org_memberships'])),
+      permissions: Auth2StringEntry.listFromJson(AppJson.listValue(json['permissions'])),
+      roles: Auth2StringEntry.listFromJson(AppJson.listValue(json['roles'])),
+      groups: Auth2StringEntry.listFromJson(AppJson.listValue(json['groups'])),
+      authTypes: Auth2Type.listFromJson(AppJson.listValue(json['auth_types'])),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id' : id,
-      'account': account,
       'profile': profile,
       'permissions': permissions,
-      'roles': Auth2Role.listToJson(roles),
-      'groups': Auth2Group.listToJson(groups),
-      'org_memberships': Auth2OrgMembership.listToJson(orgMemberships),
+      'roles': roles,
+      'groups': groups,
+      'auth_types': authTypes,
     };
   }
+
+  bool operator ==(o) =>
+    (o is Auth2Account) &&
+      (o.id == id) &&
+      (o.profile == profile) &&
+      DeepCollectionEquality().equals(o.permissions, permissions) &&
+      DeepCollectionEquality().equals(o.roles, roles) &&
+      DeepCollectionEquality().equals(o.groups, groups) &&
+      DeepCollectionEquality().equals(o.authTypes, authTypes);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (profile?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(permissions) ?? 0) ^
+    (DeepCollectionEquality().hash(roles) ?? 0) ^
+    (DeepCollectionEquality().hash(groups) ?? 0) ^
+    (DeepCollectionEquality().hash(authTypes) ?? 0);
 
   bool get isValid {
     return (id != null) && id.isNotEmpty &&
-      (account != null) && account.isValid &&
       (profile != null) && profile.isValid;
   }
 
-  UserPiiData get pii {
-    return (uiucAccount != null) ? UserPiiData(
-        pid: Uuid().v1(),
-        uin: uiucAccount?.uin,
-        netId: uiucAccount?.username,
-        firstName: uiucAccount?.firstName,
-        lastName: uiucAccount?.lastName,
-        middleName: uiucAccount.middleName,
-        userName: uiucAccount?.username,
-        email: account?.email,
-        phone: account?.phone,
-        imageUrl: profile?.photoUrl
-    ) : null;
-  }
-}
-
-////////////////////////////////
-// Auth2UserAccount
-
-class Auth2UserAccount {
-  final String id;
-  final String email;
-  final String phone;
-  final String userName;
-  
-  Auth2UserAccount({this.id, this.email, this.phone, this.userName});
-
-  factory Auth2UserAccount.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? Auth2UserAccount(
-      id: AppJson.stringValue(json['id']),
-      email: AppJson.stringValue(json['email']),
-      phone: AppJson.stringValue(json['phone']),
-      userName: AppJson.stringValue(json['username']),
-    ) : null;
+  Auth2Type get authType {
+    return ((authTypes != null) && (0 < authTypes.length)) ? authTypes?.first : null;
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id' : id,
-      'email': email,
-      'phone': phone,
-      'username': userName,
-    };
-  }
-
-  bool get isValid {
-    return AppString.isStringNotEmpty(id);
-  }
 }
 
 ////////////////////////////////
@@ -156,27 +120,87 @@ class Auth2UserProfile {
   final String id;
   final String firstName;
   final String lastName;
+  final int birthYear;
   final String photoUrl;
+
+  final String email;
+  final String phone;
   
-  Auth2UserProfile({this.id, this.firstName, this.lastName, this.photoUrl});
+  final String address;
+  final String state;
+  final String zip;
+  final String country;
+  
+  Auth2UserProfile({this.id, this.firstName, this.lastName, this.birthYear, this.photoUrl,
+    this.email, this.phone, this.address, this.state, this.zip, this.country
+  });
 
   factory Auth2UserProfile.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UserProfile(
       id: AppJson.stringValue(json['id']),
       firstName: AppJson.stringValue(json['first_name']),
       lastName: AppJson.stringValue(json['last_name']),
+      birthYear: AppJson.intValue(json['birth_year']),
       photoUrl: AppJson.stringValue(json['photo_url']),
+
+      email: AppJson.stringValue(json['email']),
+      phone: AppJson.stringValue(json['phone']),
+  
+      address: AppJson.stringValue(json['address']),
+      state: AppJson.stringValue(json['state']),
+      zip: AppJson.stringValue(json['zip']),
+      country: AppJson.stringValue(json['country']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id' : id,
-      'email': firstName,
-      'phone': lastName,
-      'username': photoUrl,
+      'first_name': firstName,
+      'last_name': lastName,
+      'birth_year': birthYear,
+      'photo_url': photoUrl,
+
+      'email': email,
+      'phone': phone,
+
+      'address': address,
+      'state': state,
+      'zip': zip,
+      'country': country,
     };
   }
+
+  bool operator ==(o) =>
+    (o is Auth2UserProfile) &&
+      (o.id == id) &&
+      (o.firstName == firstName) &&
+      (o.lastName == lastName) &&
+      (o.birthYear == birthYear) &&
+      (o.photoUrl == photoUrl) &&
+
+      (o.email == email) &&
+      (o.phone == phone) &&
+
+      (o.address == address) &&
+      (o.state == state) &&
+      (o.zip == zip) &&
+      (o.country == country);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (firstName?.hashCode ?? 0) ^
+    (lastName?.hashCode ?? 0) ^
+    (birthYear?.hashCode ?? 0) ^
+    (photoUrl?.hashCode ?? 0) ^
+
+    (email?.hashCode ?? 0) ^
+    (phone?.hashCode ?? 0) ^
+
+    (address?.hashCode ?? 0) ^
+    (state?.hashCode ?? 0) ^
+    (zip?.hashCode ?? 0) ^
+    (country?.hashCode ?? 0);
 
   bool get isValid {
     return AppString.isStringNotEmpty(id);
@@ -188,51 +212,54 @@ class Auth2UserProfile {
 }
 
 ////////////////////////////////
-// Auth2Role
+// Auth2StringEntry
 
-class Auth2Role {
+class Auth2StringEntry {
   final String id;
-  final String orgId;
   final String name;
-  final List<String> permissions;
   
-  Auth2Role({this.id, this.orgId, this.name, this.permissions});
+  Auth2StringEntry({this.id, this.name});
 
-  factory Auth2Role.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? Auth2Role(
+  factory Auth2StringEntry.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2StringEntry(
       id: AppJson.stringValue(json['id']),
-      orgId: AppJson.stringValue(json['org_id']),
       name: AppJson.stringValue(json['name']),
-      permissions: AppJson.stringListValue(json['permissions']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id' : id,
-      'org_id': orgId,
       'name': name,
-      'permissions': permissions,
     };
   }
 
-  static List<Auth2Role> listFromJson(List<dynamic> jsonList) {
-    List<Auth2Role> authList;
+  bool operator ==(o) =>
+    (o is Auth2StringEntry) &&
+      (o.id == id) &&
+      (o.name == name);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0);
+
+  static List<Auth2StringEntry> listFromJson(List<dynamic> jsonList) {
+    List<Auth2StringEntry> result;
     if (jsonList != null) {
-      authList = <Auth2Role>[];
+      result = [];
       for (dynamic jsonEntry in jsonList) {
-        authList.add(Auth2Role.fromJson(AppJson.mapValue(jsonEntry)));
+        result.add((jsonEntry is Map) ? Auth2StringEntry.fromJson(jsonEntry) : null);
       }
     }
-    return authList;
+    return result;
   }
 
-  static List<dynamic> listToJson(List<Auth2Role> authList) {
+  static List<dynamic> listToJson(List<Auth2StringEntry> contentList) {
     List<dynamic> jsonList;
-    if (authList != null) {
-      jsonList = <dynamic>[];
-      for (Auth2Role authEntry in authList) {
-        jsonList.add(authEntry?.toJson());
+    if (contentList != null) {
+      jsonList = [];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
       }
     }
     return jsonList;
@@ -240,60 +267,72 @@ class Auth2Role {
 }
 
 ////////////////////////////////
-// Auth2Group
+// Auth2Type
 
-class Auth2Group {
+class Auth2Type {
   final String id;
-  final String orgId;
-  final String name;
-  final List<String> permissions;
-  final List<Auth2Role> roles;
-  final List<String> users;
-  final List<String> orgMemberships;
+  final String identifier;
+  final bool active;
+  final bool active2fa;
+  final Map<String, dynamic> params;
   
-  Auth2Group({this.id, this.orgId, this.name, this.permissions, this.roles, this.users, this.orgMemberships});
+  final Auth2UiucUser uiucUser;
+  
+  Auth2Type({this.id, this.identifier, this.active, this.active2fa, this.params}) :
+  uiucUser = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null;
 
-  factory Auth2Group.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? Auth2Group(
+  factory Auth2Type.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2Type(
       id: AppJson.stringValue(json['id']),
-      orgId: AppJson.stringValue(json['org_id']),
-      name: AppJson.stringValue(json['name']),
-      permissions: AppJson.stringListValue(json['permissions']),
-      roles: Auth2Role.listFromJson(AppJson.listValue(json['roles'])),
-      users: AppJson.stringListValue(json['users']),
-      orgMemberships: AppJson.stringListValue(json['org_memberships']),
+      identifier: AppJson.stringValue(json['identifier']),
+      active: AppJson.boolValue(json['active']),
+      active2fa: AppJson.boolValue(json['active_2fa']),
+      params: AppJson.mapValue(json['params']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id' : id,
-      'org_id': orgId,
-      'name': name,
-      'permissions': permissions,
-      'roles': Auth2Role.listToJson(roles),
-      'users': users,
-      'org_memberships': orgMemberships,
+      'identifier': identifier,
+      'active': active,
+      'active_2fa': active2fa,
+      'params': params,
     };
   }
 
-  static List<Auth2Group> listFromJson(List<dynamic> jsonList) {
-    List<Auth2Group> authList;
+  bool operator ==(o) =>
+    (o is Auth2Type) &&
+      (o.id == id) &&
+      (o.identifier == identifier) &&
+      (o.active == active) &&
+      (o.active2fa == active2fa) &&
+      DeepCollectionEquality().equals(o.params, params);
+
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (identifier?.hashCode ?? 0) ^
+    (active?.hashCode ?? 0) ^
+    (active2fa?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(params) ?? 0);
+
+  static List<Auth2Type> listFromJson(List<dynamic> jsonList) {
+    List<Auth2Type> result;
     if (jsonList != null) {
-      authList = <Auth2Group>[];
+      result = [];
       for (dynamic jsonEntry in jsonList) {
-        authList.add(Auth2Group.fromJson(AppJson.mapValue(jsonEntry)));
+        result.add((jsonEntry is Map) ? Auth2Type.fromJson(jsonEntry) : null);
       }
     }
-    return authList;
+    return result;
   }
 
-  static List<dynamic> listToJson(List<Auth2Group> authList) {
+  static List<dynamic> listToJson(List<Auth2Type> contentList) {
     List<dynamic> jsonList;
-    if (authList != null) {
-      jsonList = <dynamic>[];
-      for (Auth2Group authEntry in authList) {
-        jsonList.add(authEntry?.toJson());
+    if (contentList != null) {
+      jsonList = [];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
       }
     }
     return jsonList;
@@ -301,88 +340,111 @@ class Auth2Group {
 }
 
 ////////////////////////////////
-// Auth2OrgMembership
+// Auth2UiucUser
 
-class Auth2OrgMembership {
-  final String id;
-  final String orgId;
-  final String userId;
-  final Map<String, dynamic> userData;
-  final List<String> permissions;
-  final List<Auth2Role> roles;
-  final List<Auth2Group> groups;
+class Auth2UiucUser {
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String middleName;
+  final String identifier;
+  final List<String> groups;
+  final Map<String, dynamic> systemSpecific;
+  final Set<String> groupsMembership;
   
-  Auth2OrgMembership({this.id, this.orgId, this.userId, this.userData, this.permissions, this.roles, this.groups});
+  Auth2UiucUser({this.email, this.firstName, this.lastName, this.middleName, this.identifier, this.groups, this.systemSpecific}) :
+    groupsMembership = (groups != null) ? Set.from(groups) : null;
 
-  factory Auth2OrgMembership.fromJson(Map<String, dynamic> json) {
-    return (json != null) ? Auth2OrgMembership(
-      id: AppJson.stringValue(json['id']),
-      orgId: AppJson.stringValue(json['org_id']),
-      userId: AppJson.stringValue(json['user_id']),
-      userData: AppJson.mapValue(json['org_user_data']),
-      permissions: AppJson.stringListValue(json['permissions']),
-      roles: Auth2Role.listFromJson(AppJson.listValue(json['roles'])),
-      groups: Auth2Group.listFromJson(AppJson.listValue(json['groups'])),
+  factory Auth2UiucUser.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2UiucUser(
+      email: AppJson.stringValue(json['email']),
+      firstName: AppJson.stringValue(json['first_name']),
+      lastName: AppJson.stringValue(json['last_name']),
+      middleName: AppJson.stringValue(json['middle_name']),
+      identifier: AppJson.stringValue(json['identifier']),
+      groups: AppJson.stringListValue(json['groups']),
+      systemSpecific: AppJson.mapValue(json['system_specific']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id' : id,
-      'org_id': orgId,
-      'user_id': userId,
-      'org_user_data': userData,
-      'permissions': permissions,
-      'roles': Auth2Role.listToJson(roles),
-      'groups': Auth2Group.listToJson(groups),
+      'email' : email,
+      'first_name': firstName,
+      'last_name': lastName,
+      'middle_name': middleName,
+      'identifier': identifier,
+      'groups': groups,
+      'system_specific': systemSpecific,
     };
   }
 
-  static Auth2OrgMembership findInList(List<Auth2OrgMembership> authList, {String orgId }) {
-    if (authList != null) {
-      for (Auth2OrgMembership authEntry in authList) {
-        if ((orgId != null) && (authEntry.orgId == orgId)) {
-          return authEntry;
-        }
-      }
-    }
-    return null;
+  bool operator ==(o) =>
+    (o is Auth2UiucUser) &&
+      (o.email == email) &&
+      (o.firstName == firstName) &&
+      (o.lastName == lastName) &&
+      (o.middleName == middleName) &&
+      (o.identifier == identifier) &&
+      DeepCollectionEquality().equals(o.groups, groups) &&
+      DeepCollectionEquality().equals(o.systemSpecific, systemSpecific);
+
+  int get hashCode =>
+    (email?.hashCode ?? 0) ^
+    (firstName?.hashCode ?? 0) ^
+    (lastName?.hashCode ?? 0) ^
+    (middleName?.hashCode ?? 0) ^
+    (identifier?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(groups) ?? 0) ^
+    (DeepCollectionEquality().hash(systemSpecific) ?? 0);
+
+  String get uin {
+    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_uin']) : null;
   }
 
-  static List<Auth2OrgMembership> listFromJson(List<dynamic> jsonList) {
-    List<Auth2OrgMembership> authList;
+  String get netId {
+    //TBD Auth2:
+    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_username']) : null;
+  }
+
+  String get fullName {
+    return AppString.fullName([firstName, middleName, lastName]);
+  }
+
+  static List<Auth2UiucUser> listFromJson(List<dynamic> jsonList) {
+    List<Auth2UiucUser> result;
     if (jsonList != null) {
-      authList = <Auth2OrgMembership>[];
+      result = [];
       for (dynamic jsonEntry in jsonList) {
-        authList.add(Auth2OrgMembership.fromJson(AppJson.mapValue(jsonEntry)));
+        result.add((jsonEntry is Map) ? Auth2UiucUser.fromJson(jsonEntry) : null);
       }
     }
-    return authList;
+    return result;
   }
 
-  static List<dynamic> listToJson(List<Auth2OrgMembership> authList) {
+  static List<dynamic> listToJson(List<Auth2UiucUser> contentList) {
     List<dynamic> jsonList;
-    if (authList != null) {
-      jsonList = <dynamic>[];
-      for (Auth2OrgMembership authEntry in authList) {
-        jsonList.add(authEntry?.toJson());
+    if (contentList != null) {
+      jsonList = [];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
       }
     }
     return jsonList;
   }
-
 }
 
 ////////////////////////////////
 // Auth2LoginType
 
-enum Auth2LoginType { email, phone, oidc }
+enum Auth2LoginType { email, phone, oidc, oidcIllinois }
 
 String auth2LoginTypeToString(Auth2LoginType value) {
   switch (value) {
     case Auth2LoginType.email: return 'email';
     case Auth2LoginType.phone: return 'phone';
     case Auth2LoginType.oidc: return 'oidc';
+    case Auth2LoginType.oidcIllinois: return 'illinois_oidc';
   }
   return null;
 }
@@ -396,6 +458,9 @@ Auth2LoginType auth2LoginTypeFromString(String value) {
   }
   else if (value == 'oidc') {
     return Auth2LoginType.oidc;
+  }
+  else if (value == 'illinois_oidc') {
+    return Auth2LoginType.oidcIllinois;
   }
   return null;
 }

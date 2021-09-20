@@ -47,16 +47,16 @@ class _SettingsAddIlliniCashPanelState
   bool _agreePrivacy = false;
   bool __isLoading = false;
 
-  final TextEditingController _uinController = TextEditingController(text: Auth2()?.user?.uiucAccount?.uin ?? "");
+  final TextEditingController _uinController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.uin ?? "");
   final FocusNode _uinFocusNode = FocusNode();
 
-  final TextEditingController _firstNameController = TextEditingController(text: Auth2()?.user?.uiucAccount?.firstName ?? "");
+  final TextEditingController _firstNameController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.firstName ?? "");
   final FocusNode _firstNameFocusNode = FocusNode();
 
-  final TextEditingController _lastNameController = TextEditingController(text: Auth2()?.user?.uiucAccount?.lastName ?? "");
+  final TextEditingController _lastNameController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.lastName ?? "");
   final FocusNode _lastNameFocusNode = FocusNode();
 
-  final TextEditingController _emailController = TextEditingController(text: Auth2()?.user?.uiucAccount?.email ?? "");
+  final TextEditingController _emailController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.email ?? "");
   final FocusNode _emailFocusNode = FocusNode();
 
   final TextEditingController _ccController = TextEditingController();

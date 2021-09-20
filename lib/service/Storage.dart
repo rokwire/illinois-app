@@ -776,13 +776,13 @@ class Storage with Service {
     _setStringWithName(_auth2UiucTokenKey, AppJson.encode(value?.toJson()));
   }
 
-  static const String _auth2UserKey = 'auth2User';
+  static const String _auth2UserKey = 'auth2Account';
 
-  Auth2User get auth2User {
-    return Auth2User.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UserKey)));
+  Auth2Account get auth2Account {
+    return Auth2Account.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UserKey)));
   }
 
-  set auth2User(Auth2User value) {
+  set auth2Account(Auth2Account value) {
     _setStringWithName(_auth2UserKey, AppJson.encode(value?.toJson()));
   }
 

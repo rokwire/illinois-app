@@ -224,7 +224,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // User Info
 
   Widget _buildUserInfo() {
-    String fullName = Auth2()?.user?.profile?.fullName ?? "";
+    String fullName = Auth2().account?.profile?.fullName ?? "";
     bool hasFullName =  AppString.isStringNotEmpty(fullName);
     String welcomeMessage = AppString.isStringNotEmpty(fullName)
         ? AppDateTime().getDayGreeting() + ","
@@ -435,7 +435,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as "),
                     style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
-                Text(Auth2().user?.profile?.fullName ?? "",
+                Text(Auth2().account?.profile?.fullName ?? "",
                     style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ]))));
       }
@@ -463,7 +463,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   List<Widget> _buildConnectedPhoneLayout() {
     List<Widget> contentList = [];
 
-    String fullName = Auth2()?.user?.profile?.fullName ?? "";
+    String fullName = Auth2().account?.profile?.fullName ?? "";
     bool hasFullName = AppString.isStringNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.phone'] ?? [];
@@ -480,7 +480,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as "),
                     style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
                 Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
-                Text(Auth2().user?.account?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+                Text(Auth2().account?.profile?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ]))));
       }
       else if (code == 'verify') {
@@ -900,9 +900,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth2().user?.account?.email;
-      String name =  Auth2().user?.profile?.fullName;
-      String phone = Auth2().user?.account?.phone;
+      String email = Auth2().account?.profile?.email;
+      String name =  Auth2().account?.profile?.fullName;
+      String phone = Auth2().account?.profile?.phone;
       String params = _constructFeedbackParams(email, phone, name);
       String feedbackUrl = Config().feedbackUrl + params;
 

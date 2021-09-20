@@ -497,7 +497,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           geoFence: _selectedGeofenceResult,
         ),
         creatorUserUuid: _selectedGeofence?.id,
-        creatorUserName: _selectedGeofence?.name, /*Auth2().user?.uiucAccount?.fullName,*/
+        creatorUserName: _selectedGeofence?.name, /*Auth2().account?.authType?.uiucUser?.fullName,*/
         regionId: _selectedGeofence?.id,
         pinCode: Poll.randomPin,
         status: status,

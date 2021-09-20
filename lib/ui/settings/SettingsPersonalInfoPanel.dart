@@ -61,8 +61,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
     _nameController = TextEditingController();
     _emailController = TextEditingController();
 
-    _nameController.text = _initialName = Auth2().user?.profile?.fullName ?? "";
-    _emailController.text = _initialEmail = Auth2().user?.account?.email ?? "";
+    _nameController.text = _initialName = Auth2().account?.profile?.fullName ?? "";
+    _emailController.text = _initialEmail = Auth2().account?.profile?.email ?? "";
   }
 
   @override
@@ -104,20 +104,20 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
         children: <Widget>[
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.net_id.title', 'NetID'),
-              value: Auth2().user?.uiucAccount?.username ?? ""
+              value: Auth2().account?.authType?.uiucUser?.netId ?? ""
           ),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
-              value: Auth2().user?.uiucAccount?.fullName ?? ""),
+              value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
-              value: Auth2().user?.uiucAccount?.middleName ?? ""),
+              value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.last_name.title', 'Last Name'),
-              value:  Auth2().user?.uiucAccount?.lastName ?? ""),
+              value:  Auth2().account?.authType?.uiucUser?.lastName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
-              value: Auth2().user?.uiucAccount?.email ?? ""),
+              value: Auth2().account?.authType?.uiucUser?.email ?? ""),
         ],
       ),
     );
@@ -211,7 +211,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
           _PersonalInfoEntry(
               visible: Auth2().isPhoneLoggedIn,
               title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
-              value: Auth2().user?.account?.phone ?? ""),
+              value: Auth2().account?.profile?.phone ?? ""),
         ],
       ),
     );
@@ -354,8 +354,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   }
 
   _onSaveChangesClicked() async{
-    /* TBD Auth2: update user profile in Auth2
-    bool piiDataUpdated = false;
+    //TBD Auth2: update user profile in Auth2
+    /*bool piiDataUpdated = false;
     setState(() {
       _isSaving = true;
     });

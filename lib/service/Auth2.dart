@@ -44,7 +44,7 @@ class Auth2 with Service implements NotificationsListener {
   
   Auth2Token _token;
   Auth2Token _uiucToken;
-  Auth2User _user;
+  Auth2Account _account;
   
   AuthCard  _authCard;
   File _authCardCacheFile;
@@ -72,7 +72,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<void> initService() async {
     _token = Storage().auth2Token;
     _uiucToken = Storage().auth2UiucToken;
-    _user = Storage().auth2User;
+    _account = Storage().auth2Account;
     
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
@@ -120,22 +120,22 @@ class Auth2 with Service implements NotificationsListener {
 
   Auth2Token get token => _token;
   Auth2Token get uiucToken => _uiucToken;
-  Auth2User get user => _user;
+  Auth2Account get account => _account;
   AuthCard get authCard => _authCard;
 
   bool get isLoggedIn => (_token != null);
-  bool get isOidcLoggedIn => (_user?.uiucAccount != null);
+  bool get isOidcLoggedIn => (_account?.authType?.uiucUser != null);
   bool get isPhoneLoggedIn => false;
 
   bool get hasUin => (0 < uin?.length ?? 0);
-  String get uin => _user?.uiucAccount?.uin;
+  String get uin => _account?.authType?.uiucUser?.uin;
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
   bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
   bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
 
-  bool isMemberOf(String group) => _user?.uiucAccount?.userGroupMembership?.contains(group) ?? false;
+  bool isMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
 
 
   // OIDC Authentication
@@ -193,7 +193,7 @@ class Auth2 with Service implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
-        'auth_type': auth2LoginTypeToString(Auth2LoginType.oidc),
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
         'org_id': Config().coreOrgId,
         'app_id': Config().appCanonicalId,
         'creds': uri?.toString(),
@@ -205,11 +205,11 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2User user = Auth2User.fromJson(AppJson.mapValue(responseJson['user']));
+        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']));
 
-        if ((token != null) && token.isValid && (user != null) && user.isValid) {
+        if ((token != null) && token.isValid && (account != null) && account.isValid) {
           Storage().auth2Token = _token = token;
-          Storage().auth2User = _user = user;
+          Storage().auth2Account = _account = account;
 
           Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
           Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
@@ -237,7 +237,7 @@ class Auth2 with Service implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
-        'auth_type': auth2LoginTypeToString(Auth2LoginType.oidc),
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
         'org_id': Config().coreOrgId,
         'app_id': Config().appCanonicalId,
         'redirect_uri': REDIRECT_URI,
@@ -300,9 +300,9 @@ class Auth2 with Service implements NotificationsListener {
   // Logout
 
   void logout() {
-    if ((_token != null) || (_user != null)) {
+    if ((_token != null) || (_account != null)) {
       Storage().auth2Token = _token = null;
-      Storage().auth2User = _user = null;
+      Storage().auth2Account = _account = null;
       
       Storage().auth2UiucToken = _uiucToken = null;
       
@@ -416,7 +416,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
-    String uin = _user?.uiucAccount?.uin;
+    String uin = _account?.authType?.uiucUser?.uin;
     String accessToken = _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {

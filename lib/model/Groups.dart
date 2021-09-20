@@ -151,7 +151,7 @@ class Group {
   Member get currentUserAsMember{
     if(Auth2().isOidcLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
       for (Member member in members) {
-        if (member.email == Auth2().user.uiucAccount?.email) {
+        if (member.email == Auth2().account?.authType?.uiucUser?.email) {
           return member;
         }
       }
@@ -179,7 +179,7 @@ class Group {
   bool get currentUserIsUserMember{
     if(Auth2().isOidcLoggedIn && AppCollection.isCollectionNotEmpty(members)){
       for(Member member in members){
-        if(member.email == Auth2()?.user?.uiucAccount?.email && member.status != GroupMemberStatus.pending){
+        if(member.email == Auth2().account?.authType?.uiucUser?.email && member.status != GroupMemberStatus.pending){
           return true;
         }
       }

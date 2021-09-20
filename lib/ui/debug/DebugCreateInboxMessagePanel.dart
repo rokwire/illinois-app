@@ -39,7 +39,7 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
       }
     }
     if (recepients.isEmpty) {
-      recepients = Auth2().user?.uiucAccount?.email ?? Auth2().user?.account?.email ?? '';
+      recepients = Auth2().account?.authType?.uiucUser?.email ?? Auth2().account?.profile?.email ?? '';
     }
 
     _recepientsController = TextEditingController(text: recepients);
