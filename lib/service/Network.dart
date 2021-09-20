@@ -368,7 +368,7 @@ class Network  {
           url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
 
       if (refreshToken && (response is Http.BaseResponse) && _requiresRefreshToken(response, auth)) {
-        await Auth().refreshToken();
+        await Auth2().refreshToken();
         response = await _multipartPost(
             url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
       }
