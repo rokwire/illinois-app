@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.10] 2021-09-17
+### Changed
+- Upload images using Content BB. [#763](https://github.com/rokwire/illinois-app/issues/763).
+
 ## [3.0.9] 2021-09-16
 ### Changed
-- Iplemented Twitter widget paging, removed caching from Twitter service [#759](https://github.com/rokwire/illinois-app/issues/759).
+- Implemented Twitter widget paging, removed caching from Twitter service [#759](https://github.com/rokwire/illinois-app/issues/759).
 
 ## [3.0.8] 2021-09-15
 ### Fixed
