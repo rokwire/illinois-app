@@ -291,10 +291,10 @@ class TweetEntities {
 
   bool operator ==(o) =>
     (o is TweetEntities) &&
-      DeepCollectionEquality().equals(urls, urls) &&
-      DeepCollectionEquality().equals(annotations, annotations) &&
-      DeepCollectionEquality().equals(hashtags, hashtags) &&
-      DeepCollectionEquality().equals(mentions, mentions);
+      DeepCollectionEquality().equals(o.urls, urls) &&
+      DeepCollectionEquality().equals(o.annotations, annotations) &&
+      DeepCollectionEquality().equals(o.hashtags, hashtags) &&
+      DeepCollectionEquality().equals(o.mentions, mentions);
 
   int get hashCode =>
     (DeepCollectionEquality().hash(urls) ?? 0) ^
