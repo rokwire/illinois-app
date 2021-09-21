@@ -564,8 +564,7 @@ class Analytics with Service implements NotificationsListener {
   // User Roles Service
 
   void _updateUserRoles() {
-    Set<UserRole> roles = User().roles;
-    _userRoles = (roles != null) ? List.from(roles) : null;
+    _userRoles = UserRole.setToJson(User().roles);
   }
 
   // Packets Processing
