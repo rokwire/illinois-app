@@ -547,7 +547,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapRegistration(String registrationUrl) {
     Analytics.instance.logSelect(target: "Registration");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _onTapWebButton(registrationUrl);
       });

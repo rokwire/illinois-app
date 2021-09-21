@@ -155,6 +155,8 @@ class Auth2 with Service implements NotificationsListener {
   bool privacyMatch(int requredPrivacyLevel) => 
     (prefs?.privacyLevel == null) || (prefs.privacyLevel >= requredPrivacyLevel);
 
+  bool get canFavorite => privacyMatch(2);
+  
   // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {

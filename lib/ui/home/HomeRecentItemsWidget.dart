@@ -269,7 +269,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
             )
           ),
           _topBorder(),
-          Visibility(visible: User().favoritesStarVisible, child:
+          Visibility(visible: Auth2().canFavorite, child:
             Align(alignment: Alignment.topRight, child:
               GestureDetector(onTap: _onTapFavorite, child:
                 Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:

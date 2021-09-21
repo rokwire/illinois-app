@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/User.dart';
@@ -139,7 +140,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: Container(),
                               ),
                               Visibility(
-                                visible: User().favoritesStarVisible,
+                                visible: Auth2().canFavorite,
                                 child: Semantics(
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
                                   hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", ""),
@@ -149,7 +150,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                       child: Image.asset(
                                         isGameSaved ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
                                       ),
-                                      onTap: _onTapSaveGame),
+                                      onTap: _onTapSwitchFavorite),
                                 ),
                               )
                             ],
@@ -431,7 +432,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     return widgets;
   }
 
-  void _onTapSaveGame() {
+  void _onTapSwitchFavorite() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
     User().switchFavorite(widget.game);
   }
@@ -439,7 +440,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   void _onTapGetTickets() {
     Analytics.instance.logSelect(target: "Get Tickets");
 
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
       });

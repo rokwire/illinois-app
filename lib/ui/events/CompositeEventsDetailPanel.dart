@@ -181,7 +181,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   Widget _exploreHeading() {
     String category = widget.parentEvent?.category;
     bool isFavorite = User().isExploreFavorite(widget.parentEvent);
-    bool starVisible = User().favoritesStarVisible;
+    bool starVisible = Auth2().canFavorite;
     return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
       children: <Widget>[
         Text(
@@ -532,7 +532,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onTapGetTickets(String ticketsUrl) {
     Analytics.instance.logSelect(target: "Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(
           context, onContinueTap: () {
         _onTapWebButton(ticketsUrl, 'Tickets');
@@ -728,7 +728,7 @@ class _EventEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isFavorite = User().isFavorite(event);
-    bool starVisible = User().favoritesStarVisible;
+    bool starVisible = Auth2().canFavorite;
     String title = parentEvent.isSuperEvent ? event.title : event.displayDate;
     String subTitle = parentEvent.isSuperEvent ? event.displaySuperTime : event.displayStartEndTime;
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(

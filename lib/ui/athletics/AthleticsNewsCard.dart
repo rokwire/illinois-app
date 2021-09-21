@@ -112,7 +112,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                  ),
               ),
             ),
-          Visibility(visible: User().favoritesStarVisible,
+          Visibility(visible: Auth2().canFavorite,
             child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _onTapSave,

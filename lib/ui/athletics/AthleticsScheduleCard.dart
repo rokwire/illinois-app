@@ -112,7 +112,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardTitle() {
-    bool starVisible = widget._game.isUpcoming && User().favoritesStarVisible;
+    bool starVisible = widget._game.isUpcoming && Auth2().canFavorite;
     bool isGameSaved = User().isFavorite(widget._game);
 
     return Padding(
@@ -293,7 +293,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   void _onTapGetTickets() {
     Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game.title + " -Tickets");
 
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _pushTicketsWebPanel();
       });

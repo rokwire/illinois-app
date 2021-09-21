@@ -234,7 +234,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
     Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
     bool isFavorite = User().isExploreFavorite(widget.explore);
-    bool starVisible = User().favoritesStarVisible;
+    bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
     if (event != null) {
@@ -556,7 +556,7 @@ class _EventSmallCard extends StatelessWidget {
     bool isMoreCardType = (type == _EventCardType.more);
     Favorite favorite = event is Favorite ? event : null;
     bool isFavorite = User().isFavorite(favorite);
-    bool starVisible = User().favoritesStarVisible && !isMoreCardType;
+    bool starVisible = Auth2().canFavorite && !isMoreCardType;
     double borderWidth = 1.0;
     double topBorderHeight = 4;
     double internalPadding = 16;

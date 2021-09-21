@@ -26,7 +26,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
@@ -365,7 +364,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   void _onTapTickets() {
     Analytics.instance.logSelect(target: "Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
       });

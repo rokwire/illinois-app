@@ -84,7 +84,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
               ],),
           ),)),
         Container(color: Styles().colors.accentColor3, height: 4),
-        Visibility(visible: User().favoritesStarVisible, child:
+        Visibility(visible: Auth2().canFavorite, child:
           Align(alignment: Alignment.topRight, child:
           Semantics(
             label: _isFavorite

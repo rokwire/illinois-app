@@ -672,7 +672,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                             ),
                           ),
                           Visibility(
-                            visible: User().favoritesStarVisible,
+                            visible: Auth2().canFavorite,
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {

@@ -1112,7 +1112,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                             ),
                           ),
                           Visibility(
-                            visible: User().favoritesStarVisible,
+                            visible: Auth2().canFavorite,
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {

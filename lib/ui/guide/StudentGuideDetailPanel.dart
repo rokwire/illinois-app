@@ -92,7 +92,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:
               _buildContent()
             ),
-            Visibility(visible: User().favoritesStarVisible, child:
+            Visibility(visible: Auth2().canFavorite, child:
               Align(alignment: Alignment.topRight, child:
               Semantics(
                 label: _isFavorite

@@ -687,7 +687,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                               Expanded(
                                 child: Container(),
                               ),
-                              Visibility(visible: User().favoritesStarVisible,
+                              Visibility(visible: Auth2().canFavorite,
                                 child: GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: _onTapSave,
@@ -794,7 +794,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   void _onTapGetTickets() {
     Analytics.instance.logSelect(
         target: "AthleticsCard:Item:" + widget?.game?.title + " -Get Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
       });

@@ -192,7 +192,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget _exploreHeading() {
     String category = widget?.event?.category;
     bool isFavorite = User().isFavorite(widget.event);
-    bool starVisible = User().favoritesStarVisible;
+    bool starVisible = Auth2().canFavorite;
     return Container(
       color: Colors.white,
       padding: EdgeInsets.only(left: _horizontalPadding,top: 16, bottom: 12), child: Row(
@@ -771,7 +771,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapGetTickets(String ticketsUrl) {
     Analytics.instance.logSelect(target: "Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(
           context, onContinueTap: () {
         _onTapWebButton(ticketsUrl, 'Tickets');

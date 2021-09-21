@@ -361,16 +361,16 @@ class User with Service implements NotificationsListener {
     }
   }
 
-  bool privacyMatch(int requredPrivacyLevel) {
+  bool obsoletePrivacyMatch(int requredPrivacyLevel) {
     return (_userData?.privacyLevel == null) || (_userData.privacyLevel >= requredPrivacyLevel);
   }
 
-  bool get favoritesStarVisible {
-    return privacyMatch(2);
+  bool get obsoleteFavoritesStarVisible {
+    return obsoletePrivacyMatch(2);
   }
 
-  bool get showTicketsConfirmationModal {
-    return !privacyMatch(4);
+  bool get obsoleteShowTicketsConfirmationModal {
+    return !obsoletePrivacyMatch(4);
   }
 
   //Favorites

@@ -128,7 +128,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                             color: Styles().colors.fillColorPrimary,
                                             fontFamily: Styles().fontFamilies.bold),
                                       ),
-                                      Visibility(visible: User().favoritesStarVisible,
+                                      Visibility(visible: Auth2().canFavorite,
                                           child: GestureDetector(
                                             onTap: () {
                                               Analytics.instance.logSelect(target: "Favorite: ${widget.room?.title}");

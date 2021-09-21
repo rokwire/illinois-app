@@ -42,6 +42,10 @@ class PrivacyTicketsDialog extends StatefulWidget {
         )
     );
   }
+
+  static bool get shouldConfirm {
+    return !Auth2().privacyMatch(4);
+  }
 }
 
 class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {

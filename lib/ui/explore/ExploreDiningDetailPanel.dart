@@ -198,7 +198,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget _exploreTitle() {
-    bool starVisible = User().favoritesStarVisible;
+    bool starVisible = Auth2().canFavorite;
     bool isFavorite = User().isFavorite(dining);
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
