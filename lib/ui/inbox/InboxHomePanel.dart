@@ -7,6 +7,7 @@ import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
