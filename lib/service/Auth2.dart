@@ -42,6 +42,9 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Response> _refreshTokenFuture;
   
+  Client _updateUserPrefsClient;
+  Timer _updateUserPrefsTimer;
+  
   Auth2Token _token;
   Auth2Token _uiucToken;
   Auth2Account _account;
@@ -320,6 +323,12 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2Account = _account = null;
       Storage().auth2UiucToken = _uiucToken = null;
       
+      _updateUserPrefsTimer?.cancel();
+      _updateUserPrefsTimer = null;
+
+      _updateUserPrefsClient?.close();
+      _updateUserPrefsClient = null;
+
       _authCard = null;
       _saveAuthCardStringToCache(null);
       Storage().authCardTime = null;
@@ -477,7 +486,38 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2UserPrefs = _userPrefs;
     }
     else if (identical(prefs, _account?.prefs)) {
+      _updateAccountUserPrefs();
+    }
+  }
 
+  Future<void> _updateAccountUserPrefs() async {
+    if ((Config().coreUrl != null) && (_account?.prefs != null)) {
+      String url = "${Config().coreUrl}/services/account-preferences";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode(_account.prefs);
+
+      Client client = Client();
+      _updateUserPrefsClient?.close();
+      _updateUserPrefsClient = client;
+      
+      Response response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post, client: _updateUserPrefsClient);
+      
+      if (identical(client, _updateUserPrefsClient)) {
+        if (response?.statusCode == 200) {
+          _updateUserPrefsTimer?.cancel();
+          _updateUserPrefsTimer = null;
+        }
+        else if (_updateUserPrefsTimer == null) {
+          _updateUserPrefsTimer = Timer.periodic(Duration(seconds: 3), (_) {
+            if (_updateUserPrefsClient == null) {
+              _updateAccountUserPrefs();
+            }
+          });
+        }
+      }
+      _updateUserPrefsClient = null;
     }
   }
 
