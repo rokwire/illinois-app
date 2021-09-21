@@ -16,6 +16,7 @@
 
 import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -273,7 +274,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _initTabs() {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -322,7 +323,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   bool _userLocationEnabled() {
-    return User().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
   }
 
   void _initFilters() {
@@ -1304,7 +1305,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onPrivacyLevelChanged() {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _updateTabs();
@@ -1316,7 +1317,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus status) {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       _locationServicesStatus = status;
       _updateTabs();
     }

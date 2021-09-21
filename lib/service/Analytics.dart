@@ -520,7 +520,7 @@ class Analytics with Service implements NotificationsListener {
   }
 
   Map<String, dynamic> get _location {
-    LocationData location = User().privacyMatch(3) ? LocationServices().lastLocation : null;
+    LocationData location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
@@ -639,7 +639,7 @@ class Analytics with Service implements NotificationsListener {
   // Public Accessories
 
   void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes}) {
-    if ((event != null) && User().privacyMatch(2)) {
+    if ((event != null) && Auth2().privacyMatch(2)) {
       
       event[LogEventPageName] = _currentPageName;
 

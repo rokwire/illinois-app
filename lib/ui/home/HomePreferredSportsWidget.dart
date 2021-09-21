@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -65,7 +66,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     }
 
     _loadSports();
-    _setDisplayPreferredSports(User().privacyMatch(_minPrivacyLevel));
+    _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
     super.initState();
   }
 
@@ -125,7 +126,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                         style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
                       )
                     ),
-                    Visibility(visible: (!_displayPreferredSports && User().privacyMatch(_minPrivacyLevel)),
+                    Visibility(visible: (!_displayPreferredSports && Auth2().privacyMatch(_minPrivacyLevel)),
                       child: Expanded(
                         flex: 3,
                         child:Semantics(excludeSemantics: true,
@@ -175,7 +176,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                         ),
                       ),
 
-                      Visibility(visible: (!_displayPreferredSports && User().privacyMatch(_minPrivacyLevel)),
+                      Visibility(visible: (!_displayPreferredSports && Auth2().privacyMatch(_minPrivacyLevel)),
                         child: Expanded(
                           flex: 3,
                           child: Semantics(excludeSemantics: true,
@@ -213,7 +214,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
       ],),
       Column(
         children: <Widget>[
-          !User().privacyMatch(_minPrivacyLevel)? Container():
+          !Auth2().privacyMatch(_minPrivacyLevel)? Container():
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top:16), child:Row(children: <Widget>[
             Expanded(child:_HomePreferredSportFilterTab(text: Localization().getStringEx('widget.home_prefered_sports.button.your_teams.title', 'Your Teams'), hint: Localization().getStringEx('widget.home_prefered_sports.button.your_teams.hint', ''), left: true, selected: _displayPreferredSports, onTap: () { _setDisplayPreferredSports(true); },)),
             Expanded(child:_HomePreferredSportFilterTab(text: Localization().getStringEx('widget.home_prefered_sports.button.all_sports.title', 'All Illinois Sports'), hint: Localization().getStringEx('widget.home_prefered_sports.button.all_sports.hint', ''), left: false, selected: !_displayPreferredSports, onTap: () { _setDisplayPreferredSports(false); })),
@@ -283,7 +284,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _setDisplayPreferredSports(User().privacyMatch(_minPrivacyLevel));
+      _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
     }
     else if (name == User.notifyInterestsUpdated) {
       _loadSports();

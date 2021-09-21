@@ -326,7 +326,7 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   static bool _localeEvalPrivacyRule(dynamic privacyRule) {
-    return (privacyRule is int) ? User().privacyMatch(privacyRule) : true; // allow everything that is not defined or we do not understand
+    return (privacyRule is int) ? Auth2().privacyMatch(privacyRule) : true; // allow everything that is not defined or we do not understand
   }
 
   static bool _localeEvalAuthRule(dynamic authRule) {

@@ -415,7 +415,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
 
   bool get _notifySettingsAvailable  {
-    return User().privacyMatch(4);
+    return Auth2().privacyMatch(4);
   }
 
   bool _getNotifySetting(String name) {

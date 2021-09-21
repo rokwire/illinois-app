@@ -21,6 +21,7 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -788,7 +789,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return User().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
   }
 
   //EventsLoading
@@ -928,7 +929,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //LocationServices
   _initLocationService(){
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -976,7 +977,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   _onPrivacyLevelChanged(){
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
@@ -988,7 +989,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus status) {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       _locationServicesStatus = status;
       _refresh((){});
     }

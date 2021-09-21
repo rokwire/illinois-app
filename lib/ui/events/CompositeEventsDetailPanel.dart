@@ -19,6 +19,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -97,7 +98,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = User().privacyMatch(2) ? await LocationServices.instance.location : null;
+    _locationData = Auth2().privacyMatch(2) ? await LocationServices.instance.location : null;
   }
 
   void _updateCurrentLocation() {

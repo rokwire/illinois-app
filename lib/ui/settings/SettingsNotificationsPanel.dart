@@ -20,13 +20,13 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -199,7 +199,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   bool get _matchPrivacyLevel{
-    return User().privacyMatch(4);
+    return Auth2().privacyMatch(4);
   }
 
   String get _notificationsStatus{

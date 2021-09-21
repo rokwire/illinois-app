@@ -24,6 +24,7 @@ import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Assets.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
@@ -106,7 +107,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestPermissionsStatus(){
-    if (Platform.isIOS && User().privacyMatch(4)) {
+    if (Platform.isIOS && Auth2().privacyMatch(4)) {
       NativeCommunicator().queryNotificationsAuthorization("query").then((bool authorized){
         if(!authorized){
           setState(() {

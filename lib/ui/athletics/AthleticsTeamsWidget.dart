@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
@@ -124,7 +125,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
             sport: sport,
             showChevron: widget._handleLabelClick,
             label: sport.customName,
-            checkMarkVisibility: User().privacyMatch(3),
+            checkMarkVisibility: Auth2().privacyMatch(3),
             selected: _preferredSports != null &&
                 _preferredSports.contains(sport.shortName),
             onLabelTap: () =>
@@ -171,7 +172,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                       fontSize: 14,
                       letterSpacing: 1.0),
                 ))),
-            Visibility(visible: User().privacyMatch(3),
+            Visibility(visible: Auth2().privacyMatch(3),
               child: Semantics(excludeSemantics: true,
                 label: Localization().getStringEx(
                     'widget.athletics_teams.men_sports.title.checkmark',
@@ -229,7 +230,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                       fontSize: 14,
                       letterSpacing: 1.0),
                 ))),
-            Visibility(visible: User().privacyMatch(3),
+            Visibility(visible: Auth2().privacyMatch(3),
               child: Semantics(excludeSemantics: true,
                 label: Localization().getStringEx(
                     'widget.athletics_teams.women_sports.title.checkmark',

@@ -28,6 +28,7 @@ import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/UserPiiData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -917,7 +918,7 @@ class Auth with Service implements NotificationsListener {
   }
 
   void _onPrivacyLevelChanged() {
-    if (this.isLoggedIn && !User().privacyMatch(4)) {
+    if (this.isLoggedIn && !Auth2().privacyMatch(4)) {
       logout();
     }
   }
