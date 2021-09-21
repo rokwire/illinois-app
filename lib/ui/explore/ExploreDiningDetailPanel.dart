@@ -32,7 +32,6 @@ import 'package:location/location.dart' as Core;
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
@@ -84,7 +83,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
     _reloadDiningIfNeed();
@@ -199,7 +198,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget _exploreTitle() {
     bool starVisible = Auth2().canFavorite;
-    bool isFavorite = User().isFavorite(dining);
+    bool isFavorite = Auth2().isFavorite(dining);
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -219,7 +218,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 behavior: HitTestBehavior.opaque,
                 onTap: (){
                   Analytics.instance.logSelect(target: "Favorite: ${dining?.title}");
-                  User().switchFavorite(dining);},
+                  Auth2().prefs?.toggleFavorite(dining);},
                 child: Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
@@ -615,7 +614,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }

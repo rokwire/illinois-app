@@ -18,15 +18,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Dining.dart';
-import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/UserData.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Log.dart';
@@ -42,7 +37,6 @@ class User with Service implements NotificationsListener {
   static const String notifyUserUpdated = "edu.illinois.rokwire.user.updated";
   static const String notifyUserDeleted = "edu.illinois.rokwire.user.deleted";
   static const String notifyTagsUpdated  = "edu.illinois.rokwire.user.tags.updated";
-  static const String notifyFavoritesUpdated  = "edu.illinois.rokwire.user.favorites.updated";
   static const String notifyInterestsUpdated  = "edu.illinois.rokwire.user.interests.updated";
   static const String notifyPrivacyLevelEmpty  = "edu.illinois.rokwire.user.privacy.level.empty";
   static const String notifyVoterUpdated  = "edu.illinois.rokwire.user.voter.updated";
@@ -336,98 +330,6 @@ class User with Service implements NotificationsListener {
     return userUpdated;
   }
 
-  //Favorites
-  void switchFavorite(Favorite favorite) {
-    bool isFavoriteItem = isFavorite(favorite);
-    Analytics().logFavorite(favorite, !isFavoriteItem);
-    if(isFavoriteItem)
-      _removeFavorite(favorite);
-    else
-      _addFavorite(favorite);
-  }
-
-  void _addFavorite(Favorite favorite) {
-    if(favorite==null || _userData==null)
-      return;
-
-    if(AppString.isStringNotEmpty(favorite.favoriteId)) {
-      _userData.addFavorite(favorite.favoriteKey,favorite.favoriteId);
-      _notifyUserFavoritesUpdated();
-      _updateUser().then((_) {
-        _notifyUserFavoritesUpdated();
-      });
-
-      DeviceCalendar().addEvent(favorite is Event? favorite : null);
-    }
-  }
-
-  void addAllFavorites(List<Favorite> favorites) {
-    if ((_userData == null) || AppCollection.isCollectionEmpty(favorites)) {
-      return;
-    }
-    String favoriteKey = favorites.first?.favoriteKey;
-    Set<String> uiuds = favorites.map(((value) => value.favoriteId)).toSet();
-    _userData.addAllFavorites(favoriteKey, uiuds);
-    _notifyUserFavoritesUpdated();
-    _updateUser().then((_) {
-      _notifyUserFavoritesUpdated();
-    });
-  }
-
-  void _removeFavorite(Favorite favorite) {
-    if(favorite==null || _userData==null)
-      return;
-
-    if(AppString.isStringNotEmpty(favorite.favoriteId)) {
-      _userData.removeFavorite(favorite.favoriteKey,favorite.favoriteId);
-      _notifyUserFavoritesUpdated();
-      _updateUser().then((_) {
-        _notifyUserFavoritesUpdated();
-      });
-
-      DeviceCalendar().deleteEvent(favorite is Event? favorite : null);
-    }
-  }
-
-  void removeAllFavorites(List<Favorite> favorites) {
-    if ((_userData == null) || AppCollection.isCollectionEmpty(favorites)) {
-      return;
-    }
-    String favoriteKey = favorites.first?.favoriteKey;
-    Set<String> uiuds = favorites.map(((value) => value.favoriteId)).toSet();
-    _userData.removeAllFavorites(favoriteKey, uiuds);
-    _notifyUserFavoritesUpdated();
-    _updateUser().then((_) {
-      _notifyUserFavoritesUpdated();
-    });
-  }
-
-  bool isExploreFavorite(Explore explore) {
-    if ((explore is Event) && explore.isRecurring) {
-      for (Event event in explore.recurringEvents) {
-        if (!isFavorite(event)) {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      if (explore is Event) {
-        return isFavorite(explore);
-      } else if (explore is Dining) {
-        return isFavorite(explore);
-      }
-      return false;
-    }
-  }
-
-  bool isFavorite(Favorite favorite) {
-    return _userData?.isFavorite(favorite) ?? false;
-  }
-
-  Set<String> getFavorites(String favoriteKey) {
-      return _userData?.getFavorites(favoriteKey);
-  }
-
   //Sport categories (Interest)
   switchInterestCategory(String categoryName) async{
     _userData?.switchCategory(categoryName);
@@ -623,10 +525,6 @@ class User with Service implements NotificationsListener {
 
   void _notifyUserInterestsUpdated() {
     NotificationService().notify(notifyInterestsUpdated, null);
-  }
-
-  void _notifyUserFavoritesUpdated(){
-    NotificationService().notify(notifyFavoritesUpdated, null);
   }
 
   void _notifyUserTagsUpdated() {

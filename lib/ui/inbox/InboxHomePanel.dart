@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -13,7 +14,6 @@ import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -831,9 +831,9 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
-    _isFavorite = User().isFavorite(widget.message);
+    _isFavorite = Auth2().isFavorite(widget.message);
   }
 
   @override
@@ -846,9 +846,9 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {
-        _isFavorite = User().isFavorite(widget.message);
+        _isFavorite = Auth2().isFavorite(widget.message);
       });
     }
   }
@@ -931,7 +931,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   void _onTapFavorite() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.message.subject}");
     setState(() {
-      User().switchFavorite(widget.message);
+      Auth2().prefs?.toggleFavorite(widget.message);
     });
   }
 }

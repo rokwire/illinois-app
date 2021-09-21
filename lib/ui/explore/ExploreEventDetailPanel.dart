@@ -25,7 +25,6 @@ import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
@@ -78,7 +77,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
     _addRecentItem();
@@ -191,7 +190,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   Widget _exploreHeading() {
     String category = widget?.event?.category;
-    bool isFavorite = User().isFavorite(widget.event);
+    bool isFavorite = Auth2().isFavorite(widget.event);
     bool starVisible = Auth2().canFavorite;
     return Container(
       color: Colors.white,
@@ -212,7 +211,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
                   Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
-                  User().switchFavorite(widget.event);
+                  Auth2().prefs?.toggleFavorite(widget.event);
                 },
                 child: Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization()
@@ -845,7 +844,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }

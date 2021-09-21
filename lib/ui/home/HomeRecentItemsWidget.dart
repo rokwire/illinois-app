@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/News.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/StudentGuide.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
@@ -217,7 +217,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
 //    _originalItem = widget.item.fromOriginalJson();
     super.initState();
   }
@@ -233,10 +233,10 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     bool isFavorite;
     Object originalItem = widget.item.fromOriginalJson();
     if (originalItem is Favorite) {
-      isFavorite = User().isFavorite(originalItem);
+      isFavorite = Auth2().isFavorite(originalItem);
     }
     else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      isFavorite = User().isFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
+      isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
     }
     else {
       isFavorite = false;
@@ -365,10 +365,10 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     Analytics.instance.logSelect(target: "Favorite: ${widget?.item?.recentTitle}");
     Object originalItem = widget.item.fromOriginalJson();
     if (originalItem is Favorite) {
-      User().switchFavorite(originalItem);
+      Auth2().prefs?.toggleFavorite(originalItem);
     }
     else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      User().switchFavorite(StudentGuideFavorite(
+      Auth2().prefs?.toggleFavorite(StudentGuideFavorite(
         id: StudentGuide().entryId(originalItem),
         title: StudentGuide().entryTitle(originalItem)
       ));
@@ -379,7 +379,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       if (mounted){
         setState(() {});
       }

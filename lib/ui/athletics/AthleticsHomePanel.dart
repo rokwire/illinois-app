@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
@@ -568,7 +569,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -582,7 +583,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -596,7 +597,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     bool isGetTicketsVisible = isTicketedSport && (widget.game.links?.tickets != null);
     bool showImage =
         (isTicketedSport && !AppString.isStringEmpty(widget.game.imageUrl));
-    bool isFavorite = User().isFavorite(widget.game);
+    bool isFavorite = Auth2().isFavorite(widget.game);
     String interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = AppString.isStringNotEmpty(interestsLabelValue);
 
@@ -916,7 +917,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   void _onTapSave() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
-    User().switchFavorite(widget.game);
+    Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapSportCategory(SportDefinition sport) {

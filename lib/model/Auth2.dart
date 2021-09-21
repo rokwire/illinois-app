@@ -1,6 +1,8 @@
 
 import 'package:collection/collection.dart';
 import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -471,21 +473,26 @@ class Auth2UiucUser {
 class Auth2UserPrefs {
 
   static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.prefs.privacy.level.changed";
+  static const String notifyFavoritesChanged  = "edu.illinois.rokwire.user.prefs.favorites.changed";
+  static const String notifyFavoriteChanged  = "edu.illinois.rokwire.user.prefs.favorite.changed";
   static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
   static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
   int _privacyLevel;
   Set<UserRole> _roles;
+  Map<String, Set<String>>  _favorites;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
+    _favorites = favorites;
   }
 
   factory Auth2UserPrefs.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UserPrefs(
       privacyLevel: AppJson.intValue(json['privacy_level']),
-      roles: UserRole.setFromJson(AppJson.listValue(json['roles']))
+      roles: UserRole.setFromJson(AppJson.listValue(json['roles'])),
+      favorites: mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
     ) : null;
   }
 
@@ -493,6 +500,7 @@ class Auth2UserPrefs {
     return Auth2UserPrefs(
       privacyLevel: 0,
       roles: Set<UserRole>(),
+      favorites: Map<String, Set<String>>(),
     );
   }
 
@@ -500,28 +508,35 @@ class Auth2UserPrefs {
     return {
       'privacy_level' : privacyLevel,
       'roles': UserRole.setToJson(roles),
+      'favorites': mapOfStringSetsToJson(_favorites),
     };
   }
 
   bool operator ==(o) =>
     (o is Auth2UserPrefs) &&
       (o._privacyLevel == _privacyLevel) &&
-      DeepCollectionEquality().equals(o._roles, _roles);
+      DeepCollectionEquality().equals(o._roles, _roles) &&
+      DeepCollectionEquality().equals(o._favorites, _favorites);
 
   int get hashCode =>
     (_privacyLevel?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(_roles) ?? 0);
+    (DeepCollectionEquality().hash(_roles) ?? 0) ^
+    (DeepCollectionEquality().hash(_favorites) ?? 0);
 
   bool apply(Auth2UserPrefs prefs) {
     bool modified = false;
 
     if (prefs != null) {
       if ((prefs.privacyLevel != null) && (prefs.privacyLevel > 0) && (prefs.privacyLevel != _privacyLevel)) {
-        _privacyLevel = prefs.privacyLevel;
+        _privacyLevel = prefs._privacyLevel;
         modified = true;
       }
-      if ((prefs.roles != null) && prefs.roles.isNotEmpty && (_roles != prefs.roles)) {
-        _roles = prefs.roles;
+      if ((prefs.roles != null) && prefs.roles.isNotEmpty && !DeepCollectionEquality().equals(prefs.roles, _roles)) {
+        _roles = prefs._roles;
+        modified = true;
+      }
+      if ((prefs._favorites != null) && prefs._favorites.isNotEmpty && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
+        _favorites = prefs._favorites;
         modified = true;
       }
     }
@@ -537,7 +552,7 @@ class Auth2UserPrefs {
   set privacyLevel(int value) {
     if (privacyLevel != _privacyLevel) {
       _privacyLevel = privacyLevel;
-      NotificationService().notify(notifyPrivacyLevelChanged, this);
+      NotificationService().notify(notifyPrivacyLevelChanged);
       NotificationService().notify(notifyChanged, this);
     }
   }
@@ -551,9 +566,107 @@ class Auth2UserPrefs {
   set roles(Set<UserRole> value) {
     if (_roles != value) {
       _roles = (value != null) ? Set.from(value) : null;
-      NotificationService().notify(notifyRolesChanged, this);
+      NotificationService().notify(notifyRolesChanged);
       NotificationService().notify(notifyChanged, this);
     }
+  }
+
+  // Favorites
+
+  Set<String> getFavorites(String favoriteKey) {
+    return (_favorites != null) ? _favorites[favoriteKey] : null;
+  }
+
+  bool isFavorite(Favorite favorite) {
+    Set<String> favoriteIdsForKey = (_favorites != null) ? _favorites[favorite?.favoriteKey] : null;
+    return (favoriteIdsForKey != null) && favoriteIdsForKey.contains(favorite?.favoriteId);
+  }
+
+  void toggleFavorite(Favorite favorite) {
+    if ((favorite != null) && (_favorites != null)) {
+      Set<String> favoriteIdsForKey = _favorites[favorite?.favoriteKey];
+      bool shouldFavorite = (favoriteIdsForKey == null) || !favoriteIdsForKey.contains(favorite?.favoriteId);
+      if (shouldFavorite) {
+        if (favoriteIdsForKey == null) {
+          _favorites[favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
+        }
+        favoriteIdsForKey.add(favorite.favoriteId);
+      }
+      else {
+        favoriteIdsForKey.remove(favorite?.favoriteId);
+        if (favoriteIdsForKey.isEmpty) {
+          _favorites.remove(favorite?.favoriteKey);
+        }
+      }
+
+      Analytics().logFavorite(favorite, shouldFavorite);
+      DeviceCalendar().onFavoriteUpdated(favorite, shouldFavorite);
+      NotificationService().notify(notifyFavoriteChanged, favorite);
+      NotificationService().notify(notifyFavoritesChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  bool isListFavorite(List<Favorite> favorites) {
+    if ((favorites != null) && (_favorites != null)) {
+      for (Favorite favorite in favorites) {
+        if (!isFavorite(favorite)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  void setListFavorite(List<Favorite> favorites, bool shouldFavorite, {Favorite sourceFavorite}) {
+    if ((favorites != null) && (_favorites != null)) {
+      for (Favorite favorite in favorites) {
+        Set<String> favoriteIdsForKey = _favorites[favorite?.favoriteKey];
+        bool isFavorite = (favoriteIdsForKey != null) && favoriteIdsForKey.contains(favorite?.favoriteId);
+        if (isFavorite && !shouldFavorite) {
+          favoriteIdsForKey.remove(favorite?.favoriteId);
+          if (favoriteIdsForKey.isEmpty) {
+            _favorites.remove(favorite?.favoriteKey);
+          }
+        }
+        else if (!isFavorite && shouldFavorite) {
+          if (favoriteIdsForKey == null) {
+            _favorites[favorite.favoriteKey] = favoriteIdsForKey = Set<String>();
+          }
+          favoriteIdsForKey.add(favorite.favoriteId);
+        }
+        //DeviceCalendar().onFavoriteUpdated(favorite, shouldFavorite);
+        NotificationService().notify(notifyFavoriteChanged, favorite);
+      }
+      if (sourceFavorite != null) {
+        Analytics().logFavorite(sourceFavorite, shouldFavorite);
+      }
+      NotificationService().notify(notifyFavoritesChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  static Map<String, Set<String>> mapOfStringSetsFromJson(Map<String, dynamic> jsonMap) {
+    Map<String, Set<String>> result;
+    if (jsonMap != null) {
+      result = Map<String, Set<String>>();
+      for (String key in jsonMap.keys) {
+        result[key] = AppJson.setStringsValue(jsonMap[key]);
+      }
+    }
+    return result;
+  }
+
+  static Map<String, dynamic> mapOfStringSetsToJson(Map<String, Set<String>> contentMap) {
+    Map<String, dynamic> jsonMap;
+    if (contentMap != null) {
+      jsonMap = Map<String, dynamic>();
+      for (String key in contentMap.keys) {
+        jsonMap[key] = List.from(contentMap[key]);
+      }
+    }
+    return jsonMap;
   }
 }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -156,7 +157,11 @@ class Auth2 with Service implements NotificationsListener {
     (prefs?.privacyLevel == null) || (prefs.privacyLevel >= requredPrivacyLevel);
 
   bool get canFavorite => privacyMatch(2);
+
+  bool isFavorite(Favorite favorite) => prefs?.isFavorite(favorite) ?? false;
+  bool isListFavorite(List<Favorite> favorites) => prefs?.isListFavorite(favorites) ?? false;
   
+
   // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {

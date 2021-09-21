@@ -15,11 +15,11 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -58,7 +58,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     _load();
     Analytics().logMapShow();
   }
@@ -83,7 +83,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
 
     String washersAvailable = (_laundryRoomAvailability?.availableWashers is String)  ? _laundryRoomAvailability?.availableWashers : '0';
     String dryersAvailable = (_laundryRoomAvailability?.availableDryers is String) ? _laundryRoomAvailability?.availableDryers : '0';
-    bool isFavorite = User().isFavorite(widget.room);
+    bool isFavorite = Auth2().isFavorite(widget.room);
 
     return Scaffold(
       appBar: _buildHeaderBar(),
@@ -133,8 +133,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                           child: GestureDetector(
                                             onTap: () {
                                               Analytics.instance.logSelect(target: "Favorite: ${widget.room?.title}");
-                                              User()
-                                                  .switchFavorite(widget.room);
+                                              Auth2().prefs?.toggleFavorite(widget.room);
                                             },
                                             child: Semantics(
                                                 label: isFavorite
@@ -396,7 +395,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }

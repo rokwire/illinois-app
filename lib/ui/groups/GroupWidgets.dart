@@ -17,16 +17,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
@@ -524,7 +525,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -538,7 +539,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -546,7 +547,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
 
-    bool isFavorite = User().isExploreFavorite(widget.event);
+    bool isFavorite = widget.event.isFavorite;
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
@@ -602,7 +603,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   void _onFavoriteTap() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
-    User().switchFavorite(widget.event);
+    Auth2().prefs?.toggleFavorite(widget.event);
   }
 
   void _onOptionsTap(){

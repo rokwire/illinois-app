@@ -7,6 +7,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
@@ -15,7 +16,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -461,7 +461,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           behavior: HitTestBehavior.opaque,
           onTap: () {
             Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
-            User().switchFavorite(_event);
+            Auth2().prefs?.toggleFavorite(_event);
             setState(() {});
           },
           child: Semantics(
@@ -659,7 +659,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     );
   }
 
-  bool get isFavorite => User().isFavorite(_event);
+  bool get isFavorite => Auth2().isFavorite(_event);
 
   bool get _isPrivateGroupEvent => _event?.isGroupPrivate ?? false;
 

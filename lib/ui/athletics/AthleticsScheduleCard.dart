@@ -16,12 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -44,7 +44,7 @@ class AthleticsScheduleCard extends StatefulWidget {
 class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -58,7 +58,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -114,7 +114,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
   Widget _cardTitle() {
     bool starVisible = widget._game.isUpcoming && Auth2().canFavorite;
-    bool isGameSaved = User().isFavorite(widget._game);
+    bool isGameSaved = Auth2().isFavorite(widget._game);
 
     return Padding(
       padding: EdgeInsets.only(left: 24),
@@ -279,7 +279,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
   void _onTapSaveGame() {
     Analytics.instance.logSelect(target: "Favorite: ${widget._game?.title}");
-    User().switchFavorite(widget._game);
+    Auth2().prefs?.toggleFavorite(widget._game);
   }
 
   void _onTapSchedule() {

@@ -1,4 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
+import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -17,6 +18,14 @@ class DeviceCalendar with Service {
   }
 
   DeviceCalendar._internal();
+
+  Future<bool> onFavoriteUpdated(Favorite favorite, bool isFavorite) async {
+    //TBD Auth2: listen for Auth2.notifyFavoriteChanged
+    if (favorite is Event) {
+      return isFavorite ? await addEvent(favorite) : await deleteEvent(favorite);
+    }
+    return false;
+  }
 
   Future<bool> addEvent(ExploreEvent.Event event) async{
     String additionalUrl = _extractAdditionalDataUrl(event);

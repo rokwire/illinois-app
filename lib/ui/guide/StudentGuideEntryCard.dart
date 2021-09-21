@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -10,7 +11,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -31,9 +31,9 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
-    _isFavorite = User().isFavorite(StudentGuideFavorite(id: guideEntryId));
+    _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: guideEntryId));
   }
 
   @override
@@ -46,9 +46,9 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {
-        _isFavorite = User().isFavorite(StudentGuideFavorite(id: guideEntryId));
+        _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: guideEntryId));
       });
     }
   }
@@ -118,7 +118,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   void _onTapFavorite() {
     String title = StudentGuide().entryTitle(widget.guideEntry, stripHtmlTags: true);
     Analytics.instance.logSelect(target: "Favorite: $title");
-    User().switchFavorite(StudentGuideFavorite(id: guideEntryId, title: title,));
+    Auth2().prefs?.toggleFavorite(StudentGuideFavorite(id: guideEntryId, title: title,));
   }
 
   void _onTapEntry() {

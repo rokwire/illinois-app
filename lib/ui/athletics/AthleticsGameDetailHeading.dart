@@ -16,12 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -49,7 +49,7 @@ class AthleticsGameDetailHeading extends StatefulWidget {
 class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, [LiveStats.notifyLiveGamesLoaded, User.notifyFavoritesUpdated]);
+    NotificationService().subscribe(this, [LiveStats.notifyLiveGamesLoaded, Auth2UserPrefs.notifyFavoritesChanged]);
     super.initState();
   }
 
@@ -65,7 +65,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   void onNotification(String name, dynamic param) {
     if (name == LiveStats.notifyLiveGamesLoaded) {
       setState(() {});
-    } else if (name == User.notifyFavoritesUpdated) {
+    } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -86,7 +86,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool hasScores = sportDefinition.hasScores;
     bool hasLiveGame = Storage().debugDisableLiveGameCheck ? true : LiveStats().hasLiveGame(widget.game.id);
     bool showScore = hasScores && widget.game.isGameDay && hasLiveGame;
-    bool isGameSaved = User().isFavorite(widget.game);
+    bool isGameFavorite = Auth2().isFavorite(widget.game);
     String liveStatsUrl = widget.game?.links?.liveStats;
     String audioUrl = widget.game?.links?.audio;
     String videoUrl = widget.game?.links?.video;
@@ -145,10 +145,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
                                   hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", ""),
                                   button: true,
-                                  checked: isGameSaved,
+                                  checked: isGameFavorite,
                                   child: GestureDetector(
                                       child: Image.asset(
-                                        isGameSaved ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
+                                        isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
                                       ),
                                       onTap: _onTapSwitchFavorite),
                                 ),
@@ -434,7 +434,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   void _onTapSwitchFavorite() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
-    User().switchFavorite(widget.game);
+    Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapGetTickets() {

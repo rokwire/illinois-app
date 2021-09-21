@@ -15,6 +15,8 @@
  */
 
 import 'dart:ui';
+import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:location/location.dart' as Core;
 
@@ -43,6 +45,16 @@ abstract class Explore {
 
   Map<String, dynamic> get analyticsSharedExploreAttributes {
     return exploreLocation?.analyticsAttributes;
+  }
+
+  bool get isFavorite {
+    return (this is Favorite) && Auth2().isFavorite(this as Favorite);
+  }
+
+  void toggleFavorite() {
+    if (this is Favorite) {
+      Auth2().prefs?.toggleFavorite(this as Favorite);
+    }
   }
 
   static bool canJson(Map<String, dynamic> json) {

@@ -19,6 +19,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -34,7 +35,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/StudentGuide.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
@@ -91,7 +91,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Assets.notifyChanged,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
       StudentGuide.notifyChanged
     ]);
     _laundryAvailable = (IlliniCash().ballance?.housingResidenceStatus ?? false);
@@ -223,7 +223,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadEvents() {
-    Set<String> favoriteEventIds = User().getFavorites(Event.favoriteKeyName);
+    Set<String> favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteEventIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -243,7 +243,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadDinings() {
-    Set<String> favoriteDiningIds = User().getFavorites(Dining.favoriteKeyName);
+    Set<String> favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteDiningIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -263,7 +263,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadAthletics() {
-    Set<String> favoriteGameIds = User().getFavorites(Game.favoriteKeyName);
+    Set<String> favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteGameIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -283,7 +283,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadNews() {
-    Set<String> favoriteNewsIds = User().getFavorites(News.favoriteKeyName);
+    Set<String> favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteNewsIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -306,7 +306,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (!_laundryAvailable) {
       return;
     }
-    Set<String> favoriteLaundryIds = User().getFavorites(LaundryRoom.favoriteKeyName);
+    Set<String> favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteLaundryIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -327,7 +327,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadGuideItems() {
 
-    Set<String> favoriteGuideIds = User().getFavorites(StudentGuideFavorite.favoriteKeyName);
+    Set<String> favoriteGuideIds = Auth2().prefs?.getFavorites(StudentGuideFavorite.favoriteKeyName);
     List<Favorite> guideItems = <Favorite>[];
     if (favoriteGuideIds != null) {
       for (dynamic contentEntry in StudentGuide().contentList) {
@@ -355,7 +355,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadInboxMessages() {
-    Set<String> favoriteMessageIds = User().getFavorites(InboxMessage.favoriteKeyName);
+    Set<String> favoriteMessageIds = Auth2().prefs?.getFavorites(InboxMessage.favoriteKeyName);
     if (favoriteMessageIds != null) {
       setState(() {
         _progress++;
@@ -566,7 +566,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else if (name == Assets.notifyChanged) {
       setState(() { _loadDinings(); });
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() { _loadSavedItems(); });
     }
     else if (name == StudentGuide.notifyChanged) {
@@ -639,7 +639,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return _buildCompositEventCard(item);
     }
 
-    bool favorite = User().isFavorite(item);
+    bool favorite = Auth2().isFavorite(item);
     Color headerColor = _cardHeaderColor(item);
     String title = AppString.getDefaultEmptyString(value: _cardTitle(item));
     String cardDetailLabel = AppString.getDefaultEmptyString(value: _cardDetailLabel(item));
@@ -677,7 +677,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
                                   Analytics.instance.logSelect(target: "Favorite: $title");
-                                  User().switchFavorite(item);
+                                  Auth2().prefs?.toggleFavorite(item);
                                 },
                                 child: Semantics(
                                     container: true,

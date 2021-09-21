@@ -22,6 +22,7 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/User.dart';
@@ -578,6 +579,22 @@ class Event with Explore implements Favorite {
     };
     attributes.addAll(analyticsSharedExploreAttributes ?? {});
     return attributes;
+  }
+
+  @override
+  bool get isFavorite {
+    return isRecurring ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>()) : Auth2().isFavorite(this);
+  }
+
+  @override
+  void toggleFavorite() {
+    if (isRecurring) {
+      List<Favorite> favorites = recurringEvents?.cast<Favorite>();
+      Auth2().prefs?.setListFavorite(favorites, !Auth2().isListFavorite(favorites));
+    }
+    else {
+      Auth2().prefs?.toggleFavorite(this);
+    }
   }
 
   DateTime get startDateLocal     { return AppDateTime().getUniLocalTimeFromUtcTime(startDateGmt); }

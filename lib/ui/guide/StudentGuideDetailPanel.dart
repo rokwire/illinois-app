@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -11,7 +12,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -51,10 +51,10 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     super.initState();
     NotificationService().subscribe(this, [
       StudentGuide.notifyChanged,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
     _guideEntry = StudentGuide().entryById(widget.guideEntryId);
-    _isFavorite = User().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+    _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
     
     RecentItems().addRecentItem(RecentItem.fromStudentGuideItem(_guideEntry));
   }
@@ -74,9 +74,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
         _guideEntry = StudentGuide().entryById(widget.guideEntryId);
       });
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {
-        _isFavorite = User().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+        _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
       });
     }
   }
@@ -472,7 +472,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   void _onTapFavorite() {
     String title = StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics.instance.logSelect(target: "Favorite: $title");
-    User().switchFavorite(StudentGuideFavorite(id: StudentGuide().entryId(_guideEntry), title: title, ));
+    Auth2().prefs?.toggleFavorite(StudentGuideFavorite(id: StudentGuide().entryId(_guideEntry), title: title, ));
   }
 
   void _onTapLink(String url) {

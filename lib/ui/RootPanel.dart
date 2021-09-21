@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -96,7 +97,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       Localization.notifyStringsUpdated,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
       User.notifyPrivacyLevelEmpty,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -148,7 +149,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Localization.notifyStringsUpdated) {
       setState(() { });
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _FavoritesSavedDialog.show(context);
     }
     else if (name == User.notifyPrivacyLevelEmpty) {

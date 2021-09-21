@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -26,7 +27,6 @@ import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
 import 'package:location/location.dart' as Core;
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
@@ -61,7 +61,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -234,7 +234,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreTop() {
 
     Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    bool isFavorite = User().isExploreFavorite(widget.explore);
+    bool isFavorite = widget.explore.isFavorite;
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
@@ -501,17 +501,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   void _onTapExploreCardStar() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
-    Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
-    if (event?.isRecurring ?? false) {
-      if (User().isExploreFavorite(event)) {
-        User().removeAllFavorites(event.recurringEvents);
-      } else {
-        User().addAllFavorites(event.recurringEvents);
-      }
-    } else {
-      Favorite favorite = widget.explore is Favorite ? widget.explore as Favorite : null;
-      User().switchFavorite(favorite);
-    }
+    widget.explore.toggleFavorite();
   }
 
   void _onTapSmallExploreCard({BuildContext context, _EventCardType cardType, Event parentEvent, Event subEvent}) {
@@ -530,7 +520,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -556,7 +546,7 @@ class _EventSmallCard extends StatelessWidget {
     double scaledHeight = _getScaledCardHeight(context);
     bool isMoreCardType = (type == _EventCardType.more);
     Favorite favorite = event is Favorite ? event : null;
-    bool isFavorite = User().isFavorite(favorite);
+    bool isFavorite = Auth2().isFavorite(favorite);
     bool starVisible = Auth2().canFavorite && !isMoreCardType;
     double borderWidth = 1.0;
     double topBorderHeight = 4;
@@ -587,7 +577,7 @@ class _EventSmallCard extends StatelessWidget {
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
                           Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
-                          User().switchFavorite(favorite);
+                          Auth2().prefs?.toggleFavorite(favorite);
                         },
                         child: Semantics(
                             label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization()

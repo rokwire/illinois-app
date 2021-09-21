@@ -469,8 +469,14 @@ class AppJson {
     return result;
   }
   
-  static List<dynamic> listStringsValue(dynamic value) {
+  static List<String> listStringsValue(dynamic value) {
     try { return (value is List) ? value.cast<String>() : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
+  }
+
+  static Set<String> setStringsValue(dynamic value) {
+    try { return (value is List) ? Set.from(value.cast<String>()) : null; }
     catch(e) { print(e?.toString()); }
     return null;
   }
