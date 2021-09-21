@@ -42,10 +42,8 @@ class User with Service implements NotificationsListener {
   static const String notifyUserUpdated = "edu.illinois.rokwire.user.updated";
   static const String notifyUserDeleted = "edu.illinois.rokwire.user.deleted";
   static const String notifyTagsUpdated  = "edu.illinois.rokwire.user.tags.updated";
-  static const String notifyObsoleteRolesUpdated  = "edu.illinois.rokwire.user.roles.updated";
   static const String notifyFavoritesUpdated  = "edu.illinois.rokwire.user.favorites.updated";
   static const String notifyInterestsUpdated  = "edu.illinois.rokwire.user.interests.updated";
-  static const String notifyObsoletePrivacyLevelChanged  = "edu.illinois.rokwire.user.privacy.level.changed";
   static const String notifyPrivacyLevelEmpty  = "edu.illinois.rokwire.user.privacy.level.empty";
   static const String notifyVoterUpdated  = "edu.illinois.rokwire.user.voter.updated";
 
@@ -68,7 +66,6 @@ class User with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifyToken,
-      User.notifyObsoletePrivacyLevelChanged,
       Auth2.notifyLogout,
     ]);
   }
@@ -97,10 +94,7 @@ class User with Service implements NotificationsListener {
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == User.notifyObsoletePrivacyLevelChanged)) {
-      _updateUser();      
-    }
-    else if (name == FirebaseMessaging.notifyToken) {
+    if (name == FirebaseMessaging.notifyToken) {
       _updateFCMToken();
     }
     else if(name == AppLivecycle.notifyStateChanged && param == AppLifecycleState.resumed){
@@ -342,37 +336,6 @@ class User with Service implements NotificationsListener {
     return userUpdated;
   }
 
-  // Privacy
-
-  int get obsoletePrivacyLevel {
-    return _userData?.privacyLevel;
-  }
-
-  set obsoletePrivacyLevel(int privacyLevel) {
-    if (_userData != null) {
-      if (_userData.privacyLevel != privacyLevel) {
-        _userData.privacyLevel = privacyLevel;
-        Storage().userData = _userData;
-        Storage().privacyLevel = privacyLevel;
-        _updateUser().then((_){
-          NotificationService().notify(notifyObsoletePrivacyLevelChanged, null);
-        });
-      }
-    }
-  }
-
-  bool obsoletePrivacyMatch(int requredPrivacyLevel) {
-    return (_userData?.privacyLevel == null) || (_userData.privacyLevel >= requredPrivacyLevel);
-  }
-
-  bool get obsoleteFavoritesStarVisible {
-    return obsoletePrivacyMatch(2);
-  }
-
-  bool get obsoleteShowTicketsConfirmationModal {
-    return !obsoletePrivacyMatch(4);
-  }
-
   //Favorites
   void switchFavorite(Favorite favorite) {
     bool isFavoriteItem = isFavorite(favorite);
@@ -592,22 +555,6 @@ class User with Service implements NotificationsListener {
 
   bool isTagged(String tag, bool positiveInterest) {
     return _userData?.containsTag(tag) ?? false;
-  }
-
-  //UserRoles
-  Set<UserRole> get obsoleteRoles {
-    return _userData?.roles;
-  }
-
-  set obsoleteRoles(Set<UserRole> userRoles) {
-    if (_userData != null) {
-      _userData.roles = (userRoles != null) ? Set.from(userRoles) : null;
-      Storage().userData = _userData;
-      Storage().userRoles = _userData.roles;
-      _updateUser().then((_){
-        NotificationService().notify(notifyObsoleteRolesUpdated, null);
-      });
-    }
   }
 
   // Voter Registration
