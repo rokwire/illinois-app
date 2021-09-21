@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -11,7 +12,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
 import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -40,7 +40,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
 
     NotificationService().subscribe(this, [
       StudentGuide.notifyChanged,
-      User.notifyRolesUpdated,
+      Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
     ]);
@@ -67,7 +67,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
     if (name == StudentGuide.notifyChanged) {
       _updatePromotedItems();
     }
-    else if (name == User.notifyRolesUpdated) {
+    else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updatePromotedItems();
     }
     else if (name == Auth2.notifyCardChanged) {

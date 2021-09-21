@@ -408,31 +408,6 @@ class UserRole{
     }
     return jsonList;
   }
-
-  //TBD Auth2: move this to a better location?
-  static Set<String> targetAudienceFromUserRoles(Set<UserRole> roles) {
-    if (roles == null || roles.isEmpty) {
-      return null;
-    }
-    Set<String> targetAudiences = Set();
-    for (UserRole role in roles) {
-      if(role == UserRole.student)
-        targetAudiences.add('students');
-      else if(role == UserRole.alumni)
-        targetAudiences.add('alumni');
-      else if(role == UserRole.employee)
-        targetAudiences.addAll(['faculty', 'staff']);
-      else if(role == UserRole.fan)
-        targetAudiences.add('public');
-      else if(role == UserRole.parent)
-        targetAudiences.add('parents');
-      else if(role == UserRole.visitor)
-        targetAudiences.add('public');
-      else if(role == UserRole.resident)
-        targetAudiences.add('public');
-    }
-    return targetAudiences;
-  }
 }
 
 

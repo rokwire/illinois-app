@@ -16,9 +16,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -44,7 +44,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
   @override
   void initState() {
-    _selectedRoles = (User().roles != null) ? Set.from(User().roles): Set<UserRole>();
+    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs.roles) : Set<UserRole>();
     super.initState();
   }
   
@@ -229,7 +229,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   void _onExploreClicked() {
     Analytics.instance.logSelect(target:"Explore Illinois");
     if (_selectedRoles != null && _selectedRoles.isNotEmpty && !_updating) {
-      User().roles = _selectedRoles;
+      Auth2().prefs?.roles = _selectedRoles;
       setState(() { _updating = true; });
       FlexUI().update().then((_){
         if (mounted) {

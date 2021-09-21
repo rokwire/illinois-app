@@ -18,13 +18,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -33,22 +32,19 @@ class SettingsRolesPanel extends StatefulWidget {
   _SettingsRolesPanelState createState() => _SettingsRolesPanelState();
 }
 
-class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements NotificationsListener {
-  //User _user;
-  Set<UserRole> _selectedRoles = Set<UserRole>();
+class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
+  Set<UserRole> _selectedRoles;
 
   Timer _saveRolesTimer;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyRolesUpdated);
-    _selectedRoles = (User().roles != null) ? Set.from(User().roles): Set<UserRole>();
+    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs.roles) : Set<UserRole>();
     super.initState();
   }
 
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
     if (_saveRolesTimer != null) {
       _stopSaveRolesTimer();
       _saveSelectedRoles();
@@ -253,7 +249,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
   }
 
   void _saveSelectedRoles() {
-    User().roles = _selectedRoles;
+    Auth2().prefs?.roles;
   }
 
   /*_onSaveChangesClicked(){
@@ -264,16 +260,5 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
   bool get _canSave{
     return _selectedRoles != User().roles ;
   }*/
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == User.notifyRolesUpdated) {
-      setState(() {
-        _selectedRoles = User().roles ?? Set<UserRole>();
-      });
-    }
-  }
 }
 

@@ -23,6 +23,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as Http;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/model/UserData.dart';
@@ -271,7 +272,7 @@ class Analytics with Service implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
-      User.notifyRolesUpdated,
+      Auth2UserPrefs.notifyRolesChanged,
       User.notifyUserUpdated,
       User.notifyUserDeleted,
       NativeCommunicator.notifyMapRouteStart,
@@ -383,7 +384,7 @@ class Analytics with Service implements NotificationsListener {
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
     }
-    else if (name == User.notifyRolesUpdated) {
+    else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
     }
     else if (name == User.notifyUserUpdated) {
@@ -564,7 +565,7 @@ class Analytics with Service implements NotificationsListener {
   // User Roles Service
 
   void _updateUserRoles() {
-    _userRoles = UserRole.setToJson(User().roles);
+    _userRoles = UserRole.setToJson(Auth2().prefs?.roles);
   }
 
   // Packets Processing

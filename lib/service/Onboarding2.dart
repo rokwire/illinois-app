@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/User.dart';
@@ -34,7 +35,7 @@ class Onboarding2 with Service{
   void proceedToLogin(BuildContext context){
     final UserData storedUserData = User().data;
     if(getPrivacyLevel>=3) {
-      if (User().rolesMatch([UserRole.employee, UserRole.student])) { //Roles that requires NetId Login
+      if (Auth2().prefs?.roles?.intersection(Set.from([UserRole.employee, UserRole.student]))?.isNotEmpty ?? false) { //Roles that requires NetId Login
         Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             OnboardingLoginNetIdPanel(
               onboardingContext: {"onContinueAction": () {

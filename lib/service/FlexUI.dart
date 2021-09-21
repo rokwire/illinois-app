@@ -20,6 +20,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as Http;
 
 import 'package:collection/collection.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -64,7 +65,7 @@ class FlexUI with Service implements NotificationsListener {
     NotificationService().subscribe(this,[
       User.notifyUserUpdated,
       User.notifyUserDeleted,
-      User.notifyRolesUpdated,
+      Auth2UserPrefs.notifyRolesChanged,
       User.notifyPrivacyLevelChanged,
       Auth2.notifyLoginChanged,
       Auth2.notifyCardChanged,
@@ -98,7 +99,7 @@ class FlexUI with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if ((name == User.notifyUserUpdated) ||
         (name == User.notifyUserDeleted) ||
-        (name == User.notifyRolesUpdated) ||
+        (name == Auth2UserPrefs.notifyRolesChanged) ||
         (name == User.notifyPrivacyLevelChanged) ||
         (name == Auth2.notifyLoginChanged) ||
         (name == Auth2.notifyCardChanged) || 
@@ -308,7 +309,7 @@ class FlexUI with Service implements NotificationsListener {
   static bool _localeEvalRoleRule(dynamic roleRule) {
     return AppBoolExpr.eval(roleRule, (String argument) {
       UserRole userRole = UserRole.fromString(argument);
-      return (userRole != null) ? (User().roles?.contains(userRole) ?? false) : null;
+      return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     });
   }
 

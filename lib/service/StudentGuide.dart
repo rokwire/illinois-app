@@ -13,7 +13,6 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -282,7 +281,7 @@ class StudentGuide with Service implements NotificationsListener {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
     return (roles != null) ? AppBoolExpr.eval(roles, (String argument) {
       UserRole userRole = UserRole.fromString(argument);
-      return (userRole != null) ? (User().roles?.contains(userRole) ?? false) : null;
+      return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     }) : true; 
   }
 

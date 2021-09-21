@@ -42,7 +42,7 @@ class User with Service implements NotificationsListener {
   static const String notifyUserUpdated = "edu.illinois.rokwire.user.updated";
   static const String notifyUserDeleted = "edu.illinois.rokwire.user.deleted";
   static const String notifyTagsUpdated  = "edu.illinois.rokwire.user.tags.updated";
-  static const String notifyRolesUpdated  = "edu.illinois.rokwire.user.roles.updated";
+  static const String notifyObsoleteRolesUpdated  = "edu.illinois.rokwire.user.roles.updated";
   static const String notifyFavoritesUpdated  = "edu.illinois.rokwire.user.favorites.updated";
   static const String notifyInterestsUpdated  = "edu.illinois.rokwire.user.interests.updated";
   static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.privacy.level.changed";
@@ -595,52 +595,19 @@ class User with Service implements NotificationsListener {
   }
 
   //UserRoles
-  Set<UserRole> get roles {
+  Set<UserRole> get obsoleteRoles {
     return _userData?.roles;
   }
 
-  set roles(Set<UserRole> userRoles) {
+  set obsoleteRoles(Set<UserRole> userRoles) {
     if (_userData != null) {
       _userData.roles = (userRoles != null) ? Set.from(userRoles) : null;
       Storage().userData = _userData;
       Storage().userRoles = _userData.roles;
       _updateUser().then((_){
-        _notifyUserRolesUpdated();
+        NotificationService().notify(notifyObsoleteRolesUpdated, null);
       });
     }
-  }
-
-  bool rolesMatch(List<UserRole> permittedRoles) {
-    Set<UserRole> currentUserRoles = roles;
-    if (!AppCollection.isCollectionNotEmpty(permittedRoles) || (currentUserRoles == null)) {
-      return true; //default
-    }
-
-    for (UserRole role in permittedRoles) {
-      if (currentUserRoles?.contains(role) ?? false) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  bool get isResident{
-    return AppCollection.isCollectionNotEmpty(roles) ? roles.contains(UserRole.resident) : false;
-  }
-
-  bool get isStudentOrEmployee {
-    if (AppCollection.isCollectionEmpty(roles)) {
-      return false;
-    }
-    return roles.contains(UserRole.student) || roles.contains(UserRole.employee);
-  }
-
-  bool get isEmployee {
-    if (AppCollection.isCollectionEmpty(roles)) {
-      return false;
-    }
-    return roles.contains(UserRole.employee);
   }
 
   // Voter Registration
@@ -705,10 +672,6 @@ class User with Service implements NotificationsListener {
 
   void _notifyUserDeleted() {
     NotificationService().notify(notifyUserDeleted, null);
-  }
-
-  void _notifyUserRolesUpdated() {
-    NotificationService().notify(notifyRolesUpdated, null);
   }
 
   void _notifyUserInterestsUpdated() {

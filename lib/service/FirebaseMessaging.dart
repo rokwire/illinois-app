@@ -21,9 +21,11 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/Inbox.dart';
 
@@ -105,7 +107,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      User.notifyRolesUpdated,
+      Auth2UserPrefs.notifyRolesChanged,
       User.notifyPrivacyLevelChanged,
       User.notifyInterestsUpdated,
       User.notifyUserUpdated,
@@ -177,7 +179,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     if (name == LocalNotifications.notifySelected) {
       _processDataMessage(AppJson.decode(param));
     }
-    else if (name == User.notifyRolesUpdated) {
+    else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateRolesSubscriptions();
     }
     else if (name == User.notifyPrivacyLevelChanged) {
@@ -477,7 +479,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _processRolesSubscriptions({Set<String> subscribedTopis}) {
-    Set<UserRole> roles = User().roles;
+    Set<UserRole> roles = Auth2().prefs?.roles;
     for (UserRole role in UserRole.values) {
       String roleTopic = role.toString();
       bool roleSubscribed = (subscribedTopis != null) && subscribedTopis.contains(roleTopic);
