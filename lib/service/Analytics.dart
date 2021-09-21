@@ -688,7 +688,7 @@ class Analytics with Service implements NotificationsListener {
           analyticsEvent[LogStdUserUuidName] = User().uuid;
         }
         else if (attributeName == LogStdUserPrivacyLevelName) {
-          analyticsEvent[LogStdUserPrivacyLevelName] = User().privacyLevel;
+          analyticsEvent[LogStdUserPrivacyLevelName] = Auth2().prefs?.privacyLevel;
         }
         else if (attributeName == LogStdUserRolesName) {
           analyticsEvent[LogStdUserRolesName] = _userRoles;

@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as Http;
 import 'package:http/http.dart';
 import 'package:illinois/model/Auth.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/UserPiiData.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -108,7 +109,7 @@ class Auth with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       User.notifyUserDeleted,
     ]);
   }
@@ -889,7 +890,7 @@ class Auth with Service implements NotificationsListener {
         _createShibbolethAuthenticationTimerIfNeeded();
       }
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
     }
     else if (name == User.notifyUserDeleted) {

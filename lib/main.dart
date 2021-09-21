@@ -19,7 +19,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -160,7 +162,7 @@ class _AppState extends State<App> implements NotificationsListener {
       Config.notifyOnboardingRequired,
       Storage.notifySettingChanged,
       User.notifyUserDeleted,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       User.notifyPrivacyLevelEmpty,
       AppLivecycle.notifyStateChanged,
     ]);
@@ -226,7 +228,7 @@ class _AppState extends State<App> implements NotificationsListener {
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
     }
-    else if (User().privacyLevel == null) {
+    else if (Auth2().prefs?.privacyLevel == null) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else {
@@ -321,7 +323,7 @@ class _AppState extends State<App> implements NotificationsListener {
         setState(() {});
       }
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       setState(() { });
     }
     else if (name == User.notifyPrivacyLevelEmpty) {

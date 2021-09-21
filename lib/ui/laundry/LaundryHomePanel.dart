@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -63,7 +64,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
       Assets.notifyChanged,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
     ]);
 
     LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
@@ -110,7 +111,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     else if (name == Assets.notifyChanged) {
       _refreshRooms();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateOnPrivacyLevelChanged();
     }
   }

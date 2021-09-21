@@ -45,7 +45,7 @@ class User with Service implements NotificationsListener {
   static const String notifyObsoleteRolesUpdated  = "edu.illinois.rokwire.user.roles.updated";
   static const String notifyFavoritesUpdated  = "edu.illinois.rokwire.user.favorites.updated";
   static const String notifyInterestsUpdated  = "edu.illinois.rokwire.user.interests.updated";
-  static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.privacy.level.changed";
+  static const String notifyObsoletePrivacyLevelChanged  = "edu.illinois.rokwire.user.privacy.level.changed";
   static const String notifyPrivacyLevelEmpty  = "edu.illinois.rokwire.user.privacy.level.empty";
   static const String notifyVoterUpdated  = "edu.illinois.rokwire.user.voter.updated";
 
@@ -68,7 +68,7 @@ class User with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifyToken,
-      User.notifyPrivacyLevelChanged,
+      User.notifyObsoletePrivacyLevelChanged,
       Auth2.notifyLogout,
     ]);
   }
@@ -97,7 +97,7 @@ class User with Service implements NotificationsListener {
   // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == User.notifyPrivacyLevelChanged)) {
+    if ((name == User.notifyObsoletePrivacyLevelChanged)) {
       _updateUser();      
     }
     else if (name == FirebaseMessaging.notifyToken) {
@@ -344,18 +344,18 @@ class User with Service implements NotificationsListener {
 
   // Privacy
 
-  int get privacyLevel {
+  int get obsoletePrivacyLevel {
     return _userData?.privacyLevel;
   }
 
-  set privacyLevel(int privacyLevel) {
+  set obsoletePrivacyLevel(int privacyLevel) {
     if (_userData != null) {
       if (_userData.privacyLevel != privacyLevel) {
         _userData.privacyLevel = privacyLevel;
         Storage().userData = _userData;
         Storage().privacyLevel = privacyLevel;
         _updateUser().then((_){
-          NotificationService().notify(notifyPrivacyLevelChanged, null);
+          NotificationService().notify(notifyObsoletePrivacyLevelChanged, null);
         });
       }
     }

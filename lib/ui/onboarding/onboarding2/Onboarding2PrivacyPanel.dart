@@ -17,12 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -520,7 +520,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   }
 
   void _goNext(BuildContext context) {
-    User().privacyLevel = _privacyLevel;
+    Auth2().prefs?.privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
     Onboarding2().proceedToLogin(context);
 

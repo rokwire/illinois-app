@@ -66,7 +66,7 @@ class FlexUI with Service implements NotificationsListener {
       User.notifyUserUpdated,
       User.notifyUserDeleted,
       Auth2UserPrefs.notifyRolesChanged,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2.notifyLoginChanged,
       Auth2.notifyCardChanged,
       IlliniCash.notifyBallanceUpdated,
@@ -100,7 +100,7 @@ class FlexUI with Service implements NotificationsListener {
     if ((name == User.notifyUserUpdated) ||
         (name == User.notifyUserDeleted) ||
         (name == Auth2UserPrefs.notifyRolesChanged) ||
-        (name == User.notifyPrivacyLevelChanged) ||
+        (name == Auth2UserPrefs.notifyPrivacyLevelChanged) ||
         (name == Auth2.notifyLoginChanged) ||
         (name == Auth2.notifyCardChanged) || 
         (name == IlliniCash.notifyBallanceUpdated))

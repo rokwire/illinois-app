@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/semantics.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -173,7 +174,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       Styles.notifyChanged,
     ]);
 
@@ -1294,7 +1295,7 @@ class ExplorePanelState extends State<ExplorePanel>
     else if(name == Storage.useDeviceLocalTimeZoneKey){
       _loadExplores();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
     }
     else if(name == Styles.notifyChanged){

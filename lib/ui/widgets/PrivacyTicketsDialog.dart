@@ -16,9 +16,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -127,7 +127,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                             padding: EdgeInsets.all(15),
                             child: CustomPaint(
                               painter: ShapesPainter(),
-                              child: Text(User().privacyLevel?.toString() ?? "",
+                              child: Text(Auth2().prefs?.privacyLevel?.toString() ?? "",
                                   style: TextStyle(
                                     color: Styles().colors.white,
                                   )),

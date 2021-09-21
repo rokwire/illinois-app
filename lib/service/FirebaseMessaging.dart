@@ -108,7 +108,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void createService() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyRolesChanged,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       User.notifyInterestsUpdated,
       User.notifyUserUpdated,
       User.notifyUserDeleted,
@@ -182,7 +182,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateRolesSubscriptions();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateNotifySettingsSubscriptions();
     }
     else if (name == User.notifyInterestsUpdated) {

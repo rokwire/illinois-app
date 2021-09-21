@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
@@ -75,7 +76,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   void initState() {
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       User.notifyFavoritesUpdated,
     ]);
 
@@ -840,7 +841,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     if (name == LocationServices.notifyStatusChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateCurrentLocation();
     }
     else if (name == User.notifyFavoritesUpdated) {

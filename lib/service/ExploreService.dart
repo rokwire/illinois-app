@@ -543,7 +543,7 @@ class ExploreService /* with Service */ {
       headers = Map<String, String>();
     }
     headers[Network.RokwireUserUuid] = User().uuid ?? "null";
-    headers[Network.RokwireUserPrivacyLevel] = User().privacyLevel?.toString() ?? "null";
+    headers[Network.RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
     return headers;
   }
 

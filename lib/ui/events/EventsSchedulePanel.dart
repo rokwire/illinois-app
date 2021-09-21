@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -101,7 +102,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
     ]);
     _initFilters();
     _initLocationService();
@@ -969,7 +970,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     else if (name == NativeCommunicator.notifyMapClearExplore) {
       _onNativeMapClearExplore(param['mapId']);
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
     }
   }

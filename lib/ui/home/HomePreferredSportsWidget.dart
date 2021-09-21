@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Connectivity.dart';
@@ -53,7 +54,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       User.notifyInterestsUpdated,
     ]);
 
@@ -281,7 +282,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyPrivacyLevelChanged) {
+    if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _setDisplayPreferredSports(User().privacyMatch(_minPrivacyLevel));
     }
     else if (name == User.notifyInterestsUpdated) {

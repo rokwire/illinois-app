@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Assets.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Onboarding.dart';
@@ -25,7 +26,6 @@ import 'package:illinois/model/PrivacyData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -122,8 +122,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   double get _privacyLevel {
-    int privacyLevel = User().privacyLevel;
-    return (privacyLevel != null) ? privacyLevel.toDouble() : 5.0;
+    return Auth2().prefs?.privacyLevel?.toDouble() ?? 5.0;
   }
 
   @override
@@ -412,7 +411,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   }
 
   void _save() {
-    User().privacyLevel = _sliderValue.toInt();
+    Auth2().prefs?.privacyLevel = _sliderValue.toInt();
     Storage().privacyUpdateVersion = Config().appVersion;
     
     if (widget.mode == SettingsPrivacyPanelMode.regular) {

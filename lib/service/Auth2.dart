@@ -224,9 +224,15 @@ class Auth2 with Service implements NotificationsListener {
         Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']), prefs: _userPrefs ?? Auth2UserPrefs.empty());
 
         if ((token != null) && token.isValid && (account != null) && account.isValid) {
+          
+          bool profileUpdated = account.prefs?.apply(_userPrefs);
           Storage().auth2Token = _token = token;
           Storage().auth2Account = _account = account;
           Storage().auth2UserPrefs = _userPrefs = null;
+
+          if (profileUpdated) {
+            _updateAccountUserPrefs();
+          }
 
           Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
           Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;

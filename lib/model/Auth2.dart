@@ -512,6 +512,22 @@ class Auth2UserPrefs {
     (_privacyLevel?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(_roles) ?? 0);
 
+  bool apply(Auth2UserPrefs prefs) {
+    bool modified = false;
+
+    if (prefs != null) {
+      if ((prefs.privacyLevel != null) && (prefs.privacyLevel > 0) && (prefs.privacyLevel != _privacyLevel)) {
+        _privacyLevel = prefs.privacyLevel;
+        modified = true;
+      }
+      if ((prefs.roles != null) && prefs.roles.isNotEmpty && (_roles != prefs.roles)) {
+        _roles = prefs.roles;
+        modified = true;
+      }
+    }
+    return modified;
+  }
+  
   // Privacy
 
   int get privacyLevel {
