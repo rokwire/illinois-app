@@ -40,7 +40,7 @@ class UserData {
         uuid: json['uuid'],
         overThirteen: json['over13'],
         privacySettings: json['privacySettings'],
-        roles: UserRole.userRolesFromList(json["roles"]),
+        roles: UserRole.setFromJson(json["roles"]),
         interests: serializeInterests(json['interests']),
         favorites: serializeFavorites(json['favorites']),
         positiveTags: AppJson.castToStringList(json['positiveInterestTags']),
@@ -343,11 +343,16 @@ class UserRole{
 
   const UserRole._internal(this._value);
 
-  factory UserRole.fromString(String userRoleString) {
-    return (userRoleString != null) ? UserRole._internal(userRoleString) : null;
+  factory UserRole.fromString(String value) {
+    return (value != null) ? UserRole._internal(value) : null;
+  }
+
+  factory UserRole.fromJson(dynamic value) {
+    return (value is String) ? UserRole._internal(value) : null;
   }
 
   toString() => _value;
+  toJson() => _value;
 
   @override
   bool operator==(dynamic obj) {
@@ -360,36 +365,51 @@ class UserRole{
   @override
   int get hashCode => _value.hashCode;
 
-  toJson() {
-    return _value;
-  }
-
-  // Static Helpers
-
-  static Set<UserRole> userRolesFromList(List<dynamic> userRolesList) {
-    Set<UserRole> userRoles;
-    if (userRolesList != null) {
-      userRoles = new Set<UserRole>();
-      for (dynamic userRole in userRolesList) {
-        if (userRole is String) {
-          userRoles.add(UserRole.fromString(userRole));
-        }
+  static List<UserRole> listFromJson(List<dynamic> jsonList) {
+    List<UserRole> result;
+    if (jsonList != null) {
+      result = <UserRole>[];
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
       }
     }
-    return userRoles;
+    return result;
   }
 
-  static List<dynamic> userRolesToList(Set<UserRole> userRoles) {
-    List<String> userRolesList;
-    if (userRoles != null) {
-      userRolesList = [];
-      for (UserRole userRole in userRoles) {
-        userRolesList.add(userRole.toString());
+  static List<dynamic> listToJson(List<UserRole> contentList) {
+    List<dynamic> jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (UserRole contentEntry in contentList) {
+        jsonList.add(contentEntry?.toString());
       }
     }
-    return userRolesList;
+    return jsonList;
   }
 
+  static Set<UserRole> setFromJson(List<dynamic> jsonList) {
+    Set<UserRole> result;
+    if (jsonList != null) {
+      result = Set<UserRole>();
+      for (dynamic jsonEntry in jsonList) {
+        result.add((jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic> setToJson(Set<UserRole> contentSet) {
+    List<dynamic> jsonList;
+    if (contentSet != null) {
+      jsonList = <dynamic>[];
+      for (UserRole contentEntry in contentSet) {
+        jsonList.add(contentEntry?.toString());
+      }
+    }
+    return jsonList;
+  }
+
+  //TBD Auth2: move this to a better location?
   static Set<String> targetAudienceFromUserRoles(Set<UserRole> roles) {
     if (roles == null || roles.isEmpty) {
       return null;
