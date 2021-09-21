@@ -402,11 +402,6 @@ class Auth2UiucUser {
     return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_uin']) : null;
   }
 
-  String get netId {
-    //TBD Auth2:
-    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_username']) : null;
-  }
-
   String get fullName {
     return AppString.fullName([firstName, middleName, lastName]);
   }

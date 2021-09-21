@@ -104,7 +104,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
         children: <Widget>[
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.net_id.title', 'NetID'),
-              value: Auth2().account?.authType?.uiucUser?.netId ?? ""
+              value: Auth2().account?.authType?.uiucUser?.identifier ?? ""
           ),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
