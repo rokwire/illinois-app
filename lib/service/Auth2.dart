@@ -45,6 +45,7 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token _token;
   Auth2Token _uiucToken;
   Auth2Account _account;
+  Auth2UserPrefs _userPrefs;
   
   AuthCard  _authCard;
   File _authCardCacheFile;
@@ -65,6 +66,7 @@ class Auth2 with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
+      Auth2UserPrefs.notifyChanged,
     ]);
   }
 
@@ -73,6 +75,11 @@ class Auth2 with Service implements NotificationsListener {
     _token = Storage().auth2Token;
     _uiucToken = Storage().auth2UiucToken;
     _account = Storage().auth2Account;
+    _userPrefs = Storage().auth2UserPrefs;
+    
+    if ((_account?.prefs == null) && (_userPrefs == null)) {
+      Storage().auth2UserPrefs = _userPrefs = Auth2UserPrefs.empty();
+    }
     
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
@@ -94,6 +101,9 @@ class Auth2 with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
       _onDeepLinkUri(param);
+    }
+    else if (name == Auth2UserPrefs.notifyChanged) {
+      _onUserPrefsChanged(param);
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
@@ -122,6 +132,8 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token get uiucToken => _uiucToken;
   Auth2Account get account => _account;
   AuthCard get authCard => _authCard;
+  
+  Auth2UserPrefs get prefs => _account?.prefs ?? _userPrefs;
 
   bool get isLoggedIn => (_token != null);
   bool get isOidcLoggedIn => (_account?.authType?.uiucUser != null);
@@ -197,7 +209,8 @@ class Auth2 with Service implements NotificationsListener {
         'org_id': Config().coreOrgId,
         'app_id': Config().appCanonicalId,
         'creds': uri?.toString(),
-        'params': _oidcLogin?.params
+        'params': _oidcLogin?.params,
+        'prefs': _userPrefs?.toJson(), //TBD Auth2
       });
       _oidcLogin = null;
       
@@ -205,11 +218,12 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']));
+        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']), prefs: _userPrefs ?? Auth2UserPrefs.empty());
 
         if ((token != null) && token.isValid && (account != null) && account.isValid) {
           Storage().auth2Token = _token = token;
           Storage().auth2Account = _account = account;
+          Storage().auth2UserPrefs = _userPrefs = null;
 
           Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
           Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
@@ -301,9 +315,9 @@ class Auth2 with Service implements NotificationsListener {
 
   void logout() {
     if ((_token != null) || (_account != null)) {
+      Storage().auth2UserPrefs = _userPrefs = _account?.prefs ?? Auth2UserPrefs.empty();
       Storage().auth2Token = _token = null;
       Storage().auth2Account = _account = null;
-      
       Storage().auth2UiucToken = _uiucToken = null;
       
       _authCard = null;
@@ -454,6 +468,17 @@ class Auth2 with Service implements NotificationsListener {
       NotificationService().notify(notifyCardChanged);
     }
     return authCard;
+  }
+
+  // User Prefs
+
+  void _onUserPrefsChanged(Auth2UserPrefs prefs) {
+    if (identical(prefs, _userPrefs)) {
+      Storage().auth2UserPrefs = _userPrefs;
+    }
+    else if (identical(prefs, _account?.prefs)) {
+
+    }
   }
 
   // Helpers

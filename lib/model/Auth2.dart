@@ -1,5 +1,7 @@
 
 import 'package:collection/collection.dart';
+import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
 
 ////////////////////////////////
@@ -50,23 +52,56 @@ class Auth2Token {
 }
 
 ////////////////////////////////
+// Auth2LoginType
+
+enum Auth2LoginType { email, phone, oidc, oidcIllinois }
+
+String auth2LoginTypeToString(Auth2LoginType value) {
+  switch (value) {
+    case Auth2LoginType.email: return 'email';
+    case Auth2LoginType.phone: return 'phone';
+    case Auth2LoginType.oidc: return 'oidc';
+    case Auth2LoginType.oidcIllinois: return 'illinois_oidc';
+  }
+  return null;
+}
+
+Auth2LoginType auth2LoginTypeFromString(String value) {
+  if (value == 'email') {
+    return Auth2LoginType.email;
+  }
+  else if (value == 'phone') {
+    return Auth2LoginType.email;
+  }
+  else if (value == 'oidc') {
+    return Auth2LoginType.oidc;
+  }
+  else if (value == 'illinois_oidc') {
+    return Auth2LoginType.oidcIllinois;
+  }
+  return null;
+}
+
+////////////////////////////////
 // Auth2Account
 
 class Auth2Account {
   final String id;
   final Auth2UserProfile profile;
+  final Auth2UserPrefs prefs;
   final List<Auth2StringEntry> permissions;
   final List<Auth2StringEntry> roles;
   final List<Auth2StringEntry> groups;
   final List<Auth2Type> authTypes;
   
   
-  Auth2Account({this.id, this.profile, this.permissions, this.roles, this.groups, this.authTypes});
+  Auth2Account({this.id, this.profile, this.prefs, this.permissions, this.roles, this.groups, this.authTypes});
 
-  factory Auth2Account.fromJson(Map<String, dynamic> json) {
+  factory Auth2Account.fromJson(Map<String, dynamic> json, { Auth2UserPrefs prefs }) {
     return (json != null) ? Auth2Account(
       id: AppJson.stringValue(json['id']),
       profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])),
+      prefs: Auth2UserPrefs.fromJson(AppJson.mapValue(json['preferences'])) ?? prefs, //TBD Auth2
       permissions: Auth2StringEntry.listFromJson(AppJson.listValue(json['permissions'])),
       roles: Auth2StringEntry.listFromJson(AppJson.listValue(json['roles'])),
       groups: Auth2StringEntry.listFromJson(AppJson.listValue(json['groups'])),
@@ -78,6 +113,7 @@ class Auth2Account {
     return {
       'id' : id,
       'profile': profile,
+      'preferences': prefs,
       'permissions': permissions,
       'roles': roles,
       'groups': groups,
@@ -246,7 +282,7 @@ class Auth2StringEntry {
   static List<Auth2StringEntry> listFromJson(List<dynamic> jsonList) {
     List<Auth2StringEntry> result;
     if (jsonList != null) {
-      result = [];
+      result = <Auth2StringEntry>[];
       for (dynamic jsonEntry in jsonList) {
         result.add((jsonEntry is Map) ? Auth2StringEntry.fromJson(jsonEntry) : null);
       }
@@ -257,7 +293,7 @@ class Auth2StringEntry {
   static List<dynamic> listToJson(List<Auth2StringEntry> contentList) {
     List<dynamic> jsonList;
     if (contentList != null) {
-      jsonList = [];
+      jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {
         jsonList.add(contentEntry?.toJson());
       }
@@ -319,7 +355,7 @@ class Auth2Type {
   static List<Auth2Type> listFromJson(List<dynamic> jsonList) {
     List<Auth2Type> result;
     if (jsonList != null) {
-      result = [];
+      result = <Auth2Type>[];
       for (dynamic jsonEntry in jsonList) {
         result.add((jsonEntry is Map) ? Auth2Type.fromJson(jsonEntry) : null);
       }
@@ -330,7 +366,7 @@ class Auth2Type {
   static List<dynamic> listToJson(List<Auth2Type> contentList) {
     List<dynamic> jsonList;
     if (contentList != null) {
-      jsonList = [];
+      jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {
         jsonList.add(contentEntry?.toJson());
       }
@@ -409,7 +445,7 @@ class Auth2UiucUser {
   static List<Auth2UiucUser> listFromJson(List<dynamic> jsonList) {
     List<Auth2UiucUser> result;
     if (jsonList != null) {
-      result = [];
+      result = <Auth2UiucUser>[];
       for (dynamic jsonEntry in jsonList) {
         result.add((jsonEntry is Map) ? Auth2UiucUser.fromJson(jsonEntry) : null);
       }
@@ -420,7 +456,7 @@ class Auth2UiucUser {
   static List<dynamic> listToJson(List<Auth2UiucUser> contentList) {
     List<dynamic> jsonList;
     if (contentList != null) {
-      jsonList = [];
+      jsonList = <dynamic>[];
       for (dynamic contentEntry in contentList) {
         jsonList.add(contentEntry?.toJson());
       }
@@ -430,33 +466,78 @@ class Auth2UiucUser {
 }
 
 ////////////////////////////////
-// Auth2LoginType
+// Auth2UserPrefs
 
-enum Auth2LoginType { email, phone, oidc, oidcIllinois }
+class Auth2UserPrefs {
 
-String auth2LoginTypeToString(Auth2LoginType value) {
-  switch (value) {
-    case Auth2LoginType.email: return 'email';
-    case Auth2LoginType.phone: return 'phone';
-    case Auth2LoginType.oidc: return 'oidc';
-    case Auth2LoginType.oidcIllinois: return 'illinois_oidc';
-  }
-  return null;
-}
+  static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.prefs.privacy.level.changed";
+  static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
+  static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
-Auth2LoginType auth2LoginTypeFromString(String value) {
-  if (value == 'email') {
-    return Auth2LoginType.email;
+  int _privacyLevel;
+  Set<UserRole> _roles;
+
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles}) {
+    _privacyLevel = privacyLevel;
+    _roles = roles;
   }
-  else if (value == 'phone') {
-    return Auth2LoginType.email;
+
+  factory Auth2UserPrefs.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2UserPrefs(
+      privacyLevel: AppJson.intValue(json['privacy_level']),
+      roles: UserRole.setFromJson(AppJson.listValue(json['roles']))
+    ) : null;
   }
-  else if (value == 'oidc') {
-    return Auth2LoginType.oidc;
+
+  factory Auth2UserPrefs.empty() {
+    return Auth2UserPrefs(
+      privacyLevel: 0,
+      roles: Set<UserRole>(),
+    );
   }
-  else if (value == 'illinois_oidc') {
-    return Auth2LoginType.oidcIllinois;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'privacy_level' : privacyLevel,
+      'roles': UserRole.setToJson(roles),
+    };
   }
-  return null;
+
+  bool operator ==(o) =>
+    (o is Auth2UserPrefs) &&
+      (o._privacyLevel == _privacyLevel) &&
+      DeepCollectionEquality().equals(o._roles, _roles);
+
+  int get hashCode =>
+    (_privacyLevel?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(_roles) ?? 0);
+
+  // Privacy
+
+  int get privacyLevel {
+    return _privacyLevel;
+  }
+  
+  set privacyLevel(int value) {
+    if (privacyLevel != _privacyLevel) {
+      _privacyLevel = privacyLevel;
+      NotificationService().notify(notifyPrivacyLevelChanged, this);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  // Roles
+
+  Set<UserRole> get roles {
+    return _roles;
+  } 
+  
+  set roles(Set<UserRole> value) {
+    if (_roles != value) {
+      _roles = (value != null) ? Set.from(value) : null;
+      NotificationService().notify(notifyRolesChanged, this);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
 }
 
