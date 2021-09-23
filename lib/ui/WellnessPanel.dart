@@ -557,7 +557,7 @@ class _WellnessActivityButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
+    return (AppString.isStringNotEmpty(label) || AppString.isStringNotEmpty(imageName)) ? Semantics(
         label: label,
         button: true,
         excludeSemantics: true,
@@ -576,20 +576,20 @@ class _WellnessActivityButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Padding(
+                    AppString.isStringNotEmpty(imageName) ? Padding(
                       padding: EdgeInsets.only(bottom: 16),
                       child: Image.asset('images/$imageName'),
-                    ),
-                    Text(
+                    ) : Container(),
+                    AppString.isStringNotEmpty(label) ? Text(
                       label,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: fontSize, color: Styles().colors.fillColorPrimary),
-                    )
+                    ) : Container()
                   ],
                 ),
               ),
             ),
           ),
-        ));
+        )) : Container();
   }
 }
