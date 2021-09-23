@@ -1,11 +1,13 @@
 import 'package:device_calendar/device_calendar.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:url_launcher/url_launcher.dart';
 
-class DeviceCalendar with Service {
+class DeviceCalendar with Service implements NotificationsListener{
   Calendar _defaultCalendar;
   Map<String, String> _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin;
@@ -18,8 +20,18 @@ class DeviceCalendar with Service {
 
   DeviceCalendar._internal();
 
-  //TBD implement Notifications and listen for add/remove favorite. Do not call add/remove from outside.
-  //TBD Handle recurring events
+  @override
+  void createService() {
+    NotificationService().subscribe(this, [
+      User.notifyFavoritesUpdated
+    ]);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
   Future<bool> addEvent(ExploreEvent.Event event) async{
     String additionalUrl = _extractAdditionalDataUrl(event);
 
@@ -56,7 +68,7 @@ class DeviceCalendar with Service {
     return true;
   }
 
-  Future<bool> deleteEvent(event) async{
+  Future<bool> deleteEvent(ExploreEvent.Event event) async{
     if(_deviceCalendarPlugin == null){
       await _initDeviceCalendarPlugin();
     }
@@ -149,5 +161,29 @@ class DeviceCalendar with Service {
 
   void _debugToast(String msg){
     AppToast.show(msg); //TBD Remove before release
+  }
+
+  void _processEvents(List events){
+    if(events!=null && events.isNotEmpty) {
+      for (ExploreEvent.Event event in events) {
+        if (event != null) {
+          if (User().isFavorite(event)) {
+            //Just added
+            addEvent(event);
+          } else {
+            deleteEvent(event);
+          }
+        }
+      }
+    }
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == User.notifyFavoritesUpdated){
+      if(param != null && param is List && param.isNotEmpty){
+        _processEvents(param);
+      }
+    }
   }
 }
