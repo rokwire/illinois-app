@@ -7,7 +7,7 @@ import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:url_launcher/url_launcher.dart';
 
 class DeviceCalendar with Service {
-  String _defaultCalendarId;
+  Calendar _defaultCalendar;
   Map<String, String> _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin;
 
@@ -19,6 +19,9 @@ class DeviceCalendar with Service {
 
   DeviceCalendar._internal();
 
+  //TBD implement Notifications and listen for add/remove favorite. Do not call add/remove from outside.
+  //TBD Handle recurring events
+
   Future<bool> onFavoriteUpdated(Favorite favorite, bool isFavorite) async {
     //TBD Auth2: listen for Auth2.notifyFavoriteChanged
     if (favorite is Event) {
@@ -29,6 +32,8 @@ class DeviceCalendar with Service {
 
   Future<bool> addEvent(ExploreEvent.Event event) async{
     String additionalUrl = _extractAdditionalDataUrl(event);
+
+    _debugToast("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
     if(AppString.isStringNotEmpty(additionalUrl)){
       _openAdditionalDataLink(additionalUrl);
       return true;
@@ -37,15 +42,20 @@ class DeviceCalendar with Service {
     if(_deviceCalendarPlugin == null){
       await _initDeviceCalendarPlugin();
     }
+    _debugToast("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
 
     bool hasPermissions = await _requestPermissions();
-    if(hasPermissions && _defaultCalendarId!=null) {
+
+    _debugToast("Has permissions: $hasPermissions");
+    if(hasPermissions && _defaultCalendar!=null) {
       Event calendarEvent = _convertEvent(event);
 
       final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(calendarEvent);
       if(createEventResult?.data!=null){
         _storeEventId(event.id, createEventResult?.data);
       }
+
+      _debugToast("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
 
       if(!createEventResult.isSuccess) {
         AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
@@ -62,11 +72,13 @@ class DeviceCalendar with Service {
     }
 
     String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
+    _debugToast("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${_defaultCalendar.id}");
     if(AppString.isStringEmpty(eventId)){
       return false;
     }
 
-    final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(_defaultCalendarId, eventId);
+    final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(_defaultCalendar?.id, eventId);
+    _debugToast("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
     if(deleteEventResult.isSuccess){
       _eraseEventId(event?.id);
     }
@@ -90,7 +102,7 @@ class DeviceCalendar with Service {
     if(AppCollection.isCollectionNotEmpty(calendars)) {
       Calendar defaultCalendar = calendars.firstWhere((element) => element.isDefault);
       if (defaultCalendar!= null){
-        _defaultCalendarId = defaultCalendar.id;
+        _defaultCalendar = defaultCalendar;
       }
     }
   }
@@ -109,7 +121,7 @@ class DeviceCalendar with Service {
   }
 
   Event _convertEvent(ExploreEvent.Event event){
-    Event calendarEvent = new Event(_defaultCalendarId);
+    Event calendarEvent = new Event(_defaultCalendar?.id);
 
     calendarEvent.title = event.title ?? "";
     if(event.startDateLocal!=null) {
@@ -143,5 +155,9 @@ class DeviceCalendar with Service {
   
   void _eraseEventId(String id){
     _calendarEventIdTable.removeWhere((key, value) => key == id);
+  }
+
+  void _debugToast(String msg){
+    AppToast.show(msg); //TBD Remove before release
   }
 }
