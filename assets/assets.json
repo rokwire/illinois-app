@@ -1073,14 +1073,6 @@
 								}
 							},
 							{
-								"title": "panel.wellness.common.interactive_activities.activity.upace",
-								"image": "group-18.png",
-								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/group-fitness/upace-app/"
-								}
-							},
-							{
 								"title": "panel.wellness.common.interactive_activities.activity.reflection",
 								"image": "reflection.png",
 								"action": {
@@ -1095,6 +1087,9 @@
 									"name": "web",
 									"source": "https://campusrec.illinois.edu/programs/student-wellness/take-the-wellness-pledge/"
 								}
+							},
+							{
+								
 							},
 							{
 								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk",
@@ -1125,14 +1120,6 @@
 							"title": "panel.wellness.common.interactive_activities.title"
 						},
 						"items": [
-							{
-								"title": "panel.wellness.common.interactive_activities.activity.upace",
-								"image": "group-18.png",
-								"action": {
-									"name": "web",
-									"source": "https://campusrec.illinois.edu/programs/group-fitness/upace-app/"
-								}
-							},
 							{
 								"title": "panel.wellness.common.interactive_activities.activity.reflection",
 								"image": "reflection.png",
