@@ -12,6 +12,8 @@ class DeviceCalendar with Service implements NotificationsListener{
   Map<String, String> _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin;
 
+  bool _disableAdditionalDataLink = true;
+
   static final DeviceCalendar _instance = DeviceCalendar._internal();
 
   factory DeviceCalendar(){
@@ -33,7 +35,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   Future<bool> addEvent(ExploreEvent.Event event) async{
-    String additionalUrl = _extractAdditionalDataUrl(event);
+    String additionalUrl = _disableAdditionalDataLink? null : _extractAdditionalDataUrl(event);
 
     _debugToast("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
     if(AppString.isStringNotEmpty(additionalUrl)){
@@ -139,7 +141,6 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   String _extractAdditionalDataUrl(ExploreEvent.Event event){
-//    return null; //TBD
     String additionalUrl = AppString.isStringNotEmpty(event.icalUrl) ? event.icalUrl : null;
     additionalUrl = AppString.isStringNotEmpty(event.outlookUrl) ? event.outlookUrl : additionalUrl; //TBD decide do we support both at same time
 
