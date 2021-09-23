@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Deleted
+- Removed UPACE activity button from Wellness content [#768](https://github.com/rokwire/illinois-app/issues/768).
+
 ## [3.0.11] 2021-09-21
 ## Added
-- More debug logs for DeviceCalendar[#751](https://github.com/rokwire/illinois-app/issues/751).
+- More debug logs for DeviceCalendar [#751](https://github.com/rokwire/illinois-app/issues/751).
 
 ## [3.0.10] 2021-09-17
 ### Changed
