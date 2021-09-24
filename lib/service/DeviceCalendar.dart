@@ -8,6 +8,10 @@ import 'package:illinois/model/Event.dart' as ExploreEvent;
 import 'package:url_launcher/url_launcher.dart';
 
 class DeviceCalendar with Service implements NotificationsListener{
+
+  static const String notifyPromptPopupMessage    = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
+  static const String notifyPlaceEventMessage     = "edu.illinois.rokwire.device_calendar.messaging.place.event";
+
   Calendar _defaultCalendar;
   Map<String, String> _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin;
@@ -25,7 +29,8 @@ class DeviceCalendar with Service implements NotificationsListener{
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      User.notifyFavoritesUpdated
+      User.notifyFavoritesUpdated,
+      DeviceCalendar.notifyPlaceEventMessage
     ]);
   }
 
@@ -34,26 +39,47 @@ class DeviceCalendar with Service implements NotificationsListener{
     NotificationService().unsubscribe(this);
   }
 
-  Future<bool> addEvent(ExploreEvent.Event event) async{
-    String additionalUrl = _disableAdditionalDataLink? null : _extractAdditionalDataUrl(event);
-
+  Future<bool> _addEvent(ExploreEvent.Event event) async{
     _debugToast("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
+    
+    //User prefs
+    if(!canAddToCalendar){
+      _debugToast("Disabled");
+      return false;
+    }
+    
+    if(canShowPrompt){
+      _promptDialog(event);
+      return true;
+    }
+    
+    //URL
+    String additionalUrl = _disableAdditionalDataLink? null : _extractAdditionalDataUrl(event);
     if(AppString.isStringNotEmpty(additionalUrl)){
       _openAdditionalDataLink(additionalUrl);
       return true;
     }
 
+    return _placeCalendarEvent(event);
+  }
+
+  Future<bool> _placeCalendarEvent(ExploreEvent.Event event) async{
+    Event calendarEvent = _convertEvent(event);
+
+    //PLUGIN
     if(_deviceCalendarPlugin == null){
-      await _initDeviceCalendarPlugin();
+      bool initResult = await _initDeviceCalendarPlugin();
+      if(!initResult ?? true){
+        _debugToast("Unable to init plugin");
+      }
     }
     _debugToast("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
-
+    //PERMISSIONS
     bool hasPermissions = await _requestPermissions();
 
     _debugToast("Has permissions: $hasPermissions");
+    //PLACE
     if(hasPermissions && _defaultCalendar!=null) {
-      Event calendarEvent = _convertEvent(event);
-
       final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(calendarEvent);
       if(createEventResult?.data!=null){
         _storeEventId(event.id, createEventResult?.data);
@@ -66,13 +92,16 @@ class DeviceCalendar with Service implements NotificationsListener{
         return false;
       }
     }
-
+    
     return true;
   }
 
-  Future<bool> deleteEvent(ExploreEvent.Event event) async{
+  Future<bool> _deleteEvent(ExploreEvent.Event event) async{
     if(_deviceCalendarPlugin == null){
-      await _initDeviceCalendarPlugin();
+      bool initResult = await _initDeviceCalendarPlugin();
+      if(!initResult ?? true){
+        _debugToast("Unable to init plugin");
+      }
     }
 
     String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
@@ -89,17 +118,17 @@ class DeviceCalendar with Service implements NotificationsListener{
     return deleteEventResult?.isSuccess;
   }
 
-  Future<void> _initDeviceCalendarPlugin() async{
+  Future<bool> _initDeviceCalendarPlugin() async{
     _deviceCalendarPlugin = new DeviceCalendarPlugin();
     dynamic storedTable = Storage().calendarEventsTable ?? Map();
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
-    await _loadDefaultCalendar();
+    return await _loadDefaultCalendar();
   }
 
-  Future<void> _loadDefaultCalendar() async {
+  Future<bool> _loadDefaultCalendar() async {
     bool hasPermissions = await _requestPermissions();
     if(!hasPermissions) {
-      return;
+      return false;
     }
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     List<Calendar> calendars = calendarsResult.data;
@@ -107,8 +136,11 @@ class DeviceCalendar with Service implements NotificationsListener{
       Calendar defaultCalendar = calendars.firstWhere((element) => element.isDefault);
       if (defaultCalendar!= null){
         _defaultCalendar = defaultCalendar;
+        return true;
       }
     }
+
+    return false;
   }
 
   Future<bool> _requestPermissions() async {
@@ -142,7 +174,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
   String _extractAdditionalDataUrl(ExploreEvent.Event event){
     String additionalUrl = AppString.isStringNotEmpty(event.icalUrl) ? event.icalUrl : null;
-    additionalUrl = AppString.isStringNotEmpty(event.outlookUrl) ? event.outlookUrl : additionalUrl; //TBD decide do we support both at same time
+    additionalUrl = AppString.isStringNotEmpty(event.outlookUrl) ? event.outlookUrl : additionalUrl;
 
     return additionalUrl;
   }
@@ -170,14 +202,20 @@ class DeviceCalendar with Service implements NotificationsListener{
         if (event != null) {
           if (User().isFavorite(event)) {
             //Just added
-            addEvent(event);
+            _addEvent(event);
           } else {
-            deleteEvent(event);
+            _deleteEvent(event);
           }
         }
       }
     }
   }
+
+  void _promptDialog(ExploreEvent.Event event) {
+    NotificationService().notify(notifyPromptPopupMessage, event);
+  }
+
+
 
   @override
   void onNotification(String name, param) {
@@ -185,6 +223,18 @@ class DeviceCalendar with Service implements NotificationsListener{
       if(param != null && param is List && param.isNotEmpty){
         _processEvents(param);
       }
+    } else if(name == DeviceCalendar.notifyPlaceEventMessage){
+      if(param!=null && param is ExploreEvent.Event){
+        _placeCalendarEvent(param);
+      }
     }
+  }
+  
+  bool get canAddToCalendar{
+    return Storage().calendarEnabledToSave ?? false;
+  }
+  
+  bool get canShowPrompt{
+    return Storage().calendarCanPrompt ?? false;
   }
 }
