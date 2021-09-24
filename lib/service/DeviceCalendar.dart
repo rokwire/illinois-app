@@ -64,7 +64,6 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   Future<bool> _placeCalendarEvent(ExploreEvent.Event event) async{
-    Event calendarEvent = _convertEvent(event);
 
     //PLUGIN
     if(_deviceCalendarPlugin == null){
@@ -80,6 +79,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     _debugToast("Has permissions: $hasPermissions");
     //PLACE
     if(hasPermissions && _defaultCalendar!=null) {
+      Event calendarEvent = _convertEvent(event);
       final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(calendarEvent);
       if(createEventResult?.data!=null){
         _storeEventId(event.id, createEventResult?.data);
@@ -89,6 +89,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
       if(!createEventResult.isSuccess) {
         AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
+        print(createEventResult?.errorMessages);
         return false;
       }
     }
