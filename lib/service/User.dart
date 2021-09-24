@@ -391,10 +391,10 @@ class User with Service implements NotificationsListener {
       _userData.addFavorite(favorite.favoriteKey,favorite.favoriteId);
       _notifyUserFavoritesUpdated();
       _updateUser().then((_) {
-        _notifyUserFavoritesUpdated();
+        _notifyUserFavoritesUpdated(favorites: [favorite]);
       });
 
-      DeviceCalendar().addEvent(favorite is Event? favorite : null);
+//      DeviceCalendar().addEvent(favorite is Event? favorite : null);
     }
   }
 
@@ -407,7 +407,7 @@ class User with Service implements NotificationsListener {
     _userData.addAllFavorites(favoriteKey, uiuds);
     _notifyUserFavoritesUpdated();
     _updateUser().then((_) {
-      _notifyUserFavoritesUpdated();
+      _notifyUserFavoritesUpdated(favorites: favorites);
     });
   }
 
@@ -419,10 +419,10 @@ class User with Service implements NotificationsListener {
       _userData.removeFavorite(favorite.favoriteKey,favorite.favoriteId);
       _notifyUserFavoritesUpdated();
       _updateUser().then((_) {
-        _notifyUserFavoritesUpdated();
+        _notifyUserFavoritesUpdated(favorites: [favorite]);
       });
 
-      DeviceCalendar().deleteEvent(favorite is Event? favorite : null);
+//      DeviceCalendar().deleteEvent(favorite is Event? favorite : null);
     }
   }
 
@@ -435,7 +435,7 @@ class User with Service implements NotificationsListener {
     _userData.removeAllFavorites(favoriteKey, uiuds);
     _notifyUserFavoritesUpdated();
     _updateUser().then((_) {
-      _notifyUserFavoritesUpdated();
+      _notifyUserFavoritesUpdated(favorites: favorites);
     });
   }
 
@@ -715,8 +715,8 @@ class User with Service implements NotificationsListener {
     NotificationService().notify(notifyInterestsUpdated, null);
   }
 
-  void _notifyUserFavoritesUpdated(){
-    NotificationService().notify(notifyFavoritesUpdated, null);
+  void _notifyUserFavoritesUpdated({List<Favorite> favorites}){
+    NotificationService().notify(notifyFavoritesUpdated, favorites);
   }
 
   void _notifyUserTagsUpdated() {
