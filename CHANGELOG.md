@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
+
+## [3.0.13] 2021-09-24
+## Added
+- Save Calendar prompt [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.12] 2021-09-23
 ### Deleted
 - Removed UPACE activity button from Wellness content [#768](https://github.com/rokwire/illinois-app/issues/768).
 

@@ -187,7 +187,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       hint: _getTicketsInformationHint(sport),
       button: true,
       child: Padding(
-        padding: EdgeInsets.only(top: (widget._game.isHomeGame ? 16 : 24)),
+        padding: EdgeInsets.only(top: (_hasTickets() ? 16 : 24)),
         child: Column(
           children: <Widget>[
             Container(
@@ -204,7 +204,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   }
                 },
                 child: Visibility(
-                  visible: widget._game.isHomeGame,
+                  visible: _hasTickets(),
                   child: Container(
                       height: 48,
                       color: Styles().colors.background,
@@ -226,23 +226,11 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   String _getTicketsInformationText(SportDefinition sport) {
-    if (widget._game.isHomeGame) {
-      return _hasTickets()
-          ? Localization().getStringEx("widget.schedule_card.button.get_tickets.title", "Get Tickets")
-          : Localization().getStringEx("widget.schedule_card.button.free_admission.title", "Free Admission");
-    } else {
-      return "";
-    }
+    return _hasTickets() ? Localization().getStringEx("widget.schedule_card.button.get_tickets.title", "Get Tickets") : "";
   }
 
   String _getTicketsInformationHint(SportDefinition sport) {
-    if (widget._game.isHomeGame) {
-      return _hasTickets()
-          ? Localization().getStringEx("widget.schedule_card.button.get_tickets.hint", "")
-          : Localization().getStringEx("widget.schedule_card.button.free_admission.hint", "");
-    } else {
-      return "";
-    }
+    return _hasTickets() ? Localization().getStringEx("widget.schedule_card.button.get_tickets.hint", "") : "";
   }
 
   Widget _cardScore() {

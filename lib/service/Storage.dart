@@ -799,6 +799,8 @@ class Storage with Service {
   /////////////
 
   static const String _calendarEventsTableKey = 'calendar_events_table';
+  static const String _calendarEnableSaveKey = 'calendar_enabled_to_save';
+  static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
 
   dynamic get calendarEventsTable {
     String jsonString = _getStringWithName(_calendarEventsTableKey);
@@ -809,6 +811,22 @@ class Storage with Service {
   set calendarEventsTable(dynamic table) {
     String tableToString = (table != null) ? json.encode(table) : null;
     _setStringWithName(_calendarEventsTableKey, tableToString);
+  }
+
+  bool get calendarEnabledToSave{
+    return _getBoolWithName(_calendarEnableSaveKey, defaultValue: true);
+  }
+
+  set calendarEnabledToSave(bool value){
+    _setBoolWithName(_calendarEnableSaveKey, value);
+  }
+
+  bool get calendarCanPrompt{
+    return _getBoolWithName(_calendarEnablePromptKey);
+  }
+
+  set calendarCanPrompt(bool value){
+    _setBoolWithName(_calendarEnablePromptKey, value);
   }
 
 }

@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Poll.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Polls.dart';
@@ -96,6 +97,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
+      DeviceCalendar.notifyPromptPopupMessage,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       User.notifyPrivacyLevelEmpty,
@@ -137,7 +139,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FirebaseMessaging.notifyPopupMessage) {
+    if (name == DeviceCalendar.notifyPromptPopupMessage) {
+      _onCalendarPromptMessage(param);
+    }
+    else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
     }
     else if (name == FirebaseMessaging.notifyEventDetail) {
@@ -326,6 +331,26 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ),
       ),
     );
+  }
+
+  void _onCalendarPromptMessage(dynamic data) {
+        AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization().getStringEx(
+            'prompt.device_calendar.msg.add_event',
+            'Do you want to save this event to your calendar?')),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                NotificationService().notify(DeviceCalendar.notifyPlaceEventMessage, data);
+              }),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              onPressed: () => Navigator.of(context).pop())
+        ]);
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {

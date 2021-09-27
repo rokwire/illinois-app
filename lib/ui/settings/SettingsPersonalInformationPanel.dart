@@ -20,6 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
@@ -29,6 +30,7 @@ import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
@@ -122,6 +124,23 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
             iconRes: "images/u-blue.png",
             onTap: _onTapFoodFilters,
           ),
+          Container(height: 8,),
+          ToggleRibbonButton(
+              label: 'Add saved events to calendar',
+              toggled: Storage().calendarEnabledToSave,
+              onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave;});}),
+          Container(height: 8,),
+          ToggleRibbonButton(
+              label: 'Prompt when saving events to calendar',
+              style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies.bold, color: Storage().calendarEnabledToSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,) ,
+              height: null,
+              toggled: Storage().calendarCanPrompt,
+              onTap: (){
+                if(!Storage().calendarEnabledToSave) {
+                  return;
+                }
+                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt;});
+              }),
           Container(height: 29,),
         ],));
   }
