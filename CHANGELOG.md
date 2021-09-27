@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
+## Added
+- Implemented event detail from DeepLink [#773](https://github.com/rokwire/illinois-app/issues/773).
 
 ## [3.0.13] 2021-09-24
 ## Added
