@@ -45,7 +45,7 @@ class Twitter {
       
       Response response = await Network().get(url, auth: NetworkAuth.App, headers: headers);
       String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
-      print("Twitter Page Load: ${response.statusCode}\n${response.body}");
+      print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
       return TweetsPage.fromJson(AppJson.decodeMap(responseString));
     }
     return null;
@@ -71,7 +71,7 @@ class Twitter {
       
       Response response = await Network().get(url, headers: headers);
       String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
-      print("Twitter Page Load: ${response.statusCode}\n${response.body}");
+      print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
       return TweetsPage.fromJson(AppJson.decodeMap(responseString));
     }
     return null;
