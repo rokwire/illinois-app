@@ -170,7 +170,7 @@ class DeviceCalendar with Service implements NotificationsListener{
       calendarEvent.end = DateTime(event.startDateLocal.year, event.startDateLocal.month, event.startDateLocal.day, 23, 59,);
     }
 
-    String eventDeepLink = "edu.illinois.rokwire://rokwire.illinois.edu/event_detail?event_id= ${event.id}";
+    String eventDeepLink = "edu.illinois.rokwire://rokwire.illinois.edu/event_detail?event_id=${event.id}";
     calendarEvent.description ="$eventDeepLink";
 //    calendarEvent.url = Uri.dataFromString(eventDeepLink);
     return calendarEvent;
