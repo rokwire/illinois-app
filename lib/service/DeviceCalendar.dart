@@ -1,4 +1,5 @@
 import 'package:device_calendar/device_calendar.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -170,7 +171,7 @@ class DeviceCalendar with Service implements NotificationsListener{
       calendarEvent.end = DateTime(event.startDateLocal.year, event.startDateLocal.month, event.startDateLocal.day, 23, 59,);
     }
 
-    String eventDeepLink = "edu.illinois.rokwire://rokwire.illinois.edu/event_detail?event_id=${event.id}";
+    String eventDeepLink = "${ExploreService.EVENT_URI}?event_id=${event.id}";
     calendarEvent.description ="$eventDeepLink";
 //    calendarEvent.url = Uri.dataFromString(eventDeepLink);
     return calendarEvent;
