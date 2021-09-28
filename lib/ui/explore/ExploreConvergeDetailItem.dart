@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -40,12 +39,15 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         ),
       ),
       onTap: () {
-        if (hasConvergeUrl()) {
-          Navigator.push(context, CupertinoPageRoute(
-              builder: (context) => WebPanel(url:eventConvergeUrl)));
-        }
+        onTap(context);
       },
     );
+  }
+
+  void onTap(BuildContext context){
+    if (hasConvergeUrl()) {
+      //No action fro now
+    }
   }
 
   List<Widget> content(){
@@ -121,7 +123,7 @@ class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
       ),
       Text( Localization().getString("widget.card.label.converge")),
       Container(width: 5,),
-      Image.asset('images/chevron-right.png')
+//      Image.asset('images/chevron-right.png')
 
     ];
   }

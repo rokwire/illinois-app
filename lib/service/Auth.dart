@@ -559,7 +559,7 @@ class Auth with Service implements NotificationsListener {
 
       try {
         Response response = await Network().delete(url, headers: {'Content-Type': 'application/json'}, auth: NetworkAuth.User);
-        if(response?.statusCode == 200) {
+        if ((response?.statusCode != null) && (200 <= response.statusCode) && (response.statusCode <= 206)) {
           _applyUserPiiData(null, null);
           return true;
         }

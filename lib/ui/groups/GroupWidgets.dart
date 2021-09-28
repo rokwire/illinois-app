@@ -19,11 +19,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
-import 'package:illinois/model/ImageType.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/ImageService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
@@ -564,7 +563,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     return Stack(children: <Widget>[
       GestureDetector(onTap: () {
         Analytics().logSelect(target: "Group Event");
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, groupId: widget.group?.id,previewMode: widget.isAdmin,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
       },
           child: Padding(padding: EdgeInsets.all(16), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
@@ -695,9 +694,10 @@ class GroupAddImageWidget extends StatefulWidget {
 }
 
 class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
-  var _imageUrlController = TextEditingController();
+  final String _groupImageStoragePath = 'group/tout';
+  final int _groupImageWidth = 1080;
 
-  final ImageType _imageType = ImageType(identifier: 'event-tout', width: 1080);
+  var _imageUrlController = TextEditingController();
   bool _showProgress = false;
 
   @override
@@ -817,7 +817,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
       });
 
       Future<ImagesResult> result =
-      ImageService().useUrl(_imageType, url);
+      Content().useUrl(storageDir: _groupImageStoragePath, width: _groupImageWidth, url: url);
       result.then((logicResult) {
         setState(() {
           _showProgress = false;
@@ -850,7 +850,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
     });
 
     Future<ImagesResult> result =
-    ImageService().chooseFromDevice(_imageType);
+    Content().selectImageFromDevice(storagePath: _groupImageStoragePath, width: _groupImageWidth);
     result.then((logicResult) {
       setState(() {
         _showProgress = false;

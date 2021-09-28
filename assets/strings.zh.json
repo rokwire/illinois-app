@@ -641,6 +641,7 @@
 	"panel.explore_detail.time.sunday":"周日",
 	"panel.explore_detail.label.event_preview":"活动预览",
 	"panel.explore_detail.label.related_tags":"相关标签：",
+	"panel.explore_detail.label.contacts": "聯繫人:",
 	"panel.explore_detail.label.accepted_pa​​yment":"已接受付款",
 	"panel.explore_detail.label.accepted_pa​​yment_details":"详细信息",
 	"panel.explore_detail.recurring_event.schedule.heading.title": "可用時間",
@@ -1248,11 +1249,11 @@
 	"panel.parking_lots.label.empty":"本次活动无停车场",
 	"panel.parking_lots.label.available_spots":"可用停车位: ",
 
-	"panel.buss_pass.header.title": "MTD 公交车票",
-	"panel.buss_pass.button.close.title": "关闭",
-	"panel.buss_pass.description.text": " 上车时向司机显示此屏幕.",
-	"panel.buss_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
-	"panel.buss_pass.error.default.text": "無法加載公交通行證",
+	"panel.bus_pass.header.title": "MTD 公交车票",
+	"panel.bus_pass.button.close.title": "关闭",
+	"panel.bus_pass.description.text": " 上车时向司机显示此屏幕.",
+	"panel.bus_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
+	"panel.bus_pass.error.default.text": "無法加載公交通行證",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.description.main_text": "實現和維持健康是一個動態的過程，其中涉及自我反思以及對什麼是幸福以及如何解決該幸福的個性化意識的認識。",
@@ -1953,7 +1954,7 @@
 	"widget.id_card.header.title": "Illini ID",
 	"widget.id_card.header.button.close.title": "关闭",
 	"widget.id_card.label.update_i_card": "Update your i-card",
-	"widget.buss_pass.header.title": "MTD 公交车通行证",
+	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
 	"widget.card.label.expires.title": "卡过期",
 

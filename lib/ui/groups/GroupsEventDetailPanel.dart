@@ -27,16 +27,23 @@ import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 
-class GroupEventDetailPanel extends StatefulWidget{
+class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event event;
-  final String groupId;
+  final Group group;
   final bool previewMode;
 
-  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event, this.groupId}) : super(key: key);
+  String get groupId => group?.id;
+
+  const GroupEventDetailPanel({Key key,this.previewMode = false, this.event, this.group}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     return _GroupEventDetailsPanelState();
+  }
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes {
+    return group?.analyticsAttributes;
   }
 }
 
@@ -109,6 +116,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       Container(height: 8,),
                       _eventPriceDetail(),
                       _eventPrivacyDetail(),
+                      _eventContacts(),
                       Container(height: 20,),
                       _buildPreviewButtons(),
                       Container(height: 20,),
@@ -347,6 +355,44 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)))
               ])
             ])));
+  }
+
+  Widget _eventContacts() {
+    if (AppCollection.isCollectionEmpty(widget.event?.contacts)) {
+      return Container();
+    }
+    List<Widget> contactList = [];
+    contactList.add(Padding(
+        padding: EdgeInsets.only(bottom: 5), child: Text(Localization().getStringEx('panel.explore_detail.label.contacts', 'Contacts:'))));
+    for (Contact contact in widget.event.contacts) {
+      String contactDetails = '';
+      if (AppString.isStringNotEmpty(contact.firstName)) {
+        contactDetails += contact.firstName;
+      }
+      if (AppString.isStringNotEmpty(contact.lastName)) {
+        if (AppString.isStringNotEmpty(contactDetails)) {
+          contactDetails += ' ';
+        }
+        contactDetails += contact.lastName;
+      }
+      if (AppString.isStringNotEmpty(contact.organization)) {
+        contactDetails += ' (${contact.organization})';
+      }
+      if (AppString.isStringNotEmpty(contact.email)) {
+        if (AppString.isStringNotEmpty(contactDetails)) {
+          contactDetails += ', ';
+        }
+        contactDetails += contact.email;
+      }
+      if (AppString.isStringNotEmpty(contact.phone)) {
+        if (AppString.isStringNotEmpty(contactDetails)) {
+          contactDetails += ', ';
+        }
+        contactDetails += contact.phone;
+      }
+      contactList.add(Padding(padding: EdgeInsets.only(bottom: 5), child: Text(contactDetails, style: TextStyle(fontFamily: Styles().fontFamilies.regular))));
+    }
+    return Padding(padding: EdgeInsets.only(left: 30), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: contactList));
   }
 
   Widget _eventDescription() {

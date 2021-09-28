@@ -6,6 +6,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.28] - 2021-09-27
+### Changed
+- Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
+
+## [2.6.27] - 2021-09-17
+### Changed
+- Upload images using Content BB. [#763](https://github.com/rokwire/illinois-app/issues/763).
+
+## [2.6.26] - 2021-09-16
+### Fixed
+- Removed wrong "buss" spelling everywhere (display strings, internal names, resource names) [#756](https://github.com/rokwire/illinois-app/issues/756).
+
+## [2.6.25] - 2021-09-02
+### Changed
+- ExplorePanel: remove horizontal scrolling for tabs and filters. [#511](https://github.com/rokwire/illinois-app/issues/511).
+
+## [2.6.24] - 2021-09-01
+### Added
+- Added contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
+- Added group attributes ito "Request to join" select analytics event [#737](https://github.com/rokwire/illinois-app/issues/737).
+
+## [2.6.23] - 2021-08-30
+### Fixed
+- Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
+- AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
+- BrowsePanel: improve Large Text support [#511](https://github.com/rokwire/illinois-app/issues/511).
+
+## [2.6.22] - 2021-08-23
+### Fixed
+- Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
+- Unwanted display of test emergency widget [#710](https://github.com/rokwire/illinois-app/issues/710).
+### Changed
+- Delay creating MapWidget  until needed in Laundry Home, Laundry Detail and Event Schedule panels [#706](https://github.com/rokwire/illinois-app/issues/706).
+
 ## [2.6.21] - 2021-08-20
 ### Fixed
 - Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).

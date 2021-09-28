@@ -110,7 +110,7 @@ class FilterSelectorWidget extends StatelessWidget {
                     padding: padding,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
                           label,

@@ -37,13 +37,17 @@ import 'package:sprintf/sprintf.dart';
 
 import 'GroupFindEventPanel.dart';
 
-class GroupAdminPanel extends StatefulWidget {
+class GroupAdminPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group group;
   final List<GroupEvent>   groupEvents;
   
   GroupAdminPanel({this.group, this.groupEvents});
 
+  @override
   _GroupAdminPanelState createState() => _GroupAdminPanelState();
+
+  @override
+  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupAdminPanelState extends State<GroupAdminPanel>{
@@ -207,7 +211,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
 
   void onTapMembers(){
     Analytics().logSelect(target: "Group Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(groupId: widget.group.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: widget.group)));
   }
 
   void onTapSettings(){

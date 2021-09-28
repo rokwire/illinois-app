@@ -90,7 +90,7 @@ class TransportationService /* with Service */ {
     return null;
   }
 
-  Future<Color> loadBussColor({String userId, String deviceId}) async {
+  Future<Color> loadBusColor({String userId, String deviceId}) async {
     String transportationUrl =Config().transportationUrl;
     String url = "$transportationUrl/bus/color";
     Map<String, dynamic> data = {
@@ -108,14 +108,14 @@ class TransportationService /* with Service */ {
         String colorHex = jsonData["color"];
         return AppString.isStringNotEmpty(colorHex) ? UiColors.fromHex(colorHex) : null;
       } else {
-        Log.e('Failed to load buss color');
+        Log.e('Failed to load bus color');
         Log.e(responseBody);
       }
     } catch(e){}
     return null;
   }
 
-  Future<dynamic> loadBussPass({String userId, String deviceId, Map<String, dynamic> iBeaconData}) async {
+  Future<dynamic> loadBusPass({String userId, String deviceId, Map<String, dynamic> iBeaconData}) async {
     try {
       String url = "${Config().transportationUrl}/bus/pass";
       Map<String, dynamic> data = {
