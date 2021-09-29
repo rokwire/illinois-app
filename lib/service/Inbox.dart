@@ -128,7 +128,7 @@ class Inbox with Service implements NotificationsListener {
     dynamic body = (messageIds != null) ? AppJson.encode({ "ids": List.from(messageIds) }) : null;
 
     String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
-    Response response = await Network().get(url, body: body, auth: NetworkAuth.User);
+    Response response = await Network().get(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
 
@@ -138,7 +138,7 @@ class Inbox with Service implements NotificationsListener {
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
 
-    Response response = await Network().delete(url, body: body, auth: NetworkAuth.User);
+    Response response = await Network().delete(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200);
   }
 
@@ -146,7 +146,7 @@ class Inbox with Service implements NotificationsListener {
     String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
     String body = AppJson.encode(message?.toJson());
 
-    Response response = await Network().post(url, body: body, auth: NetworkAuth.User);
+    Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200);
   }
 
@@ -164,7 +164,7 @@ class Inbox with Service implements NotificationsListener {
       String body = AppJson.encode({
         'token': token
       });
-      Response response = await Network().post(url, body: body, auth: NetworkAuth.User);
+      Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
       Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
@@ -203,7 +203,7 @@ class Inbox with Service implements NotificationsListener {
         'previous_token': previousToken
       });
       if (auth == null) {
-        auth = Auth2().isLoggedIn ? NetworkAuth.User : NetworkAuth.App;
+        auth = Auth2().isLoggedIn ? NetworkAuth.Auth2 : NetworkAuth.App;
       }
       Response response = await Network().post(url, body: body, auth: auth);
       Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");

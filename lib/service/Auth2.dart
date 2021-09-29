@@ -219,7 +219,7 @@ class Auth2 with Service implements NotificationsListener {
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
         'org_id': Config().coreOrgId,
-        'app_id': Config().appCanonicalId,
+        'app_type_identifier': Config().appCanonicalId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
         'prefs': _userPrefs?.toJson(), //TBD Auth2
@@ -271,7 +271,7 @@ class Auth2 with Service implements NotificationsListener {
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
         'org_id': Config().coreOrgId,
-        'app_id': Config().appCanonicalId,
+        'app_type_identifier': Config().appCanonicalId,
         'redirect_uri': REDIRECT_URI,
       });
       Response response = await Network().post(url, headers: headers, body: post);
