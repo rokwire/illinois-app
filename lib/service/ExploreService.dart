@@ -21,6 +21,9 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Service.dart';
 import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/User.dart';
@@ -33,7 +36,15 @@ import 'package:illinois/service/Log.dart';
 
 
 /// ExploreService does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
-class ExploreService /* with Service */ {
+class ExploreService with Service implements NotificationsListener {
+
+  static const String EVENT_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/event_detail';
+
+  static const String notifyEventDetail = "edu.illinois.rokwire.explore.event.detail";
+
+  List<Map<String, dynamic>> _eventDetailsCache;
+  
+  // Singletone Factory
   static final ExploreService _instance = ExploreService._internal();
 
   factory ExploreService() {
@@ -41,6 +52,43 @@ class ExploreService /* with Service */ {
   }
 
   ExploreService._internal();
+
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _eventDetailsCache = [];
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedEventDetails();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([DeepLink()]);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
+  }
+
+
+  // Implementation
 
   Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, EventTimeFilter eventFilter = EventTimeFilter.upcoming, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
     if(_enabled) {
@@ -173,12 +221,10 @@ class ExploreService /* with Service */ {
       String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
       EventTimeFilter upcomingFilter = EventTimeFilter.upcoming;
       String timeQueryParams = _constructEventTimeFilterParams(upcomingFilter);
-      String dateTimeQueryParam = '&$timeQueryParams';
+      String url = '${Config().eventsUrl}?$idsQueryParam&$timeQueryParams';
       http.Response response;
-      String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
       try {
-        response = (Config().eventsUrl != null) ? await Network().get(
-            '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get(url, auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events by ids.');
         Log.e(e?.toString());
@@ -532,4 +578,52 @@ class ExploreService /* with Service */ {
   NetworkAuth get _userOrAppAuth{
     return Auth().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
   }
+
+  /////////////////////////
+  // DeepLinks
+
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri eventUri = Uri.tryParse(EVENT_URI);
+      if ((eventUri != null) &&
+          (eventUri.scheme == uri.scheme) &&
+          (eventUri.authority == uri.authority) &&
+          (eventUri.path == uri.path))
+      {
+        try { _handleEventDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  void _handleEventDetail(Map<String, dynamic> params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_eventDetailsCache != null) {
+        _cacheEventDetail(params);
+      }
+      else {
+        _processEventDetail(params);
+      }
+    }
+  }
+
+  void _processEventDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyEventDetail, params);
+  }
+
+  void _cacheEventDetail(Map<String, dynamic> params) {
+    _eventDetailsCache?.add(params);
+  }
+
+  void _processCachedEventDetails() {
+    if (_eventDetailsCache != null) {
+      List<Map<String, dynamic>> eventDetailsCache = _eventDetailsCache;
+      _eventDetailsCache = null;
+
+      for (Map<String, dynamic> eventDetail in eventDetailsCache) {
+        _handleEventDetail(eventDetail);
+      }
+    }
+  }
+
 }

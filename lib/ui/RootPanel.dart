@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Polls.dart';
@@ -96,6 +97,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
+      ExploreService.notifyEventDetail,
       DeviceCalendar.notifyPromptPopupMessage,
       Localization.notifyStringsUpdated,
       User.notifyFavoritesUpdated,
@@ -149,6 +151,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
+    }
+    else if (name == ExploreService.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       setState(() { });
@@ -365,7 +370,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic> content) async {
-    ExplorePanel.presentDetailPanel(context, eventId:content['event_id']);
+    String eventId = (content != null) ? AppJson.stringValue(content['event_id']) : null;
+    if (AppString.isStringNotEmpty(eventId)) {
+      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+    }
   }
 
   void _showPresentPoll() {
