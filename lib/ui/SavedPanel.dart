@@ -267,10 +267,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      Sports().loadAllScheduleGamesUnlimited().then((List<Game> athleticItems) {
+      Sports().loadGames(ids: favoriteGameIds.toList(growable: false)).then((List<Game> athleticItems) {
         setState(() {
           _progress--;
-          _athletics = _buildFilteredItems(athleticItems, favoriteGameIds);
+          _athletics = athleticItems;
         });
       });
     }

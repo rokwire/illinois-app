@@ -362,7 +362,7 @@ class Sports with Service {
       Log.d('Missing game id to load.');
       return null;
     }
-    List<Game> games = await _loadGames(ids: [gameId], sports: [sportKey]);
+    List<Game> games = await loadGames(ids: [gameId], sports: [sportKey]);
     return games?.first;
   }
 
@@ -534,7 +534,7 @@ class Sports with Service {
     return null;
   }
 
-  Future<List<Game>> _loadGames({List<String> ids, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
+  Future<List<Game>> loadGames({List<String> ids, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
     if (!_enabled) {
       return null;
     }
