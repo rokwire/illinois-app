@@ -670,7 +670,9 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   void _loadSportPreferences() {
     _sportPreferences = User().getSportsInterestSubCategories();
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _onTeamScheduleLoaded(TeamSchedule schedule) {
@@ -678,30 +680,38 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       _games = schedule.games;
       _record = schedule.record;
     }
-    setState(() {
-      _scheduleLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _scheduleLoaded = true;
+      });
+    }
   }
 
   void _onTeamNewsLoaded(List<News> newsList) {
     _teamNews = newsList;
-    setState(() {
-      _newsLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _newsLoaded = true;
+      });
+    }
   }
 
   void _onRostersLoaded(List<Roster> rosters) {
     _allRosters = rosters;
-    setState(() {
-      _rostersLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _rostersLoaded = true;
+      });
+    }
   }
 
   void _onCoachesLoaded(List<Coach> coaches) {
     _allCoaches = coaches;
-    setState(() {
-      _coachesLoaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _coachesLoaded = true;
+      });
+    }
   }
 
   GestureTapCallback _showRosterListPanel() {
