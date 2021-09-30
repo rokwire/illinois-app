@@ -162,7 +162,7 @@ class LiveStats with Service implements NotificationsListener {
   }
 
   void _loadLiveGames() {
-    String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/livestats" : null;
+    String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/v2/live-games" : null;
     var response = Network().get(url, auth: NetworkAuth.App);
     response.then((response) {
       if ((response != null) && (response.statusCode == 200)) {
