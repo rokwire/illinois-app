@@ -358,25 +358,12 @@ class Sports with Service {
   }
 
   Future<Game> loadGame(String sportKey, String gameId) async {
-    Game game;
-    if(_enabled) {
-      final url = (Config().sportScheduleUrl != null) ? "${Config().sportScheduleUrl}?path=$sportKey&format=json&game_id=$gameId" : null;
-      final response = await Network().get(url);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<dynamic> scheduleList = jsonData["schedule"];
-          if (scheduleList != null && scheduleList.length > 0) {
-            game = Game.fromJson(scheduleList[0]);
-          }
-        }
-      } else {
-        Log.e('Failed to load game with id:' + gameId);
-        Log.e(responseBody);
-      }
+    if (AppString.isStringEmpty(gameId)) {
+      Log.d('Missing game id to load.');
+      return null;
     }
-    return game;
+    List<Game> games = await _loadGames(ids: [gameId], sports: [sportKey]);
+    return games?.first;
   }
 
   Future<List<Game>> loadAllScheduleGames() async {
@@ -543,6 +530,62 @@ class Sports with Service {
           Log.e(responseBody);
         }
       }
+    }
+    return null;
+  }
+
+  Future<List<Game>> _loadGames({List<String> ids, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
+    if (!_enabled) {
+      return null;
+    }
+    String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
+    if (startDate == null) {
+      startDate = AppDateTime().now;
+    }
+    String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+    gamesUrl += '?start=$startDateFormatted';
+
+    if (endDate != null) {
+      String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      gamesUrl += '&end=$endDateFormatted';
+    }
+
+    if (AppCollection.isCollectionNotEmpty(ids)) {
+      for (String id in ids) {
+        if (AppString.isStringNotEmpty(id)) {
+          gamesUrl += '&id=$id';
+        }
+      }
+    }
+    if (AppCollection.isCollectionNotEmpty(sports)) {
+      for (String sport in sports) {
+        if (AppString.isStringNotEmpty(sport)) {
+          gamesUrl += '&sport=$sport';
+        }
+      }
+    }
+    if ((limit != null) && (limit > 0)) {
+      gamesUrl += '&limit=$limit';
+    }
+
+    final response = await Network().get(gamesUrl, auth: NetworkAuth.App);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+
+    if (responseCode == 200) {
+      List<dynamic> jsonData = AppJson.decode(responseBody);
+      if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<Game> gamesList = [];
+        for (dynamic entry in jsonData) {
+          Game game = Game.fromJson(entry);
+          if (game != null) {
+            gamesList.add(game);
+          }
+        }
+        return gamesList;
+      }
+    } else {
+      Log.d('Failed to load games. Reason: $responseBody');
     }
     return null;
   }
