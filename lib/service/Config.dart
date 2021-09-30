@@ -110,9 +110,7 @@ class Config with Service implements NotificationsListener {
   String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
   String get rokwireAuthUrl         { return platformBuildingBlocks['rokwire_auth_url']; }            // "https://api-dev.rokwire.illinois.edu/authentication"
   String get imagesServiceUrl       { return platformBuildingBlocks['images_service_url']; }          // "https://api-dev.rokwire.illinois.edu/images-service";
-  //TBD: Fix sports service url, remove unused config entries - roser, coaches, news, social
-  // String get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
-  String get sportsServiceUrl       { return "http://192.168.1.101/sports-service"; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
+  String get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
   String get eventsUrl              { return platformBuildingBlocks['events_url']; }                  // "https://api-dev.rokwire.illinois.edu/events"
   String get talentChooserUrl       { return platformBuildingBlocks['talent_chooser_url']; }          // "https://api-dev.rokwire.illinois.edu/talent-chooser/api/ui-content"
   String get parkingUrl             { return platformBuildingBlocks["parking_url"]; }                 // "https://api-dev.rokwire.illinois.edu/parking/api"
