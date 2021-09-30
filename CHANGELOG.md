@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - SECURITY.md file [#785](https://github.com/rokwire/illinois-app/issues/785).
 
-## [3.0.14] 2021-09-27
+## [3.0.15] 2021-09-28
 ### Fixed
 - Deeplink url for calendar events [#751](https://github.com/rokwire/illinois-app/issues/751).
 
