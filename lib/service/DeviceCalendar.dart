@@ -15,6 +15,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
   static const String notifyPromptPopupMessage    = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
   static const String notifyPlaceEventMessage     = "edu.illinois.rokwire.device_calendar.messaging.place.event";
+  static const String showConsoleMessage    = "edu.illinois.rokwire.debug_console.messaging.message";
 
   Calendar _defaultCalendar;
   Map<String, String> _calendarEventIdTable;
@@ -44,11 +45,11 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   Future<bool> _addEvent(ExploreEvent.Event event) async{
-    _debugToast("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
+    _debugMessage("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
     
     //User prefs
     if(!canAddToCalendar){
-      _debugToast("Disabled");
+      _debugMessage("Disabled");
       return false;
     }
     
@@ -73,14 +74,14 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(_deviceCalendarPlugin == null){
       bool initResult = await _initDeviceCalendarPlugin();
       if(!initResult ?? true){
-        _debugToast("Unable to init plugin");
+        _debugMessage("Unable to init plugin");
       }
     }
-    _debugToast("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
+    _debugMessage("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
     //PERMISSIONS
     bool hasPermissions = await _requestPermissions();
 
-    _debugToast("Has permissions: $hasPermissions");
+    _debugMessage("Has permissions: $hasPermissions");
     //PLACE
     if(hasPermissions && _defaultCalendar!=null) {
       Event calendarEvent = _convertEvent(event);
@@ -89,7 +90,7 @@ class DeviceCalendar with Service implements NotificationsListener{
         _storeEventId(event.id, createEventResult?.data);
       }
 
-      _debugToast("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
+      _debugMessage("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
 
       if(!createEventResult.isSuccess) {
         AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
@@ -105,18 +106,18 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(_deviceCalendarPlugin == null){
       bool initResult = await _initDeviceCalendarPlugin();
       if(!initResult ?? true){
-        _debugToast("Unable to init plugin");
+        _debugMessage("Unable to init plugin");
       }
     }
 
     String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
-    _debugToast("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${_defaultCalendar.id}");
+    _debugMessage("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${_defaultCalendar.id}");
     if(AppString.isStringEmpty(eventId)){
       return false;
     }
 
     final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(_defaultCalendar?.id, eventId);
-    _debugToast("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
+    _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
     if(deleteEventResult.isSuccess){
       _eraseEventId(event?.id);
     }
@@ -198,8 +199,8 @@ class DeviceCalendar with Service implements NotificationsListener{
     _calendarEventIdTable.removeWhere((key, value) => key == id);
   }
 
-  void _debugToast(String msg){
-    AppToast.show(msg); //TBD Remove before release
+  void _debugMessage(String msg){
+    NotificationService().notify(DeviceCalendar.showConsoleMessage, msg);
   }
 
   void _processEvents(List events){

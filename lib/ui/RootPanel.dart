@@ -98,7 +98,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       ExploreService.notifyEventDetail,
-      DeviceCalendar.notifyPromptPopupMessage,
       Localization.notifyStringsUpdated,
       User.notifyFavoritesUpdated,
       User.notifyPrivacyLevelEmpty,
@@ -106,6 +105,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+      DeviceCalendar.notifyPromptPopupMessage,
+      DeviceCalendar.showConsoleMessage,
     ]);
 
     _tabs = _getTabs();
@@ -142,6 +143,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void onNotification(String name, dynamic param) {
     if (name == DeviceCalendar.notifyPromptPopupMessage) {
       _onCalendarPromptMessage(param);
+    }
+    else if (name == DeviceCalendar.showConsoleMessage) {
+      _showConsoleMessage(param);
     }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
@@ -409,6 +413,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
   }
+  
+  void _showConsoleMessage(message){
+    AppAlert.showDialogResult(context, message);
+  }
 
   static List<String> _getTabbarCodes() {
     try {
@@ -549,7 +557,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list'),
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.") :""),
                             style: TextStyle(
                               color: Styles().colors.white,
                               fontSize: 16,
