@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-## Added
+## [3.0.16] 2021-09-30
+### Added
 - SECURITY.md file [#785](https://github.com/rokwire/illinois-app/issues/785).
+### Changed 
+-  Update Calendar event deep link to use redirect url as workaround for broken Android links. [#751](https://github.com/rokwire/illinois-app/issues/751).
 
 ## [3.0.15] 2021-09-28
 ### Fixed

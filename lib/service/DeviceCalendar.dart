@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:device_calendar/device_calendar.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -171,9 +174,7 @@ class DeviceCalendar with Service implements NotificationsListener{
       calendarEvent.end = DateTime(event.startDateLocal.year, event.startDateLocal.month, event.startDateLocal.day, 23, 59,);
     }
 
-    String eventDeepLink = "${ExploreService.EVENT_URI}?event_id=${event.id}";
-    calendarEvent.description ="$eventDeepLink";
-//    calendarEvent.url = Uri.dataFromString(eventDeepLink);
+    calendarEvent.description = _constructEventDeepLinkUrl(event);
     return calendarEvent;
   }
 
@@ -220,7 +221,18 @@ class DeviceCalendar with Service implements NotificationsListener{
     NotificationService().notify(notifyPromptPopupMessage, event);
   }
 
+  String _constructEventDeepLinkUrl(ExploreEvent.Event event){
+    if(event == null || event.id == null){
+      return null;
+    }
 
+    String eventDeepLink = "${ExploreService.EVENT_URI}?event_id=${event.id}";
+    Uri assetsUri = Uri.parse(Config().assetsUrl);
+    String redirectUrl = assetsUri!= null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+
+    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$eventDeepLink" : eventDeepLink;
+  }
+  
 
   @override
   void onNotification(String name, param) {
