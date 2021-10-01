@@ -177,7 +177,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
 
   Widget _newsTimeDetail() {
     News news = widget.news;
-    String displayTime = news?.getDisplayTime();
+    String displayTime = news?.displayTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
@@ -207,7 +207,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   bool _showTopBorder(){
-    return widget.news?.getImageUrl()==null ?? true;
+    return widget.news?.imageUrl == null ?? true;
   }
 
   void _onTapSave() {

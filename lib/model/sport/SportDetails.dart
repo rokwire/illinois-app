@@ -58,44 +58,22 @@ class SportSeasonSchedule {
 }
 
 class SportSocialMedia {
-  int id;
-  String shortName;
-  String abbrev;
-  String name;
-  String shortDisplayName;
-  String globalSportShortName;
-  String twitterName;
-  String instagramName;
-  String facebookPage;
-  String facebookId;
+  final String shortName;
+  final String twitterName;
+  final String instagramName;
+  final String facebookPage;
 
-  SportSocialMedia(
-      {this.id,
-        this.shortName,
-        this.abbrev,
-        this.name,
-        this.shortDisplayName,
-        this.globalSportShortName,
-        this.twitterName,
-        this.instagramName,
-        this.facebookPage,
-        this.facebookId});
+  SportSocialMedia({this.shortName, this.twitterName, this.instagramName, this.facebookPage});
 
   factory SportSocialMedia.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
     return SportSocialMedia(
-        id: json['id'],
         shortName: json['shortname'],
-        abbrev: json['abbrev'],
-        name: json['name'],
-        shortDisplayName: json['short_display_name'],
-        globalSportShortName: json['global_sport_shortname'],
         twitterName: json['sport_twitter_name'],
         instagramName: json['sport_instagram_name'],
-        facebookPage: json['sport_facebook_page'],
-        facebookId: json['sport_facebook_id']);
+        facebookPage: json['sport_facebook_page']);
   }
 }
 

@@ -94,22 +94,22 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                         title: Localization().getStringEx("panel.athletics_roster_detail.label.highschool.title", "High School"),
                         value: widget.roster.highSchool
                     ),
-                    Container(
+                    Visibility(visible: AppString.isStringNotEmpty(widget.roster.htmlBio), child: Container(
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                         color: Styles().colors.background,
                         child: Column(
                             children: <Widget>[
                               HtmlWidget(
-                                widget.roster.htmlBio,
+                                AppString.getDefaultEmptyString(value: widget.roster.htmlBio),
                                 webView: false,
                                 textStyle: TextStyle(
-                                  fontFamily: Styles().fontFamilies.regular,
-                                  fontSize: 16
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: 16
                                 ),
                               )
                             ]
                         )
-                    )
+                    ))
                   ],
                 ),
                 //modalPhotoVisibility ? Expanded
@@ -126,7 +126,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
 
   Widget _createModalPhotoDialog(){
    return _modalPhotoVisibility ? ModalImageDialog(
-     imageUrl: widget.roster.rosterFullSizePhotoUrl,
+     imageUrl: widget.roster.fullSizePhotoUrl,
      onClose: () {
        Analytics.instance.logSelect(target: "Close");
        _modalPhotoVisibility = false;
@@ -261,8 +261,8 @@ class _RosterDetailHeading extends StatelessWidget{
                     child: Container(
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
-                      child: (AppString.isStringNotEmpty(roster.rosterPhotoUrl) ?
-                      Image.network(roster.rosterPhotoUrl,width: photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      child: (AppString.isStringNotEmpty(roster.thumbPhotoUrl) ?
+                      Image.network(roster.thumbPhotoUrl, width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)
                       ),
                     ),

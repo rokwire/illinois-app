@@ -20,64 +20,49 @@ import 'package:illinois/utils/Utils.dart';
 
 import 'UserData.dart';
 
-class News implements Favorite{
-  String id;
+class News implements Favorite {
+  final String id;
+  final String title;
+  final String link;
+  final String category;
+  final String description;
+  final String fullText;
+  final String fullTextRaw;
+  final String imageUrl;
+  final DateTime pubDateUtc;
 
-  String title;
-  String link;
-  String category;
-  String description;
-  String summary;
-  String fulltext;
-  DateTime pubDateUTC;
+  final Map<String, dynamic> json;
 
-  Map<String,dynamic> jsonData;
-
-
-  News(
-      {
-        this.id,
-        this.title,
-        this.link,
-        this.category,
-        this.description,
-        this.summary,
-        this.fulltext,
-        this.pubDateUTC,
-        this.jsonData});
+  News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
   factory News.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
     return News(
-      id          : json['id'],
-      title       : json['title'],
-      link        : json['link'],
-      category    : json["category"],
-      description : json['description'],
-      summary     : json['summary'],
-      fulltext    : json['fulltext'],
-      pubDateUTC  : AppDateTime().dateTimeFromString(json['pubDateUTC'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true),
-      jsonData    : json,
-    );
+        id: json['id'],
+        title: json['title'],
+        link: json['link'],
+        category: json["category"],
+        description: json['description'],
+        fullText: json['fulltext'],
+        fullTextRaw: json['fulltext_raw'],
+        imageUrl: json['image_url'],
+        pubDateUtc: AppDateTime().dateTimeFromString(json['pub_date_utc'], format: AppDateTime.serverResponseDateTimeFormat, isUtc: true),
+        json: json);
   }
 
-  String getImageUrl(){
-      Map<String,dynamic> enclosure = jsonData!=null ? jsonData["enclosure"] : null;
-      return enclosure!=null ? enclosure["url"] : null;
+  String get fillText {
+    return AppString.isStringNotEmpty(fullText) ? fullText : fullTextRaw;
   }
 
-  String getFillText(){
-    return AppString.isStringNotEmpty(fulltext) ? fulltext : jsonData['fulltext_raw'];
-  }
-
-  String getDisplayTime() {
-    if (pubDateUTC == null) {
+  String get displayTime {
+    if (pubDateUtc == null) {
       return "";
     }
     bool useDeviceLocalTimeZone = Storage().useDeviceLocalTimeZone;
-    DateTime pubDateTime = useDeviceLocalTimeZone ? AppDateTime()
-        .getDeviceTimeFromUtcTime(pubDateUTC) : pubDateUTC;
-    return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ",
-        ignoreTimeZone: useDeviceLocalTimeZone);
+    DateTime pubDateTime = useDeviceLocalTimeZone ? AppDateTime().getDeviceTimeFromUtcTime(pubDateUtc) : pubDateUtc;
+    return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ", ignoreTimeZone: useDeviceLocalTimeZone);
   }
 
   @override
@@ -90,8 +75,4 @@ class News implements Favorite{
   String get favoriteKey => favoriteKeyName;
 
   static String favoriteKeyName = "athleticNewsIds";
-
-
 }
-
-

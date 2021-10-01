@@ -109,14 +109,13 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   void _loadSchedules() {
     _setLoading(true);
-    Sports()
-        .loadScheduleForCurrentSeason(widget.sport?.shortName).then((sportSeason) => _onSportSeasonLoaded(sportSeason));
+    Sports().loadScheduleForCurrentSeason(widget.sport?.shortName).then((schedule) => _onScheduleLoaded(schedule));
   }
 
-  void _onSportSeasonLoaded(Map<String, TeamSchedule> sportSeason) {
-    if (sportSeason != null) {
-      _scheduleYear = sportSeason.keys.elementAt(0);
-      _schedule = sportSeason.values.elementAt(0);
+  void _onScheduleLoaded(TeamSchedule schedule) {
+    if (schedule != null) {
+      _schedule = schedule;
+      _scheduleYear = schedule.label;
       _displayList = _buildDisplayList();
     }
     _setLoading(false);
@@ -124,7 +123,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   List _buildDisplayList() {
     List displayList = [];
-    if (_schedule.games != null && _schedule.games.isNotEmpty) {
+    if (AppCollection.isCollectionNotEmpty(_schedule?.games)) {
       DateTime now = DateTime.now();
       for (Game game in _schedule.games) {
         DateTime gameDateTime = game.dateTimeUniLocal;
