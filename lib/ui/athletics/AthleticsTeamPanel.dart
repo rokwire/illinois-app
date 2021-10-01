@@ -63,20 +63,19 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   List<Roster> _allRosters;
   List<Coach> _allCoaches;
   List<String> _sportPreferences;
-  bool _scheduleLoaded = false;
-  bool _newsLoaded = false;
-  bool _rostersLoaded = false;
-  bool _coachesLoaded = false;
+
+  int _progress = 0;
 
   @override
   void initState() {
     NotificationService().subscribe(this, User.notifyInterestsUpdated);
 
     _loadSportPreferences();
-    Sports().loadUpcomingScheduleItems(widget.sport.shortName, 3).then((schedule) => _onTeamScheduleLoaded(schedule));
-    Sports().loadNews(widget.sport.shortName, 2).then((newsList) => _onTeamNewsLoaded(newsList));
-    Sports().loadRosters(widget.sport.shortName).then((rosters) => _onRostersLoaded(rosters));
-    Sports().loadCoaches(widget.sport.shortName).then((coaches) => _onCoachesLoaded(coaches));
+    _loadGames();
+    _loadRecord();
+    _loadNews();
+    _loadRosters();
+    _loadCoaches();
     super.initState();
   }
 
@@ -88,11 +87,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   bool get hasSportPreference{
     return _sportPreferences != null && _sportPreferences.contains(widget.sport.shortName);
-  }
-
-  void onTapSportPreference(){
-    Analytics.instance.logSelect(target:"Category -Favorite");
-    User().switchSportSubCategory(widget.sport.shortName);
   }
 
   @override
@@ -179,7 +173,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                         checked: hasSportPreference,
                         button: true,
                         child: GestureDetector(
-                          onTap: onTapSportPreference,
+                          onTap: _onTapSportPreference,
                           child: Padding(
                               padding: EdgeInsets.only(top: 8),
                               child: hasSportPreference ? Image.asset('images/deselected-dark.png') : Image.asset('images/deselected.png')
@@ -675,43 +669,44 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     }
   }
 
-  void _onTeamScheduleLoaded(TeamSchedule schedule) {
-    if (schedule != null) {
-      _games = schedule.games;
-      _record = schedule.record;
-    }
-    if (mounted) {
-      setState(() {
-        _scheduleLoaded = true;
-      });
-    }
+  void _loadGames() {
+    _increaseProgress();
+    Sports().loadUpcomingGames(sport: widget.sport.shortName, limit: 3).then((games) {
+      _games = games;
+      _decreaseProgress();
+    });
   }
 
-  void _onTeamNewsLoaded(List<News> newsList) {
-    _teamNews = newsList;
-    if (mounted) {
-      setState(() {
-        _newsLoaded = true;
-      });
-    }
+  void _loadRecord() {
+    _increaseProgress();
+    Sports().loadRecordForCurrentSeason(widget.sport.shortName).then((record) {
+      _record = record;
+      _decreaseProgress();
+    });
   }
 
-  void _onRostersLoaded(List<Roster> rosters) {
-    _allRosters = rosters;
-    if (mounted) {
-      setState(() {
-        _rostersLoaded = true;
-      });
-    }
+  void _loadNews() {
+    _increaseProgress();
+    Sports().loadNews(widget.sport.shortName, 2).then((newsList) {
+      _teamNews = newsList;
+      _decreaseProgress();
+    });
   }
 
-  void _onCoachesLoaded(List<Coach> coaches) {
-    _allCoaches = coaches;
-    if (mounted) {
-      setState(() {
-        _coachesLoaded = true;
-      });
-    }
+  void _loadRosters() {
+    _increaseProgress();
+    Sports().loadRosters(widget.sport.shortName).then((rosters) {
+      _allRosters = rosters;
+      _decreaseProgress();
+    });
+  }
+
+  void _loadCoaches() {
+    _increaseProgress();
+    Sports().loadCoaches(widget.sport.shortName).then((coaches) {
+      _allCoaches = coaches;
+      _decreaseProgress();
+    });
   }
 
   GestureTapCallback _showRosterListPanel() {
@@ -743,6 +738,11 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               builder: (context) =>
                   AthleticsSchedulePanel(sport: widget.sport,)));
     };
+  }
+
+  void _onTapSportPreference() {
+    Analytics.instance.logSelect(target:"Category -Favorite");
+    User().switchSportSubCategory(widget.sport.shortName);
   }
 
   void _onTapRosterItem(BuildContext context, Roster roster) {
@@ -798,9 +798,24 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
     return coachingWidgets;
   }
 
+  void _increaseProgress() {
+    if (mounted) {
+      setState(() {
+        _progress++;
+      });
+    }
+  }
+
+  void _decreaseProgress() {
+    if (mounted) {
+      setState(() {
+        _progress--;
+      });
+    }
+  }
+
   bool _isLoading() {
-    return !(_scheduleLoaded && _newsLoaded && _coachesLoaded &&
-        _rostersLoaded);
+    return _progress > 0;
   }
 
   // NotificationsListener

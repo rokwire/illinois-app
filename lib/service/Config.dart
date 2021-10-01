@@ -124,7 +124,6 @@ class Config with Service implements NotificationsListener {
   String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
   String get twitterHostUrl         { return thirdPartyServices['twitter_host_url']; }          // "https://twitter.com/"
   String get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
-  String get sportScheduleUrl       { return thirdPartyServices['sport_schedule_url']; }        // "http://fightingillini.com/services/schedule_xml_2.aspx"
   String get ticketsUrl             { return thirdPartyServices['tickets_url']; }               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"
   String get youtubeUrl             { return thirdPartyServices['youtube_url']; }               // "https://www.youtube.com/c/fightingilliniathletics"
   String get voterRegistrationUrl   { return thirdPartyServices['voter_registration_url']; }    // "https://ova.elections.il.gov/"

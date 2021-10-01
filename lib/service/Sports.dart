@@ -260,38 +260,45 @@ class Sports with Service {
     return null;
   }
 
-  ///returns Map<String, Schedule> where the key is the season name and the value is the Schedule itself
-  Future<Map<String, TeamSchedule>> loadScheduleForCurrentSeason(String sportKey) async {
-    if(_enabled) {
-      if (AppString.isStringEmpty(sportKey)) {
-        return null;
-      }
-      String baseScheduleUrl = await getCurrentSportSeasonScheduleUrl(sportKey);
-      if (AppString.isStringEmpty(baseScheduleUrl)) {
-        return null;
-      }
-      final String yearLabel = 'year=';
-      int startIndex = baseScheduleUrl.indexOf(yearLabel) + yearLabel.length;
-      String scheduleYear = baseScheduleUrl.substring(startIndex, baseScheduleUrl.length);
-      final scheduleUrl = "$baseScheduleUrl&format=json";
-      final response = await Network().get(scheduleUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        TeamSchedule schedule = TeamSchedule.fromJson(jsonData);
-        return {scheduleYear: schedule};
-      } else {
-        Log.e('Failed to load schedule for $sportKey');
-        Log.e(responseBody);
-        return null;
-      }
+  Future<TeamSchedule> loadScheduleForCurrentSeason(String sportKey) async {
+    if (AppString.isStringEmpty(sportKey) || !_enabled) {
+      return null;
     }
-    return null;
+    String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
+    final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic> jsonData = AppJson.decode(responseBody);
+      TeamSchedule schedule = TeamSchedule.fromJson(jsonData);
+      return schedule;
+    } else {
+      Log.e('Failed to load schedule for $sportKey. Reason: $responseBody');
+      return null;
+    }
+  }
+
+  Future<TeamRecord> loadRecordForCurrentSeason(String sportKey) async {
+    if (AppString.isStringEmpty(sportKey) || !_enabled) {
+      return null;
+    }
+    String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
+    final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic> jsonData = AppJson.decode(responseBody);
+      TeamRecord record = TeamRecord.fromJson(jsonData);
+      return record;
+    } else {
+      Log.e('Failed to load record for $sportKey. Reason: $responseBody');
+      return null;
+    }
   }
 
   Future<List<Game>> loadTopScheduleGames() async {
     if(_enabled) {
-      List<Game> gamesList = await loadAllScheduleGames();
+      List<Game> gamesList = await loadUpcomingGames();
       return getTopScheduleGamesFromList(gamesList);
     }
     return null;
@@ -366,131 +373,9 @@ class Sports with Service {
     return games?.first;
   }
 
-  Future<List<Game>> loadAllScheduleGames() async {
-    List<Game> gamesList = [];
-    if(_enabled) {
-      String scheduleUrl = "${Config().sportsServiceUrl}/api/v2/games";
-      DateTime now = AppDateTime().now;
-      if (now != null) {
-        String dateOffsetString = AppDateTime().formatDateTime(now, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
-        scheduleUrl = '$scheduleUrl?start=$dateOffsetString';
-      }
-
-      final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
-      if (response != null) {
-        String responseBody = response.body;
-        if (response.statusCode == 200) {
-          List<dynamic> jsonListData = AppJson.decode(responseBody);
-          if (AppCollection.isCollectionNotEmpty(jsonListData)) {
-            for (var jsonData in jsonListData) {
-              Game game = Game.fromJson(jsonData);
-              gamesList.add(game);
-            }
-            gamesList.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-          }
-        } else {
-          Log.e('Failed to load upcoming upcoming games');
-          Log.e(responseBody);
-        }
-      } else {
-        Log.e('Failed to load upcoming upcoming games response == null');
-      }
-    }
+  Future<List<Game>> loadUpcomingGames({String sport, int limit = 0}) async {
+    List<Game> gamesList = await (AppString.isStringNotEmpty(sport) ? _loadGames(sports: [sport], limit: limit) : _loadGames(limit: limit));
     return gamesList;
-  }
-
-  Future<List<Game>> loadUpcomingGames() async {
-    List<Game> gamesList;
-    if (_enabled) {
-      DateTime now = AppDateTime().now;
-      String dateOffsetString = AppDateTime().formatDateTime(now, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
-      String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games?start=$dateOffsetString';
-      final response = await Network().get(gamesUrl, auth: NetworkAuth.App);
-
-      if (response != null) {
-        String responseBody = response.body;
-        if (response.statusCode == 200) {
-          List<dynamic> jsonData = AppJson.decode(responseBody);
-          if (AppCollection.isCollectionNotEmpty(jsonData)) {
-            gamesList = [];
-            for (dynamic entry in jsonData) {
-              Game game = Game.fromJson(entry);
-              if (game != null) {
-                gamesList.add(game);
-              }
-            }
-            gamesList.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-          }
-        } else {
-          Log.e('Failed to load upcoming games. Reason: $responseBody');
-        }
-      } else {
-        Log.e('Failed to load upcoming games: response is null');
-      }
-    }
-    return gamesList;
-  }
-
-  Future<TeamSchedule> loadUpcomingScheduleItems(String sportKey, int limit) async {
-    TeamSchedule schedule;
-    if(_enabled) {
-      if (limit <= 0 || AppString.isStringEmpty(sportKey)) {
-        return null;
-      }
-      String baseScheduleUrl = await getCurrentSportSeasonScheduleUrl(sportKey);
-      if (AppString.isStringEmpty(baseScheduleUrl)) {
-        return null;
-      }
-
-      DateTime now = DateTime.now();
-      String nowFormatted = AppDateTime().formatDateTime(
-          now, format: AppDateTime.scheduleServerQueryDateTimeFormat,
-          ignoreTimeZone: true);
-      final scheduleUrl = "$baseScheduleUrl&format=json&starting=$nowFormatted&take=$limit";
-      final response = await Network().get(scheduleUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        schedule = TeamSchedule.fromJson(jsonData);
-      } else {
-        Log.e('Failed to load upcoming schedule for $sportKey');
-        Log.e(responseBody);
-      }
-    }
-    return schedule;
-  }
-
-  Future<SportSeasons> loadSportSeason(String sportKey) async {
-    SportSeasons sportSeason;
-    if(_enabled) {
-      if (AppString.isStringEmpty(sportKey)) {
-        return null;
-      }
-      final sportSeasonsUrl = (Config().sportScheduleUrl != null) ? "${Config().sportScheduleUrl}?format=json&path=$sportKey&sportseasons=true" : null;
-      final response = await Network().get(sportSeasonsUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        sportSeason = SportSeasons.fromJson(jsonData);
-      } else {
-        Log.e('Failed to load sport seasons for $sportKey');
-        Log.e(responseBody);
-      }
-    }
-    return sportSeason;
-  }
-
-  Future<String> getCurrentSportSeasonScheduleUrl(String sportKey) async {
-    if(_enabled) {
-      SportSeasons sportSeason = await loadSportSeason(sportKey);
-      List<SportSeasonSchedule> seasons = sportSeason?.seasons;
-      if (seasons == null || seasons.isEmpty) {
-        return null;
-      }
-      SportSeasonSchedule lastSeason = seasons[seasons.length - 1];
-      return lastSeason.schedule;
-    }
-    return null;
   }
 
   Future<List<News>> loadNews(String sportKey, int count) async {
@@ -706,6 +591,5 @@ class Sports with Service {
   /////////////////////////
   // Enabled
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl)
-      && AppString.isStringNotEmpty(Config().sportScheduleUrl);
+  bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl);
 }
