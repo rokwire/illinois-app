@@ -464,7 +464,7 @@ class Sports with Service {
         return gamesList;
       }
     } else {
-      Log.d('Failed to load games. Reason: $responseBody');
+      Log.e('Failed to load games. Reason: $responseBody');
     }
     return null;
   }
