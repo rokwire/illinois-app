@@ -362,7 +362,7 @@ class Sports with Service {
       Log.d('Missing game id to load.');
       return null;
     }
-    List<Game> games = await loadGames(ids: [gameId], sports: [sportKey]);
+    List<Game> games = await _loadGames(id: gameId, sports: [sportKey]);
     return games?.first;
   }
 
@@ -399,36 +399,33 @@ class Sports with Service {
     return gamesList;
   }
 
-  ///
-  /// DD: This is used for Saved panel because sport service returns limited game results until 02/16/2019 when we query with startDate=10/01/2019.
-  /// Workaround for not displaying Athletics games in Saved panel
-  ///
-  Future<List<Game>> loadAllScheduleGamesUnlimited() async {
+  Future<List<Game>> loadUpcomingGames() async {
     List<Game> gamesList;
-    if(_enabled) {
-      String scheduleUrl = Config().sportScheduleUrl;
+    if (_enabled) {
       DateTime now = AppDateTime().now;
-      String dateOffsetString = AppDateTime().formatDateTime(
-          now, format: AppDateTime.scheduleServerQueryDateTimeFormat,
-          ignoreTimeZone: true);
-      scheduleUrl = '$scheduleUrl?format=json&starting=$dateOffsetString';
-      final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
+      String dateOffsetString = AppDateTime().formatDateTime(now, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games?start=$dateOffsetString';
+      final response = await Network().get(gamesUrl, auth: NetworkAuth.App);
 
       if (response != null) {
         String responseBody = response.body;
         if (response.statusCode == 200) {
-          Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-          TeamSchedule schedule = TeamSchedule.fromJson(jsonData);
-          gamesList = schedule.games;
-          gamesList.sort((game1, game2) =>
-              game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
+          List<dynamic> jsonData = AppJson.decode(responseBody);
+          if (AppCollection.isCollectionNotEmpty(jsonData)) {
+            gamesList = [];
+            for (dynamic entry in jsonData) {
+              Game game = Game.fromJson(entry);
+              if (game != null) {
+                gamesList.add(game);
+              }
+            }
+            gamesList.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
+          }
         } else {
-          Log.e('Failed to load unlimited upcoming games');
-          Log.e(responseBody);
+          Log.e('Failed to load upcoming games. Reason: $responseBody');
         }
       } else {
-        Log.e(
-            'Failed to load unlimited upcoming games: response is null');
+        Log.e('Failed to load upcoming games: response is null');
       }
     }
     return gamesList;
@@ -534,7 +531,7 @@ class Sports with Service {
     return null;
   }
 
-  Future<List<Game>> loadGames({List<String> ids, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
+  Future<List<Game>> _loadGames({String id, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
     if (!_enabled) {
       return null;
     }
@@ -550,13 +547,10 @@ class Sports with Service {
       gamesUrl += '&end=$endDateFormatted';
     }
 
-    if (AppCollection.isCollectionNotEmpty(ids)) {
-      for (String id in ids) {
-        if (AppString.isStringNotEmpty(id)) {
-          gamesUrl += '&id=$id';
-        }
-      }
+    if (AppString.isStringNotEmpty(id)) {
+      gamesUrl += '&id=$id';
     }
+
     if (AppCollection.isCollectionNotEmpty(sports)) {
       for (String sport in sports) {
         if (AppString.isStringNotEmpty(sport)) {
