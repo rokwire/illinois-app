@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix loading Athletics games [#790](https://github.com/rokwire/illinois-app/issues/790).
 
-## [3.0.16] 2021-10-01
+## [3.0.17] 2021-10-01
 ### Changed
 - Acknowledged new APIs from Sports BB [#750](https://github.com/rokwire/illinois-app/issues/750).
 - Updated debug messages for Device Calendar [#751](https://github.com/rokwire/illinois-app/issues/751).
