@@ -424,10 +424,12 @@ class Sports with Service {
     if (startDate == null) {
       startDate = AppDateTime().now;
     }
+    startDate = startDate.toUtc();
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
     gamesUrl += '?start=$startDateFormatted';
 
     if (endDate != null) {
+      endDate = endDate.toUtc();
       String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
       gamesUrl += '&end=$endDateFormatted';
     }
