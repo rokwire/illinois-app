@@ -18,6 +18,7 @@ import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import '../UserData.dart';
 
@@ -176,7 +177,7 @@ class Game implements Favorite {
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
       String dateFormatted = AppDateTime().formatDateTime(date, format: dateFormat, ignoreTimeZone: true, showTzSuffix: false); //another workaround
-      dateFormatted += ' $timeToString';
+      dateFormatted += ' ${AppString.getDefaultEmptyString(value: timeToString)}';
       return dateFormatted;
     } else {
       return AppDateTime().getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
