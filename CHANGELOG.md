@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fix loading Athletics games [#790](https://github.com/rokwire/illinois-app/issues/790).
+
 ## [3.0.16] 2021-10-01
 ### Changed
 - Acknowledged new APIs from Sports BB [#750](https://github.com/rokwire/illinois-app/issues/750).
