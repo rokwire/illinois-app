@@ -19,16 +19,17 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
@@ -62,7 +63,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   void initState() {
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      User.notifyTagsUpdated,
+      Auth2UserPrefs.notifyTagsChanged,
     ]);
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
@@ -86,7 +87,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     if (name == Connectivity.notifyStatusChanged) {
       _loadAvailableCategories();
     }
-    else if (name == User.notifyTagsUpdated) {
+    else if (name == Auth2UserPrefs.notifyTagsChanged) {
       _loadEvents();
     }
   }
@@ -124,13 +125,13 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
     if (Connectivity().isNotOffline) {
 
-      Set<String> userCategories = User().getInterestsCategories()?.toSet();
+      Set<String> userCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
       if ((userCategories != null) && userCategories.isNotEmpty && (_availableCategories != null) && _availableCategories.isNotEmpty) {
         userCategories = userCategories.intersection(_availableCategories);
       }
       Set<String> categoriesFilter = ((userCategories != null) && userCategories.isNotEmpty) ? userCategories : null;
 
-      Set<String> userTags = User().getTags()?.toSet();
+      Set<String> userTags = Auth2().prefs?.getTags(positive: true);
       Set<String> tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
       ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {

@@ -16,11 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/model/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/News.dart';
@@ -62,13 +63,13 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   List<News> _teamNews;
   List<Roster> _allRosters;
   List<Coach> _allCoaches;
-  List<String> _sportPreferences;
+  Set<String> _sportPreferences;
 
   int _progress = 0;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyInterestsUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyInterestsChanged);
 
     _loadSportPreferences();
     _loadGames();
@@ -663,9 +664,10 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   }
 
   void _loadSportPreferences() {
-    _sportPreferences = User().getSportsInterestSubCategories();
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _sportPreferences = Auth2().prefs?.sportsInterests;
+      });
     }
   }
 
@@ -742,7 +744,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   void _onTapSportPreference() {
     Analytics.instance.logSelect(target:"Category -Favorite");
-    User().switchSportSubCategory(widget.sport.shortName);
+    Auth2().prefs?.toggleSportInterest(widget.sport.shortName);
   }
 
   void _onTapRosterItem(BuildContext context, Roster roster) {
@@ -822,7 +824,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyInterestsUpdated) {
+    if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _loadSportPreferences();
     }
   }

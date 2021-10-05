@@ -21,6 +21,7 @@ import 'package:illinois/model/sport/Team.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 
 import 'package:illinois/model/Coach.dart';
@@ -30,7 +31,6 @@ import 'package:illinois/model/Roster.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -306,7 +306,7 @@ class Sports with Service {
 
   List<Game> getTopScheduleGamesFromList(List<Game> gamesList){
     if(_enabled) {
-      List<String> preferredSports = User().getSportsInterestSubCategories();
+      Set<String> preferredSports = Auth2().prefs?.sportsInterests;
 
       // Step 1: Group games by sport
       Map<String, List<Game>> gamesMap = Map<String, List<Game>>();

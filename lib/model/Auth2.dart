@@ -480,8 +480,6 @@ class Auth2UserPrefs {
   static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
   static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
-  static const String sportsInterestsCategory = "sports";  
-
   int _privacyLevel;
   Set<UserRole> _roles;
   Map<String, Set<String>>  _favorites;
@@ -729,7 +727,12 @@ class Auth2UserPrefs {
   }
 
   Set<String> getInterestsFromCategory(String category) {
-    return (_interests != null) ? _interests[category] : null;
+    return ((_interests != null) && (category != null)) ? _interests[category] : null;
+  }
+
+  bool hasInterest(String category, String interest) {
+    Set<String> interests = ((category != null) && (_interests != null)) ? _interests[category] : null;
+    return ((interests != null) && (interest != null)) ? interests.contains(interest) : null;
   }
 
   void toggleInterest(String category, String interest) {
@@ -789,9 +792,34 @@ class Auth2UserPrefs {
     }
   }
 
-  void _clearInterests() {
-    _interests = Map<String, Set<String>>();
+  void clearInterestsAndTags() {
+    bool modified = false;
+
+    if ((_interests == null) || _interests.isNotEmpty) {
+      _interests = Map<String, Set<String>>();
+      modified = true;
+      NotificationService().notify(notifyInterestsChanged);
+    }
+
+    if ((_tags == null) || _tags.isNotEmpty) {
+      _tags = Map<String, bool>();
+      modified = true;
+      NotificationService().notify(notifyTagsChanged);
+    }
+
+    if (modified) {
+      NotificationService().notify(notifyChanged, this);
+    }
   }
+
+  // Sports
+
+  static const String sportsInterestsCategory = "sports";  
+
+  Set<String> get sportsInterests => getInterestsFromCategory(sportsInterestsCategory);
+  bool hasSportInterest(String sport) => hasInterest(sportsInterestsCategory, sport);
+  void toggleSportInterest(String sport) => toggleInterest(sportsInterestsCategory, sport);
+  void toggleSportInterests(Iterable<String> sports) => toggleInterests(sportsInterestsCategory, sports);
 
   // Tags
 
@@ -859,10 +887,6 @@ class Auth2UserPrefs {
         NotificationService().notify(notifyChanged, this);
       }
     }
-  }
-
-  void _clearTags() {
-    _tags = Map<String, bool>();
   }
 
   // Helpers

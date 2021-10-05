@@ -22,7 +22,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
@@ -191,7 +190,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
       DiningService().setExcludedFoodIngredientsPrefs([]);
     }
     if(selectedOptions.contains(OptionYourInterests)){
-      User().deleteInterests();
+      Auth2().prefs?.clearInterestsAndTags();
     }
     progressController(loading: false);
     Navigator.pop(context);

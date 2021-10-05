@@ -936,7 +936,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   String _getInterestsLabelValue() {
     String sportName = widget?.game?.sport?.shortName;
-    bool isSportFavorite = AppString.isStringNotEmpty(sportName)? User().getSportsInterestSubCategories()?.contains(sportName)?? false : false;
+    bool isSportFavorite = Auth2().prefs?.hasSportInterest(sportName);
     return isSportFavorite ? Sports().getSportByShortName(sportName)?.customName : null;
   }
 }

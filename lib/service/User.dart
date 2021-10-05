@@ -331,15 +331,15 @@ class User with Service implements NotificationsListener {
   }
 
   //Sport categories (Interest)
-  switchInterestCategory(String categoryName) async{
+  /*switchInterestCategory(String categoryName) async{
     _userData?.switchCategory(categoryName);
 
     _updateUser().then((_){
       _notifyUserInterestsUpdated();
     });
-  }
+  }*/
 
-  switchSportSubCategory(String sportSubCategory) async {
+  /*switchSportSubCategory(String sportSubCategory) async {
     if(_userData!=null){
       _userData.switchInterestSubCategory(sportsInterestCategory, sportSubCategory);
        // the ui should be updated immediately
@@ -349,9 +349,9 @@ class User with Service implements NotificationsListener {
     _updateUser().then((_){
       _notifyUserInterestsUpdated();
     });
-  }
+  }*/
 
-  switchSportSubCategories(List<String> sportSubCategories) async {
+  /*switchSportSubCategories(List<String> sportSubCategories) async {
     if (sportSubCategories == null || sportSubCategories.isEmpty) {
       return;
     }
@@ -364,44 +364,44 @@ class User with Service implements NotificationsListener {
         _notifyUserInterestsUpdated();
       });
     }
-  }
+  }*/
 
-  List<String> getSportsInterestSubCategories() {
+  /*List<String> getSportsInterestSubCategories() {
     return  _userData?.interests!=null?_userData?.interests[sportsInterestCategory] : null;
-  }
+  }*/
 
-  Map<String,List<String>> getInterests() {
+  /*Map<String,List<String>> getInterests() {
     return _userData?.interests;
-  }
+  }*/
 
-  List<String> getInterestsCategories() {
+  /*List<String> getInterestsCategories() {
     if(_userData!=null && _userData.interests!=null){
       return _userData.interests.keys.toList();
     } else {
       return null;
     }
-  }
+  }*/
 
-  void updateCategories(List<String> newCategoriesSelection){
+  /*void updateCategories(List<String> newCategoriesSelection){
     _userData.updateCategories(newCategoriesSelection);
     _updateUser().then((_) {
       _notifyUserInterestsUpdated();
     });
-  }
+  }*/
 
-  void updateSportsSubCategories(List<String> newSubCategoriesSelection){
+  /*void updateSportsSubCategories(List<String> newSubCategoriesSelection){
     _userData.updateSubCategories(sportsInterestCategory, newSubCategoriesSelection);
     _updateUser().then((_) {
       _notifyUserInterestsUpdated();
     });
-  }
+  }*/
 
-  void deleteInterests(){
+  /*void deleteInterests(){
     _userData.deleteInterests();
     _updateUser().then((_) {
       _notifyUserInterestsUpdated();
     });
-  }
+  }*/
 
   ///////
   //Tags
@@ -523,9 +523,9 @@ class User with Service implements NotificationsListener {
     NotificationService().notify(notifyUserDeleted, null);
   }
 
-  void _notifyUserInterestsUpdated() {
+  /*void _notifyUserInterestsUpdated() {
     NotificationService().notify(notifyInterestsUpdated, null);
-  }
+  }*/
 
   void _notifyUserTagsUpdated() {
     NotificationService().notify(notifyTagsUpdated, null);

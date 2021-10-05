@@ -66,7 +66,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
     _menSports = widget.menSports ? Sports().getMenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
     _womenSports = widget.womenSports ? Sports().getWomenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
-    _sportPreferences = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+    _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
 
     _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
     super.initState();
@@ -88,7 +88,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       if (mounted) {
         setState(() {
-          _sportPreferences = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+          _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
         });
       }
     }
@@ -99,7 +99,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
       setState(() {
         _menSports = widget.menSports ? Sports().getMenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
         _womenSports = widget.womenSports ? Sports().getWomenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
-        _sportPreferences = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+        _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
       });
     }
   }
@@ -149,7 +149,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                             Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
                             AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
                                 Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
-                            Auth2().prefs?.toggleInterests(Auth2UserPrefs.sportsInterestsCategory, Sports.switchAllSports(_menSports, _sportPreferences, !allMenSelected));
+                            Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _sportPreferences, !allMenSelected));
                           } ,
                           child: Row(children: <Widget>[
                             Expanded(child:
@@ -204,7 +204,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                               Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
                               AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
                                   Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
-                              Auth2().prefs?.toggleInterests(Auth2UserPrefs.sportsInterestsCategory, Sports.switchAllSports(_womenSports, _sportPreferences, !allWomenSelected));
+                              Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _sportPreferences, !allWomenSelected));
                             },
                             child: Row(children: <Widget>[
                               Expanded(child:
@@ -299,7 +299,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   void _onTapAthleticsSportCheckmark(SportDefinition sport) {
     Analytics.instance.logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name);
     AppSemantics.announceCheckBoxStateChange(context, _sportPreferences?.contains(sport.shortName) ?? false, sport?.customName);
-    Auth2().prefs?.toggleInterest(Auth2UserPrefs.sportsInterestsCategory, sport.shortName);
+    Auth2().prefs?.toggleSportInterest(sport.shortName);
   }
 
 }

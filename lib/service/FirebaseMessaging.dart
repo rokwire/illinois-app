@@ -37,7 +37,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -109,9 +108,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      User.notifyInterestsUpdated,
-      User.notifyUserUpdated,
-      User.notifyUserDeleted,
+      Auth2UserPrefs.notifyInterestsChanged,
+      Auth2.notifyProfileChanged,
+      Auth2.notifyUserDeleted,
       AppLivecycle.notifyStateChanged,
       LocalNotifications.notifySelected
     ]);
@@ -169,7 +168,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseService(), Storage(), Config(), User()]);
+    return Set.from([FirebaseService(), Storage(), Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -185,13 +184,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateNotifySettingsSubscriptions();
     }
-    else if (name == User.notifyInterestsUpdated) {
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _updateAthleticsSubscriptions();
     }
-    else if (name == User.notifyUserUpdated) {
+    else if (name == Auth2.notifyProfileChanged) {
       _updateSubscriptions();
     }
-    else if (name == User.notifyUserDeleted) {
+    else if (name == Auth2.notifyUserDeleted) {
       _updateSubscriptions();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -514,7 +513,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _processAthleticsSubscriptions({Set<String> subscribedTopis}) {
     bool notifyAthletics = notifyAthleticsUpdates;
-    Set<String> selectedSports = User().getSportsInterestSubCategories()?.toSet();
+    Set<String> selectedSports = Auth2().prefs?.sportsInterests;
     List<SportDefinition> sportDefs = Sports().getSports();
     if (sportDefs != null) {
       for (SportDefinition sportDef in sportDefs) {

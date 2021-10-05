@@ -32,7 +32,10 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyLoginChanged   = "edu.illinois.rokwire.auth2.login.changed";
   static const String notifyLoginFinished  = "edu.illinois.rokwire.auth2.login.finished";
   static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
+  static const String notifyProfileChanged = "edu.illinois.rokwire.auth2.profile.changed";
+  static const String notifyPrefsChanged   = "edu.illinois.rokwire.auth2.prefs.changed";
   static const String notifyCardChanged    = "edu.illinois.rokwire.auth2.card.changed";
+  static const String notifyUserDeleted    = "edu.illinois.rokwire.auth2.user.deleted";
 
   static const String _authCardName        = "idCard.json";
 

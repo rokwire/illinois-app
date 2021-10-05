@@ -20,7 +20,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
@@ -513,17 +512,17 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>> _loadNearMe(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    List<String> tags = _getSelectedEventTags(selectedFilterList);
+    Set<String> tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
-    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags?.toSet(), eventFilter: eventFilter) : null;
+    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    List<String> tags = _getSelectedEventTags(selectedFilterList);
+    Set<String> tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, tags: tags?.toSet(), eventFilter: eventFilter);
+    return ExploreService().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
   }
 
   Future<List<Explore>> _loadDining(List<ExploreFilter> selectedFilterList) async {
@@ -563,9 +562,9 @@ class ExplorePanelState extends State<ExplorePanel>
         } else {
           selectedCategories = Set();
           if (selectedIndexes.contains(1)) { //My categories
-            List<String> userCategories = User().getInterestsCategories();
+            Iterable<String> userCategories = Auth2().prefs?.interestCategories;
             if (userCategories != null && userCategories.isNotEmpty) {
-              selectedCategories.addAll(userCategories.toSet());
+              selectedCategories.addAll(userCategories);
             }
           }
           List<String> filterCategoriesValues = _getFilterCategoriesValues();
@@ -620,7 +619,7 @@ class ExplorePanelState extends State<ExplorePanel>
     };*/
   }
 
-  List<String> _getSelectedEventTags(List<ExploreFilter> selectedFilterList) {
+  Set<String> _getSelectedEventTags(List<ExploreFilter> selectedFilterList) {
     if (selectedFilterList == null || selectedFilterList.isEmpty) {
       return null;
     }
@@ -630,7 +629,7 @@ class ExplorePanelState extends State<ExplorePanel>
         if (index == 0) {
           return null; //All Tags
         } else { //My tags
-          return User().getTags();
+          return Auth2().prefs?.getTags(positive: true);
         }
       }
     }
@@ -749,7 +748,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Explore explore = _displayExplores[realIndex];
 
     List<ExploreFilter> selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap[_selectedTab] : null;
-    List<String> tags  = _getSelectedEventTags(selectedFilterList);
+    Set<String> tags  = _getSelectedEventTags(selectedFilterList);
 
     ExploreCard exploreView = ExploreCard(
         explore: explore,

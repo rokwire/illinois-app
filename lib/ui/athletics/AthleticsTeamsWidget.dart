@@ -55,7 +55,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
     NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
     _menSports = Sports().getMenSports();
     _womenSports = Sports().getWomenSports();
-    _preferredSports = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+    _preferredSports = Auth2().prefs?.sportsInterests  ?? Set<String>();
     super.initState();
   }
 
@@ -72,7 +72,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
       if (mounted) {
         setState(() {
-          _preferredSports = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+          _preferredSports = Auth2().prefs?.sportsInterests ?? Set<String>();
         });
       }
     }
@@ -185,7 +185,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
-                    Auth2().prefs?.toggleInterests(Auth2UserPrefs.sportsInterestsCategory, Sports.switchAllSports(_menSports, _preferredSports, !allMenSelected));
+                    Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _preferredSports, !allMenSelected));
                   },
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx(menSelectClearTextKey, ''),
@@ -244,7 +244,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
-                    Auth2().prefs?.toggleInterests(Auth2UserPrefs.sportsInterestsCategory, Sports.switchAllSports(_womenSports, _preferredSports, !allWomenSelected));
+                    Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _preferredSports, !allWomenSelected));
                   },
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx(womenSelectClearTextKey, ''),
@@ -271,7 +271,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   void _onTapAthleticsSportCheck(BuildContext context, SportDefinition sport) {
     Analytics.instance.logSelect(target: "Sport Check Tap: "+sport.name);
     AppSemantics.announceCheckBoxStateChange(context, _preferredSports?.contains(sport.shortName) ?? false, sport?.customName);
-    Auth2().prefs?.toggleInterest(Auth2UserPrefs.sportsInterestsCategory, sport.shortName);
+    Auth2().prefs?.toggleSportInterest(sport.shortName);
   }
 
 }
