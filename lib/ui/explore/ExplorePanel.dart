@@ -629,7 +629,7 @@ class ExplorePanelState extends State<ExplorePanel>
         if (index == 0) {
           return null; //All Tags
         } else { //My tags
-          return Auth2().prefs?.getTags(positive: true);
+          return Auth2().prefs?.positiveTags;
         }
       }
     }

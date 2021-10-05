@@ -131,7 +131,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       }
       Set<String> categoriesFilter = ((userCategories != null) && userCategories.isNotEmpty) ? userCategories : null;
 
-      Set<String> userTags = Auth2().prefs?.getTags(positive: true);
+      Set<String> userTags = Auth2().prefs?.positiveTags;
       Set<String> tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
       ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {

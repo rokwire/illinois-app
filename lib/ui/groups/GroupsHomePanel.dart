@@ -22,7 +22,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -72,7 +71,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
     // Filter by User Tags
     if (_selectedTagFilter == _TagFilter.my) {
-      List<String> userTags = User().getTags();
+      Set<String> userTags = Auth2().prefs?.positiveTags;
       if (AppCollection.isCollectionNotEmpty(userTags) && AppCollection.isCollectionNotEmpty(filteredGroups)) {
         filteredGroups = filteredGroups.where((group) => group.tags?.any((tag) => userTags.contains(tag)) ?? false).toList();
       }

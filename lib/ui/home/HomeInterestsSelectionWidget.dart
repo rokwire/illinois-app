@@ -20,6 +20,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
@@ -145,7 +146,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
       Random random = Random(DateTime.now()?.millisecondsSinceEpoch);
       int randomIndex = (random.nextInt(max));
       String interest = _allInterests[randomIndex];
-      bool userContainsInterest = User()?.getTags()?.contains(interest) ?? false;
+      bool userContainsInterest = Auth2().prefs?.hasPositiveTag(interest);
       bool resultContainsInterest = result.contains(interest);
 
       if (userContainsInterest || resultContainsInterest) {
