@@ -41,6 +41,7 @@ import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
+import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -354,7 +355,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
-                NotificationService().notify(DeviceCalendar.notifyPlaceEventMessage, data);
+                List calendars = data!=null? data["calendars"] : null;
+                if(calendars!=null){
+                  CalendarSelectionDialog.show(context, data["event"], calendars);
+                } else {
+                  NotificationService().notify(
+                      DeviceCalendar.notifyPlaceEventMessage, data);
+                }
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
