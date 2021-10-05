@@ -57,6 +57,8 @@ class Auth2 with Service implements NotificationsListener {
   AuthCard  _authCard;
   File _authCardCacheFile;
 
+  String _deviceId;
+
   // Singletone instance
 
   Auth2._internal();
@@ -90,6 +92,8 @@ class Auth2 with Service implements NotificationsListener {
     
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
+
+    _deviceId = await NativeCommunicator().getDeviceId();
   }
 
   @override
@@ -99,7 +103,7 @@ class Auth2 with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config() ]);
+    return Set.from([Storage(), Config(), NativeCommunicator() ]);
   }
 
   // NotificationsListener
@@ -230,7 +234,8 @@ class Auth2 with Service implements NotificationsListener {
         'app_type_identifier': Config().appCanonicalId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
-        'preferences': _userPrefs?.toJson(), //TBD Auth2
+        'preferences': _userPrefs?.toJson(),
+        'device': _deviceInfo
       });
       _oidcLogin = null;
       
@@ -335,6 +340,16 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> handlePhoneAuthentication(String phoneNumber, String code) async {
     return false;
+  }
+
+  // Device Info
+
+  Map<String, dynamic> get _deviceInfo {
+    return {
+      'type': "mobile",
+      'device_id': _deviceId,
+      'os': Platform.operatingSystem,
+    };
   }
 
   // Logout
