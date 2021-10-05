@@ -25,7 +25,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -707,7 +706,7 @@ class Event with Explore implements Favorite {
     String interests = "";
     if(AppCollection.isCollectionNotEmpty(tags)) {
       tags.forEach((String tag){
-          if(User().isTagged(tag, true)) {
+          if(Auth2().prefs?.hasPositiveTag(tag) ?? false) {
             if (interests.isNotEmpty) {
               interests += ", ";
             }

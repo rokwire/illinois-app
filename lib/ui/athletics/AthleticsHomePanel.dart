@@ -22,7 +22,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -70,7 +69,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     NotificationService().subscribe(this, [
       Storage.offsetDateKey,
       Connectivity.notifyStatusChanged,
-      User.notifyInterestsUpdated
+      Auth2UserPrefs.notifyInterestsChanged
     ]);
 
     _loadGames();
@@ -546,7 +545,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     if(name == Storage.offsetDateKey){
       _loadGames();
     }
-    else if (name == User.notifyInterestsUpdated) {
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _reloadGames();
     }
   }

@@ -36,12 +36,8 @@ class User with Service implements NotificationsListener {
 
   static const String notifyUserUpdated = "edu.illinois.rokwire.user.updated";
   static const String notifyUserDeleted = "edu.illinois.rokwire.user.deleted";
-  static const String notifyTagsUpdated  = "edu.illinois.rokwire.user.tags.updated";
-  static const String notifyInterestsUpdated  = "edu.illinois.rokwire.user.interests.updated";
   static const String notifyPrivacyLevelEmpty  = "edu.illinois.rokwire.user.privacy.level.empty";
   static const String notifyVoterUpdated  = "edu.illinois.rokwire.user.voter.updated";
-
-  static final String sportsInterestCategory = "sports";
 
   UserData _userData;
 
@@ -330,135 +326,6 @@ class User with Service implements NotificationsListener {
     return userUpdated;
   }
 
-  //Sport categories (Interest)
-  /*switchInterestCategory(String categoryName) async{
-    _userData?.switchCategory(categoryName);
-
-    _updateUser().then((_){
-      _notifyUserInterestsUpdated();
-    });
-  }*/
-
-  /*switchSportSubCategory(String sportSubCategory) async {
-    if(_userData!=null){
-      _userData.switchInterestSubCategory(sportsInterestCategory, sportSubCategory);
-       // the ui should be updated immediately
-      _notifyUserInterestsUpdated();
-    }
-
-    _updateUser().then((_){
-      _notifyUserInterestsUpdated();
-    });
-  }*/
-
-  /*switchSportSubCategories(List<String> sportSubCategories) async {
-    if (sportSubCategories == null || sportSubCategories.isEmpty) {
-      return;
-    }
-    if (_userData != null) {
-      for (String category in sportSubCategories) {
-        _userData.switchInterestSubCategory(sportsInterestCategory, category);
-      }
-      _notifyUserInterestsUpdated();
-      _updateUser().then((_) {
-        _notifyUserInterestsUpdated();
-      });
-    }
-  }*/
-
-  /*List<String> getSportsInterestSubCategories() {
-    return  _userData?.interests!=null?_userData?.interests[sportsInterestCategory] : null;
-  }*/
-
-  /*Map<String,List<String>> getInterests() {
-    return _userData?.interests;
-  }*/
-
-  /*List<String> getInterestsCategories() {
-    if(_userData!=null && _userData.interests!=null){
-      return _userData.interests.keys.toList();
-    } else {
-      return null;
-    }
-  }*/
-
-  /*void updateCategories(List<String> newCategoriesSelection){
-    _userData.updateCategories(newCategoriesSelection);
-    _updateUser().then((_) {
-      _notifyUserInterestsUpdated();
-    });
-  }*/
-
-  /*void updateSportsSubCategories(List<String> newSubCategoriesSelection){
-    _userData.updateSubCategories(sportsInterestCategory, newSubCategoriesSelection);
-    _updateUser().then((_) {
-      _notifyUserInterestsUpdated();
-    });
-  }*/
-
-  /*void deleteInterests(){
-    _userData.deleteInterests();
-    _updateUser().then((_) {
-      _notifyUserInterestsUpdated();
-    });
-  }*/
-
-  ///////
-  //Tags
-  /*List<String> getTags() {
-    return _userData?.positiveTags;
-  }*/
-
-  switchTag(String tag,{bool fastRefresh=true}) {
-    bool positiveInterest = true;
-    if(isTagged(tag,positiveInterest)){
-      removeTag(tag,fastRefresh);
-    } else {
-      addTag(tag, positiveInterest,fastRefresh);
-    }
-  }
-
-  addTag(String tag, bool positiveInterest, bool fastRefresh) {
-    if(tag==null || _userData==null)
-      return;
-
-    if(AppString.isStringNotEmpty(tag)) {
-      if(positiveInterest){
-        _userData.addPositiveTag(tag);
-      } else {
-        _userData.addNegativeTag(tag);
-      }
-      if(fastRefresh)
-        _notifyUserTagsUpdated();
-      _updateUser().then((_) {
-        _notifyUserTagsUpdated();
-      });
-    }
-  }
-
-  removeTag(String tag,bool fastRefresh) {
-    if(tag==null || _userData==null)
-      return;
-
-    if(AppString.isStringNotEmpty(tag)) {
-      _userData.removeTag(tag);
-      if(fastRefresh)
-        _notifyUserTagsUpdated();
-      _updateUser().then((_) {
-        _notifyUserTagsUpdated();
-      });
-    }
-  }
-
-  void updateTags(List<String> newTagsSelection){
-    //We are using only positive tags for now
-    _userData?.updatePositiveTags(newTagsSelection);
-  }
-
-  bool isTagged(String tag, bool positiveInterest) {
-    return _userData?.containsTag(tag) ?? false;
-  }
-
   // Voter Registration
 
   void updateVoterRegistration({@required bool registeredVoter}) {
@@ -527,9 +394,9 @@ class User with Service implements NotificationsListener {
     NotificationService().notify(notifyInterestsUpdated, null);
   }*/
 
-  void _notifyUserTagsUpdated() {
+  /*void _notifyUserTagsUpdated() {
     NotificationService().notify(notifyTagsUpdated, null);
-  }
+  }*/
 
   void _notifyUserVoterUpdated() {
     NotificationService().notify(notifyVoterUpdated, null);

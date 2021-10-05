@@ -825,6 +825,7 @@ class Auth2UserPrefs {
 
   Set<String> get positiveTags => getTags(positive: true);
   bool hasPositiveTag(String tag) => hasTag(tag, positive: true);
+  void togglePositiveTag(String tag) => toggleTag(tag, positive: true);
 
   Set<String> getTags({ bool positive }) {
     Set<String> tags;
