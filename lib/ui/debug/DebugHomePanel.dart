@@ -592,10 +592,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapClearVoting() {
     Storage().voterHiddenForPeriod = false;
-    User().updateVoted(voted: null);
-    User().updateVoterByMail(voterByMail: null);
-    User().updateVotePlace(votePlace: null);
-    User().updateVoterRegistration(registeredVoter: null);
+    Auth2().prefs?.voter?.clear();
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 

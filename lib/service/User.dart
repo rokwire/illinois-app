@@ -37,7 +37,6 @@ class User with Service implements NotificationsListener {
   static const String notifyUserUpdated = "edu.illinois.rokwire.user.updated";
   static const String notifyUserDeleted = "edu.illinois.rokwire.user.deleted";
   static const String notifyPrivacyLevelEmpty  = "edu.illinois.rokwire.user.privacy.level.empty";
-  static const String notifyVoterUpdated  = "edu.illinois.rokwire.user.voter.updated";
 
   UserData _userData;
 
@@ -328,7 +327,7 @@ class User with Service implements NotificationsListener {
 
   // Voter Registration
 
-  void updateVoterRegistration({@required bool registeredVoter}) {
+  /*void updateVoterRegistration({@required bool registeredVoter}) {
     if ((_userData != null) && (registeredVoter != _userData.registeredVoter)) {
       _userData.registeredVoter = registeredVoter;
       _updateUser().then((_) {
@@ -378,7 +377,7 @@ class User with Service implements NotificationsListener {
 
   String get votePlace {
     return _userData?.votePlace;
-  }
+  }*/
 
   // Notifications
 
@@ -390,17 +389,6 @@ class User with Service implements NotificationsListener {
     NotificationService().notify(notifyUserDeleted, null);
   }
 
-  /*void _notifyUserInterestsUpdated() {
-    NotificationService().notify(notifyInterestsUpdated, null);
-  }*/
-
-  /*void _notifyUserTagsUpdated() {
-    NotificationService().notify(notifyTagsUpdated, null);
-  }*/
-
-  void _notifyUserVoterUpdated() {
-    NotificationService().notify(notifyVoterUpdated, null);
-  }
 }
 
 class UserNotFoundException implements Exception{

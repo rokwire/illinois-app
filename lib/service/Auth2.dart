@@ -163,6 +163,11 @@ class Auth2 with Service implements NotificationsListener {
 
   bool isFavorite(Favorite favorite) => prefs?.isFavorite(favorite) ?? false;
   bool isListFavorite(List<Favorite> favorites) => prefs?.isListFavorite(favorites) ?? false;
+
+  bool get isVoterRegistered => prefs?.voter?.registeredVoter ?? false;
+  bool get isVoterByMail => prefs?.voter?.voterByMail ?? false;
+  bool get didVote => prefs?.voter?.voted ?? false;
+  String get votePlace => prefs?.voter?.votePlace;
   
 
   // OIDC Authentication

@@ -477,6 +477,7 @@ class Auth2UserPrefs {
   static const String notifyFavoritesChanged  = "edu.illinois.rokwire.user.prefs.favorites.changed";
   static const String notifyFavoriteChanged  = "edu.illinois.rokwire.user.prefs.favorite.changed";
   static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
+  static const String notifyVoterChanged  = "edu.illinois.rokwire.user.prefs.voter.changed";
   static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
   static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
@@ -485,13 +486,15 @@ class Auth2UserPrefs {
   Map<String, Set<String>>  _favorites;
   Map<String, Set<String>>  _interests;
   Map<String, bool> _tags;
+  Auth2VoterPrefs _voter;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Auth2VoterPrefs voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
     _interests = interests;
     _tags = tags;
+    _voter = Auth2VoterPrefs.fromOther(voter, onChanged: _onVoterChanged);
   }
 
   factory Auth2UserPrefs.fromJson(Map<String, dynamic> json) {
@@ -501,6 +504,7 @@ class Auth2UserPrefs {
       favorites: mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
       interests: mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
       tags: _tagsFromJson(AppJson.mapValue(json['tags'])),
+      voter: Auth2VoterPrefs.fromJson(AppJson.mapValue(json['voter'])),
     ) : null;
   }
 
@@ -511,6 +515,7 @@ class Auth2UserPrefs {
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
       tags: Map<String, bool>(),
+      voter: Auth2VoterPrefs(),
     );
   }
 
@@ -521,6 +526,7 @@ class Auth2UserPrefs {
       'favorites': mapOfStringSetsToJson(_favorites),
       'interests': mapOfStringSetsToJson(_interests),
       'tags': _tags,
+      'voter': _voter
     };
   }
 
@@ -530,14 +536,16 @@ class Auth2UserPrefs {
       DeepCollectionEquality().equals(o._roles, _roles) &&
       DeepCollectionEquality().equals(o._favorites, _favorites) &&
       DeepCollectionEquality().equals(o._interests, _interests) &&
-      DeepCollectionEquality().equals(o._tags, _tags);
+      DeepCollectionEquality().equals(o._tags, _tags) &&
+      (o._voter == _voter);
 
   int get hashCode =>
     (_privacyLevel?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(_roles) ?? 0) ^
     (DeepCollectionEquality().hash(_favorites) ?? 0) ^
     (DeepCollectionEquality().hash(_interests) ?? 0) ^
-    (DeepCollectionEquality().hash(_tags) ?? 0);
+    (DeepCollectionEquality().hash(_tags) ?? 0) ^
+    (_voter?.hashCode ?? 0);
 
   bool apply(Auth2UserPrefs prefs) {
     bool modified = false;
@@ -561,6 +569,10 @@ class Auth2UserPrefs {
       }
       if ((prefs._tags != null) && prefs._tags.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
         _tags = prefs._tags;
+        modified = true;
+      }
+      if ((prefs._voter != null) && prefs._voter.isNotEmpty && (prefs._voter != _voter)) {
+        _voter = Auth2VoterPrefs.fromOther(prefs._voter, onChanged: _onVoterChanged);
         modified = true;
       }
     }
@@ -893,6 +905,15 @@ class Auth2UserPrefs {
     }
   }
 
+  // Voter
+
+  Auth2VoterPrefs get voter => _voter;
+
+  void _onVoterChanged() {
+    NotificationService().notify(notifyVoterChanged);
+    NotificationService().notify(notifyChanged, this);
+  }
+
   // Helpers
 
   static Map<String, Set<String>> mapOfStringSetsFromJson(Map<String, dynamic> jsonMap) {
@@ -923,3 +944,133 @@ class Auth2UserPrefs {
   }
 }
 
+class Auth2VoterPrefs {
+  bool _registeredVoter;
+  String _votePlace;
+  bool _voterByMail;
+  bool _voted;
+  
+  Function onChanged;
+  
+  Auth2VoterPrefs({bool registeredVoter, String votePlace, bool voterByMail, bool voted, this.onChanged}) :
+    _registeredVoter = registeredVoter,
+    _votePlace = votePlace,
+    _voterByMail = voterByMail,
+    _voted = voted;
+
+  factory Auth2VoterPrefs.fromJson(Map<String, dynamic> json, { Function onChanged }) {
+    return (json != null) ? Auth2VoterPrefs(
+      registeredVoter: AppJson.boolValue(json['registered_voter']),
+      votePlace: AppJson.stringValue(json['vote_place']),
+      voterByMail: AppJson.boolValue(json['voter_by_mail']),
+      voted: AppJson.boolValue(json['voted']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'registered_voter' : _registeredVoter,
+      'vote_place': _votePlace,
+      'voter_by_mail': _voterByMail,
+      'voted': _voted,
+    };
+  }
+
+  factory Auth2VoterPrefs.fromOther(Auth2VoterPrefs other, { Function onChanged }) {
+    return (other != null) ? Auth2VoterPrefs(
+      registeredVoter: other.registeredVoter,
+      votePlace: other.votePlace,
+      voterByMail: other.voterByMail,
+      voted: other.voted,
+      onChanged: onChanged,
+    ) : null;
+  }
+
+  bool operator ==(o) =>
+    (o is Auth2VoterPrefs) &&
+      (o._registeredVoter == _registeredVoter) &&
+      (o._votePlace == _votePlace) &&
+      (o._voterByMail == _voterByMail) &&
+      (o._voted == _voted);
+
+  int get hashCode =>
+    (_registeredVoter?.hashCode ?? 0) ^
+    (_votePlace?.hashCode ?? 0) ^
+    (_voterByMail?.hashCode ?? 0) ^
+    (_voted?.hashCode ?? 0);
+
+  bool get isEmpty =>
+    (_registeredVoter == null) &&
+    (_votePlace == null) &&
+    (_voterByMail == null) &&
+    (_voted == null);
+
+  bool get isNotEmpty => !isEmpty;
+  
+  void clear() {
+
+    bool modified = false;
+    if (_registeredVoter != null) {
+      _registeredVoter = null;
+      modified = true;
+    }
+
+    if (_votePlace != null) {
+      _votePlace = null;
+      modified = true;
+    }
+
+    if (_voterByMail != null) {
+      _voterByMail = null;
+      modified = true;
+    }
+
+    if (_voted != null) {
+      _voted = null;
+      modified = true;
+    }
+
+    if (modified) {
+      _notifyChanged();
+    }
+  }
+
+  bool get registeredVoter => _registeredVoter;
+  set registeredVoter(bool value) {
+    if (_registeredVoter != value) {
+      _registeredVoter = value;
+      _notifyChanged();
+    }
+  }
+
+  String get votePlace => _votePlace;
+  set votePlace(String value) {
+    if (_votePlace != value) {
+      _votePlace = value;
+      _notifyChanged();
+    }
+  }
+  
+  bool get voterByMail => _voterByMail;
+  set voterByMail(bool value) {
+    if (_voterByMail != value) {
+      _voterByMail = value;
+      _notifyChanged();
+    }
+  }
+
+  bool get voted => _voted;
+  set voted(bool value) {
+    if (_voted != value) {
+      _voted = value;
+      _notifyChanged();
+    }
+  }
+
+  void _notifyChanged() {
+    if (onChanged != null) {
+      onChanged();
+    }
+  }
+
+}
