@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -415,7 +416,22 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
   
   void _showConsoleMessage(message){
-    AppAlert.showDialogResult(context, message);
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(message??""),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text("Ok"),
+              onPressed: () => Navigator.of(context).pop()),
+          TextButton(
+              child: Text("Copy"),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: message)).then((_){
+                  AppToast.show("Text data has been copied to the clipboard!");
+                });
+              } )
+        ]);
   }
 
   static List<String> _getTabbarCodes() {
