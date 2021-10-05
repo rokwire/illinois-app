@@ -222,7 +222,7 @@ class Auth2 with Service implements NotificationsListener {
         'app_type_identifier': Config().appCanonicalId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
-        'prefs': _userPrefs?.toJson(), //TBD Auth2
+        'preferences': _userPrefs?.toJson(), //TBD Auth2
       });
       _oidcLogin = null;
       

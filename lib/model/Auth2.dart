@@ -473,19 +473,25 @@ class Auth2UiucUser {
 class Auth2UserPrefs {
 
   static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.prefs.privacy.level.changed";
+  static const String notifyInterestsChanged  = "edu.illinois.rokwire.user.prefs.interests.changed";
   static const String notifyFavoritesChanged  = "edu.illinois.rokwire.user.prefs.favorites.changed";
   static const String notifyFavoriteChanged  = "edu.illinois.rokwire.user.prefs.favorite.changed";
   static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
+  static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
   static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
   int _privacyLevel;
   Set<UserRole> _roles;
   Map<String, Set<String>>  _favorites;
+  Map<String, Set<String>>  _interests;
+  Map<String, bool> _tags;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
+    _interests = interests;
+    _tags = tags;
   }
 
   factory Auth2UserPrefs.fromJson(Map<String, dynamic> json) {
@@ -493,6 +499,8 @@ class Auth2UserPrefs {
       privacyLevel: AppJson.intValue(json['privacy_level']),
       roles: UserRole.setFromJson(AppJson.listValue(json['roles'])),
       favorites: mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
+      interests: mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
+      tags: _tagsFromJson(AppJson.mapValue(json['tags'])),
     ) : null;
   }
 
@@ -501,6 +509,8 @@ class Auth2UserPrefs {
       privacyLevel: 0,
       roles: Set<UserRole>(),
       favorites: Map<String, Set<String>>(),
+      interests: Map<String, Set<String>>(),
+      tags: Map<String, bool>(),
     );
   }
 
@@ -509,6 +519,8 @@ class Auth2UserPrefs {
       'privacy_level' : privacyLevel,
       'roles': UserRole.setToJson(roles),
       'favorites': mapOfStringSetsToJson(_favorites),
+      'interests': mapOfStringSetsToJson(_interests),
+      'tags': _tags,
     };
   }
 
@@ -516,12 +528,16 @@ class Auth2UserPrefs {
     (o is Auth2UserPrefs) &&
       (o._privacyLevel == _privacyLevel) &&
       DeepCollectionEquality().equals(o._roles, _roles) &&
-      DeepCollectionEquality().equals(o._favorites, _favorites);
+      DeepCollectionEquality().equals(o._favorites, _favorites) &&
+      DeepCollectionEquality().equals(o._interests, _interests) &&
+      DeepCollectionEquality().equals(o._tags, _tags);
 
   int get hashCode =>
     (_privacyLevel?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(_roles) ?? 0) ^
-    (DeepCollectionEquality().hash(_favorites) ?? 0);
+    (DeepCollectionEquality().hash(_favorites) ?? 0) ^
+    (DeepCollectionEquality().hash(_interests) ?? 0) ^
+    (DeepCollectionEquality().hash(_tags) ?? 0);
 
   bool apply(Auth2UserPrefs prefs) {
     bool modified = false;
@@ -537,6 +553,14 @@ class Auth2UserPrefs {
       }
       if ((prefs._favorites != null) && prefs._favorites.isNotEmpty && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
         _favorites = prefs._favorites;
+        modified = true;
+      }
+      if ((prefs._interests != null) && prefs._interests.isNotEmpty && !DeepCollectionEquality().equals(prefs._interests, _interests)) {
+        _interests = prefs._interests;
+        modified = true;
+      }
+      if ((prefs._tags != null) && prefs._tags.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
+        _tags = prefs._tags;
         modified = true;
       }
     }
@@ -647,6 +671,180 @@ class Auth2UserPrefs {
     }
   }
 
+  // Interests
+
+  Iterable<String> get interestCategories {
+    return _interests?.keys;
+  }
+
+  void toggleInterestCategory(String category) {
+    if ((category != null) && (_interests != null)) {
+      if (_interests.containsKey(category)) {
+        _interests.remove(category);
+      }
+      else {
+        _interests[category] = Set<String>();
+      }
+
+      NotificationService().notify(notifyInterestsChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  void applyInterestCategories(Set<String> categories) {
+    if ((categories != null) && (_interests != null)) {
+
+      bool modified = false;
+      Set<String> categoriesToRemove;
+      for (String category in _interests.keys) {
+        if (!categories.contains(category)) {
+          if (categoriesToRemove == null) {
+            categoriesToRemove = Set<String>();
+          }
+          categoriesToRemove.add(category);
+        }
+      }
+
+      for (String category in categories) {
+        if (!_interests.containsKey(category)) {
+          _interests[category] = Set<String>();
+          modified = true;
+        }
+      }
+
+      if (categoriesToRemove != null) {
+        for (String category in categoriesToRemove) {
+          _interests.remove(category);
+          modified = true;
+        }
+      }
+
+      if (modified) {
+        NotificationService().notify(notifyInterestsChanged);
+        NotificationService().notify(notifyChanged, this);
+      }
+    }
+  }
+
+  Set<String> getInterestsFromCategory(String category) {
+    return (_interests != null) ? _interests[category] : null;
+  }
+
+  void toggleInterest(String category, String interest) {
+    if ((category != null) && (interest != null) && (_interests != null)) {
+      Set<String> categories = _interests[category];
+      if (categories == null) {
+        _interests[category] = categories = Set<String>();
+      }
+      if (categories.contains(interest)) {
+        categories.remove(interest);
+      }
+      else {
+        categories.add(interest);
+      }
+
+      NotificationService().notify(notifyInterestsChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  void applyInterests(String category, Iterable<String> interests) {
+    if ((category != null) && (_interests != null)) {
+      bool modified = false;
+      if ((interests != null) && !DeepCollectionEquality().equals(_interests[category], interests)) {
+        _interests[category] = Set<String>.from(interests);
+        modified = true;
+      }
+      else if (_interests.containsKey(category)) {
+        _interests.remove(category);
+        modified = true;
+      }
+
+      if (modified) {
+        NotificationService().notify(notifyInterestsChanged);
+        NotificationService().notify(notifyChanged, this);
+      }
+    }
+  }
+
+  void _clearInterests() {
+    _interests = Map<String, Set<String>>();
+  }
+
+  // Tags
+
+  Set<String> getTags({ bool positive }) {
+    Set<String> tags;
+    if (_tags != null) {
+      tags = Set<String>();
+      for (String tag in _tags.keys) {
+        if ((positive == null) || (_tags[tag] == positive)) {
+          tags.add(tag);
+        }
+      }
+    }
+    return tags;
+  }
+
+  bool hasTag(String tag, { bool positive}) {
+    if ((_tags != null) && (tag != null)) {
+      bool value = _tags[tag];
+      return (value != null) && ((positive == null) || (value == positive));
+    }
+    return false;
+  }
+
+  void toggleTag(String tag, { bool positive = true}) {
+    if ((_tags != null) && (tag != null)) {
+      if (_tags.containsKey(tag)) {
+        _tags.remove(tag);
+      }
+      else {
+        _tags[tag] = positive;
+      }
+    }
+    NotificationService().notify(notifyTagsChanged);
+    NotificationService().notify(notifyChanged, this);
+  }
+
+  void addTag(String tag, { bool positive }) {
+    if ((_tags != null) && (tag != null) && (_tags[tag] != positive)) {
+      _tags[tag] = positive;
+      NotificationService().notify(notifyTagsChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  void removeTag(String tag) {
+    if ((_tags != null) && (tag != null) && _tags.containsKey(tag)) {
+      _tags.remove(tag);
+      NotificationService().notify(notifyTagsChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  void applyTags(Iterable<String> tags, { bool positive = true }) {
+    if ((_tags != null) && (tags != null)) {
+      bool modified = false;
+      for (String tag in tags) {
+        if (_tags[tag] != positive) {
+          _tags[tag] = positive;
+          modified = true;
+        }
+      }
+      if (modified) {
+        NotificationService().notify(notifyTagsChanged);
+        NotificationService().notify(notifyChanged, this);
+      }
+    }
+  }
+
+  void _clearTags() {
+    _tags = Map<String, bool>();
+  }
+
+  // Helpers
+
   static Map<String, Set<String>> mapOfStringSetsFromJson(Map<String, dynamic> jsonMap) {
     Map<String, Set<String>> result;
     if (jsonMap != null) {
@@ -667,6 +865,11 @@ class Auth2UserPrefs {
       }
     }
     return jsonMap;
+  }
+
+  static _tagsFromJson(Map<String, dynamic> json) {
+    try { return json?.cast<String, bool>(); }
+    catch(e) { print(e?.toString()); }
   }
 }
 
