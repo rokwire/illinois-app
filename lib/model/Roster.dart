@@ -16,96 +16,83 @@
 
 import 'package:illinois/utils/Utils.dart';
 
-//////////////////////////////
-/// Roster
-
 class Roster {
-  String id;
-  String name;
-  String position;
-  String numberString;
-  String height;
-  String weight;
-  String year;
-  String hometown;
-  String highSchool;
-  String major;
-  String htmlBio;
-  Map<String,dynamic> jsonData;
+  final String id;
+  final String name;
+  final String firstName;
+  final String lastName;
+  final String position;
+  final String numberString;
+  final String height;
+  final String weight;
+  final String gender;
+  final String year;
+  final String hometown;
+  final String highSchool;
+  final String htmlBio;
+  final String fullSizePhotoUrl;
+  final String thumbPhotoUrl;
 
-  // Parses the number. If the parse thorws error return -1
-  int get number{
+  Roster(
+      {this.id,
+      this.name,
+      this.firstName,
+      this.lastName,
+      this.position,
+      this.numberString,
+      this.height,
+      this.weight,
+      this.gender,
+      this.year,
+      this.hometown,
+      this.highSchool,
+      this.htmlBio,
+      this.fullSizePhotoUrl,
+      this.thumbPhotoUrl});
+
+  factory Roster.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
+    Map<String, dynamic> photosJson = json['photos'];
+    String fullSizePhotoUrl;
+    String thumbPhotoUrl;
+    if (photosJson != null) {
+      fullSizePhotoUrl = photosJson['fullsize'];
+      thumbPhotoUrl = photosJson['thumbnail'];
+    }
+    return Roster(
+        id: json['id'],
+        name: json['name'],
+        firstName: json['first_name'],
+        lastName: json['last_name'],
+        numberString: json['uni'],
+        position: json['pos_short'],
+        height: json['height'],
+        weight: json['weight'],
+        gender: json['gender'],
+        year: json['year_long'],
+        hometown: json['hometown'],
+        highSchool: json['highschool'],
+        htmlBio: json['bio'],
+        fullSizePhotoUrl: fullSizePhotoUrl,
+        thumbPhotoUrl: thumbPhotoUrl);
+  }
+
+  bool get hasPosition {
+    return AppString.isStringNotEmpty(position);
+  }
+
+  bool get hasNumber {
+    return AppString.isStringNotEmpty(numberString);
+  }
+
+  int get number {
     try {
       return int.parse(numberString);
-    } on Exception catch(e){
+    } on Exception catch (e) {
       print(e);
       return -1;
     }
   }
-
-  Roster({
-    this.id,
-    this.name,
-    this.position,
-    this.numberString,
-    this.height,
-    this.weight,
-    this.year,
-    this.hometown,
-    this.highSchool,
-    this.major,
-    this.htmlBio,
-    this.jsonData,
-  });
-
-  String get rosterPhotoUrl{
-    String fullSizeUrl = _rosterPhotoUrlWithType('headshot', 'fullsize');
-    return  AppString.isStringNotEmpty(fullSizeUrl) ? '$fullSizeUrl?width=256' : "";
-  }
-
-  String get rosterFullSizePhotoUrl{
-    return _rosterPhotoUrlWithType('headshot', 'fullsize');
-  }
-
-  String _rosterPhotoUrlWithType(String type, String subType){
-    String photoUrl;
-
-    if(AppString.isStringNotEmpty(type) && AppString.isStringNotEmpty(subType)) {
-      List<dynamic> photos = jsonData['photos'];
-      for (Map<String, dynamic> photoEntry in photos) {
-        if(type == photoEntry['type']){
-          return photoEntry.containsKey(subType)? photoEntry[subType] : "";
-        }
-      }
-    }
-    return photoUrl;
-  }
-
-  factory Roster.fromJson(Map<String, dynamic> json) {
-    Map<String,dynamic> info = json['playerinfo'] != null ? json['playerinfo'] : Map();
-    //Map<String,dynamic> info = json['playerinfo'];
-    return Roster(
-      id: !AppString.isStringEmpty(json['rp_id']) ? json['rp_id'] : "",
-      name: !AppString.isStringEmpty(json['name']) ? json['name'] : "",
-      position: !AppString.isStringEmpty(info['pos_short']) ? info['pos_short'] : "",
-        numberString: !AppString.isStringEmpty(info['uni']) ? info['uni'] : "",
-      height: !AppString.isStringEmpty(info['height']) ? info['height'] : "",
-      weight: !AppString.isStringEmpty(info['weight']) ? info['weight'] : "",
-      year: !AppString.isStringEmpty(info['year_long']) ? info['year_long'] : "",
-      hometown: !AppString.isStringEmpty(info['hometown']) ? info['hometown'] : "",
-      highSchool: !AppString.isStringEmpty(info['highschool']) ? info['highschool'] : "",
-      major: !AppString.isStringEmpty(info['major']) ? info['major'] : "",
-      htmlBio: !AppString.isStringEmpty(json['bio']) ? json['bio'] : "",
-        jsonData: json);
-
-  }
-
-  bool get hasPosition{
-    return AppString.isStringNotEmpty(position);
-  }
-
-  bool get hasNumber{
-    return AppString.isStringNotEmpty(numberString);
-  }
-
 }

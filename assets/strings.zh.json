@@ -1968,8 +1968,9 @@
 	"widget.privacy_level_slider.label.left.title":"最高隐私权",
 	"widget.privacy_level_slider.label.right.title":"大多数功能",
 
-	"widget.favorites_saved_dialog.title":"该已加星标的项目已添加到您的保存列表中",
-	"widget.favorites_saved_dialog.button.view":"查看",
+	"widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
+	"widget.favorites_saved_dialog.calendar.title":" and also your calendar." ,
+	"widget.favorites_saved_dialog.button.view":"View saved" ,
 
 	"widget.explore_card.small.view_all.title": "查看所有活動",
 

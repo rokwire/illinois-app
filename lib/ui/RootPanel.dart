@@ -23,6 +23,7 @@ import 'package:illinois/main.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Polls.dart';
@@ -97,7 +98,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
-      DeviceCalendar.notifyPromptPopupMessage,
+      ExploreService.notifyEventDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       User.notifyPrivacyLevelEmpty,
@@ -105,6 +106,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+      DeviceCalendar.notifyPromptPopupMessage,
+      DeviceCalendar.showConsoleMessage,
     ]);
 
     _tabs = _getTabs();
@@ -142,6 +145,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (name == DeviceCalendar.notifyPromptPopupMessage) {
       _onCalendarPromptMessage(param);
     }
+    else if (name == DeviceCalendar.showConsoleMessage) {
+      _showConsoleMessage(param);
+    }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
     }
@@ -150,6 +156,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
+    }
+    else if (name == ExploreService.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       setState(() { });
@@ -366,7 +375,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic> content) async {
-    ExplorePanel.presentDetailPanel(context, eventId:content['event_id']);
+    String eventId = (content != null) ? AppJson.stringValue(content['event_id']) : null;
+    if (AppString.isStringNotEmpty(eventId)) {
+      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+    }
   }
 
   void _showPresentPoll() {
@@ -401,6 +413,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return;
     }
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
+  }
+  
+  void _showConsoleMessage(message){
+    AppAlert.showDialogResult(context, message);
   }
 
   static List<String> _getTabbarCodes() {
@@ -542,7 +558,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list'),
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.") :""),
                             style: TextStyle(
                               color: Styles().colors.white,
                               fontSize: 16,

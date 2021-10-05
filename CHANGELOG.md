@@ -5,8 +5,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.18] 2021-10-04
+### Fixed
+- Fix loading Athletics games [#790](https://github.com/rokwire/illinois-app/issues/790).
+
+## [3.0.17] 2021-10-01
+### Changed
+- Acknowledged new APIs from Sports BB [#750](https://github.com/rokwire/illinois-app/issues/750).
+- Updated debug messages for Device Calendar [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.16] 2021-09-30
+### Added
+- SECURITY.md file [#785](https://github.com/rokwire/illinois-app/issues/785).
+### Changed 
+-  Update Calendar event deep link to use redirect url as workaround for broken Android links. [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.15] 2021-09-28
+### Fixed
+- Deeplink url for calendar events [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.14] 2021-09-27
 ### Changed
 - Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
+## Added
+- Implemented event detail from DeepLink [#773](https://github.com/rokwire/illinois-app/issues/773).
 
 ## [3.0.13] 2021-09-24
 ## Added

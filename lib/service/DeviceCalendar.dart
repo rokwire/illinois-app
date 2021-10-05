@@ -1,7 +1,11 @@
+
 import 'package:device_calendar/device_calendar.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/ExploreService.dart';
+
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -13,6 +17,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
   static const String notifyPromptPopupMessage    = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
   static const String notifyPlaceEventMessage     = "edu.illinois.rokwire.device_calendar.messaging.place.event";
+  static const String showConsoleMessage    = "edu.illinois.rokwire.debug_console.messaging.message";
 
   Calendar _defaultCalendar;
   Map<String, String> _calendarEventIdTable;
@@ -34,7 +39,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   Future<bool> onFavoriteUpdated(Favorite favorite, bool isFavorite) async {
     //TBD Auth2: listen for Auth2.notifyFavoriteChanged
     if (favorite is Event) {
-      return isFavorite ? await addEvent(favorite) : await deleteEvent(favorite);
+      return isFavorite ? await _addEvent(favorite) : await deleteEvent(favorite);
     }
     return false;
   }
@@ -52,12 +57,12 @@ class DeviceCalendar with Service implements NotificationsListener{
     NotificationService().unsubscribe(this);
   }
 
-  Future<bool> addEvent(ExploreEvent.Event event) async{
-    _debugToast("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
+  Future<bool> _addEvent(ExploreEvent.Event event) async{
+    _debugMessage("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
     
     //User prefs
     if(!canAddToCalendar){
-      _debugToast("Disabled");
+      _debugMessage("Disabled");
       return false;
     }
     
@@ -82,14 +87,14 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(_deviceCalendarPlugin == null){
       bool initResult = await _initDeviceCalendarPlugin();
       if(!initResult ?? true){
-        _debugToast("Unable to init plugin");
+        _debugMessage("Unable to init plugin");
       }
     }
-    _debugToast("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
+    _debugMessage("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
     //PERMISSIONS
     bool hasPermissions = await _requestPermissions();
 
-    _debugToast("Has permissions: $hasPermissions");
+    _debugMessage("Has permissions: $hasPermissions");
     //PLACE
     if(hasPermissions && _defaultCalendar!=null) {
       Event calendarEvent = _convertEvent(event);
@@ -98,7 +103,7 @@ class DeviceCalendar with Service implements NotificationsListener{
         _storeEventId(event.id, createEventResult?.data);
       }
 
-      _debugToast("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
+      _debugMessage("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
 
       if(!createEventResult.isSuccess) {
         AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
@@ -114,18 +119,18 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(_deviceCalendarPlugin == null){
       bool initResult = await _initDeviceCalendarPlugin();
       if(!initResult ?? true){
-        _debugToast("Unable to init plugin");
+        _debugMessage("Unable to init plugin");
       }
     }
 
     String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
-    _debugToast("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${_defaultCalendar.id}");
+    _debugMessage("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${_defaultCalendar.id}");
     if(AppString.isStringEmpty(eventId)){
       return false;
     }
 
     final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(_defaultCalendar?.id, eventId);
-    _debugToast("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
+    _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
     if(deleteEventResult.isSuccess){
       _eraseEventId(event?.id);
     }
@@ -183,6 +188,7 @@ class DeviceCalendar with Service implements NotificationsListener{
       calendarEvent.end = DateTime(event.startDateLocal.year, event.startDateLocal.month, event.startDateLocal.day, 23, 59,);
     }
 
+    calendarEvent.description = _constructEventDeepLinkUrl(event);
     return calendarEvent;
   }
 
@@ -206,14 +212,14 @@ class DeviceCalendar with Service implements NotificationsListener{
     _calendarEventIdTable.removeWhere((key, value) => key == id);
   }
 
-  void _debugToast(String msg){
-    AppToast.show(msg); //TBD Remove before release
+  void _debugMessage(String msg){
+    NotificationService().notify(DeviceCalendar.showConsoleMessage, msg);
   }
 
   void _processEvents(dynamic event){
     if (event is ExploreEvent.Event) {
       if (Auth2().isFavorite(event)) {
-        addEvent(event);
+        _addEvent(event);
       }
       else {
         deleteEvent(event);
@@ -225,7 +231,18 @@ class DeviceCalendar with Service implements NotificationsListener{
     NotificationService().notify(notifyPromptPopupMessage, event);
   }
 
+  String _constructEventDeepLinkUrl(ExploreEvent.Event event){
+    if(event == null || event.id == null){
+      return null;
+    }
 
+    String eventDeepLink = "${ExploreService.EVENT_URI}?event_id=${event.id}";
+    Uri assetsUri = Uri.parse(Config().assetsUrl);
+    String redirectUrl = assetsUri!= null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+
+    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$eventDeepLink" : eventDeepLink;
+  }
+  
 
   @override
   void onNotification(String name, param) {

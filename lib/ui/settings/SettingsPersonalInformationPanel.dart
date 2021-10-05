@@ -128,6 +128,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
           ToggleRibbonButton(
               label: 'Add saved events to calendar',
               toggled: Storage().calendarEnabledToSave,
+              context: context,
               onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave;});}),
           Container(height: 8,),
           ToggleRibbonButton(
@@ -135,6 +136,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies.bold, color: Storage().calendarEnabledToSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,) ,
               height: null,
               toggled: Storage().calendarCanPrompt,
+              context: context,
               onTap: (){
                 if(!Storage().calendarEnabledToSave) {
                   return;
