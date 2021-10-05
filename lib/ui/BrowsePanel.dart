@@ -609,9 +609,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth2().account?.profile?.email;
-      String name =  Auth2().account?.profile?.fullName;
-      String phone = Auth2().account?.profile?.phone;
+      String email = Auth2().email;
+      String name =  Auth2().fullName;
+      String phone = Auth2().phone;
       String params = _constructFeedbackParams(email, phone, name);
       String feedbackUrl = Config().feedbackUrl + params;
 

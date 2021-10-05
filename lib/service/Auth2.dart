@@ -152,6 +152,11 @@ class Auth2 with Service implements NotificationsListener {
 
   bool get hasUin => (0 < uin?.length ?? 0);
   String get uin => _account?.authType?.uiucUser?.uin;
+  String get netId => _account?.authType?.uiucUser?.identifier;
+
+  String get fullName => _account?.profile?.fullName ?? _account?.authType?.uiucUser?.fullName;
+  String get email => _account?.profile?.email ?? _account?.authType?.uiucUser?.email;
+  String get phone => _account?.profile?.phone; //TBD: phone from authType in case of phone login
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');

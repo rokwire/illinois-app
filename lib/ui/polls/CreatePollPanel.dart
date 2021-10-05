@@ -117,7 +117,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildNameLabel() {
-    String name = Auth2().account?.profile?.fullName ?? "Someone";
+    String name = Auth2().fullName ?? "Someone";
     String wantToKnowText = Localization().getStringEx("panel.create_poll.text.wants_to_know", "wants to know…");
     return
       Semantics(label: name +","+wantToKnowText , excludeSemantics: true,child:
@@ -453,7 +453,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         options: options,
         settings: PollSettings(allowMultipleOptions: _selectedMultichoice, hideResultsUntilClosed: _selectedHideResult, allowRepeatOptions: _selectedRepeatVotes),
         creatorUserUuid: User().uuid,
-        creatorUserName: Auth2().account?.profile?.fullName ?? 'Someone',
+        creatorUserName: Auth2().fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,
       );
