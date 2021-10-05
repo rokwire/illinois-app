@@ -405,9 +405,9 @@ class User with Service implements NotificationsListener {
 
   ///////
   //Tags
-  List<String> getTags() {
+  /*List<String> getTags() {
     return _userData?.positiveTags;
-  }
+  }*/
 
   switchTag(String tag,{bool fastRefresh=true}) {
     bool positiveInterest = true;

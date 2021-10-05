@@ -823,6 +823,9 @@ class Auth2UserPrefs {
 
   // Tags
 
+  Set<String> get positiveTags => getTags(positive: true);
+  bool hasPositiveTag(String tag) => hasTag(tag, positive: true);
+
   Set<String> getTags({ bool positive }) {
     Set<String> tags;
     if (_tags != null) {
