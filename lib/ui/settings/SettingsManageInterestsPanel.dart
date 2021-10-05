@@ -188,10 +188,12 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   //Categories
   void _initCategories() {
     ExploreService().loadEventCategories().then((List<dynamic> categories) {
-      setState(() {
-        _categories = categories != null ? categories : [];
-        _preferredCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
-      });
+      if (mounted) {
+        setState(() {
+          _categories = categories != null ? categories : [];
+          _preferredCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
+        });
+      }
     });
   }
 
@@ -246,10 +248,12 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   //Tags
   void _initTags() {
     ExploreService().loadEventTags().then((List<String> tagList) {
-      setState(() {
-        _tags = tagList ?? [];
-        _followingTags = _buildFollowingTags(tagList);
-      });
+      if (mounted) {
+        setState(() {
+          _tags = tagList ?? [];
+          _followingTags = _buildFollowingTags(tagList);
+        });
+      }
     });
   }
 

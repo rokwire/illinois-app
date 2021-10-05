@@ -73,20 +73,17 @@ class AthleticsSportItemWidget extends StatelessWidget {
                           child: Image.asset('images/chevron-right.png'),
                         )
                       : Container(),
-                  Visibility(
-                    visible: checkMarkVisibility,
-                    child: GestureDetector(
-                      onTap: onCheckTap,
-                      child: Container(
-                          child: Padding(
-                        padding: EdgeInsets.only(
-                            right: 10, top: 15, bottom: 15, left: 25),
-                        child: Image.asset(selected
-                            ? 'images/deselected-dark.png'
-                            : 'images/deselected.png'),
-                      )),
-                    ),
-                  )
+                  checkMarkVisibility ? GestureDetector(
+                    onTap: onCheckTap,
+                    child: Container(
+                        child: Padding(
+                      padding: EdgeInsets.only(
+                          right: 10, top: 15, bottom: 15, left: 25),
+                      child: Image.asset(selected
+                          ? 'images/deselected-dark.png'
+                          : 'images/deselected.png'),
+                    )),
+                  ) : Container(height: 54,),
                 ],
               ),
             ),

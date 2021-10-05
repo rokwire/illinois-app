@@ -311,11 +311,13 @@ class Sports with Service {
       // Step 1: Group games by sport
       Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
       List<Game> preferredGames = [];
-      for (Game game in gamesList) {
-        if (!gamesMap.containsKey(game.sport.shortName)) {
-          gamesMap[game.sport.shortName] = [];
+      if (gamesList != null) {
+        for (Game game in gamesList) {
+          if (!gamesMap.containsKey(game.sport.shortName)) {
+            gamesMap[game.sport.shortName] = [];
+          }
+          gamesMap[game.sport.shortName].add(game);
         }
-        gamesMap[game.sport.shortName].add(game);
       }
 
       // Step 2: Add all preferred games
@@ -548,46 +550,37 @@ class Sports with Service {
   ///
   /// addSports == 'true' - adds all sports to favorites, 'false' - removes them
   ///
-  void switchAllSports(List<SportDefinition> allSports,
-      List<String> preferredSports, bool addSports) {
-    if(_enabled) {
-      if (allSports == null || allSports.isEmpty) {
-        return;
-      }
-      List<String> sportsToUpdate = [];
+  static Set<String> switchAllSports(List<SportDefinition> allSports, Set<String> preferredSports, bool addSports) {
+    Set<String> sportsToUpdate = Set<String>();
+    if (allSports != null && allSports.isNotEmpty) {
       for (SportDefinition sport in allSports) {
         String sportShortName = sport.shortName;
-        bool preferredSport = (preferredSports?.contains(sportShortName) ??
-            false);
+        bool preferredSport = (preferredSports?.contains(sportShortName) ?? false);
         bool addFavoriteSport = !preferredSport && addSports;
         bool removeFavoriteSport = preferredSport && !addSports;
         if (addFavoriteSport || removeFavoriteSport) {
           sportsToUpdate.add(sportShortName);
         }
       }
-      User().switchSportSubCategories(sportsToUpdate);
     }
+    return sportsToUpdate;
   }
 
-  bool isAllSportsSelected(List<SportDefinition> allSports,
-      List<String> preferredSports) {
-    if(_enabled) {
-      if (allSports == null || allSports.isEmpty) {
-        return false;
-      }
-      if (preferredSports == null || preferredSports.isEmpty) {
-        return false;
-      }
-      bool allSportsSelected = true;
-      for (SportDefinition sport in allSports) {
-        if (!preferredSports.contains(sport.shortName)) {
-          allSportsSelected = false;
-          break;
-        }
-      }
-      return allSportsSelected;
+  static bool isAllSportsSelected(List<SportDefinition> allSports, Set<String> preferredSports) {
+    if (allSports == null || allSports.isEmpty) {
+      return false;
     }
-    return false;
+    if (preferredSports == null || preferredSports.isEmpty) {
+      return false;
+    }
+    bool allSportsSelected = true;
+    for (SportDefinition sport in allSports) {
+      if (!preferredSports.contains(sport.shortName)) {
+        allSportsSelected = false;
+        break;
+      }
+    }
+    return allSportsSelected;
   }
 
   /////////////////////////

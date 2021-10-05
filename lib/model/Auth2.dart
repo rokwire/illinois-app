@@ -480,6 +480,8 @@ class Auth2UserPrefs {
   static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
   static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
+  static const String sportsInterestsCategory = "sports";  
+
   int _privacyLevel;
   Set<UserRole> _roles;
   Map<String, Set<String>>  _favorites;
@@ -741,6 +743,26 @@ class Auth2UserPrefs {
       }
       else {
         categories.add(interest);
+      }
+
+      NotificationService().notify(notifyInterestsChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  void toggleInterests(String category, Iterable<String> interests) {
+    if ((category != null) && (interests != null) && interests.isNotEmpty && (_interests != null)) {
+      Set<String> categories = _interests[category];
+      if (categories == null) {
+        _interests[category] = categories = Set<String>();
+      }
+      for (String interest in interests) {
+        if (categories.contains(interest)) {
+          categories.remove(interest);
+        }
+        else {
+          categories.add(interest);
+        }
       }
 
       NotificationService().notify(notifyInterestsChanged);

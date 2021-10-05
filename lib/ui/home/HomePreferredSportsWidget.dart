@@ -26,7 +26,6 @@ import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsSportItemWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -50,22 +49,25 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   List<SportDefinition> _menSports;
   List<SportDefinition> _womenSports;
-  List<String>  _sportPreferences;
+  Set<String>  _sportPreferences;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      User.notifyInterestsUpdated,
+      Auth2UserPrefs.notifyInterestsChanged,
     ]);
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        _loadSports();
+        _refreshSports();
       });
     }
 
-    _loadSports();
+    _menSports = widget.menSports ? Sports().getMenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+    _womenSports = widget.womenSports ? Sports().getWomenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+    _sportPreferences = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+
     _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
     super.initState();
   }
@@ -76,20 +78,30 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     super.dispose();
   }
 
-  void _loadSports(){
-    _sportPreferences = User().getSportsInterestSubCategories();
+  // NotificationsListener
 
-    if (widget.menSports) {
-      var menSports = Sports().getMenSports();
-      _menSports = menSports.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName)))).toList();
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
     }
-
-    if (widget.womenSports) {
-      var womenSports = Sports().getWomenSports();
-      _womenSports = womenSports.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName)))).toList();
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      if (mounted) {
+        setState(() {
+          _sportPreferences = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+        });
+      }
     }
+  }
 
-    setState(() {});
+  void _refreshSports(){
+    if (mounted) {
+      setState(() {
+        _menSports = widget.menSports ? Sports().getMenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+        _womenSports = widget.womenSports ? Sports().getWomenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+        _sportPreferences = Auth2().prefs?.getInterestsFromCategory(Auth2UserPrefs.sportsInterestsCategory) ?? Set<String>();
+      });
+    }
   }
 
   bool get _hasMenSports {
@@ -102,8 +114,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   @override
   Widget build(BuildContext context) {
-    bool allMenSelected = Sports().isAllSportsSelected(_menSports, _sportPreferences);
-    bool allWomenSelected = Sports().isAllSportsSelected(_womenSports, _sportPreferences);
+    bool allMenSelected = Sports.isAllSportsSelected(_menSports, _sportPreferences);
+    bool allWomenSelected = Sports.isAllSportsSelected(_womenSports, _sportPreferences);
     String menSelectClearTextKey = allMenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
     String menSelectClearImageKey = allMenSelected ? "images/icon-x-orange-small.png" : "images/icon-check-simple.png";
     String womenSelectClearTextKey = allWomenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
@@ -133,7 +145,12 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                         label: Localization().getStringEx('widget.athletics_teams.men_sports.title.checkmark', 'Tap to select or deselect all men sports'),
                         checked: allMenSelected,
                         child: GestureDetector(
-                          onTap: () => Sports().switchAllSports(_menSports, _sportPreferences, !allMenSelected),
+                          onTap: () {
+                            Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
+                            AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
+                                Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
+                            Auth2().prefs?.toggleInterests(Auth2UserPrefs.sportsInterestsCategory, Sports.switchAllSports(_menSports, _sportPreferences, !allMenSelected));
+                          } ,
                           child: Row(children: <Widget>[
                             Expanded(child:
                             Text(Localization().getStringEx(menSelectClearTextKey, ''),
@@ -183,7 +200,12 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                           label: Localization().getStringEx('widget.athletics_teams.women_sports.title.checkmark', 'Tap to select or deselect all women sports'),
                           checked: allWomenSelected,
                           child: GestureDetector(
-                            onTap: () => Sports().switchAllSports(_womenSports, _sportPreferences, !allWomenSelected),
+                            onTap: () {
+                              Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
+                              AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
+                                  Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
+                              Auth2().prefs?.toggleInterests(Auth2UserPrefs.sportsInterestsCategory, Sports.switchAllSports(_womenSports, _sportPreferences, !allWomenSelected));
+                            },
                             child: Row(children: <Widget>[
                               Expanded(child:
                               Text(Localization().getStringEx(womenSelectClearTextKey, ''),
@@ -260,7 +282,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   void _setDisplayPreferredSports(bool displayPreferredSports) {
     if (_displayPreferredSports != displayPreferredSports) {
       _displayPreferredSports = !_displayPreferredSports;
-      _loadSports();
+      _refreshSports();
     }
   }
 
@@ -276,20 +298,10 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   void _onTapAthleticsSportCheckmark(SportDefinition sport) {
     Analytics.instance.logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name);
-    User().switchSportSubCategory(sport.shortName);
+    AppSemantics.announceCheckBoxStateChange(context, _sportPreferences?.contains(sport.shortName) ?? false, sport?.customName);
+    Auth2().prefs?.toggleInterest(Auth2UserPrefs.sportsInterestsCategory, sport.shortName);
   }
 
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
-    }
-    else if (name == User.notifyInterestsUpdated) {
-      _loadSports();
-    }
-  }
 }
 
 class _HomePreferredSportFilterTab extends StatelessWidget {
