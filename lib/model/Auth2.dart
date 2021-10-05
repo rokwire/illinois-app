@@ -508,7 +508,7 @@ class Auth2UserPrefs {
 
   factory Auth2UserPrefs.empty() {
     return Auth2UserPrefs(
-      privacyLevel: 0,
+      privacyLevel: null,
       roles: Set<UserRole>(),
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
@@ -576,8 +576,8 @@ class Auth2UserPrefs {
   }
   
   set privacyLevel(int value) {
-    if (privacyLevel != _privacyLevel) {
-      _privacyLevel = privacyLevel;
+    if (_privacyLevel != value) {
+      _privacyLevel = value;
       NotificationService().notify(notifyPrivacyLevelChanged);
       NotificationService().notify(notifyChanged, this);
     }
