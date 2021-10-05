@@ -154,7 +154,7 @@ class Auth2 with Service implements NotificationsListener {
   bool isMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
 
   bool privacyMatch(int requredPrivacyLevel) => 
-    (prefs?.privacyLevel == null) || (prefs.privacyLevel >= requredPrivacyLevel);
+    (prefs?.privacyLevel == null) || (prefs?.privacyLevel == 0) || (prefs.privacyLevel >= requredPrivacyLevel);
 
   bool get canFavorite => privacyMatch(2);
 
