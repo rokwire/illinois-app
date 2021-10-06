@@ -99,10 +99,10 @@ class Auth2Account {
   
   Auth2Account({this.id, this.profile, this.prefs, this.permissions, this.roles, this.groups, this.authTypes});
 
-  factory Auth2Account.fromJson(Map<String, dynamic> json, { Auth2UserPrefs prefs }) {
+  factory Auth2Account.fromJson(Map<String, dynamic> json, { Auth2UserPrefs prefs, Auth2UserProfile profile }) {
     return (json != null) ? Auth2Account(
       id: AppJson.stringValue(json['id']),
-      profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])),
+      profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])) ?? profile,
       prefs: Auth2UserPrefs.fromJson(AppJson.mapValue(json['preferences'])) ?? prefs, //TBD Auth2
       permissions: Auth2StringEntry.listFromJson(AppJson.listValue(json['permissions'])),
       roles: Auth2StringEntry.listFromJson(AppJson.listValue(json['roles'])),
@@ -155,28 +155,46 @@ class Auth2Account {
 // Auth2UserProfile
 
 class Auth2UserProfile {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final int birthYear;
-  final String photoUrl;
+  String _id;
+  String _firstName;
+  String _middleName;
+  String _lastName;
+  int    _birthYear;
+  String _photoUrl;
 
-  final String email;
-  final String phone;
+  String _email;
+  String _phone;
   
-  final String address;
-  final String state;
-  final String zip;
-  final String country;
+  String _address;
+  String _state;
+  String _zip;
+  String _country;
   
-  Auth2UserProfile({this.id, this.firstName, this.lastName, this.birthYear, this.photoUrl,
-    this.email, this.phone, this.address, this.state, this.zip, this.country
-  });
+  Auth2UserProfile({String id, String firstName, String middleName, String lastName, int birthYear, String photoUrl,
+    String email, String phone,
+    String address, String state, String zip, String country
+  }):
+    _id = id,
+    _firstName = firstName,
+    _middleName = middleName,
+    _lastName = lastName,
+    _birthYear = birthYear,
+    _photoUrl = photoUrl,
+    
+    _email = email,
+    _phone = phone,
+    
+    _address = address,
+    _state  = state,
+    _zip  = zip,
+    _country = country;
+  
 
   factory Auth2UserProfile.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UserProfile(
       id: AppJson.stringValue(json['id']),
       firstName: AppJson.stringValue(json['first_name']),
+      middleName: AppJson.stringValue(json['middle_name']),
       lastName: AppJson.stringValue(json['last_name']),
       birthYear: AppJson.intValue(json['birth_year']),
       photoUrl: AppJson.stringValue(json['photo_url']),
@@ -191,62 +209,159 @@ class Auth2UserProfile {
     ) : null;
   }
 
+  factory Auth2UserProfile.empty() {
+    return Auth2UserProfile();
+  }
+
+  factory Auth2UserProfile.fromOther(Auth2UserProfile other, {
+    String id, String firstName, String middleName, String lastName, int birthYear, String photoUrl,
+    String email, String phone,
+    String address, String state, String zip, String country}) {
+
+    return (other != null) ? Auth2UserProfile(
+      id: id ?? other._id,
+      firstName: firstName ?? other._firstName,
+      middleName: middleName ?? other._middleName,
+      lastName: lastName ?? other._lastName,
+      birthYear: birthYear ?? other._birthYear,
+      photoUrl: photoUrl ?? other._photoUrl,
+
+      email: email ?? other._email,
+      phone: phone ?? other._phone,
+  
+      address: address ?? other._address,
+      state: state ?? other._state,
+      zip: zip ?? other._zip,
+      country: country ?? other._country,
+    ) : null;
+  }
+
   Map<String, dynamic> toJson() {
     return {
-      'id' : id,
-      'first_name': firstName,
-      'last_name': lastName,
-      'birth_year': birthYear,
-      'photo_url': photoUrl,
+      'id' : _id,
+      'first_name': _firstName,
+      'middle_name': _middleName,
+      'last_name': _lastName,
+      'birth_year': _birthYear,
+      'photo_url': _photoUrl,
 
-      'email': email,
-      'phone': phone,
+      'email': _email,
+      'phone': _phone,
 
-      'address': address,
-      'state': state,
-      'zip': zip,
-      'country': country,
+      'address': _address,
+      'state': _state,
+      'zip': _zip,
+      'country': _country,
     };
   }
 
   bool operator ==(o) =>
     (o is Auth2UserProfile) &&
-      (o.id == id) &&
-      (o.firstName == firstName) &&
-      (o.lastName == lastName) &&
-      (o.birthYear == birthYear) &&
-      (o.photoUrl == photoUrl) &&
+      (o._id == _id) &&
+      (o._firstName == _firstName) &&
+      (o._middleName == _middleName) &&
+      (o._lastName == _lastName) &&
+      (o._birthYear == _birthYear) &&
+      (o._photoUrl == _photoUrl) &&
 
-      (o.email == email) &&
-      (o.phone == phone) &&
+      (o._email == _email) &&
+      (o._phone == _phone) &&
 
-      (o.address == address) &&
-      (o.state == state) &&
-      (o.zip == zip) &&
-      (o.country == country);
+      (o._address == _address) &&
+      (o._state == _state) &&
+      (o._zip == _zip) &&
+      (o._country == _country);
 
   int get hashCode =>
-    (id?.hashCode ?? 0) ^
-    (firstName?.hashCode ?? 0) ^
-    (lastName?.hashCode ?? 0) ^
-    (birthYear?.hashCode ?? 0) ^
-    (photoUrl?.hashCode ?? 0) ^
+    (_id?.hashCode ?? 0) ^
+    (_firstName?.hashCode ?? 0) ^
+    (_middleName?.hashCode ?? 0) ^
+    (_lastName?.hashCode ?? 0) ^
+    (_birthYear?.hashCode ?? 0) ^
+    (_photoUrl?.hashCode ?? 0) ^
 
-    (email?.hashCode ?? 0) ^
-    (phone?.hashCode ?? 0) ^
+    (_email?.hashCode ?? 0) ^
+    (_phone?.hashCode ?? 0) ^
 
-    (address?.hashCode ?? 0) ^
-    (state?.hashCode ?? 0) ^
-    (zip?.hashCode ?? 0) ^
-    (country?.hashCode ?? 0);
+    (_address?.hashCode ?? 0) ^
+    (_state?.hashCode ?? 0) ^
+    (_zip?.hashCode ?? 0) ^
+    (_country?.hashCode ?? 0);
 
-  bool get isValid {
-    return AppString.isStringNotEmpty(id);
+  bool apply(Auth2UserProfile profile) {
+    bool modified = false;
+    if (profile != null) {
+      if ((profile._id != null) && (profile._id != _id)) {
+        _id = profile._id;
+        modified = true;
+      }
+      if ((profile._firstName != null) && (profile._firstName != _firstName)) {
+        _firstName = profile._firstName;
+        modified = true;
+      }
+      if ((profile._middleName != null) && (profile._middleName != _middleName)) {
+        _middleName = profile._middleName;
+        modified = true;
+      }
+      if ((profile._lastName != null) && (profile._lastName != _lastName)) {
+        _lastName = profile._lastName;
+        modified = true;
+      }
+      if ((profile._birthYear != null) && (profile._birthYear != _birthYear)) {
+        _birthYear = profile._birthYear;
+        modified = true;
+      }
+      if ((profile._photoUrl != null) && (profile._photoUrl != _photoUrl)) {
+        _photoUrl = profile._photoUrl;
+        modified = true;
+      }
+
+      if ((profile._email != null) && (profile._email != _email)) {
+        _email = profile._email;
+        modified = true;
+      }
+      if ((profile._phone != null) && (profile._phone != _phone)) {
+        _phone = profile._phone;
+        modified = true;
+      }
+
+      if ((profile._address != null) && (profile._address != _address)) {
+        _address = profile._address;
+        modified = true;
+      }
+      if ((profile._state != null) && (profile._state != _state)) {
+        _state = profile._state;
+        modified = true;
+      }
+      if ((profile._zip != null) && (profile._zip != _zip)) {
+        _zip = profile._zip;
+        modified = true;
+      }
+      if ((profile._country != null) && (profile._country != _country)) {
+        _country = profile._country;
+        modified = true;
+      }
+    }
+    return modified;
   }
+  
+  String get id => _id;
+  String get firstName => _firstName;
+  String get middleName => _middleName;
+  String get lastName => _lastName;
+  int    get birthYear => _birthYear;
+  String get photoUrl => _photoUrl;
 
-  String get fullName {
-    return AppString.fullName([firstName, lastName]);
-  }
+  String get email => _email;
+  String get phone => _phone;
+  
+  String get address => _address;
+  String get state => _state;
+  String get zip => _zip;
+  String get country => _country;
+
+  bool   get isValid => AppString.isStringNotEmpty(id);
+  String get fullName => AppString.fullName([firstName, lastName]);
 }
 
 ////////////////////////////////

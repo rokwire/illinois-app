@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
@@ -354,67 +355,73 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   }
 
   _onSaveChangesClicked() async{
-    //TBD Auth2: update user profile in Auth2
-    /*bool piiDataUpdated = false;
-    setState(() {
-      _isSaving = true;
-    });
-    UserPiiData updatedUserPiiData;
-    UserPiiData userPiiData = UserPiiData.fromObject(await Auth2().reloadUserPiiData());
-    if (userPiiData != null) {
-      if(_isEmailChanged){
-        userPiiData.email = _customEmail;
-        piiDataUpdated = true;
-      }
-      if(_isNameChanged){
-        String firstName="";
-        String middleName="";
-        String lastName="";
-        String fullName = _customFullName;
 
-        //split names
-        List<String> splitNames = fullName.split(" ");
-        int namesLength = (splitNames?.length ?? 0);
-        if(namesLength > 3){
-          //Not sure if possible but handle the case
-          //Everything after first and middle name will be last name containing spaces
-          firstName = splitNames[0];
-          middleName = splitNames[1];
-          splitNames.forEach((element) {
-            if(splitNames.indexOf(element)>1){
-              lastName += "$element ";
-            }
-          });
-        } else if (namesLength == 3) {
-          firstName = splitNames[0];
-          middleName = splitNames[1];
-          lastName = splitNames[2];
-        } else if (namesLength == 2) {
-          firstName = splitNames[0];
-          lastName = splitNames[1];
-        } else {
-          firstName = fullName;
-        }
+    String email, firstName, lastName, middleName;
+    if (_isEmailChanged){
+      email = _customEmail;
+    }
 
-        //populate names to PiiData
-        userPiiData.firstName = firstName;
-        userPiiData.middleName = middleName;
-        userPiiData.lastName = lastName;
-        piiDataUpdated = true;
-      }
+    if (_isNameChanged){
+      String fullName = _customFullName;
 
-      if(piiDataUpdated) {
-        updatedUserPiiData = await Auth2().storeUserPiiData(userPiiData);
+      //split names
+      List<String> splitNames = fullName.split(" ");
+      int namesLength = (splitNames?.length ?? 0);
+      if(namesLength > 3){
+        //Not sure if possible but handle the case
+        //Everything after first and middle name will be last name containing spaces
+        firstName = splitNames[0];
+        middleName = splitNames[1];
+        splitNames.forEach((element) {
+          if(splitNames.indexOf(element)>1){
+            lastName += "$element ";
+          }
+        });
+      } else if (namesLength == 3) {
+        firstName = splitNames[0];
+        middleName = splitNames[1];
+        lastName = splitNames[2];
+      } else if (namesLength == 2) {
+        firstName = splitNames[0];
+        lastName = splitNames[1];
+      } else {
+        firstName = fullName;
       }
     }
-    setState(() {
-      _isSaving = false;
+
+    setState(() { _isSaving = true; });
+
+    Auth2().loadUserProfile().then((Auth2UserProfile userProfile) {
+      if (mounted) {
+        if (userProfile != null) {
+          Auth2UserProfile updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
+            email: email,
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+          );
+          if (userProfile != updatedUserProfile) {
+            Auth2().saveAccountUserProfile(updatedUserProfile).then((bool result) {
+              if (mounted) {
+                setState(() { _isSaving = false; });
+                if (result == true) {
+                  Navigator.pop(context);
+                } else {
+                  AppToast.show("Unable to perform save");
+                }
+              }
+            });
+          }
+          else {
+            setState(() { _isSaving = false; });
+            Navigator.pop(context);
+          }
+        }
+        else {
+          AppToast.show("Unable to perform save");
+        }
+      }
     });
-    if(updatedUserPiiData != null){
-      Navigator.pop(context);
-    } else {
-      AppToast.show("Unable to perform save");
-    }*/
   }
 
   bool get _canSave{

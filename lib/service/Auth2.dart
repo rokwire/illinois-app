@@ -135,6 +135,7 @@ class Auth2 with Service implements NotificationsListener {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _refreshAccountUserPrefs();
+          _refreshAccountUserProfile();
         }
       }
     }
@@ -264,7 +265,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']), prefs: _userPrefs ?? Auth2UserPrefs.empty());
+        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']), prefs: _userPrefs ?? Auth2UserPrefs.empty(), profile: Auth2UserProfile.empty());
 
         if ((token != null) && token.isValid && (account != null) && account.isValid) {
           
@@ -594,6 +595,53 @@ class Auth2 with Service implements NotificationsListener {
     Auth2UserPrefs prefs = await _loadAccountUserPrefs();
     if ((prefs != null) && (prefs != _account?.prefs)) {
       _account?.prefs?.apply(prefs, notify: true);
+    }
+  }
+
+  // User Profile
+  
+  Future<Auth2UserProfile> loadUserProfile() async {
+    return await _loadAccountUserProfile();
+  }
+
+  Future<bool> saveAccountUserProfile(Auth2UserProfile profile) async {
+    if (await _saveAccountUserProfile(profile)) {
+      if (_account?.profile?.apply(profile) ?? false) {
+        NotificationService().notify(notifyProfileChanged);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Future<Auth2UserProfile> _loadAccountUserProfile() async {
+    if ((Config().coreUrl != null) && isLoggedIn) {
+      String url = "${Config().coreUrl}/services/profile";
+      Response response = await Network().get(url, auth: NetworkAuth.Auth2);
+      return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(AppJson.decodeMap(response?.body)) : null;
+    }
+    return null;
+  }
+
+  Future<bool> _saveAccountUserProfile(Auth2UserProfile profile) async {
+    if ((Config().coreUrl != null) && isLoggedIn) {
+      String url = "${Config().coreUrl}/services/profile";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode(profile.toJson());
+      Response response = await Network().put(url, auth: NetworkAuth.Auth2, headers: headers, body: post);
+      return (response?.statusCode == 200);
+    }
+    return false;
+  }
+
+  Future<void> _refreshAccountUserProfile() async {
+    Auth2UserProfile profile = await _loadAccountUserProfile();
+    if ((profile != null) && (profile != _account?.profile)) {
+      if (_account?.profile?.apply(profile) ?? false) {
+        NotificationService().notify(notifyProfileChanged);
+      }
     }
   }
 
