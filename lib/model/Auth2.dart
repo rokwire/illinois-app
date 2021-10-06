@@ -547,32 +547,50 @@ class Auth2UserPrefs {
     (DeepCollectionEquality().hash(_tags) ?? 0) ^
     (_voter?.hashCode ?? 0);
 
-  bool apply(Auth2UserPrefs prefs) {
+  bool apply(Auth2UserPrefs prefs, { bool notify }) {
     bool modified = false;
 
     if (prefs != null) {
       if ((prefs.privacyLevel != null) && (prefs.privacyLevel > 0) && (prefs.privacyLevel != _privacyLevel)) {
         _privacyLevel = prefs._privacyLevel;
+        if (notify == true) {
+          NotificationService().notify(notifyPrivacyLevelChanged);
+        }
         modified = true;
       }
       if ((prefs.roles != null) && prefs.roles.isNotEmpty && !DeepCollectionEquality().equals(prefs.roles, _roles)) {
         _roles = prefs._roles;
+        if (notify == true) {
+          NotificationService().notify(notifyRolesChanged);
+        }
         modified = true;
       }
       if ((prefs._favorites != null) && prefs._favorites.isNotEmpty && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
         _favorites = prefs._favorites;
+        if (notify == true) {
+          NotificationService().notify(notifyFavoritesChanged);
+        }
         modified = true;
       }
       if ((prefs._interests != null) && prefs._interests.isNotEmpty && !DeepCollectionEquality().equals(prefs._interests, _interests)) {
         _interests = prefs._interests;
+        if (notify == true) {
+          NotificationService().notify(notifyInterestsChanged);
+        }
         modified = true;
       }
       if ((prefs._tags != null) && prefs._tags.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
         _tags = prefs._tags;
+        if (notify == true) {
+          NotificationService().notify(notifyTagsChanged);
+        }
         modified = true;
       }
       if ((prefs._voter != null) && prefs._voter.isNotEmpty && (prefs._voter != _voter)) {
         _voter = Auth2VoterPrefs.fromOther(prefs._voter, onChanged: _onVoterChanged);
+        if (notify == true) {
+          NotificationService().notify(notifyVoterChanged);
+        }
         modified = true;
       }
     }

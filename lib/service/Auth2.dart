@@ -58,6 +58,8 @@ class Auth2 with Service implements NotificationsListener {
   File _authCardCacheFile;
 
   String _deviceId;
+  
+  DateTime _pausedDateTime;
 
   // Singletone instance
 
@@ -117,9 +119,23 @@ class Auth2 with Service implements NotificationsListener {
       _onUserPrefsChanged(param);
     }
     else if (name == AppLivecycle.notifyStateChanged) {
-      if (param == AppLifecycleState.resumed) {
-        _refreshAuthCardIfNeeded();
-        _createOidcAuthenticationTimerIfNeeded();
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      _refreshAuthCardIfNeeded();
+      _createOidcAuthenticationTimerIfNeeded();
+
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshAccountUserPrefs();
+        }
       }
     }
   }
@@ -258,7 +274,7 @@ class Auth2 with Service implements NotificationsListener {
           Storage().auth2UserPrefs = _userPrefs = null;
 
           if (profileUpdated) {
-            _updateAccountUserPrefs();
+            _saveAccountUserPrefs();
           }
 
           Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
@@ -529,11 +545,12 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2UserPrefs = _userPrefs;
     }
     else if (identical(prefs, _account?.prefs)) {
-      _updateAccountUserPrefs();
+      Storage().auth2Account = _account;
+      _saveAccountUserPrefs();
     }
   }
 
-  Future<void> _updateAccountUserPrefs() async {
+  Future<void> _saveAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_account?.prefs != null)) {
       String url = "${Config().coreUrl}/services/account-preferences";
       Map<String, String> headers = {
@@ -555,12 +572,28 @@ class Auth2 with Service implements NotificationsListener {
         else if (_updateUserPrefsTimer == null) {
           _updateUserPrefsTimer = Timer.periodic(Duration(seconds: 3), (_) {
             if (_updateUserPrefsClient == null) {
-              _updateAccountUserPrefs();
+              _saveAccountUserPrefs();
             }
           });
         }
       }
       _updateUserPrefsClient = null;
+    }
+  }
+
+  Future<Auth2UserPrefs> _loadAccountUserPrefs() async {
+    if ((Config().coreUrl != null) && isLoggedIn) {
+      String url = "${Config().coreUrl}/services/account-preferences";
+      Response response = await Network().get(url, auth: NetworkAuth.Auth2);
+      return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(AppJson.decodeMap(response?.body)) : null;
+    }
+    return null;
+  }
+
+  Future<void> _refreshAccountUserPrefs() async {
+    Auth2UserPrefs prefs = await _loadAccountUserPrefs();
+    if ((prefs != null) && (prefs != _account?.prefs)) {
+      _account?.prefs?.apply(prefs, notify: true);
     }
   }
 
