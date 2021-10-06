@@ -22,7 +22,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
