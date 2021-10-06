@@ -20,7 +20,6 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';

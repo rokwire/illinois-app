@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -30,7 +31,6 @@ import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Log.dart';
 

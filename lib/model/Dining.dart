@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
@@ -24,7 +25,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 
-import 'UserData.dart';
 
 
 //////////////////////////////

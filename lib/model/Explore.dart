@@ -15,7 +15,7 @@
  */
 
 import 'dart:ui';
-import 'package:illinois/model/UserData.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:location/location.dart' as Core;

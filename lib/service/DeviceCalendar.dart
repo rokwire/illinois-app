@@ -1,7 +1,6 @@
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';

@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';

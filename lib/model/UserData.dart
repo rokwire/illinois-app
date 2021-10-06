@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class UserData {
@@ -324,95 +325,4 @@ class UserData {
   bool containsTag(String tag){
     return (positiveTags?.contains(tag)??false) || (negativeTags?.contains(tag)??false);
   }
-}
-
-class UserRole{
-  static const student = const UserRole._internal('student');
-  static const visitor = const UserRole._internal('visitor');
-  static const fan = const UserRole._internal('fan');
-  static const employee = const UserRole._internal('employee');
-  static const alumni = const UserRole._internal('alumni');
-  static const parent = const UserRole._internal('parent');
-  static const resident = const UserRole._internal('resident');
-
-  static List<UserRole> get values {
-    return [student, visitor, fan, employee, alumni, parent];
-  }
-
-  final String _value;
-
-  const UserRole._internal(this._value);
-
-  factory UserRole.fromString(String value) {
-    return (value != null) ? UserRole._internal(value) : null;
-  }
-
-  factory UserRole.fromJson(dynamic value) {
-    return (value is String) ? UserRole._internal(value) : null;
-  }
-
-  toString() => _value;
-  toJson() => _value;
-
-  @override
-  bool operator==(dynamic obj) {
-    if (obj is UserRole) {
-      return obj._value == _value;
-    }
-    return false;
-  }
-
-  @override
-  int get hashCode => _value.hashCode;
-
-  static List<UserRole> listFromJson(List<dynamic> jsonList) {
-    List<UserRole> result;
-    if (jsonList != null) {
-      result = <UserRole>[];
-      for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
-      }
-    }
-    return result;
-  }
-
-  static List<dynamic> listToJson(List<UserRole> contentList) {
-    List<dynamic> jsonList;
-    if (contentList != null) {
-      jsonList = <dynamic>[];
-      for (UserRole contentEntry in contentList) {
-        jsonList.add(contentEntry?.toString());
-      }
-    }
-    return jsonList;
-  }
-
-  static Set<UserRole> setFromJson(List<dynamic> jsonList) {
-    Set<UserRole> result;
-    if (jsonList != null) {
-      result = Set<UserRole>();
-      for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
-      }
-    }
-    return result;
-  }
-
-  static List<dynamic> setToJson(Set<UserRole> contentSet) {
-    List<dynamic> jsonList;
-    if (contentSet != null) {
-      jsonList = <dynamic>[];
-      for (UserRole contentEntry in contentSet) {
-        jsonList.add(contentEntry?.toString());
-      }
-    }
-    return jsonList;
-  }
-}
-
-
-abstract class Favorite{
-  String get favoriteId;
-  String get favoriteTitle;
-  String get favoriteKey;
 }

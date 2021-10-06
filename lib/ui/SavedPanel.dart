@@ -38,7 +38,6 @@ import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';

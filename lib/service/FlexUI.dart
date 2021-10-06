@@ -21,7 +21,6 @@ import 'package:http/http.dart' as Http;
 
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
