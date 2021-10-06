@@ -28,7 +28,6 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
 
@@ -62,8 +61,8 @@ class FlexUI with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this,[
-      User.notifyUserUpdated,
-      User.notifyUserDeleted,
+      Auth2.notifyPrefsChanged,
+      Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyRolesChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2.notifyLoginChanged,
@@ -89,15 +88,15 @@ class FlexUI with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), User(), Auth2(), IlliniCash()]);
+    return Set.from([Config(), Auth2(), IlliniCash()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == User.notifyUserUpdated) ||
-        (name == User.notifyUserDeleted) ||
+    if ((name == Auth2.notifyPrefsChanged) ||
+        (name == Auth2.notifyUserDeleted) ||
         (name == Auth2UserPrefs.notifyRolesChanged) ||
         (name == Auth2UserPrefs.notifyPrivacyLevelChanged) ||
         (name == Auth2.notifyLoginChanged) ||

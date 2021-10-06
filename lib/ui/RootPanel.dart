@@ -30,7 +30,6 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -103,7 +102,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       ExploreService.notifyEventDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
-      User.notifyPrivacyLevelEmpty,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Polls.notifyPresentVote,
@@ -167,9 +165,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _FavoritesSavedDialog.show(context);
-    }
-    else if (name == User.notifyPrivacyLevelEmpty) {
-      Navigator.of(context)?.popUntil((route) => route.isFirst);
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContent();

@@ -22,6 +22,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
@@ -35,7 +36,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/PollsPlugin.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -92,7 +92,7 @@ class Polls with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), BluetoothServices(), User()]);
+    return Set.from([Storage(), Config(), BluetoothServices(), Auth2()]);
   }
 
   // NotificationsListener
@@ -171,7 +171,7 @@ class Polls with Service implements NotificationsListener {
     if(_enabled) {
       try {
         String urlParams = (cursor != null) ? '?cursor=$cursor' : '';
-        String url = '${Config().quickPollsUrl}/$pollsType/${User().uuid}$urlParams';
+        String url = '${Config().quickPollsUrl}/$pollsType/${Auth2().accountId}$urlParams';
         Response response = await Network().get(url, auth: NetworkAuth.App);
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
@@ -294,7 +294,7 @@ class Polls with Service implements NotificationsListener {
         try {
           String url = '${Config().quickPollsUrl}/pollvote/$pollId';
           Map<String, dynamic> voteJson = {
-            'userid': User().uuid,
+            'userid': Auth2().accountId,
             'answer': vote?.toVotesJson(),
           };
           String voteString = json.encode(voteJson);
@@ -766,7 +766,7 @@ class Polls with Service implements NotificationsListener {
     Map<String, dynamic> chunksJson = AppJson.decode(pollsJsonString);
     
     if ((chunksJson != null) && (chunksJson.isNotEmpty)) {
-      String url = '${Config().quickPollsUrl}/polls/${User().uuid}';
+      String url = '${Config().quickPollsUrl}/polls/${Auth2().accountId}';
 
       String body;
       try { body = json.encode({'ids': List.from(chunksJson.keys)}); }

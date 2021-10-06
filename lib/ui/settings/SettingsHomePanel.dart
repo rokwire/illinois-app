@@ -24,7 +24,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -67,7 +66,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void initState() {
     NotificationService().subscribe(this, [
       Auth2.notifyLoginChanged,
-      User.notifyUserUpdated,
+      Auth2.notifyPrefsChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged
@@ -89,7 +88,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLoginChanged) {
       _updateState();
-    } else if (name == User.notifyUserUpdated){
+    } else if (name == Auth2.notifyPrefsChanged){
       _updateState();
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
       _updateState();

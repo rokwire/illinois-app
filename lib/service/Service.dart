@@ -47,7 +47,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
@@ -105,7 +104,6 @@ class Services {
     Styles(),
 //  Auth(),
     Auth2(),
-    User(),
     Analytics(),
     FirebaseMessaging(),
     Sports(),

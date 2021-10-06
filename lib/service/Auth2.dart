@@ -169,6 +169,7 @@ class Auth2 with Service implements NotificationsListener {
   bool get hasUin => (0 < uin?.length ?? 0);
   String get uin => _account?.authType?.uiucUser?.uin;
   String get netId => _account?.authType?.uiucUser?.identifier;
+  String get accountId => _account?.id;
 
   String get fullName => _account?.profile?.fullName ?? _account?.authType?.uiucUser?.fullName;
   String get email => _account?.profile?.email ?? _account?.authType?.uiucUser?.email;

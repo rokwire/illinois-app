@@ -21,7 +21,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Polls.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -452,7 +451,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         title: _questionController?.text?.toString(),
         options: options,
         settings: PollSettings(allowMultipleOptions: _selectedMultichoice, hideResultsUntilClosed: _selectedHideResult, allowRepeatOptions: _selectedRepeatVotes),
-        creatorUserUuid: User().uuid,
+        creatorUserUuid: Auth2().accountId,
         creatorUserName: Auth2().fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,

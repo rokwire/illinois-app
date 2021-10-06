@@ -30,7 +30,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/TransportationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -299,7 +298,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       'major': _currentBeacon.major.toString(),
       'minor': _currentBeacon.minor.toString(),
     } : null;
-    TransportationService().loadBusPass(deviceId: deviceId, userId: User().uuid, iBeaconData: beaconData).then((dynamic result){
+    TransportationService().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
 
       if (result is Map) {
         setState(() {

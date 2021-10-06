@@ -23,7 +23,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/TransportationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -89,7 +88,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Future<Color> _loadActiveColor() async{
     String deviceId = await NativeCommunicator().getDeviceId();
-    return await TransportationService().loadBusColor(deviceId: deviceId, userId: User().uuid);
+    return await TransportationService().loadBusColor(deviceId: deviceId, userId: Auth2().accountId);
   }
 
   @override

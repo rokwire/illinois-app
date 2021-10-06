@@ -16,7 +16,8 @@
 
 import 'dart:math';
 
-import 'package:illinois/service/User.dart';
+import 'package:illinois/service/Auth2.dart';
+
 
 class Poll {
   String pollId;            // unique poll id (uuid)
@@ -90,7 +91,7 @@ class Poll {
   }
 
   bool get isMine {
-    return (creatorUserUuid != null) && (creatorUserUuid == User().uuid);
+    return (creatorUserUuid != null) && (creatorUserUuid == Auth2().accountId);
   }
 
   bool get isBluetooth {

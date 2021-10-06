@@ -26,7 +26,6 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
@@ -108,7 +107,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   String get _userDebugData{
-    String userDataText = AppJson.encode(User().data?.toJson(), prettify: true);
+    String userDataText = AppJson.encode(Auth2().account?.prefs?.toJson(), prettify: true);
     String authInfoText = AppJson.encode(Auth2().account?.authType?.uiucUser?.toJson(), prettify: true);
     String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
         "AuthInfo: " + (authInfoText ?? "unknown");
@@ -117,7 +116,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   @override
   Widget build(BuildContext context) {
-    String userUuid = User().uuid;
+    String userUuid = Auth2().accountId;
     String pid = Storage().userPid;
     String firebaseProjectId = FirebaseMessaging().projectID;
     return Scaffold(

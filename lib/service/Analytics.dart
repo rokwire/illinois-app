@@ -43,7 +43,6 @@ import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:illinois/main.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -272,8 +271,8 @@ class Analytics with Service implements NotificationsListener {
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyRolesChanged,
-      User.notifyUserUpdated,
-      User.notifyUserDeleted,
+      Auth2.notifyPrefsChanged,
+      Auth2.notifyUserDeleted,
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
       NativeCommunicator.notifyGeoFenceRegionsEnter,
@@ -326,7 +325,7 @@ class Analytics with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), User(), LocationServices(), Connectivity() ]);
+    return Set.from([Config(), Auth2(), LocationServices(), Connectivity() ]);
   }
 
   // Database
@@ -386,10 +385,10 @@ class Analytics with Service implements NotificationsListener {
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
     }
-    else if (name == User.notifyUserUpdated) {
+    else if (name == Auth2.notifyPrefsChanged) {
       _updateUserRoles();
     }
-    else if (name == User.notifyUserDeleted) {
+    else if (name == Auth2.notifyUserDeleted) {
       _updateSessionUuid();
       _updateUserRoles();
     }
@@ -684,7 +683,7 @@ class Analytics with Service implements NotificationsListener {
           analyticsEvent[LogStdSessionUuidName] = _sessionUuid;
         }
         else if (attributeName == LogStdUserUuidName) {
-          analyticsEvent[LogStdUserUuidName] = User().uuid;
+          analyticsEvent[LogStdUserUuidName] = Auth2().accountId;
         }
         else if (attributeName == LogStdUserPrivacyLevelName) {
           analyticsEvent[LogStdUserPrivacyLevelName] = Auth2().prefs?.privacyLevel;

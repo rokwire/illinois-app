@@ -15,10 +15,10 @@
  */
 
 import 'dart:collection';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 
 import 'package:illinois/model/RecentItem.dart';
 
@@ -40,7 +40,7 @@ class RecentItems with Service implements NotificationsListener {
 
   @override
   void createService() {
-    NotificationService().subscribe(this, User.notifyUserDeleted);
+    NotificationService().subscribe(this, Auth2.notifyUserDeleted);
   }
 
   @override
@@ -96,7 +96,7 @@ class RecentItems with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyUserDeleted) {
+    if (name == Auth2.notifyUserDeleted) {
       _loadRecentItems();
     }
   }

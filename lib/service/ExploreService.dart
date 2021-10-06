@@ -27,7 +27,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:location/location.dart' as Core;
 
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
@@ -588,7 +587,7 @@ class ExploreService with Service implements NotificationsListener {
     if (headers == null) {
       headers = Map<String, String>();
     }
-    headers[Network.RokwireUserUuid] = User().uuid ?? "null";
+    headers[Network.RokwireUserUuid] = Auth2().accountId ?? "null";
     headers[Network.RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
     return headers;
   }
