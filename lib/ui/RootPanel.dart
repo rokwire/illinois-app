@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Poll.dart';
@@ -41,6 +42,7 @@ import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
+import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -354,7 +356,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
-                NotificationService().notify(DeviceCalendar.notifyPlaceEventMessage, data);
+                List calendars = data!=null? data["calendars"] : null;
+                if(calendars!=null){
+                  CalendarSelectionDialog.show(context, data["event"], calendars);
+                } else {
+                  NotificationService().notify(
+                      DeviceCalendar.notifyPlaceEventMessage, data);
+                }
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
@@ -416,7 +424,22 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
   
   void _showConsoleMessage(message){
-    AppAlert.showDialogResult(context, message);
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(message??""),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text("Ok"),
+              onPressed: () => Navigator.of(context).pop()),
+          TextButton(
+              child: Text("Copy"),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: message)).then((_){
+                  AppToast.show("Text data has been copied to the clipboard!");
+                });
+              } )
+        ]);
   }
 
   static List<String> _getTabbarCodes() {

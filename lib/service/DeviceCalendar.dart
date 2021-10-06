@@ -20,6 +20,8 @@ class DeviceCalendar with Service implements NotificationsListener{
   static const String showConsoleMessage    = "edu.illinois.rokwire.debug_console.messaging.message";
 
   Calendar _defaultCalendar;
+  List<Calendar> _deviceCalendars;
+  Calendar _selectedCalendar;
   Map<String, String> _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin;
 
@@ -65,9 +67,16 @@ class DeviceCalendar with Service implements NotificationsListener{
       _debugMessage("Disabled");
       return false;
     }
+
+    if(_deviceCalendarPlugin == null){
+      bool initResult = await _initDeviceCalendarPlugin();
+      if(!initResult ?? true){
+        _debugMessage("Unable to init plugin");
+      }
+    }
     
     if(canShowPrompt){
-      _promptDialog(event);
+      _promptPermissionDialog(event);
       return true;
     }
     
@@ -90,13 +99,14 @@ class DeviceCalendar with Service implements NotificationsListener{
         _debugMessage("Unable to init plugin");
       }
     }
-    _debugMessage("Add to calendar- id:${_defaultCalendar.id}, name:${_defaultCalendar.name}, accountName:${_defaultCalendar.accountName}, accountType:${_defaultCalendar.accountType}, isReadOnly:${_defaultCalendar.isReadOnly}, isDefault:${_defaultCalendar.isDefault},");
+    
+    _debugMessage("Add to calendar- id:${calendar?.id}, name:${calendar?.name}, accountName:${calendar?.accountName}, accountType:${calendar?.accountType}, isReadOnly:${calendar?.isReadOnly}, isDefault:${calendar?.isDefault},");
     //PERMISSIONS
     bool hasPermissions = await _requestPermissions();
 
     _debugMessage("Has permissions: $hasPermissions");
     //PLACE
-    if(hasPermissions && _defaultCalendar!=null) {
+    if(hasPermissions && calendar!=null) {
       Event calendarEvent = _convertEvent(event);
       final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(calendarEvent);
       if(createEventResult?.data!=null){
@@ -124,12 +134,12 @@ class DeviceCalendar with Service implements NotificationsListener{
     }
 
     String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
-    _debugMessage("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${_defaultCalendar.id}");
+    _debugMessage("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${calendar.id}");
     if(AppString.isStringEmpty(eventId)){
       return false;
     }
 
-    final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(_defaultCalendar?.id, eventId);
+    final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(calendar?.id, eventId);
     _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
     if(deleteEventResult.isSuccess){
       _eraseEventId(event?.id);
@@ -141,18 +151,19 @@ class DeviceCalendar with Service implements NotificationsListener{
     _deviceCalendarPlugin = new DeviceCalendarPlugin();
     dynamic storedTable = Storage().calendarEventsTable ?? Map();
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
-    return await _loadDefaultCalendar();
+    return await _loadCalendars();
   }
 
-  Future<bool> _loadDefaultCalendar() async {
+  Future<bool> _loadCalendars() async {
     bool hasPermissions = await _requestPermissions();
     if(!hasPermissions) {
       return false;
     }
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     List<Calendar> calendars = calendarsResult.data;
-    if(AppCollection.isCollectionNotEmpty(calendars)) {
-      Calendar defaultCalendar = calendars.firstWhere((element) => element.isDefault);
+    _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false)?.toList() : null;
+    if(AppCollection.isCollectionNotEmpty(_deviceCalendars)) {
+      Calendar defaultCalendar = _deviceCalendars.firstWhere((element) => element.isDefault);
       if (defaultCalendar!= null){
         _defaultCalendar = defaultCalendar;
         return true;
@@ -176,9 +187,9 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   Event _convertEvent(ExploreEvent.Event event){
-    Event calendarEvent = new Event(_defaultCalendar?.id);
+    Event calendarEvent = new Event(calendar?.id);
 
-    calendarEvent.title = event.title ?? "";
+    calendarEvent.title = event?.title ?? "";
     if(event.startDateLocal!=null) {
       calendarEvent.start = event.startDateLocal;
     }
@@ -213,6 +224,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _debugMessage(String msg){
+//    if(true) return; //TBD remove
     NotificationService().notify(DeviceCalendar.showConsoleMessage, msg);
   }
 
@@ -227,8 +239,8 @@ class DeviceCalendar with Service implements NotificationsListener{
     }
   }
 
-  void _promptDialog(ExploreEvent.Event event) {
-    NotificationService().notify(notifyPromptPopupMessage, event);
+  void _promptPermissionDialog(ExploreEvent.Event event) {
+    NotificationService().notify(notifyPromptPopupMessage, {"event": event, "calendars": _deviceCalendars});
   }
 
   String _constructEventDeepLinkUrl(ExploreEvent.Event event){
@@ -249,8 +261,13 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(name == Auth2UserPrefs.notifyFavoriteChanged){
       _processEvents(param);
     } else if(name == DeviceCalendar.notifyPlaceEventMessage){
-      if(param!=null && param is ExploreEvent.Event){
-        _placeCalendarEvent(param);
+      if(param!=null && param is Map){
+        ExploreEvent.Event event = param["event"];
+        Calendar calendarSelection = param["calendar"];
+        if(calendarSelection!=null){
+          _selectedCalendar = calendarSelection;
+        }
+        _placeCalendarEvent(event);
       }
     }
   }
@@ -261,5 +278,13 @@ class DeviceCalendar with Service implements NotificationsListener{
   
   bool get canShowPrompt{
     return Storage().calendarCanPrompt ?? false;
+  }
+  
+  Calendar get calendar{
+    return _selectedCalendar ?? _defaultCalendar;
+  }
+
+  set calendar(Calendar calendar){
+    _selectedCalendar = calendar;
   }
 }
