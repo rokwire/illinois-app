@@ -437,11 +437,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
-    bool piiDeleted = await Auth2().deleteUser();
-    if(piiDeleted) {
-      await User().deleteUser();
-    }
-    Auth2().logout();
+    await Auth2().deleteUser();
   }
 
   bool get _showFinishSetupWidget{

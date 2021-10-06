@@ -806,11 +806,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
-    bool piiDeleted = await Auth2().deleteUser();
-    if(piiDeleted) {
-      await User().deleteUser();
-    }
-    Auth2().logout();
+    await Auth2().deleteUser();
   }
 
   // Account

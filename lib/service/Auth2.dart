@@ -269,18 +269,21 @@ class Auth2 with Service implements NotificationsListener {
 
         if ((token != null) && token.isValid && (account != null) && account.isValid) {
           
-          bool profileUpdated = account.prefs?.apply(_userPrefs);
+          bool prefsUpdated = account.prefs?.apply(_userPrefs);
           Storage().auth2Token = _token = token;
           Storage().auth2Account = _account = account;
           Storage().auth2UserPrefs = _userPrefs = null;
 
-          if (profileUpdated) {
+          if (prefsUpdated) {
             _saveAccountUserPrefs();
           }
 
           Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
           Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
           Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
+          NotificationService().notify(notifyProfileChanged);
+          NotificationService().notify(notifyPrefsChanged);
 
           String authCardString = await _loadAuthCardStringFromNet();
           _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
@@ -396,6 +399,8 @@ class Auth2 with Service implements NotificationsListener {
       Analytics().logAuth(action: Analytics.LogAuthLogoutActionName);
       
       NotificationService().notify(notifyCardChanged);
+      NotificationService().notify(notifyProfileChanged);
+      NotificationService().notify(notifyPrefsChanged);
       NotificationService().notify(notifyLoginChanged);
       NotificationService().notify(notifyLogout);
     }
@@ -404,6 +409,20 @@ class Auth2 with Service implements NotificationsListener {
   // Delete
 
   Future<bool> deleteUser() async {
+    if (await _deleteUserAccount()) {
+      logout();
+      NotificationService().notify(notifyUserDeleted);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> _deleteUserAccount() async {
+    if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
+      String url = "${Config().coreUrl}/services/account";
+      Response response = await Network().delete(url, auth: NetworkAuth.Auth2);
+      return response?.statusCode == 200;
+    }
     return false;
   }
 
@@ -585,7 +604,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<Auth2UserPrefs> _loadAccountUserPrefs() async {
-    if ((Config().coreUrl != null) && isLoggedIn) {
+    if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/account-preferences";
       Response response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(AppJson.decodeMap(response?.body)) : null;
@@ -621,7 +640,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<Auth2UserProfile> _loadAccountUserProfile() async {
-    if ((Config().coreUrl != null) && isLoggedIn) {
+    if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/profile";
       Response response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(AppJson.decodeMap(response?.body)) : null;
@@ -630,7 +649,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> _saveAccountUserProfile(Auth2UserProfile profile) async {
-    if ((Config().coreUrl != null) && isLoggedIn) {
+    if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
       String url = "${Config().coreUrl}/services/profile";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
