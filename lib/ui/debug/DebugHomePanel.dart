@@ -117,7 +117,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   @override
   Widget build(BuildContext context) {
     String userUuid = Auth2().accountId;
-    String pid = Storage().userPid;
+    String pid = Auth2().account?.profile?.id;
     String firebaseProjectId = FirebaseMessaging().projectID;
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(

@@ -290,7 +290,7 @@ class Auth2 with Service implements NotificationsListener {
 
           String authCardString = await _loadAuthCardStringFromNet();
           _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
-          Storage().authCardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
+          Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
           await _saveAuthCardStringToCache(authCardString);
           NotificationService().notify(notifyCardChanged);
 
@@ -397,7 +397,7 @@ class Auth2 with Service implements NotificationsListener {
 
       _authCard = null;
       _saveAuthCardStringToCache(null);
-      Storage().authCardTime = null;
+      Storage().auth2CardTime = null;
 
       Analytics().logAuth(action: Analytics.LogAuthLogoutActionName);
       
@@ -535,7 +535,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<void> _refreshAuthCardIfNeeded() async {
-    int lastCheckTime = Storage().authCardTime;
+    int lastCheckTime = Storage().auth2CardTime;
     DateTime lastCheckDate = (lastCheckTime != null) ? DateTime.fromMillisecondsSinceEpoch(lastCheckTime) : null;
     DateTime lastCheckMidnight = AppDateTime.midnight(lastCheckDate);
 
@@ -545,7 +545,7 @@ class Auth2 with Service implements NotificationsListener {
     // Do it one per day
     if ((lastCheckMidnight == null) || (lastCheckMidnight.compareTo(todayMidnight) < 0)) {
       if (await _refreshAuthCard() != null) {
-        Storage().authCardTime = now.millisecondsSinceEpoch;
+        Storage().auth2CardTime = now.millisecondsSinceEpoch;
       }
     }
   }

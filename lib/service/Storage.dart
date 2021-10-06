@@ -15,12 +15,10 @@
  */
 
 import 'dart:convert';
-import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -178,75 +176,6 @@ class Storage with Service {
   }
 
   /////////////
-  // User
-
-  static const String userKey  = 'user';
-
-  UserData get userData {
-    final String userToString = _getStringWithName(userKey);
-    final Map<String, dynamic> userToJson = AppJson.decode(userToString);
-    return (userToJson != null) ? UserData.fromJson(userToJson) : null;
-  }
-
-  set userData(UserData user) {
-    String userToString = (user != null) ? json.encode(user) : null;
-    _setStringWithName(userKey, userToString);
-  }
-
-  /////////////
-  // UserRoles
-
-  static const String userRolesKey  = 'user_roles';
-
-  List<dynamic> get userRolesJson {
-    final String userRolesToString = _getStringWithName("user_roles");
-    return AppJson.decode(userRolesToString);
-  }
-
-  Set<UserRole> get userRoles {
-    final List<dynamic> userRolesToJson = userRolesJson;
-    return (userRolesToJson != null) ? Set.from(userRolesToJson.map((value)=>UserRole.fromString(value))) : null;
-  }
-
-  set userRoles(Set<UserRole> userRoles) {
-    String userRolesToString = (userRoles != null) ? json.encode(userRoles.toList()) : null;
-    _setStringWithName(userRolesKey, userRolesToString);
-  }
-
-  static const String phoneNumberKey  = 'user_phone_number';
-
-  String get phoneNumber {
-    return _getStringWithName(phoneNumberKey);
-  }
-
-  set phoneNumber(String phoneNumber) {
-    _setStringWithName(phoneNumberKey, phoneNumber);
-  }
-
-  /////////////
-  // UserPII
-
-  static const String userPidKey  = 'user_pid';
-
-  String get userPid {
-    return _getStringWithName(userPidKey);
-  }
-
-  set userPid(String userPid) {
-    _setStringWithName(userPidKey, userPid);
-  }
-
-  static const String userPiiDataTimeKey  = '_user_pii_data_time';
-
-  int get userPiiDataTime {
-    return _getIntWithName(userPiiDataTimeKey);
-  }
-
-  set userPiiDataTime(int value) {
-    _setIntWithName(userPiiDataTimeKey, value);
-  }
-
-  /////////////
   // Polls
 
   static const String selectedPollTypeKey  = 'selected_poll_type';
@@ -368,46 +297,6 @@ class Storage with Service {
 
   set lastRunVersion(String value) {
     _setStringWithName(lastRunVersionKey, value);
-  }
-
-  ////////////////
-  // Auth
-
-  static const String authTokenKey  = '_auth_token';
-
-  AuthToken get authToken {
-    try {
-      String jsonString = _getStringWithName(authTokenKey);
-      dynamic jsonData = AppJson.decode(jsonString);
-      return (jsonData != null) ? AuthToken.fromJson(jsonData) : null;
-    } on Exception catch (e) { print(e.toString()); }
-    return null;
-  }
-
-  set authToken(AuthToken value) {
-    _setStringWithName(authTokenKey, value != null ? json.encode(value.toJson()) : null);
-  }
-
-  static const String authInfoKey  = '_auth_info';
-
-  AuthInfo get authInfo {
-    final String authInfoToString = _getStringWithName(authInfoKey);
-    AuthInfo authInfo = AuthInfo.fromJson(AppJson.decode(authInfoToString));
-    return authInfo;
-  }
-
-  set authInfo(AuthInfo value) {
-    _setStringWithName(authInfoKey, value != null ? json.encode(value.toJson()) : null);
-  }
-
-  static const String authCardTimeKey  = '_auth_card_time';
-
-  int get authCardTime {
-    return _getIntWithName(authCardTimeKey);
-  }
-
-  set authCardTime(int value) {
-    _setIntWithName(authCardTimeKey, value);
   }
 
   ////////////////
@@ -794,6 +683,16 @@ class Storage with Service {
 
   set auth2UserPrefs(Auth2UserPrefs value) {
     _setStringWithName(_auth2UserPrefsKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String auth2CardTimeKey  = 'auth2CardTime';
+
+  int get auth2CardTime {
+    return _getIntWithName(auth2CardTimeKey);
+  }
+
+  set auth2CardTime(int value) {
+    _setIntWithName(auth2CardTimeKey, value);
   }
 
   /////////////
