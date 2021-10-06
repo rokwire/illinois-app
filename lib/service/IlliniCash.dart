@@ -18,7 +18,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:illinois/model/Auth.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -125,7 +124,7 @@ class IlliniCash with Service implements NotificationsListener {
       bool eligible = await _isEligible();
       if (eligible == true) {
         String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().account?.authType?.uiucUser?.uin}";
-        String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${AuthInfo.analyticsUin}";
+        String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${Auth2.analyticsUin}";
         Response response = await Network().get(url, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
         if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
           String responseBody = response.body;
@@ -149,7 +148,7 @@ class IlliniCash with Service implements NotificationsListener {
 
     if ((Config().illiniCashBaseUrl != null) && !AppString.isStringEmpty(uin) && !AppString.isStringEmpty(firstName) && !AppString.isStringEmpty(lastName)) {
       String url =  "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
-      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${AuthInfo.analyticsUin}/${AuthInfo.analyticsFirstName}/${AuthInfo.analyticsLastName}";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${Auth2.analyticsUin}/${Auth2.analyticsFirstName}/${Auth2.analyticsLastName}";
       Response response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
@@ -191,7 +190,7 @@ class IlliniCash with Service implements NotificationsListener {
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${AuthInfo.analyticsUin}/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
     final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl );
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
@@ -219,7 +218,7 @@ class IlliniCash with Service implements NotificationsListener {
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${AuthInfo.analyticsUin}/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
     final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
 
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
@@ -250,7 +249,7 @@ class IlliniCash with Service implements NotificationsListener {
     String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
-    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${AuthInfo.analyticsUin}/$startDateFormatted/$endDateFormatted";
+    String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
     final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
 

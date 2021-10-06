@@ -396,11 +396,11 @@ class Auth with Service implements NotificationsListener {
   //Phone verification
 
   ///Returns 'true' if code was send, otherwise - false
-  Future<bool> initiatePhoneNumber(String phoneNumberCandidate, AuthPhoneVerificationMethod verifyMethod) async {
+  Future<bool> initiatePhoneNumber(String phoneNumberCandidate, Auth2PhoneVerificationMethod verifyMethod) async {
     if (AppString.isStringEmpty(phoneNumberCandidate) || verifyMethod == null || AppString.isStringEmpty(Config().rokwireAuthUrl)) {
       return false;
     }
-    String channel = (verifyMethod == AuthPhoneVerificationMethod.call) ? 'call' : 'sms';
+    String channel = (verifyMethod == Auth2PhoneVerificationMethod.call) ? 'call' : 'sms';
     String phoneInitiateBody = '{"phoneNumber":"$phoneNumberCandidate", "channel":"$channel"}';
     var headers = {
       "Content-Type": "application/json"

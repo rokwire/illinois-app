@@ -1,5 +1,9 @@
 
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -1206,6 +1210,9 @@ class Auth2VoterPrefs {
   }
 }
 
+////////////////////////////////
+// UserRole
+
 class UserRole {
   static const student = const UserRole._internal('student');
   static const visitor = const UserRole._internal('visitor');
@@ -1291,8 +1298,108 @@ class UserRole {
 }
 
 
+////////////////////////////////
+// Favorite
+
 abstract class Favorite {
   String get favoriteId;
   String get favoriteTitle;
   String get favoriteKey;
 }
+
+////////////////////////////////
+// Auth2PhoneVerificationMethod
+
+enum Auth2PhoneVerificationMethod { call, sms }
+
+////////////////////////////////
+// AuthCard
+
+class AuthCard {
+
+  final String uin;
+  final String fullName;
+  final String role;
+  final String studentLevel;
+  final String cardNumber;
+  final String expirationDate;
+  final String libraryNumber;
+  final String magTrack2;
+  final String photoBase64;
+
+  AuthCard({this.uin, this.cardNumber, this.libraryNumber, this.expirationDate, this.fullName, this.role, this.studentLevel, this.magTrack2, this.photoBase64});
+
+  factory AuthCard.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? AuthCard(
+      uin: json['UIN'],
+      fullName: json['full_name'],
+      role: json['role'],
+      studentLevel: json['student_level'],
+      cardNumber: json['card_number'],
+      expirationDate: json['expiration_date'],
+      libraryNumber: json['library_number'],
+      magTrack2: json['mag_track2'],
+      photoBase64: json['photo_base64'],
+    ) : null;
+  }
+
+  toJson() {
+    return {
+      'UIN': uin,
+      'full_name': fullName,
+      'role': role,
+      'student_level': studentLevel,
+      'card_number': cardNumber,
+      'expiration_date': expirationDate,
+      'library_number': libraryNumber,
+      'mag_track2': magTrack2,
+      'photo_base64': photoBase64,
+    };
+  }
+
+  toShortJson() {
+    return {
+      'UIN': uin,
+      'full_name': fullName,
+      'role': role,
+      'student_level': studentLevel,
+      'card_number': cardNumber,
+      'expiration_date': expirationDate,
+      'library_number': libraryNumber,
+      'mag_track2': magTrack2,
+      'photo_base64_len': photoBase64?.length,
+    };
+  }
+
+  bool operator ==(o) =>
+      o is AuthCard &&
+          o.uin == uin &&
+          o.fullName == fullName &&
+          o.role == role &&
+          o.studentLevel == studentLevel &&
+          o.cardNumber == cardNumber &&
+          o.expirationDate == expirationDate &&
+          o.libraryNumber == libraryNumber &&
+          o.magTrack2 == magTrack2 &&
+          o.photoBase64 == photoBase64;
+
+  int get hashCode =>
+      uin.hashCode ^
+      fullName.hashCode ^
+      role.hashCode ^
+      studentLevel.hashCode ^
+      cardNumber.hashCode ^
+      expirationDate.hashCode ^
+      libraryNumber.hashCode ^
+      magTrack2.hashCode ^
+      photoBase64.hashCode;
+
+  Future<Uint8List> get photoBytes async {
+    return (photoBase64 != null) ? await compute(base64Decode, photoBase64) : null;
+  }
+
+  bool get needsUpdate {
+    return (role == "Undergraduate") && (studentLevel != "1U");
+  }
+}
+

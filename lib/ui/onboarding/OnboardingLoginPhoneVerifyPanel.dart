@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
@@ -48,7 +48,7 @@ class OnboardingLoginPhoneVerifyPanel extends StatefulWidget with OnboardingPane
 class _OnboardingLoginPhoneVerifyPanelState
     extends State<OnboardingLoginPhoneVerifyPanel> {
   TextEditingController _phoneNumberController = TextEditingController();
-  AuthPhoneVerificationMethod _verificationMethod = AuthPhoneVerificationMethod.sms;
+  Auth2PhoneVerificationMethod _verificationMethod = Auth2PhoneVerificationMethod.sms;
   String _validationErrorMsg;
 
   bool _isLoading = false;
@@ -151,11 +151,11 @@ class _OnboardingLoginPhoneVerifyPanelState
                             excludeSemantics: true,
                             label: Localization().getStringEx("panel.onboarding.verify_phone.text_me.label", "Text me"),
                             hint: Localization().getStringEx("panel.onboarding.verify_phone.text_me.hint", ""),
-                            selected: _verificationMethod == AuthPhoneVerificationMethod.sms,
+                            selected: _verificationMethod == Auth2PhoneVerificationMethod.sms,
                             button: true,
                             child: Radio(
                               activeColor: Styles().colors.fillColorSecondary,
-                              value: AuthPhoneVerificationMethod.sms,
+                              value: Auth2PhoneVerificationMethod.sms,
                               groupValue: _verificationMethod,
                               onChanged: _onMethodChanged,
                             ),
@@ -254,7 +254,7 @@ class _OnboardingLoginPhoneVerifyPanelState
     });
   }
 
-  void _onMethodChanged(AuthPhoneVerificationMethod method) {
+  void _onMethodChanged(Auth2PhoneVerificationMethod method) {
     Analytics.instance.logSelect(target: method?.toString());
     FocusScope.of(context).requestFocus(new FocusNode());
     setState(() {

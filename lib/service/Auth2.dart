@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Auth.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -35,6 +34,10 @@ class Auth2 with Service implements NotificationsListener {
   static const String notifyPrefsChanged   = "edu.illinois.rokwire.auth2.prefs.changed";
   static const String notifyCardChanged    = "edu.illinois.rokwire.auth2.card.changed";
   static const String notifyUserDeleted    = "edu.illinois.rokwire.auth2.user.deleted";
+
+  static const String analyticsUin         = 'UINxxxxxx';
+  static const String analyticsFirstName   = 'FirstNameXXXXXX';
+  static const String analyticsLastName    = 'LastNameXXXXXX';
 
   static const String _authCardName        = "idCard.json";
 
