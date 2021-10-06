@@ -26,7 +26,6 @@ import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -161,9 +160,8 @@ class _AppState extends State<App> implements NotificationsListener {
       Config.notifyUpgradeRequired,
       Config.notifyOnboardingRequired,
       Storage.notifySettingChanged,
-      User.notifyUserDeleted,
+      Auth2.notifyUserDeleted,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
-      User.notifyPrivacyLevelEmpty,
       AppLivecycle.notifyStateChanged,
     ]);
 
@@ -315,7 +313,7 @@ class _AppState extends State<App> implements NotificationsListener {
         _resetUI();
       }
     }
-    else if (name == User.notifyUserDeleted) {
+    else if (name == Auth2.notifyUserDeleted) {
       _resetUI();
     }
     else if (name == Storage.notifySettingChanged) {
@@ -324,9 +322,6 @@ class _AppState extends State<App> implements NotificationsListener {
       }
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setState(() { });
-    }
-    else if (name == User.notifyPrivacyLevelEmpty) {
       setState(() { });
     }
     else if (name == AppLivecycle.notifyStateChanged) {
