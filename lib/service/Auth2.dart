@@ -544,9 +544,11 @@ class Auth2 with Service implements NotificationsListener {
   void _onUserPrefsChanged(Auth2UserPrefs prefs) {
     if (identical(prefs, _userPrefs)) {
       Storage().auth2UserPrefs = _userPrefs;
+      NotificationService().notify(notifyPrefsChanged);
     }
     else if (identical(prefs, _account?.prefs)) {
       Storage().auth2Account = _account;
+      NotificationService().notify(notifyPrefsChanged);
       _saveAccountUserPrefs();
     }
   }
@@ -594,7 +596,10 @@ class Auth2 with Service implements NotificationsListener {
   Future<void> _refreshAccountUserPrefs() async {
     Auth2UserPrefs prefs = await _loadAccountUserPrefs();
     if ((prefs != null) && (prefs != _account?.prefs)) {
-      _account?.prefs?.apply(prefs, notify: true);
+      if (_account?.prefs?.apply(prefs, notify: true) ?? false) {
+        Storage().auth2Account = _account;
+        NotificationService().notify(notifyPrefsChanged);
+      }
     }
   }
 
@@ -607,6 +612,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<bool> saveAccountUserProfile(Auth2UserProfile profile) async {
     if (await _saveAccountUserProfile(profile)) {
       if (_account?.profile?.apply(profile) ?? false) {
+        Storage().auth2Account = _account;
         NotificationService().notify(notifyProfileChanged);
       }
       return true;
@@ -640,6 +646,7 @@ class Auth2 with Service implements NotificationsListener {
     Auth2UserProfile profile = await _loadAccountUserProfile();
     if ((profile != null) && (profile != _account?.profile)) {
       if (_account?.profile?.apply(profile) ?? false) {
+        Storage().auth2Account = _account;
         NotificationService().notify(notifyProfileChanged);
       }
     }
