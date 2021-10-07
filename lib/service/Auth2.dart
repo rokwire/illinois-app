@@ -531,9 +531,9 @@ class Auth2 with Service implements NotificationsListener {
 
   // Logout
 
-  void logout() {
+  void logout({ Auth2UserPrefs prefs }) {
     if ((_token != null) || (_account != null)) {
-      Storage().auth2AnonymousPrefs = _anonymousPrefs = _account?.prefs ?? Auth2UserPrefs.empty();
+      Storage().auth2AnonymousPrefs = _anonymousPrefs = prefs ?? _account?.prefs ?? Auth2UserPrefs.empty();
       Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
       Storage().auth2Token = _token = null;
       Storage().auth2Account = _account = null;
@@ -563,7 +563,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> deleteUser() async {
     if (await _deleteUserAccount()) {
-      logout();
+      logout(prefs: Auth2UserPrefs.empty());
       NotificationService().notify(notifyUserDeleted);
       return true;
     }
