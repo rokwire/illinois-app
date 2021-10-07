@@ -11,9 +11,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class DeviceCalendar with Service implements NotificationsListener{
 
-  static const String notifyPromptPopupMessage    = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
-  static const String notifyPlaceEventMessage     = "edu.illinois.rokwire.device_calendar.messaging.place.event";
-  static const String showConsoleMessage    = "edu.illinois.rokwire.debug_console.messaging.message";
+  static const String notifyPromptPopupMessage            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
+  static const String notifyCalendarSelectionPopupMessage = "edu.illinois.rokwire.device_calendar.messaging.calendar_selection.popup";
+  static const String notifyPlaceEventMessage             = "edu.illinois.rokwire.device_calendar.messaging.place.event";
+  static const String showConsoleMessage                  = "edu.illinois.rokwire.debug_console.messaging.message";
 
   Calendar _defaultCalendar;
   List<Calendar> _deviceCalendars;
@@ -229,7 +230,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _promptPermissionDialog(ExploreEvent.Event event) {
-    NotificationService().notify(notifyPromptPopupMessage, {"event": event, "calendars": _deviceCalendars});
+    NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopupMessage, {"event": event, "calendars": _deviceCalendars});
   }
 
   String _constructEventDeepLinkUrl(ExploreEvent.Event event){
