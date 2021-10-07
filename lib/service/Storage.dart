@@ -685,6 +685,16 @@ class Storage with Service {
     _setStringWithName(_auth2UserPrefsKey, AppJson.encode(value?.toJson()));
   }
 
+  static const String _auth2UserProfileKey = 'auth2UserProfile';
+
+  Auth2UserProfile get auth2UserProfile {
+    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UserProfileKey)));
+  }
+
+  set auth2UserProfile(Auth2UserProfile value) {
+    _setStringWithName(_auth2UserProfileKey, AppJson.encode(value?.toJson()));
+  }
+
   static const String auth2CardTimeKey  = 'auth2CardTime';
 
   int get auth2CardTime {

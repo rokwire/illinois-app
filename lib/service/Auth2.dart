@@ -55,6 +55,7 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token _uiucToken;
   Auth2Account _account;
   Auth2UserPrefs _userPrefs;
+  Auth2UserProfile _userProfile;
   
   AuthCard  _authCard;
   File _authCardCacheFile;
@@ -88,12 +89,17 @@ class Auth2 with Service implements NotificationsListener {
     _token = Storage().auth2Token;
     _uiucToken = Storage().auth2UiucToken;
     _account = Storage().auth2Account;
-    _userPrefs = Storage().auth2UserPrefs;
     
+    _userPrefs = Storage().auth2UserPrefs;
     if ((_account?.prefs == null) && (_userPrefs == null)) {
       Storage().auth2UserPrefs = _userPrefs = Auth2UserPrefs.empty();
     }
     
+    _userProfile = Storage().auth2UserProfile;
+    if ((_account?.profile == null) && (_userProfile == null)) {
+      Storage().auth2UserProfile = _userProfile = Auth2UserProfile.empty();
+    }
+
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
 
@@ -164,6 +170,7 @@ class Auth2 with Service implements NotificationsListener {
   AuthCard get authCard => _authCard;
   
   Auth2UserPrefs get prefs => _account?.prefs ?? _userPrefs;
+  Auth2UserProfile get profile => _account?.profile ?? _userProfile;
 
   bool get isLoggedIn => (_token != null);
   bool get isOidcLoggedIn => (_account?.authType?.uiucUser != null);
@@ -198,6 +205,8 @@ class Auth2 with Service implements NotificationsListener {
   bool get didVote => prefs?.voter?.voted ?? false;
   String get votePlace => prefs?.voter?.votePlace;
   
+
+  // Anonymous Authentication
 
   // OIDC Authentication
 
@@ -260,6 +269,7 @@ class Auth2 with Service implements NotificationsListener {
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
         'preferences': _userPrefs?.toJson(),
+        'profile': _userProfile?.toJson(),
         'device': _deviceInfo
       });
       _oidcLogin = null;
@@ -268,17 +278,25 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']), prefs: _userPrefs ?? Auth2UserPrefs.empty(), profile: Auth2UserProfile.empty());
+        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
+          prefs: _userPrefs ?? Auth2UserPrefs.empty(),
+          profile: _userProfile ?? Auth2UserProfile.empty());
 
         if ((token != null) && token.isValid && (account != null) && account.isValid) {
           
           bool prefsUpdated = account.prefs?.apply(_userPrefs);
+          bool profileUpdated = account.profile?.apply(_userProfile);
           Storage().auth2Token = _token = token;
           Storage().auth2Account = _account = account;
           Storage().auth2UserPrefs = _userPrefs = null;
+          Storage().auth2UserProfile = _userProfile = null;
 
-          if (prefsUpdated) {
+          if (prefsUpdated == true) {
             _saveAccountUserPrefs();
+          }
+
+          if (profileUpdated == true) {
+            _saveAccountUserProfile(account.profile);
           }
 
           Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
@@ -385,6 +403,7 @@ class Auth2 with Service implements NotificationsListener {
   void logout() {
     if ((_token != null) || (_account != null)) {
       Storage().auth2UserPrefs = _userPrefs = _account?.prefs ?? Auth2UserPrefs.empty();
+      Storage().auth2UserProfile = _userProfile = Auth2UserProfile.empty();
       Storage().auth2Token = _token = null;
       Storage().auth2Account = _account = null;
       Storage().auth2UiucToken = _uiucToken = null;
