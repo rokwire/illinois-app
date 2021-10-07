@@ -54,9 +54,13 @@ class Auth2 with Service implements NotificationsListener {
   Auth2Token _token;
   Auth2Token _uiucToken;
   Auth2Account _account;
-  Auth2UserPrefs _userPrefs;
-  Auth2UserProfile _userProfile;
+
+  String _anonymousId;
+  Auth2Token _anonymousToken;
+  Auth2UserPrefs _anonymousPrefs;
+  Auth2UserProfile _anonymousProfile;
   
+
   AuthCard  _authCard;
   File _authCardCacheFile;
 
@@ -89,21 +93,22 @@ class Auth2 with Service implements NotificationsListener {
     _token = Storage().auth2Token;
     _uiucToken = Storage().auth2UiucToken;
     _account = Storage().auth2Account;
-    
-    _userPrefs = Storage().auth2UserPrefs;
-    if ((_account?.prefs == null) && (_userPrefs == null)) {
-      Storage().auth2UserPrefs = _userPrefs = Auth2UserPrefs.empty();
-    }
-    
-    _userProfile = Storage().auth2UserProfile;
-    if ((_account?.profile == null) && (_userProfile == null)) {
-      Storage().auth2UserProfile = _userProfile = Auth2UserProfile.empty();
-    }
+
+    _anonymousId = Storage().auth2AnonymousId;
+    _anonymousToken = Storage().auth2AnonymousToken;
+    _anonymousPrefs = Storage().auth2AnonymousPrefs;
+    _anonymousProfile = Storage().auth2AnonymousProfile;
 
     _authCardCacheFile = await _getAuthCardCacheFile();
     _authCard = await _loadAuthCardFromCache();
 
     _deviceId = await NativeCommunicator().getDeviceId();
+
+    if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValidAnonymous) {
+      if (!await authenticateAnonymously()) {
+        Log.d("Anonymous Authentication Failed");
+      }
+    }
   }
 
   @override
@@ -164,26 +169,26 @@ class Auth2 with Service implements NotificationsListener {
 
   // Getters
 
-  Auth2Token get token => _token;
+  Auth2Token get token => _token ?? _anonymousToken;
   Auth2Token get uiucToken => _uiucToken;
   Auth2Account get account => _account;
   AuthCard get authCard => _authCard;
   
-  Auth2UserPrefs get prefs => _account?.prefs ?? _userPrefs;
-  Auth2UserProfile get profile => _account?.profile ?? _userProfile;
+  String get accountId => _account?.id ?? _anonymousId;
+  Auth2UserPrefs get prefs => _account?.prefs ?? _anonymousPrefs;
+  Auth2UserProfile get profile => _account?.profile ?? _anonymousProfile;
 
-  bool get isLoggedIn => (_token != null);
+  bool get isLoggedIn => (_account?.id != null);
   bool get isOidcLoggedIn => (_account?.authType?.uiucUser != null);
   bool get isPhoneLoggedIn => false;
 
   bool get hasUin => (0 < uin?.length ?? 0);
   String get uin => _account?.authType?.uiucUser?.uin;
   String get netId => _account?.authType?.uiucUser?.identifier;
-  String get accountId => _account?.id;
 
-  String get fullName => _account?.profile?.fullName ?? _account?.authType?.uiucUser?.fullName;
-  String get email => _account?.profile?.email ?? _account?.authType?.uiucUser?.email;
-  String get phone => _account?.profile?.phone; //TBD: phone from authType in case of phone login
+  String get fullName => profile?.fullName ?? _account?.authType?.uiucUser?.fullName;
+  String get email => profile?.email ?? _account?.authType?.uiucUser?.email;
+  String get phone => profile?.phone; //TBD: phone from authType in case of phone login
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
@@ -205,8 +210,39 @@ class Auth2 with Service implements NotificationsListener {
   bool get didVote => prefs?.voter?.voted ?? false;
   String get votePlace => prefs?.voter?.votePlace;
   
-
   // Anonymous Authentication
+
+  Future<bool> authenticateAnonymously() async {
+    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
+      String url = "${Config().coreUrl}/services/auth/login";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.apiKey),
+        'org_id': Config().coreOrgId,
+        'app_type_identifier': Config().appCanonicalId,
+        'creds': Config().rokwireApiKey,
+        'device': _deviceInfo
+      });
+      
+      Response response = await Network().post(url, headers: headers, body: post);
+      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      if (responseJson != null) {
+        Auth2Token anonymousToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
+        Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
+        String anonymousId = (params != null) ? AppJson.stringValue(params['anonymous_id']) : null;
+        if ((anonymousToken != null) && anonymousToken.isValidAnonymous && (anonymousId != null) && anonymousId.isNotEmpty) {
+          Storage().auth2AnonymousId = _anonymousId = anonymousId;
+          Storage().auth2AnonymousToken = _anonymousToken = anonymousToken;
+          Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty();
+          Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   // OIDC Authentication
 
@@ -268,9 +304,10 @@ class Auth2 with Service implements NotificationsListener {
         'app_type_identifier': Config().appCanonicalId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
-        'preferences': _userPrefs?.toJson(),
-        'profile': _userProfile?.toJson(),
-        'device': _deviceInfo
+//      'anonymous_id': _anonymousId,
+//      'profile': _anonymousProfile?.toJson(applyId: false),
+        'preferences': _anonymousPrefs?.toJson(),
+        'device': _deviceInfo,
       });
       _oidcLogin = null;
       
@@ -279,17 +316,17 @@ class Auth2 with Service implements NotificationsListener {
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
         Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
-          prefs: _userPrefs ?? Auth2UserPrefs.empty(),
-          profile: _userProfile ?? Auth2UserProfile.empty());
+          prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
+          profile: _anonymousProfile ?? Auth2UserProfile.empty());
 
         if ((token != null) && token.isValid && (account != null) && account.isValid) {
           
-          bool prefsUpdated = account.prefs?.apply(_userPrefs);
-          bool profileUpdated = account.profile?.apply(_userProfile);
+          bool prefsUpdated = account.prefs?.apply(_anonymousPrefs);
+          bool profileUpdated = account.profile?.apply(_anonymousProfile);
           Storage().auth2Token = _token = token;
           Storage().auth2Account = _account = account;
-          Storage().auth2UserPrefs = _userPrefs = null;
-          Storage().auth2UserProfile = _userProfile = null;
+          Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
+          Storage().auth2AnonymousProfile = _anonymousProfile = null;
 
           if (prefsUpdated == true) {
             _saveAccountUserPrefs();
@@ -402,8 +439,8 @@ class Auth2 with Service implements NotificationsListener {
 
   void logout() {
     if ((_token != null) || (_account != null)) {
-      Storage().auth2UserPrefs = _userPrefs = _account?.prefs ?? Auth2UserPrefs.empty();
-      Storage().auth2UserProfile = _userProfile = Auth2UserProfile.empty();
+      Storage().auth2AnonymousPrefs = _anonymousPrefs = _account?.prefs ?? Auth2UserPrefs.empty();
+      Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
       Storage().auth2Token = _token = null;
       Storage().auth2Account = _account = null;
       Storage().auth2UiucToken = _uiucToken = null;
@@ -583,8 +620,8 @@ class Auth2 with Service implements NotificationsListener {
   // User Prefs
 
   void _onUserPrefsChanged(Auth2UserPrefs prefs) {
-    if (identical(prefs, _userPrefs)) {
-      Storage().auth2UserPrefs = _userPrefs;
+    if (identical(prefs, _anonymousPrefs)) {
+      Storage().auth2AnonymousPrefs = _anonymousPrefs;
       NotificationService().notify(notifyPrefsChanged);
     }
     else if (identical(prefs, _account?.prefs)) {

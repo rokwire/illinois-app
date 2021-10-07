@@ -54,15 +54,20 @@ class Auth2Token {
   bool get isValidUiuc {
     return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(idToken) && AppString.isStringNotEmpty(tokenType);
   }
+
+  bool get isValidAnonymous {
+    return AppString.isStringNotEmpty(accessToken) && AppString.isStringNotEmpty(tokenType);
+  }
 }
 
 ////////////////////////////////
 // Auth2LoginType
 
-enum Auth2LoginType { email, phone, oidc, oidcIllinois }
+enum Auth2LoginType { apiKey, email, phone, oidc, oidcIllinois }
 
 String auth2LoginTypeToString(Auth2LoginType value) {
   switch (value) {
+    case Auth2LoginType.apiKey: return 'api_key';
     case Auth2LoginType.email: return 'email';
     case Auth2LoginType.phone: return 'phone';
     case Auth2LoginType.oidc: return 'oidc';
@@ -72,6 +77,9 @@ String auth2LoginTypeToString(Auth2LoginType value) {
 }
 
 Auth2LoginType auth2LoginTypeFromString(String value) {
+  if (value == 'api_key') {
+    return Auth2LoginType.apiKey;
+  } 
   if (value == 'email') {
     return Auth2LoginType.email;
   }
@@ -144,8 +152,7 @@ class Auth2Account {
     (DeepCollectionEquality().hash(authTypes) ?? 0);
 
   bool get isValid {
-    return (id != null) && id.isNotEmpty &&
-      (profile != null) && profile.isValid;
+    return (id != null) && id.isNotEmpty /* && (profile != null) && profile.isValid*/;
   }
 
   Auth2Type get authType {
@@ -239,9 +246,9 @@ class Auth2UserProfile {
     ) : null;
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id' : _id,
+  Map<String, dynamic> toJson({ bool applyId }) {
+    Map<String, dynamic> json = {
+//    'id' : _id,
       'first_name': _firstName,
       'middle_name': _middleName,
       'last_name': _lastName,
@@ -256,6 +263,11 @@ class Auth2UserProfile {
       'zip': _zip,
       'country': _country,
     };
+    if (applyId != false) {
+      json['id'] = _id;
+    }
+
+    return json;
   }
 
   bool operator ==(o) =>

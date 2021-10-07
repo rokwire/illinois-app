@@ -645,6 +645,46 @@ class Storage with Service {
   //////////////////
   // Auth2
 
+  static const String _auth2AnonymousIdKey = 'auth2AnonymousId';
+
+  String get auth2AnonymousId {
+    return _getStringWithName(_auth2AnonymousIdKey);
+  }
+
+  set auth2AnonymousId(String value) {
+    _setStringWithName(_auth2AnonymousIdKey, value);
+  }
+
+  static const String _auth2AnonymousTokenKey = 'auth2AnonymousToken';
+
+  Auth2Token get auth2AnonymousToken {
+    return Auth2Token.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AnonymousTokenKey)));
+  }
+
+  set auth2AnonymousToken(Auth2Token value) {
+    _setStringWithName(_auth2AnonymousTokenKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2AnonymousPrefsKey = 'auth2AnonymousPrefs';
+
+  Auth2UserPrefs get auth2AnonymousPrefs {
+    return Auth2UserPrefs.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AnonymousPrefsKey)));
+  }
+
+  set auth2AnonymousPrefs(Auth2UserPrefs value) {
+    _setStringWithName(_auth2AnonymousPrefsKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2AnonymousProfileKey = 'auth2AnonymousProfile';
+
+  Auth2UserProfile get auth2AnonymousProfile {
+    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AnonymousProfileKey)));
+  }
+
+  set auth2AnonymousProfile(Auth2UserProfile value) {
+    _setStringWithName(_auth2AnonymousProfileKey, AppJson.encode(value?.toJson()));
+  }
+
   static const String _auth2TokenKey = 'auth2Token';
 
   Auth2Token get auth2Token {
@@ -673,26 +713,6 @@ class Storage with Service {
 
   set auth2Account(Auth2Account value) {
     _setStringWithName(_auth2AccountKey, AppJson.encode(value?.toJson()));
-  }
-
-  static const String _auth2UserPrefsKey = 'auth2UserPrefs';
-
-  Auth2UserPrefs get auth2UserPrefs {
-    return Auth2UserPrefs.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UserPrefsKey)));
-  }
-
-  set auth2UserPrefs(Auth2UserPrefs value) {
-    _setStringWithName(_auth2UserPrefsKey, AppJson.encode(value?.toJson()));
-  }
-
-  static const String _auth2UserProfileKey = 'auth2UserProfile';
-
-  Auth2UserProfile get auth2UserProfile {
-    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UserProfileKey)));
-  }
-
-  set auth2UserProfile(Auth2UserProfile value) {
-    _setStringWithName(_auth2UserProfileKey, AppJson.encode(value?.toJson()));
   }
 
   static const String auth2CardTimeKey  = 'auth2CardTime';
