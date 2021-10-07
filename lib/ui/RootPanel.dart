@@ -108,6 +108,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
       DeviceCalendar.notifyPromptPopupMessage,
+      DeviceCalendar.notifyCalendarSelectionPopupMessage,
       DeviceCalendar.showConsoleMessage,
     ]);
 
@@ -145,6 +146,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void onNotification(String name, dynamic param) {
     if (name == DeviceCalendar.notifyPromptPopupMessage) {
       _onCalendarPromptMessage(param);
+    }
+    else if (name == DeviceCalendar.notifyCalendarSelectionPopupMessage) {
+      _promptCalendarSelection(param);
     }
     else if (name == DeviceCalendar.showConsoleMessage) {
       _showConsoleMessage(param);
@@ -343,6 +347,24 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
+  void _promptCalendarSelection(dynamic data){
+    List calendars = data!=null? data["calendars"] : null;
+    if(calendars!=null){
+      CalendarSelectionDialog.show(context: context, calendars: calendars,
+          onContinue:( selectedCalendar) {
+            Navigator.of(context).pop();
+            data["calendar"] = selectedCalendar;
+            //Store the selection even if the event is not stored
+            if(selectedCalendar!=null){
+              DeviceCalendar().calendar = selectedCalendar;
+            }
+            NotificationService().notify(
+                DeviceCalendar.notifyPromptPopupMessage, data);
+          }
+      );
+    }
+  }
+
   void _onCalendarPromptMessage(dynamic data) {
         AppAlert.showCustomDialog(
         context: context,
@@ -355,13 +377,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
               onPressed: () {
                 Navigator.of(context).pop();
-                List calendars = data!=null? data["calendars"] : null;
-                if(calendars!=null){
-                  CalendarSelectionDialog.show(context, data["event"], calendars);
-                } else {
                   NotificationService().notify(
                       DeviceCalendar.notifyPlaceEventMessage, data);
-                }
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),

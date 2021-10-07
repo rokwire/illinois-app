@@ -2,22 +2,20 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
-import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/model/Event.dart' as ExploreEvent;
 
 import 'RoundedButton.dart';
 
 class CalendarSelectionDialog extends StatefulWidget {
   final List<Calendar> calendars;
-  final ExploreEvent.Event event;
+  final Function onContinue;
 
-  const CalendarSelectionDialog({Key key, this.calendars, this.event}) : super(key: key);
+  const CalendarSelectionDialog({Key key, this.calendars, this.onContinue}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CalendarSelectionDialogState();
 
-  static void show(BuildContext context, ExploreEvent.Event event, List<Calendar> calendars){
+  static void show({@required BuildContext context, List<Calendar> calendars, Function onContinue}){
     if(calendars == null || calendars.isEmpty){
       return;
     }
@@ -25,7 +23,7 @@ class CalendarSelectionDialog extends StatefulWidget {
     showDialog<void>(
         context: context,
         builder: (BuildContext context) {
-          return CalendarSelectionDialog(calendars: calendars,event: event,);
+          return CalendarSelectionDialog(calendars: calendars, onContinue: onContinue,);
         });
   }
 }
@@ -75,11 +73,11 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   ),
                   Container(height: 10,),
                   RoundedButton(label: "Choose",
-                    onTap: (){
-                      Navigator.of(context).pop();
-                      NotificationService().notify(
-                          DeviceCalendar.notifyPlaceEventMessage, {"event": widget.event, "calendar":_selectedCalendar});
-                    },
+                    onTap: () {
+                      if (widget.onContinue != null) {
+                        widget.onContinue(_selectedCalendar);
+                      }
+                    }
                   )
                 ],
               )
