@@ -305,7 +305,7 @@ class Auth2 with Service implements NotificationsListener {
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
 //      'anonymous_id': _anonymousId,
-//      'profile': _anonymousProfile?.toJson(applyId: false),
+//      'profile': _anonymousProfile?.toJson(),
         'preferences': _anonymousPrefs?.toJson(),
         'device': _deviceInfo,
       });
@@ -418,10 +418,86 @@ class Auth2 with Service implements NotificationsListener {
   // Phone Authentication
 
   Future<bool> authenticateWithPhone(String phoneNumber) async {
+    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
+      String url = "${Config().coreUrl}/services/auth/login";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
+        'org_id': Config().coreOrgId,
+        'app_type_identifier': Config().appCanonicalId,
+        'creds': {
+          "phone": phoneNumber,
+        },
+//      'anonymous_id': _anonymousId,
+//      'profile': _anonymousProfile?.toJson(),
+//      'preferences': _anonymousPrefs?.toJson(),
+//      'device': _deviceInfo,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200);
+    }
     return false;
   }
 
   Future<bool> handlePhoneAuthentication(String phoneNumber, String code) async {
+    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (phoneNumber != null) && (code != null)) {
+      String url = "${Config().coreUrl}/services/auth/login";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
+        'org_id': Config().coreOrgId,
+        'app_type_identifier': Config().appCanonicalId,
+        'creds': {
+          "phone": phoneNumber,
+          "code": code,
+        },
+//      'anonymous_id': _anonymousId,
+//      'profile': _anonymousProfile?.toJson(),
+        'preferences': _anonymousPrefs?.toJson(),
+        'device': _deviceInfo,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      if (responseJson != null) {
+        Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
+        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
+          prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
+          profile: _anonymousProfile ?? Auth2UserProfile.empty());
+
+        if ((token != null) && token.isValid && (account != null) && account.isValid) {
+          
+          bool prefsUpdated = account.prefs?.apply(_anonymousPrefs);
+          bool profileUpdated = account.profile?.apply(_anonymousProfile);
+          Storage().auth2Token = _token = token;
+          Storage().auth2Account = _account = account;
+          Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
+          Storage().auth2AnonymousProfile = _anonymousProfile = null;
+
+          if (prefsUpdated == true) {
+            _saveAccountUserPrefs();
+          }
+
+          if (profileUpdated == true) {
+            _saveAccountUserProfile(account.profile);
+          }
+
+          Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
+          Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['phone_token'])) : null;
+          Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+
+          NotificationService().notify(notifyProfileChanged);
+          NotificationService().notify(notifyPrefsChanged);
+          NotificationService().notify(notifyLoginChanged);
+          return true;
+        }
+      }
+    }
     return false;
   }
 

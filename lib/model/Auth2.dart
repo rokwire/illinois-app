@@ -63,13 +63,14 @@ class Auth2Token {
 ////////////////////////////////
 // Auth2LoginType
 
-enum Auth2LoginType { apiKey, email, phone, oidc, oidcIllinois }
+enum Auth2LoginType { apiKey, email, phone, phoneTwilio, oidc, oidcIllinois }
 
 String auth2LoginTypeToString(Auth2LoginType value) {
   switch (value) {
     case Auth2LoginType.apiKey: return 'api_key';
     case Auth2LoginType.email: return 'email';
     case Auth2LoginType.phone: return 'phone';
+    case Auth2LoginType.phoneTwilio: return 'twilio_phone';
     case Auth2LoginType.oidc: return 'oidc';
     case Auth2LoginType.oidcIllinois: return 'illinois_oidc';
   }
@@ -84,7 +85,10 @@ Auth2LoginType auth2LoginTypeFromString(String value) {
     return Auth2LoginType.email;
   }
   else if (value == 'phone') {
-    return Auth2LoginType.email;
+    return Auth2LoginType.phone;
+  }
+  else if (value == 'twilio_phone') {
+    return Auth2LoginType.phoneTwilio;
   }
   else if (value == 'oidc') {
     return Auth2LoginType.oidc;
@@ -246,9 +250,9 @@ class Auth2UserProfile {
     ) : null;
   }
 
-  Map<String, dynamic> toJson({ bool applyId }) {
-    Map<String, dynamic> json = {
-//    'id' : _id,
+  Map<String, dynamic> toJson() {
+    return {
+      'id' : _id,
       'first_name': _firstName,
       'middle_name': _middleName,
       'last_name': _lastName,
@@ -263,11 +267,6 @@ class Auth2UserProfile {
       'zip': _zip,
       'country': _country,
     };
-    if (applyId != false) {
-      json['id'] = _id;
-    }
-
-    return json;
   }
 
   bool operator ==(o) =>
