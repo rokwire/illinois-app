@@ -727,7 +727,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<void> _saveAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_account?.prefs != null)) {
-      String url = "${Config().coreUrl}/services/preferences";
+      String url = "${Config().coreUrl}/services/account/preferences";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
@@ -758,7 +758,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2UserPrefs> _loadAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
-      String url = "${Config().coreUrl}/services/preferences";
+      String url = "${Config().coreUrl}/services/account/preferences";
       Response response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(AppJson.decodeMap(response?.body)) : null;
     }
@@ -794,7 +794,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2UserProfile> _loadAccountUserProfile() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
-      String url = "${Config().coreUrl}/services/profile";
+      String url = "${Config().coreUrl}/services/account/profile";
       Response response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? Auth2UserProfile.fromJson(AppJson.decodeMap(response?.body)) : null;
     }
@@ -803,7 +803,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<bool> _saveAccountUserProfile(Auth2UserProfile profile) async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
-      String url = "${Config().coreUrl}/services/profile";
+      String url = "${Config().coreUrl}/services/account/profile";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
