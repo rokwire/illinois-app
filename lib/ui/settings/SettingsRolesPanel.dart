@@ -61,6 +61,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
           Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
         ),
+        onBackPressed: _onBack,
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
@@ -235,6 +236,13 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
     }
   }
 
+  void _onBack() {
+    if (_saveRolesTimer != null) {
+      _saveSelectedRoles();
+    }
+    Navigator.pop(context);
+  }
+
   //TBD clear up when sure that timer saving approach won't be needed
   void _startSaveRolesTimer() {
     _stopSaveRolesTimer();
@@ -249,7 +257,8 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   }
 
   void _saveSelectedRoles() {
-    Auth2().prefs?.roles;
+    _stopSaveRolesTimer();
+    Auth2().prefs?.roles = _selectedRoles;
   }
 
   /*_onSaveChangesClicked(){
