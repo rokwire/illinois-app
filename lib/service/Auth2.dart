@@ -633,7 +633,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<void> _saveAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_account?.prefs != null)) {
-      String url = "${Config().coreUrl}/services/account-preferences";
+      String url = "${Config().coreUrl}/services/preferences";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
@@ -664,7 +664,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2UserPrefs> _loadAccountUserPrefs() async {
     if ((Config().coreUrl != null) && (_token?.accessToken != null)) {
-      String url = "${Config().coreUrl}/services/account-preferences";
+      String url = "${Config().coreUrl}/services/preferences";
       Response response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? Auth2UserPrefs.fromJson(AppJson.decodeMap(response?.body)) : null;
     }
