@@ -56,8 +56,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
     _nameController = TextEditingController();
     _emailController = TextEditingController();
 
-    _nameController.text = _initialName = Auth2().profile?.fullName ?? "";
-    _emailController.text = _initialEmail = Auth2().profile?.email ?? "";
+    _nameController.text = _initialName = Auth2().fullName ?? "";
+    _emailController.text = _initialEmail = Auth2().email ?? "";
   }
 
   @override
@@ -206,7 +206,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
           _PersonalInfoEntry(
               visible: Auth2().isPhoneLoggedIn,
               title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
-              value: Auth2().profile?.phone ?? ""),
+              value: Auth2().phone ?? ""),
         ],
       ),
     );
@@ -412,6 +412,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
           }
         }
         else {
+          setState(() { _isSaving = false; });
           AppToast.show("Unable to perform save");
         }
       }
