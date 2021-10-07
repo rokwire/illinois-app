@@ -194,7 +194,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
             _tweetsPages = [tweetsPage];
           }
         });
-        _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        if (tweetsPage != null) {
+          _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        }
       }
     });
   }
