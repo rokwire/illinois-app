@@ -180,15 +180,15 @@ class Auth2 with Service implements NotificationsListener {
 
   bool get isLoggedIn => (_account?.id != null);
   bool get isOidcLoggedIn => (_account?.authType?.uiucUser != null);
-  bool get isPhoneLoggedIn => false;
+  bool get isPhoneLoggedIn => (_account?.authType?.phoneUser != null);
 
   bool get hasUin => (0 < uin?.length ?? 0);
   String get uin => _account?.authType?.uiucUser?.uin;
   String get netId => _account?.authType?.uiucUser?.identifier;
 
-  String get fullName => profile?.fullName ?? _account?.authType?.uiucUser?.fullName;
-  String get email => profile?.email ?? _account?.authType?.uiucUser?.email;
-  String get phone => profile?.phone; //TBD: phone from authType in case of phone login
+  String get fullName => AppString.isStringNotEmpty(profile?.fullName) ? profile?.fullName : _account?.authType?.uiucUser?.fullName;
+  String get email => AppString.isStringNotEmpty(profile?.email) ? profile?.email : _account?.authType?.uiucUser?.email;
+  String get phone => AppString.isStringNotEmpty(profile?.phone) ? profile?.phone : _account?.authType?.phoneUser?.phone;
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
@@ -466,7 +466,9 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
+        Map<String, dynamic> accountJson = AppJson.mapValue(responseJson['account']);
+        _applyPhoneUserToAccountJson(accountJson, Auth2PhoneUser(phone: phoneNumber));
+        Auth2Account account = Auth2Account.fromJson(accountJson,
           prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
           profile: _anonymousProfile ?? Auth2UserProfile.empty());
 
@@ -499,6 +501,22 @@ class Auth2 with Service implements NotificationsListener {
       }
     }
     return false;
+  }
+
+  void _applyPhoneUserToAccountJson(Map<String, dynamic> accountJson, Auth2PhoneUser phoneUser) {
+    List<dynamic> authTypes = (accountJson != null) ? AppJson.listValue(accountJson['auth_types']) : null;
+    if (authTypes == null) {
+      accountJson['auth_types'] = authTypes = [];
+    }
+    Map<String, dynamic> authType = (0 < authTypes.length) ? AppJson.mapValue(authTypes[0]) : null;
+    if (authType == null) {
+      authTypes.add(authType = {});
+    }
+    Map<String, dynamic> params = AppJson.mapValue(authType['params']);
+    if (params == null) {
+      authType['params'] = params = {};
+    }
+    params['phone_user'] = phoneUser?.toJson();
   }
 
   // Device Info

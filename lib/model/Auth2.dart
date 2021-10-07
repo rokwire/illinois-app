@@ -443,10 +443,12 @@ class Auth2Type {
   final bool active2fa;
   final Map<String, dynamic> params;
   
-  final Auth2UiucUser uiucUser;
+  final dynamic user;
   
   Auth2Type({this.id, this.identifier, this.active, this.active2fa, this.params}) :
-  uiucUser = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null;
+    user = (params != null) ? (
+      Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) ??
+      Auth2PhoneUser.fromJson(AppJson.mapValue(params['phone_user']))) : null;
 
   factory Auth2Type.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2Type(
@@ -482,6 +484,9 @@ class Auth2Type {
     (active?.hashCode ?? 0) ^
     (active2fa?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(params) ?? 0);
+
+  Auth2UiucUser get uiucUser => (user is Auth2UiucUser) ? user : null;
+  Auth2PhoneUser get phoneUser => (user is Auth2PhoneUser) ? user : null;
 
   static List<Auth2Type> listFromJson(List<dynamic> jsonList) {
     List<Auth2Type> result;
@@ -595,6 +600,35 @@ class Auth2UiucUser {
     return jsonList;
   }
 }
+
+////////////////////////////////
+// Auth2PhoneUser
+
+class Auth2PhoneUser {
+  final String phone;
+  
+  Auth2PhoneUser({this.phone});
+
+  factory Auth2PhoneUser.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2PhoneUser(
+      phone: AppJson.stringValue(json['phone']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'phone' : phone,
+    };
+  }
+
+  bool operator ==(o) =>
+    (o is Auth2PhoneUser) &&
+      (o.phone == phone);
+
+  int get hashCode =>
+    (phone?.hashCode ?? 0);
+}
+
 
 ////////////////////////////////
 // Auth2UserPrefs
