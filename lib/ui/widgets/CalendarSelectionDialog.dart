@@ -7,41 +7,47 @@ import 'package:illinois/service/Styles.dart';
 import 'RoundedButton.dart';
 
 class CalendarSelectionDialog extends StatefulWidget {
-  final List<Calendar> calendars;
+//  final
   final Function onContinue;
 
-  const CalendarSelectionDialog({Key key, this.calendars, this.onContinue}) : super(key: key);
+  const CalendarSelectionDialog({Key key, this.onContinue}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CalendarSelectionDialogState();
 
-  static void show({@required BuildContext context, List<Calendar> calendars, Function onContinue}){
-    if(calendars == null || calendars.isEmpty){
-      return;
-    }
-
+  static void show({@required BuildContext context, Function onContinue}){
     showDialog<void>(
         context: context,
         builder: (BuildContext context) {
-          return CalendarSelectionDialog(calendars: calendars, onContinue: onContinue,);
+          return CalendarSelectionDialog( onContinue: onContinue);
         });
   }
 }
 
 class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
   Calendar _selectedCalendar;
+  List<Calendar> calendars = [];
 
   @override
   void initState() {
     _selectedCalendar = DeviceCalendar().calendar;
+    _refreshCalendars();
     super.initState();
+  }
+
+  _refreshCalendars(){
+    DeviceCalendar().refreshCalendars().then((value){
+      setState(() {
+        if(value!=null && value.isNotEmpty) {
+          calendars = value;
+        }
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.calendars.length == 0
-        ? Container()
-        :
+    return
     AlertDialog(
         content:
         Row(children:[
@@ -51,32 +57,44 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  calendars.length == 0 ? Container() :
+                  ConstrainedBox(
+                  constraints:BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height/2,
+                    ),
+                    child:
                   ListView.separated(
                     separatorBuilder: (context, index) => Divider(
                       color: Colors.grey,
                     ),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: widget.calendars.length,
+                    itemCount: calendars.length,
                     itemBuilder: (BuildContext context, int index) {
                       return new InkWell(
                         //highlightColor: Colors.red,
                         //splashColor: Colors.blueAccent,
                         onTap: () {
                           setState(() {
-                            _selectedCalendar = widget.calendars[index];
+                            _selectedCalendar = calendars[index];
                           });
                         },
-                        child: _buildItem(widget.calendars[index]),
+                        child: _buildItem(calendars[index]),
                       );
                     },
-                  ),
+                  )),
                   Container(height: 10,),
                   RoundedButton(label: "Choose",
                     onTap: () {
                       if (widget.onContinue != null) {
                         widget.onContinue(_selectedCalendar);
                       }
+                    }
+                  ),
+                  Container(height: 10,),
+                  RoundedButton(label: "Refresh",
+                    onTap: () {
+                      _refreshCalendars();
                     }
                   )
                 ],
