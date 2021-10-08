@@ -18,7 +18,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/sport/Team.dart';
-import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -65,7 +64,7 @@ class Sports with Service {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), Assets(),]);
+    return Set.from([Auth2(), Storage(), Config()]);
   }
 
   List<SportDefinition> getSports() {
