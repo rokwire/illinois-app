@@ -159,6 +159,11 @@ class DeviceCalendar with Service implements NotificationsListener{
     return false;
   }
 
+  Future<List<Calendar>> refreshCalendars() async {
+    await _loadCalendars();
+    return _deviceCalendars;
+  }
+
   Future<bool> _requestPermissions() async {
     var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
     if (permissionsGranted.isSuccess && !permissionsGranted.data) {
@@ -230,7 +235,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _promptPermissionDialog(ExploreEvent.Event event) {
-    NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopupMessage, {"event": event, "calendars": _deviceCalendars});
+    NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopupMessage, {"event": event});
   }
 
   String _constructEventDeepLinkUrl(ExploreEvent.Event event){

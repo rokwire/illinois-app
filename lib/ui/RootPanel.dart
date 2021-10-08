@@ -348,12 +348,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _promptCalendarSelection(dynamic data){
-    List calendars = data!=null? data["calendars"] : null;
-    if(calendars!=null){
-      CalendarSelectionDialog.show(context: context, calendars: calendars,
+      CalendarSelectionDialog.show(context: context,
           onContinue:( selectedCalendar) {
             Navigator.of(context).pop();
-            data["calendar"] = selectedCalendar;
+//            data["calendar"] = selectedCalendar;
             //Store the selection even if the event is not stored
             if(selectedCalendar!=null){
               DeviceCalendar().calendar = selectedCalendar;
@@ -362,7 +360,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 DeviceCalendar.notifyPromptPopupMessage, data);
           }
       );
-    }
   }
 
   void _onCalendarPromptMessage(dynamic data) {
