@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -186,7 +187,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     setState(() {
       _loadingPage = true;
     });
-    Twitter().loadTweetsPage(count: count ?? tweetsCount, noCache: noCache).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: count ?? max(tweetsCount, Config().twitterTweetsCount), noCache: noCache).then((TweetsPage tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
