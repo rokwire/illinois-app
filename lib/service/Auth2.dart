@@ -431,9 +431,9 @@ class Auth2 with Service implements NotificationsListener {
           "phone": phoneNumber,
         },
 //      'anonymous_id': _anonymousId,
-//      'profile': _anonymousProfile?.toJson(),
-//      'preferences': _anonymousPrefs?.toJson(),
-//      'device': _deviceInfo,
+        'profile': _anonymousProfile?.toJson(),
+        'preferences': _anonymousPrefs?.toJson(),
+        'device': _deviceInfo,
       });
 
       Response response = await Network().post(url, headers: headers, body: post);
@@ -457,9 +457,9 @@ class Auth2 with Service implements NotificationsListener {
           "code": code,
         },
 //      'anonymous_id': _anonymousId,
-        'profile': _anonymousProfile?.toJson(),
-        'preferences': _anonymousPrefs?.toJson(),
-        'device': _deviceInfo,
+//      'profile': _anonymousProfile?.toJson(),
+//      'preferences': _anonymousPrefs?.toJson(),
+//      'device': _deviceInfo,
       });
 
       Response response = await Network().post(url, headers: headers, body: post);
