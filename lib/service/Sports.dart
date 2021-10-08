@@ -56,10 +56,8 @@ class Sports with Service {
 
   @override
   Future<void> initService() async {
-    if(_enabled) {
-      await _loadSportDefinitions();
-      await _loadSportSocialMedias();
-    }
+    await _loadSportDefinitions();
+    await _loadSportSocialMedias();
   }
 
   @override
@@ -67,23 +65,21 @@ class Sports with Service {
     return Set.from([Auth2(), Storage(), Config()]);
   }
 
-  List<SportDefinition> getSports() {
-    return _enabled ? _sports : null;
+  List<SportDefinition> get sports {
+    return _sports;
   }
 
-  List<SportDefinition> getMenSports() {
-    return _enabled ? _menSports : null;
+  List<SportDefinition> get menSports {
+    return _menSports;
   }
 
-  List<SportDefinition> getWomenSports() {
-    return _enabled ? _womenSports : null;
+  List<SportDefinition> get womenSports {
+    return _womenSports;
   }
 
   SportSocialMedia getSocialMediaForSport(String shortName) {
-    if (_enabled) {
-      if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
-        return _socialMedias.firstWhere((socialMedia) => shortName == socialMedia.shortName);
-      }
+    if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
+      return _socialMedias.firstWhere((socialMedia) => shortName == socialMedia.shortName);
     }
     return null;
   }
@@ -115,6 +111,9 @@ class Sports with Service {
         });
       }
     } else {
+      _sports = null;
+      _menSports = null;
+      _womenSports = null;
       Log.e('Failed to load sport definitions');
       Log.e(responseBody);
     }
@@ -122,47 +121,56 @@ class Sports with Service {
     NotificationService().notify(notifyChanged, null);
   }
 
-  void _sortSports(){
-    if(AppCollection.isCollectionNotEmpty(_menSports)){
-      SportDefinition firstExplicitItem = _menSports.firstWhere((SportDefinition sportType){
+  void _sortSports() {
+    if (AppCollection.isCollectionNotEmpty(_menSports)) {
+      SportDefinition firstExplicitItem = _menSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "football";
       });
-      SportDefinition secondExplicitItem = _menSports.firstWhere((SportDefinition sportType){
+
+      SportDefinition secondExplicitItem = _menSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "basketball";
       });
+
       //sort
-      _menSports.sort((SportDefinition first, SportDefinition second){
+      _menSports.sort((SportDefinition first, SportDefinition second) {
         return first?.customName?.compareTo(second?.customName);
       });
+
       //Explicitly ordered items
-      if(firstExplicitItem!=null){
+      if (firstExplicitItem != null) {
         _menSports.remove(firstExplicitItem);
-        _menSports.insert(0,firstExplicitItem);
+        _menSports.insert(0, firstExplicitItem);
       }
-      if(secondExplicitItem!=null){
+
+      if (secondExplicitItem != null) {
         _menSports.remove(secondExplicitItem);
-        _menSports.insert(1,secondExplicitItem);
+        _menSports.insert(1, secondExplicitItem);
       }
     }
-    if(AppCollection.isCollectionNotEmpty(_womenSports)){
-      SportDefinition firstExplicitItem = _womenSports.firstWhere((SportDefinition sportType){
+
+    if (AppCollection.isCollectionNotEmpty(_womenSports)) {
+      SportDefinition firstExplicitItem = _womenSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "volleyball";
       });
-      SportDefinition secondExplicitItem = _womenSports.firstWhere((SportDefinition sportType){
+
+      SportDefinition secondExplicitItem = _womenSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "basketball";
       });
+
       //sort
-      _womenSports.sort((SportDefinition first, SportDefinition second){
+      _womenSports.sort((SportDefinition first, SportDefinition second) {
         return first?.customName?.compareTo(second?.customName);
       });
+
       //Explicitly ordered items
-      if(firstExplicitItem!=null){
+      if (firstExplicitItem != null) {
         _womenSports.remove(firstExplicitItem);
-        _womenSports.insert(0,firstExplicitItem);
+        _womenSports.insert(0, firstExplicitItem);
       }
-      if(secondExplicitItem!=null){
+
+      if (secondExplicitItem != null) {
         _womenSports.remove(secondExplicitItem);
-        _womenSports.insert(1,secondExplicitItem);
+        _womenSports.insert(1, secondExplicitItem);
       }
     }
   }
@@ -194,10 +202,7 @@ class Sports with Service {
   }
 
   SportDefinition getSportByShortName(String sportShortName) {
-    if(_enabled) {
-      if (_sports == null || AppString.isStringEmpty(sportShortName)) {
-        return null;
-      }
+    if (AppCollection.isCollectionNotEmpty(_sports) && AppString.isStringNotEmpty(sportShortName)) {
       for (SportDefinition sport in _sports) {
         if (sportShortName == sport.shortName) {
           return sport;
@@ -208,7 +213,7 @@ class Sports with Service {
   }
 
   Future<List<Roster>> loadRosters(String sportKey) async {
-    if (_enabled && AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
       final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
       final response = await Network().get(rostersUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
@@ -234,7 +239,7 @@ class Sports with Service {
   }
 
   Future<List<Coach>> loadCoaches(String sportKey) async {
-    if (_enabled && AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
       final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
       final response = await Network().get(coachesUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
@@ -260,7 +265,7 @@ class Sports with Service {
   }
 
   Future<TeamSchedule> loadScheduleForCurrentSeason(String sportKey) async {
-    if (AppString.isStringEmpty(sportKey) || !_enabled) {
+    if (AppString.isStringEmpty(Config().sportsServiceUrl) || AppString.isStringEmpty(sportKey)) {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
@@ -278,7 +283,7 @@ class Sports with Service {
   }
 
   Future<TeamRecord> loadRecordForCurrentSeason(String sportKey) async {
-    if (AppString.isStringEmpty(sportKey) || !_enabled) {
+    if (AppString.isStringEmpty(Config().sportsServiceUrl) && AppString.isStringEmpty(sportKey)) {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
@@ -296,73 +301,67 @@ class Sports with Service {
   }
 
   Future<List<Game>> loadTopScheduleGames() async {
-    if(_enabled) {
-      List<Game> gamesList = await loadUpcomingGames();
-      return getTopScheduleGamesFromList(gamesList);
-    }
-    return null;
+    List<Game> gamesList = await loadUpcomingGames();
+    return getTopScheduleGamesFromList(gamesList);
   }
 
-  List<Game> getTopScheduleGamesFromList(List<Game> gamesList){
-    if(_enabled) {
-      Set<String> preferredSports = Auth2().prefs?.sportsInterests;
-
-      // Step 1: Group games by sport
-      Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
-      List<Game> preferredGames = [];
-      if (gamesList != null) {
-        for (Game game in gamesList) {
-          if (!gamesMap.containsKey(game.sport.shortName)) {
-            gamesMap[game.sport.shortName] = [];
-          }
-          gamesMap[game.sport.shortName].add(game);
-        }
-      }
-
-      // Step 2: Add all preferred games
-      if (preferredSports != null && preferredSports.isNotEmpty) {
-        for (String preferredSport in preferredSports) {
-          List<Game> subList = gamesMap[preferredSport];
-          if (subList != null) {
-            preferredGames.addAll(subList);
-          }
-        }
-      }
-
-      // Step 3: In case of multiple preferences - show only the top upcoming game per sport
-      Set<String> limitedSports = Set<String>();
-      if (preferredGames.isNotEmpty) {
-        preferredGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-        List<Game> limitedGames = [];
-        for (Game game in preferredGames) {
-          if (!limitedSports.contains(game.sport.shortName)) {
-            limitedGames.add(game);
-            limitedSports.add(game.sport.shortName);
-          }
-          else if (preferredSports.length == 1 && limitedGames.length < 3) {
-            // In case of single preference - show 3 games
-            limitedGames.add(game);
-          }
-        }
-        preferredGames = limitedGames;
-      }
-      else if (AppCollection.isCollectionNotEmpty(gamesList)) {
-        // Step 3.1: Show first 3 games (top one per sport)
-        for (Game game in gamesList) {
-          if (preferredGames.length >= 3) {
-            break;
-          }
-
-          if (!limitedSports.contains(game.sport.shortName)) {
-            preferredGames.add(game);
-            limitedSports.add(game.sport.shortName);
-          }
-        }
-      }
-
-      return preferredGames;
+  List<Game> getTopScheduleGamesFromList(List<Game> gamesList) {
+    if (AppCollection.isCollectionEmpty(gamesList)) {
+      return null;
     }
-    return null;
+
+    Set<String> preferredSports = Auth2().prefs?.sportsInterests;
+
+    // Step 1: Group games by sport
+    Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
+    List<Game> preferredGames = [];
+    for (Game game in gamesList) {
+      if (!gamesMap.containsKey(game.sport.shortName)) {
+        gamesMap[game.sport.shortName] = [];
+      }
+      gamesMap[game.sport.shortName].add(game);
+    }
+
+    // Step 2: Add all preferred games
+    if (preferredSports != null && preferredSports.isNotEmpty) {
+      for (String preferredSport in preferredSports) {
+        List<Game> subList = gamesMap[preferredSport];
+        if (subList != null) {
+          preferredGames.addAll(subList);
+        }
+      }
+    }
+
+    // Step 3: In case of multiple preferences - show only the top upcoming game per sport
+    Set<String> limitedSports = Set<String>();
+    if (preferredGames.isNotEmpty) {
+      preferredGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
+      List<Game> limitedGames = [];
+      for (Game game in preferredGames) {
+        if (!limitedSports.contains(game.sport.shortName)) {
+          limitedGames.add(game);
+          limitedSports.add(game.sport.shortName);
+        } else if (preferredSports.length == 1 && limitedGames.length < 3) {
+          // In case of single preference - show 3 games
+          limitedGames.add(game);
+        }
+      }
+      preferredGames = limitedGames;
+    } else {
+      // Step 3.1: Show first 3 games (top one per sport)
+      for (Game game in gamesList) {
+        if (preferredGames.length >= 3) {
+          break;
+        }
+
+        if (!limitedSports.contains(game.sport.shortName)) {
+          preferredGames.add(game);
+          limitedSports.add(game.sport.shortName);
+        }
+      }
+    }
+
+    return preferredGames;
   }
 
   Future<Game> loadGame(String sportKey, String gameId) async {
@@ -380,45 +379,45 @@ class Sports with Service {
   }
 
   Future<List<News>> loadNews(String sportKey, int count) async {
-    if (_enabled) {
-      String sportQueryParam = AppString.isStringNotEmpty(sportKey) ? "&sport=$sportKey" : "";
-      String countQueryParam = (count > 0) ? "&limit=$count" : "";
-      if (Config().sportsServiceUrl != null) {
-        String newsUrl = Config().sportsServiceUrl + '/api/v2/news';
-        if (AppString.isStringNotEmpty(sportQueryParam) || AppString.isStringNotEmpty(countQueryParam)) {
-          newsUrl += "?";
-          if (AppString.isStringNotEmpty(sportQueryParam)) {
-            newsUrl += sportQueryParam;
-          }
-          if (AppString.isStringNotEmpty(countQueryParam)) {
-            newsUrl += countQueryParam;
-          }
-        }
-        final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
-        String responseBody = response?.body;
-        if ((response != null) && (response.statusCode == 200)) {
-          List<dynamic> jsonData = AppJson.decode(responseBody);
-          if (AppCollection.isCollectionNotEmpty(jsonData)) {
-            List<News> newsList = [];
-            for (Map<String, dynamic> jsonEntry in jsonData) {
-              News news = News.fromJson(jsonEntry);
-              if (news != null) {
-                newsList.add(news);
-              }
-            }
-            return newsList;
-          }
+    if (Config().sportsServiceUrl != null) {
+      String newsUrl = Config().sportsServiceUrl + '/api/v2/news';
+      bool hasSportParam = AppString.isStringNotEmpty(sportKey);
+      if (hasSportParam) {
+        newsUrl += '?sport=$sportKey';
+      }
+      if ((count != null) && (count > 0)) {
+        if (hasSportParam) {
+          newsUrl += '&';
         } else {
-          Log.e('Failed to load news');
-          Log.e(responseBody);
+          newsUrl += '?';
         }
+        newsUrl += 'limit=$count';
+      }
+
+      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
+      String responseBody = response?.body;
+      if ((response != null) && (response.statusCode == 200)) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+          List<News> newsList = [];
+          for (Map<String, dynamic> jsonEntry in jsonData) {
+            News news = News.fromJson(jsonEntry);
+            if (news != null) {
+              newsList.add(news);
+            }
+          }
+          return newsList;
+        }
+      } else {
+        Log.e('Failed to load news');
+        Log.e(responseBody);
       }
     }
     return null;
   }
 
   Future<List<Game>> _loadGames({String id, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
-    if (!_enabled) {
+    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
       return null;
     }
     String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
@@ -475,33 +474,28 @@ class Sports with Service {
   ///Game Helpers
 
   Game getFirstUpcomingGame(List<Game> games) {
-    if(_enabled) {
-      if (games == null || games.isEmpty) {
-        return null;
-      }
+    if (AppCollection.isCollectionNotEmpty(games)) {
       return games.first;
+    } else {
+      return null;
     }
-    return null;
   }
 
   List<Game> getTodayGames(List<Game> games) {
-    if(_enabled) {
-      if (AppCollection.isCollectionEmpty(games)) {
-        return null;
-      }
-      List<Game> todayGames = [];
-      for (Game game in games) {
-        if (game.isGameDay) {
-          todayGames.add(game);
-        }
-      }
-      if (AppCollection.isCollectionEmpty(todayGames)) {
-        return null;
-      }
-      _sortTodayGames(todayGames);
-      return todayGames;
+    if (AppCollection.isCollectionEmpty(games)) {
+      return null;
     }
-    return null;
+    List<Game> todayGames = [];
+    for (Game game in games) {
+      if (game.isGameDay) {
+        todayGames.add(game);
+      }
+    }
+    if (AppCollection.isCollectionEmpty(todayGames)) {
+      return null;
+    }
+    _sortTodayGames(todayGames);
+    return todayGames;
   }
 
   void _sortTodayGames(List<Game> todayGames) {
@@ -533,15 +527,12 @@ class Sports with Service {
 
   ///Assert that games are sorted by start date
   bool hasTodayGame(List<Game> games) {
-    if(_enabled) {
-      Game upcomingGame = getFirstUpcomingGame(games);
-      return upcomingGame?.isGameDay ?? false;
-    }
-    return false;
+    Game upcomingGame = getFirstUpcomingGame(games);
+    return upcomingGame?.isGameDay ?? false;
   }
 
   bool showWelcome(List<Game> games) {
-    return _enabled ? !hasTodayGame(games) : false;
+    return !hasTodayGame(games);
   }
 
   //Preferred Sports helpers
@@ -581,9 +572,4 @@ class Sports with Service {
     }
     return allSportsSelected;
   }
-
-  /////////////////////////
-  // Enabled
-
-  bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl);
 }

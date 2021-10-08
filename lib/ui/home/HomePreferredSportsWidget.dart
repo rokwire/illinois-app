@@ -64,8 +64,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
       });
     }
 
-    _menSports = widget.menSports ? Sports().getMenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
-    _womenSports = widget.womenSports ? Sports().getWomenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+    _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+    _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
     _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
 
     _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
@@ -97,8 +97,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   void _refreshSports(){
     if (mounted) {
       setState(() {
-        _menSports = widget.menSports ? Sports().getMenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
-        _womenSports = widget.womenSports ? Sports().getWomenSports()?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+        _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+        _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
         _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
       });
     }

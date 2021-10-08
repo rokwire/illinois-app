@@ -53,8 +53,8 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   @override
   void initState() {
     NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
-    _menSports = Sports().getMenSports();
-    _womenSports = Sports().getWomenSports();
+    _menSports = Sports().menSports;
+    _womenSports = Sports().womenSports;
     _preferredSports = Auth2().prefs?.sportsInterests  ?? Set<String>();
     super.initState();
   }

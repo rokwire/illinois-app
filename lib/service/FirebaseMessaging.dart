@@ -513,7 +513,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void _processAthleticsSubscriptions({Set<String> subscribedTopis}) {
     bool notifyAthletics = notifyAthleticsUpdates;
     Set<String> selectedSports = Auth2().prefs?.sportsInterests;
-    List<SportDefinition> sportDefs = Sports().getSports();
+    List<SportDefinition> sportDefs = Sports().sports;
     if (sportDefs != null) {
       for (SportDefinition sportDef in sportDefs) {
         String sport = sportDef.shortName;
