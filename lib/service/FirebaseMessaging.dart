@@ -30,7 +30,6 @@ import 'package:illinois/service/Inbox.dart';
 
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -225,28 +224,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     if (await Inbox().unsubscribeFromTopic(topic: topic, token: _token)) {
       Storage().removeFirebaseMessagingSubscriptionTopic(topic);
       return true;
-    }
-    return false;
-  }
-
-  Future<bool> send({String topic, dynamic message}) async {
-    try {
-      if (Config().sportsServiceUrl != null) {
-        String url = "${Config().sportsServiceUrl}/api/message";
-        String body = json.encode({'topic': topic, 'message': message});
-        final response = await Network().post(url, timeout: 10, body: body, auth: NetworkAuth.App, headers: {
-          "Accept": "application/json",
-          "content-type": "application/json",
-          Network.RokwireAppId : Config().appCanonicalId
-        });
-        if ((response != null) && (response.statusCode == 200)) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    } catch (e) {
-       Log.e(e.toString());
     }
     return false;
   }

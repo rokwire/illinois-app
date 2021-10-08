@@ -32,7 +32,6 @@ import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
-import 'package:illinois/ui/debug/DebugFirebaseMessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -237,18 +236,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             _changeDate();
                           },
                         )),
-                    Visibility(
-                      visible: true,
-                      child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                          child: RoundedButton(
-                              label: "Messaging",
-                              backgroundColor: Styles().colors.background,
-                              fontSize: 16.0,
-                              textColor: Styles().colors.fillColorPrimary,
-                              borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onMessagingClicked),),
-                    ),
                     Visibility(
                       visible: true,
                       child: Padding(
@@ -521,10 +508,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     setState(() {
       Storage().useDeviceLocalTimeZone = !Storage().useDeviceLocalTimeZone;
     });
-  }
-
-  void _onMessagingClicked() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugFirebaseMessagingPanel()));
   }
 
   void _onCreateEventClicked() {
