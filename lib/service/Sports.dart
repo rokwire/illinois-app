@@ -95,7 +95,7 @@ class Sports with Service {
       return;
     }
     String sportsUrl = serviceUrl + '/api/v2/sports';
-    Response response = await Network().get(sportsUrl, auth: NetworkAuth.App);
+    Response response = await Network().get(sportsUrl, auth: NetworkAuth.Auth2);
     String responseBody = response?.body;
     if (response?.statusCode == 200) {
       List<dynamic> jsonData = AppJson.decode(responseBody);
@@ -176,7 +176,7 @@ class Sports with Service {
       return;
     }
     String socialUrl = Config().sportsServiceUrl + '/api/v2/social';
-    Response response = await Network().get(socialUrl, auth: NetworkAuth.App);
+    Response response = await Network().get(socialUrl, auth: NetworkAuth.Auth2);
     String responseBody = response?.body;
     if (response?.statusCode == 200) {
       List<dynamic> jsonList = AppJson.decodeList(responseBody);
@@ -211,7 +211,7 @@ class Sports with Service {
   Future<List<Roster>> loadRosters(String sportKey) async {
     if (_enabled && AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
       final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
-      final response = await Network().get(rostersUrl, auth: NetworkAuth.App);
+      final response = await Network().get(rostersUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
       int responseCode = response?.statusCode ?? -1;
       if (responseCode == 200) {
@@ -237,7 +237,7 @@ class Sports with Service {
   Future<List<Coach>> loadCoaches(String sportKey) async {
     if (_enabled && AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
       final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
-      final response = await Network().get(coachesUrl, auth: NetworkAuth.App);
+      final response = await Network().get(coachesUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
       int responseCode = response?.statusCode;
       if (responseCode == 200) {
@@ -265,7 +265,7 @@ class Sports with Service {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
-    final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
+    final response = await Network().get(scheduleUrl, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
     String responseBody = response?.body;
     if (responseCode == 200) {
@@ -283,7 +283,7 @@ class Sports with Service {
       return null;
     }
     String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
-    final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
+    final response = await Network().get(scheduleUrl, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
     String responseBody = response?.body;
     if (responseCode == 200) {
@@ -347,7 +347,7 @@ class Sports with Service {
         }
         preferredGames = limitedGames;
       }
-      else {
+      else if (AppCollection.isCollectionNotEmpty(gamesList)) {
         // Step 3.1: Show first 3 games (top one per sport)
         for (Game game in gamesList) {
           if (preferredGames.length >= 3) {
@@ -395,7 +395,7 @@ class Sports with Service {
             newsUrl += countQueryParam;
           }
         }
-        final response = await Network().get(newsUrl, auth: NetworkAuth.App);
+        final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
         String responseBody = response?.body;
         if ((response != null) && (response.statusCode == 200)) {
           List<dynamic> jsonData = AppJson.decode(responseBody);
@@ -451,7 +451,7 @@ class Sports with Service {
       gamesUrl += '&limit=$limit';
     }
 
-    final response = await Network().get(gamesUrl, auth: NetworkAuth.App);
+    final response = await Network().get(gamesUrl, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
     String responseBody = response?.body;
 
