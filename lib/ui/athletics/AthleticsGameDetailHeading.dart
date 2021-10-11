@@ -75,7 +75,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     String sportKey = widget.game.sport?.shortName;
     String sportName = widget.game.sport?.title;
     SportDefinition sportDefinition = Sports().getSportByShortName(sportKey);
-    bool isTicketedSport = (sportDefinition != null) ? sportDefinition.ticketed : false;
+    bool isTicketedSport = sportDefinition?.ticketed ?? false;
     bool isMenBasketball = ('mbball' == sportKey);
     bool isHomeGame = widget.game.isHomeGame;
     bool isGameDay = widget.game.isGameDay;
@@ -83,7 +83,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool showGetTickets = isTicketedSport && (widget.game.links?.tickets != null);
     bool showParking = widget.game.parkingUrl != null;
     bool showGameDayGuide = widget.game.isHomeGame;
-    bool hasScores = sportDefinition.hasScores;
+    bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = Storage().debugDisableLiveGameCheck ? true : LiveStats().hasLiveGame(widget.game.id);
     bool showScore = hasScores && widget.game.isGameDay && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
