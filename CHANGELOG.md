@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Merged integration/core2-bb branch in develop, Core BB integration is now official in main workbranch.
+
 ## [3.0.21] 2021-10-08
 ### Changed
 - Update calendar dialog so support refresh in calendar chooser [#751](https://github.com/rokwire/illinois-app/issues/751).
