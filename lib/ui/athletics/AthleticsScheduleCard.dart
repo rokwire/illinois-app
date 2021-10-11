@@ -238,7 +238,13 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String formattedResult = result.status + ' ' + result.teamScore + '-' + result.opponentScore;
+    String formattedResult = AppString.getDefaultEmptyString(value: result.status);
+    if (AppString.isStringNotEmpty(result.teamScore)) {
+      formattedResult += ' ' + result.teamScore;
+      if (AppString.isStringNotEmpty(result.opponentScore)) {
+        formattedResult += '-' + result.opponentScore;
+      }
+    }
     return Padding(
       padding: EdgeInsets.only(top: 16),
       child: Column(
