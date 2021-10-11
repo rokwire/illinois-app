@@ -448,32 +448,32 @@ class Network  {
       }
     }
     else if (auth == NetworkAuth.User) {
-      String idToken = Auth2().uiucToken?.idToken;
-      String tokenType = Auth2().uiucToken?.tokenType ?? 'Bearer';
-      if ((idToken != null) && idToken.isNotEmpty) {
+      String token = Auth2().token?.accessToken;               // Disable UIUC Tokens: Auth2().uiucToken?.idToken;
+      String tokenType = Auth2().token?.tokenType ?? 'Bearer'; // Disable UIUC Tokens: Auth2().uiucToken?.tokenType ?? 'Bearer';
+      if ((token != null) && token.isNotEmpty) {
         if (headers == null) {
           headers = new Map();
         }
-        headers[HttpHeaders.authorizationHeader] = "$tokenType $idToken";
+        headers[HttpHeaders.authorizationHeader] = "$tokenType $token";
       }
     }
     else if (auth == NetworkAuth.Access) {
-      String accessToken = Auth2().uiucToken?.accessToken;
-      if ((accessToken != null) && accessToken.isNotEmpty) {
+      String token = Auth2().token?.accessToken;               // Disable UIUC Tokens: Auth2().uiucToken?.accessToken;
+      if ((token != null) && token.isNotEmpty) {
         if (headers == null) {
           headers = new Map();
         }
-        headers['access_token'] = accessToken;
+        headers['access_token'] = token;
       }
     }
     else if (auth == NetworkAuth.Auth2) {
-      String accessToken = Auth2().token?.accessToken;
+      String token = Auth2().token?.accessToken;
       String tokenType = Auth2().token?.tokenType ?? 'Bearer';
-      if ((accessToken != null) && accessToken.isNotEmpty) {
+      if ((token != null) && token.isNotEmpty) {
         if (headers == null) {
           headers = new Map();
         }
-        headers[HttpHeaders.authorizationHeader] = "$tokenType $accessToken";
+        headers[HttpHeaders.authorizationHeader] = "$tokenType $token";
       }
     }
 
