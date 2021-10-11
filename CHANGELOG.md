@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.22] 2021-10-11
 ### Changed
 - Merged integration/core2-bb branch in develop, Core BB integration is now official in main workbranch.
 
