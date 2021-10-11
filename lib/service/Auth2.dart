@@ -312,7 +312,6 @@ class Auth2 with Service implements NotificationsListener {
         'app_type_identifier': Config().appCanonicalId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
-//      'anonymous_id': _anonymousId,
         'profile': _anonymousProfile?.toJson(),
         'preferences': _anonymousPrefs?.toJson(),
         'device': _deviceInfo,
@@ -438,7 +437,6 @@ class Auth2 with Service implements NotificationsListener {
         'creds': {
           "phone": phoneNumber,
         },
-//      'anonymous_id': _anonymousId,
         'profile': _anonymousProfile?.toJson(),
         'preferences': _anonymousPrefs?.toJson(),
         'device': _deviceInfo,
@@ -464,7 +462,6 @@ class Auth2 with Service implements NotificationsListener {
           "phone": phoneNumber,
           "code": code,
         },
-//      'anonymous_id': _anonymousId,
 //      'profile': _anonymousProfile?.toJson(),
 //      'preferences': _anonymousPrefs?.toJson(),
 //      'device': _deviceInfo,
