@@ -104,6 +104,14 @@ class Auth2 with Service implements NotificationsListener {
 
     _deviceId = await NativeCommunicator().getDeviceId();
 
+    if ((_account == null) && (_anonymousPrefs == null)) {
+      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty();
+    }
+
+    if ((_account == null) && (_anonymousProfile == null)) {
+      Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
+    }
+
     if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValidAnonymous) {
       if (!await authenticateAnonymously()) {
         Log.d("Anonymous Authentication Failed");
@@ -179,23 +187,23 @@ class Auth2 with Service implements NotificationsListener {
   Auth2UserProfile get profile => _account?.profile ?? _anonymousProfile;
 
   bool get isLoggedIn => (_account?.id != null);
-  bool get isOidcLoggedIn => (_account?.authType?.uiucUser != null);
-  bool get isPhoneLoggedIn => (_account?.authType?.phoneUser != null);
+  bool get isOidcLoggedIn => (_account?.authType?.loginType == Auth2LoginType.oidcIllinois);
+  bool get isPhoneLoggedIn => (_account?.authType?.loginType == Auth2LoginType.phoneTwilio);
 
   bool get hasUin => (0 < uin?.length ?? 0);
-  String get uin => _account?.authType?.uiucUser?.uin;
-  String get netId => _account?.authType?.uiucUser?.identifier;
+  String get uin => _account?.authType?.user?.uin;
+  String get netId => _account?.authType?.user?.identifier;
 
-  String get fullName => AppString.isStringNotEmpty(profile?.fullName) ? profile?.fullName : _account?.authType?.uiucUser?.fullName;
-  String get email => AppString.isStringNotEmpty(profile?.email) ? profile?.email : _account?.authType?.uiucUser?.email;
-  String get phone => AppString.isStringNotEmpty(profile?.phone) ? profile?.phone : _account?.authType?.phoneUser?.phone;
+  String get fullName => AppString.getDefaultEmptyString(value: profile?.fullName, defaultValue: _account?.authType?.user?.fullName);
+  String get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.user?.email);
+  String get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.user?.phone);
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
   bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
   bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
 
-  bool isMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
+  bool isMemberOf(String group) => _account?.authType?.user?.groupsMembership?.contains(group) ?? false;
 
   bool privacyMatch(int requredPrivacyLevel) => 
     (prefs?.privacyLevel == null) || (prefs?.privacyLevel == 0) || (prefs.privacyLevel >= requredPrivacyLevel);
@@ -222,7 +230,9 @@ class Auth2 with Service implements NotificationsListener {
         'auth_type': auth2LoginTypeToString(Auth2LoginType.apiKey),
         'org_id': Config().coreOrgId,
         'app_type_identifier': Config().appCanonicalId,
-        'creds': Config().rokwireApiKey,
+        'creds': {
+          'api_key': Config().rokwireApiKey,
+        },
         'device': _deviceInfo
       });
       
@@ -235,8 +245,6 @@ class Auth2 with Service implements NotificationsListener {
         if ((anonymousToken != null) && anonymousToken.isValidAnonymous && (anonymousId != null) && anonymousId.isNotEmpty) {
           Storage().auth2AnonymousId = _anonymousId = anonymousId;
           Storage().auth2AnonymousToken = _anonymousToken = anonymousToken;
-          Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty();
-          Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
           return true;
         }
       }
@@ -466,8 +474,9 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
+
         Map<String, dynamic> accountJson = AppJson.mapValue(responseJson['account']);
-        _applyPhoneUserToAccountJson(accountJson, Auth2PhoneUser(phone: phoneNumber));
+        _applyUserToAccountJson(accountJson, Auth2UiucUser(phone: phoneNumber));
         Auth2Account account = Auth2Account.fromJson(accountJson,
           prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
           profile: _anonymousProfile ?? Auth2UserProfile.empty());
@@ -503,7 +512,7 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
-  void _applyPhoneUserToAccountJson(Map<String, dynamic> accountJson, Auth2PhoneUser phoneUser) {
+  void _applyUserToAccountJson(Map<String, dynamic> accountJson, Auth2UiucUser user) {
     List<dynamic> authTypes = (accountJson != null) ? AppJson.listValue(accountJson['auth_types']) : null;
     if (authTypes == null) {
       accountJson['auth_types'] = authTypes = [];
@@ -516,7 +525,7 @@ class Auth2 with Service implements NotificationsListener {
     if (params == null) {
       authType['params'] = params = {};
     }
-    params['phone_user'] = phoneUser?.toJson();
+    params['user'] = user?.toJson();
   }
 
   // Device Info
@@ -671,7 +680,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
-    String uin = _account?.authType?.uiucUser?.uin;
+    String uin = _account?.authType?.user?.uin;
     String accessToken = _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {

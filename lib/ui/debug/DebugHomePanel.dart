@@ -107,7 +107,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   String get _userDebugData{
     String userDataText = AppJson.encode(Auth2().account?.prefs?.toJson(), prettify: true);
-    String authInfoText = AppJson.encode(Auth2().account?.authType?.uiucUser?.toJson(), prettify: true);
+    String authInfoText = AppJson.encode(Auth2().account?.authType?.user?.toJson(), prettify: true);
     String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
         "AuthInfo: " + (authInfoText ?? "unknown");
     return userData;
