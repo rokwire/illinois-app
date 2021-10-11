@@ -917,7 +917,7 @@ class _RosterItem extends StatelessWidget {
                     fontSize: 16),
               ),
               Text(
-                position,
+                AppString.getDefaultEmptyString(value: position),
                 softWrap: true,
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies.medium,
