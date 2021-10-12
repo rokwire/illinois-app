@@ -1,0 +1,81 @@
+[{
+  "id":"get.started",
+  "title":"Ready to get started?",
+  "text":"Please note that you will not be able to complete many of your checklist items until you receive your Official Notice of Admissions described in Step 1. This email typically arrives within 3-7 business days of your program offer letter. If you have any questions, please contact <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a>",
+  "steps":[
+    "Step 1: Accept Your Offer",
+    "Step 2: Set up your University Accounts",
+    "Step 3: Set up your Coursera Account",
+    "Step 4: Connect with your New Student Guide and Fellow Classmates",
+    "Step 5: Complete Your Onboarding Course",
+    "Step 6: Review Course Recommendations and Register for Courses",
+    "Step 7: Submit Your Official Credentials"
+  ],
+  "buttons":[
+    {"title":"Continue", "page":"accept.offer"}
+  ]
+},{
+  "id":"accept.offer",
+  "title":"Step 1: Accept Your Offer",
+  "content":[
+    {
+      "heading": "Applicants who have been offered admission to Gies College of Business online programs should have received the following:",
+      "bullets": [
+        "<b>A Program Offer Letter:</b> This indicates that we have referred you to the Graduate College for admission as a degree-seeking student from Gies Online Programs.",
+        "<b>An Official Notice of Admission from Illinois Graduate Admissions:</b> This will be delivered as an email with the subject line “Illinois Admission Decision."
+    ]},
+    {
+      "heading": "Once you have received these items, it is time to decide if you’ll join us as a degree-seeking student through the <a href='https://choose.illinois.edu/apply/status'>Graduate College Application Portal</a>. You will make one of three choices:",
+      "bullets": [
+        "<b>Accept Your Offer:</b> This will secure your spot in your program. No enrollment deposit is required!",
+        "<b>Defer Your Acceptance:</b> You have the option to defer your admission for up to 1 calendar year. This will require a $750 deposit to hold your spot in the program. This deposit will be applied toward your Illinois tuition during your first semester in the program.",
+        "<b>Decline Your Offer:</b> If you no longer want to join our program, please let us know by declining your offer. If you have already paid your enrollment deposit to defer your admission, it is not refundable."
+    ]}
+  ],
+  "buttons":[
+    {"title":"Accept", "page":"setup.accounts"},
+    {"title":"Defer", "page":""},
+    {"title":"Decline", "page":""}
+  ]
+},{
+  "id":"setup.accounts",
+  "title":"Step 2: Set up your University Accounts",
+  "text":"<i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i><br>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.<br>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.",
+  "steps":[
+    "2A Claim Your NetID and Password",
+    "2B Setup Your University Email Account",
+    "2C Verify Your Personal Information in Student Self-Service",
+    "2D Set Up Your Illinois Zoom Pro Account"
+  ],
+  "buttons":[
+    {"title":"Continue", "page":"claim.netid.and.password"}
+  ]
+},{
+  "id":"claim.netid.and.password",
+  "title":"Step 2A: Claim Your NetID and Password",
+  "text":"Your NetID will give you access to campus services, including e-mail and file storage. New students should visit <a href='https://netidclaim.illinois.edu/'>Illinois NetID Claim</a> to claim their NetID. First, you will need to enter your University ID Number (UIN) and Activation Code. The UIN and Activation Code were sent to you in your Notice of Admission Letter from the Graduate College. Next, you will select and provide answers to two security questions to protect your NetID account. Finally, you will need to choose a password for your NetID account and setup <a href='https://techservices.illinois.edu/content/two-factor-authentication-2fa'>Two-Factor Authentication (2FA)</a>.<br><i>If you have previously enrolled at the University of Illinois, there is no need to claim your NetID again. You will need to reset your password. You can find more information on the <a href='https://answers.uillinois.edu/illinois/page.php?id=48103'>Technology Services Website</a>.</i>",
+  "buttons":[
+    {"title":"Done", "page":"setup.email.account"}
+  ]
+},{
+  "id":"setup.email.account",
+  "title":"Step 2B: Setup Your University Email Account",
+  "text":"Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>.",
+  "buttons":[
+    {"title":"Done", "page":"verify.personal.information"}
+  ]
+},{
+  "id":"verify.personal.information",
+  "title":"Step 2C: Verify Your Personal Information in Student Self-Service",
+  "text":"Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents.",
+  "buttons":[
+    {"title":"Done", "page":"setup.zoom.account"}
+  ]
+},{
+  "id":"setup.zoom.account",
+  "title":"Step 2D: Set Up Your Illinois Zoom Pro Account",
+  "text":"Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom.",
+  "buttons":[
+    {"title":"Done", "page":""}
+  ]
+}]
