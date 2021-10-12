@@ -152,8 +152,8 @@ class Groups /* with Service */ {
       String url = '${Config().groupsUrl}/groups';
       try {
         Map<String, dynamic> json = group.toJson(withId: false);
-        json["creator_email"] = Auth2().account?.authType?.user?.email ?? "";
-        json["creator_name"] = Auth2().account?.authType?.user?.fullName ?? "";
+        json["creator_email"] = Auth2().account?.authType?.uiucUser?.email ?? "";
+        json["creator_name"] = Auth2().account?.authType?.uiucUser?.fullName ?? "";
         json["creator_photo_url"] = "";
         String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.User, body: body);
@@ -228,8 +228,8 @@ class Groups /* with Service */ {
       String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
       try {
         Map<String, dynamic> json = {};
-        json["email"] = Auth2().account?.authType?.user?.email ?? "";
-        json["name"] = Auth2().account?.authType?.user?.fullName ?? "";
+        json["email"] = Auth2().account?.authType?.uiucUser?.email ?? "";
+        json["name"] = Auth2().account?.authType?.uiucUser?.fullName ?? "";
         json["creator_photo_url"] = "";
         json["member_answers"] = AppCollection.isCollectionNotEmpty(answers) ? answers.map((e) => e.toJson()).toList() : [];
 

@@ -99,20 +99,20 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
         children: <Widget>[
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.net_id.title', 'NetID'),
-              value: Auth2().account?.authType?.user?.identifier ?? ""
+              value: Auth2().account?.authType?.uiucUser?.identifier ?? ""
           ),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
-              value: Auth2().account?.authType?.user?.fullName ?? ""),
+              value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
-              value: Auth2().account?.authType?.user?.middleName ?? ""),
+              value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.last_name.title', 'Last Name'),
-              value:  Auth2().account?.authType?.user?.lastName ?? ""),
+              value:  Auth2().account?.authType?.uiucUser?.lastName ?? ""),
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
-              value: Auth2().account?.authType?.user?.email ?? ""),
+              value: Auth2().account?.authType?.uiucUser?.email ?? ""),
         ],
       ),
     );

@@ -191,11 +191,11 @@ class Auth2 with Service implements NotificationsListener {
   bool get isPhoneLoggedIn => (_account?.authType?.loginType == Auth2LoginType.phoneTwilio);
 
   bool get hasUin => (0 < uin?.length ?? 0);
-  String get uin => _account?.authType?.user?.uin;
-  String get netId => _account?.authType?.user?.netId;
+  String get uin => _account?.authType?.uiucUser?.uin;
+  String get netId => _account?.authType?.uiucUser?.netId;
 
-  String get fullName => AppString.getDefaultEmptyString(value: profile?.fullName, defaultValue: _account?.authType?.user?.fullName);
-  String get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.user?.email);
+  String get fullName => AppString.getDefaultEmptyString(value: profile?.fullName, defaultValue: _account?.authType?.uiucUser?.fullName);
+  String get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.uiucUser?.email);
   String get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.phone);
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
@@ -203,7 +203,7 @@ class Auth2 with Service implements NotificationsListener {
   bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
   bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
 
-  bool isMemberOf(String group) => _account?.authType?.user?.groupsMembership?.contains(group) ?? false;
+  bool isMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
 
   bool privacyMatch(int requredPrivacyLevel) => 
     (prefs?.privacyLevel == null) || (prefs?.privacyLevel == 0) || (prefs.privacyLevel >= requredPrivacyLevel);
@@ -658,7 +658,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
-    String uin = _account?.authType?.user?.uin;
+    String uin = _account?.authType?.uiucUser?.uin;
     String accessToken = _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {

@@ -444,11 +444,11 @@ class Auth2Type {
   final String code;
   final Map<String, dynamic> params;
   
-  final Auth2UiucUser user;
+  final Auth2UiucUser uiucUser;
   final Auth2LoginType loginType;
   
   Auth2Type({this.id, this.identifier, this.active, this.active2fa, this.code, this.params}) :
-    user = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null,
+    uiucUser = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null,
     loginType = auth2LoginTypeFromString(code);
 
   factory Auth2Type.fromJson(Map<String, dynamic> json) {
