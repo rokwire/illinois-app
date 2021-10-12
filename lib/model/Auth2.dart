@@ -490,6 +490,14 @@ class Auth2Type {
     (code?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(params) ?? 0);
 
+  String get phone {
+    return (loginType == Auth2LoginType.phoneTwilio) ? identifier : null;
+  }
+
+  String get uin {
+    return (loginType == Auth2LoginType.oidcIllinois) ? identifier : null;
+  }
+
   static List<Auth2Type> listFromJson(List<dynamic> jsonList) {
     List<Auth2Type> result;
     if (jsonList != null) {
@@ -518,7 +526,6 @@ class Auth2Type {
 
 class Auth2UiucUser {
   final String email;
-  final String phone;
   final String firstName;
   final String lastName;
   final String middleName;
@@ -527,13 +534,12 @@ class Auth2UiucUser {
   final Map<String, dynamic> systemSpecific;
   final Set<String> groupsMembership;
   
-  Auth2UiucUser({this.email, this.phone, this.firstName, this.lastName, this.middleName, this.identifier, this.groups, this.systemSpecific}) :
+  Auth2UiucUser({this.email, this.firstName, this.lastName, this.middleName, this.identifier, this.groups, this.systemSpecific}) :
     groupsMembership = (groups != null) ? Set.from(groups) : null;
 
   factory Auth2UiucUser.fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UiucUser(
       email: AppJson.stringValue(json['email']),
-      phone: AppJson.stringValue(json['phone']),
       firstName: AppJson.stringValue(json['first_name']),
       lastName: AppJson.stringValue(json['last_name']),
       middleName: AppJson.stringValue(json['middle_name']),
@@ -546,7 +552,6 @@ class Auth2UiucUser {
   Map<String, dynamic> toJson() {
     return {
       'email' : email,
-      'phone' : phone,
       'first_name': firstName,
       'last_name': lastName,
       'middle_name': middleName,
@@ -559,7 +564,6 @@ class Auth2UiucUser {
   bool operator ==(o) =>
     (o is Auth2UiucUser) &&
       (o.email == email) &&
-      (o.phone == phone) &&
       (o.firstName == firstName) &&
       (o.lastName == lastName) &&
       (o.middleName == middleName) &&
@@ -569,7 +573,6 @@ class Auth2UiucUser {
 
   int get hashCode =>
     (email?.hashCode ?? 0) ^
-    (phone?.hashCode ?? 0) ^
     (firstName?.hashCode ?? 0) ^
     (lastName?.hashCode ?? 0) ^
     (middleName?.hashCode ?? 0) ^
@@ -578,7 +581,11 @@ class Auth2UiucUser {
     (DeepCollectionEquality().hash(systemSpecific) ?? 0);
 
   String get uin {
-    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_uin']) : null;
+    return ((systemSpecific != null) ? AppJson.stringValue(systemSpecific['uiucedu_uin']) : null) ?? identifier;
+  }
+
+  String get netId {
+    return (systemSpecific != null) ? AppJson.stringValue(systemSpecific['preferred_username']) : null;
   }
 
   String get fullName {

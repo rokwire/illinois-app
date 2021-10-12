@@ -192,11 +192,11 @@ class Auth2 with Service implements NotificationsListener {
 
   bool get hasUin => (0 < uin?.length ?? 0);
   String get uin => _account?.authType?.user?.uin;
-  String get netId => _account?.authType?.user?.identifier;
+  String get netId => _account?.authType?.user?.netId;
 
   String get fullName => AppString.getDefaultEmptyString(value: profile?.fullName, defaultValue: _account?.authType?.user?.fullName);
   String get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.user?.email);
-  String get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.user?.phone);
+  String get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.phone);
 
   bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
   bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
@@ -471,10 +471,7 @@ class Auth2 with Service implements NotificationsListener {
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
       if (responseJson != null) {
         Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-
-        Map<String, dynamic> accountJson = AppJson.mapValue(responseJson['account']);
-        _applyUserToAccountJson(accountJson, Auth2UiucUser(phone: phoneNumber));
-        Auth2Account account = Auth2Account.fromJson(accountJson,
+        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
           prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
           profile: _anonymousProfile ?? Auth2UserProfile.empty());
 
@@ -507,22 +504,6 @@ class Auth2 with Service implements NotificationsListener {
       }
     }
     return false;
-  }
-
-  void _applyUserToAccountJson(Map<String, dynamic> accountJson, Auth2UiucUser user) {
-    List<dynamic> authTypes = (accountJson != null) ? AppJson.listValue(accountJson['auth_types']) : null;
-    if (authTypes == null) {
-      accountJson['auth_types'] = authTypes = [];
-    }
-    Map<String, dynamic> authType = (0 < authTypes.length) ? AppJson.mapValue(authTypes[0]) : null;
-    if (authType == null) {
-      authTypes.add(authType = {});
-    }
-    Map<String, dynamic> params = AppJson.mapValue(authType['params']);
-    if (params == null) {
-      authType['params'] = params = {};
-    }
-    params['user'] = user?.toJson();
   }
 
   // Device Info

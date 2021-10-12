@@ -206,7 +206,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
           _PersonalInfoEntry(
               visible: Auth2().isPhoneLoggedIn,
               title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
-              value: Auth2().phone ?? ""),
+              value: Auth2().account?.authType?.phone ?? ""),
         ],
       ),
     );
