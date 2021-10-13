@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch groups to Core BB [#795](https://github.com/rokwire/illinois-app/issues/795).
 ### Added
 - Added initial GIES support [#796](https://github.com/rokwire/illinois-app/issues/796).
+- DeviceCalendar support Athletic events [#801](https://github.com/rokwire/illinois-app/issues/801).
 
 ## [3.0.22] 2021-10-11
 ### Changed

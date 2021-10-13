@@ -1,6 +1,8 @@
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -10,7 +12,6 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
-import 'package:url_launcher/url_launcher.dart';
 
 class DeviceCalendar with Service implements NotificationsListener{
 
@@ -25,8 +26,6 @@ class DeviceCalendar with Service implements NotificationsListener{
   Map<String, String> _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin;
 
-  bool _disableAdditionalDataLink = true;
-
   static final DeviceCalendar _instance = DeviceCalendar._internal();
 
   factory DeviceCalendar(){
@@ -34,17 +33,6 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   DeviceCalendar._internal();
-
-  //TBD implement Notifications and listen for add/remove favorite. Do not call add/remove from outside.
-  //TBD Handle recurring events
-
-  Future<bool> onFavoriteUpdated(Favorite favorite, bool isFavorite) async {
-    //TBD Auth2: listen for Auth2.notifyFavoriteChanged
-    if (favorite is Event) {
-      return isFavorite ? await _addEvent(favorite) : await deleteEvent(favorite);
-    }
-    return false;
-  }
 
   @override
   void createService() {
@@ -59,9 +47,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     NotificationService().unsubscribe(this);
   }
 
-  Future<bool> _addEvent(ExploreEvent.Event event) async{
-    _debugMessage("Add Event- iCall:${event.icalUrl}, outlook:${event.outlookUrl}, startDateLocal: ${event.startDateLocal}, endDateLocal: ${event.endDateLocal}");
-    
+  Future<bool> _addEvent(DeviceCalendarEvent event) async{
     //User prefs
     if(!canAddToCalendar){
       _debugMessage("Disabled");
@@ -79,18 +65,13 @@ class DeviceCalendar with Service implements NotificationsListener{
       _promptPermissionDialog(event);
       return true;
     }
-    
-    //URL
-    String additionalUrl = _disableAdditionalDataLink? null : _extractAdditionalDataUrl(event);
-    if(AppString.isStringNotEmpty(additionalUrl)){
-      _openAdditionalDataLink(additionalUrl);
-      return true;
-    }
 
     return _placeCalendarEvent(event);
   }
 
-  Future<bool> _placeCalendarEvent(ExploreEvent.Event event) async{
+  Future<bool> _placeCalendarEvent(DeviceCalendarEvent event,) async{
+    if(event == null)
+      return false;
 
     //PLUGIN
     if(_deviceCalendarPlugin == null){
@@ -107,10 +88,9 @@ class DeviceCalendar with Service implements NotificationsListener{
     _debugMessage("Has permissions: $hasPermissions");
     //PLACE
     if(hasPermissions && calendar!=null) {
-      Event calendarEvent = _convertEvent(event);
-      final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(calendarEvent);
+      final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(event.toCalendarEvent(calendar?.id));
       if(createEventResult?.data!=null){
-        _storeEventId(event.id, createEventResult?.data);
+        _storeEventId(event.internalEventId, createEventResult?.data);
       }
 
       _debugMessage("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
@@ -125,7 +105,10 @@ class DeviceCalendar with Service implements NotificationsListener{
     return true;
   }
 
-  Future<bool> deleteEvent(ExploreEvent.Event event) async{
+  Future<bool> deleteEvent(DeviceCalendarEvent event) async{
+    if(event == null)
+      return false;
+
     if(_deviceCalendarPlugin == null){
       bool initResult = await _initDeviceCalendarPlugin();
       if(!initResult ?? true){
@@ -133,8 +116,8 @@ class DeviceCalendar with Service implements NotificationsListener{
       }
     }
 
-    String eventId = event?.id != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.id] : null;
-    _debugMessage("Try delete eventId: ${event.id} stored with calendarId: $eventId from calendarId ${calendar.id}");
+    String eventId = event?.internalEventId != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.internalEventId] : null;
+    _debugMessage("Try delete eventId: ${event.internalEventId} stored with calendarId: $eventId from calendarId ${calendar.id}");
     if(AppString.isStringEmpty(eventId)){
       return false;
     }
@@ -142,7 +125,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(calendar?.id, eventId);
     _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
     if(deleteEventResult.isSuccess){
-      _eraseEventId(event?.id);
+      _eraseEventId(event?.internalEventId);
     }
     return deleteEventResult?.isSuccess;
   }
@@ -191,34 +174,6 @@ class DeviceCalendar with Service implements NotificationsListener{
     return true;
   }
 
-  Event _convertEvent(ExploreEvent.Event event){
-    Event calendarEvent = new Event(calendar?.id);
-
-    calendarEvent.title = event?.title ?? "";
-    if(event.startDateLocal!=null) {
-      calendarEvent.start = event.startDateLocal;
-    }
-    if(event.endDateLocal!=null){
-      calendarEvent.end = event.endDateLocal;
-    } else {
-      calendarEvent.end = DateTime(event.startDateLocal.year, event.startDateLocal.month, event.startDateLocal.day, 23, 59,);
-    }
-
-    calendarEvent.description = _constructEventDeepLinkUrl(event);
-    return calendarEvent;
-  }
-
-  String _extractAdditionalDataUrl(ExploreEvent.Event event){
-    String additionalUrl = AppString.isStringNotEmpty(event.icalUrl) ? event.icalUrl : null;
-    additionalUrl = AppString.isStringNotEmpty(event.outlookUrl) ? event.outlookUrl : additionalUrl;
-
-    return additionalUrl;
-  }
-
-  void _openAdditionalDataLink(String url) async{
-      await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
-  }
-
   void _storeEventId(String exploreId, String calendarEventId){
     _calendarEventIdTable[exploreId] = calendarEventId;
     Storage().calendarEventsTable = _calendarEventIdTable;
@@ -229,37 +184,25 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _debugMessage(String msg){
-//    if(true) return; //TBD remove
     NotificationService().notify(DeviceCalendar.showConsoleMessage, msg);
   }
 
   void _processEvents(dynamic event){
-    if (event is ExploreEvent.Event) {
-      if (Auth2().isFavorite(event)) {
-        _addEvent(event);
-      }
-      else {
-        deleteEvent(event);
-      }
+    DeviceCalendarEvent deviceCalendarEvent = DeviceCalendarEvent.from(event);
+    if(deviceCalendarEvent==null)
+      return;
+
+    if (Auth2().isFavorite(event)) {
+      _addEvent(deviceCalendarEvent);
+    }
+    else {
+      deleteEvent(deviceCalendarEvent);
     }
   }
 
-  void _promptPermissionDialog(ExploreEvent.Event event) {
+  void _promptPermissionDialog(DeviceCalendarEvent event) {
     NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopupMessage, {"event": event});
   }
-
-  String _constructEventDeepLinkUrl(ExploreEvent.Event event){
-    if(event == null || event.id == null){
-      return null;
-    }
-
-    String eventDeepLink = "${ExploreService.EVENT_URI}?event_id=${event.id}";
-    Uri assetsUri = Uri.parse(Config().assetsUrl);
-    String redirectUrl = assetsUri!= null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-
-    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$eventDeepLink" : eventDeepLink;
-  }
-  
 
   @override
   void onNotification(String name, param) {
@@ -267,7 +210,7 @@ class DeviceCalendar with Service implements NotificationsListener{
       _processEvents(param);
     } else if(name == DeviceCalendar.notifyPlaceEventMessage){
       if(param!=null && param is Map){
-        ExploreEvent.Event event = param["event"];
+        DeviceCalendarEvent event = param["event"];
         Calendar calendarSelection = param["calendar"];
         if(calendarSelection!=null){
           _selectedCalendar = calendarSelection;
@@ -292,4 +235,73 @@ class DeviceCalendar with Service implements NotificationsListener{
   set calendar(Calendar calendar){
     _selectedCalendar = calendar;
   }
+}
+
+class DeviceCalendarEvent {
+  String internalEventId;
+  String title;
+  String deepLinkUrl;
+  DateTime startDate;
+  DateTime endDate;
+
+  DeviceCalendarEvent({this.internalEventId, this.title, this.deepLinkUrl, this.startDate, this.endDate});
+
+  factory DeviceCalendarEvent.from(dynamic data){
+    if(data==null)
+      return null;
+
+    if(data is ExploreEvent.Event){
+      return DeviceCalendarEvent.fromEvent(data);
+    }
+    else if (data is Game){
+      return DeviceCalendarEvent.fromGame(data);
+    }
+
+    return null;
+  }
+
+  factory DeviceCalendarEvent.fromEvent(ExploreEvent.Event event){
+    if(event==null)
+      return null;
+
+    return DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal, endDate: event.endDateLocal,
+        deepLinkUrl: "${ExploreService.EVENT_URI}?event_id=${event.id}");
+  }
+
+  factory DeviceCalendarEvent.fromGame(Game game){
+    if(game==null)
+      return null;
+
+    return DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
+        endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
+        deepLinkUrl: "${ExploreService.EVENT_URI}?game_id=${game.id}");
+  }
+
+  Event toCalendarEvent(String calendarId){
+    Event calendarEvent = Event(calendarId);
+    calendarEvent.title = title ?? "";
+    if (startDate != null) {
+      calendarEvent.start = startDate;
+    }
+    if (endDate != null) {
+      calendarEvent.end = endDate;
+    } else {
+      calendarEvent.end = DateTime(
+        startDate.year, startDate.month,
+        startDate.day, 23, 59,);
+    }
+
+    calendarEvent.description = _constructRedirectLinkUrl(deepLinkUrl);
+
+    return calendarEvent;
+  }
+
+  static String _constructRedirectLinkUrl(String url){
+
+    Uri assetsUri = Uri.parse(Config().assetsUrl);
+    String redirectUrl = assetsUri!= null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+
+    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$url" : url;
+  }
+
 }
