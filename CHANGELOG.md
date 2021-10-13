@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.7.0] - //TBD: Unreleased. Please, add date in format yyyy-MM-dd when building a version
+
 ## [2.6.28] - 2021-09-27
 ### Changed
 - Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
