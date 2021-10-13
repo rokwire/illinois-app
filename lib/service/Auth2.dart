@@ -47,6 +47,7 @@ class Auth2 with Service implements NotificationsListener {
   Timer _oidcAuthenticationTimer;
 
   Future<Response> _refreshTokenFuture;
+  int _refreshTonenFailCount = 0;
   
   Client _updateUserPrefsClient;
   Timer _updateUserPrefsTimer;
@@ -525,6 +526,8 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2Token = _token = null;
       Storage().auth2Account = _account = null;
       Storage().auth2UiucToken = _uiucToken = null;
+
+      _refreshTonenFailCount = null;
       
       _updateUserPrefsTimer?.cancel();
       _updateUserPrefsTimer = null;
@@ -570,28 +573,28 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2Token> refreshToken() async {
     if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
-      if (_refreshTokenFuture != null){
-        Log.d("Auth2: will await refresh token");
-        await _refreshTokenFuture;
-        Log.d("Auth2: did await refresh token");
-      }
-      else {
-        try {
+      try {
+
+        if (_refreshTokenFuture != null) {
+          Log.d("Auth2: will await refresh token");
+          Response response = await _refreshTokenFuture;
+          Log.d("Auth2: did await refresh token");
+          Auth2Token token = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
+          return ((token != null) && token.isValid) ? token : null;
+        }
+        else {
           Log.d("Auth2: will refresh token");
 
-          String url = "${Config().coreUrl}/services/auth/refresh";
-          Map<String, String> headers = {
-            'Content-Type': 'text/plain'
-          };
-
-          _refreshTokenFuture = Network().post(url, headers: headers, body: _token?.refreshToken);
-          Response refreshTokenResponse = await _refreshTokenFuture;
+          _refreshTokenFuture = _refreshToken();
+          Response response = await _refreshTokenFuture;
           _refreshTokenFuture = null;
 
-          if (refreshTokenResponse?.statusCode == 200) {
-            Map<String, dynamic> responseJson = AppJson.decodeMap(refreshTokenResponse?.body);
+          if (response?.statusCode == 200) {
+            Map<String, dynamic> responseJson = AppJson.decodeMap(response?.body);
             Auth2Token token = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
             if ((token != null) && token.isValid) {
+              _refreshTonenFailCount = null;
+
               Log.d("Auth: did refresh token: ${token?.accessToken}");
               Storage().auth2Token = _token = token;
 
@@ -602,18 +605,40 @@ class Auth2 with Service implements NotificationsListener {
               return token;
             }
             else {
-              Log.d("Auth: failed to refresh token: ${refreshTokenResponse?.body}");
+              Log.d("Auth: failed to refresh token: ${response?.body}");
+              _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount + 1) : 1;
+              if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount) {
+                logout();
+              }
             }
           }
-          else if(refreshTokenResponse?.statusCode == 400 || refreshTokenResponse?.statusCode == 401 || refreshTokenResponse?.statusCode == 403) {
+          else if ((response?.statusCode == 400) || (response?.statusCode == 401) || (response?.statusCode == 403)) {
             logout(); // Logout only on 400, 401 or 403. Do not do anything else for the rest of scenarios
           }
-        }
-        catch(e) {
-          print(e.toString());
-          _refreshTokenFuture = null; // make sure to clear this in case something went wrong.
+          else {
+            Log.d("Auth: failed to refresh token: ${response?.body}");
+            _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount + 1) : 1;
+            if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount) {
+              logout();
+            }
+          } 
         }
       }
+      catch(e) {
+        print(e.toString());
+        _refreshTokenFuture = null; // make sure to clear this in case something went wrong.
+      }
+    }
+    return null;
+  }
+
+  Future<Response> _refreshToken() async {
+    if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
+      String url = "${Config().coreUrl}/services/auth/refresh";
+      Map<String, String> headers = {
+        'Content-Type': 'text/plain'
+      };
+      return Network().post(url, headers: headers, body: _token?.refreshToken);
     }
     return null;
   }

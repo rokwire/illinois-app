@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Cleanup refresh token in Auth2, logout if number of retries fail [#798](https://github.com/rokwire/illinois-app/issues/798).
 - Switch groups to Core BB [#795](https://github.com/rokwire/illinois-app/issues/795).
 
 ## [3.0.22] 2021-10-11
