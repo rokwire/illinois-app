@@ -512,20 +512,23 @@ class ExploreService with Service implements NotificationsListener {
     }
     Set<String> targetAudiences = Set();
     for (UserRole role in roles) {
-      if(role == UserRole.student)
+      if (role == UserRole.student) {
         targetAudiences.add('students');
-      else if(role == UserRole.alumni)
+      } else if (role == UserRole.alumni) {
         targetAudiences.add('alumni');
-      else if(role == UserRole.employee)
+      } else if (role == UserRole.employee) {
         targetAudiences.addAll(['faculty', 'staff']);
-      else if(role == UserRole.fan)
+      } else if (role == UserRole.fan) {
         targetAudiences.add('public');
-      else if(role == UserRole.parent)
+      } else if (role == UserRole.parent) {
         targetAudiences.add('parents');
-      else if(role == UserRole.visitor)
+      } else if (role == UserRole.visitor) {
         targetAudiences.add('public');
-      else if(role == UserRole.resident)
+      } else if (role == UserRole.resident) {
         targetAudiences.add('public');
+      } else if (role == UserRole.gies) {
+
+      }
     }
     return targetAudiences;
   }
