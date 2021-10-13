@@ -182,8 +182,8 @@ class Config with Service implements NotificationsListener {
     return kReleaseMode ? (settings['refreshTimeout'] ?? 0) : 0;
   }
 
-  int get refreshTokenRetryCount {
-    return (settings['refreshTokenRetryCount'] ?? 3);
+  int get refreshTokenRetriesCount {
+    return (settings['refreshTokenRetriesCount'] ?? 3);
   }
 
   String get appPrivacyVersion {

@@ -607,7 +607,7 @@ class Auth2 with Service implements NotificationsListener {
             else {
               Log.d("Auth: failed to refresh token: ${response?.body}");
               _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount + 1) : 1;
-              if (Config().refreshTokenRetryCount <= _refreshTonenFailCount) {
+              if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount) {
                 logout();
               }
             }
@@ -618,7 +618,7 @@ class Auth2 with Service implements NotificationsListener {
           else {
             Log.d("Auth: failed to refresh token: ${response?.body}");
             _refreshTonenFailCount = (_refreshTonenFailCount != null) ? (_refreshTonenFailCount + 1) : 1;
-            if (Config().refreshTokenRetryCount <= _refreshTonenFailCount) {
+            if (Config().refreshTokenRetriesCount <= _refreshTonenFailCount) {
               logout();
             }
           } 
