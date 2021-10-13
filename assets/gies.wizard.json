@@ -17,28 +17,25 @@
 },{
   "id":"accept.offer",
   "title":"Step 1: Accept Your Offer",
-  "content":[
-    {
-      "heading": "Applicants who have been offered admission to Gies College of Business online programs should have received the following:",
-      "bullets": [
-        "<b>A Program Offer Letter:</b> This indicates that we have referred you to the Graduate College for admission as a degree-seeking student from Gies Online Programs.",
-        "<b>An Official Notice of Admission from Illinois Graduate Admissions:</b> This will be delivered as an email with the subject line “Illinois Admission Decision."
-    ]},
-    {
-      "heading": "Once you have received these items, it is time to decide if you’ll join us as a degree-seeking student through the <a href='https://choose.illinois.edu/apply/status'>Graduate College Application Portal</a>. You will make one of three choices:",
-      "bullets": [
-        "<b>Accept Your Offer:</b> This will secure your spot in your program. No enrollment deposit is required!",
-        "<b>Defer Your Acceptance:</b> You have the option to defer your admission for up to 1 calendar year. This will require a $750 deposit to hold your spot in the program. This deposit will be applied toward your Illinois tuition during your first semester in the program.",
-        "<b>Decline Your Offer:</b> If you no longer want to join our program, please let us know by declining your offer. If you have already paid your enrollment deposit to defer your admission, it is not refundable."
-    ]}
-  ],
+  "content":[{
+    "heading": "Applicants who have been offered admission to Gies College of Business online programs should have received the following:",
+    "bullets": [
+      "<b>A Program Offer Letter:</b> This indicates that we have referred you to the Graduate College for admission as a degree-seeking student from Gies Online Programs.",
+      "<b>An Official Notice of Admission from Illinois Graduate Admissions:</b> This will be delivered as an email with the subject line “Illinois Admission Decision."
+  ]},{
+    "heading": "Once you have received these items, it is time to decide if you’ll join us as a degree-seeking student through the <a href='https://choose.illinois.edu/apply/status'>Graduate College Application Portal</a>. You will make one of three choices:",
+    "bullets": [
+      "<b>Accept Your Offer:</b> This will secure your spot in your program. No enrollment deposit is required!",
+      "<b>Defer Your Acceptance:</b> You have the option to defer your admission for up to 1 calendar year. This will require a $750 deposit to hold your spot in the program. This deposit will be applied toward your Illinois tuition during your first semester in the program.",
+      "<b>Decline Your Offer:</b> If you no longer want to join our program, please let us know by declining your offer. If you have already paid your enrollment deposit to defer your admission, it is not refundable."
+  ]}],
   "buttons":[
-    {"title":"Accept", "page":"setup.accounts"},
-    {"title":"Defer", "page":""},
-    {"title":"Decline", "page":""}
+    {"title":"Accept", "page":"setup.university.accounts"},
+    {"title":"Defer", "page":"goodby.defered"},
+    {"title":"Decline", "page":"goodby.declined"}
   ]
 },{
-  "id":"setup.accounts",
+  "id":"setup.university.accounts",
   "title":"Step 2: Set up your University Accounts",
   "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
   "steps":[
@@ -76,6 +73,36 @@
   "title":"Step 2D: Set Up Your Illinois Zoom Pro Account",
   "text":"Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom.",
   "buttons":[
+    {"title":"Done", "page":"setup.coursera.account"}
+  ]
+},{
+  "id":"setup.coursera.account",
+  "title":"Step 3: Set up your Coursera Account",
+  "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p></p>",
+  "steps":[
+    "3A Set Up Your Coursera Account"
+  ],
+  "buttons":[
+    {"title":"Continue", "page":"claim.coursera.account"}
+  ]
+},{
+  "id":"claim.coursera.account",
+  "title":"Step 3A: Set up your Coursera Account",
+  "content":[{
+    "heading":"The University of Illinois partners with Coursera to offer our Gies online programs’ massive open online courses (MOOCs) that accompany the Canvas component of your online course. Setting up your Coursera account is a two-step process that is outlined below.",
+    "numbers":[
+      "<b>Link your Coursera account:</b> Within a few days of accepting your offer, you will receive an email from Coursera for Illinois regarding information on how to set-up and link your Coursera account with the University of Illinois. Linking your account ensures that the work you do in the Coursera MOOCs is transferred to your online course to be counted towards your grade. Once you have linked your Coursera account, you will see your program name displayed at the top of your dashboard.<p><b>The linking email will be sent to your Illinois email account.</b> If you do not see your linking email after four days of accepting your admission, send an email to <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> requesting to have your Coursera linking email re-sent.",
+      "<b>Join Coursera for Illinois:</b> Coursera for Illinois is a perk of being a student at the University of Illinois. Carefully follow these <a href='https://uofi.app.box.com/file/624565567278?s=6cyz7pxaqlwcjxyz1gf1p35mxah392p6'>step-by-step instructions</a> to successfully add your Coursera for Illinois dashboard. Coursera for Illinois ensures that you can access the University of Illinois Coursera MOOCs for free. If you previously had an account with Coursera then you will still need to enroll in Coursera for Illinois in order to avoid paying the MOOC enrollment fees."
+  ]}],
+  "buttons":[
     {"title":"Done", "page":""}
   ]
+},{
+  "id":"goodby.defered",
+  "title":"See you later",
+  "text":"We are sory for your decision. We are looking forward for your application next year."
+},{
+  "id":"goodby.declined",
+  "title":"Goodby",
+  "text":"We are sory for your decision. We are looking forward for your application next year."
 }]
