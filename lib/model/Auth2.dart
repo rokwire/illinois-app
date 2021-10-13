@@ -1251,6 +1251,7 @@ class UserRole {
   static const alumni = const UserRole._internal('alumni');
   static const parent = const UserRole._internal('parent');
   static const resident = const UserRole._internal('resident');
+  static const gies = const UserRole._internal('gies');
 
   static List<UserRole> get values {
     return [student, visitor, fan, employee, alumni, parent];

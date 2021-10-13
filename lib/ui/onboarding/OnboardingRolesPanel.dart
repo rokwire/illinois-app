@@ -170,7 +170,19 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     sortOrder: 6,
                     onTap: _onRoleGridButton,
                   ),
-
+                  Container(height: gridSpacing,),
+                  RoleGridButton(
+                    title: 'GIES Student',
+                    hint: '',
+                    iconPath: 'images/icon-persona-alumni-normal.png',
+                    selectedIconPath: 'images/icon-persona-alumni-selected.png',
+                    selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                    selectedTextColor: Colors.white,
+                    selected:(_selectedRoles.contains(UserRole.gies)),
+                    data: UserRole.gies,
+                    sortOrder: 8,
+                    onTap: _onRoleGridButton,
+                  ),
                 ],),),
               ],),),),),        
 
