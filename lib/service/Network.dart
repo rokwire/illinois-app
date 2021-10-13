@@ -481,20 +481,22 @@ class Network  {
   }
 
   bool _requiresRefreshToken(Http.BaseResponse response, NetworkAuth auth){
-    return (response != null
+    return ((response != null)
        && (
-//          response.statusCode == 400 || 
-            response.statusCode == 401
+//          (response.statusCode == 400) || 
+            (response.statusCode == 401)
         )
-        && Auth2().isLoggedIn
-        && (NetworkAuth.User == auth || NetworkAuth.Access == auth || NetworkAuth.Auth2 == auth));
+        && (Auth2().token?.refreshToken != null)
+        && (
+            (NetworkAuth.User == auth) ||
+            (NetworkAuth.Access == auth) ||
+            (NetworkAuth.Auth2 == auth)
+        )
+    );
   }
 
   Future<bool> _refreshToken(NetworkAuth auth) async {
-    if (NetworkAuth.User == auth || NetworkAuth.Access == auth) {
-      return (await Auth2().refreshToken() != null);
-    }
-    else if (NetworkAuth.Auth2 == auth) {
+    if ((NetworkAuth.User == auth) || (NetworkAuth.Access == auth) || (NetworkAuth.Auth2 == auth)) {
       return (await Auth2().refreshToken() != null);
     }
     else {
