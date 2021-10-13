@@ -40,7 +40,7 @@
 },{
   "id":"setup.accounts",
   "title":"Step 2: Set up your University Accounts",
-  "text":"<i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i><br>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.<br>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.",
+  "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
   "steps":[
     "2A Claim Your NetID and Password",
     "2B Setup Your University Email Account",
@@ -53,7 +53,7 @@
 },{
   "id":"claim.netid.and.password",
   "title":"Step 2A: Claim Your NetID and Password",
-  "text":"Your NetID will give you access to campus services, including e-mail and file storage. New students should visit <a href='https://netidclaim.illinois.edu/'>Illinois NetID Claim</a> to claim their NetID. First, you will need to enter your University ID Number (UIN) and Activation Code. The UIN and Activation Code were sent to you in your Notice of Admission Letter from the Graduate College. Next, you will select and provide answers to two security questions to protect your NetID account. Finally, you will need to choose a password for your NetID account and setup <a href='https://techservices.illinois.edu/content/two-factor-authentication-2fa'>Two-Factor Authentication (2FA)</a>.<br><i>If you have previously enrolled at the University of Illinois, there is no need to claim your NetID again. You will need to reset your password. You can find more information on the <a href='https://answers.uillinois.edu/illinois/page.php?id=48103'>Technology Services Website</a>.</i>",
+  "text":"<p>Your NetID will give you access to campus services, including e-mail and file storage. New students should visit <a href='https://netidclaim.illinois.edu/'>Illinois NetID Claim</a> to claim their NetID. First, you will need to enter your University ID Number (UIN) and Activation Code. The UIN and Activation Code were sent to you in your Notice of Admission Letter from the Graduate College. Next, you will select and provide answers to two security questions to protect your NetID account. Finally, you will need to choose a password for your NetID account and setup <a href='https://techservices.illinois.edu/content/two-factor-authentication-2fa'>Two-Factor Authentication (2FA)</a>.</p><p><i>If you have previously enrolled at the University of Illinois, there is no need to claim your NetID again. You will need to reset your password. You can find more information on the <a href='https://answers.uillinois.edu/illinois/page.php?id=48103'>Technology Services Website</a>.</i></p>",
   "buttons":[
     {"title":"Done", "page":"setup.email.account"}
   ]
