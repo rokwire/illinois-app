@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +32,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        _page = ((_pages != null) && (0 < _pages.length)) ? AppJson.mapValue(_pages[0]) : null;
+        setState(() {
+          _page = ((_pages != null) && (0 < _pages.length)) ? AppJson.mapValue(_pages[0]) : null;
+        });
       });
     }
 
@@ -182,13 +185,89 @@ class _GiesPageWidget extends StatelessWidget {
       }
     }
 
+    List<dynamic> content = (page != null) ? AppJson.listValue(page['content']) : null;
+    if (content != null) {
+      for (dynamic contentEntry in content) {
+        if (contentEntry is Map) {
+          List<Widget> contentEntryWidgets = <Widget>[];
+          
+          String heading = AppJson.stringValue(contentEntry['heading']);
+          if ((heading != null) && (0 < heading.length)) {
+            contentEntryWidgets.add(
+              Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
+                Html(data: heading,
+                  onLinkTap: (url, context, attributes, element) => onTapLink(url),
+                  style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+              ),),
+            );
+          }
+
+          List<dynamic> bullets = AppJson.listValue(contentEntry['bullets']);
+          if (bullets != null) {
+            String bulletText = '\u2022';
+            Color bulletColor = Styles().colors.textBackground;
+            List<Widget> bulletWidgets = <Widget>[];
+            for (dynamic bulletEntry in bullets) {
+              if (bulletEntry is String) {
+                bulletWidgets.add(
+                  Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
+                        Text(bulletText, style: TextStyle(color: bulletColor, fontSize: 20),),),
+                      Expanded(child:
+                        Html(data: bulletEntry,
+                        onLinkTap: (url, context, attributes, element) => onTapLink(url),
+                          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                      ),),
+                    ],)
+                  ),
+                );
+              }
+            }
+            if (0 < bulletWidgets.length) {
+              contentEntryWidgets.add(Column(children: bulletWidgets,));
+            }
+          }
+          
+          if (0 < contentEntryWidgets.length) {
+            contentList.add(
+              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                Column(children: contentEntryWidgets)
+            ),);
+          }
+        }
+      }
+    }
+
     List<dynamic> buttons = (page != null) ? AppJson.listValue(page['buttons']) : null;
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
         if (button is Map) {
-          
+          String title = AppJson.stringValue(button['title']);
+          String page = AppJson.stringValue(button['page']);
+          buttonWidgets.add(
+            Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              RoundedButton(label: title,
+                backgroundColor: Styles().colors.white,
+                textColor: Styles().colors.fillColorPrimary,
+                fontFamily: Styles().fontFamilies.bold,
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 16, ),
+                borderColor: Styles().colors.fillColorSecondary,
+                borderWidth: 2,
+                height: 42,
+                onTap:() { onTapPage(page);  }
+              )
+            ]),
+          );
         }
+      }
+      if (0 < buttonWidgets.length) {
+        contentList.add(
+          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+            Wrap(runSpacing: 8, spacing: 16, children: buttonWidgets,)
+        ),);
       }
     }
 
