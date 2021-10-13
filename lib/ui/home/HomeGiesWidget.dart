@@ -36,6 +36,15 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
+        if ((_pages != null) && _pages.isNotEmpty) {
+          Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
+          String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
+          if (pageId != null) {
+            setState(() {
+              Storage().giesPages = _passed = [pageId];
+            });
+          }
+        }
       });
     }
 
@@ -46,7 +55,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         
         if (_passed.isEmpty && (_pages != null) && _pages.isNotEmpty) {
           Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-          String pageId = (firstPage != null) ? firstPage['id'] : null;
+          String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
           if (pageId != null) {
             _passed.add(pageId);
             Storage().giesPages = _passed;
@@ -273,6 +282,33 @@ class _GiesPageWidget extends StatelessWidget {
             }
           }
           
+          List<dynamic> numbers = AppJson.listValue(contentEntry['numbers']);
+          if (numbers != null) {
+            Color numberColor = Styles().colors.textBackground;
+            List<Widget> numberWidgets = <Widget>[];
+            for (int numberIndex = 0; numberIndex < numbers.length; numberIndex++) {
+              dynamic numberEntry = numbers[numberIndex];
+              if ((numberEntry is String) && numberEntry.isNotEmpty) {
+                numberWidgets.add(
+                  Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Padding(padding: EdgeInsets.only(left: 16, right: 8), child:
+                        Text('${numberIndex + 1}.', style: TextStyle(color: numberColor, fontSize: 20),),),
+                      Expanded(child:
+                        Html(data: numberEntry,
+                        onLinkTap: (url, context, attributes, element) => onTapLink(url),
+                          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                      ),),
+                    ],)
+                  ),
+                );
+              }
+            }
+            if (0 < numberWidgets.length) {
+              contentEntryWidgets.add(Column(children: numberWidgets,));
+            }
+          }
+
           if (0 < contentEntryWidgets.length) {
             contentList.add(
               Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
