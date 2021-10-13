@@ -49,20 +49,6 @@ class Groups /* with Service */ {
     return _service;
   }
 
-  // Emulation
-
-  /*Future<Map<String, dynamic>> get _sampleJson async {
-      Map<String, dynamic> result;
-      try {
-        String sampleSource = await rootBundle.loadString('assets/sample.groups.json');
-        result = (sampleSource != null) ? json.decode(sampleSource) : null;
-      }
-      catch(e) {
-        print(e.toString());
-      }
-      return result ?? {};
-  }*/
-
   // Current User Membership
 
   Member getUserMembership(String groupId) {
