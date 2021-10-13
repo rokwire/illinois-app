@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -802,7 +801,6 @@ class Auth2UserPrefs {
       }
 
       Analytics().logFavorite(favorite, shouldFavorite);
-      DeviceCalendar().onFavoriteUpdated(favorite, shouldFavorite);
       NotificationService().notify(notifyFavoriteChanged, favorite);
       NotificationService().notify(notifyFavoritesChanged);
       NotificationService().notify(notifyChanged, this);
