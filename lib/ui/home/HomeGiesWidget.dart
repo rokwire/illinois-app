@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -24,24 +26,32 @@ class HomeGiesWidget extends StatefulWidget {
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
   List<dynamic> _pages;
-  Map<String, dynamic> _page;
+  List<String> _passed;
   
   @override
   void initState() {
     super.initState();
 
+    _passed = Storage().giesPages ?? [];
+
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        setState(() {
-          _page = ((_pages != null) && (0 < _pages.length)) ? AppJson.mapValue(_pages[0]) : null;
-        });
       });
     }
 
     rootBundle.loadString('assets/gies.wizard.json').then((String assetsContentString) {
       setState(() {
+        
         _pages = AppJson.decodeList(assetsContentString);
-        _page = ((_pages != null) && (0 < _pages.length)) ? AppJson.mapValue(_pages[0]) : null;
+        
+        if (_passed.isEmpty && (_pages != null) && _pages.isNotEmpty) {
+          Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
+          String pageId = (firstPage != null) ? firstPage['id'] : null;
+          if (pageId != null) {
+            _passed.add(pageId);
+            Storage().giesPages = _passed;
+          }
+        }
       });
     });
   }
@@ -87,8 +97,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Widget _buildContent() {
+    Map<String, dynamic> page = _passed.isNotEmpty ? _getPage(_passed.last) : null;
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 30), child:
-      _GiesPageWidget(page: _page, onTapLink: _onTapLink, onTapPage: _onTapPage),
+      _GiesPageWidget(page: page, onTapLink: _onTapLink, onTapPage: _onTapPage, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
     );
   }
 
@@ -105,9 +116,20 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   void _onTapPage(String pageId) {
     Map<String, dynamic> page = _getPage(pageId);
     if (page != null) {
-      setState(() {
-        _page = page;
-      });
+
+      _passed.add(pageId);
+      Storage().giesPages = _passed;
+
+      setState(() {});
+    }
+  }
+
+  void _onTapBack() {
+    if (1 < _passed.length) {
+      _passed.removeLast();
+      Storage().giesPages = _passed;
+
+      setState(() {});
     }
   }
 
@@ -129,10 +151,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
 class _GiesPageWidget extends StatelessWidget {
   final Map<String, dynamic> page;
+  
   final void Function(String) onTapLink;
   final void Function(String) onTapPage;
+  final void Function() onTapBack;
   
-  _GiesPageWidget({this.page, this.onTapLink, this.onTapPage});
+  _GiesPageWidget({this.page, this.onTapLink, this.onTapPage, this.onTapBack});
 
   @override
   Widget build(BuildContext context) {
@@ -141,17 +165,37 @@ class _GiesPageWidget extends StatelessWidget {
     String titleHtml = (page != null) ? AppJson.stringValue(page['title']) : null;
     if (AppString.isStringNotEmpty(titleHtml)) {
       contentList.add(
-        Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-          Html(data: titleHtml,
-            onLinkTap: (url, context, attributes, element) => onTapLink(url),
-            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
-      ),);
+        
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          (onTapBack != null) ?
+            Semantics(
+              label: Localization().getStringEx('headerbar.back.title', 'Back'),
+              hint: Localization().getStringEx('headerbar.back.hint', ''),
+              button: true,
+              child: InkWell(
+                onTap: onTapBack,
+                child: Container(height: 36, width: 36, child:
+                  Image.asset('images/chevron-left-gray.png')
+                ),
+                ),
+            ) :
+            Padding(padding: EdgeInsets.only(left: 16), child: Container()),
+
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
+              Html(data: titleHtml,
+                onLinkTap: (url, context, attributes, element) => onTapLink(url),
+                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+            ),
+          ),
+
+        ],));
     }
 
     String textHtml = (page != null) ? AppJson.stringValue(page['text']) : null;
     if (AppString.isStringNotEmpty(textHtml)) {
       contentList.add(
-        Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Html(data: textHtml,
             onLinkTap: (url, context, attributes, element) => onTapLink(url),
             style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
@@ -179,7 +223,7 @@ class _GiesPageWidget extends StatelessWidget {
       }
       if (0 < stepWidgets.length) {
         contentList.add(
-          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
             Column(children: stepWidgets,)
         ),);
       }
@@ -191,11 +235,11 @@ class _GiesPageWidget extends StatelessWidget {
         if (contentEntry is Map) {
           List<Widget> contentEntryWidgets = <Widget>[];
           
-          String heading = AppJson.stringValue(contentEntry['heading']);
-          if ((heading != null) && (0 < heading.length)) {
+          String headingHtml = AppJson.stringValue(contentEntry['heading']);
+          if (AppString.isStringNotEmpty(headingHtml)) {
             contentEntryWidgets.add(
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
-                Html(data: heading,
+                Html(data: headingHtml,
                   onLinkTap: (url, context, attributes, element) => onTapLink(url),
                   style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
               ),),
@@ -208,7 +252,7 @@ class _GiesPageWidget extends StatelessWidget {
             Color bulletColor = Styles().colors.textBackground;
             List<Widget> bulletWidgets = <Widget>[];
             for (dynamic bulletEntry in bullets) {
-              if (bulletEntry is String) {
+              if ((bulletEntry is String) && bulletEntry.isNotEmpty) {
                 bulletWidgets.add(
                   Padding(padding: EdgeInsets.only(top: 4, bottom: 2), child:
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -231,7 +275,7 @@ class _GiesPageWidget extends StatelessWidget {
           
           if (0 < contentEntryWidgets.length) {
             contentList.add(
-              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                 Column(children: contentEntryWidgets)
             ),);
           }
@@ -265,12 +309,11 @@ class _GiesPageWidget extends StatelessWidget {
       }
       if (0 < buttonWidgets.length) {
         contentList.add(
-          Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
             Wrap(runSpacing: 8, spacing: 16, children: buttonWidgets,)
         ),);
       }
     }
-
 
     return Padding(padding: EdgeInsets.only(), child:
       Container(
@@ -280,7 +323,7 @@ class _GiesPageWidget extends StatelessWidget {
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
         clipBehavior: Clip.none,
-        child: Padding(padding: EdgeInsets.all(16), child:
+        child: Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
           Row(children: [ Expanded(child: Column(children: contentList))],)
         ),
     ),);

@@ -725,11 +725,10 @@ class Storage with Service {
     _setIntWithName(auth2CardTimeKey, value);
   }
 
-  /////////////
+  //////////////////
+  // Calendar
 
   static const String _calendarEventsTableKey = 'calendar_events_table';
-  static const String _calendarEnableSaveKey = 'calendar_enabled_to_save';
-  static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
 
   dynamic get calendarEventsTable {
     String jsonString = _getStringWithName(_calendarEventsTableKey);
@@ -742,6 +741,8 @@ class Storage with Service {
     _setStringWithName(_calendarEventsTableKey, tableToString);
   }
 
+  static const String _calendarEnableSaveKey = 'calendar_enabled_to_save';
+
   bool get calendarEnabledToSave{
     return _getBoolWithName(_calendarEnableSaveKey, defaultValue: true);
   }
@@ -749,6 +750,8 @@ class Storage with Service {
   set calendarEnabledToSave(bool value){
     _setBoolWithName(_calendarEnableSaveKey, value);
   }
+
+  static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
 
   bool get calendarCanPrompt{
     return _getBoolWithName(_calendarEnablePromptKey);
@@ -758,4 +761,16 @@ class Storage with Service {
     _setBoolWithName(_calendarEnablePromptKey, value);
   }
 
+  //////////////////
+  // GIES
+
+  static const String giesPagesKey  = 'excluded_food_ingredients_prefs';
+
+  List<String> get giesPages {
+    return _getStringListWithName(giesPagesKey);
+  }
+
+  set giesPages(List<String> value) {
+    _setStringListWithName(giesPagesKey, value);
+  }
 }
