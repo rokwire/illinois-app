@@ -1082,11 +1082,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool _isCurrentUserCreator(GroupPost item) {
-    String currentMemberEmail = widget.group?.currentUserAsMember?.email;
-    String itemMemberEmail = item?.member?.email;
+    String currentMemberEmail = widget.group?.currentUserAsMember?.userId;
+    String itemMemberUserId = item?.member?.userId;
     return AppString.isStringNotEmpty(currentMemberEmail) &&
-        AppString.isStringNotEmpty(itemMemberEmail) &&
-        (currentMemberEmail == itemMemberEmail);
+        AppString.isStringNotEmpty(itemMemberUserId) &&
+        (currentMemberEmail == itemMemberUserId);
   }
 
   bool get _isDeletePostVisible {
