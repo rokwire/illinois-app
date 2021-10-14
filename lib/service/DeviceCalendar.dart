@@ -276,7 +276,7 @@ class DeviceCalendarEvent {
 
     return DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
         endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
-        deepLinkUrl: "${ExploreService.EVENT_URI}?game_id=${game.id}");
+        deepLinkUrl: "${Sports.GAME_URI}?game_id=${game.id}%26sport=${game.sport?.shortName}");
   }
 
   Event toCalendarEvent(String calendarId){
