@@ -57,8 +57,6 @@ class _IDCardPanelState extends State<IDCardPanel>
     super.initState();
     NotificationService().subscribe(this, Auth.notifyCardChanged);
     
-    _loadPhotoImage();
-    
     _animationController = AnimationController(duration: Duration(milliseconds: 1500), lowerBound: 0, upperBound: 2 * math.pi, animationBehavior: AnimationBehavior.preserve, vsync: this)
     ..addListener(() {
       if (mounted) {
