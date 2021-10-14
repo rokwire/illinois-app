@@ -338,7 +338,7 @@ class Sports with Service implements NotificationsListener {
   }
 
   Future<List<Game>> loadTopScheduleGames() async {
-    List<Game> gamesList = await loadUpcomingGames();
+    List<Game> gamesList = await loadGames();
     return getTopScheduleGamesFromList(gamesList);
   }
 
@@ -406,54 +406,11 @@ class Sports with Service implements NotificationsListener {
       Log.d('Missing game id to load.');
       return null;
     }
-    List<Game> games = await _loadGames(id: gameId, sports: [sportKey]);
+    List<Game> games = await loadGames(id: gameId, sports: [sportKey]);
     return games?.first;
   }
 
-  Future<List<Game>> loadUpcomingGames({String sport, int limit = 0}) async {
-    List<Game> gamesList = await (AppString.isStringNotEmpty(sport) ? _loadGames(sports: [sport], limit: limit) : _loadGames(limit: limit));
-    return gamesList;
-  }
-
-  Future<List<News>> loadNews(String sportKey, int count) async {
-    if (Config().sportsServiceUrl != null) {
-      String newsUrl = Config().sportsServiceUrl + '/api/v2/news';
-      bool hasSportParam = AppString.isStringNotEmpty(sportKey);
-      if (hasSportParam) {
-        newsUrl += '?sport=$sportKey';
-      }
-      if ((count != null) && (count > 0)) {
-        if (hasSportParam) {
-          newsUrl += '&';
-        } else {
-          newsUrl += '?';
-        }
-        newsUrl += 'limit=$count';
-      }
-
-      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic> jsonData = AppJson.decode(responseBody);
-        if (AppCollection.isCollectionNotEmpty(jsonData)) {
-          List<News> newsList = [];
-          for (Map<String, dynamic> jsonEntry in jsonData) {
-            News news = News.fromJson(jsonEntry);
-            if (news != null) {
-              newsList.add(news);
-            }
-          }
-          return newsList;
-        }
-      } else {
-        Log.e('Failed to load news');
-        Log.e(responseBody);
-      }
-    }
-    return null;
-  }
-
-  Future<List<Game>> _loadGames({String id, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
+  Future<List<Game>> loadGames({String id, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
     if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
       return null;
     }
@@ -504,6 +461,44 @@ class Sports with Service implements NotificationsListener {
       }
     } else {
       Log.e('Failed to load games. Reason: $responseBody');
+    }
+    return null;
+  }
+
+  Future<List<News>> loadNews(String sportKey, int count) async {
+    if (Config().sportsServiceUrl != null) {
+      String newsUrl = Config().sportsServiceUrl + '/api/v2/news';
+      bool hasSportParam = AppString.isStringNotEmpty(sportKey);
+      if (hasSportParam) {
+        newsUrl += '?sport=$sportKey';
+      }
+      if ((count != null) && (count > 0)) {
+        if (hasSportParam) {
+          newsUrl += '&';
+        } else {
+          newsUrl += '?';
+        }
+        newsUrl += 'limit=$count';
+      }
+
+      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
+      String responseBody = response?.body;
+      if ((response != null) && (response.statusCode == 200)) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+          List<News> newsList = [];
+          for (Map<String, dynamic> jsonEntry in jsonData) {
+            News news = News.fromJson(jsonEntry);
+            if (news != null) {
+              newsList.add(news);
+            }
+          }
+          return newsList;
+        }
+      } else {
+        Log.e('Failed to load news');
+        Log.e(responseBody);
+      }
     }
     return null;
   }

@@ -673,7 +673,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
 
   void _loadGames() {
     _increaseProgress();
-    Sports().loadUpcomingGames(sport: widget.sport.shortName, limit: 3).then((games) {
+    Sports().loadGames(sports: [widget.sport.shortName], limit: 3).then((games) {
       _games = games;
       _decreaseProgress();
     });
