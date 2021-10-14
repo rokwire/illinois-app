@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [2.7.0] - //TBD: Unreleased. Please, add date in format yyyy-MM-dd when building a version
+### Added
+- Added building access status in ID Card panel [#806](https://github.com/rokwire/illinois-app/issues/806).
 
 ## [2.6.28] - 2021-09-27
 ### Changed
