@@ -16,6 +16,7 @@
 
 import 'dart:ui';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:location/location.dart' as Core;
@@ -36,6 +37,7 @@ abstract class Explore {
   String   get exploreSubTitle;
   String   get exploreShortDescription;
   String   get exploreLongDescription;
+  DateTime get exploreStartDateUtc;
   String   get exploreImageURL;
   String   get explorePlaceId;
   Location get exploreLocation;
@@ -222,12 +224,17 @@ class ExploreHelper {
     }
   }
 
-  static String getExploreEventTypeText(Explore explore){
-    if(explore!=null && explore is Event) {
-      bool isVirtual = explore.isVirtual ?? false;
-      return isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+  static String getExploreTypeText(Explore explore) {
+    if (explore != null) {
+      if (explore is Event) {
+        bool isVirtual = explore.isVirtual ?? false;
+        return isVirtual
+            ? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")
+            : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      } else if (explore is Game) {
+        return Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      }
     }
-
     return null;
   }
 }

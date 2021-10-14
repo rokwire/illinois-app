@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -72,23 +73,23 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   String get semanticLabel {
     dynamic explore = widget.explore;
-    String category = ((explore is Event) ? explore.category : null) ?? "";
     String title = widget?.explore?.exploreTitle ?? "";
-    String time = _getEventTimeDisplayString();
+    String time = _getExploreTimeDisplayString();
     String locationText = ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData) ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
     int eventConvergeScore = (explore is Event) ? explore.convergeScore : null;
     String convergeScore = ((eventConvergeScore != null) ? (eventConvergeScore.toString() + '%') : null) ?? "";
     String interests = ((explore is Event) ? _getInterestsLabelValue() : null) ?? "";
     interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
-    String eventType = ExploreHelper.getExploreEventTypeText(explore)??"";
+    String eventType = ExploreHelper.getExploreTypeText(explore)??"";
 
-    return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
+    return "$_exploreCategory, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
   }
 
   @override
   Widget build(BuildContext context) {
     bool isEvent = (widget.explore is Event);
+    bool isGame = (widget.explore is Game);
     Event event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
     String imageUrl = AppString.getDefaultEmptyString(value: widget.explore.exploreImageURL);
@@ -120,7 +121,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Visibility(
-                                visible: isEvent,
+                                visible: (isEvent || isGame),
                                 child: _exploreName(),
                               ),
                               _exploreDetails(),
@@ -232,13 +233,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   Widget _exploreTop() {
 
-    Event event = (widget.explore is Event) ? (widget.explore as Event) : null;
+    String category = _exploreCategory;
     bool isFavorite = widget.explore.isFavorite;
     bool starVisible = Auth2().canFavorite;
     String leftLabel = "";
     TextStyle leftLabelStyle;
-    if (event != null) {
-      leftLabel = event?.category;
+    if (AppString.isStringNotEmpty(category)) {
+      leftLabel = category;
       leftLabel = (leftLabel != null) ? leftLabel.toUpperCase() : "";
       leftLabelStyle = TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, letterSpacing: 0.86, color: Styles().colors.fillColorPrimary);
     } else {
@@ -284,14 +285,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   Widget _exploreName() {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
-      child: Text(
-        (widget.explore.exploreTitle != null) ? widget.explore.exploreTitle : "",
-        style:
-        TextStyle(fontSize: 20,
-            color: Styles().colors.fillColorPrimary),
-      ),
-    );
+        padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
+        child: Text(AppString.getDefaultEmptyString(value: widget.explore?.exploreTitle),
+            style: TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary)));
   }
 
   Widget _exploreDetails() {
@@ -323,7 +319,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget _exploreTimeDetail() {
-    String displayTime = _getEventTimeDisplayString();
+    String displayTime = _getExploreTimeDisplayString();
     if (AppString.isStringEmpty(displayTime)) {
       return null;
     }
@@ -436,9 +432,15 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         : Container();
   }
 
-  String _getEventTimeDisplayString() {
+  String _getExploreTimeDisplayString() {
     Explore explore = widget.explore;
-    return (explore is Event) ? explore.timeDisplayString : '';
+    if (explore is Event) {
+      return explore.timeDisplayString;
+    } else if (explore is Game) {
+      return explore.displayTime;
+    } else {
+      return '';
+    }
   }
 
   Widget _divider(){
@@ -512,6 +514,16 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       }
     } else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: subEvent, superEventTitle: parentEvent.title)));
+    }
+  }
+
+  String get _exploreCategory {
+    if (widget.explore is Event) {
+      return (widget.explore as Event).category;
+    } else if (widget.explore is Game) {
+      return 'Athletics';
+    } else {
+      return '';
     }
   }
 
