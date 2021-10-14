@@ -16,6 +16,7 @@
 
 import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -975,6 +976,10 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
         }
+        else if(explore is Game) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+              AthleticsGameDetailPanel(game: explore)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
@@ -1172,6 +1177,9 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
+    }
+    else if (explore is Game) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: explore)));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
