@@ -283,4 +283,15 @@ class AppDateTime with Service {
   DateTime copyDateTime(DateTime date){
     return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
   }
+
+  DateTime localEndOfDay(DateTime date){
+    if(date == null)
+      return null;
+    try{
+      return timezone.TZDateTime(_universityLocation ,date.year,date.month,date.day,24);
+    } catch(e){
+      print(e);
+    }
+    return null;
+  }
 }

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added athletics game detail handling as deep link and FCM notification [#803](https://github.com/rokwire/illinois-app/issues/803).
 - Added building access status in ID Card panel [#806](https://github.com/rokwire/illinois-app/issues/806).
 - Merged Athletics game entries in Events list [#804](https://github.com/rokwire/illinois-app/issues/804).
+- DeviceCalendar support Athletic events [#801](https://github.com/rokwire/illinois-app/issues/801).
 
 ## [3.0.23] 2021-10-13
 ### Changed
