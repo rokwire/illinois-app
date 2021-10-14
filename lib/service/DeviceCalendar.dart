@@ -6,7 +6,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
-
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
@@ -43,6 +42,13 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   @override
+  Future<void> initService() async {
+    _deviceCalendarPlugin = new DeviceCalendarPlugin();
+    dynamic storedTable = Storage().calendarEventsTable ?? Map();
+    _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
+  }
+
+  @override
   void destroyService() {
     NotificationService().unsubscribe(this);
   }
@@ -53,11 +59,11 @@ class DeviceCalendar with Service implements NotificationsListener{
       _debugMessage("Disabled");
       return false;
     }
-
-
-    bool initResult = await _initDeviceCalendarPlugin();
+    
+    bool initResult = await _loadDefaultCalendarIfNeeded();
     if(!initResult ?? true){
       _debugMessage("Unable to init plugin");
+      return false;
     }
     
     if(canShowPrompt){
@@ -68,37 +74,37 @@ class DeviceCalendar with Service implements NotificationsListener{
     return _placeCalendarEvent(event);
   }
 
-  Future<bool> _placeCalendarEvent(_DeviceCalendarEvent event,) async{
+  Future<bool> _placeCalendarEvent(_DeviceCalendarEvent event) async{
     if(event == null)
       return false;
 
     //PLUGIN
-    bool initResult = await _initDeviceCalendarPlugin();
+    bool initResult = await _loadDefaultCalendarIfNeeded();
     if(!initResult ?? true){
       _debugMessage("Unable to init plugin");
+      return false;
     }
 
     _debugMessage("Add to calendar- id:${calendar?.id}, name:${calendar?.name}, accountName:${calendar?.accountName}, accountType:${calendar?.accountType}, isReadOnly:${calendar?.isReadOnly}, isDefault:${calendar?.isDefault},");
-    //PERMISSIONS
-    bool hasPermissions = await _requestPermissions();
-
-    _debugMessage("Has permissions: $hasPermissions");
     //PLACE
-    if(hasPermissions && calendar!=null) {
+    if(calendar!=null) {
       final createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(event.toCalendarEvent(calendar?.id));
       if(createEventResult?.data!=null){
         _storeEventId(event.internalEventId, createEventResult?.data);
       }
 
-      _debugMessage("result.data: ${createEventResult.data}, result.errorMessages: ${createEventResult.errorMessages}");
+      _debugMessage("result.data: ${createEventResult?.data}, result.errorMessages: ${createEventResult?.errorMessages}");
 
       if(!createEventResult.isSuccess) {
         AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
         print(createEventResult?.errorMessages);
         return false;
       }
+    } else {
+      _debugMessage("calendar is missing");
     }
-    
+
+    _debugMessage("added");
     return true;
   }
 
@@ -106,9 +112,10 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(event == null)
       return false;
 
-    bool initResult = await _initDeviceCalendarPlugin();
+    bool initResult = await _loadDefaultCalendarIfNeeded();
     if(!initResult ?? true){
       _debugMessage("Unable to init plugin");
+      return false;
     }
 
     String eventId = event?.internalEventId != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.internalEventId] : null;
@@ -124,22 +131,21 @@ class DeviceCalendar with Service implements NotificationsListener{
     }
     return deleteEventResult?.isSuccess;
   }
-
-  Future<bool> _initDeviceCalendarPlugin() async{
-    if(_deviceCalendarPlugin != null) {
+  
+  Future<bool> _loadDefaultCalendarIfNeeded() async{
+    if(calendar!=null)
       return true;
-    }
-    _deviceCalendarPlugin = new DeviceCalendarPlugin();
-    dynamic storedTable = Storage().calendarEventsTable ?? Map();
-    _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
+    
     return await _loadCalendars();
   }
 
   Future<bool> _loadCalendars() async {
     bool hasPermissions = await _requestPermissions();
     if(!hasPermissions) {
+      _debugMessage("No Calendar permissions");
       return false;
     }
+    _debugMessage("Has permissions");
     final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
     List<Calendar> calendars = calendarsResult.data;
     _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false)?.toList() : null;
@@ -150,7 +156,7 @@ class DeviceCalendar with Service implements NotificationsListener{
         return true;
       }
     }
-
+    _debugMessage("No Calendars");
     return false;
   }
 
