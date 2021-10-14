@@ -554,6 +554,7 @@ class Event with Explore implements Favorite {
   @override String   get exploreSubTitle         { return subTitle; }
   @override String   get exploreShortDescription { return shortDescription; }
   @override String   get exploreLongDescription  { return longDescription; }
+  @override DateTime get exploreStartDateUtc     { return startDateGmt; }
   @override String   get explorePlaceId          { return placeID; }
   @override Location get exploreLocation         { return location; }
   @override Color    get uiColor                 { return Styles().colors.eventColor; }

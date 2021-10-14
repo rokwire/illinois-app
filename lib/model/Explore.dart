@@ -36,6 +36,7 @@ abstract class Explore {
   String   get exploreSubTitle;
   String   get exploreShortDescription;
   String   get exploreLongDescription;
+  DateTime get exploreStartDateUtc;
   String   get exploreImageURL;
   String   get explorePlaceId;
   Location get exploreLocation;

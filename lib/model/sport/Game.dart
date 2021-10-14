@@ -275,6 +275,9 @@ class Game with Explore implements Favorite {
   String get exploreLongDescription => longDescription;
 
   @override
+  DateTime get exploreStartDateUtc => dateTimeUtc;
+
+  @override
   String get explorePlaceId => null;
 
   @override

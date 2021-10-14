@@ -520,6 +520,7 @@ class ExplorePanelState extends State<ExplorePanel>
         explores.addAll(games);
       }
     }
+    _sortExplores(explores);
     return explores;
   }
 
@@ -548,6 +549,7 @@ class ExplorePanelState extends State<ExplorePanel>
         explores.addAll(games);
       }
     }
+    _sortExplores(explores);
     return explores;
   }
 
@@ -600,6 +602,19 @@ class ExplorePanelState extends State<ExplorePanel>
         break;
     }
     return [startDate, endDate];
+  }
+
+  void _sortExplores(List<Explore> explores) {
+    if (AppCollection.isCollectionEmpty(explores)) {
+      return;
+    }
+    explores.sort((Explore first, Explore second) {
+      if (first.exploreStartDateUtc == null || second.exploreStartDateUtc == null) {
+        return 0;
+      } else {
+        return (first.exploreStartDateUtc.isBefore(second.exploreStartDateUtc)) ? -1 : 1;
+      }
+    });
   }
 
   Set<int> _getSelectedFilterIndexes(List<ExploreFilter> selectedFilterList, ExploreFilterType filterType) {
