@@ -26,20 +26,20 @@ class CalendarSelectionDialog extends StatefulWidget {
 
 class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
   Calendar _selectedCalendar;
-  List<Calendar> calendars = [];
+  List<Calendar> _calendars = [];
 
   @override
   void initState() {
+    super.initState();
     _selectedCalendar = DeviceCalendar().calendar;
     _refreshCalendars();
-    super.initState();
   }
 
-  _refreshCalendars(){
+  void _refreshCalendars(){
     DeviceCalendar().refreshCalendars().then((value){
       setState(() {
         if(value!=null && value.isNotEmpty) {
-          calendars = value;
+          _calendars = value;
         }
       });
     });
@@ -57,7 +57,7 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  calendars.length == 0 ? Container() :
+                  _calendars.length == 0 ? Container() :
                   ConstrainedBox(
                   constraints:BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height/2,
@@ -69,17 +69,17 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                     ),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
-                    itemCount: calendars.length,
+                    itemCount: _calendars.length,
                     itemBuilder: (BuildContext context, int index) {
                       return new InkWell(
                         //highlightColor: Colors.red,
                         //splashColor: Colors.blueAccent,
                         onTap: () {
                           setState(() {
-                            _selectedCalendar = calendars[index];
+                            _selectedCalendar = _calendars[index];
                           });
                         },
-                        child: _buildItem(calendars[index]),
+                        child: _buildItem(_calendars[index]),
                       );
                     },
                   )),

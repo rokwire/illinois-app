@@ -15,11 +15,10 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 
 class DeviceCalendar with Service implements NotificationsListener{
-
-  static const String notifyPromptPopupMessage            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
-  static const String notifyCalendarSelectionPopupMessage = "edu.illinois.rokwire.device_calendar.messaging.calendar_selection.popup";
-  static const String notifyPlaceEventMessage             = "edu.illinois.rokwire.device_calendar.messaging.place.event";
-  static const String showConsoleMessage                  = "edu.illinois.rokwire.debug_console.messaging.message";
+  static const String notifyPromptPopup            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
+  static const String notifyCalendarSelectionPopup = "edu.illinois.rokwire.device_calendar.messaging.calendar_selection.popup";
+  static const String notifyPlaceEvent             = "edu.illinois.rokwire.device_calendar.messaging.place.event";
+  static const String notifyShowConsoleMessage     = "edu.illinois.rokwire.device_calendar.console.debug.message";
 
   Calendar _defaultCalendar;
   List<Calendar> _deviceCalendars;
@@ -39,7 +38,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   void createService() {
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoriteChanged,
-      DeviceCalendar.notifyPlaceEventMessage
+      DeviceCalendar.notifyPlaceEvent
     ]);
   }
 
@@ -48,18 +47,17 @@ class DeviceCalendar with Service implements NotificationsListener{
     NotificationService().unsubscribe(this);
   }
 
-  Future<bool> _addEvent(DeviceCalendarEvent event) async{
+  Future<bool> _addEvent(_DeviceCalendarEvent event) async{
     //User prefs
     if(!canAddToCalendar){
       _debugMessage("Disabled");
       return false;
     }
 
-    if(_deviceCalendarPlugin == null){
-      bool initResult = await _initDeviceCalendarPlugin();
-      if(!initResult ?? true){
-        _debugMessage("Unable to init plugin");
-      }
+
+    bool initResult = await _initDeviceCalendarPlugin();
+    if(!initResult ?? true){
+      _debugMessage("Unable to init plugin");
     }
     
     if(canShowPrompt){
@@ -70,18 +68,16 @@ class DeviceCalendar with Service implements NotificationsListener{
     return _placeCalendarEvent(event);
   }
 
-  Future<bool> _placeCalendarEvent(DeviceCalendarEvent event,) async{
+  Future<bool> _placeCalendarEvent(_DeviceCalendarEvent event,) async{
     if(event == null)
       return false;
 
     //PLUGIN
-    if(_deviceCalendarPlugin == null){
-      bool initResult = await _initDeviceCalendarPlugin();
-      if(!initResult ?? true){
-        _debugMessage("Unable to init plugin");
-      }
+    bool initResult = await _initDeviceCalendarPlugin();
+    if(!initResult ?? true){
+      _debugMessage("Unable to init plugin");
     }
-    
+
     _debugMessage("Add to calendar- id:${calendar?.id}, name:${calendar?.name}, accountName:${calendar?.accountName}, accountType:${calendar?.accountType}, isReadOnly:${calendar?.isReadOnly}, isDefault:${calendar?.isDefault},");
     //PERMISSIONS
     bool hasPermissions = await _requestPermissions();
@@ -106,15 +102,13 @@ class DeviceCalendar with Service implements NotificationsListener{
     return true;
   }
 
-  Future<bool> deleteEvent(DeviceCalendarEvent event) async{
+  Future<bool> _deleteEvent(_DeviceCalendarEvent event) async{
     if(event == null)
       return false;
 
-    if(_deviceCalendarPlugin == null){
-      bool initResult = await _initDeviceCalendarPlugin();
-      if(!initResult ?? true){
-        _debugMessage("Unable to init plugin");
-      }
+    bool initResult = await _initDeviceCalendarPlugin();
+    if(!initResult ?? true){
+      _debugMessage("Unable to init plugin");
     }
 
     String eventId = event?.internalEventId != null && _calendarEventIdTable!= null ? _calendarEventIdTable[event?.internalEventId] : null;
@@ -132,6 +126,9 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   Future<bool> _initDeviceCalendarPlugin() async{
+    if(_deviceCalendarPlugin != null) {
+      return true;
+    }
     _deviceCalendarPlugin = new DeviceCalendarPlugin();
     dynamic storedTable = Storage().calendarEventsTable ?? Map();
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
@@ -185,11 +182,11 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _debugMessage(String msg){
-    NotificationService().notify(DeviceCalendar.showConsoleMessage, msg);
+    NotificationService().notify(DeviceCalendar.notifyShowConsoleMessage, msg);
   }
 
   void _processEvents(dynamic event){
-    DeviceCalendarEvent deviceCalendarEvent = DeviceCalendarEvent.from(event);
+    _DeviceCalendarEvent deviceCalendarEvent = _DeviceCalendarEvent.from(event);
     if(deviceCalendarEvent==null)
       return;
 
@@ -197,21 +194,21 @@ class DeviceCalendar with Service implements NotificationsListener{
       _addEvent(deviceCalendarEvent);
     }
     else {
-      deleteEvent(deviceCalendarEvent);
+      _deleteEvent(deviceCalendarEvent);
     }
   }
 
-  void _promptPermissionDialog(DeviceCalendarEvent event) {
-    NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopupMessage, {"event": event});
+  void _promptPermissionDialog(_DeviceCalendarEvent event) {
+    NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopup, {"event": event});
   }
 
   @override
   void onNotification(String name, param) {
     if(name == Auth2UserPrefs.notifyFavoriteChanged){
       _processEvents(param);
-    } else if(name == DeviceCalendar.notifyPlaceEventMessage){
+    } else if(name == DeviceCalendar.notifyPlaceEvent){
       if(param!=null && param is Map){
-        DeviceCalendarEvent event = param["event"];
+        _DeviceCalendarEvent event = param["event"];
         Calendar calendarSelection = param["calendar"];
         if(calendarSelection!=null){
           _selectedCalendar = calendarSelection;
@@ -238,43 +235,43 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 }
 
-class DeviceCalendarEvent {
+class _DeviceCalendarEvent {
   String internalEventId;
   String title;
   String deepLinkUrl;
   DateTime startDate;
   DateTime endDate;
 
-  DeviceCalendarEvent({this.internalEventId, this.title, this.deepLinkUrl, this.startDate, this.endDate});
+  _DeviceCalendarEvent({this.internalEventId, this.title, this.deepLinkUrl, this.startDate, this.endDate});
 
-  factory DeviceCalendarEvent.from(dynamic data){
+  factory _DeviceCalendarEvent.from(dynamic data){
     if(data==null)
       return null;
 
     if(data is ExploreEvent.Event){
-      return DeviceCalendarEvent.fromEvent(data);
+      return _DeviceCalendarEvent.fromEvent(data);
     }
     else if (data is Game){
-      return DeviceCalendarEvent.fromGame(data);
+      return _DeviceCalendarEvent.fromGame(data);
     }
 
     return null;
   }
 
-  factory DeviceCalendarEvent.fromEvent(ExploreEvent.Event event){
+  factory _DeviceCalendarEvent.fromEvent(ExploreEvent.Event event){
     if(event==null)
       return null;
 
-    return DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal,
+    return _DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal,
         endDate: event.endDateLocal,
         deepLinkUrl: "${ExploreService.EVENT_URI}?event_id=${event.id}");
   }
 
-  factory DeviceCalendarEvent.fromGame(Game game){
+  factory _DeviceCalendarEvent.fromGame(Game game){
     if(game==null)
       return null;
 
-    return DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
+    return _DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
         endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
         deepLinkUrl: "${Sports.GAME_URI}?game_id=${game.id}%26sport=${game.sport?.shortName}");
   }

@@ -108,9 +108,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
-      DeviceCalendar.notifyPromptPopupMessage,
-      DeviceCalendar.notifyCalendarSelectionPopupMessage,
-      DeviceCalendar.showConsoleMessage,
+      DeviceCalendar.notifyPromptPopup,
+      DeviceCalendar.notifyCalendarSelectionPopup,
+      DeviceCalendar.notifyShowConsoleMessage,
     ]);
 
     _tabs = _getTabs();
@@ -145,13 +145,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DeviceCalendar.notifyPromptPopupMessage) {
+    if (name == DeviceCalendar.notifyPromptPopup) {
       _onCalendarPromptMessage(param);
     }
-    else if (name == DeviceCalendar.notifyCalendarSelectionPopupMessage) {
+    else if (name == DeviceCalendar.notifyCalendarSelectionPopup) {
       _promptCalendarSelection(param);
     }
-    else if (name == DeviceCalendar.showConsoleMessage) {
+    else if (name == DeviceCalendar.notifyShowConsoleMessage) {
       _showConsoleMessage(param);
     }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
@@ -361,7 +361,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               DeviceCalendar().calendar = selectedCalendar;
             }
             NotificationService().notify(
-                DeviceCalendar.notifyPromptPopupMessage, data);
+                DeviceCalendar.notifyPromptPopup, data);
           }
       );
   }
@@ -379,7 +379,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               onPressed: () {
                 Navigator.of(context).pop();
                   NotificationService().notify(
-                      DeviceCalendar.notifyPlaceEventMessage, data);
+                      DeviceCalendar.notifyPlaceEvent, data);
               }),
           TextButton(
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
