@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/TransportationService.dart';
 import 'package:illinois/service/User.dart';
@@ -49,6 +54,9 @@ class _IDCardPanelState extends State<IDCardPanel>
   Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
 
   MemoryImage _photoImage;
+  bool _buildingAccess;
+  DateTime _buildingAccessTime;
+  bool _loadingBuildingAccess;
   AnimationController _animationController;
 
 
@@ -73,12 +81,6 @@ class _IDCardPanelState extends State<IDCardPanel>
       }
     });
     
-    // Auth().updateAuthCard();
-
-    _loadPhotoImage();
-  }
-
-  void _loadPhotoImage(){
     _loadAsyncPhotoImage().then((MemoryImage photoImage){
       if (mounted) {
         setState(() {
@@ -86,16 +88,43 @@ class _IDCardPanelState extends State<IDCardPanel>
         });
       }
     });
+
+    _loadingBuildingAccess = true;
+    _loadBuildingAccess().then((bool buildingAccess) {
+      if (mounted) {
+        setState(() {
+          _buildingAccess = buildingAccess;
+          _buildingAccessTime = (buildingAccess != null) ? DateTime.now() : null;
+          _loadingBuildingAccess = false;
+        });
+      }
+    });
+
+    // Auth().updateAuthCard();
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth().authCard.photoBytes;
+    Uint8List photoBytes = await Auth().authCard.photoBytes;
     return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
   Future<Color> _loadActiveColor() async{
     String deviceId = await NativeCommunicator().getDeviceId();
     return await TransportationService().loadBusColor(deviceId: deviceId, userId: User().uuid);
+  }
+
+  Future<bool> _loadBuildingAccess() async {
+    if (AppString.isStringNotEmpty(Config().padaapiUrl) && AppString.isStringNotEmpty(Config().padaapiApiKey) && AppString.isStringNotEmpty(Auth().authCard?.uin)) {
+      String url = "${Config().padaapiUrl}/access/${Auth().authCard?.uin}";
+      Map<String, String> headers = {
+        HttpHeaders.acceptHeader : 'application/json',
+        Network.RokwirePadaapiKey: Config().padaapiApiKey
+      };
+      Response response = await Network().get(url, headers: headers);
+      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      return (responseJson != null) ? AppJson.boolValue(responseJson['allowAccess']) : null;
+    }
+    return null;
   }
 
   @override
@@ -110,7 +139,13 @@ class _IDCardPanelState extends State<IDCardPanel>
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth.notifyCardChanged) {
-      _loadPhotoImage();
+      _loadAsyncPhotoImage().then((MemoryImage photoImage){
+        if (mounted) {
+          setState(() {
+            _photoImage = photoImage;
+          });
+        }
+      });
     }
   }
   
@@ -165,6 +200,25 @@ class _IDCardPanelState extends State<IDCardPanel>
     String cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
     String expirationDate = Auth().authCard.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
+
+    Widget buildingAccessIcon;
+    String buildingAccessStatus, buildingAccessTime;
+    if (_loadingBuildingAccess) {
+      buildingAccessIcon = Container(width: 84, height: 84, child:
+        Align(alignment: Alignment.center, child: 
+          SizedBox(height: 32, width: 32, child:
+            CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), )
+          )
+        ,),);
+    }
+    else if (_buildingAccess != null) {
+      buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', excludeFromSemantics: true);
+      buildingAccessStatus = (_buildingAccess == true) ? Localization().getStringEx('widget.id_card.label.building_access.granted', 'GRANTED') : Localization().getStringEx('widget.id_card.label.building_access.denied', 'DENIED');
+      buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
+    }
+    else {
+      buildingAccessStatus = Localization().getStringEx('widget.id_card.label.building_access.not_available', 'NOT AVAILABLE');
+    }
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
@@ -241,13 +295,18 @@ class _IDCardPanelState extends State<IDCardPanel>
           padding: const EdgeInsets.all(10.0),),),
       Text(Auth().authCard.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
 
-      Container(height: 10,),
+      Visibility(visible: true, child:
+        Padding(padding: EdgeInsets.only(top: 10), child:
+          Column(children: [
+            Text(Localization().getStringEx('widget.id_card.label.building_access', 'Building Access'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
+            Container(height: 5,),
+            buildingAccessIcon ?? Container(),
+            Text(buildingAccessStatus ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24),),
+            Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
+          ],)
+        )
+      ),
 
-      Text('Building Access', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
-      Container(height: 5,),
-      Image.asset('images/group-20.png', excludeFromSemantics: true,),
-      Text('DENIED', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),),
-      Text('Oct 14, 2021 11:04 AM', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
 
 
     ],)    );
