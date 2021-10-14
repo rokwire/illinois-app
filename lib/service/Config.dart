@@ -78,6 +78,7 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get secretShibboleth        { return secretKeys['shibboleth'] ?? {}; }
   Map<String, dynamic> get secretLaundry           { return secretKeys['laundry'] ?? {}; }
   Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
+  Map<String, dynamic> get secretPadaapi           { return secretKeys['padaapi'] ?? {}; }
   
   Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
 
@@ -100,6 +101,7 @@ class Config with Service implements NotificationsListener {
   String get feedbackUrl            { return otherUniversityServices['feedback_url']; }               // "https://forms.illinois.edu/sec/1971889"
   String get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
+  String get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
 
   String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
   String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
@@ -149,6 +151,8 @@ class Config with Service implements NotificationsListener {
   String get illiniCashSecretKey    { return secretIlliniCash['secret_key']; }
 
   String get laundryApiKey          { return secretLaundry['api_key']; }
+
+  String get padaapiApiKey          { return secretPadaapi['api_key']; }
 
   String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
     String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
