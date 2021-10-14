@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
+import 'dart:ui';
+
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class Game implements Favorite {
+class Game with Explore implements Favorite {
   final String id;
   final String dateToString;
   final String timeToString;
+  final String dateTimeUtcString;
   final DateTime dateTimeUtc;
+  final String endDateTimeUtcString;
   final DateTime endDateTimeUtc;
+  final String endDateTimeString;
   final DateTime endDateTime;
   final bool allDay;
   final String status;
@@ -49,8 +57,11 @@ class Game implements Favorite {
       {this.id,
       this.dateToString,
       this.timeToString,
+      this.dateTimeUtcString,
       this.dateTimeUtc,
+      this.endDateTimeUtcString,
       this.endDateTimeUtc,
+      this.endDateTimeString,
       this.endDateTime,
       this.allDay,
       this.status,
@@ -76,8 +87,11 @@ class Game implements Favorite {
       id: json['id'],
       dateToString: json['date'],
       timeToString: json['time'],
+      dateTimeUtcString: json['datetime_utc'],
       dateTimeUtc: AppDateTime().dateTimeFromString(json['datetime_utc'], format: AppDateTime.gameResponseDateTimeFormat, isUtc: true),
+      endDateTimeUtcString: json['end_datetime_utc'],
       endDateTimeUtc: AppDateTime().dateTimeFromString(json['end_datetime_utc'], format: AppDateTime.gameResponseDateTimeFormat, isUtc: true),
+      endDateTimeString: json['end_datetime'],
       endDateTime: AppDateTime().dateTimeFromString(json['end_datetime'], format: AppDateTime.gameResponseDateTimeFormat2),
       allDay: json['all_day'],
       status: json['status'],
@@ -86,7 +100,7 @@ class Game implements Favorite {
       location: GameLocation.fromJson(json['location']),
       tv: json['tv'],
       radio: json['radio'],
-      parkingUrl: json['custom_display_field_2'],
+      parkingUrl: json['parking_url'],
       links: Links.fromJson(json['links']),
       opponent: Opponent.fromJson(json['opponent']),
       sponsor: json['sponsor'],
@@ -224,12 +238,15 @@ class Game implements Favorite {
     return randomImageURL.isNotEmpty ? randomImageURL : null;
   }
 
-  Map<String, dynamic> get analyticsAttributes {
-    Map<String, dynamic> attributes = {Analytics.LogAttributeGameId: id, Analytics.LogAttributeGameName: title};
-    attributes.addAll(location?.analyticsAttributes ?? {});
-    return attributes;
+  Location get _exploreLocation {
+    if (location == null) {
+      return null;
+    }
+    return Location(description: location.location);
   }
 
+  ////////////////////////////
+  // Favorite implementation
 
   @override
   String get favoriteId => id;
@@ -241,6 +258,70 @@ class Game implements Favorite {
   String get favoriteKey => favoriteKeyName;
 
   static String favoriteKeyName = "athleticEventIds";
+
+  ////////////////////////////
+  // Explore implementation
+
+  @override
+  String get exploreId => id;
+
+  @override
+  String get exploreImageURL => imageUrl;
+
+  @override
+  Location get exploreLocation => _exploreLocation;
+
+  @override
+  String get exploreLongDescription => longDescription;
+
+  @override
+  String get explorePlaceId => null;
+
+  @override
+  String get exploreShortDescription => shortDescription;
+
+  @override
+  String get exploreSubTitle => null;
+
+  @override
+  String get exploreTitle => title;
+
+  @override
+  Color get uiColor => Styles().colors.eventColor;
+
+  Map<String, dynamic> get analyticsAttributes {
+    Map<String, dynamic> attributes = {Analytics.LogAttributeGameId: id, Analytics.LogAttributeGameName: title};
+    attributes.addAll(location?.analyticsAttributes ?? {});
+    return attributes;
+  }
+
+  static bool canJson(Map<String, dynamic> json) {
+    return (json != null) && (json['id'] != null);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "date": dateToString,
+      "time": timeToString,
+      "datetime_utc": dateTimeUtcString,
+      "end_datetime_utc": endDateTimeUtcString,
+      "end_datetime": endDateTimeString,
+      "all_day": allDay,
+      "status": status,
+      "description": description,
+      "sport": sport?.toJson(),
+      "location": location?.toJson(),
+      "tv": tv,
+      "radio": radio,
+      "parking_url": parkingUrl,
+      "links": links?.toJson(),
+      "opponent": opponent?.toJson(),
+      "sponsor": sponsor,
+      "results": GameResult.toJsonList(results)
+    };
+  }
 }
 
 class Sport {
@@ -248,6 +329,10 @@ class Sport {
   final String shortName;
 
   Sport({this.title, this.shortName});
+
+  Map<String, dynamic> toJson() {
+    return {"title": title, "shortname": shortName};
+  }
 
   factory Sport.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
@@ -262,6 +347,10 @@ class GameLocation {
   final String han;
 
   GameLocation({this.location, this.han});
+
+  Map<String, dynamic> toJson() {
+    return {"location": location, "HAN": han};
+  }
 
   factory GameLocation.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
@@ -284,6 +373,10 @@ class Links {
 
   Links({this.liveStats, this.video, this.audio, this.tickets, this.preGame});
 
+  Map<String, dynamic> toJson() {
+    return {"livestats": liveStats, "video": video, "audio": audio, "tickets": tickets, "pregame": preGame?.toJson()};
+  }
+
   factory Links.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
@@ -302,6 +395,10 @@ class GameStory {
 
   GameStory({this.id, this.url, this.storyImageUrl, this.text});
 
+  Map<String, dynamic> toJson() {
+    return {"id": id, "url": url, "story_image_url": storyImageUrl, "text": text};
+  }
+
   factory GameStory.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
@@ -315,6 +412,10 @@ class Opponent {
   final String logoImage;
 
   Opponent({this.name, this.logoImage});
+
+  Map<String, dynamic> toJson() {
+    return {"name": name, "logo_image": logoImage};
+  }
 
   factory Opponent.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
@@ -331,10 +432,25 @@ class GameResult {
 
   GameResult({this.status, this.teamScore, this.opponentScore});
 
+  Map<String, dynamic> toJson() {
+    return {"status": status, "team_score": teamScore, "opponent_score": opponentScore};
+  }
+
   factory GameResult.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
     return GameResult(status: json['status'], teamScore: json['team_score'], opponentScore: json['opponent_score']);
+  }
+
+  static List<dynamic> toJsonList(List<GameResult> results) {
+    List<dynamic> jsonList;
+    if (AppCollection.isCollectionNotEmpty(results)) {
+      jsonList = [];
+      for (GameResult result in results) {
+        jsonList.add(result?.toJson());
+      }
+    }
+    return jsonList;
   }
 }
