@@ -22,7 +22,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -100,7 +99,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       }
     });
 
-    // Auth().updateAuthCard();
+    // Auth2().updateAuthCard();
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
@@ -114,8 +113,8 @@ class _IDCardPanelState extends State<IDCardPanel>
   }
 
   Future<bool> _loadBuildingAccess() async {
-    if (AppString.isStringNotEmpty(Config().padaapiUrl) && AppString.isStringNotEmpty(Config().padaapiApiKey) && AppString.isStringNotEmpty(Auth().authCard?.uin)) {
-      String url = "${Config().padaapiUrl}/access/${Auth().authCard?.uin}";
+    if (AppString.isStringNotEmpty(Config().padaapiUrl) && AppString.isStringNotEmpty(Config().padaapiApiKey) && AppString.isStringNotEmpty(Auth2().authCard?.uin)) {
+      String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
         Network.RokwirePadaapiKey: Config().padaapiApiKey
@@ -138,7 +137,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyCardChanged) {
+    if (name == Auth2.notifyCardChanged) {
       _loadAsyncPhotoImage().then((MemoryImage photoImage){
         if (mounted) {
           setState(() {
@@ -161,7 +160,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           ],),
           
           SafeArea(child: Column(children: <Widget>[
-            Expanded(child: (Auth().authCard != null) ? _buildCardContent() : Container(),),
+            Expanded(child: (Auth2().authCard != null) ? _buildCardContent() : Container(),),
 
             Align(alignment: Alignment.bottomCenter, child:
               Padding(padding: EdgeInsets.only(), child:
