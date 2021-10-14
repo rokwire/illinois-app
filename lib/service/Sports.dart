@@ -27,6 +27,7 @@ import 'package:illinois/model/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/Roster.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -35,10 +36,13 @@ import 'package:illinois/utils/Utils.dart';
 
 import 'package:illinois/service/Network.dart';
 
-class Sports with Service {
+class Sports with Service implements NotificationsListener {
+
+  static const String GAME_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/game_detail';
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
+  static const String notifyGameDetail = "edu.illinois.rokwire.sports.game.detail";
 
   static final Sports _logic = Sports._internal();
 
@@ -46,13 +50,30 @@ class Sports with Service {
   List<SportDefinition> _menSports;
   List<SportDefinition> _womenSports;
   List<SportSocialMedia> _socialMedias;
+  List<Map<String, dynamic>> _gameDetailsCache;
 
+  // Singletone Factory
 
   factory Sports() {
     return _logic;
   }
 
   Sports._internal();
+
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _gameDetailsCache = [];
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
 
   @override
   Future<void> initService() async {
@@ -61,9 +82,25 @@ class Sports with Service {
   }
 
   @override
+  void initServiceUI() {
+    _processCachedGameDetails();
+  }
+
+  @override
   Set<Service> get serviceDependsOn {
     return Set.from([Auth2(), Storage(), Config()]);
   }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
+  }
+
+  // Accessories
 
   List<SportDefinition> get sports {
     return _sports;
@@ -571,5 +608,52 @@ class Sports with Service {
       }
     }
     return allSportsSelected;
+  }
+
+  /////////////////////////
+  // DeepLinks
+
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri gameUri = Uri.tryParse(GAME_URI);
+      if ((gameUri != null) &&
+          (gameUri.scheme == uri.scheme) &&
+          (gameUri.authority == uri.authority) &&
+          (gameUri.path == uri.path))
+      {
+        try { _handleGameDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  void _handleGameDetail(Map<String, dynamic> params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_gameDetailsCache != null) {
+        _cacheGameDetail(params);
+      }
+      else {
+        _processGameDetail(params);
+      }
+    }
+  }
+
+  void _processGameDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyGameDetail, params);
+  }
+
+  void _cacheGameDetail(Map<String, dynamic> params) {
+    _gameDetailsCache?.add(params);
+  }
+
+  void _processCachedGameDetails() {
+    if (_gameDetailsCache != null) {
+      List<Map<String, dynamic>> gameDetailsCache = _gameDetailsCache;
+      _gameDetailsCache = null;
+
+      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
+        _processGameDetail(gameDetail);
+      }
+    }
   }
 }

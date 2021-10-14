@@ -29,6 +29,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
@@ -100,6 +101,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
       ExploreService.notifyEventDetail,
+      Sports.notifyGameDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -158,11 +160,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
+    else if (name == FirebaseMessaging.notifyGameDetail) {
+      _onFirebaseGameDetail(param);
+    }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
     }
     else if (name == ExploreService.notifyEventDetail) {
       _onFirebaseEventDetail(param);
+    }
+    else if (name == Sports.notifyGameDetail) {
+      _onFirebaseGameDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       setState(() { });
@@ -398,6 +406,27 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  
+  Future<void> _onFirebaseGameDetail(Map<String, dynamic> content) async {
+    String gameId = (content != null) ? AppJson.stringValue(content['game_id']) : null;
+    String sport = (content != null) ? AppJson.stringValue(content['sport']) : null;
+    if (AppString.isStringNotEmpty(gameId) && AppString.isStringNotEmpty(sport)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId,)));
+    }
+  }
+
+  void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
+    if (athleticsGameDetails == null) {
+      return;
+    }
+    String sportShortName = athleticsGameDetails["Path"];
+    String gameId = athleticsGameDetails["GameId"];
+    if (AppString.isStringEmpty(sportShortName) || AppString.isStringEmpty(gameId)) {
+      return;
+    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
+  }
+  
   void _showPresentPoll() {
     Poll presentPoll = Polls().presentPoll;
     if (presentPoll != null) {
@@ -420,18 +449,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
   }
 
-  void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
-    if (athleticsGameDetails == null) {
-      return;
-    }
-    String sportShortName = athleticsGameDetails["Path"];
-    String gameId = athleticsGameDetails["GameId"];
-    if (AppString.isStringEmpty(sportShortName) || AppString.isStringEmpty(gameId)) {
-      return;
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
-  }
-  
   void _showConsoleMessage(message){
     AppAlert.showCustomDialog(
         context: context,
