@@ -59,7 +59,8 @@ class DeviceCalendar with Service implements NotificationsListener{
       _debugMessage("Disabled");
       return false;
     }
-    
+
+    //init check
     bool initResult = await _loadDefaultCalendarIfNeeded();
     if(!initResult ?? true){
       _debugMessage("Unable to init plugin");
@@ -78,7 +79,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(event == null)
       return false;
 
-    //PLUGIN
+    //init check
     bool initResult = await _loadDefaultCalendarIfNeeded();
     if(!initResult ?? true){
       _debugMessage("Unable to init plugin");
@@ -112,6 +113,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     if(event == null)
       return false;
 
+    //init check
     bool initResult = await _loadDefaultCalendarIfNeeded();
     if(!initResult ?? true){
       _debugMessage("Unable to init plugin");
@@ -212,10 +214,12 @@ class DeviceCalendar with Service implements NotificationsListener{
   void onNotification(String name, param) {
     if(name == Auth2UserPrefs.notifyFavoriteChanged){
       _processEvents(param);
-    } else if(name == DeviceCalendar.notifyPlaceEvent){
+    }
+    else if(name == DeviceCalendar.notifyPlaceEvent){
       if(param!=null && param is Map){
         _DeviceCalendarEvent event = param["event"];
         Calendar calendarSelection = param["calendar"];
+
         if(calendarSelection!=null){
           _selectedCalendar = calendarSelection;
         }
@@ -285,13 +289,14 @@ class _DeviceCalendarEvent {
   Event toCalendarEvent(String calendarId){
     Event calendarEvent = Event(calendarId);
     calendarEvent.title = title ?? "";
+
     if (startDate != null) {
       calendarEvent.start = startDate;
     }
+
     if (endDate != null) {
       calendarEvent.end = endDate;
-    }
-    else {
+    } else {
       calendarEvent.end = AppDateTime().localEndOfDay(startDate);
     }
 
@@ -301,11 +306,9 @@ class _DeviceCalendarEvent {
   }
 
   static String _constructRedirectLinkUrl(String url){
-
     Uri assetsUri = Uri.parse(Config().assetsUrl);
     String redirectUrl = assetsUri!= null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
 
     return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$url" : url;
   }
-
 }
