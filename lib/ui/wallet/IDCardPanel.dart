@@ -119,31 +119,33 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
+    return Scaffold(body:
+      Stack(children: <Widget>[
+          
           Column(children: <Widget>[
             Container(height: _headingH1, color: _activeHeadingColor,),
             Container(height: _headingH2, color: _activeHeadingColor, child: CustomPaint(painter: TrianglePainter(painterColor: Colors.white), child: Container(),),),
           ],),
-          Column(children: <Widget>[
+          
+          SafeArea(child: Column(children: <Widget>[
             Expanded(child: (Auth().authCard != null) ? _buildCardContent() : Container(),),
 
-            SafeArea(child: Align(alignment: Alignment.bottomCenter, child:
-              Padding(padding: EdgeInsets.only(bottom: 10), child:
+            Align(alignment: Alignment.bottomCenter, child:
+              Padding(padding: EdgeInsets.only(), child:
                 Semantics(button:true,label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
                   InkWell(onTap : _onClose, child:
                     Container(width: 64, height: 64, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Color(0xff0f2040), width: 3)), child:
                       Align(alignment: Alignment.center, child:
                         Padding(padding: EdgeInsets.only(top: 2), child:
-                          Semantics(excludeSemantics: true,child:
+                          Semantics(excludeSemantics: true, child:
                           Text('\u00D7', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.light, fontSize: 48),), )),
                         ),
                     ),
                   ),
                 )
-            )),),
-          ],),
+            ),),
+          ],),),
+
           SafeArea(child: Stack(children: <Widget>[
             Padding(padding: EdgeInsets.all(16), child:
                 Semantics(header:true, child:
@@ -168,7 +170,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(top: _headingH1 + (_headingH2 - _photoSize) / 2), child:
+      Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 3 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
         Stack(children: <Widget>[
           Align(alignment: Alignment.topCenter, child:
             Container(width: _photoSize, height: _photoSize, child:
@@ -215,12 +217,12 @@ class _IDCardPanelState extends State<IDCardPanel>
           ),
         ],),
       ),
-      Container(height: 10,),
+      Container(height: 0,),
       
       Text(Auth().authCard.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
       Text(Auth().authCard.roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
       
-      Container(height: 20,),
+      Container(height: 10,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
@@ -230,7 +232,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Text(cardExpiresText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
       
-      Container(height: 20,),
+      Container(height: 10,),
       
       Visibility(
         visible: (0 < (Auth().authCard.cardNumber?.length ?? 0)),
@@ -240,6 +242,15 @@ class _IDCardPanelState extends State<IDCardPanel>
           size: MediaQuery.of(context).size.width / 4 + 10,
           padding: const EdgeInsets.all(10.0),),),
       Text(Auth().authCard.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
+
+      Container(height: 10,),
+
+      Text('Building Access', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
+      Container(height: 5,),
+      Image.asset('images/group-20.png', excludeFromSemantics: true,),
+      Text('DENIED', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),),
+      Text('Oct 14, 2021 11:04 AM', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
+
 
     ],)    );
   }
