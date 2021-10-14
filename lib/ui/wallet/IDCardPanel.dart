@@ -44,9 +44,9 @@ class _IDCardPanelState extends State<IDCardPanel>
   final double _photoSize = 240;
   final double _iconSize = 64;
 
-  Color __activeColor;
-  Color get _activeBorderColor{ return __activeColor ?? Styles().colors.fillColorSecondary; }
-  Color get _activeHeadingColor{ return __activeColor ?? Styles().colors.fillColorPrimary; }
+  Color _activeColor;
+  Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
+  Color get _activeHeadingColor{ return _activeColor ?? Styles().colors.fillColorPrimary; }
 
   MemoryImage _photoImage;
   AnimationController _animationController;
@@ -61,13 +61,18 @@ class _IDCardPanelState extends State<IDCardPanel>
     
     _animationController = AnimationController(duration: Duration(milliseconds: 1500), lowerBound: 0, upperBound: 2 * math.pi, animationBehavior: AnimationBehavior.preserve, vsync: this)
     ..addListener(() {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     _animationController.repeat();
 
     _loadActiveColor().then((Color color){
-      __activeColor = color;
-      setState(() {});
+      if (mounted) {
+        setState(() {
+          _activeColor = color;
+        });
+      }
     });
     
     // Auth().updateAuthCard();
@@ -77,8 +82,11 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   void _loadPhotoImage(){
     _loadAsyncPhotoImage().then((MemoryImage photoImage){
-      _photoImage = photoImage;
-      setState(() {});
+      if (mounted) {
+        setState(() {
+          _photoImage = photoImage;
+        });
+      }
     });
   }
 
