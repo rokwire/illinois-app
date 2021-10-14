@@ -16,12 +16,14 @@
 
 import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
@@ -507,7 +509,20 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>> _loadAll(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
+    List<Explore> explores = [];
+    List<Explore> events = await ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
+    if (AppCollection.isCollectionNotEmpty(events)) {
+      explores.addAll(events);
+    }
+    if (_shouldLoadGames(categories)) {
+      List<DateTime> gamesTimeFrame = _getGamesTimeFrame(EventTimeFilter.upcoming);
+      List<Explore> games = await Sports().loadGames(startDate: gamesTimeFrame?.first, endDate: gamesTimeFrame?.last);
+      if (AppCollection.isCollectionNotEmpty(games)) {
+        explores.addAll(games);
+      }
+    }
+    _sortExplores(explores);
+    return explores;
   }
 
   Future<List<Explore>> _loadNearMe(List<ExploreFilter> selectedFilterList) async {
@@ -515,6 +530,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Set<String> tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
+    // Do not load games here, because they do not have proper location data (lat, long)
     return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
 
@@ -522,7 +538,20 @@ class ExplorePanelState extends State<ExplorePanel>
     Set<String> categories = _getSelectedCategories(selectedFilterList);
     Set<String> tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
+    List<Explore> explores = [];
+    List<Explore> events = await ExploreService().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
+    if (AppCollection.isCollectionNotEmpty(events)) {
+      explores.addAll(events);
+    }
+    if (_shouldLoadGames(categories)) {
+      List<DateTime> gamesTimeFrame = _getGamesTimeFrame(eventFilter);
+      List<Explore> games = await Sports().loadGames(startDate: gamesTimeFrame?.first, endDate: gamesTimeFrame?.last);
+      if (AppCollection.isCollectionNotEmpty(games)) {
+        explores.addAll(games);
+      }
+    }
+    _sortExplores(explores);
+    return explores;
   }
 
   Future<List<Explore>> _loadDining(List<ExploreFilter> selectedFilterList) async {
@@ -534,6 +563,59 @@ class ExplorePanelState extends State<ExplorePanel>
     _diningSpecials = await DiningService().loadDiningSpecials();
 
     return DiningService().loadBackendDinings(onlyOpened, paymentType, _locationData);
+  }
+
+  ///
+  /// Load athletics games if "All Categories" or "Athletics" categories are selected
+  ///
+  bool _shouldLoadGames(Set<String> selectedCategories) {
+    return AppCollection.isCollectionEmpty(selectedCategories) || selectedCategories.contains('Athletics');
+  }
+
+  ///
+  /// calculates games start and end date for loading games based on EventTimeFilter
+  ///
+  /// returns list with 2 items. The first one is start date, the second is the end date
+  ///
+  List<DateTime> _getGamesTimeFrame(EventTimeFilter eventFilter) {
+    DateTime startDate;
+    DateTime endDate;
+    DateTime now = AppDateTime().now;
+    switch (eventFilter) {
+      case EventTimeFilter.today:
+        startDate = endDate = now;
+        break;
+      case EventTimeFilter.thisWeekend:
+        int currentWeekDay = now.weekday;
+        DateTime weekendStartDateTime = DateTime(now.year, now.month, now.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
+        startDate = now.isBefore(weekendStartDateTime) ? weekendStartDateTime : now;
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59).add(Duration(days: (7 - currentWeekDay)));
+        break;
+      case EventTimeFilter.next7Day:
+        startDate = now;
+        endDate = now.add(Duration(days: 6));
+        break;
+      case EventTimeFilter.next30Days:
+        DateTime next = now.add(Duration(days: 30));
+        endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        break;
+      default:
+        break;
+    }
+    return [startDate, endDate];
+  }
+
+  void _sortExplores(List<Explore> explores) {
+    if (AppCollection.isCollectionEmpty(explores)) {
+      return;
+    }
+    explores.sort((Explore first, Explore second) {
+      if (first.exploreStartDateUtc == null || second.exploreStartDateUtc == null) {
+        return 0;
+      } else {
+        return (first.exploreStartDateUtc.isBefore(second.exploreStartDateUtc)) ? -1 : 1;
+      }
+    });
   }
 
   Set<int> _getSelectedFilterIndexes(List<ExploreFilter> selectedFilterList, ExploreFilterType filterType) {
@@ -894,6 +976,10 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
         }
+        else if(explore is Game) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+              AthleticsGameDetailPanel(game: explore)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
@@ -1091,6 +1177,9 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
+    }
+    else if (explore is Game) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: explore)));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
