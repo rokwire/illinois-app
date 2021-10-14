@@ -9,6 +9,7 @@ import 'package:illinois/service/ExploreService.dart';
 
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
@@ -264,7 +265,8 @@ class DeviceCalendarEvent {
     if(event==null)
       return null;
 
-    return DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal, endDate: event.endDateLocal,
+    return DeviceCalendarEvent(title: event.title, internalEventId: event.id, startDate: event.startDateLocal,
+        endDate: event.endDateLocal,
         deepLinkUrl: "${ExploreService.EVENT_URI}?event_id=${event.id}");
   }
 
@@ -285,10 +287,9 @@ class DeviceCalendarEvent {
     }
     if (endDate != null) {
       calendarEvent.end = endDate;
-    } else {
-      calendarEvent.end = DateTime(
-        startDate.year, startDate.month,
-        startDate.day, 23, 59,);
+    }
+    else {
+      calendarEvent.end = AppDateTime().localEndOfDay(startDate);
     }
 
     calendarEvent.description = _constructRedirectLinkUrl(deepLinkUrl);
