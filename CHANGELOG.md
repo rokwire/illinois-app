@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added athletics game detail handling as deep link and FCM notification [#803](https://github.com/rokwire/illinois-app/issues/803).
+
 ## [3.0.23] 2021-10-13
 ### Changed
 - Cleanup refresh token in Auth2, logout if number of retries fail [#798](https://github.com/rokwire/illinois-app/issues/798).

@@ -647,7 +647,7 @@ class ExploreService with Service implements NotificationsListener {
       _eventDetailsCache = null;
 
       for (Map<String, dynamic> eventDetail in eventDetailsCache) {
-        _handleEventDetail(eventDetail);
+        _processEventDetail(eventDetail);
       }
     }
   }
