@@ -41,6 +41,7 @@ class Network  {
   static const String RokwireUserUuid = 'ROKWIRE-USER-UUID';
   static const String RokwireUserPrivacyLevel = 'ROKWIRE-USER-PRIVACY-LEVEL';
   static const String RokwireAppId = 'APP';
+  static const String RokwirePadaapiKey = 'x-api-key';
 
   static final Network _network = new Network._internal();
   factory Network() {
