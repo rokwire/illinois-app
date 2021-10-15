@@ -10,7 +10,7 @@
     "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=complete.onboarding.course'>Step 5: Complete Your Onboarding Course</a>",
     "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=review.course.recommendations.and.register.for.courses'>Step 6: Review Course Recommendations and Register for Courses</a>",
     "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=sumbit.official.credentials'>Step 7: Submit Your Official Credentials</a>",
-    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=new.student.office.hours'>Step 8: New student office hours</a>"
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=new.student.office.hours'>New student office hours</a>"
   ],
   "buttons":[
     {"title":"Continue", "page":"accept.offer"}
@@ -198,8 +198,8 @@
   ]
 },{
   "id":"new.student.office.hours",
-  "progress": 8,
-  "title":"Step 8: New student office hours",
+  "progress-possition": 8,
+  "title":"New student office hours",
   "content":[{
     "heading":"If you have questions as you work through your New Student Checklist, please email <a href='i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
     "bullets":[

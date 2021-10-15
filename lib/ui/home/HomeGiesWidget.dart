@@ -76,7 +76,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     List<Widget> progressWidgets = <Widget>[];
     if (_progressSteps != null) {
       Map<String, dynamic> curentPage = _currentPage;
-      int currentProgress = (curentPage != null) ? AppJson.intValue(curentPage['progress']) : null;
+      int currentProgress = (curentPage != null) ? (AppJson.intValue(curentPage['progress']) ?? AppJson.intValue(curentPage['progress-possition'])) : null;
 
       for (int progressStep in _progressSteps) {
         if (progressWidgets.isNotEmpty) {
@@ -232,7 +232,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       Set<int> progressSteps = Set<int>();
       for (dynamic page in _pages) {
         if (page is Map) {
-          int pageProgress = AppJson.intValue(page['progress']);
+          int pageProgress = AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-entry']);
           if ((pageProgress != null) && !progressSteps.contains(pageProgress))  {
             progressSteps.add(pageProgress);
           }
