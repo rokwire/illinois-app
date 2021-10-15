@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated layout of ID Card panel [#810](https://github.com/rokwire/illinois-app/issues/810).
-- Hide the plus button within the Inbox UI [#812](https://github.com/rokwire/illinois-app/issues/812).
 
 ## [3.0.24] 2021-10-14
 ### Added
