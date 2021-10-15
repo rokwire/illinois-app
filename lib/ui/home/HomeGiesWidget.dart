@@ -27,6 +27,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
   List<dynamic> _pages;
   List<String> _passed;
+  List<int> _progressSteps;
   
   @override
   void initState() {
@@ -36,31 +37,15 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        if ((_pages != null) && _pages.isNotEmpty) {
-          Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-          String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
-          if (pageId != null) {
-            setState(() {
-              Storage().giesPages = _passed = [pageId];
-            });
-          }
-        }
+        _resetPassed();
       });
     }
 
     rootBundle.loadString('assets/gies.wizard.json').then((String assetsContentString) {
       setState(() {
-        
         _pages = AppJson.decodeList(assetsContentString);
-        
-        if (_passed.isEmpty && (_pages != null) && _pages.isNotEmpty) {
-          Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-          String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
-          if (pageId != null) {
-            _passed.add(pageId);
-            Storage().giesPages = _passed;
-          }
-        }
+        _buildProgressSteps();
+        _ensurePassed();
       });
     });
   }
@@ -85,14 +70,58 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Widget _buildHeader() {
+
+    List<Widget> progressWidgets = <Widget>[];
+    if (_progressSteps != null) {
+      Map<String, dynamic> curentPage = _currentPage;
+      int currentProgress = (curentPage != null) ? AppJson.intValue(curentPage['progress']) : null;
+
+      for (int progressStep in _progressSteps) {
+        if (progressWidgets.isNotEmpty) {
+          progressWidgets.add(Container(width: 6));
+        }
+        
+        double borderWidth;
+        Color borderColor, textColor;
+        String textFamily;
+        
+        if ((currentProgress != null) && (progressStep < currentProgress)) {
+          borderWidth = 2;
+          borderColor = textColor = Colors.greenAccent;
+          textFamily = Styles().fontFamilies.medium;
+        }
+        else if ((currentProgress != null) && (progressStep == currentProgress)) {
+          borderWidth = 3;
+          borderColor = textColor = Colors.white;
+          textFamily = Styles().fontFamilies.extraBold;
+        }
+        else {
+          borderWidth = 1;
+          borderColor = textColor = Colors.white;
+          textFamily = Styles().fontFamilies.regular;
+        }
+
+        progressWidgets.add(Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
+          Align(alignment: Alignment.center, child:
+            Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,)),),),);
+      }
+    }
+    if (progressWidgets.isNotEmpty) {
+      progressWidgets.insert(0, Expanded(child: Container()));
+      progressWidgets.insert(progressWidgets.length, Expanded(child: Container()));
+    }
+
     return Container(color: Styles().colors.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png')),
-          Expanded(child: 
-            Text("New Degree Student Checklist", style:
-              TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
-      ],),),);
+      Padding(padding: EdgeInsets.only(left: 20, top: 5, bottom: 5), child:
+        Column(children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png')),
+            Expanded(child: 
+              Text("iMBA New student checklist", style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+          ],),
+          Padding(padding: EdgeInsets.only(top: 5), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,)),
+        ],),
+      ),);
   }
 
   Widget _buildSlant() {
@@ -106,9 +135,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Widget _buildContent() {
-    Map<String, dynamic> page = _passed.isNotEmpty ? _getPage(_passed.last) : null;
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 30), child:
-      _GiesPageWidget(page: page, onTapLink: _onTapLink, onTapPage: _onTapPage, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
+      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapPage: _onTapPage, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
     );
   }
 
@@ -142,11 +170,15 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     }
   }
 
+  Map<String, dynamic> get _currentPage {
+    return _passed.isNotEmpty ? _getPage(_passed.last) : null;
+  }
+
   Map<String, dynamic> _getPage(String id) {
     if (_pages != null) {
       for (dynamic page in _pages) {
         if (page is Map) {
-          String pageId = page['id'];
+          String pageId = AppJson.stringValue(page['id']);
           if (pageId == id) {
             try { return page.cast<String, dynamic>(); }
             catch(e) { print(e?.toString()); }
@@ -155,6 +187,45 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       }
     }
     return null;
+  }
+
+  void _resetPassed() {
+    if ((_pages != null) && _pages.isNotEmpty) {
+      Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
+      String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
+      if (pageId != null) {
+        setState(() {
+          Storage().giesPages = _passed = [pageId];
+        });
+      }
+    }
+  }
+
+  void _ensurePassed() {
+    if ((_pages != null) && _pages.isNotEmpty && _passed.isEmpty) {
+      Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
+      String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
+      if (pageId != null) {
+        _passed.add(pageId);
+        Storage().giesPages = _passed;
+      }
+    }
+  }
+
+  void _buildProgressSteps() {
+    if ((_pages != null) && _pages.isNotEmpty) {
+      Set<int> progressSteps = Set<int>();
+      for (dynamic page in _pages) {
+        if (page is Map) {
+          int pageProgress = AppJson.intValue(page['progress']);
+          if ((pageProgress != null) && !progressSteps.contains(pageProgress))  {
+            progressSteps.add(pageProgress);
+          }
+        }
+      }
+      _progressSteps = List.from(progressSteps);
+      _progressSteps.sort();
+    }
   }
 }
 
