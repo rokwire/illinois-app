@@ -6,10 +6,11 @@
     "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=accept.offer'>Step 1: Accept Your Offer</a>",
     "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=setup.university.accounts'>Step 2: Set up your University Accounts</a>",
     "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=setup.coursera.account'>Step 3: Set up your Coursera Account</a>",
-    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 4: Connect with your New Student Guide and Fellow Classmates</a>",
-    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 5: Complete Your Onboarding Course</a>",
-    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 6: Review Course Recommendations and Register for Courses</a>",
-    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 7: Submit Your Official Credentials</a>"
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=connect.workspace.and.student.guide'>Step 4: Connect with your New Student Guide and Fellow Classmates</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=complete.onboarding.course'>Step 5: Complete Your Onboarding Course</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=review.course.recommendations.and.register.for.courses'>Step 6: Review Course Recommendations and Register for Courses</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=sumbit.official.credentials'>Step 7: Submit Your Official Credentials</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=new.student.office.hours'>Step 8: New student office hours</a>"
   ],
   "buttons":[
     {"title":"Continue", "page":"accept.offer"}
@@ -103,9 +104,107 @@
       "<b>Join Coursera for Illinois:</b> Coursera for Illinois is a perk of being a student at the University of Illinois. Carefully follow these <a href='https://uofi.app.box.com/file/624565567278?s=6cyz7pxaqlwcjxyz1gf1p35mxah392p6'>step-by-step instructions</a> to successfully add your Coursera for Illinois dashboard. Coursera for Illinois ensures that you can access the University of Illinois Coursera MOOCs for free. If you previously had an account with Coursera then you will still need to enroll in Coursera for Illinois in order to avoid paying the MOOC enrollment fees."
   ]}],
   "buttons":[
-    {"title":"Done", "page":""}
+    {"title":"Done", "page":"connect.workspace.and.student.guide"}
   ]
 },{
+  "id":"connect.workspace.and.student.guide",
+  "progress": 4,
+  "title":"Step 4: Connect with your New Student Guide and Fellow Classmates",
+  "steps":[
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=join.workspace'>4A Join Workplace</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=connect.student.guide'>4B Connect with your New Student Guide</a>"
+  ],
+  "buttons":[
+    {"title":"Continue", "page":"join.workspace"}
+  ]
+},{
+  "id":"join.workspace",
+  "progress": 4,
+  "title":"Step 4A: Join Workplace",
+  "content":[{
+    "heading":"Workplace is an online platform designed by Facebook exclusively for organizations’ members to network and develop excellent professional partnerships. You will receive an invitation to join Workplace at your Illinois email address approximately one week after you accept your offer letter, and you can log in at <a href='https://giesonline.workplace.com/'>giesonline.facebook.com</a>. Make sure to create your profile and get started exploring Workplace. If you choose to join us, you can begin by:",
+    "bullets":[
+      "Saying hello and introducing yourself to your fellow Gies Online Students",
+      "Explore interest, location and course-based groups, or create your own to connect with your classmates!"
+    ]},{
+      "heading":"Make sure to check your junk mail if you have not received an email regarding Workplace."
+    }],
+    "buttons":[
+      {"title":"Done", "page":"connect.student.guide"}
+    ]
+},{
+  "id":"connect.student.guide",
+  "progress": 4,
+  "title":"Step 4B: Connect with your New Student Guide",
+  "text":"Pairing with your Gies Online New Student Guide begins approximately four weeks prior to the term start. You will receive an email notifying you of your New Student Guide. Your guide will be able to assist you with orientation to the program and will be a resource moving forward for general questions and more.",
+  "buttons":[
+    {"title":"Done", "page":"complete.onboarding.course"}
+  ]
+},{
+  "id":"complete.onboarding.course",
+  "progress": 5,
+  "title":"Step 5: Complete Your Onboarding Course",
+  "text":"<i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, you should have already completed the onboarding course. Feel free to review this information or skip this step and head straight to Step 5.</i>",
+  "content":[{
+    "heading":"Our online courses are delivered on two platforms: Coursera & Canvas.  Each course has two structural components:",
+    "bullets":[
+      "A Foundational Component on Coursera (MOOCs)",
+      "Weekly Live Class Sessions, Graded Assignments and Exams on Canvas (High Engagement/HE)"
+    ]},{
+      "heading":"To help students become familiar with both platforms and other important aspects of the program, we have created an Onboarding Course.",
+      "bullets":[
+        "<a href='https://canvas.illinois.edu/courses/14157'>Access Your Onboarding Course</a>"
+    ]},{
+      "heading":"This onboarding course takes approximately 3-4 hours to complete but is essential in your success as a Gies online student. Please be sure to complete well in advance of starting your coursework."
+    }],
+    "buttons":[
+      {"title":"Done", "page":"review.course.recommendations.and.register.for.courses"}
+    ]
+},{
+  "id":"review.course.recommendations.and.register.for.courses",
+  "progress": 6,
+  "title":"Step 6: Review Course Recommendations and Register for Courses",
+  "text":"<b>Spring 2022 registration will open on Thursday, November 18 for all new students. Check back soon for details regarding course recommendations for your first semester.</b><p>We are excited to begin this journey with you, and our team is prepared to help along the way. While you may want to create a full degree plan at this time, it is important to focus on your first set of courses. After courses begin, you will have an opportunity to attend a Degree Planning workshop offered by the Student & Academic Success Team.</p>",
+  "content":[{
+    "heading":"<b>iMBA Students</b>",
+    "bullets":[
+      "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imba'>iMBA Course Offerings</a>",
+      "<a href='https://uofi.box.com/s/yjrfig0kimlosurpx6jpdcsx80xrhp6o'>New Student Course Recommendations for August 2021</a>",
+      "<a href='https://uofi.box.com/s/zzxxxp447gq7e6fou3pho4sc4hw6ysh5'>New Student Course Recommendations for October 2021</a>",
+      "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMBA Course Registration</a>"
+    ]},{
+      "heading":"<b>iMSM Students:</b>",
+      "bullets":[
+        "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imsm'>iMSM Course Offerings</a>",
+        "<a href='https://uofi.box.com/s/axqw2r24qsu4woa2cof63mqnsrumnswq'>New Student Course Recommendations for August 2021</a>",
+        "<a href='https://uofi.box.com/s/wxsbl4alzzet3s00t8r7firnhutl3kr0'>New Student Course Recommendations for October 2021</a>",
+        "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSM Course Registration</a>"
+      ]},{
+      "heading":"<b>iMSA Students:</b>",
+      "bullets":[
+        "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imsa'>iMSA Course Offerings</a>",
+        "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSA Course Registration</a>"
+    ]}],
+    "buttons":[
+      {"title":"Done", "page":"sumbit.official.credentials"}
+    ]
+},{
+  "id":"sumbit.official.credentials",
+  "progress": 7,
+  "title":"Step 7: Submit Your Official Credentials",
+  "text":"Original credentials (transcripts, mark sheets, academic records, certificates of degree, etc.) need to be sent from your previous institution(s) to complete your admission. Please note that the credentials you provided as scans in your application are considered unofficial.<p><b>Electronic credentials can be sent to <a href='mailto:grad@illinois.edu'>grad@illinois.edu</a> from your institution. This is the preferred and fastest method.</b> Electronic credentials sent from a student are not official.</p><p><b>If you have international credentials that need to be returned because you have only one original copy:</b> you can send the credentials to the Graduate College (address below) but you must include a postage-paid return envelope (or label, if the envelope can be re-used) using FedEx or UPS. If you do not include a postage-paid return envelope or label, the Graduate College will not be able to return your credentials. Please make sure that you include all mark sheets, transcripts, and certificates of degrees in both English and native language (if applicable).</p><p><b>Please have your paper academic credentials sent to the following address:</b></p><p><b>Graduate College Admissions, Registration and Enrollment Services</b></p><p>507 E. Green Street</p><p>Suite 101, MC-434</p><p>Champaign, IL 61820</p><p>If you would like to visit campus to submit your credentials, you must email grad@illinois.edu to set up a time.</p>",
+  "buttons":[
+    {"title":"Done", "page":"new.student.office.hours"}
+  ]
+},{
+  "id":"new.student.office.hours",
+  "progress": 8,
+  "title":"Step 8: New student office hours",
+  "content":[{
+    "heading":"If you have questions as you work through your New Student Checklist, please email <a href='i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
+    "bullets":[
+      "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
+    ]}]
 },{
   "id":"goodby.defered",
   "title":"See you later",
