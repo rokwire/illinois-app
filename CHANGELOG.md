@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated layout of ID Card panel [#810](https://github.com/rokwire/illinois-app/issues/810).
+### Added
+- Added progress to GIES Home wizard [#815](https://github.com/rokwire/illinois-app/issues/815).
+- Added missing pages to GIES Home wizard [#815](https://github.com/rokwire/illinois-app/issues/815).
 
 ## [3.0.24] 2021-10-14
 ### Added

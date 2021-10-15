@@ -25,8 +25,11 @@ class HomeGiesWidget extends StatefulWidget {
 
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
+  static const String GIES_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/gies';
+
   List<dynamic> _pages;
   List<String> _passed;
+  List<int> _progressSteps;
   
   @override
   void initState() {
@@ -36,31 +39,15 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        if ((_pages != null) && _pages.isNotEmpty) {
-          Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-          String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
-          if (pageId != null) {
-            setState(() {
-              Storage().giesPages = _passed = [pageId];
-            });
-          }
-        }
+        _resetPassed();
       });
     }
 
     rootBundle.loadString('assets/gies.wizard.json').then((String assetsContentString) {
       setState(() {
-        
         _pages = AppJson.decodeList(assetsContentString);
-        
-        if (_passed.isEmpty && (_pages != null) && _pages.isNotEmpty) {
-          Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-          String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
-          if (pageId != null) {
-            _passed.add(pageId);
-            Storage().giesPages = _passed;
-          }
-        }
+        _buildProgressSteps();
+        _ensurePassed();
       });
     });
   }
@@ -85,14 +72,59 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Widget _buildHeader() {
+
+    List<Widget> progressWidgets = <Widget>[];
+    if (_progressSteps != null) {
+      Map<String, dynamic> curentPage = _currentPage;
+      int currentProgress = (curentPage != null) ? (AppJson.intValue(curentPage['progress']) ?? AppJson.intValue(curentPage['progress-possition'])) : null;
+
+      for (int progressStep in _progressSteps) {
+        
+        double borderWidth;
+        Color borderColor, textColor;
+        String textFamily;
+        
+        if ((currentProgress != null) && (progressStep < currentProgress)) {
+          borderWidth = 2;
+          borderColor = textColor = Colors.greenAccent;
+          textFamily = Styles().fontFamilies.medium;
+        }
+        else if ((currentProgress != null) && (progressStep == currentProgress)) {
+          borderWidth = 3;
+          borderColor = textColor = Colors.white;
+          textFamily = Styles().fontFamilies.extraBold;
+        }
+        else {
+          borderWidth = 1;
+          borderColor = textColor = Colors.white;
+          textFamily = Styles().fontFamilies.regular;
+        }
+
+        progressWidgets.add(
+          InkWell(onTap: () => _onTapProgress(progressStep), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
+              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
+                Align(alignment: Alignment.center, child:
+                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,)),),),),),);
+      }
+    }
+    if (progressWidgets.isNotEmpty) {
+      progressWidgets.insert(0, Expanded(child: Container()));
+      progressWidgets.insert(progressWidgets.length, Expanded(child: Container()));
+    }
+
     return Container(color: Styles().colors.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png')),
-          Expanded(child: 
-            Text("New Degree Student Checklist", style:
-              TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
-      ],),),);
+      Padding(padding: EdgeInsets.only(left: 20, top: 10), child:
+        Column(children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child: 
+              Text("iMBA New student checklist", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+          ],),
+          Padding(padding: EdgeInsets.only(top: 3), child:
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,),
+          ),
+        ],),
+      ),);
   }
 
   Widget _buildSlant() {
@@ -106,15 +138,27 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Widget _buildContent() {
-    Map<String, dynamic> page = _passed.isNotEmpty ? _getPage(_passed.last) : null;
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 30), child:
-      _GiesPageWidget(page: page, onTapLink: _onTapLink, onTapPage: _onTapPage, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
+      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapPage: _onTapPage, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
     );
   }
 
   void _onTapLink(String url) {
     if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+
+      Uri uri = Uri.tryParse(url);
+      Uri giesUri = Uri.tryParse(GIES_URI);
+      if ((giesUri != null) &&
+          (giesUri.scheme == uri.scheme) &&
+          (giesUri.authority == uri.authority) &&
+          (giesUri.path == uri.path))
+      {
+        String pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
+        if ((pageId != null) && pageId.isNotEmpty) {
+          _onTapPage(pageId);
+        }
+      }
+      else if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url);
@@ -123,7 +167,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   void _onTapPage(String pageId) {
-    Map<String, dynamic> page = _getPage(pageId);
+    Map<String, dynamic> page = _getPage(id: pageId);
     if (page != null) {
 
       _passed.add(pageId);
@@ -142,12 +186,29 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     }
   }
 
-  Map<String, dynamic> _getPage(String id) {
+  void _onTapProgress(int progress) {
+    Map<String, dynamic> currentPage = _currentPage;
+    int currentProgress = (currentPage != null) ? (AppJson.intValue(currentPage['progress']) ?? AppJson.intValue(currentPage['progress-possition'])) : null;
+    if (currentProgress != progress) {
+      Map<String, dynamic> progressPage = _getPage(progress: progress);
+      String pageId = (progressPage != null) ? AppJson.stringValue(progressPage['id']) : null;
+      if (pageId != null) {
+        _onTapPage(pageId);
+      }
+    }
+  }
+
+  Map<String, dynamic> get _currentPage {
+    return _passed.isNotEmpty ? _getPage(id: _passed.last) : null;
+  }
+
+  Map<String, dynamic> _getPage({String id, int progress}) {
     if (_pages != null) {
       for (dynamic page in _pages) {
         if (page is Map) {
-          String pageId = page['id'];
-          if (pageId == id) {
+          if (((id == null) || (id == AppJson.stringValue(page['id']))) &&
+              ((progress == null) || (progress == (AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-possition'])))))
+          {
             try { return page.cast<String, dynamic>(); }
             catch(e) { print(e?.toString()); }
           }
@@ -155,6 +216,45 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       }
     }
     return null;
+  }
+
+  void _resetPassed() {
+    if ((_pages != null) && _pages.isNotEmpty) {
+      Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
+      String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
+      if (pageId != null) {
+        setState(() {
+          Storage().giesPages = _passed = [pageId];
+        });
+      }
+    }
+  }
+
+  void _ensurePassed() {
+    if ((_pages != null) && _pages.isNotEmpty && _passed.isEmpty) {
+      Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
+      String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
+      if (pageId != null) {
+        _passed.add(pageId);
+        Storage().giesPages = _passed;
+      }
+    }
+  }
+
+  void _buildProgressSteps() {
+    if ((_pages != null) && _pages.isNotEmpty) {
+      Set<int> progressSteps = Set<int>();
+      for (dynamic page in _pages) {
+        if (page is Map) {
+          int pageProgress = AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-entry']);
+          if ((pageProgress != null) && !progressSteps.contains(pageProgress))  {
+            progressSteps.add(pageProgress);
+          }
+        }
+      }
+      _progressSteps = List.from(progressSteps);
+      _progressSteps.sort();
+    }
   }
 }
 
@@ -194,7 +294,10 @@ class _GiesPageWidget extends StatelessWidget {
             Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
               Html(data: titleHtml,
                 onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                style: {
+                  "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                  "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                },),
             ),
           ),
 
@@ -207,7 +310,10 @@ class _GiesPageWidget extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Html(data: textHtml,
             onLinkTap: (url, context, attributes, element) => onTapLink(url),
-            style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+            style: {
+              "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+              "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+            },),
       ),);
     }
 
@@ -223,7 +329,10 @@ class _GiesPageWidget extends StatelessWidget {
                 Expanded(child:
                   Html(data: step,
                   onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                    style: { "body": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                    style: {
+                      "body": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                      "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                    },
                 ),),
               ],)
             ),
@@ -250,7 +359,10 @@ class _GiesPageWidget extends StatelessWidget {
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
                 Html(data: headingHtml,
                   onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                  style: {
+                    "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                  },
               ),),
             );
           }
@@ -270,7 +382,10 @@ class _GiesPageWidget extends StatelessWidget {
                       Expanded(child:
                         Html(data: bulletEntry,
                         onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                          style: {
+                            "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                            "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                          },
                       ),),
                     ],)
                   ),
@@ -297,7 +412,10 @@ class _GiesPageWidget extends StatelessWidget {
                       Expanded(child:
                         Html(data: numberEntry,
                         onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                          style: {
+                            "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                            "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                          },
                       ),),
                     ],)
                   ),
