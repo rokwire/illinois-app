@@ -79,9 +79,6 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       int currentProgress = (curentPage != null) ? (AppJson.intValue(curentPage['progress']) ?? AppJson.intValue(curentPage['progress-possition'])) : null;
 
       for (int progressStep in _progressSteps) {
-        if (progressWidgets.isNotEmpty) {
-          progressWidgets.add(Container(width: 6));
-        }
         
         double borderWidth;
         Color borderColor, textColor;
@@ -103,9 +100,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           textFamily = Styles().fontFamilies.regular;
         }
 
-        progressWidgets.add(Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
-          Align(alignment: Alignment.center, child:
-            Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,)),),),);
+        progressWidgets.add(
+          InkWell(onTap: () => _onTapProgress(progressStep), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
+              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
+                Align(alignment: Alignment.center, child:
+                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,)),),),),),);
       }
     }
     if (progressWidgets.isNotEmpty) {
@@ -114,13 +114,15 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     }
 
     return Container(color: Styles().colors.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 7), child:
+      Padding(padding: EdgeInsets.only(left: 20, top: 10), child:
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child: 
               Text("iMBA New student checklist", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
-          Padding(padding: EdgeInsets.only(top: 7), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,)),
+          Padding(padding: EdgeInsets.only(top: 3), child:
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,),
+          ),
         ],),
       ),);
   }
@@ -165,7 +167,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   void _onTapPage(String pageId) {
-    Map<String, dynamic> page = _getPage(pageId);
+    Map<String, dynamic> page = _getPage(id: pageId);
     if (page != null) {
 
       _passed.add(pageId);
@@ -184,16 +186,29 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     }
   }
 
-  Map<String, dynamic> get _currentPage {
-    return _passed.isNotEmpty ? _getPage(_passed.last) : null;
+  void _onTapProgress(int progress) {
+    Map<String, dynamic> currentPage = _currentPage;
+    int currentProgress = (currentPage != null) ? (AppJson.intValue(currentPage['progress']) ?? AppJson.intValue(currentPage['progress-possition'])) : null;
+    if (currentProgress != progress) {
+      Map<String, dynamic> progressPage = _getPage(progress: progress);
+      String pageId = (progressPage != null) ? AppJson.stringValue(progressPage['id']) : null;
+      if (pageId != null) {
+        _onTapPage(pageId);
+      }
+    }
   }
 
-  Map<String, dynamic> _getPage(String id) {
+  Map<String, dynamic> get _currentPage {
+    return _passed.isNotEmpty ? _getPage(id: _passed.last) : null;
+  }
+
+  Map<String, dynamic> _getPage({String id, int progress}) {
     if (_pages != null) {
       for (dynamic page in _pages) {
         if (page is Map) {
-          String pageId = AppJson.stringValue(page['id']);
-          if (pageId == id) {
+          if (((id == null) || (id == AppJson.stringValue(page['id']))) &&
+              ((progress == null) || (progress == (AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-possition'])))))
+          {
             try { return page.cast<String, dynamic>(); }
             catch(e) { print(e?.toString()); }
           }
