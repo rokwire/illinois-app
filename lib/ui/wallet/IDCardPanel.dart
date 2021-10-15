@@ -46,7 +46,8 @@ class _IDCardPanelState extends State<IDCardPanel>
   final double _headingH1 = 200;
   final double _headingH2 = 80;
   final double _photoSize = 240;
-  final double _iconSize = 64;
+  final double _illiniIconSize = 64;
+  final double _buildingAccessIconSize = 84;
 
   Color _activeColor;
   Color get _activeBorderColor{ return _activeColor ?? Styles().colors.fillColorSecondary; }
@@ -93,7 +94,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       if (mounted) {
         setState(() {
           _buildingAccess = buildingAccess;
-          _buildingAccessTime = (buildingAccess != null) ? DateTime.now() : null;
+          _buildingAccessTime = DateTime.now();
           _loadingBuildingAccess = false;
         });
       }
@@ -202,22 +203,26 @@ class _IDCardPanelState extends State<IDCardPanel>
     String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
 
     Widget buildingAccessIcon;
-    String buildingAccessStatus, buildingAccessTime;
+    String buildingAccessStatus;
+    String buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
+    double buildingAccessStatusHeight = 24;
+    double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
+
     if (_loadingBuildingAccess) {
-      buildingAccessIcon = Container(width: 84, height: 84, child:
+      buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
         Align(alignment: Alignment.center, child: 
-          SizedBox(height: 32, width: 32, child:
+          SizedBox(height: 42, width: 42, child:
             CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), )
           )
         ,),);
     }
     else if (_buildingAccess != null) {
-      buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', excludeFromSemantics: true);
+      buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, excludeFromSemantics: true);
       buildingAccessStatus = (_buildingAccess == true) ? Localization().getStringEx('widget.id_card.label.building_access.granted', 'GRANTED') : Localization().getStringEx('widget.id_card.label.building_access.denied', 'DENIED');
-      buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
     }
     else {
-      buildingAccessStatus = Localization().getStringEx('widget.id_card.label.building_access.not_available', 'NOT AVAILABLE');
+      buildingAccessIcon = Container(height: (qrCodeImageSize / 2 - buildingAccessStatusHeight - 6));
+      buildingAccessStatus = Localization().getStringEx('widget.id_card.label.building_access.not_available', 'NOT\nAVAILABLE');
     }
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
@@ -263,18 +268,18 @@ class _IDCardPanelState extends State<IDCardPanel>
             */
           ),
           Align(alignment: Alignment.topCenter, child:
-            Padding(padding: EdgeInsets.only(top:_photoSize - _iconSize / 2 - 5, left: 3), child:
-              Image.asset('images/group-5-white.png',excludeFromSemantics: true, width: _iconSize, height: _iconSize,)
+            Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
+              Image.asset('images/group-5-white.png',excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
             ),
           ),
         ],),
       ),
-      Container(height: 0,),
+      Container(height: 10,),
       
       Text(Auth2().authCard?.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
       Text(roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
       
-      Container(height: 10,),
+      Container(height: 20,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
@@ -284,29 +289,30 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Text(cardExpiresText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 14)),
       
-      Container(height: 10,),
+      Container(height: 30,),
+
+      Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        
+        Visibility(visible: (0 < (Auth2().authCard.cardNumber?.length ?? 0)), child: Column(children: [
+          Text(Auth2().authCard.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+          Container(height: 8),
+          QrImage(data: Auth2().authCard.magTrack2 ?? '', size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
+        ],),),
+
+        Container(width: 20),
+
+        Visibility(visible: (0 < (Auth2().authCard.cardNumber?.length ?? 0)), child: Column(children: [
+          Text(Localization().getStringEx('widget.id_card.label.building_access', 'Building Access'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+          Container(height: 8),
+          buildingAccessIcon ?? Container(),
+          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: buildingAccessStatusHeight),),
+        ],),),
+
+      ],),
+
+      Container(height: 30),
       
-      Visibility(
-        visible: (0 < (Auth2().authCard?.cardNumber?.length ?? 0)),
-        child: QrImage(
-          data: Auth2().authCard?.magTrack2 ?? '',
-          version: QrVersions.auto,
-          size: MediaQuery.of(context).size.width / 4 + 10,
-          padding: const EdgeInsets.all(10.0),),),
-      Text(Auth2().authCard?.cardNumber ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 12)),
-
-      Visibility(visible: true, child:
-        Padding(padding: EdgeInsets.only(top: 10), child:
-          Column(children: [
-            Text(Localization().getStringEx('widget.id_card.label.building_access', 'Building Access'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
-            Container(height: 5,),
-            buildingAccessIcon ?? Container(),
-            Text(buildingAccessStatus ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24),),
-            Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
-          ],)
-        )
-      ),
-
+      Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 20)),
     ],)    );
   }
 
