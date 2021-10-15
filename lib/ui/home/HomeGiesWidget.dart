@@ -25,6 +25,8 @@ class HomeGiesWidget extends StatefulWidget {
 
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
+  static const String GIES_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/gies';
+
   List<dynamic> _pages;
   List<String> _passed;
   List<int> _progressSteps;
@@ -112,14 +114,14 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     }
 
     return Container(color: Styles().colors.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 5, bottom: 5), child:
+      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 7), child:
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png')),
+            Padding(padding: EdgeInsets.only(right: 12), child: Image.asset('images/campus-tools.png')),
             Expanded(child: 
-              Text("iMBA New student checklist", style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              Text("iMBA New student checklist", textAlign: TextAlign.left, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
-          Padding(padding: EdgeInsets.only(top: 5), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,)),
+          Padding(padding: EdgeInsets.only(top: 7), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,)),
         ],),
       ),);
   }
@@ -142,7 +144,20 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
   void _onTapLink(String url) {
     if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
+
+      Uri uri = Uri.tryParse(url);
+      Uri giesUri = Uri.tryParse(GIES_URI);
+      if ((giesUri != null) &&
+          (giesUri.scheme == uri.scheme) &&
+          (giesUri.authority == uri.authority) &&
+          (giesUri.path == uri.path))
+      {
+        String pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
+        if ((pageId != null) && pageId.isNotEmpty) {
+          _onTapPage(pageId);
+        }
+      }
+      else if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
         launch(url);
@@ -294,7 +309,10 @@ class _GiesPageWidget extends StatelessWidget {
                 Expanded(child:
                   Html(data: step,
                   onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                    style: { "body": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                    style: {
+                      "body": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                      "a": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20)),
+                    },
                 ),),
               ],)
             ),

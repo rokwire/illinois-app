@@ -3,13 +3,13 @@
   "title":"Ready to get started?",
   "text":"Please note that you will not be able to complete many of your checklist items until you receive your Official Notice of Admissions described in Step 1. This email typically arrives within 3-7 business days of your program offer letter. If you have any questions, please contact <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a>",
   "steps":[
-    "Step 1: Accept Your Offer",
-    "Step 2: Set up your University Accounts",
-    "Step 3: Set up your Coursera Account",
-    "Step 4: Connect with your New Student Guide and Fellow Classmates",
-    "Step 5: Complete Your Onboarding Course",
-    "Step 6: Review Course Recommendations and Register for Courses",
-    "Step 7: Submit Your Official Credentials"
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=accept.offer'>Step 1: Accept Your Offer</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=setup.university.accounts'>Step 2: Set up your University Accounts</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=setup.coursera.account'>Step 3: Set up your Coursera Account</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 4: Connect with your New Student Guide and Fellow Classmates</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 5: Complete Your Onboarding Course</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 6: Review Course Recommendations and Register for Courses</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id='>Step 7: Submit Your Official Credentials</a>"
   ],
   "buttons":[
     {"title":"Continue", "page":"accept.offer"}
@@ -41,10 +41,10 @@
   "title":"Step 2: Set up your University Accounts",
   "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
   "steps":[
-    "2A Claim Your NetID and Password",
-    "2B Setup Your University Email Account",
-    "2C Verify Your Personal Information in Student Self-Service",
-    "2D Set Up Your Illinois Zoom Pro Account"
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=claim.netid.and.password'>2A Claim Your NetID and Password</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=setup.email.account'>2B Setup Your University Email Account</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=verify.personal.information'>2C Verify Your Personal Information in Student Self-Service</a>",
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=setup.zoom.account'>2D Set Up Your Illinois Zoom Pro Account</a>"
   ],
   "buttons":[
     {"title":"Continue", "page":"claim.netid.and.password"}
@@ -87,7 +87,7 @@
   "title":"Step 3: Set up your Coursera Account",
   "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p></p>",
   "steps":[
-    "3A Set Up Your Coursera Account"
+    "<a href='edu.illinois.rokwire://rokwire.illinois.edu/gies?page_id=claim.coursera.account'>3A Set Up Your Coursera Account</a>"
   ],
   "buttons":[
     {"title":"Continue", "page":"claim.coursera.account"}
@@ -105,6 +105,7 @@
   "buttons":[
     {"title":"Done", "page":""}
   ]
+},{
 },{
   "id":"goodby.defered",
   "title":"See you later",
