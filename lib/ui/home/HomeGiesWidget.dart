@@ -280,7 +280,10 @@ class _GiesPageWidget extends StatelessWidget {
             Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
               Html(data: titleHtml,
                 onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                style: {
+                  "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                  "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                },),
             ),
           ),
 
@@ -293,7 +296,10 @@ class _GiesPageWidget extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
           Html(data: textHtml,
             onLinkTap: (url, context, attributes, element) => onTapLink(url),
-            style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+            style: {
+              "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+              "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+            },),
       ),);
     }
 
@@ -311,7 +317,7 @@ class _GiesPageWidget extends StatelessWidget {
                   onLinkTap: (url, context, attributes, element) => onTapLink(url),
                     style: {
                       "body": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                      "a": Style(color: Styles().colors.fillColorSecondaryVariant, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20)),
+                      "a": Style(color: Styles().colors.fillColorSecondaryVariant),
                     },
                 ),),
               ],)
@@ -339,7 +345,10 @@ class _GiesPageWidget extends StatelessWidget {
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
                 Html(data: headingHtml,
                   onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                  style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                  style: {
+                    "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                  },
               ),),
             );
           }
@@ -359,7 +368,10 @@ class _GiesPageWidget extends StatelessWidget {
                       Expanded(child:
                         Html(data: bulletEntry,
                         onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                          style: {
+                            "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                            "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                          },
                       ),),
                     ],)
                   ),
@@ -386,7 +398,10 @@ class _GiesPageWidget extends StatelessWidget {
                       Expanded(child:
                         Html(data: numberEntry,
                         onLinkTap: (url, context, attributes, element) => onTapLink(url),
-                          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                          style: {
+                            "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                            "a": Style(color: Styles().colors.fillColorSecondaryVariant),
+                          },
                       ),),
                     ],)
                   ),
