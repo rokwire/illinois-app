@@ -373,8 +373,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildDebugCreateMessageButton() {
-    return Semantics(label: 'Debug Create Message', hint: '', button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/icon-create-event-white.png'), onPressed: _onDebugCreateMessage),);
+    return Visibility(
+      visible: false, // Hidden, but still available as a code
+      child: Semantics(label: 'Debug Create Message', hint: '', button: true, excludeSemantics: true, child:
+        IconButton(icon: Image.asset('images/icon-create-event-white.png'), onPressed: _onDebugCreateMessage),),
+    );
   }
 
   Widget _buildEditButton() {
