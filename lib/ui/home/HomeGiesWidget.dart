@@ -117,9 +117,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 7), child:
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Padding(padding: EdgeInsets.only(right: 12), child: Image.asset('images/campus-tools.png')),
             Expanded(child: 
-              Text("iMBA New student checklist", textAlign: TextAlign.left, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              Text("iMBA New student checklist", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
           Padding(padding: EdgeInsets.only(top: 7), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,)),
         ],),
