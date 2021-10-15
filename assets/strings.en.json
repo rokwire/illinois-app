@@ -1962,7 +1962,7 @@
     "widget.id_card.label.building_access.denied": "DENIED",
     "widget.id_card.label.building_access.loading": "LOADING",
     "widget.id_card.label.building_access.failed": "FAILED",
-    "widget.id_card.label.building_access.not_available": "NOT AVAILABLE",
+    "widget.id_card.label.building_access.not_available": "NOT\nAVAILABLE",
 	"widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
     "widget.card.label.expires.title": "Card Expires",
