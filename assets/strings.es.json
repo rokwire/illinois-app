@@ -1961,7 +1961,7 @@
     "widget.id_card.label.building_access.denied": "NEGADO",
     "widget.id_card.label.building_access.loading": "CARGANDO",
     "widget.id_card.label.building_access.failed": "FALLIDO",
-    "widget.id_card.label.building_access.not_available": "NO DISPONIBLE",
+    "widget.id_card.label.building_access.not_available": "NO\nDISPONIBLE",
     "widget.bus_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",
     "widget.card.label.expires.title": "La tarjeta caduca",
