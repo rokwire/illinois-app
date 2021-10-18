@@ -225,8 +225,6 @@ class _IDCardPanelState extends State<IDCardPanel>
       buildingAccessStatus = Localization().getStringEx('widget.id_card.label.building_access.not_available', 'NOT\nAVAILABLE');
     }
     
-    double h1 = _headingH1 + _headingH2 / 3 - _photoSize / 2;
-    double offset = MediaQuery.of(context).padding.top;
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 5 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
@@ -281,7 +279,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Text(Auth().authCard.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
       Text(Auth().authCard.roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
       
-      Container(height: 20,),
+      Container(height: 30,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
