@@ -214,8 +214,11 @@
     "heading":"If you have questions as you work through your New Student Checklist, please email <a href='i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
     "bullets":[
       "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
-    ]}]
-},{
+    ]}],
+    "buttons":[
+      {"title":"Notes", "popup":"notes"}
+    ]
+  },{
   "id":"goodby.defered",
   "title":"See you later",
   "text":"We are sory for your decision. We are looking forward for your application next year."
