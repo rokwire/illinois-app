@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/model/Auth2.dart';
@@ -9,12 +8,10 @@ import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -329,9 +326,6 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       ]);
     }
     else {
-      if (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
-        actions.add(_buildDebugCreateMessageButton());
-      }
       actions.add(_buildEditButton());
     }
     
@@ -370,11 +364,6 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         ),
       ],)
     );
-  }
-
-  Widget _buildDebugCreateMessageButton() {
-    return Semantics(label: 'Debug Create Message', hint: '', button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/icon-create-event-white.png'), onPressed: _onDebugCreateMessage),);
   }
 
   Widget _buildEditButton() {
@@ -506,13 +495,6 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   void _onBack() {
     Analytics.instance.logSelect(target: "Back");
     Navigator.pop(context);
-  }
-
-  void _onDebugCreateMessage() {
-    Analytics.instance.logSelect(target: "Debug Create Message");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugCreateInboxMessagePanel())).then((_) {
-      _refreshContent();
-    });
   }
 
   void _onEdit() {
