@@ -294,9 +294,13 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   void _resetNotes() {
     Storage().giesNotes = null;
   }
+
   Future<void> _showPopup(String popupId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
+        return _GiesNotesWidget(notes: Storage().giesNotes ?? '');
+      }
+      else if (popupId == 'current-notes') {
         return _GiesNotesWidget(notes: _currentNotes);
       }
       else {
