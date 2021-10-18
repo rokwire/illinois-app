@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Deleted
 - Possibility for creating notification message [#817](https://github.com/rokwire/illinois-app/issues/817).
+### Changed
+- Updated again layout of ID Card panel [#819](https://github.com/rokwire/illinois-app/issues/819).
 
 ## [3.0.25] 2021-10-15
 ### Changed
