@@ -227,7 +227,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 3 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
+      Padding(padding: EdgeInsets.only(top: _headingH1 + _headingH2 / 5 - _photoSize / 2 - MediaQuery.of(context).padding.top), child:
         Stack(children: <Widget>[
           Align(alignment: Alignment.topCenter, child:
             Container(width: _photoSize, height: _photoSize, child:
@@ -279,7 +279,7 @@ class _IDCardPanelState extends State<IDCardPanel>
       Text(Auth().authCard.fullName ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 24)),
       Text(Auth().authCard.roleDisplayString ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 20)),
       
-      Container(height: 20,),
+      Container(height: 30,),
 
       Semantics( container: true,
         child: Column(children: <Widget>[
@@ -310,7 +310,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
       ],),
 
-      Container(height: 30),
+      Container(height: 15),
       
       Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 20)),
     ],)    );
