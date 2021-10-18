@@ -764,13 +764,23 @@ class Storage with Service {
   //////////////////
   // GIES
 
-  static const String giesPagesKey  = 'excluded_food_ingredients_prefs';
+  static const String _giesPagesKey  = 'gies_pages';
 
   List<String> get giesPages {
-    return _getStringListWithName(giesPagesKey);
+    return _getStringListWithName(_giesPagesKey);
   }
 
   set giesPages(List<String> value) {
-    _setStringListWithName(giesPagesKey, value);
+    _setStringListWithName(_giesPagesKey, value);
+  }
+
+  static const String _giesNotesKey = 'gies_notes';
+
+  String get giesNotes {
+    return _getStringWithName(_giesNotesKey);
+  }
+
+  set giesNotes(String value) {
+    _setStringWithName(_giesNotesKey, value);
   }
 }
