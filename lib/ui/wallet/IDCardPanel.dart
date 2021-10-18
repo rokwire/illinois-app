@@ -310,7 +310,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
       ],),
 
-      Container(height: 30),
+      Container(height: 15),
       
       Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: 20)),
     ],)    );
