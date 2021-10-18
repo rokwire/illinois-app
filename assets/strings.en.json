@@ -2005,6 +2005,12 @@
     "widget.group_card.status.hidden": "Hidden",
     "widget.group_card.status.hint": "status: %s ,for: ",
 
+    "widget.gies.title": "iMBA New student checklist",
+    "widget.gies.notes.title": "Things to Remember",
+    "widget.gies.notes.label.add": "Add to Notes:",
+    "widget.gies.notes.button.save": "Save",
+    "widget.gies.notes.button.skip": "Skip",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",

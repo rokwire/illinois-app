@@ -121,7 +121,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child: 
-              Text("iMBA New student checklist", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              Text(Localization().getStringEx('widget.gies.title', 'iMBA New student checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
           Padding(padding: EdgeInsets.only(top: 3), child:
             Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,),
@@ -578,7 +578,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                     Row(children: [
                       Expanded(child:
-                          Text(Localization().getStringEx("tbd", "Things to Remember"), style: TextStyle(fontSize: 20, color: Colors.white),),
+                          Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
                       ),
                       InkWell(onTap:() {
                           Analytics.instance.logAlert(text: "Things to Remember", selection: "Close");
@@ -597,7 +597,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(Localization().getStringEx("tbd", "Add to Notes:"), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+              Text(Localization().getStringEx('widget.gies.notes.label.add', 'Add to Notes:'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
               Container(height: 4,),
               TextField(
                 focusNode: _textFocusNode,
@@ -613,7 +613,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                 Wrap(runSpacing: 8, spacing: 8, children: <Widget>[
                   Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     RoundedButton(
-                      label: Localization().getStringEx('tbd', 'Save'),
+                      label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
                       backgroundColor: Colors.transparent,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorSecondary,
@@ -628,7 +628,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                   ]),
                   /*Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     RoundedButton(
-                      label: Localization().getStringEx('tbd', 'Skip'),
+                      label: Localization().getStringEx('widget.gies.notes.button.skip', 'Skip'),
                       backgroundColor: Colors.transparent,
                       textColor: Styles().colors.fillColorPrimary,
                       borderColor: Styles().colors.fillColorSecondary,

@@ -2004,6 +2004,12 @@
     "widget.group_card.status.hidden": "Hidden",
     "widget.group_card.status.hint": "status: %s ,for: ",
 
+    "widget.gies.title": "Lista de verificación para nuevos estudiantes de iMBA",
+    "widget.gies.notes.title": "Cosas para recordar",
+    "widget.gies.notes.label.add": "Agregar a notas:",
+    "widget.gies.notes.button.save": "Ahorrar",
+    "widget.gies.notes.button.skip": "Saltar",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",
