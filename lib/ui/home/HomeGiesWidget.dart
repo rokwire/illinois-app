@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
@@ -30,6 +31,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   List<dynamic> _pages;
   List<String> _passed;
   List<int> _progressSteps;
+
   
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
         _resetPassed();
+        _resetNotes();
       });
     }
 
@@ -118,7 +121,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child: 
-              Text("iMBA New student checklist", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              Text(Localization().getStringEx('widget.gies.title', 'iMBA New student checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
           Padding(padding: EdgeInsets.only(top: 3), child:
             Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,),
@@ -139,7 +142,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 30), child:
-      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapPage: _onTapPage, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
+      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
     );
   }
 
@@ -154,8 +157,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           (giesUri.path == uri.path))
       {
         String pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
-        if ((pageId != null) && pageId.isNotEmpty) {
-          _onTapPage(pageId);
+        if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
+          _loadPage(pageId);
         }
       }
       else if (AppUrl.launchInternal(url)) {
@@ -166,14 +169,21 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     }
   }
 
-  void _onTapPage(String pageId) {
-    Map<String, dynamic> page = _getPage(id: pageId);
-    if (page != null) {
-
-      _passed.add(pageId);
-      Storage().giesPages = _passed;
-
-      setState(() {});
+  void _onTapButton(Map<String, dynamic> button) {
+    String popupId = AppJson.stringValue(button['popup']);
+    if (popupId != null) {
+      _showPopup(popupId).then((_){
+        String pageId = AppJson.stringValue(button['page']);
+        if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
+          _loadPage(pageId);
+        }
+      });
+    }
+    else {
+      String pageId = AppJson.stringValue(button['page']);
+      if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
+        _loadPage(pageId);
+      }
     }
   }
 
@@ -193,13 +203,24 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       Map<String, dynamic> progressPage = _getPage(progress: progress);
       String pageId = (progressPage != null) ? AppJson.stringValue(progressPage['id']) : null;
       if (pageId != null) {
-        _onTapPage(pageId);
+        _loadPage(pageId);
       }
     }
   }
 
   Map<String, dynamic> get _currentPage {
     return _passed.isNotEmpty ? _getPage(id: _passed.last) : null;
+  }
+
+  void _loadPage(String pageId) {
+    setState(() {
+      _passed.add(pageId);
+    });
+    Storage().giesPages = _passed;
+  }
+
+  bool _hasPage({String id}) {
+    return _getPage(id: id) != null;
   }
 
   Map<String, dynamic> _getPage({String id, int progress}) {
@@ -256,16 +277,48 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       _progressSteps.sort();
     }
   }
+
+  String get _currentNotes {
+    String notes = Storage().giesNotes ?? '';
+    Map<String, dynamic> currentPage = _currentPage;
+    String currentTitle = (currentPage != null) ? AppJson.stringValue(currentPage['title']) : null;
+    if ((currentTitle != null) && !notes.contains(currentTitle)) {
+      if (notes.isNotEmpty && !notes.endsWith('\n\n')) {
+        notes += notes.endsWith('\n') ? '\n' : '\n\n';
+      }
+      notes += "$currentTitle:\n";
+    }
+    return notes;
+  }
+
+  void _resetNotes() {
+    Storage().giesNotes = null;
+  }
+
+  Future<void> _showPopup(String popupId) async {
+    return showDialog(context: context, builder: (BuildContext context) {
+      if (popupId == 'notes') {
+        return _GiesNotesWidget(notes: Storage().giesNotes ?? '');
+      }
+      else if (popupId == 'current-notes') {
+        return _GiesNotesWidget(notes: _currentNotes);
+      }
+      else {
+        return Container();
+      }
+    });
+  }
+
 }
 
 class _GiesPageWidget extends StatelessWidget {
   final Map<String, dynamic> page;
   
   final void Function(String) onTapLink;
-  final void Function(String) onTapPage;
+  final void Function(Map<String, dynamic> button) onTapButton;
   final void Function() onTapBack;
   
-  _GiesPageWidget({this.page, this.onTapLink, this.onTapPage, this.onTapBack});
+  _GiesPageWidget({this.page, this.onTapLink, this.onTapButton, this.onTapBack});
 
   @override
   Widget build(BuildContext context) {
@@ -443,7 +496,6 @@ class _GiesPageWidget extends StatelessWidget {
       for (dynamic button in buttons) {
         if (button is Map) {
           String title = AppJson.stringValue(button['title']);
-          String page = AppJson.stringValue(button['page']);
           buttonWidgets.add(
             Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
               RoundedButton(label: title,
@@ -455,7 +507,10 @@ class _GiesPageWidget extends StatelessWidget {
                 borderColor: Styles().colors.fillColorSecondary,
                 borderWidth: 2,
                 height: 42,
-                onTap:() { onTapPage(page);  }
+                onTap:() {
+                  try { onTapButton(button.cast<String, dynamic>()); }
+                  catch (e) { print(e?.toString()); }
+                }
               )
             ]),
           );
@@ -481,5 +536,125 @@ class _GiesPageWidget extends StatelessWidget {
           Row(children: [ Expanded(child: Column(children: contentList))],)
         ),
     ),);
+  }
+}
+
+class _GiesNotesWidget extends StatefulWidget {
+  final String notes;
+  _GiesNotesWidget({this.notes});
+  _GiesNotesWidgetState createState() => _GiesNotesWidgetState();
+}
+
+class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
+
+  TextEditingController _textEditingController;
+  FocusNode _textFocusNode = FocusNode();
+  ScrollController _scrollController;
+
+  @override
+  void initState() {
+    _textFocusNode = FocusNode();
+    _textEditingController = TextEditingController(text: widget.notes);
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut).then((_) {
+        _textFocusNode.requestFocus();
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _textFocusNode.dispose();
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(children: <Widget>[
+              Expanded(child:
+                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)),), child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                    Row(children: [
+                      Expanded(child:
+                          Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
+                      ),
+                      InkWell(onTap:() {
+                          Analytics.instance.logAlert(text: "Things to Remember", selection: "Close");
+                          Navigator.of(context).pop();
+                        }, child:
+                        Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
+                          Center(child:
+                            Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, ),),
+                          ),
+                        ),
+                      ),                      
+                    ],),),
+                ),
+              ),
+            ],
+          ),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(Localization().getStringEx('widget.gies.notes.label.add', 'Add to Notes:'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+              Container(height: 4,),
+              TextField(
+                focusNode: _textFocusNode,
+                controller: _textEditingController,
+                scrollController: _scrollController,
+                minLines: 10, maxLines: 10,
+                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
+                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+              ),
+              Container(height: 16,),
+              
+              Center(child:
+                Wrap(runSpacing: 8, spacing: 8, children: <Widget>[
+                  Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    RoundedButton(
+                      label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
+                      backgroundColor: Colors.transparent,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      padding: EdgeInsets.symmetric(horizontal: 16, ),
+                      borderWidth: 2, height: 42,
+                      onTap: () {
+                        Analytics.instance.logAlert(text: "Things to Remember", selection: "Save");
+                        Storage().giesNotes = _textEditingController.text;
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ]),
+                  /*Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    RoundedButton(
+                      label: Localization().getStringEx('widget.gies.notes.button.skip', 'Skip'),
+                      backgroundColor: Colors.transparent,
+                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors.fillColorSecondary,
+                      padding: EdgeInsets.symmetric(horizontal: 16, ),
+                      borderWidth: 2, height: 42,
+                      onTap: () {
+                        Analytics.instance.logAlert(text: "Things to Remember", selection: "Skip");
+                        Navigator.of(context).pop();
+                      },
+                      ),
+                    ]),*/
+
+                ],)
+              ,),
+
+
+            ],),
+          )
+        ],
+      )
+      ),
+    );
+
   }
 }
