@@ -764,14 +764,27 @@ class Storage with Service {
   //////////////////
   // GIES
 
-  static const String _giesPagesKey  = 'gies_pages';
+  static const String _giesNavPagesKey  = 'gies_nav_pages';
 
-  List<String> get giesPages {
-    return _getStringListWithName(_giesPagesKey);
+  List<String> get giesNavPages {
+    return _getStringListWithName(_giesNavPagesKey);
   }
 
-  set giesPages(List<String> value) {
-    _setStringListWithName(_giesPagesKey, value);
+  set giesNavPages(List<String> value) {
+    _setStringListWithName(_giesNavPagesKey, value);
+  }
+
+  static const String _giesCompletedPagesKey  = 'gies_completed_pages';
+
+  
+  Set<String> get giesCompletedPages {
+    List<String> pagesList = _getStringListWithName(_giesCompletedPagesKey);
+    return (pagesList != null) ? Set.from(pagesList) : null;
+  }
+
+  set giesCompletedPages(Set<String> value) {
+    List<String> pagesList = (value != null) ? List.from(value) : null;
+    _setStringListWithName(_giesCompletedPagesKey, pagesList);
   }
 
   static const String _giesNotesKey = 'gies_notes';
