@@ -31,21 +31,28 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   static const String GIES_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/gies';
 
   List<dynamic> _pages;
-  List<String> _passed;
+  List<String>  _navigationPages;
+  
+  
+  Map<int, Set<String>> _progressPages;
+  Set<String> _completedPages;
   List<int> _progressSteps;
 
-  
   @override
   void initState() {
     super.initState();
 
-    _passed = Storage().giesPages ?? [];
+    _navigationPages = Storage().giesNavPages ?? [];
+    _completedPages = Storage().giesCompletedPages ?? Set<String>();
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
         if (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
-            _resetPassed();
+          setState(() {
+            _resetNavigationPages();
+            _resetCompleted();
             _resetNotes();
+          });
         }
       });
     }
@@ -54,7 +61,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       setState(() {
         _pages = AppJson.decodeList(assetsContentString);
         _buildProgressSteps();
-        _ensurePassed();
+        _ensureNavigationPages();
       });
     });
   }
@@ -90,23 +97,24 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         double borderWidth;
         Color borderColor, textColor;
         String textFamily;
-        
-        if ((currentProgress != null) && (progressStep < currentProgress)) {
+        bool progressStepCompleted = _progressStepCompleted(progressStep);
+
+        if ((currentProgress != null) && (progressStep == currentProgress)) {
+          borderWidth = 3;
+          borderColor = textColor = progressStepCompleted ? Colors.greenAccent : Colors.white;
+          textFamily = Styles().fontFamilies.extraBold;
+        }
+        else if (progressStepCompleted) {
           borderWidth = 2;
           borderColor = textColor = Colors.greenAccent;
           textFamily = Styles().fontFamilies.medium;
-        }
-        else if ((currentProgress != null) && (progressStep == currentProgress)) {
-          borderWidth = 3;
-          borderColor = textColor = Colors.white;
-          textFamily = Styles().fontFamilies.extraBold;
         }
         else {
           borderWidth = 1;
           borderColor = textColor = Colors.white;
           textFamily = Styles().fontFamilies.regular;
         }
-
+        
         progressWidgets.add(
           InkWell(onTap: () => _onTapProgress(progressStep), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
@@ -146,7 +154,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 30), child:
-      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < _passed.length) ? _onTapBack : null,),
+      _GiesPageWidget(page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < _navigationPages.length) ? _onTapBack : null,),
     );
   }
 
@@ -161,9 +169,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           (giesUri.path == uri.path))
       {
         String pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
-        if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
-          _loadPage(pageId);
-        }
+        _pushPage(pageId);
       }
       else if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -174,30 +180,37 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   void _onTapButton(Map<String, dynamic> button) {
+    _processButtonPopup(button).then((_) {
+      _processButtonPage(button);
+    });
+  }
+
+  Future<void> _processButtonPopup(Map<String, dynamic> button) async {
     String popupId = AppJson.stringValue(button['popup']);
     if (popupId != null) {
-      _showPopup(popupId).then((_){
-        String pageId = AppJson.stringValue(button['page']);
-        if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
-          _loadPage(pageId);
-        }
-      });
+      await _showPopup(popupId);
     }
-    else {
-      String pageId = AppJson.stringValue(button['page']);
-      if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
-        _loadPage(pageId);
+  }
+
+  void _processButtonPage(Map<String, dynamic> button) {
+    if (_pageButtonCompletes(button)) {
+      String currentPageId = _currentPageId;
+      if ((currentPageId != null) && currentPageId.isNotEmpty) {
+        setState(() {
+          _completedPages.add(currentPageId);
+        });
+        Storage().giesCompletedPages = _completedPages;
       }
+    }
+
+    String pushPageId = AppJson.stringValue(button['page']);
+    if ((pushPageId != null) && pushPageId.isNotEmpty) {
+      _pushPage(pushPageId);
     }
   }
 
   void _onTapBack() {
-    if (1 < _passed.length) {
-      _passed.removeLast();
-      Storage().giesPages = _passed;
-
-      setState(() {});
-    }
+    _popPage();
   }
 
   void _onTapProgress(int progress) {
@@ -207,20 +220,35 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       Map<String, dynamic> progressPage = _getPage(progress: progress);
       String pageId = (progressPage != null) ? AppJson.stringValue(progressPage['id']) : null;
       if (pageId != null) {
-        _loadPage(pageId);
+        _pushPage(pageId);
       }
     }
   }
 
-  Map<String, dynamic> get _currentPage {
-    return _passed.isNotEmpty ? _getPage(id: _passed.last) : null;
+  String get _currentPageId {
+    return _navigationPages.isNotEmpty ? _navigationPages.last : null;
   }
 
-  void _loadPage(String pageId) {
-    setState(() {
-      _passed.add(pageId);
-    });
-    Storage().giesPages = _passed;
+  Map<String, dynamic> get _currentPage {
+    return _getPage(id: _currentPageId);
+  }
+
+  void _pushPage(String pageId) {
+    if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
+      setState(() {
+        _navigationPages.add(pageId);
+      });
+      Storage().giesNavPages = _navigationPages;
+    }
+  }
+
+  void _popPage() {
+    if (1 < _navigationPages.length) {
+      _navigationPages.removeLast();
+      Storage().giesNavPages = _navigationPages;
+
+      setState(() {});
+    }
   }
 
   bool _hasPage({String id}) {
@@ -243,43 +271,83 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     return null;
   }
 
-  void _resetPassed() {
+  String get _navigationRootPageId {
     if ((_pages != null) && _pages.isNotEmpty) {
-      Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-      String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
-      if (pageId != null) {
-        setState(() {
-          Storage().giesPages = _passed = [pageId];
-        });
+      for (dynamic page in _pages) {
+        if (page is Map) {
+          String pageId = (page != null) ? AppJson.stringValue(page['id']) : null;
+          if (pageId != null) {
+            return pageId;
+          }
+        }
       }
+    }
+    return null;
+  }
+
+  void _resetNavigationPages() {
+    String rootPageId = _navigationRootPageId;
+    if ((rootPageId != null) && rootPageId.isNotEmpty) {
+      Storage().giesNavPages = _navigationPages = [rootPageId];
     }
   }
 
-  void _ensurePassed() {
-    if ((_pages != null) && _pages.isNotEmpty && _passed.isEmpty) {
-      Map<String, dynamic> firstPage = AppJson.mapValue(_pages.first);
-      String pageId = (firstPage != null) ? AppJson.stringValue(firstPage['id']) : null;
-      if (pageId != null) {
-        _passed.add(pageId);
-        Storage().giesPages = _passed;
+  void _ensureNavigationPages() {
+    if (_navigationPages.isEmpty) {
+      String rootPageId = _navigationRootPageId;
+      if ((rootPageId != null) && rootPageId.isNotEmpty) {
+        Storage().giesNavPages = _navigationPages = [rootPageId];
       }
     }
   }
 
   void _buildProgressSteps() {
+    _progressPages = Map<int, Set<String>>();
     if ((_pages != null) && _pages.isNotEmpty) {
-      Set<int> progressSteps = Set<int>();
       for (dynamic page in _pages) {
         if (page is Map) {
-          int pageProgress = AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-entry']);
-          if ((pageProgress != null) && !progressSteps.contains(pageProgress))  {
-            progressSteps.add(pageProgress);
+          int pageProgress = AppJson.intValue(page['progress']);
+          if (pageProgress != null) {
+            String pageId = AppJson.stringValue(page['id']);
+            if ((pageId != null) && pageId.isNotEmpty && _pageCanComplete(page)) {
+              Set<String> progressPages = _progressPages[pageProgress];
+              if (progressPages == null) {
+                _progressPages[pageProgress] = progressPages = Set<String>();
+              }
+              progressPages.add(pageId);
+            }
           }
         }
       }
-      _progressSteps = List.from(progressSteps);
+      _progressSteps = List.from(_progressPages.keys);
       _progressSteps.sort();
     }
+  }
+
+  void _resetCompleted() {
+    _completedPages.clear();
+    Storage().giesCompletedPages = null;
+  }
+
+  static bool _pageCanComplete(Map page) {
+    List<dynamic> buttons = (page != null) ? AppJson.listValue(page['buttons']) : null;
+    if (buttons != null) {
+      for (dynamic button in buttons) {
+        if ((button is Map) && _pageButtonCompletes(button)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  static bool _pageButtonCompletes(Map button) {
+    return AppJson.boolValue(button['completes']) == true;
+  }
+
+  bool _progressStepCompleted(int progressStep) {
+    Set<String> progressPages = _progressPages[progressStep];
+    return (progressPages == null) || _completedPages.containsAll(progressPages);
   }
 
   String get _currentNotes {
