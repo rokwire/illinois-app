@@ -205,7 +205,7 @@ class User with Service implements NotificationsListener {
 
   Future<UserData> _requestCreateUser() async {
     try {
-      final response = await Network().post(Config().userProfileUrl, auth: NetworkAuth.App, timeout: 10);
+      final response = await Network().post(Config().userProfileUrl, auth: NetworkAuth.App);
       if ((response != null) && (response.statusCode == 200)) {
         String responseBody = response.body;
         Map<String, dynamic> jsonData = AppJson.decode(responseBody);
