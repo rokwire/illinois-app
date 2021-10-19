@@ -193,9 +193,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   void _processButtonPage(Map<String, dynamic> button) {
+    String currentPageId = _currentPageId;
     if (_pageButtonCompletes(button)) {
-      String currentPageId = _currentPageId;
-      if ((currentPageId != null) && currentPageId.isNotEmpty) {
+      if ((currentPageId != null) && currentPageId.isNotEmpty && !_completedPages.contains(currentPageId)) {
         setState(() {
           _completedPages.add(currentPageId);
         });
@@ -205,6 +205,28 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     String pushPageId = AppJson.stringValue(button['page']);
     if ((pushPageId != null) && pushPageId.isNotEmpty) {
+      Map<String, dynamic> currentPage = _getPage(id: currentPageId);
+      int currentPageProgress = (currentPage != null) ? (AppJson.intValue(currentPage['progress']) ?? AppJson.intValue(currentPage['progress-possition'])) : null;
+      
+      Map<String, dynamic> pushPage = _getPage(id: pushPageId);
+      int pushPageProgress = (pushPage != null) ? (AppJson.intValue(pushPage['progress']) ?? AppJson.intValue(pushPage['progress-possition'])) : null;
+
+      if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
+        while (_progressStepCompleted(pushPageProgress)) {
+          int nextPushPageProgress = pushPageProgress + 1;
+          Map<String, dynamic> nextPushPage = _getPage(progress: nextPushPageProgress);
+          String nextPushPageId = (nextPushPage != null) ? AppJson.stringValue(nextPushPage['id']) : null;
+          if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
+            pushPage = nextPushPage;
+            pushPageProgress = nextPushPageProgress;
+            pushPageId = nextPushPageId;
+          }
+          else {
+            break;
+          }
+        }
+      }
+
       _pushPage(pushPageId);
     }
   }
