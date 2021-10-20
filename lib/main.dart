@@ -37,7 +37,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/onboarding/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/utils/Utils.dart';

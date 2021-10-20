@@ -19,8 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/ui/onboarding/onboarding2/Onboadring2RolesPanel.dart';
-import 'package:illinois/ui/onboarding/onboarding2/Onboarding2Widgets.dart';
+import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/service/Styles.dart';
 
