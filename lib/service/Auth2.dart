@@ -229,10 +229,11 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.apiKey),
-        'org_id': Config().coreOrgId,
         'app_type_identifier': Config().appCanonicalId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
         'creds': {
-          'api_key': Config().rokwireApiKey,
+          'api_key': Config().rokwireApiKey, //TBD: This should be removed.
         },
         'device': _deviceInfo
       });
@@ -309,8 +310,9 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
-        'org_id': Config().coreOrgId,
         'app_type_identifier': Config().appCanonicalId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
         'creds': uri?.toString(),
         'params': _oidcLogin?.params,
         'profile': _anonymousProfile?.toJson(),
@@ -374,8 +376,9 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
-        'org_id': Config().coreOrgId,
         'app_type_identifier': Config().appCanonicalId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
         'redirect_uri': REDIRECT_URI,
       });
       Response response = await Network().post(url, headers: headers, body: post);
@@ -433,8 +436,9 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
-        'org_id': Config().coreOrgId,
         'app_type_identifier': Config().appCanonicalId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
         'creds': {
           "phone": phoneNumber,
         },
@@ -457,8 +461,9 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
-        'org_id': Config().coreOrgId,
         'app_type_identifier': Config().appCanonicalId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
         'creds': {
           "phone": phoneNumber,
           "code": code,
@@ -636,9 +641,13 @@ class Auth2 with Service implements NotificationsListener {
     if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
       String url = "${Config().coreUrl}/services/auth/refresh";
       Map<String, String> headers = {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       };
-      return Network().post(url, headers: headers, body: _token?.refreshToken);
+      String post = AppJson.encode({
+        'api_key': Config().rokwireApiKey,
+        'refresh_token': _token?.refreshToken
+      });
+      return Network().post(url, headers: headers, body: post);
     }
     return null;
   }
