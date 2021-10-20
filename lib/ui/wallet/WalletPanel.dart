@@ -411,7 +411,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              "Card exprires $expires",
+              Localization().getStringEx("panel.wallet.label.expires.title", "Card expires") + " $expires",
               style: TextStyle(
                 color: Styles().colors.fillColorPrimary,
                 fontFamily: Styles().fontFamilies.medium,
