@@ -640,13 +640,20 @@ class Auth2 with Service implements NotificationsListener {
   Future<Response> _refreshToken() async {
     if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
       String url = "${Config().coreUrl}/services/auth/refresh";
+      
+      //Map<String, String> headers = {
+      //  'Content-Type': 'application/json'
+      //};
+      //String post = AppJson.encode({
+      //  'api_key': Config().rokwireApiKey,
+      //  'refresh_token': _token?.refreshToken
+      //});
+
       Map<String, String> headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'text/plain'
       };
-      String post = AppJson.encode({
-        'api_key': Config().rokwireApiKey,
-        'refresh_token': _token?.refreshToken
-      });
+      String post = _token?.refreshToken;
+
       return Network().post(url, headers: headers, body: post);
     }
     return null;
