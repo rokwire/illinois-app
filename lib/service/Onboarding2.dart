@@ -6,7 +6,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
 import 'Storage.dart';
 
@@ -40,13 +40,13 @@ class Onboarding2 with Service{
                 finish(context);
               }},
             )));
-      } else { //Phone Login
+      } else { //Phone or Email Login
         Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            OnboardingLoginPhonePanel(
+            Onboarding2LoginPhoneOrEmailStatementPanel(
               onboardingContext: {"onContinueAction": () {
                 finish(context);
-              }
-              },)));
+              }},
+            )));
       }
     } else { //Proceed without login
       finish(context);
