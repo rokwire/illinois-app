@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed spelling in Wallet  [#830](https://github.com/rokwire/illinois-app/issues/830).
+- Improve Accessibility for GIES widgets  [#833](https://github.com/rokwire/illinois-app/issues/833).
 
 ## [3.0.27] 2021-10-19
 ### Changed
