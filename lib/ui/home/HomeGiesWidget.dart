@@ -115,11 +115,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         }
         
         progressWidgets.add(
-          InkWell(onTap: () => _onTapProgress(progressStep), child:
+          Semantics( label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentProgress)? "Current page":"Not Completed"),
+            child: InkWell(onTap: () => _onTapProgress(progressStep), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
               Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
                 Align(alignment: Alignment.center, child:
-                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,)),),),),),);
+                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: "",),),),),),));
       }
     }
     if (progressWidgets.isNotEmpty) {
@@ -677,16 +678,18 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                       Expanded(child:
                           Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
                       ),
-                      InkWell(onTap:() {
+                      Semantics(
+                        label: Localization().getStringEx("dialog.close.title","Close"), button: true,
+                        child: InkWell(onTap:() {
                           Analytics.instance.logAlert(text: "Things to Remember", selection: "Close");
                           Navigator.of(context).pop();
                         }, child:
                         Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2),), child:
                           Center(child:
-                            Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, ),),
+                            Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, ),semanticsLabel: "", ),
                           ),
                         ),
-                      ),                      
+                      )),
                     ],),),
                 ),
               ),
