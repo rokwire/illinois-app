@@ -35,6 +35,8 @@
 #import "UIColor+InaParse.h"
 #import "Bluetooth+InaUtils.h"
 
+#import "FirebaseMessaging.h"
+
 #import <GoogleMaps/GoogleMaps.h>
 #import <MapsIndoors/MapsIndoors.h>
 #import <Firebase/Firebase.h>
@@ -155,25 +157,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		[weakSelf handleFlutterAPIFromCall:call result:result];
 	}];
 	
-	// Push Notifications
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-    [self queryNotificationsAuthorizationStatusWithCompletionHandler:^(bool authorized){
-		if (authorized) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[weakSelf registerForRemoteNotifications];
-			});
-		}
-	}];
-	
 	return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-
-	// Push Notifications
-	if (UNUserNotificationCenter.currentNotificationCenter.delegate == self) {
-		UNUserNotificationCenter.currentNotificationCenter.delegate = nil;
-	}
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -238,7 +225,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		[self handleMapWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"showNotification"]) {
-		[self handleShowNotificationWithParameters:parameters result:result];
+		//[self handleShowNotificationWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"dismissSafariVC"]) {
 		[self handleDismissSafariVCWithParameters:parameters result:result];
@@ -247,10 +234,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"firebaseInfo"]) {
-		[self handleFirebaseInfoWithParameters:parameters result:result];
+		//[self handleFirebaseInfoWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"notifications_authorization"]) {
-		[self handleNotificationsWithParameters:parameters result:result];
+		//[self handleNotificationsWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"location_services_permission"]) {
 		[self handleLocationServicesWithParameters:parameters result:result];
@@ -330,26 +317,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	[self.navigationViewController pushViewController:mapController animated:YES];
 }
 
-- (void)handleShowNotificationWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-	content.title = [parameters inaStringForKey:@"title"] ?: [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-	content.subtitle = [parameters inaStringForKey:@"subtitle"];
-	content.body = [parameters inaStringForKey:@"body"];
-	content.sound = [parameters inaBoolForKey:@"sound" defaults:true] ? [UNNotificationSound defaultSound] : nil;
-	
-	UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
-												  triggerWithTimeInterval:1 repeats:NO];
-	
-	UNNotificationRequest* request = [UNNotificationRequest
-									  requestWithIdentifier:@"Poll_Created" content:content trigger:trigger];
-	
-	UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
-	[center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
-		if (error != nil) {
-			NSLog(@"%@", error.localizedDescription);
-		}
-	}];
-}
 
 - (void)handleDismissSafariVCWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	UIViewController *presentedController = self.flutterViewController.presentedViewController;
@@ -367,25 +334,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	[self removeLaunchScreen];
 }
 
-- (void)handleFirebaseInfoWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-    FIRApp *firApp = [FIRApp defaultApp];
-    FIROptions *options = (firApp != nil) ? [firApp options] : nil;
-    NSString *projectID = (options != nil) ? [options projectID] : nil;
-    result(projectID);
-}
-
-- (void)handleNotificationsWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *method = [parameters inaStringForKey:@"method"];
-	if ([method isEqualToString:@"query"]) {
-		[self queryNotificationsAuthorizationWithFlutterResult:result];
-	}
-	else if ([method isEqualToString:@"request"]) {
-		[self requestNotificationsAuthorizationWithFlutterResult:result];
-	}
-	else {
-		result(nil);
-	}
-}
 
 - (void)handleLocationServicesWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	NSString *method = [parameters inaStringForKey:@"method"];
@@ -527,70 +475,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	result(base64ImageData);
 }
 
-/*
-//#import "NKDBarcodeFramework.h"
-#import "NKDBarcode.h"
-#import "NKDBarcodeOffscreenView.h"
-#import "NKDCode39Barcode.h"
-#import "NKDExtendedCode39Barcode.h"
-#import "NKDInterleavedTwoOfFiveBarcode.h"
-#import "NKDModifiedPlesseyBarcode.h"
-#import "NKDPostnetBarcode.h"
-#import "NKDUPCABarcode.h"
-#import "NKDModifiedPlesseyHexBarcode.h"
-#import "NKDIndustrialTwoOfFiveBarcode.h"
-#import "NKDEAN13Barcode.h"
-#import "NKDCode128Barcode.h"
-#import "NKDCodabarBarcode.h"
-#import "UIImage-NKDBarcode.h"
-#import "UIImage-Normalize.h"
-#import "NKDUPCEBarcode.h"
-#import "NKDEAN8Barcode.h"
-#import "NKDRoyalMailBarcode.h"
-#import "NKDPlanetBarcode.h"
-
-- (void)handleBarcodeWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *content = [parameters inaStringForKey:@"content"];
-	NSString *formatName = [parameters inaStringForKey:@"format"];
-	float barWidth = [parameters inaFloatForKey:@"barWidth"];
-	float height = [parameters inaFloatForKey:@"height"];
-
-	NKDBarcode *format = nil;
-	if ([formatName isEqualToString:@"codabar"]) {
-		format = [NKDCodabarBarcode alloc];
-	} else if ([formatName isEqualToString:@"code39"]) {
-		format = [NKDCode39Barcode alloc];
-	} else if ([formatName isEqualToString:@"code128"]) {
-		format = [NKDCode128Barcode alloc];
-	} else if ([formatName isEqualToString:@"upca"]) {
-		format = [NKDUPCABarcode alloc];
-	} else if ([formatName isEqualToString:@"upce"]) {
-		format = [NKDUPCEBarcode alloc];
-	} else if ([formatName isEqualToString:@"ean13"]) {
-		format = [NKDEAN13Barcode alloc];
-	} else if ([formatName isEqualToString:@"ean8"]) {
-		format = [NKDEAN8Barcode alloc];
-
-	} else if ([formatName isEqualToString:@"code93ext"]) {
-		format = [NKDExtendedCode39Barcode alloc];
-	} else if ([formatName isEqualToString:@"plesseyMod"]) {
-		format = [NKDModifiedPlesseyBarcode alloc];
-	} else if ([formatName isEqualToString:@"plesseyModHex"]) {
-		format = [NKDModifiedPlesseyHexBarcode alloc];
-	} else if ([formatName isEqualToString:@"postnet"]) {
-		format = [NKDPostnetBarcode alloc];
-	} else if ([formatName isEqualToString:@"industrial"]) {
-		format = [NKDIndustrialTwoOfFiveBarcode alloc];
-	}
-
-	format = [format initWithContent:content printsCaption:NO andBarWidth:barWidth andHeight:height andFontSize:0 andCheckDigit:(char)-1];
-
-	UIImage *image = (format != nil) ? [UIImage imageFromBarcode:format] : nil; // ..or as a less accu
-	NSData *imageData = (image != nil) ? UIImagePNGRepresentation(image) : nil;
-	NSString *base64ImageData = (imageData != nil) ? [imageData base64EncodedStringWithOptions:0] : nil;
-	result(base64ImageData);
-}
-*/
 
 #pragma mark Orientations
 
@@ -637,66 +521,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	
 }
 
-/*
-[_navigationViewController.topViewController presentViewController:[[UIViewController alloc] init] animated:NO completion:^{
-	[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(closeForceOrientationConrtoller:) userInfo:nil repeats:NO];
-}];
-- (void)closeForceOrientationConrtoller:(NSTimer*)timer {
-	[_navigationViewController.topViewController dismissViewControllerAnimated:NO completion:nil];
-}
-*/
-
-#pragma mark Push Notifications
-
-- (void)queryNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
-    [self queryNotificationsAuthorizationStatusWithCompletionHandler:^(bool authorized){
-		result(authorized ? @(YES) : @(NO));
-	}];
-}
-
-- (void)queryNotificationsAuthorizationStatusWithCompletionHandler:(void(^)(bool authorized)) completionHandler {
-	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
-		completionHandler((settings.authorizationStatus != UNAuthorizationStatusNotDetermined) && (settings.authorizationStatus != UNAuthorizationStatusDenied));
-	}];
-}
-
-- (void)requestNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
-	__weak typeof(self) weakSelf = self;
-	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
-		if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
-			result(@(NO));
-		}
-		else {
-			UNAuthorizationOptions options = UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound;
-			[UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:options completionHandler:^(BOOL granted, NSError * _Nullable error){
-				dispatch_async(dispatch_get_main_queue(), ^{
-					result(granted ? @(YES) : @(NO));
-					if (granted) {
-						[weakSelf registerForRemoteNotifications];
-					}
-				});
-			}];
-		}
-	}];
-}
-
-- (void)registerForRemoteNotifications {
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-	[[UIApplication sharedApplication] registerForRemoteNotifications];
-}
-
-- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
-	NSLog(@"UIApplication didRegisterForRemoteNotificationsWithDeviceToken: %@", [NSString stringWithFormat:@"%@", deviceToken]);
-	[FIRMessaging messaging].APNSToken = deviceToken;
-}
-
-- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
-	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
-}
-
-- (void)processPushNotification:(NSDictionary*)userInfo {
-	[[FIRMessaging messaging] appDidReceiveMessage:userInfo];
-}
 
 #pragma mark LocationServices
 
@@ -963,50 +787,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	
 	return nil;
-}
-
-
-#pragma mark UNUserNotificationCenterDelegate
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-	NSDictionary *userInfo = notification.request.content.userInfo;
-	NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:userInfo options:0 error:NULL];
-	NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-	NSLog(@"UIApplication: UNUserNotificationCenter willPresentNotification:\n%@", userInfoString);
-	
-	completionHandler(UNNotificationPresentationOptionAlert|UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
-	NSDictionary *userInfo = response.notification.request.content.userInfo;
-	NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:userInfo options:0 error:NULL];
-	NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-	NSLog(@"UIApplication: UNUserNotificationCenter didReceiveNotificationResponse (%@):\n%@", response.actionIdentifier, userInfoString);
-
-	if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
-		// The user dismissed the notification without taking action.
-	}
-	else if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-		// The user launched the app.
-		[self processPushNotification:response.notification.request.content.userInfo];
-	}
-
-	completionHandler();
-}
-
-#pragma mark FIRMessagingDelegate
-
-- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-	NSLog(@"UIApplication: FIRMessaging: didReceiveRegistrationToken: %@", fcmToken);
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:fcmToken forKey:@"token"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"FCMToken" object:nil userInfo:userInfo];
-}
-
-#pragma mark NSNotificationCenter
-
-- (void)didReceiveFCMTokenNotification:(NSNotification *)notification {
-	NSString *fcmToken = [notification.object isKindOfClass:[NSString class]] ? notification.object : nil;
-	NSLog(@"UIApplication: didReceiveFCMTokenNotification: %@", fcmToken);
 }
 
 @end
