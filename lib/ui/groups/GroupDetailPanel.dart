@@ -1043,7 +1043,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1053,7 +1053,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
@@ -1082,7 +1082,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1092,7 +1092,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();

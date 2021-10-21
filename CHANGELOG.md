@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed spelling in Wallet  [#830](https://github.com/rokwire/illinois-app/issues/830).
 - GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Changed
+- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836)
 
 ## [2.7.2] - 2021-10-18
 ### Changed
