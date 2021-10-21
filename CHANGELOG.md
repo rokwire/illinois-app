@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
 ### Changed
-- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836)
+- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836).
+### Added
+- Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
 
 ## [3.0.28] 2021-10-20
 ### Fixed
