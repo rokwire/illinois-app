@@ -475,12 +475,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       ],
                                     ),
                                   ),
-                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
+                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _allDay, excludeSemantics: true, child:
                                   ToggleRibbonButton(
                                     height: null,
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                    label: Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
+                                    label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                     toggled: _allDay,
                                     onTap: _onAllDayToggled,
                                     context: context,
