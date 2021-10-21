@@ -35,7 +35,7 @@ class TransportationService /* with Service */ {
   TransportationService._internal();
 
   Future<List<ParkingEvent>> loadParkingEvents() async {
-    final url = (Config().parkingUrl != null) ? "${Config().parkingUrl}/events" : null;
+    final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
     final response = await Network().get(url, auth: NetworkAuth.App);
     String responseBody = response?.body;
     if ((response != null) && (response.statusCode == 200)) {
@@ -58,7 +58,7 @@ class TransportationService /* with Service */ {
 
   Future<List<ParkingLot>> loadParkingEventInventory(String eventId) async {
     if (AppString.isStringNotEmpty(eventId)) {
-      final url = (Config().parkingUrl != null) ? "${Config().parkingUrl}/v2/inventory?event-id=$eventId" : null;
+      final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
       final response = await Network().get(url, auth: NetworkAuth.App);
       if (response == null) {
         Log.e('Failed to load inventory: Server response is null');
