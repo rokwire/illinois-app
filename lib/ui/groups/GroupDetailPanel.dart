@@ -784,11 +784,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       )
       );
     }
-    
-    int last = _visibleGroupPosts.length - 1;
-    for (int i = last; i >= 0; i--) {
+
+    for (int i = 0; i <_visibleGroupPosts.length ; i++) {
       GroupPost post = _visibleGroupPosts[i];
-      if (i < last) {
+      if (i > 0) {
         postsContent.add(Container(height: 16));
       }
       postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
