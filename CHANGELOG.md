@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Display sport name for games in explore card [#844](https://github.com/rokwire/illinois-app/issues/844).
+### Changed 
+- Change Home panel content order so twitter goes on top. [#848](https://github.com/rokwire/illinois-app/issues/848).
 
 ## [3.0.31] 2021-10-21
 ### Fixed
