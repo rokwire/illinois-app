@@ -5,12 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-- Broken FCM messaging in iOS [#839](https://github.com/rokwire/illinois-app/issues/839).
+### Added
+- Display sport name for games in explore card [#844](https://github.com/rokwire/illinois-app/issues/844).
+### Changed 
+- Change Home panel content order so twitter goes on top. [#848](https://github.com/rokwire/illinois-app/issues/848).
 
+## [3.0.31] 2021-10-21
 ### Fixed
 - GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
 ### Changed
-- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836)
+- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836).
+- GroupDetailPanel: place "show older" button at the end of the posts list [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Added
+- Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
 
 ## [3.0.28] 2021-10-20
 ### Fixed
