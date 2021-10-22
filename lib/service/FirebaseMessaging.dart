@@ -19,6 +19,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase_messaging;
 import 'package:illinois/model/Auth2.dart';
@@ -35,14 +37,23 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/utils/Utils.dart';
 
 const String _channelId = "Notifications_Channel_ID";
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
+
 class FirebaseMessaging with Service implements NotificationsListener {
 
+
   static const String notifyToken                 = "edu.illinois.rokwire.firebase.messaging.token";
+  static const String notifyForegroundMessage     = "edu.illinois.rokwire.firebase.messaging.message.foreground";
   static const String notifyPopupMessage          = "edu.illinois.rokwire.firebase.messaging.message.popup";
   static const String notifyScoreMessage          = "edu.illinois.rokwire.firebase.messaging.message.score";
   static const String notifyConfigUpdate          = "edu.illinois.rokwire.firebase.messaging.config.update";
@@ -78,7 +89,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   String   _projectID;
   DateTime _pausedDateTime;
   
-  List<Map<String, dynamic>> _messagesCache;
+  List<firebase_messaging.RemoteMessage> _messagesCache;
 
   // Singletone instance
 
@@ -111,7 +122,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Auth2.notifyProfileChanged,
       Auth2.notifyUserDeleted,
       AppLivecycle.notifyStateChanged,
-      LocalNotifications.notifySelected
     ]);
   }
 
@@ -125,7 +135,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     // Cache messages until UI is displayed
     _messagesCache = [];
 
-    //firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     await _firebaseMessaging.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_channel);
 
@@ -136,15 +146,15 @@ class FirebaseMessaging with Service implements NotificationsListener {
     );
 
     firebase_messaging.FirebaseMessaging.onMessage.listen((firebase_messaging.RemoteMessage message) {
-      _onFirebaseMessage(message.data);
+      _onFirebaseMessage(message);
     });
 
     firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((firebase_messaging.RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');
-      _onFirebaseMessage(message.data);
+      _onFirebaseMessage(message);
     });
 
-
+   // firebase_messaging.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
 
     firebase_messaging.FirebaseMessaging.instance.getToken().then((String token) {
@@ -174,10 +184,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == LocalNotifications.notifySelected) {
-      _processDataMessage(AppJson.decode(param));
-    }
-    else if (name == Auth2UserPrefs.notifyRolesChanged) {
+    if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateRolesSubscriptions();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
@@ -231,7 +238,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   // Message Processing
 
-  Future<dynamic> _onFirebaseMessage(Map<String, dynamic> message) async {
+  Future<dynamic> _onFirebaseMessage(firebase_messaging.RemoteMessage message) async {
     Log.d("FCM: onFirebaseMessage");
     _onMessageProcess(message);
   }
@@ -246,7 +253,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   ///iOS
   ///{GameId: 16692, IsComplete: false, gcm.message_id: 1572250193655080, VisitingScore: 20, HomeScore: 14, Custom: {"Possession":"","LastPlay":"","Clock":"","Phase":"Pregame"}, Type: football, Path: football, aps: {content-available: 1}, ClockSeconds: -1, HasStarted: false, Period: 1}
-  void _onMessageProcess(Map<String, dynamic> message) {
+  void _onMessageProcess(firebase_messaging.RemoteMessage message) {
     if (message != null) {
       if (_messagesCache != null) {
         Log.d("FCM: cacheMessage: $message");
@@ -258,28 +265,23 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processMessage(Map<String, dynamic> message) {
+  void _processMessage(firebase_messaging.RemoteMessage message) {
     Log.d("FCM: onMessageProcess: $message");
-    if (message != null) {
+    if (message?.data != null) {
       try {
-        if (Platform.isIOS) {
-          Log.d("FCM: iOS message");
-          _processDataMessage(message.cast<String, dynamic>());
+        if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
+          AppString.isStringNotEmpty(message.notification.title) &&
+            AppString.isStringNotEmpty(message.notification.body)
+        ){
+          NotificationService().notify(notifyForegroundMessage, {
+            "title": message.notification.title,
+            "body": message.notification.body,
+            "onComplete": (){
+              _processDataMessage(message.data);
+            }
+          });
         } else {
-          dynamic data = message["data"];
-          dynamic notification = message["notification"];
-          String title = (notification != null) ? notification["title"] : null;
-          String body = (notification != null) ? notification["body"] : null;
-          if (AppString.isStringNotEmpty(title) || AppString.isStringNotEmpty(body)) {
-            Log.d("FCM: Android notification message");
-            //Explicitly show it only when in foreground
-            String notificationPayload = (data != null) ? json.encode(data) : null;
-            LocalNotifications().showNotification(title: title, message: body, payload: notificationPayload);
-          }
-          else if (data != null) {
-            Log.d("FCM: Android data message");
-            _processDataMessage(data.cast<String, dynamic>());
-          }
+          _processDataMessage(message.data);
         }
       }
       catch(e) {
@@ -373,10 +375,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _processCachedMessages() {
     if (_messagesCache != null) {
-      List<Map<String, dynamic>> messagesCache = _messagesCache;
+      List<firebase_messaging.RemoteMessage> messagesCache = _messagesCache;
       _messagesCache = null;
 
-      for (Map<String, dynamic> message in messagesCache) {
+      for (firebase_messaging.RemoteMessage message in messagesCache) {
         _processMessage(message);
       }
     }

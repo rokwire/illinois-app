@@ -97,6 +97,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
+      FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
@@ -153,6 +154,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == DeviceCalendar.notifyShowConsoleMessage) {
       _showConsoleMessage(param);
+    }
+    else if (name == FirebaseMessaging.notifyForegroundMessage){
+      _onFirebaseForegroundMessage(param);
     }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
@@ -385,6 +389,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
+  }
+
+  void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
+    String body = content["body"];
+    Function completion = content["onComplete"];
+    AppAlert.showDialogResult(context, body).then((value){
+      if(completion != null){
+        completion();
+      }
+    });
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {

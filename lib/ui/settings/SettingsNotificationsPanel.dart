@@ -22,7 +22,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -161,7 +160,6 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     } else {
       bool granted = await NativeCommunicator().queryNotificationsAuthorization("request");
       if (granted) {
-        LocalNotifications().initPlugin();
         Analytics.instance.updateNotificationServices();
       }
       print('Notifications granted: $granted');
