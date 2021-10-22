@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Introduce HomeMyGroupsWidget [#852](https://github.com/rokwire/illinois-app/issues/852).
 - Display sport name for games in explore card [#844](https://github.com/rokwire/illinois-app/issues/844).
 - Introduce HomeHighlightedFeatures widget [#850](https://github.com/rokwire/illinois-app/issues/850).
 ### Changed 

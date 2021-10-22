@@ -895,7 +895,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 // GroupCard
 
 
-enum GroupCardDisplayType { myGroup, allGroups }
+enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
 class GroupCard extends StatelessWidget {
   final Group group;
@@ -924,20 +924,26 @@ class GroupCard extends StatelessWidget {
                         child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 0),
                             child: Text(group?.title ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                                 style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))))
                   ]),
+                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
                   Visibility(
                     visible: (group?.currentUserIsAdmin ?? false) && (group.pendingCount > 0),
                     child: Text(pendingCountText ?? "",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 16,
-                          color: Styles().colors.textBackgroundVariant
+                          color: Styles().colors.textBackgroundVariant,
+
                       ),
                     ),
                   ),
                   Container(height: 4),
-                  displayType == GroupCardDisplayType.allGroups ? Container() : _buildUpdateTime()
+                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups ) ? _buildUpdateTime() : Container()
                 ]))));
   }
 
@@ -963,7 +969,9 @@ class GroupCard extends StatelessWidget {
         leftContent.add(Container(height: 6,));
       }
       leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),
+          overflow: TextOverflow.ellipsis,
+          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
       );
     }
 
@@ -1006,8 +1014,10 @@ class GroupCard extends StatelessWidget {
   Widget _buildUpdateTime() {
     return Container(
         child: Text(
-      _timeUpdatedText,
-      style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface),
+          _timeUpdatedText,
+          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface,),
     ));
   }
 
