@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
 ### Changed
 - Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836).
+- GroupDetailPanel: place "show older" button at the end of the posts list [#829](https://github.com/rokwire/illinois-app/issues/829).
 ### Added
 - Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
 
