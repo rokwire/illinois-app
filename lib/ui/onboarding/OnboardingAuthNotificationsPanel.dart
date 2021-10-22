@@ -22,7 +22,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'dart:io' show Platform;
@@ -157,7 +156,6 @@ void _requestAuthorization(BuildContext context) async {
     } else {
       bool granted = await NativeCommunicator().queryNotificationsAuthorization("request");
       if (granted) {
-        LocalNotifications().initPlugin();
         Analytics.instance.updateNotificationServices();
       }
       print('Notifications granted: $granted');
