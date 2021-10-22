@@ -39,6 +39,7 @@ import 'package:illinois/ui/home/HomeGiesWidget.dart';
 import 'package:illinois/ui/home/HomeHighligtedFeaturesWidget.dart';
 import 'package:illinois/ui/home/HomeInterestsSelectionWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
+import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
 import 'package:illinois/ui/home/HomePreferredSportsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeStudentGuideHighlightsWidget.dart';
@@ -172,6 +173,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'highlighted_features') {
         widget = HomeHighlightedFeatures();
+      }
+      else if (code == 'my_groups') {
+        widget = HomeMyGroupsWidget(refreshController: _refreshController,);
       }
       else {
         widget = FlexContentWidget.fromAssets(code);
