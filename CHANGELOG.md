@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+- Open groups detail panel on FCM group notification is received [#839](https://github.com/rokwire/illinois-app/issues/839).
 
 ## [3.0.33] 2021-10-22
 - Broken FCM messaging in iOS [#839](https://github.com/rokwire/illinois-app/issues/839).
