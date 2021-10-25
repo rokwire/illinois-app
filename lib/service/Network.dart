@@ -30,10 +30,11 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/utils/Utils.dart';
 
 enum NetworkAuth {
-  App,      // Config.rokwireApiKey
-  User,     // Auth.idToken
-  Access,   // Auth.accessToken
-  Auth2     // Auth2.accessToken
+  App,      // obsolete Config.rokwireApiKey
+  User,     // obsolete Auth.idToken
+  Access,   // obsolete Auth.accessToken
+  Auth2,    // Auth2.accessToken
+  ApiKey,   // Config.rokwireApiKey
 }
 
 class Network  {
@@ -439,35 +440,7 @@ class Network  {
 
   static Map<String, String> _prepareAuthHeaders(Map<String, String> headers, NetworkAuth auth) {
 
-    if (auth == NetworkAuth.App) {
-      String rokwireApiKey = Config().rokwireApiKey;
-      if ((rokwireApiKey != null) && rokwireApiKey.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
-        }
-        headers[RokwireApiKey] = rokwireApiKey;
-      }
-    }
-    else if (auth == NetworkAuth.User) {
-      String token = Auth2().token?.accessToken;               // Disable UIUC Tokens: Auth2().uiucToken?.idToken;
-      String tokenType = Auth2().token?.tokenType ?? 'Bearer'; // Disable UIUC Tokens: Auth2().uiucToken?.tokenType ?? 'Bearer';
-      if ((token != null) && token.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
-        }
-        headers[HttpHeaders.authorizationHeader] = "$tokenType $token";
-      }
-    }
-    else if (auth == NetworkAuth.Access) {
-      String token = Auth2().token?.accessToken;               // Disable UIUC Tokens: Auth2().uiucToken?.accessToken;
-      if ((token != null) && token.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
-        }
-        headers['access_token'] = token;
-      }
-    }
-    else if (auth == NetworkAuth.Auth2) {
+    if ((auth == NetworkAuth.App) || (auth == NetworkAuth.User) || (auth == NetworkAuth.Access) || (auth == NetworkAuth.Auth2)) {
       String token = Auth2().token?.accessToken;
       String tokenType = Auth2().token?.tokenType ?? 'Bearer';
       if ((token != null) && token.isNotEmpty) {
@@ -475,6 +448,15 @@ class Network  {
           headers = new Map();
         }
         headers[HttpHeaders.authorizationHeader] = "$tokenType $token";
+      }
+    }
+    else if (auth == NetworkAuth.ApiKey) {
+      String rokwireApiKey = Config().rokwireApiKey;
+      if ((rokwireApiKey != null) && rokwireApiKey.isNotEmpty) {
+        if (headers == null) {
+          headers = new Map();
+        }
+        headers[RokwireApiKey] = rokwireApiKey;
       }
     }
 
@@ -489,6 +471,7 @@ class Network  {
         )
         && (Auth2().token?.refreshToken != null)
         && (
+            (NetworkAuth.App == auth) ||
             (NetworkAuth.User == auth) ||
             (NetworkAuth.Access == auth) ||
             (NetworkAuth.Auth2 == auth)
@@ -497,7 +480,7 @@ class Network  {
   }
 
   Future<bool> _refreshToken(NetworkAuth auth) async {
-    if ((NetworkAuth.User == auth) || (NetworkAuth.Access == auth) || (NetworkAuth.Auth2 == auth)) {
+    if ((NetworkAuth.App == auth) || (NetworkAuth.User == auth) || (NetworkAuth.Access == auth) || (NetworkAuth.Auth2 == auth)) {
       return (await Auth2().refreshToken() != null);
     }
     else {

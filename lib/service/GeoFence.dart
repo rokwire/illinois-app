@@ -23,6 +23,7 @@ import 'package:http/http.dart' as Http;
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
@@ -93,7 +94,7 @@ class GeoFence with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), NativeCommunicator(), Assets()]);
+    return Set.from([Config(), NativeCommunicator(), Auth2(), Assets()]);
   }
 
   // NotificationsListener

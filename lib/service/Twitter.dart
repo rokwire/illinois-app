@@ -6,7 +6,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class Twitter {
+class Twitter  /* with Service */ {
 
   static const String _tweetFieldsUrlParam = "tweet.fields=attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets,reply_settings,source,text,withheld";
   static const String _userFieldsUrlParam = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld";

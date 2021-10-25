@@ -262,7 +262,7 @@ class Config with Service implements NotificationsListener {
 
   Future<String> _loadAsStringFromNet() async {
     try {
-      http.Response response = await Network().get(appConfigUrl, auth: NetworkAuth.App);
+      http.Response response = await Network().get(appConfigUrl, auth: NetworkAuth.ApiKey);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
       print(e.toString());

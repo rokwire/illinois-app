@@ -77,7 +77,7 @@ class StudentGuide with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config()]);
+    return Set.from([Storage(), Config(), Auth2()]);
   }
 
   // NotificationsListener
