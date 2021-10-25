@@ -310,7 +310,7 @@ class StudentGuide with Service implements NotificationsListener {
         Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
         if (isEntryReminder(guideEntry)) {
           DateTime entryDate = reminderDate(guideEntry);
-          if ((entryDate != null) && (entryDate.month == midnightUtc.month) && (midnightUtc.compareTo(entryDate) <= 0)) {
+          if ((entryDate != null) && (midnightUtc.compareTo(entryDate) <= 0)) {
             remindersList.add(entry);
           }
         }

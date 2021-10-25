@@ -27,6 +27,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize this app') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.edit.hint', '') ,
+                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapPersonalize,
                 ),
@@ -34,6 +35,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.resources.title',  'Resources for you') ,
                   hint: Localization().getStringEx('widgets.home_highlighted_features.button.edit.hint', '') ,
+                  height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapResources,
                 ),

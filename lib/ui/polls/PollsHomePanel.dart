@@ -776,7 +776,7 @@ class _PollCardState extends State<_PollCard>{
             Text(pollStatus ?? '', style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 12, ),),
             ),
             Expanded(child:
-              Text(pin, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 12, ),),
+              Text(pin, style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.bold, fontSize: 12, ),),
             )
           ],),),
           ),
