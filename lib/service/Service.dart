@@ -97,11 +97,10 @@ class Services {
     NativeCommunicator(),
     DeepLink(),
 
+    Auth2(),
     Localization(),
     Assets(),
     Styles(),
-//  Auth(),
-    Auth2(),
     Analytics(),
     FirebaseMessaging(),
     Sports(),
