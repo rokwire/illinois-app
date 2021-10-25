@@ -41,12 +41,15 @@ import 'package:illinois/utils/Utils.dart';
 
 const String _channelId = "Notifications_Channel_ID";
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
 
-  print("Handling a background message: ${message.messageId}");
+//
+// This may require more handling, because the App may not be fully initialized in the moment of invocation.
+// It is not invoked as it's designed and document - however it's good start for now.
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+
+  await FirebaseService().initFirebase();
+  print("Handling a background message: ${message.toString()}");
+  FirebaseMessaging()._onFirebaseMessage(message);
 }
 
 class FirebaseMessaging with Service implements NotificationsListener {
@@ -62,6 +65,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String notifyGameDetail            = "edu.illinois.rokwire.firebase.messaging.game.detail";
   static const String notifyAthleticsGameStarted  = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
   static const String notifySettingUpdated        = "edu.illinois.rokwire.firebase.messaging.setting.updated";
+  static const String notifyGroupsNotification         = "edu.illinois.rokwire.firebase.messaging.groups.updated";
 
   // Topic names
   static const List<String> _permanentTopis = [
@@ -146,11 +150,12 @@ class FirebaseMessaging with Service implements NotificationsListener {
     );
 
     firebase_messaging.FirebaseMessaging.onMessage.listen((firebase_messaging.RemoteMessage message) {
+      print('A new onMessage event was published!');
       _onFirebaseMessage(message);
     });
 
     firebase_messaging.FirebaseMessaging.onMessageOpenedApp.listen((firebase_messaging.RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+       print('A new onMessageOpenedApp event was published!');
       _onFirebaseMessage(message);
     });
 
@@ -312,6 +317,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);
+    }
+    else if (type == "group") {
+      NotificationService().notify(notifyGroupsNotification, data);
     }
     else {
       Log.d("FCM: unknown message type: $type");
