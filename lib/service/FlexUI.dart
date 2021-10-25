@@ -321,7 +321,7 @@ class FlexUI with Service implements NotificationsListener {
         Set<UserRole> userRoles = _localeEvalRoleParam(argument);
         if (userRoles != null) {
           if (not == true) {
-            userRoles = Set.from(UserRole.values).difference(userRoles);
+            userRoles = Set.from(UserRole.values).cast<UserRole>().difference(userRoles);
           }
 
           if (all == true) {
