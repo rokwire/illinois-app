@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Open groups detail panel on FCM group notification is received [#839](https://github.com/rokwire/illinois-app/issues/839).
+### Fixed
+- Display all games in Athletics schedule [#857](https://github.com/rokwire/illinois-app/issues/857).
 
 ## [3.0.33] 2021-10-22
 - Broken FCM messaging in iOS [#839](https://github.com/rokwire/illinois-app/issues/839).
