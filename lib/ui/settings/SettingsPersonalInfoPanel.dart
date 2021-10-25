@@ -143,23 +143,15 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
           Semantics(label:Localization().getStringEx("panel.profile_info.phone_number.name.title","Full Name"),
               hint: Localization().getStringEx("panel.profile_info.phone_number.name.hint",""), textField: true, excludeSemantics: true, child:
               Container(
-                  padding:
-                  EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Styles().colors.fillColorPrimary,
-                          width: 1)),
-//                  height: 48,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+//                height: 48,
                   child: TextField(
                     controller: _nameController,
-                    onChanged: (text){ setState(() {});},
-                    decoration: InputDecoration(
-                        border: InputBorder.none),
+                    onChanged: (text) { setState(() {});},
+                    decoration: InputDecoration(border: InputBorder.none),
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    style: TextStyle(
-                        color: Styles().colors.textSurface,
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies.regular),
+                    style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                   ),
               )
           ),
@@ -183,23 +175,15 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
           Semantics(label:Localization().getStringEx("panel.profile_info.phone_number.email.title","Email"),
               hint: Localization().getStringEx("panel.profile_info.phone_number.email.hint",""), textField: true, excludeSemantics: true, child:
               Container(
-                padding:
-                EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Styles().colors.fillColorPrimary,
-                        width: 1)),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
-                  onChanged: (text){ setState(() {});},
-                  decoration: InputDecoration(
-                      border: InputBorder.none),
+                  onChanged: (text) { setState(() {});},
+                  decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: TextStyle(
-                      color: Styles().colors.textSurface,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular),
+                  style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 ),
               )
           ),
