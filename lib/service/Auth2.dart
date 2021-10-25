@@ -113,7 +113,7 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
     }
 
-    if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValidAnonymous) {
+    if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValid) {
       if (!await authenticateAnonymously()) {
         Log.d("Anonymous Authentication Failed");
       }
@@ -228,13 +228,10 @@ class Auth2 with Service implements NotificationsListener {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
-        'auth_type': auth2LoginTypeToString(Auth2LoginType.apiKey),
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.anonymous),
         'app_type_identifier': Config().appCanonicalId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
-        'creds': {
-          'api_key': Config().rokwireApiKey, //TBD: This should be removed.
-        },
         'device': _deviceInfo
       });
       
@@ -244,7 +241,7 @@ class Auth2 with Service implements NotificationsListener {
         Auth2Token anonymousToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
         Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
         String anonymousId = (params != null) ? AppJson.stringValue(params['anonymous_id']) : null;
-        if ((anonymousToken != null) && anonymousToken.isValidAnonymous && (anonymousId != null) && anonymousId.isNotEmpty) {
+        if ((anonymousToken != null) && anonymousToken.isValid && (anonymousId != null) && anonymousId.isNotEmpty) {
           Storage().auth2AnonymousId = _anonymousId = anonymousId;
           Storage().auth2AnonymousToken = _anonymousToken = anonymousToken;
           return true;
@@ -641,18 +638,13 @@ class Auth2 with Service implements NotificationsListener {
     if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
       String url = "${Config().coreUrl}/services/auth/refresh";
       
-      //Map<String, String> headers = {
-      //  'Content-Type': 'application/json'
-      //};
-      //String post = AppJson.encode({
-      //  'api_key': Config().rokwireApiKey,
-      //  'refresh_token': _token?.refreshToken
-      //});
-
       Map<String, String> headers = {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       };
-      String post = _token?.refreshToken;
+      String post = AppJson.encode({
+        'api_key': Config().rokwireApiKey,
+        'refresh_token': _token?.refreshToken
+      });
 
       return Network().post(url, headers: headers, body: post);
     }
