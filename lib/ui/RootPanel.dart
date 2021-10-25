@@ -180,7 +180,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGameDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _FavoritesSavedDialog.show(context);
@@ -189,7 +191,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _updateContent();
     }
     else if (name == Styles.notifyChanged) {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
@@ -250,9 +254,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         Analytics.instance.logPage(name:tabPanel?.runtimeType?.toString());
       }
 
-      setState(() {
+      if (mounted) {
+        setState(() {
+          _currentTabIndex = index;
+        });
+      }
+      else {
         _currentTabIndex = index;
-      });
+      }
     }
   }
 

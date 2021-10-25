@@ -2,8 +2,10 @@
 	"content": {
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
-		"home": ["twitter","highlighted_features", "my_groups", "emergency", "connect", "upgrade_version_message", "gies", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
-		"home.connect": ["netid", "phone"],
+		"home": ["content", "gies_only_content"],
+		"home.content": ["emergency", "upgrade_version_message", "connect", "twitter", "gies", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
+		"home.content.connect": ["netid", "phone"],
+		"home.gies_only_content": ["twitter", "gies"],
 		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
 
 		"wallet": ["connect", "content", "cards"],
@@ -42,6 +44,9 @@
 			"tabbar.athletics"                : ["fan", "AND", ["NOT", ["student", "OR", "employee", "OR", "parent"]]],
 			"tabbar.explore"                  : ["NOT", ["employee", "OR", "student", "OR", "resident"]],
 			"tabbar.wallet"                   : ["student", "OR", "employee", "OR", "resident"],
+
+			"home.content"                    : ["~gies?"],
+			"home.gies_only_content"          : ["gies!"],
 
 			"game_day"                        : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"pref_sports"                     : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
@@ -92,7 +97,7 @@
 			"onboarding.sport_prefs"          : 3
 		},
 		"auth": {
-			"home.connect"                    : {"loggedIn": false },
+			"home.content.connect"            : {"loggedIn": false },
 			"laundry"                         : { "shibbolethLoggedIn": true },
 			"create_event"                    : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },
 			"create_stadium_poll"             : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager" },

@@ -47,7 +47,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   void dispose() {
     if (_saveRolesTimer != null) {
       _stopSaveRolesTimer();
-      _saveSelectedRoles();
+      Timer(Duration(microseconds: 300), () {
+        _saveSelectedRoles();
+      });
     }
     super.dispose();
   }
@@ -258,7 +260,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
   //TBD clear up when sure that timer saving approach won't be needed
   void _startSaveRolesTimer() {
     _stopSaveRolesTimer();
-    _saveRolesTimer = Timer(Duration(seconds: 3), _saveSelectedRoles);
+    _saveRolesTimer = Timer(Duration(seconds: 3), () {
+      _saveSelectedRoles();
+    });
   }
 
   void _stopSaveRolesTimer() {
