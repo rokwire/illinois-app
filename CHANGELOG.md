@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Open groups detail panel on FCM group notification is received [#839](https://github.com/rokwire/illinois-app/issues/839).
 - Make the edit controls in phone login in Personal Info panel with white background to indicate that they are editable [#842](https://github.com/rokwire/illinois-app/issues/842).
+- Updated Home panel display for GIES only student [#860](https://github.com/rokwire/illinois-app/issues/860).
 ### Fixed
 - Display all games in Athletics schedule [#857](https://github.com/rokwire/illinois-app/issues/857).
 
