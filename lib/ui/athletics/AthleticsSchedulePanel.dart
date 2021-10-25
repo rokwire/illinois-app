@@ -97,10 +97,11 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
           itemCount: itemsCount,
           itemBuilder: (context, index) {
             return Padding(padding: EdgeInsets.only(right: 16, left: 16),
-                child: (index == (itemsCount - 1) ? Container(height: 48,) : _displayItemAtIndex(context, index)));
+                child: _displayItemAtIndex(context, index));
           },
           controller: _scrollController,
-        ),),)
+        ))),
+        Visibility(visible: (itemsCount > 1), child: Container(height: 48))
       ]),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
