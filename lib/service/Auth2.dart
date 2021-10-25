@@ -574,7 +574,7 @@ class Auth2 with Service implements NotificationsListener {
   // Refresh
 
   Future<Auth2Token> refreshToken() async {
-    if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
+    if ((Config().coreUrl != null) && (token?.refreshToken != null)) {
       try {
 
         if (_refreshTokenFuture != null) {
@@ -635,7 +635,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<Response> _refreshToken() async {
-    if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
+    if ((Config().coreUrl != null) && (token?.refreshToken != null)) {
       String url = "${Config().coreUrl}/services/auth/refresh";
       
       Map<String, String> headers = {
@@ -643,7 +643,7 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'api_key': Config().rokwireApiKey,
-        'refresh_token': _token?.refreshToken
+        'refresh_token': token?.refreshToken
       });
 
       return Network().post(url, headers: headers, body: post);
@@ -692,7 +692,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
     String uin = _account?.authType?.uiucUser?.uin;
-    String accessToken = _uiucToken?.accessToken;
+    String accessToken = token.accessToken; //TBD _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
       Response response = await Network().post(url, headers: {
