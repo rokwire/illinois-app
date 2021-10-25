@@ -306,9 +306,59 @@ class FlexUI with Service implements NotificationsListener {
 
   static bool _localeEvalRoleRule(dynamic roleRule) {
     return AppBoolExpr.eval(roleRule, (String argument) {
-      UserRole userRole = UserRole.fromString(argument);
-      return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
+      if (argument != null) {
+        bool not, all, any;
+        if (not = argument.startsWith('~')) {
+          argument = argument.substring(1);
+        }
+        if (all = argument.endsWith('!')) {
+          argument = argument.substring(0, argument.length - 1);
+        }
+        else if (any = argument.endsWith('?')) {
+          argument = argument.substring(0, argument.length - 1);
+        }
+        
+        Set<UserRole> userRoles = _localeEvalRoleParam(argument);
+        if (userRoles != null) {
+          if (not == true) {
+            userRoles = Set.from(UserRole.values).difference(userRoles);
+          }
+
+          if (all == true) {
+            return DeepCollectionEquality().equals(Auth2().prefs?.roles, userRoles);
+          }
+          else if (any == true) {
+            return Auth2().prefs?.roles?.intersection(userRoles)?.isNotEmpty ?? false;
+          }
+          else {
+            return Auth2().prefs?.roles?.containsAll(userRoles) ?? false;
+          }
+        }
+      }
+      return null;
     });
+  }
+
+  static Set<UserRole> _localeEvalRoleParam(String roleParam) {
+    if (roleParam != null) {
+      if (RegExp("{.+}").hasMatch(roleParam)) {
+        Set<UserRole> roles = Set<UserRole>();
+        String rolesStr = roleParam.substring(1, roleParam.length - 1);
+        List<String> rolesStrList = rolesStr.split(',');
+        for (String roleStr in rolesStrList) {
+          UserRole role = UserRole.fromString(roleStr.trim());
+          if (role != null) {
+            roles.add(role);
+          }
+        }
+        return roles;
+      }
+      else {
+        UserRole userRole = UserRole.fromString(roleParam);
+        return (userRole != null) ? Set.from([userRole]) : null;
+      }
+    }
+    return null;
   }
 
   static bool _localeEvalIlliniCashRule(dynamic illiniCashRule) {
