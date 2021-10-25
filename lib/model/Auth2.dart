@@ -1252,7 +1252,7 @@ class UserRole {
   static const gies = const UserRole._internal('gies');
 
   static List<UserRole> get values {
-    return [student, visitor, fan, employee, alumni, parent];
+    return [student, visitor, fan, employee, alumni, parent, resident, gies];
   }
 
   final String _value;
