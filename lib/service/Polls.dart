@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -608,7 +609,11 @@ class Polls with Service implements NotificationsListener {
         var request = new Request("GET", Uri.parse(url));
         request.headers["Cache-Control"] = "no-cache";
         request.headers["Accept"] = "text/event-stream";
-        request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
+        
+        String accessToken = Auth2().token?.accessToken;
+        String tokenType = Auth2().token?.tokenType ?? 'Bearer';
+        request.headers[HttpHeaders.authorizationHeader] = "$tokenType $accessToken";
+        //request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
 
         Future<StreamedResponse> response = pollChunk.eventClient.send(request);
         print("Subscribed!");
