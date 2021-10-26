@@ -574,6 +574,7 @@ class Auth2 with Service implements NotificationsListener {
   // Refresh
 
   Future<Auth2Token> refreshToken() async {
+    Auth2Token token = _token ?? _anonymousToken;
     if ((Config().coreUrl != null) && (token?.refreshToken != null)) {
       try {
 
@@ -581,30 +582,35 @@ class Auth2 with Service implements NotificationsListener {
           Log.d("Auth2: will await refresh token");
           Response response = await _refreshTokenFuture;
           Log.d("Auth2: did await refresh token");
-          Auth2Token token = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
-          return ((token != null) && token.isValid) ? token : null;
+          Auth2Token responseToken = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
+          return ((responseToken != null) && responseToken.isValid) ? responseToken : null;
         }
         else {
           Log.d("Auth2: will refresh token");
 
-          _refreshTokenFuture = _refreshToken();
+          _refreshTokenFuture = _refreshToken(token?.refreshToken);
           Response response = await _refreshTokenFuture;
           _refreshTokenFuture = null;
 
           if (response?.statusCode == 200) {
             Map<String, dynamic> responseJson = AppJson.decodeMap(response?.body);
-            Auth2Token token = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
-            if ((token != null) && token.isValid) {
+            Auth2Token responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
+            if ((responseToken != null) && responseToken.isValid) {
               _refreshTonenFailCount = null;
 
               Log.d("Auth: did refresh token: ${token?.accessToken}");
-              Storage().auth2Token = _token = token;
+              if (_token != null) {
+                Storage().auth2Token = _token = responseToken;
+              }
+              else if (_anonymousToken != null) {
+                Storage().auth2AnonymousToken = _anonymousToken = responseToken;
+              }
 
               Map<String, dynamic> params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
               Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
               Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
-              return token;
+              return responseToken;
             }
             else {
               Log.d("Auth: failed to refresh token: ${response?.body}");
@@ -634,8 +640,8 @@ class Auth2 with Service implements NotificationsListener {
     return null;
   }
 
-  Future<Response> _refreshToken() async {
-    if ((Config().coreUrl != null) && (token?.refreshToken != null)) {
+  static Future<Response> _refreshToken(String refreshToken) async {
+    if ((Config().coreUrl != null) && (refreshToken != null)) {
       String url = "${Config().coreUrl}/services/auth/refresh";
       
       Map<String, String> headers = {
@@ -643,7 +649,7 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'api_key': Config().rokwireApiKey,
-        'refresh_token': token?.refreshToken
+        'refresh_token': refreshToken
       });
 
       return Network().post(url, headers: headers, body: post);
