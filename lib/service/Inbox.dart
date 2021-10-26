@@ -203,7 +203,7 @@ class Inbox with Service implements NotificationsListener {
         'previous_token': previousToken
       });
       if (auth == null) {
-        auth = Auth2().isLoggedIn ? NetworkAuth.Auth2 : NetworkAuth.App;
+        auth = NetworkAuth.Auth2;
       }
       Response response = await Network().post(url, body: body, auth: auth);
       Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");

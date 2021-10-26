@@ -16,6 +16,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -172,7 +173,7 @@ class Polls with Service implements NotificationsListener {
       try {
         String urlParams = (cursor != null) ? '?cursor=$cursor' : '';
         String url = '${Config().quickPollsUrl}/$pollsType/${Auth2().accountId}$urlParams';
-        Response response = await Network().get(url, auth: NetworkAuth.App);
+        Response response = await Network().get(url, auth: NetworkAuth.Auth2);
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
         if ((response != null) && (responseCode == 200)) {
@@ -208,7 +209,7 @@ class Polls with Service implements NotificationsListener {
       if (poll != null) {
         try {
           String url = '${Config().quickPollsUrl}/pollcreate';
-          Response response = await Network().post(url, body: json.encode(poll.toJson()), auth: NetworkAuth.App);
+          Response response = await Network().post(url, body: json.encode(poll.toJson()), auth: NetworkAuth.Auth2);
           int responseCode = response?.statusCode ?? -1;
           String responseString = response?.body;
           if ((response != null) && (response.statusCode == 200)) {
@@ -259,7 +260,7 @@ class Polls with Service implements NotificationsListener {
       if (pollId != null) {
         try {
           String url = '${Config().quickPollsUrl}/pollstart/$pollId';
-          Response response = await Network().put(url, auth: NetworkAuth.App);
+          Response response = await Network().put(url, auth: NetworkAuth.Auth2);
           if ((response != null) && (response.statusCode == 200)) {
             _onPollStarted(pollId).then((Poll poll) {
               if (poll != null) {
@@ -298,7 +299,7 @@ class Polls with Service implements NotificationsListener {
             'answer': vote?.toVotesJson(),
           };
           String voteString = json.encode(voteJson);
-          Response response = await Network().post(url, body: voteString, auth: NetworkAuth.App);
+          Response response = await Network().post(url, body: voteString, auth: NetworkAuth.Auth2);
           if ((response != null) && (response.statusCode == 200)) {
             Analytics().logPoll(getPoll(pollId: pollId), Analytics.LogPollVoteActionName);
             _updatePollVote(pollId, vote);
@@ -322,7 +323,7 @@ class Polls with Service implements NotificationsListener {
       if (pollId != null) {
         try {
           String url = '${Config().quickPollsUrl}/pollend/$pollId';
-          Response response = await Network().put(url, auth: NetworkAuth.App);
+          Response response = await Network().put(url, auth: NetworkAuth.Auth2);
           if ((response != null) && (response.statusCode == 200)) {
             Analytics().logPoll(getPoll(pollId: pollId), Analytics.LogPollCloseActionName);
             _updatePollStatus(pollId, PollStatus.closed);
@@ -350,7 +351,7 @@ class Polls with Service implements NotificationsListener {
             throw Localization().getStringEx('app.offline.message.title', 'You appear to be offline');
           }
           String url = '${Config().quickPollsUrl}/pinpolls/$pollPin';
-          Response response = await Network().get(url, auth: NetworkAuth.App);
+          Response response = await Network().get(url, auth: NetworkAuth.Auth2);
           String responseString = response?.body;
           Map<String, dynamic> responseJson = AppJson.decode(responseString);
           List<dynamic> responseList = (responseJson != null) ? responseJson['data'] : null;
@@ -500,7 +501,7 @@ class Polls with Service implements NotificationsListener {
       if (pollChunk == null) {
         try {
           String url = '${Config().quickPollsUrl}/poll/$pollId';
-          Response response = await Network().get(url, auth: NetworkAuth.App);
+          Response response = await Network().get(url, auth: NetworkAuth.Auth2);
           String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
           Map<String, dynamic> responseJson = AppJson.decode(responseString);
           Poll poll = (responseJson != null) ? Poll.fromJson(responseJson) : null;
@@ -608,7 +609,11 @@ class Polls with Service implements NotificationsListener {
         var request = new Request("GET", Uri.parse(url));
         request.headers["Cache-Control"] = "no-cache";
         request.headers["Accept"] = "text/event-stream";
-        request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
+        
+        String accessToken = Auth2().token?.accessToken;
+        String tokenType = Auth2().token?.tokenType ?? 'Bearer';
+        request.headers[HttpHeaders.authorizationHeader] = "$tokenType $accessToken";
+        //request.headers[Network.RokwireApiKey] = Config().rokwireApiKey;
 
         Future<StreamedResponse> response = pollChunk.eventClient.send(request);
         print("Subscribed!");
@@ -772,7 +777,7 @@ class Polls with Service implements NotificationsListener {
       try { body = json.encode({'ids': List.from(chunksJson.keys)}); }
       on Exception catch(e) { print(e.toString()); }
 
-      Response response = await Network().post(url, body: body, auth: NetworkAuth.App);
+      Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
       if ((response != null) && (response.statusCode == 200)) {
         List<dynamic> pollsJson = AppJson.decode(response.body);
         if (pollsJson != null) {

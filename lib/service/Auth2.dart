@@ -698,7 +698,7 @@ class Auth2 with Service implements NotificationsListener {
   Future<String> _loadAuthCardStringFromNet() async {
     String url = Config().iCardUrl;
     String uin = _account?.authType?.uiucUser?.uin;
-    String accessToken = token.accessToken; //TBD _uiucToken?.accessToken;
+    String accessToken = _uiucToken?.accessToken;
 
     if (AppString.isStringNotEmpty(url) &&  AppString.isStringNotEmpty(uin) && AppString.isStringNotEmpty(accessToken)) {
       Response response = await Network().post(url, headers: {
