@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -17,9 +18,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeGiesWidget extends StatefulWidget {
 
+  static const String notifyPageChanged  = "edu.illinois.rokwire.gies.widget.page.changed";
+
   final StreamController<void> refreshController;
 
-  HomeGiesWidget({this.refreshController});
+  HomeGiesWidget({Key key, this.refreshController}) : super(key: key);
 
   @override
   _HomeGiesWidgetState createState() => _HomeGiesWidgetState();
@@ -311,15 +314,17 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         }
       });
       Storage().giesNavPages = _navigationPages;
+      NotificationService().notify(HomeGiesWidget.notifyPageChanged);
     }
   }
 
   void _popPage() {
     if (1 < _navigationPages.length) {
-      _navigationPages.removeLast();
+      setState(() {
+        _navigationPages.removeLast();
+      });
       Storage().giesNavPages = _navigationPages;
-
-      setState(() {});
+      NotificationService().notify(HomeGiesWidget.notifyPageChanged);
     }
   }
 
