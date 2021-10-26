@@ -60,8 +60,8 @@ class HomePanel extends StatefulWidget {
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
   List<dynamic> _contentListCodes;
-
   StreamController<void> _refreshController;
+  GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
   void initState() {
@@ -71,6 +71,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Assets.notifyChanged,
+      HomeGiesWidget.notifyPageChanged,
     ]);
     _contentListCodes = _buildContentListCodes() ?? [];
     _refreshController = StreamController.broadcast();
@@ -157,7 +158,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         widget = HomeTwitterWidget(refreshController: _refreshController);
       }
       else if (code == 'gies') {
-        widget = HomeGiesWidget(refreshController: _refreshController);
+        widget = HomeGiesWidget(key: _giesWidgetKey, refreshController: _refreshController);
       }
       else if (code == 'voter_registration') {
         widget = HomeVoterRegistrationWidget();
@@ -221,6 +222,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     _refreshController.add(null);
   }
 
+  void _ensureGiesVisible() {
+    if (_giesWidgetKey?.currentContext != null) {
+      Scrollable.ensureVisible(_giesWidgetKey.currentContext, duration: Duration(milliseconds: 300));
+    }
+  }
+
   // NotificationsListener
 
   @override
@@ -247,6 +254,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (name == Assets.notifyChanged) {
       setState(() {});
+    }
+    else if (name == HomeGiesWidget.notifyPageChanged) {
+      _ensureGiesVisible();
     }
   }
 }

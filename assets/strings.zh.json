@@ -2005,6 +2005,7 @@
 
 	"widget.gies.title": "iMBA 新生清單",
 	"widget.gies.notes.title": "要記住的事情",
+	"widget.gies.button.notes": "筆記",
 	"widget.gies.notes.label.add": "添加到註釋：",
 	"widget.gies.notes.button.save": "節省",
 	"widget.gies.notes.button.skip": "跳過",

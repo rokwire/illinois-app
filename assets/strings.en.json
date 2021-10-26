@@ -2007,6 +2007,7 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
 
     "widget.gies.title": "iMBA New student checklist",
+    "widget.gies.button.notes": "Notes",
     "widget.gies.notes.title": "Things to Remember",
     "widget.gies.notes.label.add": "Add to Notes:",
     "widget.gies.notes.button.save": "Save",
