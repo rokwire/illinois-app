@@ -204,7 +204,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           (giesUri.path == uri.path))
       {
         String pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
-        _pushPage(pageId);
+        _pushPage(_getPage(id: pageId));
       }
       else if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -242,7 +242,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     if ((pushPageId != null) && pushPageId.isNotEmpty) {
       int currentPageProgress = getPageProgress(_currentPage);
       
-      int pushPageProgress = getPageProgress(_getPage(id: pushPageId));
+      Map<String, dynamic> pushPage = _getPage(id: pushPageId);
+      int pushPageProgress = getPageProgress(pushPage);
 
       if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
         while (_progressStepCompleted(pushPageProgress)) {
@@ -250,8 +251,9 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           Map<String, dynamic> nextPushPage = _getPage(progress: nextPushPageProgress);
           String nextPushPageId = (nextPushPage != null) ? AppJson.stringValue(nextPushPage['id']) : null;
           if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
-            pushPageProgress = nextPushPageProgress;
+            pushPage = nextPushPage;
             pushPageId = nextPushPageId;
+            pushPageProgress = nextPushPageProgress;
           }
           else {
             break;
@@ -259,7 +261,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         }
       }
 
-      _pushPage(pushPageId);
+      _pushPage(pushPage);
     }
   }
 
@@ -275,11 +277,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   void _onTapProgress(int progress) {
     int currentPageProgress = _currentPageProgress;
     if (currentPageProgress != progress) {
-      Map<String, dynamic> progressPage = _getPage(progress: progress);
-      String pageId = (progressPage != null) ? AppJson.stringValue(progressPage['id']) : null;
-      if (pageId != null) {
-        _pushPage(pageId);
-      }
+      _pushPage(_getPage(progress: progress));
     }
   }
 
@@ -299,10 +297,18 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     return (page != null) ? (AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-possition'])) : null;
   }
 
-  void _pushPage(String pageId) {
-    if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
+  void _pushPage(Map<String, dynamic> pushPage) {
+    String pushPageId = (pushPage != null) ? AppJson.stringValue(pushPage['id']) : null;
+    if ((pushPageId != null) && pushPageId.isNotEmpty && _hasPage(id: pushPageId)) {
+      int currentPageProgress = getPageProgress(_currentPage);
+      int pushPageProgress = getPageProgress(pushPage);
       setState(() {
-        _navigationPages.add(pageId);
+        if (currentPageProgress == pushPageProgress) {
+          _navigationPages.add(pushPageId);
+        }
+        else {
+          _navigationPages = [pushPageId];
+        }
       });
       Storage().giesNavPages = _navigationPages;
     }
