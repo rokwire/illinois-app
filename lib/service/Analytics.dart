@@ -623,7 +623,10 @@ class Analytics with Service implements NotificationsListener {
   Future<bool>_sendPacket(String packet) async {
     if (packet != null) {
       try {
-        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.Auth2, sendAnalytics: false);
+        //TMP: Use NetworkAuth.ApiKey auth in debug builds until logging service gets updated to acknowledge the new Core BB token.
+        //TBD: Remove this when logging service gets updated.
+        NetworkAuth auth = kReleaseMode ? NetworkAuth.Auth2 : NetworkAuth.ApiKey;
+        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: auth, sendAnalytics: false);
         return (response != null) && ((response.statusCode == 200) || (response.statusCode == 201));
       }
       catch (e) {
