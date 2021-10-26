@@ -56,7 +56,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       });
     }
 
-    rootBundle.loadString('assets/gies.wizard.json').then((String assetsContentString) {
+    rootBundle.loadString('assets/gies.json').then((String assetsContentString) {
       setState(() {
         _pages = AppJson.decodeList(assetsContentString);
         _buildProgressSteps();
