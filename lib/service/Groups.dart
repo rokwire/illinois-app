@@ -81,16 +81,19 @@ class Groups /* with Service */ {
   // Groups APIs
 
   Future<List<Group>> loadGroups({bool myGroups = false}) async {
-    String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
-    try {
-      Response response = await Network().get(url, auth: NetworkAuth.Auth2,);
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
-      return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
-    } catch (e) {
-      print(e);
+    if ((Config().groupsUrl != null) && ((myGroups != true) || Auth2().isLoggedIn)) {
+      try {
+        String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
+        Response response = await Network().get(url, auth: NetworkAuth.Auth2,);
+        int responseCode = response?.statusCode ?? -1;
+        String responseBody = response?.body;
+        List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
+        return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
+      } catch (e) {
+        print(e);
+      }
     }
+    
     return null;
   }
 
