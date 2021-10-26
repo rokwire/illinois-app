@@ -102,7 +102,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
                 InkWell(onTap: () => _onTapNotes(), child:
                   Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
                     Text(Localization().getStringEx('widget.gies.button.notes', 'Notes'), style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 16, decoration: TextDecoration.underline, ),), // Styles().colors.fillColorSecondary
-                  ), // decorationColor: Styles().colors.fillColorSecondary
+                  ),
                 ),
               ),
             ),
@@ -141,12 +141,36 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         }
         
         progressWidgets.add(
-          Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"),
-            child: InkWell(onTap: () => _onTapProgress(progressStep), child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
-              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
-                Align(alignment: Alignment.center, child:
-                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: "",),),),),),));
+          Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
+            InkWell(onTap: () => _onTapProgress(progressStep), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
+//              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
+//              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.rectangle, border: Border(bottom: BorderSide(color: borderColor, width: borderWidth)),), child:
+                Container(width: 28, height: 28, padding: EdgeInsets.only(top: 8, left: 8), child:
+//                Align(alignment: Alignment.center, child:
+//                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: "",),),),),),));
+/*                  Column(mainAxisSize: MainAxisSize.min, children:<Widget>[
+                      Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: '',),
+                      Padding(padding: EdgeInsets.only(bottom: 3 - borderWidth), child:
+                        Container(width: 12, height: borderWidth, color: borderColor,)
+                      ),
+                    ]),*/
+                    Stack(children:<Widget>[
+                      Container(width: 12, child:
+                        Align(alignment: Alignment.topCenter, child: 
+                          Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: '',),
+                        )
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 17, bottom: 3 - borderWidth), child:
+                        Container(width: 12, height: borderWidth, color: borderColor,)
+                      ),
+                    ]),
+//                ),
+                ),
+              ),
+            ),
+          )
+        );
       }
     }
 
