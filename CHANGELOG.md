@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.35] 2021-10-26
 ### Changed
 - Cleaned up network auth types, use old Shibboleth's access token in IlliniCash and iCard requests [#864](https://github.com/rokwire/illinois-app/issues/864).
 - GIES home widget updates [#866](https://github.com/rokwire/illinois-app/issues/866).
