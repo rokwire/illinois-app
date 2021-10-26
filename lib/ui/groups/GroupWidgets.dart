@@ -611,7 +611,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event.exploreImageURL, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
+                      widget.event.exploreImageURL, fit: BoxFit.fill, headers: Network.authApiKeyHeader,),),)),
                 ])
                 )
     ],);

@@ -141,7 +141,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                   width: _smallImageSize,
                                   height: _smallImageSize,
                                   child: Image.network(
-                                    imageUrl, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
+                                    imageUrl, fit: BoxFit.fill, headers: Network.authApiKeyHeader,),),)),
                         ],),
                         _explorePaymentTypes(),
                         _buildConvergeButton(),

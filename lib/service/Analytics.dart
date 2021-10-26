@@ -623,7 +623,7 @@ class Analytics with Service implements NotificationsListener {
   Future<bool>_sendPacket(String packet) async {
     if (packet != null) {
       try {
-        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.App, sendAnalytics: false);
+        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.Auth2, sendAnalytics: false);
         return (response != null) && ((response.statusCode == 200) || (response.statusCode == 201));
       }
       catch (e) {

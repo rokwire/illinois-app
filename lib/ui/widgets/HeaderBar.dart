@@ -192,7 +192,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
+                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover, headers: Network.authApiKeyHeader,)) : Container(),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors.fillColorSecondaryTransparent05, left: false),
                   child: Container(

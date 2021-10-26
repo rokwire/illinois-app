@@ -55,7 +55,7 @@ class ImageHolderListItem extends StatelessWidget {
                       height: imageHeight,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
-                      headers: Network.appAuthHeaders,
+                      headers: Network.authApiKeyHeader,
                     ) : Container(height: 0),
                     Padding(
                         padding: EdgeInsets.only(top: 168),

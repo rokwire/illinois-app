@@ -160,7 +160,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.authApiKeyHeader,)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(

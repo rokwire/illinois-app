@@ -159,7 +159,7 @@ class ExploreService with Service implements NotificationsListener {
         dynamic body = json.encode(event.toNotNullJson());
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.User) : null;
+            auth: NetworkAuth.Auth2) : null;
         Map<String, dynamic> jsonData = AppJson.decode(response?.body);
         return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
       } catch (e) {
@@ -178,7 +178,7 @@ class ExploreService with Service implements NotificationsListener {
         String url = Config().eventsUrl + "/" + event.id;
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.User) : null;
+            auth: NetworkAuth.Auth2) : null;
         Map<String, dynamic> jsonData = AppJson.decode(response?.body);
         return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
       } catch (e) {
@@ -196,7 +196,7 @@ class ExploreService with Service implements NotificationsListener {
         String url = Config().eventsUrl + "/" + eventId;
         response = (Config().eventsUrl != null) ? await Network().delete(url,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.User) : null;
+            auth: NetworkAuth.Auth2) : null;
     Map<String, dynamic> jsonData = AppJson.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
@@ -246,7 +246,7 @@ class ExploreService with Service implements NotificationsListener {
     http.Response response;
     if(_enabled) {
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -271,7 +271,7 @@ class ExploreService with Service implements NotificationsListener {
     if(_enabled) {
       http.Response response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -294,7 +294,7 @@ class ExploreService with Service implements NotificationsListener {
     if(_enabled) {
       http.Response response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e(e.toString());
         return null;
@@ -602,7 +602,7 @@ class ExploreService with Service implements NotificationsListener {
       && AppString.isStringNotEmpty(Config().eventsUrl);
 
   NetworkAuth get _userOrAppAuth{
-    return Auth2().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
+    return NetworkAuth.Auth2;
   }
 
   /////////////////////////
