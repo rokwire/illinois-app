@@ -19,6 +19,7 @@ import 'package:illinois/utils/Utils.dart';
 class Inbox with Service implements NotificationsListener {
 
   String   _fcmToken;
+  String   _fcmUserId;
   bool     _isServiceInitialized;
   DateTime _pausedDateTime;
 
@@ -51,6 +52,7 @@ class Inbox with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _fcmToken = Storage().inboxFirebaseMessagingToken;
+    _fcmUserId = Storage().inboxFirebaseMessagingUserId;
     _isServiceInitialized = true;
     _processFcmToken();
   }
@@ -176,21 +178,21 @@ class Inbox with Service implements NotificationsListener {
   // FCM Token
 
   void _processFcmToken() {
+    // We call _processFcmToken when FCM token changes or when user logs in/out.
     if (_isServiceInitialized == true) {
       String fcmToken = FirebaseMessaging().token;
-      if (Auth2().isLoggedIn) {
-        if ((fcmToken != null) && (fcmToken != _fcmToken)) {
-          _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
-            if (result) {
-              Storage().inboxFirebaseMessagingToken = _fcmToken = fcmToken;
-            }
-          });
-        }
-      }
-      else if (_fcmToken != null) {
-        _updateFCMToken(token: _fcmToken).then((bool result) {
+      String userId = Auth2().accountId;
+      if ((fcmToken != null) && (fcmToken != _fcmToken)) {
+        _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
           if (result) {
-            Storage().inboxFirebaseMessagingToken = _fcmToken = null;
+            Storage().inboxFirebaseMessagingToken = _fcmToken = fcmToken;
+          }
+        });
+      }
+      else if (userId != _fcmUserId) {
+        _updateFCMToken(token: fcmToken).then((bool result) {
+          if (result) {
+            Storage().inboxFirebaseMessagingUserId = _fcmUserId = userId;
           }
         });
       }
@@ -207,7 +209,7 @@ class Inbox with Service implements NotificationsListener {
         'app_version': Config().appVersion,
       });
       Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
-      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
+      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
