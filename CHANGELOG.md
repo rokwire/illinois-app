@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.36] 2021-10-27
 ### Changed
 - Temporarly enable ROKWIRE-API-KEY authentication for logging service calls [#868](https://github.com/rokwire/illinois-app/issues/868).
 - Removed ROKWIRE-API-KEY authentication in image requests [#870](https://github.com/rokwire/illinois-app/issues/870).
