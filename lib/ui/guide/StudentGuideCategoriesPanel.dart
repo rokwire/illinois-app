@@ -99,7 +99,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.student_guide_categories.label.heading', 'Student Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(Localization().getStringEx('panel.student_guide_categories.label.heading', 'Campus Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
