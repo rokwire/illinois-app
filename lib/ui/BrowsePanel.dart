@@ -286,7 +286,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'student_guide') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Student Guide'),
+        title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Campus Guide'),
         hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
         icon: 'images/icon-browse-student-guide.png',
         color: Styles().colors.accentColor3,
@@ -591,7 +591,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateStudentGuide() {
-    Analytics.instance.logSelect(target: "Student Guide");
+    Analytics.instance.logSelect(target: "Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
   }
 

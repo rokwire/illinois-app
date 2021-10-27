@@ -184,7 +184,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                               headingIconResource: 'images/icon-news.png',
                               items: _laundries,),),
                             _buildItemsSection(
-                              headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Student Guide'),
+                              headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Campus Guide'),
                               headingIconResource: 'images/icon-news.png',
                               items: _guideItems,),
                             _buildItemsSection(

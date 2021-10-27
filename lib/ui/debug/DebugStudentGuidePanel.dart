@@ -47,7 +47,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text("Student Guide", style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text("Campus Guide", style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: SafeArea(child:
         Column(children: <Widget>[
