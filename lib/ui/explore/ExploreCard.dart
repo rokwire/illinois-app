@@ -20,7 +20,6 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
@@ -141,7 +140,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                   width: _smallImageSize,
                                   height: _smallImageSize,
                                   child: Image.network(
-                                    imageUrl, fit: BoxFit.fill, headers: Network.authApiKeyHeader,),),)),
+                                    imageUrl, fit: BoxFit.fill,),),)),
                         ],),
                         _explorePaymentTypes(),
                         _buildConvergeButton(),
