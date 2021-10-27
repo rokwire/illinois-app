@@ -222,14 +222,14 @@ class Auth2 with Service implements NotificationsListener {
   // Anonymous Authentication
 
   Future<bool> authenticateAnonymously() async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.anonymous),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'device': _deviceInfo
@@ -254,7 +254,7 @@ class Auth2 with Service implements NotificationsListener {
   // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       NotificationService().notify(notifyLoginStarted);
       
@@ -300,14 +300,14 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> _processOidcAuthentication(Uri uri) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': uri?.toString(),
@@ -365,7 +365,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<_OidcLogin> _getOidcData() async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       String url = "${Config().coreUrl}/services/auth/login-url";
       Map<String, String> headers = {
@@ -373,7 +373,7 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'redirect_uri': REDIRECT_URI,
@@ -426,14 +426,14 @@ class Auth2 with Service implements NotificationsListener {
   // Phone Authentication
 
   Future<bool> authenticateWithPhone(String phoneNumber) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': {
@@ -451,14 +451,14 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> handlePhoneAuthentication(String phoneNumber, String code) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (phoneNumber != null) && (code != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (phoneNumber != null) && (code != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': {
