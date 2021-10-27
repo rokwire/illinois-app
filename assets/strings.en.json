@@ -172,7 +172,7 @@
     "panel.browse.button.safer.hint":"",
     "panel.browse.button.add_illini_cash.title": "Add Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
-    "panel.browse.button.student_guide.title":"Student Guide",
+    "panel.browse.button.student_guide.title":"Campus Guide",
     "panel.browse.button.student_guide.hint":"",
     "panel.browse.button.privacy_center.title": "Privacy Center",
     "panel.browse.button.privacy_center.hint":"",
@@ -827,7 +827,7 @@
     "panel.saved.label.dining": "Dining",
     "panel.saved.label.news": "News",
     "panel.saved.label.laundry": "Laundry",
-    "panel.saved.label.student_guide": "Student Guide",
+    "panel.saved.label.student_guide": "Campus Guide",
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
     "panel.saved.notifications.skip.label": "Not right now",
@@ -1729,10 +1729,10 @@
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
 
-    "panel.student_guide_categories.label.heading": "Student Guide",
+    "panel.student_guide_categories.label.heading": "Campus Guide",
     "panel.student_guide_categories.label.content.empty": "Empty guide content",
 
-    "panel.student_guide_list.label.highlights.heading": "Student Guide",
+    "panel.student_guide_list.label.highlights.heading": "Campus Guide",
     "panel.student_guide_list.label.highlights.section": "Highlights",
     "panel.student_guide_list.label.campus_reminders.section": "Campus Reminders",
     "panel.student_guide_list.label.content.empty": "Empty guide content",
@@ -1849,7 +1849,7 @@
     "widget.home_upgrade_version.text": "Welcome to the latest version of Illinois. We recommend that you Sign out and then Sign in again to ensure that all features are available.",
     "widget.home_upgrade_version.button.got_it": "Got It",
 
-    "widget.home_student_guide_highlights.label.heading": "Student Guide Highlights",
+    "widget.home_student_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home_student_guide_highlights.button.more.title": "View All",
     "widget.home_student_guide_highlights.button.more.hint": "Tap to view all highlights",
 
