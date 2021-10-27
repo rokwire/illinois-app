@@ -149,9 +149,24 @@ class Config with Service implements NotificationsListener {
   String get coreOrgId              { return secretCore['org_id']; }
 
   String get twitterUrl             { return twitter['url']; }                                  // "https://api.twitter.com/2"
-  String get twitterUserId          { return twitter['user_id']; }                              // "18165866"
-  String get twitterUserName        { return twitter['username']; }                             // "illinois_alma"
-  int    get twitterTweetsCount     { return twitter['tweets_count']; }                             // "illinois_alma"
+  int    get twitterTweetsCount     { return twitter['tweets_count']; }                         // 5
+  
+  // ""     : { "id":"18165866", "name":"illinois_alma" },
+  // "gies" : { "id":"19615559", "name":"giesbusiness" }
+  Map<String, dynamic> twitterUserAccount([String category]) {
+    Map<String, dynamic> users = twitter['users'];
+    return (users != null) ? users[category ?? ''] : null;
+  }
+  
+  String twitterUserId([String category]) {
+    Map<String, dynamic> userAccount = twitterUserAccount(category);
+    return (userAccount != null) ? userAccount['id'] : null;
+  }
+  
+  String twitterUserName([String category]) {
+    Map<String, dynamic> userAccount = twitterUserAccount(category);
+    return (userAccount != null) ? userAccount['name'] : null;
+  }
 
   String get shibbolethClientId     { return secretShibboleth['client_id']; }
   String get shibbolethClientSecret { return secretShibboleth['client_secret']; }

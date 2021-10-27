@@ -6,7 +6,9 @@
 		"home.content": ["emergency", "upgrade_version_message", "connect", "twitter", "gies", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
 		"home.content.connect": ["netid", "phone"],
 		"home.gies_only_content": ["twitter", "gies"],
-		"campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
+		
+		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
+		"home.twitter.user": ["gies"],
 
 		"wallet": ["connect", "content", "cards"],
 		"wallet.connect":["netid", "phone"],
@@ -47,6 +49,7 @@
 
 			"home.content"                    : ["~gies?"],
 			"home.gies_only_content"          : ["gies!"],
+			"home.twitter.user.gies"          : ["gies"],
 
 			"game_day"                        : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"pref_sports"                     : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
