@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Inbox.dart';
@@ -195,17 +197,16 @@ class Inbox with Service implements NotificationsListener {
     }
   }
 
-  Future<bool> _updateFCMToken({String token, String previousToken, NetworkAuth auth}) async {
+  Future<bool> _updateFCMToken({String token, String previousToken}) async {
     if ((Config().notificationsUrl != null) && ((token != null) || (previousToken != null))) {
       String url = "${Config().notificationsUrl}/api/token";
       String body = AppJson.encode({
         'token': token,
-        'previous_token': previousToken
+        'previous_token': previousToken,
+        'app_platform': Platform.operatingSystem,
+        'app_version': Config().appVersion,
       });
-      if (auth == null) {
-        auth = NetworkAuth.Auth2;
-      }
-      Response response = await Network().post(url, body: body, auth: auth);
+      Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
       Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
