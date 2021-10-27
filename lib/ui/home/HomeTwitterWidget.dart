@@ -7,6 +7,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
@@ -28,6 +29,7 @@ class HomeTwitterWidget extends StatefulWidget {
 class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
+  String _tweetsUserCategory;
   bool _loadingPage = false;
   DateTime _pausedDateTime;
   PageController _pageController;
@@ -37,7 +39,8 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     super.initState();
 
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged
+      AppLivecycle.notifyStateChanged,
+      FlexUI.notifyChanged,
     ]);
 
 
@@ -48,12 +51,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
 
     _loadingPage = true;
-    Twitter().loadTweetsPage(count: Config().twitterTweetsCount).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, userCategory: userCategory).then((TweetsPage tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
           if (tweetsPage != null) {
             _tweetsPages.add(tweetsPage);
+            _tweetsUserCategory = userCategory;
           }
         });
       }
@@ -73,6 +77,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
+    else if (name == FlexUI.notifyChanged) {
+      _onTwitterUserChanged();
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState state) {
@@ -86,6 +93,12 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           _refresh(count: Config().twitterTweetsCount);
         }
       }
+    }
+  }
+
+  void _onTwitterUserChanged() {
+    if (_tweetsUserCategory != userCategory) {
+      _refresh(count: Config().twitterTweetsCount);
     }
   }
 
@@ -170,12 +183,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       });
       TweetsPage lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
       Tweet lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage.tweets.length)) ? lastTweetsPage.tweets.last : null;
-      Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc).then((TweetsPage tweetsPage) {
+      Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, userCategory: userCategory).then((TweetsPage tweetsPage) {
         if (mounted) {
           setState(() {
             _loadingPage = false;
             if (tweetsPage != null) {
               _tweetsPages.add(tweetsPage);
+              _tweetsUserCategory = userCategory;
             }
           });
         }
@@ -187,12 +201,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     setState(() {
       _loadingPage = true;
     });
-    Twitter().loadTweetsPage(count: count ?? max(tweetsCount, Config().twitterTweetsCount), noCache: noCache).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: count ?? max(tweetsCount, Config().twitterTweetsCount), noCache: noCache, userCategory: userCategory).then((TweetsPage tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
           if (tweetsPage != null) {
             _tweetsPages = [tweetsPage];
+            _tweetsUserCategory = userCategory;
           }
         });
         if (tweetsPage != null) {
@@ -200,6 +215,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         }
       }
     });
+  }
+
+  String get userCategory {
+    List<dynamic> twitterUserList = FlexUI()['home.twitter.user'];
+    return ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
   }
 }
 
