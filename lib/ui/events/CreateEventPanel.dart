@@ -29,7 +29,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -182,7 +181,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
                               AppString.isStringNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover, headers: Network.authApiKeyHeader))
+                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),

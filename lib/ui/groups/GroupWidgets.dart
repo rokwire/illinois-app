@@ -38,7 +38,6 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/service/Network.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -611,7 +610,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event.exploreImageURL, fit: BoxFit.fill, headers: Network.authApiKeyHeader,),),)),
+                      widget.event.exploreImageURL, fit: BoxFit.fill,),),)),
                 ])
                 )
     ],);

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Temporarly enable ROKWIRE-API-KEY authentication for logging service calls [#868](https://github.com/rokwire/illinois-app/issues/868).
+- Removed ROKWIRE-API-KEY authentication in image requests [#870](https://github.com/rokwire/illinois-app/issues/870).
 
 ## [3.0.35] 2021-10-26
 ### Changed
