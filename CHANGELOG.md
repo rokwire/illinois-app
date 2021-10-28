@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch twitter user account for GIES users [#872](https://github.com/rokwire/illinois-app/issues/872).
 - Update GIES notes [#874](https://github.com/rokwire/illinois-app/issues/874).
 - Rename "Student Guide" to "Campus Guide" [#875](https://github.com/rokwire/illinois-app/issues/875).
+### Fixed
+- RootPanel: fix broken Tab content when recreating the TabBarController [#879](https://github.com/rokwire/illinois-app/issues/879).
 
 ## [3.0.35] 2021-10-26
 ### Changed
