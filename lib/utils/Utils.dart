@@ -107,15 +107,18 @@ class AppString {
 
   /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
 
-  static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
-  static const String _phonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
-  static const String _phonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+  static const String _usPhonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
+  static const String _usPhonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
+  static const String _usPhonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+
+  static const String _phonePattern = "^((\\+?\\d{1,3})?[\\(\\- ]?\\d{3,5}[\\)\\- ]?)?(\\d[.\\- ]?\\d)+\$";   // Valid: +123456789120
+
 
   static bool isUsPhoneValid(String phone){
     if(isStringNotEmpty(phone)){
-      return (phone.length == 10 && RegExp(_phonePattern1).hasMatch(phone))
-              || (phone.length == 11 && RegExp(_phonePattern2).hasMatch(phone))
-              || (phone.length == 12 && RegExp(_phonePattern3).hasMatch(phone));
+      return (phone.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone))
+          || (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone))
+          || (phone.length == 12 && RegExp(_usPhonePattern3).hasMatch(phone));
     }
     return false;
   }
@@ -124,21 +127,33 @@ class AppString {
     return !isUsPhoneValid(phone);
   }
 
+  static bool isPhoneValid(String phone) {
+    return isStringNotEmpty(phone) && RegExp(_phonePattern).hasMatch(phone);
+  }
+
   /// US Phone construction
 
   static String constructUsPhone(String phone){
     if(isUsPhoneValid(phone)){
-      if(phone.length == 10 && RegExp(_phonePattern1).hasMatch(phone)){
+      if(phone.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone)){
         return "+1$phone";
       }
-      else if (phone.length == 11 && RegExp(_phonePattern2).hasMatch(phone)){
+      else if (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone)){
         return "+$phone";
       }
-      else if (phone.length == 12 && RegExp(_phonePattern3).hasMatch(phone)){
+      else if (phone.length == 12 && RegExp(_usPhonePattern3).hasMatch(phone)){
         return phone;
       }
     }
     return null;
+  }
+
+  /// Email validation  https://github.com/rokwire/illinois-app/issues/47
+
+  static const String _emailPattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$" ;
+
+  static bool isEmailValid(String email){
+    return isStringNotEmpty(email) && RegExp(_emailPattern).hasMatch(email);
   }
 }
 

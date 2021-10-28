@@ -320,45 +320,54 @@ class Auth2 with Service implements NotificationsListener {
       
       Response response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (responseJson != null) {
-        Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
-          prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
-          profile: _anonymousProfile ?? Auth2UserProfile.empty());
+      if (await _processLoginResponse(responseJson, loadCard: true)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-        if ((token != null) && token.isValid && (account != null) && account.isValid) {
-          
-          bool prefsUpdated = account.prefs?.apply(_anonymousPrefs);
-          bool profileUpdated = account.profile?.apply(_anonymousProfile);
-          Storage().auth2Token = _token = token;
-          Storage().auth2Account = _account = account;
-          Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
-          Storage().auth2AnonymousProfile = _anonymousProfile = null;
+  Future<bool> _processLoginResponse(Map<String, dynamic> responseJson, { bool loadCard }) async {
+    if (responseJson != null) {
+      Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
+      Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
+        prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
+        profile: _anonymousProfile ?? Auth2UserProfile.empty());
 
-          if (prefsUpdated == true) {
-            _saveAccountUserPrefs();
-          }
+      if ((token != null) && token.isValid && (account != null) && account.isValid) {
+        
+        bool prefsUpdated = account.prefs?.apply(_anonymousPrefs);
+        bool profileUpdated = account.profile?.apply(_anonymousProfile);
+        Storage().auth2Token = _token = token;
+        Storage().auth2Account = _account = account;
+        Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
+        Storage().auth2AnonymousProfile = _anonymousProfile = null;
 
-          if (profileUpdated == true) {
-            _saveAccountUserProfile(account.profile);
-          }
+        if (prefsUpdated == true) {
+          _saveAccountUserPrefs();
+        }
 
-          Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
-          Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
-          Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
+        if (profileUpdated == true) {
+          _saveAccountUserProfile(account.profile);
+        }
 
-          NotificationService().notify(notifyProfileChanged);
-          NotificationService().notify(notifyPrefsChanged);
+        Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
+        Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
+        Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
+        NotificationService().notify(notifyProfileChanged);
+        NotificationService().notify(notifyPrefsChanged);
+
+        if (loadCard == true) {
           String authCardString = await _loadAuthCardStringFromNet();
           _authCard = AuthCard.fromJson(AppJson.decodeMap((authCardString)));
           Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
           await _saveAuthCardStringToCache(authCardString);
           NotificationService().notify(notifyCardChanged);
-
-          NotificationService().notify(notifyLoginChanged);
-          return true;
         }
+
+        NotificationService().notify(notifyLoginChanged);
+        return true;
       }
     }
     return false;
@@ -472,41 +481,66 @@ class Auth2 with Service implements NotificationsListener {
 
       Response response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (responseJson != null) {
-        Auth2Token token = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
-        Auth2Account account = Auth2Account.fromJson(AppJson.mapValue(responseJson['account']),
-          prefs: _anonymousPrefs ?? Auth2UserPrefs.empty(),
-          profile: _anonymousProfile ?? Auth2UserProfile.empty());
-
-        if ((token != null) && token.isValid && (account != null) && account.isValid) {
-          
-          bool prefsUpdated = account.prefs?.apply(_anonymousPrefs);
-          bool profileUpdated = account.profile?.apply(_anonymousProfile);
-          Storage().auth2Token = _token = token;
-          Storage().auth2Account = _account = account;
-          Storage().auth2AnonymousPrefs = _anonymousPrefs = null;
-          Storage().auth2AnonymousProfile = _anonymousProfile = null;
-
-          if (prefsUpdated == true) {
-            _saveAccountUserPrefs();
-          }
-
-          if (profileUpdated == true) {
-            _saveAccountUserProfile(account.profile);
-          }
-
-          Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
-          Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['phone_token'])) : null;
-          Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
-
-          NotificationService().notify(notifyProfileChanged);
-          NotificationService().notify(notifyPrefsChanged);
-          NotificationService().notify(notifyLoginChanged);
-          return true;
-        }
+      if (await _processLoginResponse(responseJson, loadCard: true)) {
+        return true;
       }
     }
     return false;
+  }
+
+  // Email Authentication
+
+  Future<bool> authenticateWithEmail(String email, String password, { bool signUp }) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
+      String url = "${Config().coreUrl}/services/auth/login";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'creds': {
+          "email": email,
+          "password": password
+        },
+        'params': (signUp == true) ? {
+          "sign_up": true,
+          "confirm_password": password
+        } : null,
+        'profile': _anonymousProfile?.toJson(),
+        'preferences': _anonymousPrefs?.toJson(),
+        'device': _deviceInfo,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
+      if (await _processLoginResponse(responseJson, loadCard: true)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<bool> hasEmailAccount(String email) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/account-exists";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200) ? AppJson.boolValue(AppJson.decode(response?.body)) : null;
+    }
+    return null;
   }
 
   // Device Info
