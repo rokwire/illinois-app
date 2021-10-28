@@ -49,7 +49,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.title.text', 'Login by phone or email');
+    String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
         Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
@@ -59,7 +59,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
             SingleChildScrollView(child:
               Padding(padding: EdgeInsets.only(left: 18, right: 18, top: 148 + 24 + MediaQuery.of(context).padding.top, bottom: 24), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.title.hint', ''), excludeSemantics: true, child:
+                  Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                       Center(child:
                         Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
@@ -68,7 +68,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                   ),
                   Container(height: 24,),
                   Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                    Text(Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))
+                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))
                   ),
                 ]),
               ),
@@ -77,8 +77,8 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
           Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
             Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               ScalableRoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.continue.title', 'Continue'),
-                hint: Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.continue.hint', ''),
+                label: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.title', 'Continue'),
+                hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.hint', ''),
                 fontSize: 16,
                 padding: EdgeInsets.symmetric(vertical: 12),
                 borderColor: Styles().colors.fillColorSecondary,
@@ -87,8 +87,8 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                 onTap: _onContinueTapped,
               ),
               Onboarding2UnderlinedButton(
-                title: Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.dont_continue.title', 'Not right now'),
-                hint: Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.dont_continue.hint', 'Skip verification'),
+                title: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.dont_continue.title', 'Not right now'),
+                hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.dont_continue.hint', 'Skip verification'),
                 onTap: (){_onSkipTapped();},
               )
             ],),
