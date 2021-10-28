@@ -69,7 +69,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                 Padding(padding: EdgeInsets.only(left: 18, right: 18, top: (148 + 24).toDouble(), bottom: 24), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
-                      Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary))
+                      Text(Localization().getStringEx('panel.onboarding2.phone_or_email.title.text', 'Login by phone or email'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary))
                     ),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:

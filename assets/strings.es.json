@@ -595,7 +595,7 @@
     "panel.onboarding2.phone_or_email_statement.dont_continue.title": "Not right now",
     "panel.onboarding2.phone_or_email_statement.dont_continue.hint": "Skip verification",
 
-    "panel.onboarding2.phone_or_email.title.text": "Connect to Illinois",
+    "panel.onboarding2.phone_or_email.title.text": "Login by phone or email",
     "panel.onboarding2.phone_or_email.description": "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.",
     "panel.onboarding2.phone_or_email.phone_or_email.text": "Phone number or email address:",
     "panel.onboarding2.phone_or_email.phone_or_email.hint":"",
