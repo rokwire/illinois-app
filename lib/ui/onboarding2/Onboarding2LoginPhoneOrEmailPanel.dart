@@ -60,17 +60,18 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 //    GestureDetector(excludeFromSemantics: true, behavior: HitTestBehavior.translucent, onTap: () => FocusScope.of(context).requestFocus(new FocusNode()), child:      
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
+        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
         OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
         SafeArea(child:
           Column(children:[
             Expanded(child:
               SingleChildScrollView(child:
-                Padding(padding: EdgeInsets.only(left: 18, right: 18, top: 28, bottom: 24), child:
+                Padding(padding: EdgeInsets.only(left: 18, right: 18, top: (148 + 24).toDouble(), bottom: 24), child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
-                      Text(Localization().getStringEx('panel.onboarding2.phone_or_mail.title.text', 'Connect to Illinois'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary))
+                      Text(Localization().getStringEx('panel.onboarding2.phone_or_mail_statement.title.text', 'Login by phone or email'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary))
                     ),
-                    Container(height: 48,),
+                    Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
                       Text(Localization().getStringEx("panel.onboarding2.phone_or_mail.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email."), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                     ),
@@ -84,16 +85,19 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                         textField: true,
                         excludeSemantics: true,
                         value: _phoneOrEmailController.text,
-                        child: TextField(
-                          controller: _phoneOrEmailController,
-                          autofocus: false,
-                          onSubmitted: (_) => _clearErrorMsg,
-                          cursorColor: Styles().colors.textBackground,
-                          keyboardType: TextInputType.phone,
-                          style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
+                        child: Container(
+                          color: Styles().colors.white,
+                          child: TextField(
+                            controller: _phoneOrEmailController,
+                            autofocus: false,
+                            onSubmitted: (_) => _clearErrorMsg,
+                            cursorColor: Styles().colors.textBackground,
+                            keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+                            decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
+                            ),
                           ),
                         ),
                       ),
