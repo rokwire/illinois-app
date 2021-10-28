@@ -51,6 +51,7 @@ class Config with Service implements NotificationsListener {
   PackageInfo          _packageInfo;
   Directory            _appDocumentsDir; 
   String               _appCanonicalId;
+  String               _appPlatformId;
   DateTime             _pausedDateTime;
   
   final Set<String>    _reportedUpgradeVersions = Set<String>();
@@ -117,7 +118,6 @@ class Config with Service implements NotificationsListener {
   String get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
   String get eventsUrl              { return platformBuildingBlocks['events_url']; }                  // "https://api-dev.rokwire.illinois.edu/events"
   String get talentChooserUrl       { return platformBuildingBlocks['talent_chooser_url']; }          // "https://api-dev.rokwire.illinois.edu/talent-chooser/api/ui-content"
-  String get parkingUrl             { return platformBuildingBlocks["parking_url"]; }                 // "https://api-dev.rokwire.illinois.edu/parking/api"
   String get transportationUrl      { return platformBuildingBlocks["transportation_url"]; }          // "https://api-dev.rokwire.illinois.edu/transportation"
   String get quickPollsUrl          { return platformBuildingBlocks["polls_url"]; }                   // "https://api-dev.rokwire.illinois.edu/poll/api";
   String get locationsUrl           { return platformBuildingBlocks["locations_url"]; }               // "https://api-dev.rokwire.illinois.edu/location/api";
@@ -149,9 +149,24 @@ class Config with Service implements NotificationsListener {
   String get coreOrgId              { return secretCore['org_id']; }
 
   String get twitterUrl             { return twitter['url']; }                                  // "https://api.twitter.com/2"
-  String get twitterUserId          { return twitter['user_id']; }                              // "18165866"
-  String get twitterUserName        { return twitter['username']; }                             // "illinois_alma"
-  int    get twitterTweetsCount     { return twitter['tweets_count']; }                             // "illinois_alma"
+  int    get twitterTweetsCount     { return twitter['tweets_count']; }                         // 5
+  
+  // ""     : { "id":"18165866", "name":"illinois_alma" },
+  // "gies" : { "id":"19615559", "name":"giesbusiness" }
+  Map<String, dynamic> twitterUserAccount([String category]) {
+    Map<String, dynamic> users = twitter['users'];
+    return (users != null) ? users[category ?? ''] : null;
+  }
+  
+  String twitterUserId([String category]) {
+    Map<String, dynamic> userAccount = twitterUserAccount(category);
+    return (userAccount != null) ? userAccount['id'] : null;
+  }
+  
+  String twitterUserName([String category]) {
+    Map<String, dynamic> userAccount = twitterUserAccount(category);
+    return (userAccount != null) ? userAccount['name'] : null;
+  }
 
   String get shibbolethClientId     { return secretShibboleth['client_id']; }
   String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
@@ -263,7 +278,7 @@ class Config with Service implements NotificationsListener {
 
   Future<String> _loadAsStringFromNet() async {
     try {
-      http.Response response = await Network().get(appConfigUrl, auth: NetworkAuth.App);
+      http.Response response = await Network().get(appConfigUrl, auth: NetworkAuth.ApiKey);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     } catch (e) {
       print(e.toString());
@@ -381,12 +396,24 @@ class Config with Service implements NotificationsListener {
     if (_appCanonicalId == null) {
       _appCanonicalId = appId;
       
-      final String iosSuffix = '.ios';
-      if (Platform.isIOS && (_appCanonicalId != null) && _appCanonicalId.endsWith(iosSuffix)) {
-        _appCanonicalId = _appCanonicalId.substring(0, _appCanonicalId.length - iosSuffix.length);
+      String platformSuffix = ".${Platform.operatingSystem.toLowerCase()}";
+      if ((_appCanonicalId != null) && _appCanonicalId.endsWith(platformSuffix)) {
+        _appCanonicalId = _appCanonicalId.substring(0, _appCanonicalId.length - platformSuffix.length);
       }
     }
     return _appCanonicalId;
+  }
+
+  String get appPlatformId {
+    if (_appPlatformId == null) {
+      _appPlatformId = appId;
+
+      String platformSuffix = ".${Platform.operatingSystem.toLowerCase()}";
+      if ((_appPlatformId != null) && !_appPlatformId.endsWith(platformSuffix)) {
+        _appPlatformId = _appPlatformId + platformSuffix;
+      }
+    }
+    return _appPlatformId;
   }
 
   String get appVersion {

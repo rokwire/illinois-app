@@ -5,6 +5,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.36] 2021-10-27
+### Changed
+- Temporarly enable ROKWIRE-API-KEY authentication for logging service calls [#868](https://github.com/rokwire/illinois-app/issues/868).
+- Removed ROKWIRE-API-KEY authentication in image requests [#870](https://github.com/rokwire/illinois-app/issues/870).
+- Switch twitter user account for GIES users [#872](https://github.com/rokwire/illinois-app/issues/872).
+- Update GIES notes [#874](https://github.com/rokwire/illinois-app/issues/874).
+- Rename "Student Guide" to "Campus Guide" [#875](https://github.com/rokwire/illinois-app/issues/875).
+
+## [3.0.35] 2021-10-26
+### Changed
+- Cleaned up network auth types, use old Shibboleth's access token in IlliniCash and iCard requests [#864](https://github.com/rokwire/illinois-app/issues/864).
+- GIES home widget updates [#866](https://github.com/rokwire/illinois-app/issues/866).
+
+## [3.0.34] 2021-10-25
+### Changed
+- Open groups detail panel on FCM group notification is received [#839](https://github.com/rokwire/illinois-app/issues/839).
+- Make the edit controls in phone login in Personal Info panel with white background to indicate that they are editable [#842](https://github.com/rokwire/illinois-app/issues/842).
+- Updated Home panel display for GIES only student [#860](https://github.com/rokwire/illinois-app/issues/860).
+- Updated styling for Home panel widgets [#861](https://github.com/rokwire/illinois-app/issues/861).
+### Fixed
+- Display all games in Athletics schedule [#857](https://github.com/rokwire/illinois-app/issues/857).
+
+## [3.0.33] 2021-10-22
+- Broken FCM messaging in iOS [#839](https://github.com/rokwire/illinois-app/issues/839).
+
+## [3.0.32] 2021-10-22
+### Added
+- Introduce HomeMyGroupsWidget [#852](https://github.com/rokwire/illinois-app/issues/852).
+- Display sport name for games in explore card [#844](https://github.com/rokwire/illinois-app/issues/844).
+- Introduce HomeHighlightedFeatures widget [#850](https://github.com/rokwire/illinois-app/issues/850).
+### Changed 
+- Change Home panel content order so twitter goes on top. [#848](https://github.com/rokwire/illinois-app/issues/848).
+
+## [3.0.31] 2021-10-21
+### Fixed
+- GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Changed
+- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836).
+- GroupDetailPanel: place "show older" button at the end of the posts list [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Added
+- Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
+
 ## [3.0.28] 2021-10-20
 ### Fixed
 - Fixed spelling in Wallet  [#830](https://github.com/rokwire/illinois-app/issues/830).

@@ -137,7 +137,7 @@ class _StudentGuideListPanelState extends State<StudentGuideListPanel> implement
       title = widget.category;
     }
     else if (widget.contentList != null) {
-      title = Localization().getStringEx('panel.student_guide_list.label.highlights.heading', 'Student Guide');
+      title = Localization().getStringEx('panel.student_guide_list.label.highlights.heading', 'Campus Guide');
     }
     
     return Scaffold(

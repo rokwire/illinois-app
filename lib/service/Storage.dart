@@ -544,6 +544,16 @@ class Storage with Service {
     _setStringWithName(inboxFirebaseMessagingTokenKey, value);
   }
 
+  static const String inboxFirebaseMessagingUserIdKey  = 'inbox_firebase_messaging_user_id';
+
+  String get inboxFirebaseMessagingUserId {
+    return _getStringWithName(inboxFirebaseMessagingUserIdKey);
+  }
+
+  set inboxFirebaseMessagingUserId(String value) {
+    _setStringWithName(inboxFirebaseMessagingUserIdKey, value);
+  }
+
   //////////////
   // Polls
 

@@ -27,6 +27,7 @@ import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
@@ -37,6 +38,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -97,9 +99,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
+      FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
+      FirebaseMessaging.notifyGroupsNotification,
       ExploreService.notifyEventDetail,
       Sports.notifyGameDetail,
       Localization.notifyStringsUpdated,
@@ -154,6 +158,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == DeviceCalendar.notifyShowConsoleMessage) {
       _showConsoleMessage(param);
     }
+    else if (name == FirebaseMessaging.notifyForegroundMessage){
+      _onFirebaseForegroundMessage(param);
+    }
     else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
     }
@@ -173,7 +180,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _onFirebaseGameDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _FavoritesSavedDialog.show(context);
@@ -182,13 +191,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _updateContent();
     }
     else if (name == Styles.notifyChanged) {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
     }
     else if (name == Polls.notifyPresentResult) {
       _presentPollResult(param);
+    }
+    else if (name == FirebaseMessaging.notifyGroupsNotification) {
+      _onFirebaseGroupsNotification(param);
     }
   }
 
@@ -240,9 +254,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         Analytics.instance.logPage(name:tabPanel?.runtimeType?.toString());
       }
 
-      setState(() {
+      if (mounted) {
+        setState(() {
+          _currentTabIndex = index;
+        });
+      }
+      else {
         _currentTabIndex = index;
-      });
+      }
     }
   }
 
@@ -385,6 +404,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
+  }
+
+  void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
+    String body = content["body"];
+    Function completion = content["onComplete"];
+    AppAlert.showDialogResult(context, body).then((value){
+      if(completion != null){
+        completion();
+      }
+    });
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
@@ -536,6 +565,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else {
       return null;
+    }
+  }
+
+  void _onFirebaseGroupsNotification(param) {
+    if(param is Map<String, dynamic>){
+      String groupId = param["entity_id"];
+      if(groupId != null) {
+        Groups().loadGroup(groupId).then((value){
+          if(value != null){
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: value,)));
+          }
+        }).catchError((err){
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+        });
+      }
     }
   }
 

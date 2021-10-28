@@ -85,7 +85,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
     return Visibility(visible: AppCollection.isCollectionNotEmpty(_promotedItems), child:
       Column(children: [
           SectionTitlePrimary(
-            title: Localization().getStringEx('widget.home_student_guide_highlights.label.heading', 'Student Guide Highlights'),
+            title: Localization().getStringEx('widget.home_student_guide_highlights.label.heading', 'Campus Guide Highlights'),
             iconPath: 'images/campus-tools.png',
             children: _buildPromotedList()
           ),

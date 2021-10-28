@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Inbox.dart';
@@ -17,6 +19,7 @@ import 'package:illinois/utils/Utils.dart';
 class Inbox with Service implements NotificationsListener {
 
   String   _fcmToken;
+  String   _fcmUserId;
   bool     _isServiceInitialized;
   DateTime _pausedDateTime;
 
@@ -49,6 +52,7 @@ class Inbox with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _fcmToken = Storage().inboxFirebaseMessagingToken;
+    _fcmUserId = Storage().inboxFirebaseMessagingUserId;
     _isServiceInitialized = true;
     _processFcmToken();
   }
@@ -174,39 +178,38 @@ class Inbox with Service implements NotificationsListener {
   // FCM Token
 
   void _processFcmToken() {
+    // We call _processFcmToken when FCM token changes or when user logs in/out.
     if (_isServiceInitialized == true) {
       String fcmToken = FirebaseMessaging().token;
-      if (Auth2().isLoggedIn) {
-        if ((fcmToken != null) && (fcmToken != _fcmToken)) {
-          _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
-            if (result) {
-              Storage().inboxFirebaseMessagingToken = _fcmToken = fcmToken;
-            }
-          });
-        }
-      }
-      else if (_fcmToken != null) {
-        _updateFCMToken(token: _fcmToken).then((bool result) {
+      String userId = Auth2().accountId;
+      if ((fcmToken != null) && (fcmToken != _fcmToken)) {
+        _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
           if (result) {
-            Storage().inboxFirebaseMessagingToken = _fcmToken = null;
+            Storage().inboxFirebaseMessagingToken = _fcmToken = fcmToken;
+          }
+        });
+      }
+      else if (userId != _fcmUserId) {
+        _updateFCMToken(token: fcmToken).then((bool result) {
+          if (result) {
+            Storage().inboxFirebaseMessagingUserId = _fcmUserId = userId;
           }
         });
       }
     }
   }
 
-  Future<bool> _updateFCMToken({String token, String previousToken, NetworkAuth auth}) async {
+  Future<bool> _updateFCMToken({String token, String previousToken}) async {
     if ((Config().notificationsUrl != null) && ((token != null) || (previousToken != null))) {
       String url = "${Config().notificationsUrl}/api/token";
       String body = AppJson.encode({
         'token': token,
-        'previous_token': previousToken
+        'previous_token': previousToken,
+        'app_platform': Platform.operatingSystem,
+        'app_version': Config().appVersion,
       });
-      if (auth == null) {
-        auth = Auth2().isLoggedIn ? NetworkAuth.Auth2 : NetworkAuth.App;
-      }
-      Response response = await Network().post(url, body: body, auth: auth);
-      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
+      Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
+      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;

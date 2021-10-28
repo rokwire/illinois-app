@@ -25,7 +25,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -467,7 +466,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover,)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -767,31 +766,31 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         return Container();
       }
     }
-    
-    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
-      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
-      listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16);
-      postsContent.add(Semantics(label: title, button: true, excludeSemantics: true,
-        child: InkWell(onTap: _loadNextPostsPage,
-          child: Container(height: 36,
-            child: Align(alignment: Alignment.topCenter,
-              child: (_loadingPostsPage == true) ?
-                SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white), )) :
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.textColorPrimary, fontSize: 16, decoration: TextDecoration.underline ),),
-            ),
-          )
-        )
-      )
-      );
-    }
-    
-    int last = _visibleGroupPosts.length - 1;
-    for (int i = last; i >= 0; i--) {
+
+    for (int i = 0; i <_visibleGroupPosts.length ; i++) {
       GroupPost post = _visibleGroupPosts[i];
-      if (i < last) {
+      if (i > 0) {
         postsContent.add(Container(height: 16));
       }
       postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group));
+    }
+
+    if ((_group != null) && _group.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {
+      String title = Localization().getStringEx('panel.group_detail.button.show_older.title', 'Show older');
+      listPadding = EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 16);
+      postsContent.add(Container(padding: EdgeInsets.only(top: 16),
+        child: Semantics(label: title, button: true, excludeSemantics: true,
+          child: InkWell(onTap: _loadNextPostsPage,
+              child: Container(height: 36,
+                child: Align(alignment: Alignment.topCenter,
+                  child: (_loadingPostsPage == true) ?
+                  SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )) :
+                  Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16, decoration: TextDecoration.underline ),),
+                ),
+              )
+          )
+      ))
+      );
     }
 
     return Column(children: <Widget>[
@@ -1044,7 +1043,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1054,7 +1053,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
@@ -1083,7 +1082,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add public event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapBrowseEvents();
@@ -1093,7 +1092,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     child: RibbonButton(
                         height: null,
                         leftIcon: "images/icon-edit.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create group event"),
+                        label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();

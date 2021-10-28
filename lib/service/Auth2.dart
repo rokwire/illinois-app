@@ -113,7 +113,7 @@ class Auth2 with Service implements NotificationsListener {
       Storage().auth2AnonymousProfile = _anonymousProfile = Auth2UserProfile.empty();
     }
 
-    if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValidAnonymous) {
+    if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValid) {
       if (!await authenticateAnonymously()) {
         Log.d("Anonymous Authentication Failed");
       }
@@ -222,19 +222,16 @@ class Auth2 with Service implements NotificationsListener {
   // Anonymous Authentication
 
   Future<bool> authenticateAnonymously() async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
-        'auth_type': auth2LoginTypeToString(Auth2LoginType.apiKey),
-        'app_type_identifier': Config().appCanonicalId,
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.anonymous),
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
-        'creds': {
-          'api_key': Config().rokwireApiKey, //TBD: This should be removed.
-        },
         'device': _deviceInfo
       });
       
@@ -244,7 +241,7 @@ class Auth2 with Service implements NotificationsListener {
         Auth2Token anonymousToken = Auth2Token.fromJson(AppJson.mapValue(responseJson['token']));
         Map<String, dynamic> params = AppJson.mapValue(responseJson['params']);
         String anonymousId = (params != null) ? AppJson.stringValue(params['anonymous_id']) : null;
-        if ((anonymousToken != null) && anonymousToken.isValidAnonymous && (anonymousId != null) && anonymousId.isNotEmpty) {
+        if ((anonymousToken != null) && anonymousToken.isValid && (anonymousId != null) && anonymousId.isNotEmpty) {
           Storage().auth2AnonymousId = _anonymousId = anonymousId;
           Storage().auth2AnonymousToken = _anonymousToken = anonymousToken;
           return true;
@@ -257,7 +254,7 @@ class Auth2 with Service implements NotificationsListener {
   // OIDC Authentication
 
   Future<bool> authenticateWithOidc() async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       NotificationService().notify(notifyLoginStarted);
       
@@ -303,14 +300,14 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> _processOidcAuthentication(Uri uri) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': uri?.toString(),
@@ -377,7 +374,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<_OidcLogin> _getOidcData() async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null)) {
 
       String url = "${Config().coreUrl}/services/auth/login-url";
       Map<String, String> headers = {
@@ -385,7 +382,7 @@ class Auth2 with Service implements NotificationsListener {
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.oidcIllinois),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'redirect_uri': REDIRECT_URI,
@@ -438,14 +435,14 @@ class Auth2 with Service implements NotificationsListener {
   // Phone Authentication
 
   Future<bool> authenticateWithPhone(String phoneNumber) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (phoneNumber != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': {
@@ -463,14 +460,14 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> handlePhoneAuthentication(String phoneNumber, String code) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (phoneNumber != null) && (code != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (phoneNumber != null) && (code != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.phoneTwilio),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': {
@@ -598,37 +595,43 @@ class Auth2 with Service implements NotificationsListener {
   // Refresh
 
   Future<Auth2Token> refreshToken() async {
-    if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
+    Auth2Token token = _token ?? _anonymousToken;
+    if ((Config().coreUrl != null) && (token?.refreshToken != null)) {
       try {
 
         if (_refreshTokenFuture != null) {
           Log.d("Auth2: will await refresh token");
           Response response = await _refreshTokenFuture;
           Log.d("Auth2: did await refresh token");
-          Auth2Token token = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
-          return ((token != null) && token.isValid) ? token : null;
+          Auth2Token responseToken = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
+          return ((responseToken != null) && responseToken.isValid) ? responseToken : null;
         }
         else {
           Log.d("Auth2: will refresh token");
 
-          _refreshTokenFuture = _refreshToken();
+          _refreshTokenFuture = _refreshToken(token?.refreshToken);
           Response response = await _refreshTokenFuture;
           _refreshTokenFuture = null;
 
           if (response?.statusCode == 200) {
             Map<String, dynamic> responseJson = AppJson.decodeMap(response?.body);
-            Auth2Token token = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
-            if ((token != null) && token.isValid) {
+            Auth2Token responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
+            if ((responseToken != null) && responseToken.isValid) {
               _refreshTonenFailCount = null;
 
               Log.d("Auth: did refresh token: ${token?.accessToken}");
-              Storage().auth2Token = _token = token;
+              if (_token != null) {
+                Storage().auth2Token = _token = responseToken;
+              }
+              else if (_anonymousToken != null) {
+                Storage().auth2AnonymousToken = _anonymousToken = responseToken;
+              }
 
               Map<String, dynamic> params = (responseJson != null) ? AppJson.mapValue(responseJson['params']) : null;
               Auth2Token uiucToken = (params != null) ? Auth2Token.fromJson(AppJson.mapValue(params['oidc_token'])) : null;
               Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
 
-              return token;
+              return responseToken;
             }
             else {
               Log.d("Auth: failed to refresh token: ${response?.body}");
@@ -658,22 +661,17 @@ class Auth2 with Service implements NotificationsListener {
     return null;
   }
 
-  Future<Response> _refreshToken() async {
-    if ((Config().coreUrl != null) && (_token?.refreshToken != null)) {
+  static Future<Response> _refreshToken(String refreshToken) async {
+    if ((Config().coreUrl != null) && (refreshToken != null)) {
       String url = "${Config().coreUrl}/services/auth/refresh";
       
-      //Map<String, String> headers = {
-      //  'Content-Type': 'application/json'
-      //};
-      //String post = AppJson.encode({
-      //  'api_key': Config().rokwireApiKey,
-      //  'refresh_token': _token?.refreshToken
-      //});
-
       Map<String, String> headers = {
-        'Content-Type': 'text/plain'
+        'Content-Type': 'application/json'
       };
-      String post = _token?.refreshToken;
+      String post = AppJson.encode({
+        'api_key': Config().rokwireApiKey,
+        'refresh_token': refreshToken
+      });
 
       return Network().post(url, headers: headers, body: post);
     }

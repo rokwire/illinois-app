@@ -188,7 +188,7 @@
 	"panel.browse.button.safer.hint":"",
 	"panel.browse.button.add_illini_cash.title": "添加伊利尼現金",
 	"panel.browse.button.add_illini_cash.hint": "",
-	"panel.browse.button.student_guide.title":"學生指南",
+	"panel.browse.button.student_guide.title":"Campus Guide",
 	"panel.browse.button.student_guide.hint":"",
 	"panel.browse.button.inbox.title":"收件箱",
 	"panel.browse.button.inbox.hint":"",
@@ -863,7 +863,7 @@
 	"panel.saved.label.dining":"用餐",
 	"panel.saved.label.news":"新聞",
 	"panel.saved.label.laundry": "洗衣房",
-	"panel.saved.label.student_guide": "學生指南",
+	"panel.saved.label.student_guide": "Campus Guide",
 	"panel.saved.label.inbox": "收件箱",
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
@@ -1520,8 +1520,8 @@
 	"panel.group_detail.button.about.title": "About",
 	"panel.group_detail.button.leave.title": "Leave",
 	"panel.group_detail.button.group.delete.title": "Delete group",
-	"panel.group_detail.button.group.add_event.title": "Add public event",
-	"panel.group_detail.button.group.create_event.title": "Create group event",
+	"panel.group_detail.button.group.add_event.title": "Add existing event",
+	"panel.group_detail.button.group.create_event.title": "Create new event",
 	"panel.group_detail.button.all_events.title": "See all events",
 	"panel.group_detail.label.upcoming_events": "Upcoming Events",
 	"panel.group_detail.label.upcoming_events.empty": "No upcoming events",
@@ -1761,7 +1761,7 @@
 	"panel.group.detail.post.create.button.send.title": "Send",
 	"panel.group.detail.post.update.button.update.title": "Update",
 
-	"panel.student_guide_categories.label.heading": "學生指南",
+	"panel.student_guide_categories.label.heading": "Campus Guide",
 	"panel.student_guide_categories.label.content.empty": "空的指南內容",
 
 	"panel.inbox.label.heading": "收件箱",
@@ -1774,7 +1774,7 @@
 	"panel.inbox.label.time.this_month": "這個月",
 	"panel.inbox.label.time.last_month": "上個月",
 
-	"panel.student_guide_list.label.highlights.heading": "學生指南",
+	"panel.student_guide_list.label.highlights.heading": "Campus Guide",
 	"panel.student_guide_list.label.highlights.section": "強調",
 	"panel.student_guide_list.label.campus_reminders.section": "校園提醒",
 	"panel.student_guide_list.label.content.empty": "空的指南內容",
@@ -1891,7 +1891,7 @@
 	"widget.home_upgrade_version.text": "歡迎使用伊利諾伊州的最新版本。 我們建議您先註銷，然後再次登錄以確保所有功能都可用。",
 	"widget.home_upgrade_version.button.got_it": "得到它了",
 
-	"widget.home_student_guide_highlights.label.heading": "學生指南亮點",
+	"widget.home_student_guide_highlights.label.heading": "Campus Guide Highlights",
 	"widget.home_student_guide_highlights.button.more.title": "查看全部",
 	"widget.home_student_guide_highlights.button.more.hint": "點按即可查看所有亮點",
 
@@ -2023,6 +2023,7 @@
 
 	"widget.gies.title": "iMBA 新生清單",
 	"widget.gies.notes.title": "要記住的事情",
+	"widget.gies.button.notes": "筆記",
 	"widget.gies.notes.label.add": "添加到註釋：",
 	"widget.gies.notes.button.save": "節省",
 	"widget.gies.notes.button.skip": "跳過",

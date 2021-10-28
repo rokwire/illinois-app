@@ -125,7 +125,7 @@ class IlliniCash with Service implements NotificationsListener {
       if (eligible == true) {
         String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
         String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${Auth2.analyticsUin}";
-        Response response = await Network().get(url, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
+        Response response = await Network().get(url, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
         if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
           String responseBody = response.body;
           Map<String, dynamic> jsonData = AppJson.decode(responseBody);
@@ -192,7 +192,7 @@ class IlliniCash with Service implements NotificationsListener {
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
-    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl );
+    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl );
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
       String responseBody = response?.body;
       List<dynamic> jsonListData = AppJson.decode(responseBody);
@@ -219,7 +219,7 @@ class IlliniCash with Service implements NotificationsListener {
     String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
-    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
+    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
 
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
 
@@ -251,7 +251,7 @@ class IlliniCash with Service implements NotificationsListener {
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
-    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.Access, analyticsUrl: analyticsUrl);
+    final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
 
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
 

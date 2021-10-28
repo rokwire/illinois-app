@@ -18,10 +18,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
@@ -72,6 +73,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   String get semanticLabel {
+    String category = _exploreCategory;
+    String sportName = _gameSportName;
+    if (AppString.isStringNotEmpty(sportName)) {
+      category += ' - $sportName';
+    }
     dynamic explore = widget.explore;
     String title = widget?.explore?.exploreTitle ?? "";
     String time = _getExploreTimeDisplayString();
@@ -83,7 +89,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     interests = interests.isNotEmpty ? interests.replaceRange(0, 0, Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:')) : "";
     String eventType = ExploreHelper.getExploreTypeText(explore)??"";
 
-    return "$_exploreCategory, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
+    return "$category, $title, $time, $locationText, $workTime, $convergeScore, $interests, $eventType";
   }
 
   @override
@@ -134,7 +140,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                   width: _smallImageSize,
                                   height: _smallImageSize,
                                   child: Image.network(
-                                    imageUrl, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
+                                    imageUrl, fit: BoxFit.fill,),),)),
                         ],),
                         _explorePaymentTypes(),
                         _buildConvergeButton(),
@@ -239,8 +245,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String leftLabel = "";
     TextStyle leftLabelStyle;
     if (AppString.isStringNotEmpty(category)) {
-      leftLabel = category;
-      leftLabel = (leftLabel != null) ? leftLabel.toUpperCase() : "";
+      leftLabel = category.toUpperCase();
+      String sportName = _gameSportName;
+      if (AppString.isStringNotEmpty(sportName)) {
+        leftLabel += ' - $sportName';
+      }
       leftLabelStyle = TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, letterSpacing: 0.86, color: Styles().colors.fillColorPrimary);
     } else {
       leftLabel = widget.explore.exploreTitle ?? "";
@@ -525,6 +534,15 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     } else {
       return '';
     }
+  }
+
+  String get _gameSportName {
+    if (!(widget.explore is Game)) {
+      return null;
+    }
+    Game game = widget.explore as Game;
+    SportDefinition sport = Sports().getSportByShortName(game.sport?.shortName);
+    return sport?.customName;
   }
 
   // NotificationsListener

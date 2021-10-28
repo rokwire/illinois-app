@@ -44,7 +44,6 @@ import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Voter.dart';
@@ -96,14 +95,12 @@ class Services {
     LocationServices(),
     BluetoothServices(),
     NativeCommunicator(),
-    LocalNotifications(),
     DeepLink(),
 
+    Auth2(),
     Localization(),
     Assets(),
     Styles(),
-//  Auth(),
-    Auth2(),
     Analytics(),
     FirebaseMessaging(),
     Sports(),

@@ -37,7 +37,7 @@ class AppLivecycle with Service {
   static const String notifyStateChanged  = "edu.illinois.rokwire.applivecycle.state.changed";
 
   WidgetsBindingObserver _bindingObserver;
-  AppLifecycleState _state;
+  AppLifecycleState _state = AppLifecycleState.resumed; // initial value
 
   // Singletone Instance
 

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -17,9 +18,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeGiesWidget extends StatefulWidget {
 
+  static const String notifyPageChanged  = "edu.illinois.rokwire.gies.widget.page.changed";
+
   final StreamController<void> refreshController;
 
-  HomeGiesWidget({this.refreshController});
+  HomeGiesWidget({Key key, this.refreshController}) : super(key: key);
 
   @override
   _HomeGiesWidgetState createState() => _HomeGiesWidgetState();
@@ -31,8 +34,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
   List<dynamic> _pages;
   List<String>  _navigationPages;
-  
-  
+   
   Map<int, Set<String>> _progressPages;
   Set<String> _completedPages;
   List<int> _progressSteps;
@@ -56,7 +58,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       });
     }
 
-    rootBundle.loadString('assets/gies.wizard.json').then((String assetsContentString) {
+    rootBundle.loadString('assets/gies.json').then((String assetsContentString) {
       setState(() {
         _pages = AppJson.decodeList(assetsContentString);
         _buildProgressSteps();
@@ -85,11 +87,37 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   Widget _buildHeader() {
+    return Container(color: Styles().colors.fillColorPrimary, child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
+        Column(children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Expanded(child: 
+              Text(Localization().getStringEx('widget.gies.title', 'iMBA New student checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+          ],),
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+            Expanded(child: Container()),
+            Padding(padding: EdgeInsets.only(top: 3), child:
+              _buildProgress(),
+            ),
+            Expanded(child:
+              Align(alignment: Alignment.centerRight, child:
+                InkWell(onTap: () => _onTapNotes(), child:
+                  Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
+                    Text(Localization().getStringEx('widget.gies.button.notes', 'Notes'), style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.bold, fontSize: 16, decoration: TextDecoration.underline, ),), // Styles().colors.fillColorSecondary
+                  ),
+                ),
+              ),
+            ),
+          ],),
+        ],),
+      ),);
+  }
+
+  Widget _buildProgress() {
 
     List<Widget> progressWidgets = <Widget>[];
     if (_progressSteps != null) {
-      Map<String, dynamic> curentPage = _currentPage;
-      int currentProgress = (curentPage != null) ? (AppJson.intValue(curentPage['progress']) ?? AppJson.intValue(curentPage['progress-possition'])) : null;
+      int currentPageProgress = _currentPageProgress;
 
       for (int progressStep in _progressSteps) {
         
@@ -98,7 +126,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         String textFamily;
         bool progressStepCompleted = _progressStepCompleted(progressStep);
 
-        if ((currentProgress != null) && (progressStep == currentProgress)) {
+        if ((currentPageProgress != null) && (progressStep == currentPageProgress)) {
           borderWidth = 3;
           borderColor = textColor = progressStepCompleted ? Colors.greenAccent : Colors.white;
           textFamily = Styles().fontFamilies.extraBold;
@@ -115,31 +143,40 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         }
         
         progressWidgets.add(
-          Semantics( label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentProgress)? "Current page":"Not Completed"),
-            child: InkWell(onTap: () => _onTapProgress(progressStep), child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
-              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
-                Align(alignment: Alignment.center, child:
-                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: "",),),),),),));
+          Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
+            InkWell(onTap: () => _onTapProgress(progressStep), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
+//              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: borderColor, width: borderWidth),), child:
+//              Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.rectangle, border: Border(bottom: BorderSide(color: borderColor, width: borderWidth)),), child:
+                Container(width: 28, height: 28, padding: EdgeInsets.only(top: 8, left: 8), child:
+//                Align(alignment: Alignment.center, child:
+//                  Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: "",),),),),),));
+/*                  Column(mainAxisSize: MainAxisSize.min, children:<Widget>[
+                      Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: '',),
+                      Padding(padding: EdgeInsets.only(bottom: 3 - borderWidth), child:
+                        Container(width: 12, height: borderWidth, color: borderColor,)
+                      ),
+                    ]),*/
+                    Stack(children:<Widget>[
+                      Container(width: 12, child:
+                        Align(alignment: Alignment.topCenter, child: 
+                          Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16,), semanticsLabel: '',),
+                        )
+                      ),
+                      Padding(padding: EdgeInsets.only(top: 17, bottom: 3 - borderWidth), child:
+                        Container(width: 12, height: borderWidth, color: borderColor,)
+                      ),
+                    ]),
+//                ),
+                ),
+              ),
+            ),
+          )
+        );
       }
     }
-    if (progressWidgets.isNotEmpty) {
-      progressWidgets.insert(0, Expanded(child: Container()));
-      progressWidgets.insert(progressWidgets.length, Expanded(child: Container()));
-    }
 
-    return Container(color: Styles().colors.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 20, top: 10), child:
-        Column(children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(child: 
-              Text(Localization().getStringEx('widget.gies.title', 'iMBA New student checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
-          ],),
-          Padding(padding: EdgeInsets.only(top: 3), child:
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: progressWidgets,),
-          ),
-        ],),
-      ),);
+    return progressWidgets.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: progressWidgets) : Container();
   }
 
   Widget _buildSlant() {
@@ -169,7 +206,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           (giesUri.path == uri.path))
       {
         String pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
-        _pushPage(pageId);
+        _pushPage(_getPage(id: pageId));
       }
       else if (AppUrl.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -205,11 +242,10 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     String pushPageId = AppJson.stringValue(button['page']);
     if ((pushPageId != null) && pushPageId.isNotEmpty) {
-      Map<String, dynamic> currentPage = _getPage(id: currentPageId);
-      int currentPageProgress = (currentPage != null) ? (AppJson.intValue(currentPage['progress']) ?? AppJson.intValue(currentPage['progress-possition'])) : null;
+      int currentPageProgress = getPageProgress(_currentPage);
       
       Map<String, dynamic> pushPage = _getPage(id: pushPageId);
-      int pushPageProgress = (pushPage != null) ? (AppJson.intValue(pushPage['progress']) ?? AppJson.intValue(pushPage['progress-possition'])) : null;
+      int pushPageProgress = getPageProgress(pushPage);
 
       if ((currentPageProgress != null) && (pushPageProgress != null) && (currentPageProgress < pushPageProgress)) {
         while (_progressStepCompleted(pushPageProgress)) {
@@ -218,8 +254,8 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
           String nextPushPageId = (nextPushPage != null) ? AppJson.stringValue(nextPushPage['id']) : null;
           if ((nextPushPageId != null) && nextPushPageId.isNotEmpty) {
             pushPage = nextPushPage;
-            pushPageProgress = nextPushPageProgress;
             pushPageId = nextPushPageId;
+            pushPageProgress = nextPushPageProgress;
           }
           else {
             break;
@@ -227,7 +263,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         }
       }
 
-      _pushPage(pushPageId);
+      _pushPage(pushPage);
     }
   }
 
@@ -235,15 +271,15 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     _popPage();
   }
 
+  void _onTapNotes() {
+    _showPopup(_pagePopup(_currentPage) ?? 'notes');
+  }
+
+
   void _onTapProgress(int progress) {
-    Map<String, dynamic> currentPage = _currentPage;
-    int currentProgress = (currentPage != null) ? (AppJson.intValue(currentPage['progress']) ?? AppJson.intValue(currentPage['progress-possition'])) : null;
-    if (currentProgress != progress) {
-      Map<String, dynamic> progressPage = _getPage(progress: progress);
-      String pageId = (progressPage != null) ? AppJson.stringValue(progressPage['id']) : null;
-      if (pageId != null) {
-        _pushPage(pageId);
-      }
+    int currentPageProgress = _currentPageProgress;
+    if (currentPageProgress != progress) {
+      _pushPage(_getPage(progress: progress));
     }
   }
 
@@ -255,21 +291,39 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     return _getPage(id: _currentPageId);
   }
 
-  void _pushPage(String pageId) {
-    if ((pageId != null) && pageId.isNotEmpty && _hasPage(id: pageId)) {
+  int get _currentPageProgress {
+    return getPageProgress(_currentPage);
+  }
+
+  static int getPageProgress(Map<String, dynamic> page) {
+    return (page != null) ? (AppJson.intValue(page['progress']) ?? AppJson.intValue(page['progress-possition'])) : null;
+  }
+
+  void _pushPage(Map<String, dynamic> pushPage) {
+    String pushPageId = (pushPage != null) ? AppJson.stringValue(pushPage['id']) : null;
+    if ((pushPageId != null) && pushPageId.isNotEmpty && _hasPage(id: pushPageId)) {
+      int currentPageProgress = getPageProgress(_currentPage);
+      int pushPageProgress = getPageProgress(pushPage);
       setState(() {
-        _navigationPages.add(pageId);
+        if (currentPageProgress == pushPageProgress) {
+          _navigationPages.add(pushPageId);
+        }
+        else {
+          _navigationPages = [pushPageId];
+        }
       });
       Storage().giesNavPages = _navigationPages;
+      NotificationService().notify(HomeGiesWidget.notifyPageChanged);
     }
   }
 
   void _popPage() {
     if (1 < _navigationPages.length) {
-      _navigationPages.removeLast();
+      setState(() {
+        _navigationPages.removeLast();
+      });
       Storage().giesNavPages = _navigationPages;
-
-      setState(() {});
+      NotificationService().notify(HomeGiesWidget.notifyPageChanged);
     }
   }
 
@@ -367,22 +421,49 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     return AppJson.boolValue(button['completes']) == true;
   }
 
+  static String _pagePopup(Map page) {
+    List<dynamic> buttons = (page != null) ? AppJson.listValue(page['buttons']) : null;
+    if (buttons != null) {
+      String popup;
+      for (dynamic button in buttons) {
+        if ((button is Map) && ((popup = _pageButtonPopup(button)) != null)) {
+          return popup;
+        }
+      }
+    }
+    return null;
+  }
+
+  static String _pageButtonPopup(Map button) {
+    return AppJson.stringValue(button['popup']);
+  }
+
   bool _progressStepCompleted(int progressStep) {
     Set<String> progressPages = _progressPages[progressStep];
     return (progressPages == null) || _completedPages.containsAll(progressPages);
   }
 
-  String get _currentNotes {
-    String notes = Storage().giesNotes ?? '';
+  String _currentNotes(List<dynamic> notes) {
+
     Map<String, dynamic> currentPage = _currentPage;
-    String currentTitle = (currentPage != null) ? AppJson.stringValue(currentPage['title']) : null;
-    if ((currentTitle != null) && !notes.contains(currentTitle)) {
-      if (notes.isNotEmpty && !notes.endsWith('\n\n')) {
-        notes += notes.endsWith('\n') ? '\n' : '\n\n';
+    String currentPageId = (currentPage != null) ? AppJson.stringValue(currentPage['id']) : null;
+    if ((notes != null) && (currentPageId != null)) {
+      for (dynamic note in notes) {
+        if (note is Map) {
+          String noteId = AppJson.stringValue(note['id']);
+          if (noteId == currentPageId) {
+            return currentPageId;
+          }
+        }
       }
-      notes += "$currentTitle:\n";
+
+      notes.add({
+        'id': currentPageId,
+        'title': AppJson.stringValue(currentPage['title']),
+      });
     }
-    return notes;
+
+    return currentPageId;
   }
 
   void _resetNotes() {
@@ -392,10 +473,12 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   Future<void> _showPopup(String popupId) async {
     return showDialog(context: context, builder: (BuildContext context) {
       if (popupId == 'notes') {
-        return _GiesNotesWidget(notes: Storage().giesNotes ?? '');
+        return _GiesNotesWidget(notes: AppJson.decodeList(Storage().giesNotes) ?? []);
       }
       else if (popupId == 'current-notes') {
-        return _GiesNotesWidget(notes: _currentNotes);
+        List<dynamic> notes = AppJson.decodeList(Storage().giesNotes) ?? [];
+        String focusNodeId =  _currentNotes(notes); 
+        return _GiesNotesWidget(notes: notes, focusNoteId: focusNodeId,);
       }
       else {
         return Container();
@@ -634,39 +717,72 @@ class _GiesPageWidget extends StatelessWidget {
 }
 
 class _GiesNotesWidget extends StatefulWidget {
-  final String notes;
-  _GiesNotesWidget({this.notes});
+  final List<dynamic> notes;
+  final String focusNoteId;
+  _GiesNotesWidget({this.notes, this.focusNoteId});
   _GiesNotesWidgetState createState() => _GiesNotesWidgetState();
 }
 
 class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
 
-  TextEditingController _textEditingController;
-  FocusNode _textFocusNode = FocusNode();
-  ScrollController _scrollController;
+  Map<String, TextEditingController> _textEditingControllers = Map<String, TextEditingController>();
+  FocusNode _focusNode = FocusNode();
+  GlobalKey _focusKey = GlobalKey();
 
   @override
   void initState() {
-    _textFocusNode = FocusNode();
-    _textEditingController = TextEditingController(text: widget.notes);
-    _scrollController = ScrollController();
+    _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut).then((_) {
-        _textFocusNode.requestFocus();
-      });
+      if (_focusKey.currentContext != null) {
+        Scrollable.ensureVisible(_focusKey.currentContext, duration: Duration(milliseconds: 300)).then((_) {
+          _focusNode.requestFocus();
+        });
+      }
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    _textFocusNode.dispose();
-    _textEditingController.dispose();
+    _focusNode.dispose();
+    _textEditingControllers.forEach((key, value) {
+      value.dispose();
+    });
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    List<Widget> noteWidgets = <Widget>[];
+    if ((widget.notes != null) && widget.notes.isNotEmpty) {
+      //Text(Localization().getStringEx('widget.gies.notes.label.add', 'Add to Notes:'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+      for (dynamic note in widget.notes) {
+        if (note is Map) {
+          String noteId = AppJson.stringValue(note['id']);
+          String title = AppJson.stringValue(note['title']);
+          String text = AppJson.stringValue(note['text']);
+
+          noteWidgets.add(
+            Padding(padding: EdgeInsets.only(bottom: 8), child:
+              Column(key: (noteId == widget.focusNoteId) ? _focusKey : null, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+                Container(height: 4,),
+                TextField(
+                  autocorrect: false,
+                  focusNode: (noteId == widget.focusNoteId) ? _focusNode : null,
+                  controller: _textEditingControllers[noteId] ?? (_textEditingControllers[noteId] = TextEditingController(text: text ?? '')),
+                  maxLines: null,
+                  decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                  style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                ),
+              ])
+            )
+          );
+        }
+      }
+    }
+
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
         Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -676,7 +792,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                     Row(children: [
                       Expanded(child:
-                          Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
+                        Text(Localization().getStringEx('widget.gies.notes.title', 'Things to Remember'), style: TextStyle(fontSize: 20, color: Colors.white),),
                       ),
                       Semantics(
                         label: Localization().getStringEx("dialog.close.title","Close"), button: true,
@@ -696,61 +812,55 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
             ],
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(Localization().getStringEx('widget.gies.notes.label.add', 'Add to Notes:'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
-              Container(height: 4,),
-              TextField(
-                focusNode: _textFocusNode,
-                controller: _textEditingController,
-                scrollController: _scrollController,
-                minLines: 10, maxLines: 10,
-                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+            Column(children: [
+              Container(height: 240, child: noteWidgets.isNotEmpty
+                ? SingleChildScrollView(child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: noteWidgets,),
+                  )
+                : Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Expanded(child: Container(),),
+                    Row(children: [
+                      Expanded(child:
+                        Text('No saved notes yet.', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),),
+                      ),
+                    ]),
+                    Expanded(child: Container(),),
+                  ],),
               ),
               Container(height: 16,),
-              
-              Center(child:
-                Wrap(runSpacing: 8, spacing: 8, children: <Widget>[
-                  Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    RoundedButton(
-                      label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
-                      backgroundColor: Colors.transparent,
-                      textColor: Styles().colors.fillColorPrimary,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      padding: EdgeInsets.symmetric(horizontal: 16, ),
-                      borderWidth: 2, height: 42,
-                      onTap: () {
-                        Analytics.instance.logAlert(text: "Things to Remember", selection: "Save");
-                        Storage().giesNotes = _textEditingController.text;
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ]),
-                  /*Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    RoundedButton(
-                      label: Localization().getStringEx('widget.gies.notes.button.skip', 'Skip'),
-                      backgroundColor: Colors.transparent,
-                      textColor: Styles().colors.fillColorPrimary,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      padding: EdgeInsets.symmetric(horizontal: 16, ),
-                      borderWidth: 2, height: 42,
-                      onTap: () {
-                        Analytics.instance.logAlert(text: "Things to Remember", selection: "Skip");
-                        Navigator.of(context).pop();
-                      },
-                      ),
-                    ]),*/
-
-                ],)
-              ,),
-
-
-            ],),
+              Visibility(visible: (widget.notes != null) && widget.notes.isNotEmpty, child:
+                RoundedButton(
+                  label: Localization().getStringEx('widget.gies.notes.button.save', 'Save'),
+                  backgroundColor: Colors.transparent,
+                  textColor: Styles().colors.fillColorPrimary,
+                  borderColor: Styles().colors.fillColorSecondary,
+                  padding: EdgeInsets.symmetric(horizontal: 16, ),
+                  borderWidth: 2, height: 42,
+                  onTap: () => _onSave(),
+                ),
+              ),
+            ]),
           )
         ],
       )
       ),
     );
-
   }
+
+  void _onSave() {
+    Analytics.instance.logAlert(text: "Things to Remember", selection: "Save");
+
+    if (widget.notes != null) {
+      for (dynamic note in widget.notes) {
+        if (note is Map) {
+          String noteId = AppJson.stringValue(note['id']);
+          note['text'] = _textEditingControllers[noteId]?.text;
+        }
+      }
+    }
+
+    Storage().giesNotes = AppJson.encode(widget.notes);
+    Navigator.of(context).pop();
+  }
+
 }

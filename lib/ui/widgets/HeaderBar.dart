@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
 //import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/ui/SearchPanel.dart';
@@ -192,7 +191,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
+                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl, fit: BoxFit.cover,)) : Container(),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors.fillColorSecondaryTransparent05, left: false),
                   child: Container(

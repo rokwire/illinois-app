@@ -81,16 +81,19 @@ class Groups /* with Service */ {
   // Groups APIs
 
   Future<List<Group>> loadGroups({bool myGroups = false}) async {
-    String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
-    try {
-      Response response = await Network().get(url, auth: myGroups ? NetworkAuth.Auth2 : (Auth2().isOidcLoggedIn) ? NetworkAuth.Auth2 : NetworkAuth.App,);
-      int responseCode = response?.statusCode ?? -1;
-      String responseBody = response?.body;
-      List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
-      return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
-    } catch (e) {
-      print(e);
+    if ((Config().groupsUrl != null) && ((myGroups != true) || Auth2().isLoggedIn)) {
+      try {
+        String url = myGroups ? '${Config().groupsUrl}/user/groups' : '${Config().groupsUrl}/groups';
+        Response response = await Network().get(url, auth: NetworkAuth.Auth2,);
+        int responseCode = response?.statusCode ?? -1;
+        String responseBody = response?.body;
+        List<dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeList(responseBody) : null;
+        return (groupsJson != null) ? Group.listFromJson(groupsJson) : null;
+      } catch (e) {
+        print(e);
+      }
     }
+    
     return null;
   }
 
@@ -100,7 +103,7 @@ class Groups /* with Service */ {
     }
     String encodedTExt = Uri.encodeComponent(searchText);
     String url = '${Config().groupsUrl}/groups?title=$encodedTExt';
-    Response response = await Network().get(url, auth: (Auth2().isOidcLoggedIn) ? NetworkAuth.Auth2 : NetworkAuth.App);
+    Response response = await Network().get(url, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
     String responseBody = response?.body;
     if (responseCode == 200) {
@@ -121,7 +124,7 @@ class Groups /* with Service */ {
     if(AppString.isStringNotEmpty(groupId)) {
       String url = '${Config().groupsUrl}/groups/$groupId';
       try {
-        Response response = await Network().get(url, auth: Auth2().isOidcLoggedIn ? NetworkAuth.Auth2 : NetworkAuth.App,);
+        Response response = await Network().get(url, auth: NetworkAuth.Auth2,);
         int responseCode = response?.statusCode ?? -1;
         String responseBody = response?.body;
         Map<String, dynamic> groupsJson = ((responseBody != null) && (responseCode == 200)) ? AppJson.decodeMap(responseBody) : null;

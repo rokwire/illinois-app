@@ -52,7 +52,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       FlexUI.notifyChanged,
     ]);
 
-    _contentListCodes = FlexUI()['campus_tools'] ?? [];
+    _contentListCodes = FlexUI()['home.campus_tools'] ?? [];
     super.initState();
   }
 
@@ -152,7 +152,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _updateContentListCodes() {
-    List<dynamic> contentListCodes = FlexUI()['campus_tools'];
+    List<dynamic> contentListCodes = FlexUI()['home.campus_tools'];
     if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;

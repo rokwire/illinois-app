@@ -521,7 +521,7 @@ class _EventContent extends StatefulWidget {
 }
 
 class _EventContentState extends State<_EventContent> implements NotificationsListener {
-
+  static const double _smallImageSize = 64;
 
   @override
   void initState() {
@@ -550,9 +550,10 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     bool isFavorite = widget.event.isFavorite;
 
     List<Widget> content = [
-      Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
-      Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
-      ),
+      Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
+        Container(constraints: BoxConstraints(minHeight: 64), child:
+          Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
+      )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
@@ -566,38 +567,52 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
         Analytics().logSelect(target: "Group Event");
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
       },
-          child: Padding(padding: EdgeInsets.all(16), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
+          child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
           )
       ),
       Align(alignment: Alignment.topRight, child:
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Semantics(
-              label: isFavorite ? Localization().getStringEx(
-                  'widget.card.button.favorite.off.title',
-                  'Remove From Favorites') : Localization().getStringEx(
-                  'widget.card.button.favorite.on.title',
-                  'Add To Favorites'),
-              hint: isFavorite ? Localization().getStringEx(
-                  'widget.card.button.favorite.off.hint', '') : Localization()
-                  .getStringEx('widget.card.button.favorite.on.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: GestureDetector(onTap: _onFavoriteTap, child:
-                Container(width: 42, height: 42, alignment: Alignment.center, child:
-                  Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Semantics(
+                label: isFavorite ? Localization().getStringEx(
+                    'widget.card.button.favorite.off.title',
+                    'Remove From Favorites') : Localization().getStringEx(
+                    'widget.card.button.favorite.on.title',
+                    'Add To Favorites'),
+                hint: isFavorite ? Localization().getStringEx(
+                    'widget.card.button.favorite.off.hint', '') : Localization()
+                    .getStringEx('widget.card.button.favorite.on.hint', ''),
+                button: true,
+                excludeSemantics: true,
+                child: GestureDetector(onTap: _onFavoriteTap, child:
+                  Container(width: 42, height: 42, alignment: Alignment.center, child:
+                    Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+                  ),
+                )),
+
+              !widget.isAdmin? Container(width: 0, height: 0) :
+              Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                GestureDetector(onTap: () { _onOptionsTap();}, child:
+                  Container(width: 42, height: 42, alignment: Alignment.center, child:
+                    Image.asset('images/icon-groups-options-orange.png'),
+                  ),
                 ),
-              )),
-                
-            !widget.isAdmin? Container(width: 0, height: 0) :
-            Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-              GestureDetector(onTap: () { _onOptionsTap();}, child:
-                Container(width: 42, height: 42, alignment: Alignment.center, child:
-                  Image.asset('images/icon-groups-options-orange.png'),
-                ),
-              ),
-            )
-      ],),)
+              )
+            ],),
+            Visibility(visible:
+                AppString.isStringNotEmpty(widget?.event?.exploreImageURL),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
+                  child: SizedBox(
+                    width: _smallImageSize,
+                    height: _smallImageSize,
+                    child: Image.network(
+                      widget.event.exploreImageURL, fit: BoxFit.fill,),),)),
+                ])
+                )
     ],);
   }
 
@@ -879,7 +894,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 // GroupCard
 
 
-enum GroupCardDisplayType { myGroup, allGroups }
+enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
 class GroupCard extends StatelessWidget {
   final Group group;
@@ -908,20 +923,26 @@ class GroupCard extends StatelessWidget {
                         child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 0),
                             child: Text(group?.title ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                                 style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))))
                   ]),
+                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
                   Visibility(
                     visible: (group?.currentUserIsAdmin ?? false) && (group.pendingCount > 0),
                     child: Text(pendingCountText ?? "",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 16,
-                          color: Styles().colors.textBackgroundVariant
+                          color: Styles().colors.textBackgroundVariant,
+
                       ),
                     ),
                   ),
                   Container(height: 4),
-                  displayType == GroupCardDisplayType.allGroups ? Container() : _buildUpdateTime()
+                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups ) ? _buildUpdateTime() : Container()
                 ]))));
   }
 
@@ -947,7 +968,9 @@ class GroupCard extends StatelessWidget {
         leftContent.add(Container(height: 6,));
       }
       leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),
+          overflow: TextOverflow.ellipsis,
+          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
       );
     }
 
@@ -990,8 +1013,10 @@ class GroupCard extends StatelessWidget {
   Widget _buildUpdateTime() {
     return Container(
         child: Text(
-      _timeUpdatedText,
-      style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface),
+          _timeUpdatedText,
+          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface,),
     ));
   }
 

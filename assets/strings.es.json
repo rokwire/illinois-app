@@ -188,7 +188,7 @@
     "panel.browse.button.safer.hint":"",
     "panel.browse.button.add_illini_cash.title": "Añadir Illini Cash",
     "panel.browse.button.add_illini_cash.hint": "",
-    "panel.browse.button.student_guide.title":"Guía de estudiante",
+    "panel.browse.button.student_guide.title":"Campus Guide",
     "panel.browse.button.student_guide.hint":"",
     "panel.browse.button.inbox.title":"Bandeja de entrada",
     "panel.browse.button.inbox.hint":"",
@@ -863,7 +863,7 @@
     "panel.saved.label.dining": "Comida",
     "panel.saved.label.news": "Noticias",
     "panel.saved.label.laundry": "Lavandería",
-    "panel.saved.label.student_guide": "Guía de estudiante",
+    "panel.saved.label.student_guide": "Campus Guide",
     "panel.saved.label.inbox": "Bandeja de entrada",
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
     "panel.saved.notifications.enable.label": "Permitir notificaciones",
@@ -1522,8 +1522,8 @@
     "panel.group_detail.button.about.title": "About",
     "panel.group_detail.button.leave.title": "Leave",
     "panel.group_detail.button.group.delete.title": "Delete group",
-    "panel.group_detail.button.group.add_event.title": "Add public event",
-    "panel.group_detail.button.group.create_event.title": "Create group event",
+    "panel.group_detail.button.group.add_event.title": "Add existing event",
+    "panel.group_detail.button.group.create_event.title": "Create new event",
     "panel.group_detail.button.all_events.title": "See all events",
     "panel.group_detail.label.upcoming_events": "Upcoming Events",
     "panel.group_detail.label.upcoming_events.empty": "No upcoming events",
@@ -1763,7 +1763,7 @@
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
 
-    "panel.student_guide_categories.label.heading": "Guía de estudiante",
+    "panel.student_guide_categories.label.heading": "Campus Guide",
     "panel.student_guide_categories.label.content.empty": "Contenido de la guía vacía",
 
     "panel.inbox.label.heading": "Bandeja de entrada",
@@ -1776,7 +1776,7 @@
     "panel.inbox.label.time.this_month": "Este mes",
     "panel.inbox.label.time.last_month": "El mes pasado",
 
-    "panel.student_guide_list.label.highlights.heading": "Guía de estudiante",
+    "panel.student_guide_list.label.highlights.heading": "Campus Guide",
     "panel.student_guide_list.label.highlights.section": "Reflejos",
     "panel.student_guide_list.label.campus_reminders.section": "Recordatorios del campus",
     "panel.student_guide_list.label.content.empty": "Contenido de la guía vacía",
@@ -1893,7 +1893,7 @@
     "widget.home_upgrade_version.text": "Bienvenido a la última versión de Illinois. Le recomendamos que cierre sesión y luego vuelva a iniciar sesión para asegurarse de que todas las funciones estén disponibles.",
     "widget.home_upgrade_version.button.got_it": "Entendido",
 
-    "widget.home_student_guide_highlights.label.heading": "Aspectos destacados de la guía del estudiante",
+    "widget.home_student_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home_student_guide_highlights.button.more.title": "Ver todo",
     "widget.home_student_guide_highlights.button.more.hint": "Toca para ver todos los aspectos destacados",
 
@@ -2024,6 +2024,7 @@
     "widget.group_card.status.hint": "status: %s ,for: ",
 
     "widget.gies.title": "Lista de verificación para nuevos estudiantes de iMBA",
+    "widget.gies.button.notes": "Notas",
     "widget.gies.notes.title": "Cosas para recordar",
     "widget.gies.notes.label.add": "Agregar a notas:",
     "widget.gies.notes.button.save": "Ahorrar",

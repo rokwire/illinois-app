@@ -35,7 +35,6 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/StudentGuide.dart';
-import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -124,7 +123,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     } else {
       bool granted = await NativeCommunicator().queryNotificationsAuthorization("request");
       if (granted) {
-        LocalNotifications().initPlugin();
         Analytics.instance.updateNotificationServices();
       }
       print('Notifications granted: $granted');
@@ -186,7 +184,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                               headingIconResource: 'images/icon-news.png',
                               items: _laundries,),),
                             _buildItemsSection(
-                              headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Student Guide'),
+                              headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Campus Guide'),
                               headingIconResource: 'images/icon-news.png',
                               items: _guideItems,),
                             _buildItemsSection(

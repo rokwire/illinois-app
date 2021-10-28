@@ -29,7 +29,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -182,7 +181,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
                               AppString.isStringNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover, headers: Network.appAuthHeaders))
+                                  ? Positioned.fill(child: Image.network(_imageUrl, fit: BoxFit.cover))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.white), child: Container(height: 30)),
@@ -475,12 +474,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       ],
                                     ),
                                   ),
-                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
+                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                       hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _allDay, excludeSemantics: true, child:
                                   ToggleRibbonButton(
                                     height: null,
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                                    label: Localization().getStringEx("panel.create_event.date_time.all_day","All Day"),
+                                    label: Localization().getStringEx("panel.create_event.date_time.all_day","All day"),
                                     toggled: _allDay,
                                     onTap: _onAllDayToggled,
                                     context: context,

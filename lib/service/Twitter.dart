@@ -6,7 +6,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class Twitter {
+class Twitter  /* with Service */ {
 
   static const String _tweetFieldsUrlParam = "tweet.fields=attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,public_metrics,possibly_sensitive,referenced_tweets,reply_settings,source,text,withheld";
   static const String _userFieldsUrlParam = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld";
@@ -25,9 +25,9 @@ class Twitter {
 
   // Service
 
-  Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String token, bool noCache}) async {
-    if ((Config().contentUrl != null) && (Config().twitterUserId != null)) {
-      String url = "${Config().contentUrl}/twitter/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
+  Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String userCategory, String token, bool noCache}) async {
+    if ((Config().contentUrl != null) && (Config().twitterUserId(userCategory) != null)) {
+      String url = "${Config().contentUrl}/twitter/users/${Config().twitterUserId(userCategory)}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
       if (token != null) {
         url += "&pagination_token=$token";
       }
@@ -43,7 +43,7 @@ class Twitter {
         "Cache-Control" : "no-cache"
       } : null;
       
-      Response response = await Network().get(url, auth: NetworkAuth.App, headers: headers);
+      Response response = await Network().get(url, auth: NetworkAuth.Auth2, headers: headers);
       String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
       return TweetsPage.fromJson(AppJson.decodeMap(responseString));
@@ -51,9 +51,9 @@ class Twitter {
     return null;
   }
 
-  /*Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String token}) async {
-    if ((Config().twitterUrl != null) && (Config().twitterUserId != null)) {
-      String url = "${Config().twitterUrl}/users/${Config().twitterUserId}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
+  /*Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String userCategory, String token}) async {
+    if ((Config().twitterUrl != null) && (Config().twitterUserId(userCategory) != null)) {
+      String url = "${Config().twitterUrl}/users/${Config().twitterUserId(userCategory)}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
       if (token != null) {
         url += "&pagination_token=$token";
       }
