@@ -491,14 +491,14 @@ class Auth2 with Service implements NotificationsListener {
   // Email Authentication
 
   Future<bool> authenticateWithEmail(String emailAddress, String password, { bool signUp }) async {
-    if ((Config().coreUrl != null) && (Config().appCanonicalId != null) && (Config().coreOrgId != null) && (emailAddress != null) && (password != null)) {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (emailAddress != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
       String post = AppJson.encode({
         'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
-        'app_type_identifier': Config().appCanonicalId,
+        'app_type_identifier': Config().appPlatformId,
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': {
