@@ -23,6 +23,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginEmailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -38,8 +39,10 @@ class Onboarding2LoginPhoneOrEmailPanel extends StatefulWidget with OnboardingPa
 }
 
 class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhoneOrEmailPanel> {
-  TextEditingController _phoneOrEmailController = TextEditingController();
+  TextEditingController _phoneOrEmailController;
+  
   String _validationErrorMsg;
+  GlobalKey _validationErrorKey = GlobalKey();
 
   bool _isLoading = false;
 
@@ -57,11 +60,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
   @override
   Widget build(BuildContext context) {
-//    GestureDetector(excludeFromSemantics: true, behavior: HitTestBehavior.translucent, onTap: () => FocusScope.of(context).requestFocus(new FocusNode()), child:      
+    EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
+
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
         Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
-        OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
         SafeArea(child:
           Column(children:[
             Expanded(child:
@@ -75,7 +78,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
                       Text(Localization().getStringEx("panel.onboarding2.phone_or_email.description", "Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email."), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 18, color: Styles().colors.fillColorPrimary)),
                     ),
-                    Padding(padding: EdgeInsets.only(left: 12, top: 12, bottom: 6), child:
+                    Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
                       Text(Localization().getStringEx("panel.onboarding2.phone_or_email.phone_or_email.text", "Phone number or email address:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
@@ -103,11 +106,10 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                       ),
                     ),
                     Visibility(visible: AppString.isStringNotEmpty(_validationErrorMsg), child:
-                      Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
-                        Text(AppString.getDefaultEmptyString(value: _validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 14, fontFamily: Styles().fontFamilies.medium),),
+                      Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
+                        Text(AppString.getDefaultEmptyString(value: _validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
                       ),
                     ),
-                    Container(height: 48,),
                   ],),
                 ),
               ),
@@ -125,6 +127,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
             ),
           ]),
         ),
+        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
         Visibility(visible: _isLoading, child:
           Center(child:
             CircularProgressIndicator(),
@@ -153,9 +156,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
         _loginByEmail(email);
       }
       else {
-        setState(() {
-          _validationErrorMsg = Localization().getStringEx("panel.onboarding2.phone_or_email.validation.text", "Please enter your phone number or email address.");
-        });
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.validation.text", "Please enter your phone number or email address."));
       }
     }
   }
@@ -174,9 +175,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
 
   void _onPhoneInitiated(String phoneNumber, bool success) {
     if (!success) {
-      setState(() {
-        _validationErrorMsg = Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code.");
-      });
+      setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.phone.failed", "Failed to send phone verification code."));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginPhoneConfirmPanel(phoneNumber: phoneNumber, onboardingContext: widget.onboardingContext)));
@@ -189,19 +188,30 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
     Auth2().hasEmailAccount(email).then((success) {
       if (mounted) {
         setState(() { _isLoading = false; });
-        if (success == true) {
-
-        }
-        else if (success == false) {
-
+        if (success != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, signUp: (success == false), onboardingContext: widget.onboardingContext)));
+          
         }
         else {
-          setState(() {
-            _validationErrorMsg = Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address.");
-          });
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));
         }
       }
     });
+  }
+
+  void setErrorMsg(String msg) {
+    setState(() {
+      _validationErrorMsg = msg;
+    });
+
+    if (AppString.isStringNotEmpty(msg)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_validationErrorKey.currentContext != null) {
+          Scrollable.ensureVisible(_validationErrorKey.currentContext, duration: Duration(milliseconds: 300)).then((_) {
+          });
+        }
+      });
+    }
   }
 
   void _clearErrorMsg() {

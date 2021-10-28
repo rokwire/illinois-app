@@ -50,10 +50,11 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
   @override
   Widget build(BuildContext context) {
     String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
+    EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
+
     return Scaffold(backgroundColor: Styles().colors.background, body:
       Stack(children: <Widget>[
         Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
-        OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
         Column(children:[
           Expanded(child:
             SingleChildScrollView(child:
@@ -94,6 +95,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
             ],),
           )
         ]),
+        OnboardingBackButton(padding: backButtonInsets, onTap: () { Analytics.instance.logSelect(target: "Back"); Navigator.pop(context); }),
         _progress ? Container(alignment: Alignment.center, child: CircularProgressIndicator(), ) : Container(),
       ],),
     );
