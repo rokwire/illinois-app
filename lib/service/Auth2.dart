@@ -490,8 +490,8 @@ class Auth2 with Service implements NotificationsListener {
 
   // Email Authentication
 
-  Future<bool> authenticateWithEmail(String emailAddress, String password, { bool signUp }) async {
-    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (emailAddress != null) && (password != null)) {
+  Future<bool> authenticateWithEmail(String email, String password, { bool signUp }) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
@@ -502,7 +502,7 @@ class Auth2 with Service implements NotificationsListener {
         'api_key': Config().rokwireApiKey,
         'org_id': Config().coreOrgId,
         'creds': {
-          "email": emailAddress,
+          "email": email,
           "password": password
         },
         'params': (signUp == true) ? {
@@ -524,10 +524,23 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> hasEmailAccount(String email) async {
-    //TBD
-    return Future.delayed(Duration(seconds: 3), () {
-      return false;
-    });
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/account-exists";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200) ? AppJson.boolValue(AppJson.decode(response?.body)) : null;
+    }
+    return null;
   }
 
   // Device Info
