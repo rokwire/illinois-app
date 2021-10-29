@@ -70,18 +70,19 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   Widget _buildHeader() {
-    return Container(color: Styles().colors.fillColorPrimary, child:
-    Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-    Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Padding(padding: EdgeInsets.only(right: 16),
-          child: Image.asset('images/campus-tools.png')),
-      Expanded(child:
-        Text("My Groups", style:
-          TextStyle(
-            color: Styles().colors.white,
-            fontFamily: Styles().fontFamilies.extraBold,
-            fontSize: 20,),),),
-    ],),),);
+    return Semantics(container: true ,
+    child: Container(color: Styles().colors.fillColorPrimary, child:
+      Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Padding(padding: EdgeInsets.only(right: 16),
+            child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+          Expanded(child:
+            Text("My Groups", style:
+              TextStyle(
+                color: Styles().colors.white,
+                fontFamily: Styles().fontFamilies.extraBold,
+                fontSize: 20,),),),
+    ],),),));
   }
 
   Widget _buildSlant() {
