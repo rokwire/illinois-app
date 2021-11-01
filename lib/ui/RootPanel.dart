@@ -106,6 +106,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       ExploreService.notifyEventDetail,
       Sports.notifyGameDetail,
+      Groups.notifyGroupDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -178,6 +179,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Sports.notifyGameDetail) {
       _onFirebaseGameDetail(param);
+    }
+    else if (name == Groups.notifyGroupDetail) {
+      _onGroupDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -444,6 +448,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  Future<void> _onGroupDetail(Map<String, dynamic> content) async {
+    String groupId = (content != null) ? AppJson.stringValue(content['group_id']) : null;
+    _presentGroupDetailPanel(groupId);
+  }
+
   void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
     if (athleticsGameDetails == null) {
       return;
@@ -571,18 +580,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseGroupsNotification(param) {
     if(param is Map<String, dynamic>){
       String groupId = param["entity_id"];
-      if(groupId != null) {
-        Groups().loadGroup(groupId).then((value){
-          if(value != null){
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: value,)));
-          }
-        }).catchError((err){
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
-        });
-      }
+      _presentGroupDetailPanel(groupId);
     }
   }
 
+  void _presentGroupDetailPanel(String groupId) {
+    if (AppString.isStringNotEmpty(groupId)) {
+      Groups().loadGroup(groupId).then((value) {
+        if (value != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: value)));
+        } else {
+          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+        }
+      });
+    }
+  }
 }
 
 RootTab rootTabFromString(String value) {
