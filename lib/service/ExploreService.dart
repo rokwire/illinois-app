@@ -34,7 +34,6 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Log.dart';
 
 
-/// ExploreService does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
 class ExploreService with Service implements NotificationsListener {
 
   static const String EVENT_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/event_detail';
