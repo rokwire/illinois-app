@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Improve semantics for Home widgets [#882](https://github.com/rokwire/illinois-app/issues/882).
+### Add
+- Add ability to update Post in GroupPostDetailPanel [#885](https://github.com/rokwire/illinois-app/issues/885).
 
 ## [3.0.37] 2021-10-28
 ### Added
