@@ -3,6 +3,12 @@
 	"app.team_name":"伊利诺伊",
 	"app.offline.message.title":"你还没联网",
 
+	"generic.minutes": "minutes",
+	"generic.hours": "hours",
+	"generic.days": "days",
+	"generic.months": "months",
+	"generic.years": "years",
+
 	"dialog.yes.title":"是的",
 	"dialog.yes.hint":"",
 	"dialog.no.title":"不",

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Improve semantics for Home widgets [#882](https://github.com/rokwire/illinois-app/issues/882).
+- Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
 ### Add
 - Add Inbox user info as a debug panel [#887](https://github.com/rokwire/illinois-app/issues/887).
 - Add ability to update Post in GroupPostDetailPanel [#885](https://github.com/rokwire/illinois-app/issues/885).
