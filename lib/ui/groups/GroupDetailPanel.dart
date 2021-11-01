@@ -529,6 +529,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
+          hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
+          leftIcon: 'images/icon-qr-code.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: _onTapPromote,
+        ));
       }
       if (AppString.isStringNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
@@ -1157,6 +1166,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapSettings(){
     Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
+  }
+
+  void _onTapPromote() {
+    Analytics().logSelect(target: "Promote Group");
+    //TBD: display qr code panel
+    // Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
   }
 
   void _onMembershipRequest() {
