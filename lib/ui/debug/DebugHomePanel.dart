@@ -28,6 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
+import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
 import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
@@ -247,6 +248,18 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
                               onTap: _onCreateEventClicked),),
+                    ),
+                    Visibility(
+                      visible: true,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Inbox User Info",
+                            backgroundColor: Styles().colors.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors.fillColorPrimary,
+                            borderColor: Styles().colors.fillColorPrimary,
+                            onTap: _onInboxUserInfoClicked),),
                     ),
                     Visibility(
                       visible: true,
@@ -512,6 +525,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onCreateEventClicked() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
+  }
+
+  void _onInboxUserInfoClicked(){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugInboxUserInfoPanel()));
   }
 
   void _onCreateInboxMessageClicked() {
