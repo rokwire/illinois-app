@@ -272,8 +272,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     if (message?.data != null) {
       try {
         if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
-          AppString.isStringNotEmpty(message.notification.title) &&
-            AppString.isStringNotEmpty(message.notification.body)
+          AppString.isStringNotEmpty(message.notification?.title) &&
+            AppString.isStringNotEmpty(message.notification?.body)
         ){
           NotificationService().notify(notifyForegroundMessage, {
             "title": message.notification.title,
