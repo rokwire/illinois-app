@@ -345,7 +345,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ]),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: TabBarWidget(),
-        body: content);
+        body: RefreshIndicator(
+          onRefresh: _onPullToRefresh,
+          child: content,
+        ),);
   }
 
   // NotificationsListener
@@ -1229,6 +1232,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _shouldScrollToLastAfterRefresh = true;
       }
     });
+  }
+
+  Future<void>_onPullToRefresh() async {
+    Group group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
+    if ((group != null)) {
+      if(mounted) {
+        setState(() {
+          _group = group;
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+        });
+      }
+      _refreshEvents();
+      _refreshCurrentPosts();
+    }
   }
 
   void _scheduleLastPostScroll() {
