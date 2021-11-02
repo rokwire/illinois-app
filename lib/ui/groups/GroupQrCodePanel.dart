@@ -40,6 +40,7 @@ class GroupQrCodePanel extends StatefulWidget {
 }
 
 class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
+  static final int _imageSize = 1024;
   Uint8List _qrCodeBytes;
 
   @override
@@ -57,8 +58,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
     return (groupPromotionKey != null) ? await NativeCommunicator().getBarcodeImageData({
       'content': groupPromotionKey,
       'format': 'qrCode',
-      'width': 1024,
-      'height': 1024,
+      'width': _imageSize,
+      'height': _imageSize,
     }) : null;
   }
 
@@ -68,12 +69,17 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
-      final String fileName = 'Group - ${widget.group?.title}';
-      bool saveResult = await ImageUtils.saveToFs(_qrCodeBytes, fileName);
+      final String groupName = widget.group?.title;
+      Uint8List updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName, width: _imageSize.toDouble(), height: _imageSize.toDouble());
+      bool result = (updatedImageBytes != null);
+      if (result) {
+        final String fileName = 'Group - $groupName';
+        result = await ImageUtils.saveToFs(updatedImageBytes, fileName);
+      }
       String platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.group_qr_code.alert.save.success.pictures", "Pictures")
           : Localization().getStringEx("panel.group_qr_code.alert.save.success.gallery", "Gallery");
-      String message = saveResult
+      String message = result
           ? (Localization().getStringEx("panel.group_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
           : Localization().getStringEx("panel.group_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
       AppAlert.showDialogResult(context, message);
