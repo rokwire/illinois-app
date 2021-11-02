@@ -190,6 +190,7 @@ class Auth2 with Service implements NotificationsListener {
   bool get isLoggedIn => (_account?.id != null);
   bool get isOidcLoggedIn => (_account?.authType?.loginType == Auth2LoginType.oidcIllinois);
   bool get isPhoneLoggedIn => (_account?.authType?.loginType == Auth2LoginType.phoneTwilio);
+  bool get isEmailLoggedIn => (_account?.authType?.loginType == Auth2LoginType.email);
 
   bool get hasUin => (0 < uin?.length ?? 0);
   String get uin => _account?.authType?.uiucUser?.uin;
