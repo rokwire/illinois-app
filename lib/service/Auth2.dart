@@ -475,9 +475,9 @@ class Auth2 with Service implements NotificationsListener {
           "phone": phoneNumber,
           "code": code,
         },
-//      'profile': _anonymousProfile?.toJson(),
-//      'preferences': _anonymousPrefs?.toJson(),
-//      'device': _deviceInfo,
+        'profile': _anonymousProfile?.toJson(),
+        'preferences': _anonymousPrefs?.toJson(),
+        'device': _deviceInfo,
       });
 
       Response response = await Network().post(url, headers: headers, body: post);
