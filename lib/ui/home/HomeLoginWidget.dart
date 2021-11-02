@@ -152,7 +152,7 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
     Analytics.instance.logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
-        settings: RouteSettings(name: 'Phone or Email Login'),
+        settings: RouteSettings(),
         builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
           onboardingContext: {
             "onContinueAction": () {
