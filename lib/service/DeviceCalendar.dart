@@ -190,7 +190,8 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _debugMessage(String msg){
-    NotificationService().notify(DeviceCalendar.notifyShowConsoleMessage, msg);
+//    NotificationService().notify(DeviceCalendar.notifyShowConsoleMessage, msg); //Disable debug console messages
+      print(msg);
   }
 
   void _processEvents(dynamic event){
@@ -207,7 +208,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _promptPermissionDialog(_DeviceCalendarEvent event) {
-    NotificationService().notify(DeviceCalendar.notifyCalendarSelectionPopup, {"event": event});
+    NotificationService().notify(DeviceCalendar.notifyPromptPopup, {"event": event});
   }
 
   @override
