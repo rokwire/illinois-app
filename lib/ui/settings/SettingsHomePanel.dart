@@ -563,8 +563,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _onDisconnectNetIdClicked() {
     if(Auth2().isOidcLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect netId");
-    } else {
+    } if(Auth2().isPhoneLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect phone");
+    } if(Auth2().isEmailLoggedIn) {
+      Analytics.instance.logSelect(target: "Disconnect email");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
