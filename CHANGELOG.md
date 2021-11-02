@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Group promotion functionality [#884](https://github.com/rokwire/illinois-app/issues/884).
 - GroupDetailPanel implement pull to refresh [#891](https://github.com/rokwire/illinois-app/issues/891).
+### Removed
+- Commend out Calendar debug dualog messages [#893](https://github.com/rokwire/illinois-app/issues/893).
 
 ## [3.0.38] 2021-11-01
 ### Fixed
