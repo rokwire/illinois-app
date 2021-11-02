@@ -481,7 +481,7 @@ class Auth2 with Service implements NotificationsListener {
 
       Response response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson, loadCard: true)) {
+      if (await _processLoginResponse(responseJson)) {
         return true;
       }
     }
@@ -490,7 +490,7 @@ class Auth2 with Service implements NotificationsListener {
 
   // Email Authentication
 
-  Future<bool> authenticateWithEmail(String email, String password, { bool signUp }) async {
+  Future<bool> authenticateWithEmail(String email, String password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -505,10 +505,6 @@ class Auth2 with Service implements NotificationsListener {
           "email": email,
           "password": password
         },
-        'params': (signUp == true) ? {
-          "sign_up": true,
-          "confirm_password": password
-        } : null,
         'profile': _anonymousProfile?.toJson(),
         'preferences': _anonymousPrefs?.toJson(),
         'device': _deviceInfo,
@@ -516,11 +512,48 @@ class Auth2 with Service implements NotificationsListener {
 
       Response response = await Network().post(url, headers: headers, body: post);
       Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson, loadCard: true)) {
+      if (await _processLoginResponse(responseJson)) {
         return true;
       }
     }
     return false;
+  }
+
+
+
+  Future<Auth2SignUpResult> signUpWithEmail(String email, String password) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
+      String url = "${Config().coreUrl}/services/auth/login";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'creds': {
+          "email": email,
+          "password": password
+        },
+        'params': {
+          "sign_up": true,
+          "confirm_password": password
+        },
+        'profile': _anonymousProfile?.toJson(),
+        'preferences': _anonymousPrefs?.toJson(),
+        'device': _deviceInfo,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      if (response?.statusCode == 200) {
+        return Auth2SignUpResult.succeded;
+      }
+      else if (response?.body?.contains('account already exists') ?? false) {
+        return Auth2SignUpResult.failedAccountExist;
+      }
+    }
+    return Auth2SignUpResult.failed;
   }
 
   Future<bool> hasEmailAccount(String email) async {
@@ -921,3 +954,8 @@ class _OidcLogin {
 
 }
 
+enum Auth2SignUpResult {
+  succeded,
+  failed,
+  failedAccountExist,
+}
