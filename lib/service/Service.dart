@@ -32,6 +32,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
@@ -117,6 +118,7 @@ class Services {
     Inbox(),
     DeviceCalendar(),
     ExploreService(),
+    Groups()
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),
     // Content(),

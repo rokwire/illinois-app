@@ -31,6 +31,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -528,6 +529,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           leftIcon: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
+        ));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
+          hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
+          leftIcon: 'images/icon-qr-code.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: _onTapPromote,
         ));
       }
       if (AppString.isStringNotEmpty(_group?.webURL)) {
@@ -1157,6 +1167,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapSettings(){
     Analytics().logSelect(target: "Group Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
+  }
+
+  void _onTapPromote() {
+    Analytics().logSelect(target: "Promote Group");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
   }
 
   void _onMembershipRequest() {
