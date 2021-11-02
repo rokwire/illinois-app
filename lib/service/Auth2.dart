@@ -557,6 +557,11 @@ class Auth2 with Service implements NotificationsListener {
     return Auth2SignUpResult.failed;
   }
 
+  Future<bool> forgotEmailPassword(String email) async {
+    await Future.delayed(Duration(seconds: 3));
+    return true;
+  }
+
   Future<bool> hasEmailAccount(String email) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
       String url = "${Config().coreUrl}/services/auth/account-exists";

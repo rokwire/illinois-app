@@ -204,15 +204,34 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                       ),
                     ),
 
-                    InkWell(onTap: () => _onTapShowPassword(), child:
-                      Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
-                        Row(children: [
-                          Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png'),
-                          Container(width: 6),
-                          Text(Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
-                        ],)
+                    Row(children: [
+                      Expanded(child:
+                        InkWell(onTap: () => _onTapShowPassword(), child:
+                          Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                              Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png'),
+                              Container(width: 6),
+                              Text(Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                            ],)
+                          ),
+                        ),
                       ),
-                    ),
+                      Visibility(visible: (_signUp != true), child:
+                        Expanded(child:
+                          Padding(padding: EdgeInsets.only(left: 12), child:
+                            InkWell(onTap: () => _onTapForgotPassword(), child:
+                              Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
+                                Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
+                                  Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies.bold),),
+                                ],)
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    ],),
+
 
                     Visibility(visible: AppString.isStringNotEmpty(_validationErrorText), child:
                       Padding(key:_validationErrorKey, padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
@@ -254,6 +273,35 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     });
   }
 
+  void _onTapForgotPassword() {
+    Analytics.instance.logSelect(target: "Forgot Password");
+
+    if (_isLoading != true) {
+      _clearErrorMsg();
+
+      setState(() { _isLoading = true; });
+
+      Auth2().forgotEmailPassword(widget.email).then((bool result) {
+        
+        setState(() { _isLoading = false; });
+        
+        if (result == true) {
+          _emailFocusNode.unfocus();
+          _passwordFocusNode.unfocus();
+          _confirmPasswordFocusNode.unfocus();
+          _passwordController.text = '';
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.succeeded.text", "A password reset link had been sent to your email address. Please reset your password and then try to login."), color: Colors.green.shade800);
+          setState(() {
+            _showingPassword = false;
+          });
+        }
+        else {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.text", "Failed to send password reset email."));
+        }
+      });
+    }
+  }
+
   void _onTapLogin() {
     if (_signUp) {
       _trySignUp();
@@ -290,14 +338,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
           setState(() { _isLoading = false; });
           
           if (result == Auth2SignUpResult.succeded) {
+            _emailFocusNode.unfocus();
+            _passwordFocusNode.unfocus();
+            _confirmPasswordFocusNode.unfocus();
             setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential."), color: Colors.green.shade800);
             setState(() {
               _signUp = false;
               _showingPassword = false;
             });
-            _emailFocusNode.unfocus();
-            _passwordFocusNode.unfocus();
-            _confirmPasswordFocusNode.unfocus();
           }
           else if (result == Auth2SignUpResult.failedAccountExist) {
             setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign in failed - account already exists."));
