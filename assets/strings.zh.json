@@ -140,9 +140,9 @@
 	"panel.wallet.button.close.title": "关闭",
 	"panel.wallet.button.connect.netid.title": "連接NetID",
 	"panel.wallet.button.connect.netid.hint": "",
-	"panel.wallet.button.connect.phone.title": "驗證電話號碼",
-	"panel.wallet.button.connect.phone.hint": "",
-	"panel.wallet.label.expires.title": "Card expires",
+	"panel.wallet.button.connect.phone_or_email.title": "Login By Email or Phone",
+	"panel.wallet.button.connect.phone_or_email.hint": "",
+"panel.wallet.label.expires.title": "Card expires",
 
 	"panel.browse.label.title":"浏览",
 	"panel.browse.button.events.title":"活动",

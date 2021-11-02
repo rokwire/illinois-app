@@ -28,7 +28,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
@@ -180,8 +180,8 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       if (code == 'netid') {
         widget = _buildLoginNetIdButton();
       }
-      else if (code == 'phone') {
-        widget = _buildLoginPhoneButton();
+      else if (code == 'phone_or_email') {
+        widget = _buildLoginPhoneOrEmailButton();
       }
       if (widget != null) {
         if (0 < contentList.length) {
@@ -216,10 +216,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     );
   }
 
-  Widget _buildLoginPhoneButton() {
+  Widget _buildLoginPhoneOrEmailButton() {
     return RoundedButton(
-        label: Localization().getStringEx('panel.wallet.button.connect.phone.title', 'Verify Phone Number'),
-        hint: Localization().getStringEx('panel.wallet.button.connect.phone.hint', ''),
+        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone'),
+        hint: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.hint', ''),
         backgroundColor: Styles().colors.surface,
         fontSize: 16.0,
         textColor: Styles().colors.fillColorPrimary,
@@ -227,12 +227,21 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         borderColor: Styles().colors.fillColorSecondary,
         onTap: () {
           Analytics.instance.logSelect(target: "Log in");
-          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: _didPhoneVer)));
+          Navigator.push(context, CupertinoPageRoute(
+            settings: RouteSettings(),
+            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+              onboardingContext: {
+                "onContinueAction": () {
+                  _didLogin(context);
+                }
+              },
+            ),
+          ),);
         },
       );
   }
 
-  void _didPhoneVer(_) {
+  void _didLogin(_) {
     Navigator.of(context)?.popUntil((Route route){
       Widget _widget = AppNavigation.routeRootWidget(route, context: context);
       return _widget == null || _widget?.runtimeType == widget.runtimeType;

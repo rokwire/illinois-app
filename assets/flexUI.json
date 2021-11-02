@@ -11,7 +11,7 @@
 		"home.twitter.user": ["gies"],
 
 		"wallet": ["connect", "content", "cards"],
-		"wallet.connect":["netid", "phone"],
+		"wallet.connect":["netid", "phone_or_email"],
 		"wallet.content": ["illini_cash", "meal_plan"],
 		"wallet.cards":["bus_pass", "illini_id", "library_card"],
 
