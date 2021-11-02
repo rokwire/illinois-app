@@ -201,7 +201,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     if (AppString.isStringNotEmpty(_verificationErrorMsg)) {
       return;
     }
-    String phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext["phone"] : widget.phoneNumber;
+    String phoneNumber = ((widget.onboardingContext != null) ? widget.onboardingContext["phone"] : null) ?? widget.phoneNumber;
     setState(() {
       _isLoading = true;
     });
