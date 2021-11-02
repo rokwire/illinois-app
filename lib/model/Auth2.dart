@@ -485,12 +485,16 @@ class Auth2Type {
     (code?.hashCode ?? 0) ^
     (DeepCollectionEquality().hash(params) ?? 0);
 
+  String get uin {
+    return (loginType == Auth2LoginType.oidcIllinois) ? identifier : null;
+  }
+
   String get phone {
     return (loginType == Auth2LoginType.phoneTwilio) ? identifier : null;
   }
 
-  String get uin {
-    return (loginType == Auth2LoginType.oidcIllinois) ? identifier : null;
+  String get email {
+    return (loginType == Auth2LoginType.email) ? identifier : null;
   }
 
   static List<Auth2Type> listFromJson(List<dynamic> jsonList) {

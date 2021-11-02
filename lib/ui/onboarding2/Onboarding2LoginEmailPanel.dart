@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
@@ -40,47 +40,55 @@ class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
 
 class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> {
   
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
-  TextEditingController _confirmPasswordController;
+  TextEditingController _emailController = TextEditingController();
+  FocusNode _emailFocusNode = FocusNode();
+  TextEditingController _passwordController = TextEditingController();
+  FocusNode _passwordFocusNode = FocusNode();
+  TextEditingController _confirmPasswordController = TextEditingController();
+  FocusNode _confirmPasswordFocusNode = FocusNode();
   
-  String _validationErrorMsg;
+  String _validationErrorText;
+  Color _validationErrorColor;
   GlobalKey _validationErrorKey = GlobalKey();
 
+  bool _signUp;
+  bool _justSignedUp;
   bool _isLoading = false;
   bool _showingPassword = false;
 
   @override
   void initState() {
     super.initState();
-    _emailController = TextEditingController(text: widget.email);
-    _passwordController = TextEditingController();
-    _confirmPasswordController = TextEditingController();
+    _emailController.text = widget.email;
+    _signUp = widget.signUp;
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _emailFocusNode.dispose();
     _passwordController.dispose();
+    _passwordFocusNode.dispose();
     _confirmPasswordController.dispose();
+    _confirmPasswordFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    String title = (widget.signUp == true) ?
+    String title = (_signUp == true) ?
       Localization().getStringEx('panel.onboarding2.email.sign_up.title.text', 'Sign up with email') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.title.text', 'Sign in with email');
 
-    String description = (widget.signUp == true) ?
+    String description = (_signUp == true) ?
       Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
-    String buttonTitle = (widget.signUp == true) ?
+    String buttonTitle = (_signUp == true) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
 
-    String buttonHint = (widget.signUp == true) ?
+    String buttonHint = (_signUp == true) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.hint', '') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.hint', '');
 
@@ -118,7 +126,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           child: TextField(
                             enabled: false,
                             controller: _emailController,
+                            focusNode: _emailFocusNode,
                             autofocus: false,
+                            autocorrect: false,
                             style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
                             decoration: InputDecoration(
                               disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
@@ -144,7 +154,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           color: Styles().colors.white,
                           child: TextField(
                             controller: _passwordController,
-                            autofocus: true,
+                            focusNode: _passwordFocusNode,
+                            autofocus: false,
+                            autocorrect: false,
                             obscureText: !_showingPassword,
                             onSubmitted: (_) => _clearErrorMsg,
                             cursorColor: Styles().colors.textBackground,
@@ -159,12 +171,12 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                       ),
                     ),
 
-                    Visibility(visible: (widget.signUp == true), child:
+                    Visibility(visible: (_signUp == true), child:
                       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
                         Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
                       ),
                     ),
-                    Visibility(visible: (widget.signUp == true), child:
+                    Visibility(visible: (_signUp == true), child:
                       Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                         Semantics(
                           label: Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"),
@@ -176,7 +188,9 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             color: Styles().colors.white,
                             child: TextField(
                               controller: _confirmPasswordController,
-                              autofocus: true,
+                              focusNode: _confirmPasswordFocusNode,
+                              autofocus: false,
+                              autocorrect: false,
                               obscureText: !_showingPassword,
                               onSubmitted: (_) => _clearErrorMsg,
                               cursorColor: Styles().colors.textBackground,
@@ -192,19 +206,39 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                       ),
                     ),
 
-                    InkWell(onTap: () => _onTapShowPassword(), child:
-                      Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
-                        Row(children: [
-                          Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png'),
-                          Container(width: 6),
-                          Text(Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
-                        ],)
+                    Row(children: [
+                      Expanded(child:
+                        InkWell(onTap: () => _onTapShowPassword(), child:
+                          Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                              Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png'),
+                              Container(width: 6),
+                              Text(Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                            ],)
+                          ),
+                        ),
                       ),
-                    ),
+                      Visibility(visible: (_signUp != true), child:
+                        Expanded(child:
+                          Padding(padding: EdgeInsets.only(left: 12), child:
+                            InkWell(onTap: () => (_justSignedUp == true) ? _onTapResendEmail() : _onTapForgotPassword(), child:
+                              Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
+                                Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
+                                  (_justSignedUp == true) ?
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies.bold, decoration: TextDecoration.underline),) :
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies.bold, decoration: TextDecoration.underline),),
+                                ],)
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
 
-                    Visibility(visible: AppString.isStringNotEmpty(_validationErrorMsg), child:
+                    ],),
+
+                    Visibility(visible: AppString.isStringNotEmpty(_validationErrorText), child:
                       Padding(key:_validationErrorKey, padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                        Text(AppString.getDefaultEmptyString(value: _validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
+                        Text(AppString.getDefaultEmptyString(value: _validationErrorText ?? ''), style: TextStyle(color: _validationErrorColor ?? Styles().colors.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),),
                       ),
                     ),
                   ],),
@@ -242,42 +276,140 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     });
   }
 
+  void _onTapForgotPassword() {
+    Analytics.instance.logSelect(target: "Forgot Password");
+
+    if (_isLoading != true) {
+      _clearErrorMsg();
+
+      setState(() { _isLoading = true; });
+
+      Auth2().forgotEmailPassword(widget.email).then((bool result) {
+        
+        setState(() { _isLoading = false; });
+        
+        if (result == true) {
+          _emailFocusNode.unfocus();
+          _passwordFocusNode.unfocus();
+          _confirmPasswordFocusNode.unfocus();
+          _passwordController.text = '';
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.succeeded.text", "A password reset link had been sent to your email address. Please reset your password and then try to login."), color: Colors.green.shade800);
+          setState(() {
+            _showingPassword = false;
+          });
+        }
+        else {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.forgot_password.failed.text", "Failed to send password reset email."));
+        }
+      });
+    }
+  }
+
+  void _onTapResendEmail() {
+    Analytics.instance.logSelect(target: "Resend Email");
+
+    if (_isLoading != true) {
+      _clearErrorMsg();
+
+      setState(() { _isLoading = true; });
+
+      Auth2().resentActivationEmail(widget.email).then((bool result) {
+        
+        setState(() { _isLoading = false; });
+        
+        if (result == true) {
+          _emailFocusNode.unfocus();
+          _passwordFocusNode.unfocus();
+          _confirmPasswordFocusNode.unfocus();
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.resend_email.succeeded.text", "Verification email has been resent."), color: Colors.green.shade800);
+          setState(() {
+            _showingPassword = false;
+          });
+        }
+        else {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.resend_email.failed.text", "Failed to resend verification email."));
+        }
+      });
+    }
+  }
+
   void _onTapLogin() {
-    Analytics.instance.logSelect(target: (widget.signUp == true) ? "Sign Up" : "Sign In");
+    if (_signUp) {
+      _trySignUp();
+    }
+    else {
+      _trySignIn();
+    }
+  }
+
+  void _trySignUp() {
+    Analytics.instance.logSelect(target: "Sign Up");
+
+    if (_isLoading != true) {
+      _clearErrorMsg();
+
+      String password = _passwordController.text;
+      String confirmPassword = _confirmPasswordController.text;
+
+      String strengthRegEx = r'^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$';
+      if ((password == null) || password.isEmpty) {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
+      }
+      else if (!RegExp(strengthRegEx).hasMatch(password)) {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.passwords_weak.text", "Password must be at least 8 characters long and must contain a lowercase letter, uppercase letter, number, and a special character."));
+      }
+      else if (password != confirmPassword) {
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.passwords_dont_match.text", "Passwords do not match."));
+      }
+      else {
+        setState(() { _isLoading = true; });
+
+        Auth2().signUpWithEmail(widget.email, password).then((Auth2SignUpResult result) {
+          
+          setState(() { _isLoading = false; });
+          
+          if (result == Auth2SignUpResult.succeded) {
+            _emailFocusNode.unfocus();
+            _passwordFocusNode.unfocus();
+            _confirmPasswordFocusNode.unfocus();
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.succeeded.text", "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential."), color: Colors.green.shade800);
+            setState(() {
+              _signUp = false;
+              _justSignedUp = true;
+              _showingPassword = false;
+            });
+          }
+          else if (result == Auth2SignUpResult.failedAccountExist) {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign in failed - account already exists."));
+          }
+          else /*if (result == Auth2SignUpResult.failed)*/ {
+            setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed."));
+          }
+        });
+      }
+    }
+  }
+
+  void _trySignIn() {
+    Analytics.instance.logSelect(target: "Sign In");
 
     if (_isLoading != true) {
       _clearErrorMsg();
 
       String password = _passwordController.text;
 
-      String strengthRegEx = kReleaseMode ?
-        r'^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$' :
-        r'.';
-      if (!RegExp(strengthRegEx).hasMatch(password)) {
-        setState(() {
-          setErrorMsg(kReleaseMode ?
-            Localization().getStringEx("panel.onboarding2.email.validation.passwords_weak.text", "Password must be at least 8 characters long and must contain a lowercase letter, uppercase letter, number, and a special character.") :
-            "Password must not be empty.");
-        });
-      }
-      else if ((widget.signUp == true) && (password != _confirmPasswordController.text)) {
-        setState(() {
-          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.passwords_dont_match.text", "Passwords do not match."));
-        });
+      if ((password == null) || password.isEmpty) {
+          setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else {
         setState(() { _isLoading = true; });
 
-        Auth2().authenticateWithEmail(widget.email, password, signUp: widget.signUp).then((bool result) {
+        Auth2().authenticateWithEmail(widget.email, password).then((bool result) {
           
           setState(() { _isLoading = false; });
           
           if (result != true) {
-            setState(() {
-              setErrorMsg((widget.signUp == true) ?
-                Localization().getStringEx("panel.onboarding2.email.validation.sign_up.failed.text", "Sign up failed.") :
-                Localization().getStringEx("panel.onboarding2.email.validation.sign_in.failed.text", "Sign in failed."));
-            });
+              setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.sign_in.failed.text", "Sign in failed."));
           }
           else if (widget.onboardingContext != null) {
             Function onSuccess = widget.onboardingContext["onContinueAction"]; // Hook this panels to Onboarding2
@@ -292,10 +424,10 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     }
   }
 
-
-  void setErrorMsg(String msg) {
+  void setErrorMsg(String msg, { Color color}) {
     setState(() {
-      _validationErrorMsg = msg;
+      _validationErrorText = msg;
+      _validationErrorColor = color ?? Colors.red.shade700;
     });
 
     if (AppString.isStringNotEmpty(msg)) {
@@ -310,7 +442,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
   void _clearErrorMsg() {
     setState(() {
-      _validationErrorMsg = null;
+      _validationErrorText = null;
     });
   }
 }

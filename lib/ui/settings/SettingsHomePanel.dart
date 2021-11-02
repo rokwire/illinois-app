@@ -31,7 +31,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
@@ -117,11 +117,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'connect') {
         contentList.add(_buildConnect());
       }
-      else if (code == 'customizations') {
-        contentList.add(_buildCustomizations());
-      }
       else if (code == 'connected') {
         contentList.add(_buildConnected());
+      }
+      else if (code == 'customizations') {
+        contentList.add(_buildCustomizations());
       }
       else if (code == 'notifications') {
         contentList.add(_buildNotifications());
@@ -285,7 +285,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
             onTap: _onConnectNetIdClicked),);
       }
-      else if (code == 'phone') {
+      else if (code == 'phone_or_email') {
           contentList.add(Padding(
             padding: EdgeInsets.all(10),
             child: new RichText(
@@ -293,11 +293,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
                 children: <TextSpan>[
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.description.part_1", "Don't have a NetID"),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.description.part_2",
-                          "? Verify your phone number to save your preferences and have the same experience on more than one device.")),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
+                          "Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
                 ],
               ),
             )),);
@@ -305,8 +305,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             height: null,
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.title", "Verify Your Phone Number"),
-            onTap: _onPhoneVerClicked),);
+            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
+            onTap: _onPhoneOrEmailLoginClicked),);
       }
     }
 
@@ -323,16 +323,26 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Auth2().authenticateWithOidc();
   }
 
-  void _onPhoneVerClicked() {
-    Analytics.instance.logSelect(target: "Phone Verification");
+  void _onPhoneOrEmailLoginClicked() {
+    Analytics.instance.logSelect(target: "Phone or Email Login");
+    Analytics.instance.logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: _didPhoneVer,)));
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(),
+        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+          onboardingContext: {
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },
+        ),
+      ),);
     } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_ver', 'Verify Your Phone Number is not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
-  void _didPhoneVer(_) {
+  void _didLogin(_) {
     Navigator.of(context)?.popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
@@ -413,6 +423,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           title: Localization().getStringEx("panel.settings.home.phone_ver.title", "Phone Verification"),
           widgets: _buildConnectedPhoneLayout()));
       }
+      else if (code == 'email') {
+        contentList.add(_OptionsSection(
+          title: Localization().getStringEx("panel.settings.home.email_login.title", "Email Login"),
+          widgets: _buildConnectedEmailLayout()));
+      }
     }
     return Column(children: contentList,);
 
@@ -488,7 +503,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
-            onTap: _onPhoneVerClicked));
+            onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
@@ -502,11 +517,56 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     return contentList;
   }
 
+  List<Widget> _buildConnectedEmailLayout() {
+    List<Widget> contentList = [];
+
+    String fullName = Auth2().fullName ?? "";
+    bool hasFullName = AppString.isStringNotEmpty(fullName);
+
+    List<dynamic> codes = FlexUI()['settings.connected.email'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
+      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+      if (code == 'info') {
+        contentList.add(Container(
+          width: double.infinity,
+          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5)),
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as "),
+                    style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+                Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
+                Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+              ]))));
+      }
+      else if (code == 'login') {
+        contentList.add(RibbonButton(
+            height: null,
+            borderRadius: borderRadius,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+            onTap: _onPhoneOrEmailLoginClicked));
+      }
+      else if (code == 'disconnect') {
+        contentList.add(RibbonButton(
+            height: null,
+            borderRadius: borderRadius,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
+            onTap: _onDisconnectNetIdClicked));
+      }
+    }
+    return contentList;
+  }
+
   void _onDisconnectNetIdClicked() {
     if(Auth2().isOidcLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect netId");
-    } else {
+    } if(Auth2().isPhoneLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect phone");
+    } if(Auth2().isEmailLoggedIn) {
+      Analytics.instance.logSelect(target: "Disconnect email");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
