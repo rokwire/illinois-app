@@ -1171,8 +1171,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapPromote() {
     Analytics().logSelect(target: "Promote Group");
-    //TBD: display qr code panel
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(groupId: _group?.id)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
   }
 
   void _onMembershipRequest() {

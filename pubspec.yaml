@@ -74,6 +74,7 @@ dependencies:
 # system_setting: ^0.1.4
   app_settings: ^4.1.0
   device_calendar: ^3.1.0
+  gallery_saver: ^2.3.2
 
 dev_dependencies:
   flutter_test:

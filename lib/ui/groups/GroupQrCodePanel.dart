@@ -14,24 +14,29 @@
  * limitations under the License.
  */
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
-  final String groupId;
+  final Group group;
 
-  const GroupQrCodePanel({@required this.groupId});
+  const GroupQrCodePanel({@required this.group});
 
   @override
   _GroupQrCodePanelState createState() => _GroupQrCodePanelState();
@@ -51,7 +56,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   Future<Uint8List> _loadQrImageBytes() async {
-    String groupPromotionKey = '${Groups.GROUP_URI}?group_id=${widget.groupId}';
+    String groupPromotionKey = '${Groups.GROUP_URI}?group_id=${widget.group?.id}';
     return (groupPromotionKey != null) ? await NativeCommunicator().getBarcodeImageData({
       'content': groupPromotionKey,
       'format': 'qrCode',
@@ -66,11 +71,21 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
-      bool result = false; //TBD: implement saving to FS
+      final String dir = (await getApplicationDocumentsDirectory()).path;
+      final String fileName = 'Group - ${widget.group?.title}.png';
+      final String fullPath = '$dir/$fileName';
+      File capturedFile = File(fullPath);
+      await capturedFile.writeAsBytes(_qrCodeBytes);
+      bool saveResult = false;
+      try {
+        saveResult = await GallerySaver.saveImage(capturedFile.path);
+      } catch (e) {
+        Log.e('Failed to save group promotion image to gallery. \nException: ${e?.toString()}');
+      }
       String platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.group_qr_code.alert.save.success.pictures", "Pictures")
           : Localization().getStringEx("panel.group_qr_code.alert.save.success.gallery", "Gallery");
-      String message = result
+      String message = saveResult
           ? (Localization().getStringEx("panel.group_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
           : Localization().getStringEx("panel.group_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
       AppAlert.showDialogResult(context, message);
