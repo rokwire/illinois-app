@@ -23,13 +23,17 @@ import 'package:illinois/model/Groups.dart';
 //import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Service.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class Groups /* with Service */ {
+class Groups with Service implements NotificationsListener {
+
+  static const String GROUP_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/group_detail';
 
   static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
   static const String notifyGroupEventsUpdated      = "edu.illinois.rokwire.groups.events.updated";
@@ -37,8 +41,10 @@ class Groups /* with Service */ {
   static const String notifyGroupUpdated            = "edu.illinois.rokwire.group.updated";
   static const String notifyGroupDeleted            = "edu.illinois.rokwire.group.deleted";
   static const String notifyGroupPostsUpdated       = "edu.illinois.rokwire.group.posts.updated";
+  static const String notifyGroupDetail             = "edu.illinois.rokwire.group.detail";
 
   Map<String, Member> _userMembership;
+  List<Map<String, dynamic>> _groupDetailsCache;
 
   // Singletone instance
 
@@ -47,6 +53,40 @@ class Groups /* with Service */ {
 
   factory Groups() {
     return _service;
+  }
+
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _groupDetailsCache = [];
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedGroupDetails();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([DeepLink()]);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
   }
 
   // Current User Membership
@@ -518,6 +558,53 @@ class Groups /* with Service */ {
     } else {
       Log.e('Failed to retrieve group posts. Response: ${response?.body}');
       return null;
+    }
+  }
+
+  /////////////////////////
+  // DeepLinks
+
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri eventUri = Uri.tryParse(GROUP_URI);
+      if ((eventUri != null) &&
+          (eventUri.scheme == uri.scheme) &&
+          (eventUri.authority == uri.authority) &&
+          (eventUri.path == uri.path))
+      {
+        try { _handleGroupDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  void _handleGroupDetail(Map<String, dynamic> params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_groupDetailsCache != null) {
+        _cacheGroupDetail(params);
+      }
+      else {
+        _processGroupDetail(params);
+      }
+    }
+  }
+
+  void _processGroupDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyGroupDetail, params);
+  }
+
+  void _cacheGroupDetail(Map<String, dynamic> params) {
+    _groupDetailsCache?.add(params);
+  }
+
+  void _processCachedGroupDetails() {
+    if (_groupDetailsCache != null) {
+      List<Map<String, dynamic>> groupDetailsCache = _groupDetailsCache;
+      _groupDetailsCache = null;
+
+      for (Map<String, dynamic> groupDetail in groupDetailsCache) {
+        _processGroupDetail(groupDetail);
+      }
     }
   }
 }
