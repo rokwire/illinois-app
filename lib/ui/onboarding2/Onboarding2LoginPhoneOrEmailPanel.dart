@@ -93,6 +93,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                           child: TextField(
                             controller: _phoneOrEmailController,
                             autofocus: false,
+                            autocorrect: false,
                             onSubmitted: (_) => _clearErrorMsg,
                             cursorColor: Styles().colors.textBackground,
                             keyboardType: TextInputType.emailAddress,
