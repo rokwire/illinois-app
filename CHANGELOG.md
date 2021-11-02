@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Group promotion functionality [#884](https://github.com/rokwire/illinois-app/issues/884).
 
-## [3.0.38] 2021-01-01
+## [3.0.38] 2021-11-01
 ### Fixed
 - Improve semantics for Home widgets [#882](https://github.com/rokwire/illinois-app/issues/882).
 - Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
