@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed email signup/login [#832](https://github.com/rokwire/illinois-app/issues/832).
 
 
-## [3.0.38] 2021-11-01
+## [3.0.38] - 2021-11-01
 ### Fixed
 - Improve semantics for Home widgets [#882](https://github.com/rokwire/illinois-app/issues/882).
 - Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
@@ -23,13 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Inbox user info as a debug panel [#887](https://github.com/rokwire/illinois-app/issues/887).
 - Add ability to update Post in GroupPostDetailPanel [#885](https://github.com/rokwire/illinois-app/issues/885).
 
-## [3.0.37] 2021-10-28
+## [3.0.37] - 2021-10-28
 ### Added
 - Added email login support [#832](https://github.com/rokwire/illinois-app/issues/832).
 ### Fixed
 - RootPanel: fix broken Tab content when recreating the TabBarController [#879](https://github.com/rokwire/illinois-app/issues/879).
 
-## [3.0.36] 2021-10-27
+## [3.0.36] - 2021-10-27
 ### Changed
 - Temporarly enable ROKWIRE-API-KEY authentication for logging service calls [#868](https://github.com/rokwire/illinois-app/issues/868).
 - Removed ROKWIRE-API-KEY authentication in image requests [#870](https://github.com/rokwire/illinois-app/issues/870).
@@ -37,12 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GIES notes [#874](https://github.com/rokwire/illinois-app/issues/874).
 - Rename "Student Guide" to "Campus Guide" [#875](https://github.com/rokwire/illinois-app/issues/875).
 
-## [3.0.35] 2021-10-26
+## [3.0.35] - 2021-10-26
 ### Changed
 - Cleaned up network auth types, use old Shibboleth's access token in IlliniCash and iCard requests [#864](https://github.com/rokwire/illinois-app/issues/864).
 - GIES home widget updates [#866](https://github.com/rokwire/illinois-app/issues/866).
 
-## [3.0.34] 2021-10-25
+## [3.0.34] - 2021-10-25
 ### Changed
 - Open groups detail panel on FCM group notification is received [#839](https://github.com/rokwire/illinois-app/issues/839).
 - Make the edit controls in phone login in Personal Info panel with white background to indicate that they are editable [#842](https://github.com/rokwire/illinois-app/issues/842).
@@ -51,10 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Display all games in Athletics schedule [#857](https://github.com/rokwire/illinois-app/issues/857).
 
-## [3.0.33] 2021-10-22
+## [3.0.33] - 2021-10-22
 - Broken FCM messaging in iOS [#839](https://github.com/rokwire/illinois-app/issues/839).
 
-## [3.0.32] 2021-10-22
+## [3.0.32] - 2021-10-22
 ### Added
 - Introduce HomeMyGroupsWidget [#852](https://github.com/rokwire/illinois-app/issues/852).
 - Display sport name for games in explore card [#844](https://github.com/rokwire/illinois-app/issues/844).
@@ -62,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed 
 - Change Home panel content order so twitter goes on top. [#848](https://github.com/rokwire/illinois-app/issues/848).
 
-## [3.0.31] 2021-10-21
+## [3.0.31] - 2021-10-21
 ### Fixed
 - GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
 ### Changed
@@ -71,37 +71,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
 
-## [3.0.28] 2021-10-20
+## [3.0.28] - 2021-10-20
 ### Fixed
 - Fixed spelling in Wallet  [#830](https://github.com/rokwire/illinois-app/issues/830).
 - Improve Accessibility for GIES widgets  [#833](https://github.com/rokwire/illinois-app/issues/833).
 
-## [3.0.27] 2021-10-19
+## [3.0.27] - 2021-10-19
 ### Changed
 - Updated GIES progress behavior to remember what is passes and what not [#826](https://github.com/rokwire/illinois-app/issues/826).
 
-## [3.0.26] 2021-10-18
+## [3.0.26] - 2021-10-18
 ### Deleted
 - Possibility for creating notification message [#817](https://github.com/rokwire/illinois-app/issues/817).
 ### Changed
 - Updated again layout of ID Card panel [#819](https://github.com/rokwire/illinois-app/issues/819).
 - GIES Home widget updates [#822](https://github.com/rokwire/illinois-app/issues/822).
 
-## [3.0.25] 2021-10-15
+## [3.0.25] - 2021-10-15
 ### Changed
 - Updated layout of ID Card panel [#810](https://github.com/rokwire/illinois-app/issues/810).
 ### Added
 - Added progress to GIES Home wizard [#815](https://github.com/rokwire/illinois-app/issues/815).
 - Added missing pages to GIES Home wizard [#815](https://github.com/rokwire/illinois-app/issues/815).
 
-## [3.0.24] 2021-10-14
+## [3.0.24] - 2021-10-14
 ### Added
 - Added athletics game detail handling as deep link and FCM notification [#803](https://github.com/rokwire/illinois-app/issues/803).
 - Added building access status in ID Card panel [#806](https://github.com/rokwire/illinois-app/issues/806).
 - Merged Athletics game entries in Events list [#804](https://github.com/rokwire/illinois-app/issues/804).
 - DeviceCalendar support Athletic events [#801](https://github.com/rokwire/illinois-app/issues/801).
 
-## [3.0.23] 2021-10-13
+## [3.0.23] - 2021-10-13
 ### Changed
 - Cleanup refresh token in Auth2, logout if number of retries fail [#798](https://github.com/rokwire/illinois-app/issues/798).
 - Switch groups to Core BB [#795](https://github.com/rokwire/illinois-app/issues/795).
@@ -109,112 +109,112 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added initial GIES support [#796](https://github.com/rokwire/illinois-app/issues/796).
 - DeviceCalendar support Athletic events [#801](https://github.com/rokwire/illinois-app/issues/801).
 
-## [3.0.22] 2021-10-11
+## [3.0.22] - 2021-10-11
 ### Changed
 - Merged integration/core2-bb branch in develop, Core BB integration is now official in main workbranch.
 
-## [3.0.21] 2021-10-08
+## [3.0.21] - 2021-10-08
 ### Changed
 - Update calendar dialog so support refresh in calendar chooser [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.20] 2021-10-07
+## [3.0.20] - 2021-10-07
 ### Changed
 - Update calendar dialog [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.19] 2021-10-05
+## [3.0.19] - 2021-10-05
 ### Added
 - Added calendar choser dialog [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.18] 2021-10-04
+## [3.0.18] - 2021-10-04
 ### Fixed
 - Fix loading Athletics games [#790](https://github.com/rokwire/illinois-app/issues/790).
 
-## [3.0.17] 2021-10-01
+## [3.0.17] - 2021-10-01
 ### Changed
 - Acknowledged new APIs from Sports BB [#750](https://github.com/rokwire/illinois-app/issues/750).
 - Updated debug messages for Device Calendar [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.16] 2021-09-30
+## [3.0.16] - 2021-09-30
 ### Added
 - SECURITY.md file [#785](https://github.com/rokwire/illinois-app/issues/785).
 ### Changed 
 -  Update Calendar event deep link to use redirect url as workaround for broken Android links. [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.15] 2021-09-28
+## [3.0.15] - 2021-09-28
 ### Fixed
 - Deeplink url for calendar events [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.14] 2021-09-27
+## [3.0.14] - 2021-09-27
 ### Changed
 - Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
 ## Added
 - Implemented event detail from DeepLink [#773](https://github.com/rokwire/illinois-app/issues/773).
 
-## [3.0.13] 2021-09-24
+## [3.0.13] - 2021-09-24
 ## Added
 - Save Calendar prompt [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.12] 2021-09-23
+## [3.0.12] - 2021-09-23
 ### Deleted
 - Removed UPACE activity button from Wellness content [#768](https://github.com/rokwire/illinois-app/issues/768).
 
-## [3.0.11] 2021-09-21
+## [3.0.11] - 2021-09-21
 ## Added
 - More debug logs for DeviceCalendar [#751](https://github.com/rokwire/illinois-app/issues/751).
 
-## [3.0.10] 2021-09-17
+## [3.0.10] - 2021-09-17
 ### Changed
 - Upload images using Content BB. [#763](https://github.com/rokwire/illinois-app/issues/763).
 
-## [3.0.9] 2021-09-16
+## [3.0.9] - 2021-09-16
 ### Changed
 - Implemented Twitter widget paging, removed caching from Twitter service [#759](https://github.com/rokwire/illinois-app/issues/759).
 
-## [3.0.8] 2021-09-15
+## [3.0.8] - 2021-09-15
 ### Fixed
 - Removed wrong "buss" spelling everywhere (display strings, internal names, resource names) [#752](https://github.com/rokwire/illinois-app/issues/752).
 ### Added
 - Created Twitter widget and service [#749](https://github.com/rokwire/illinois-app/issues/749).
 
-## [3.0.7] 2021-09-10
+## [3.0.7] - 2021-09-10
 ### Added
 - Acknowledge new field "displayOnlyWithSuperEvent" in events [#744](https://github.com/rokwire/illinois-app/issues/744).
 - Implement Pull to refresh for InboxHomePanel [#746](https://github.com/rokwire/illinois-app/issues/746).
 
-## [3.0.6] 2021-09-09
+## [3.0.6] - 2021-09-09
 ### Changed
 - Improved Accessibility for Inbox panels [#742](https://github.com/rokwire/illinois-app/issues/742).
 - ExplorePanel: remove horizontal scrolling for tabs and filters. [#511](https://github.com/rokwire/illinois-app/issues/511).
 - Acknowledged FCM stuff from Notifications BB [#740](https://github.com/rokwire/illinois-app/issues/740).
 
-## [3.0.5] 2021-09-01
+## [3.0.5] - 2021-09-01
 ### Added
 - Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
 - Debug create Inbox message functionality [#735](https://github.com/rokwire/illinois-app/issues/735).
 - Group attributes in "Request to join" select analytics event [#737](https://github.com/rokwire/illinois-app/issues/737).
 
-## [3.0.4] 2021-08-31
+## [3.0.4] - 2021-08-31
 ### Changed
 - Updated date headers style in Inbox panel [#728](https://github.com/rokwire/illinois-app/issues/728).
 - Acknowledge latest updates from Notification BB [#732](https://github.com/rokwire/illinois-app/issues/732).
 ### Added
 - Implement Delete functionality in Inbox panel [#730](https://github.com/rokwire/illinois-app/issues/730).
 
-## [3.0.3] 2021-08-30
+## [3.0.3] - 2021-08-30
 ### Changed
 - Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
 - Hide the "Categories" drop down in Inbox panel [#721](https://github.com/rokwire/illinois-app/issues/721).
 - Replace "Today and Yesterday" with only "Yesterday" in time dropdown in Inbox panel [#723](https://github.com/rokwire/illinois-app/issues/723).
 - Group inbox messages by date [#725](https://github.com/rokwire/illinois-app/issues/725).
 
-## [3.0.2] 2021-08-27
+## [3.0.2] - 2021-08-27
 ### Fixed
 - AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
 - BrowsePanel: improve Large Text support [#511](https://github.com/rokwire/illinois-app/issues/511).
 ### Added
 - Created initial Inbox functionality and UI [#714](https://github.com/rokwire/illinois-app/issues/714).
 
-## [3.0.1] 2021-08-25
+## [3.0.1] - 2021-08-25
 ### Fixed
 - Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
 - Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
@@ -225,7 +225,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added sample wellness panels in embedded student guide content [#715](https://github.com/rokwire/illinois-app/issues/715).
 
-## [3.0.0] 2021-08-19
+## [3.0.0] - 2021-08-19
 ### Fixed
 - Do not allow editing events for non-group events [#658](https://github.com/rokwire/illinois-app/issues/658).
 - Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
