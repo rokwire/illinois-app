@@ -20,11 +20,12 @@
 		"browse.content": ["settings", "my_illini", "laundry",  "illini_cash", "add_illini_cash", "meal_plan", "parking", "feedback", "create_event", "create_stadium_poll", "state_farm_wayfinding"],
 
 		"settings": ["user_info", "privacy_center", "connect", "connected", "privacy", "feedback"],
-		"settings.connect": ["netid", "phone"],
-		"settings.customizations": ["roles", "interests", "food_filters" ],
-		"settings.connected": ["netid", "phone"],
+		"settings.connect": ["netid", "phone_or_email"],
+		"settings.connected": ["netid", "phone", "email"],
 		"settings.connected.netid": ["info", "disconnect", "connect"],
 		"settings.connected.phone": ["info", "disconnect", "verify"],
+		"settings.connected.email": ["info", "disconnect", "login"],
+		"settings.customizations": ["roles", "interests", "food_filters" ],
 		"settings.notifications": ["reminders", "athletics_updates", "dining"],
 		"settings.account": ["personal_info"],
 		"settings.privacy0": ["edit", "statement"],
@@ -118,14 +119,18 @@
 			"settings.connect"                : { "loggedIn": false },
 			"settings.connected"              : { "loggedIn": true },
 			"settings.account"                : { "loggedIn": true },
-			"settings.connected.netid"        : { "shibbolethLoggedIn": true },
-			"settings.connected.phone"        : { "phoneLoggedIn": true },
+			"settings.connected.netid"            : { "shibbolethLoggedIn": true },
 			"settings.connected.netid.info"       : { "shibbolethLoggedIn": true },
 			"settings.connected.netid.disconnect" : { "shibbolethLoggedIn": true },
 			"settings.connected.netid.connect"    : { "shibbolethLoggedIn": false },
+			"settings.connected.phone"            : { "phoneLoggedIn": true },
 			"settings.connected.phone.info"       : { "phoneLoggedIn": true },
+			"settings.connected.phone.disconnect" : { "phoneLoggedIn": true },
 			"settings.connected.phone.verify"     : { "phoneLoggedIn": false },
-			"settings.connected.phone.disconnect" : { "phoneLoggedIn": true }
+			"settings.connected.email"            : { "emailLoggedIn": true },
+			"settings.connected.email.info"       : { "emailLoggedIn": true },
+			"settings.connected.email.disconnect" : { "emailLoggedIn": true },
+			"settings.connected.email.login"      : { "emailLoggedIn": false }
 		},
 		"platform":{
 			"onboarding.bluetooth_auth"     : { "os": "ios" }
