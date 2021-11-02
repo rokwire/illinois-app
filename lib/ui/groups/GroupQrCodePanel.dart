@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/utils/ImageUtils.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:path_provider/path_provider.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group group;
@@ -71,17 +68,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
-      final String dir = (await getApplicationDocumentsDirectory()).path;
-      final String fileName = 'Group - ${widget.group?.title}.png';
-      final String fullPath = '$dir/$fileName';
-      File capturedFile = File(fullPath);
-      await capturedFile.writeAsBytes(_qrCodeBytes);
-      bool saveResult = false;
-      try {
-        saveResult = await GallerySaver.saveImage(capturedFile.path);
-      } catch (e) {
-        Log.e('Failed to save group promotion image to gallery. \nException: ${e?.toString()}');
-      }
+      final String fileName = 'Group - ${widget.group?.title}';
+      bool saveResult = await ImageUtils.saveToFs(_qrCodeBytes, fileName);
       String platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.group_qr_code.alert.save.success.pictures", "Pictures")
           : Localization().getStringEx("panel.group_qr_code.alert.save.success.gallery", "Gallery");
