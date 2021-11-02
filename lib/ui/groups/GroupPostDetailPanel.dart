@@ -60,9 +60,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
+  TextEditingController _mainPostController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   String _selectedReplyId;
   GroupPost _editingPost;
+
+  bool _editMainPost = false;
 
   bool _loading = false;
 
@@ -95,6 +98,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _bodyController.dispose();
     _linkTextController.dispose();
     _linkUrlController.dispose();
+    _mainPostController.dispose();
   }
 
   @override
@@ -151,6 +155,40 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                 color: Styles()
                                                     .colors
                                                     .fillColorPrimary)))),
+                                    Visibility(
+                                        visible: _isEditPostVisible && !widget.hidePostOptions,
+                                        child: Semantics(
+                                            container: true,
+                                            sortKey: OrdinalSortKey(5),
+                                            child: Container(
+                                                child: Semantics(
+                                                    label: Localization()
+                                                        .getStringEx(
+                                                        'panel.group.detail.post.reply.edit.label',
+                                                        "Edit"),
+                                                    button: true,
+                                                    child: GestureDetector(
+                                                        onTap: _onTapEdit,
+                                                        child: Container(
+                                                            color: Colors
+                                                                .transparent,
+                                                            child: Padding(
+                                                                padding: EdgeInsets.only(
+                                                                    left: 16,
+                                                                    top: 22,
+                                                                    bottom: 10,
+                                                                    right: (_isReplyVisible
+                                                                        ? (_outerPadding /
+                                                                        2)
+                                                                        : _outerPadding)),
+                                                                child:
+                                                                Image.asset(
+                                                                  'images/icon-edit.png',
+                                                                  width: 20,
+                                                                  height: 20,
+                                                                  excludeFromSemantics:
+                                                                  true,
+                                                                )))))))),
                                     Visibility(
                                         visible: _isDeletePostVisible && !widget.hidePostOptions,
                                         child: Semantics(
@@ -273,7 +311,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   AppString.getDefaultEmptyString(
                                       value: _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies.medium,
@@ -281,18 +319,55 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       color: Styles()
                                           .colors
                                           .fillColorPrimary)))),
-                      Semantics(
-                        container: true,
-                        child: Html(
-                          data: AppString.getDefaultEmptyString(value: _post?.body),
-                          style: {
-                            "body": Style(
-                                color: Styles().colors.fillColorPrimary,
-                                fontFamily: Styles().fontFamilies.regular,
-                                fontSize: FontSize(20))
-                          },
-                          onLinkTap: (url, context, attributes, element) =>
-                              _onTapPostLink(url)))
+                      Visibility(visible: !_editMainPost,
+                        child: Semantics(
+                          container: true,
+                          child: Html(
+                            data: AppString.getDefaultEmptyString(value: _post?.body),
+                            style: {
+                              "body": Style(
+                                  color: Styles().colors.fillColorPrimary,
+                                  fontFamily: Styles().fontFamilies.regular,
+                                  fontSize: FontSize(20))
+                            },
+                            onLinkTap: (url, context, attributes, element) =>
+                              _onTapPostLink(url)))),
+                      Visibility(
+                          visible: _editMainPost,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                    padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
+                                    child: TextField(
+                                        controller: _mainPostController,
+                                        maxLines: null,
+                                        autofocus: true,
+                                        decoration: InputDecoration(
+                                            hintText: "Edit the post",
+                                            border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Styles().colors.mediumGray,
+                                                    width: 0.0))),
+                                        style: TextStyle(
+                                            color: Styles().colors.textBackground,
+                                            fontSize: 16,
+                                            fontFamily: Styles().fontFamilies.regular))),
+                                Row(children: [
+                                  Flexible(
+                                      flex: 1,
+                                      child: RoundedButton(
+                                          label:
+                                          Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
+                                          borderColor: Styles().colors.fillColorSecondary,
+                                          textColor: Styles().colors.fillColorPrimary,
+                                          backgroundColor: Styles().colors.white,
+                                          onTap: _onTapSave)),
+                                  ])
+
+
+                              ])),
                     ],
                   )),
               Padding(
@@ -725,6 +800,33 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
+  void _onTapEdit(){
+    if(mounted){
+      _mainPostController.text = _post.body;
+      setState(() {
+        _editMainPost = true;
+      });
+    }
+  }
+
+  void _onTapSave(){
+    String body = _mainPostController.text;
+    if (AppString.isStringEmpty(body)) {
+      String validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
+      AppAlert.showDialogResult(context, validationMsg);
+      return;
+    }
+    String htmlModifiedBody = _replaceNewLineSymbols(body);
+
+    _setLoading(true);
+    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, private: true);
+    Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
+      _editMainPost = false;
+      _setLoading(false);
+    });
+
+  }
+
   void _onTapEditPost({GroupPost reply}) {
     Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
@@ -1087,6 +1189,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return AppString.isStringNotEmpty(currentMemberEmail) &&
         AppString.isStringNotEmpty(itemMemberUserId) &&
         (currentMemberEmail == itemMemberUserId);
+  }
+
+  bool get _isEditPostVisible {
+    return _isEditVisible(_post);
   }
 
   bool get _isDeletePostVisible {

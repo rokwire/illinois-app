@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.38] 2021-01-01
 ### Fixed
 - Improve semantics for Home widgets [#882](https://github.com/rokwire/illinois-app/issues/882).
+- Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
+### Add
+- Add Inbox user info as a debug panel [#887](https://github.com/rokwire/illinois-app/issues/887).
+- Add ability to update Post in GroupPostDetailPanel [#885](https://github.com/rokwire/illinois-app/issues/885).
 
 ## [3.0.37] 2021-10-28
 ### Added

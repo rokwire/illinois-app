@@ -3,6 +3,12 @@
     "app.team_name":"Illinois",
     "app.offline.message.title":"You appear to be offline",
 
+    "generic.minutes": "minutes",
+    "generic.hours": "hours",
+    "generic.days": "days",
+    "generic.months": "months",
+    "generic.years": "years",
+
     "dialog.yes.title":"Yes",
     "dialog.yes.hint":"",
     "dialog.no.title":"No",
