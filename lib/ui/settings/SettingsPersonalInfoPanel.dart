@@ -35,29 +35,33 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
 
   TextEditingController _nameController;
   TextEditingController _emailController;
+  TextEditingController _phoneController;
   String _initialName;
   String _initialEmail;
+  String _initialPhone;
 
   //bool _isDeleting = false;
   bool _isSaving = false;
 
   @override
   void initState() {
-    _initTextControllers();
+    _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
+    _emailController = TextEditingController(text: _initialEmail = Auth2().email ?? "");
+    _phoneController = TextEditingController(text: _initialPhone = Auth2().phone ?? "");
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
   }
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
     await Auth2().deleteUser();
-  }
-
-  void _initTextControllers(){
-    _nameController = TextEditingController();
-    _emailController = TextEditingController();
-
-    _nameController.text = _initialName = Auth2().fullName ?? "";
-    _emailController.text = _initialEmail = Auth2().email ?? "";
   }
 
   @override
@@ -80,17 +84,32 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Container(
-                child: _showShibbolethInfo? _buildShibolethInfoContent() : _buildPhoneVerifiedInfoContent()
+                child: _builInfoContent(),
               ),
             ),
           ),
         ),
-        _showShibbolethInfo? _buildShibbolethAccountManagementOptions() : _buildPhoneAccountManagementOptions(),
+        _buildAccountManagementOptions(),
         Container(height: 16,)
       ],),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
     );
+  }
+
+  Widget _builInfoContent() {
+    if (Auth2().isOidcLoggedIn) {
+      return _buildShibolethInfoContent();
+    }
+    else if (Auth2().isPhoneLoggedIn) {
+      return _buildPhoneVerifiedInfoContent();
+    }
+    else if (Auth2().isEmailLoggedIn) {
+      return _buildEmailLoginInfoContent();
+    }
+    else {
+      return Container();
+    }
   }
 
   Widget _buildShibolethInfoContent(){
@@ -119,62 +138,46 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
   }
 
   Widget _buildPhoneVerifiedInfoContent(){
-    return Container(
-      child:Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(height: 32,),
-          Semantics(label:Localization().getStringEx("panel.profile_info.phone_number.name.title","Full Name"),
-              header: true, excludeSemantics: true, child:
-              Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child:
-                    Text(
-                      Localization().getStringEx("panel.profile_info.phone_number.name.title","Full Name"),
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Styles().colors.fillColorPrimary,
-                          fontSize: 12,
-                          fontFamily: Styles().fontFamilies.bold,
-                          letterSpacing: 1),
-                    )
-              )
-          ),
-          Semantics(label:Localization().getStringEx("panel.profile_info.phone_number.name.title","Full Name"),
-              hint: Localization().getStringEx("panel.profile_info.phone_number.name.hint",""), textField: true, excludeSemantics: true, child:
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
-//                height: 48,
-                  child: TextField(
-                    controller: _nameController,
-                    onChanged: (text) { setState(() {});},
-                    decoration: InputDecoration(border: InputBorder.none),
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
-                  ),
-              )
+    return Container(child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(height: 32,),
+        Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
+          Padding(padding: EdgeInsets.only(bottom: 8), child:
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+          )
+        ),
+        Semantics(
+          label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"),
+          hint: Localization().getStringEx("panel.profile_info.phone_or_email.name.hint",""),
+          textField: true, excludeSemantics: true,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+//          height: 48,
+            child: TextField(
+              controller: _nameController,
+              onChanged: (text) { setState(() {});},
+              decoration: InputDecoration(border: InputBorder.none),
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+            ),
+          )
           ),
           Container(height: 33,),
-          Semantics(label:Localization().getStringEx("panel.profile_info.phone_number.email.title","Email"),
-              header: true, excludeSemantics: true, child:
-              Padding(
-                  padding: EdgeInsets.only(bottom: 8),
-                  child:
-                  Text(
-                    Localization().getStringEx("panel.profile_info.phone_number.email.title","Email"),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        color: Styles().colors.fillColorPrimary,
-                        fontSize: 12,
-                        fontFamily: Styles().fontFamilies.bold,
-                        letterSpacing: 1),
-                  )
+          Semantics(
+            label: Localization().getStringEx("panel.profile_info.phone_or_email.email.title", "Email Address"),
+            //hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint", ""),
+            header: true, excludeSemantics: true,
+               child: Padding(padding: EdgeInsets.only(bottom: 8),
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
+                    style: TextStyle( color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
               )
           ),
-          Semantics(label:Localization().getStringEx("panel.profile_info.phone_number.email.title","Email"),
-              hint: Localization().getStringEx("panel.profile_info.phone_number.email.hint",""), textField: true, excludeSemantics: true, child:
-              Container(
+          Semantics(
+            label:Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"),
+            hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint",""),
+            textField: true, excludeSemantics: true,
+            child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
 //                height: 48,
@@ -196,7 +199,84 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
     );
   }
 
+  Widget _buildEmailLoginInfoContent(){
+    return Container(child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(height: 32,),
+        Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
+          Padding(padding: EdgeInsets.only(bottom: 8), child:
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+          )
+        ),
+        Semantics(
+          label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"),
+          hint: Localization().getStringEx("panel.profile_info.phone_or_email.name.hint",""),
+          textField: true, excludeSemantics: true,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+//          height: 48,
+            child: TextField(
+              controller: _nameController,
+              onChanged: (text) { setState(() {});},
+              decoration: InputDecoration(border: InputBorder.none),
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+            ),
+          )
+          ),
+          Container(height: 33,),
+          Semantics(
+            label: Localization().getStringEx("panel.profile_info.phone_or_email.phone.title", "Phone Number"),
+            //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
+            header: true, excludeSemantics: true,
+               child: Padding(padding: EdgeInsets.only(bottom: 8),
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: TextStyle( color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+              )
+          ),
+          Semantics(
+            label:Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"),
+            hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint",""),
+            textField: true, excludeSemantics: true,
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+//                height: 48,
+                child: TextField(
+                  controller: _emailController,
+                  onChanged: (text) { setState(() {});},
+                  decoration: InputDecoration(border: InputBorder.none),
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                  style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                ),
+              )
+          ),
+          _PersonalInfoEntry(
+              visible: Auth2().isEmailLoggedIn,
+              title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
+              value: Auth2().account?.authType?.email ?? ""),
+        ],
+      ),
+    );
+  }
+
   //AccountManagementOptions
+
+  Widget _buildAccountManagementOptions() {
+    if (Auth2().isOidcLoggedIn) {
+      return _buildShibbolethAccountManagementOptions();
+    }
+    else if (Auth2().isPhoneLoggedIn) {
+      return _buildPhoneOrEmailAccountManagementOptions();
+    }
+    else if (Auth2().isEmailLoggedIn) {
+      return _buildPhoneOrEmailAccountManagementOptions();
+    }
+    else {
+      return Container();
+    }
+  }
+
   Widget _buildShibbolethAccountManagementOptions() {
     return
       Padding(
@@ -213,56 +293,49 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
       );
   }
 
-  Widget _buildPhoneAccountManagementOptions() {
-    return
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child:Row(
-          children: <Widget>[
-            Expanded(child:
-              Padding(
-                  padding: EdgeInsets.symmetric( vertical: 5),
-                  child:
-                  Stack(children: <Widget>[
-                    ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
-                      hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-                      enabled: _canSave,
-                      backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
-                      fontSize: 16.0,
-                      textColor: _canSave? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-                      borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
-                      onTap: _onSaveChangesClicked,
-                    ),
-                    Visibility(
-                        visible:_isSaving,
-                        child: Align(alignment: Alignment.center,
-                          child:Container(
-                            padding: EdgeInsets.all(4),
-                            child: Center(child:
-                            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,),),),
-                        ))
-                  ],)
-                  ,
+  Widget _buildPhoneOrEmailAccountManagementOptions() {
+    return Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Row(children: <Widget>[
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
+            Stack(children: <Widget>[
+              ScalableRoundedButton(
+                label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
+                hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+                enabled: _canSave,
+                backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
+                fontSize: 16.0,
+                textColor: _canSave? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
+                borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                onTap: _onSaveChangesClicked,
               ),
+              Visibility(
+                  visible:_isSaving,
+                  child: Align(alignment: Alignment.center,
+                    child:Container(
+                      padding: EdgeInsets.all(4),
+                      child: Center(child:
+                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,),),),
+                  ))
+            ],),
+          ),
+        ),
+        Container(width: 12,),
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric( vertical: 5), child:
+            ScalableRoundedButton(
+              label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
+              hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
+              backgroundColor: Styles().colors.white,
+              fontSize: 16.0,
+              textColor: Styles().colors.fillColorPrimary,
+              borderColor: Styles().colors.fillColorSecondary,
+              onTap: _onSignOutClicked,
             ),
-            Container(width: 12,),
-            Expanded(
-              child:Padding(
-                padding: EdgeInsets.symmetric( vertical: 5),
-                child: ScalableRoundedButton(
-                  label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
-                  hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-                  backgroundColor: Styles().colors.white,
-                  fontSize: 16.0,
-                  textColor: Styles().colors.fillColorPrimary,
-                  borderColor: Styles().colors.fillColorSecondary,
-                  onTap: _onSignOutClicked,
-                ),
-              )
-            ),
-          ],
-    ));
+          ),
+        ),
+      ],),
+    );
   }
 
   Widget _buildLogoutDialog(BuildContext context) {
@@ -334,9 +407,13 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
 
   _onSaveChangesClicked() async{
 
-    String email, firstName, lastName, middleName;
+    String email, phone, firstName, lastName, middleName;
     if (_isEmailChanged){
       email = _customEmail;
+    }
+
+    if (_isPhoneChanged){
+      phone = _customPhone;
     }
 
     if (_isNameChanged){
@@ -374,6 +451,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
         if (userProfile != null) {
           Auth2UserProfile updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
             email: email,
+            phone: phone,
             firstName: firstName,
             middleName: middleName,
             lastName: lastName,
@@ -415,18 +493,21 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
     return (_initialEmail!= _customEmail);
   }
   
-  String get _customEmail {
-      return _emailController?.value?.text??"";
+  bool get _isPhoneChanged{
+    return (_initialPhone!= _customPhone);
   }
-  
+
   String get _customFullName {
     return _nameController?.value?.text??"";
   }
   
-  bool get _showShibbolethInfo{
-    return Auth2().isOidcLoggedIn;
+  String get _customEmail {
+      return _emailController?.value?.text??"";
   }
-
+  
+  String get _customPhone {
+      return _phoneController?.value?.text??"";
+  }
 }
 
 class _PersonalInfoEntry extends StatelessWidget {
