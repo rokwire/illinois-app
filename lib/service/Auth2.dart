@@ -520,8 +520,6 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
-
-
   Future<Auth2SignUpResult> signUpWithEmail(String email, String password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
@@ -558,6 +556,13 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   Future<bool> forgotEmailPassword(String email) async {
+    //TBD: handle Core BB API
+    await Future.delayed(Duration(seconds: 3));
+    return true;
+  }
+
+  Future<bool> resentActivationEmail(String email) async {
+    //TBD: handle Core BB API
     await Future.delayed(Duration(seconds: 3));
     return true;
   }

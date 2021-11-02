@@ -634,8 +634,12 @@
     "panel.onboarding2.email.sign_up.failed.text": "Sign up failed.",
     "panel.onboarding2.email.sign_up.failed.account_exists.text": "Sign in failed - account already exists.",
 	"panel.onboarding2.email.sign_up.succeeded.text": "A verification email has been sent to your email address. To activate your account you need to confirm it. Then you will be able to login with your new credential.",
+	"panel.onboarding2.email.label.forgot_password.text": "Forgot Password?",
 	"panel.onboarding2.email.forgot_password.succeeded.text": "A password reset link had been sent to your email address. Please reset your password and then try to login.",
 	"panel.onboarding2.email.forgot_password.failed.text": "Failed to send password reset email.",
+	"panel.onboarding2.email.label.resend_email.text": "Resend Verification",
+	"panel.onboarding2.email.resend_email.succeeded.text": "Verification email has been resent.",
+	"panel.onboarding2.email.resend_email.failed.text": "Failed to resend verification email.",
 
     "panel.explore.label.title":"Explorar",
     "panel.explore.button.all.title":"Todos",
