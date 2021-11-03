@@ -23,6 +23,7 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/utils/Utils.dart';
 
 import 'UserData.dart';
 
@@ -229,7 +230,7 @@ class Dining with Explore implements Favorite {
   }
 
   bool get hasDiningSchedules {
-    return (diningSchedules != null);
+    return AppCollection.isCollectionNotEmpty(diningSchedules);
   }
 
   // Dinings support
