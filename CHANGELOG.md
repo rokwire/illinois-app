@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- DINING/RECENTLY VIEWED doesn't show dining schedule accurately [#835](https://github.com/rokwire/safer-illinois-app/issues/835).
 - Android: Update to API level 30 [#896](https://github.com/rokwire/safer-illinois-app/issues/896).
 
 ## [3.0.39] - 2021-11-02
