@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Make the edit controls in phone login in Personal Info panel with white background to indicate that they are editable [#842](https://github.com/rokwire/illinois-app/issues/842).
 - Rename "Student Guide" to "Campus Guide" [#875](https://github.com/rokwire/illinois-app/issues/875).
+- Android: Update to API level 30 [#896](https://github.com/rokwire/safer-illinois-app/issues/896).
 ### Fixed
 - RootPanel: fix broken Tab content when recreating the TabBarController [#879](https://github.com/rokwire/illinois-app/issues/879).
 
