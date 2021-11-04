@@ -82,7 +82,11 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       String message = result
           ? (Localization().getStringEx("panel.group_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
           : Localization().getStringEx("panel.group_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
-      AppAlert.showDialogResult(context, message);
+      AppAlert.showDialogResult(context, message).then((value) {
+        if(result) {
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
 
