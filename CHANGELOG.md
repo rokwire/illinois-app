@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ## [3.0.41] - 2021-11-04
 ### Fixed
 - Fixed TextFields usage in GroupSettingsPanel and GroupCreatePanel [#906](https://github.com/rokwire/illinois-app/issues/906).
 - QRCode panel improvement [#908](https://github.com/rokwire/illinois-app/issues/908).
+- Large font in Athletics news article panel [#855](https://github.com/rokwire/illinois-app/issues/855).
 ### Added
 - Athletics notifications preferences for Start, End and News [#907](https://github.com/rokwire/illinois-app/issues/907).
 
