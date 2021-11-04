@@ -111,7 +111,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode so you can share or print it.'),
+                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode to your photo library, so you can share or print it to promote your group.'),
                   style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
                 ),
                 Padding(
