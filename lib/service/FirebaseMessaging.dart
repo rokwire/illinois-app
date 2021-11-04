@@ -65,7 +65,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String notifyGroupsNotification         = "edu.illinois.rokwire.firebase.messaging.groups.updated";
 
   // Topic names
-  static const List<String> _permanentTopis = [
+  static const List<String> _permanentTopics = [
     "config_update",
     "popup_message",
     "polls",
@@ -440,10 +440,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Storage().setNotifySetting(name, value);
       NotificationService().notify(notifySettingUpdated, name);
 
-      Set<String> subscribedTopis = Storage().firebaseMessagingSubscriptionTopis;
+      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
 
       if (name == _athleticsUpdatesNotificationKey) {
-        _processAthleticsSubscriptions(subscribedTopis: subscribedTopis);
+        _processAthleticsSubscriptions(subscribedTopics: subscribedTopics);
       } else if (name == _athleticsUpdatesStartNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsStartNotificationKey);
       } else if (name == _athleticsUpdatesEndNotificationSetting) {
@@ -451,7 +451,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       } else if (name == _athleticsUpdatesNewsNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
       } else {
-        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopis: subscribedTopis);
+        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: subscribedTopics);
       }
     }
   }
@@ -460,45 +460,45 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _updateSubscriptions() {
     if (hasToken) {
-      Set<String> subscribedTopis = Storage().firebaseMessagingSubscriptionTopis;
-      _processPermanentSubscriptions(subscribedTopis: subscribedTopis);
-      _processRolesSubscriptions(subscribedTopis: subscribedTopis);
-      _processNotifySettingsSubscriptions(subscribedTopis: subscribedTopis);
-      _processAthleticsSubscriptions(subscribedTopis: subscribedTopis);
+      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+      _processPermanentSubscriptions(subscribedTopics: subscribedTopics);
+      _processRolesSubscriptions(subscribedTopics: subscribedTopics);
+      _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
+      _processAthleticsSubscriptions(subscribedTopics: subscribedTopics);
     }
   }
 
   void _updateRolesSubscriptions() {
     if (hasToken) {
-      _processRolesSubscriptions(subscribedTopis: Storage().firebaseMessagingSubscriptionTopis);
+      _processRolesSubscriptions(subscribedTopics: Storage().firebaseMessagingSubscriptionTopics);
     }
   }
 
   void _updateNotifySettingsSubscriptions() {
     if (hasToken) {
-      _processNotifySettingsSubscriptions(subscribedTopis: Storage().firebaseMessagingSubscriptionTopis);
+      _processNotifySettingsSubscriptions(subscribedTopics: Storage().firebaseMessagingSubscriptionTopics);
     }
   }
 
   void _updateAthleticsSubscriptions() {
     if (hasToken) {
-      _processAthleticsSubscriptions(subscribedTopis: Storage().firebaseMessagingSubscriptionTopis);
+      _processAthleticsSubscriptions(subscribedTopics: Storage().firebaseMessagingSubscriptionTopics);
     }
   }
 
-  void _processPermanentSubscriptions({Set<String> subscribedTopis}) {
-    for (String permanentTopic in _permanentTopis) {
-      if ((subscribedTopis == null) || !subscribedTopis.contains(permanentTopic)) {
+  void _processPermanentSubscriptions({Set<String> subscribedTopics}) {
+    for (String permanentTopic in _permanentTopics) {
+      if ((subscribedTopics == null) || !subscribedTopics.contains(permanentTopic)) {
         subscribeToTopic(permanentTopic);
       }
     }
   }
 
-  void _processRolesSubscriptions({Set<String> subscribedTopis}) {
+  void _processRolesSubscriptions({Set<String> subscribedTopics}) {
     Set<UserRole> roles = Auth2().prefs?.roles;
     for (UserRole role in UserRole.values) {
       String roleTopic = role.toString();
-      bool roleSubscribed = (subscribedTopis != null) && subscribedTopis.contains(roleTopic);
+      bool roleSubscribed = (subscribedTopics != null) && subscribedTopics.contains(roleTopic);
       bool roleSelected = (roles != null) && roles.contains(role);
       if (roleSelected && !roleSubscribed) {
         subscribeToTopic(roleTopic);
@@ -509,16 +509,16 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
   
-  void _processNotifySettingsSubscriptions({Set<String> subscribedTopis}) {
+  void _processNotifySettingsSubscriptions({Set<String> subscribedTopics}) {
     _notifySettingTopics.forEach((String setting, String topic) {
       bool value = _getNotifySetting(setting);
-      _processNotifySettingSubscription(topic: topic, value: value, subscribedTopis: subscribedTopis);
+      _processNotifySettingSubscription(topic: topic, value: value, subscribedTopics: subscribedTopics);
     });
   }
 
-  void _processNotifySettingSubscription({String topic, bool value, Set<String> subscribedTopis}) {
+  void _processNotifySettingSubscription({String topic, bool value, Set<String> subscribedTopics}) {
     if (topic != null) {
-      bool itemSubscribed = (subscribedTopis != null) && subscribedTopis.contains(topic);
+      bool itemSubscribed = (subscribedTopics != null) && subscribedTopics.contains(topic);
       if (value && !itemSubscribed) {
         subscribeToTopic(topic);
       }
@@ -528,14 +528,14 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processAthleticsSubscriptions({Set<String> subscribedTopis}) {
+  void _processAthleticsSubscriptions({Set<String> subscribedTopics}) {
     bool notifyAthletics = notifyAthleticsUpdates;
     List<SportDefinition> sportDefs = Sports().sports;
     if (sportDefs != null) {
       for (SportDefinition sportDef in sportDefs) {
         String sport = sportDef.shortName;
         for (String key in _athleticsNotificationsKeyList) {
-          _processAthleticsSubscriptionForSport(notifyAllowed: notifyAthletics, athleticsKey: key, sport: sport, subscribedTopics: subscribedTopis);
+          _processAthleticsSubscriptionForSport(notifyAllowed: notifyAthletics, athleticsKey: key, sport: sport, subscribedTopics: subscribedTopics);
         }
       }
     }
@@ -544,7 +544,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void _processAthleticsSingleSubscription(String athleticsKey) {
     List<SportDefinition> sports = Sports().sports;
     if (AppCollection.isCollectionNotEmpty(sports)) {
-      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopis;
+      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
       for (SportDefinition sport in sports) {
         _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
       }

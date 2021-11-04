@@ -508,29 +508,29 @@ class Storage with Service {
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
 // all subsciptions will be applied again through Notifications BB APIs
-  static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_messaging_subscription_topis';
+  static const String firebaseMessagingSubscriptionTopicsKey  = 'firebase_messaging_subscription_topis';
   
-  Set<String> get firebaseMessagingSubscriptionTopis {
-    List<String> topicsList = _getStringListWithName(firebaseMessagingSubscriptionTopisKey);
+  Set<String> get firebaseMessagingSubscriptionTopics {
+    List<String> topicsList = _getStringListWithName(firebaseMessagingSubscriptionTopicsKey);
     return (topicsList != null) ? Set.from(topicsList) : null;
   }
 
-  set firebaseMessagingSubscriptionTopis(Set<String> value) {
+  set firebaseMessagingSubscriptionTopics(Set<String> value) {
     List<String> topicsList = (value != null) ? List.from(value) : null;
-    _setStringListWithName(firebaseMessagingSubscriptionTopisKey, topicsList);
+    _setStringListWithName(firebaseMessagingSubscriptionTopicsKey, topicsList);
   }
 
   void addFirebaseMessagingSubscriptionTopic(String value) {
-    Set<String> topis = firebaseMessagingSubscriptionTopis ?? Set();
-    topis.add(value);
-    firebaseMessagingSubscriptionTopis = topis;
+    Set<String> topics = firebaseMessagingSubscriptionTopics ?? Set();
+    topics.add(value);
+    firebaseMessagingSubscriptionTopics = topics;
   }
 
   void removeFirebaseMessagingSubscriptionTopic(String value) {
-    Set<String> topis = firebaseMessagingSubscriptionTopis;
-    if (topis != null) {
-      topis.remove(value);
-      firebaseMessagingSubscriptionTopis = topis;
+    Set<String> topics = firebaseMessagingSubscriptionTopics;
+    if (topics != null) {
+      topics.remove(value);
+      firebaseMessagingSubscriptionTopics = topics;
     }
   }
 
