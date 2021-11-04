@@ -224,8 +224,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
             _buildInfoHeader(title,null),
             Container(
-              height: 48,
-              padding: EdgeInsets.only(left: 8,right: 8, top: 12, bottom: 16),
               decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
               child: Semantics(
                   label: fieldTitle,
@@ -235,7 +233,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   child: TextField(
                     controller: _eventTitleController,
                     onChanged: onNameChanged,
-                    decoration: InputDecoration(border: InputBorder.none,),
+                    maxLines: 1,
+                    decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                     style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                   )),
             ),
@@ -289,8 +288,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         children: <Widget>[
           _buildInfoHeader(title,fieldTitle),
           Container(
-            height: 230,
-            padding: EdgeInsets.only(left: 8,right: 8, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
                 label: title,
@@ -300,10 +297,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 child: TextField(
                   controller: _eventDescriptionController,
                   onChanged: (description){ _group.description = description;},
-                  maxLines: 64,
+                  maxLines: 8,
                   decoration: InputDecoration(
                     hintText: fieldHint,
-                    border: InputBorder.none,),
+                    border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                   style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 )),
           ),
@@ -339,24 +336,23 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 15),
                     child: Container(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(
                               color: Styles().colors.fillColorPrimary,
                               width: 1)),
-                      height: 48,
                       child: TextField(
                         controller: _linkController,
                         decoration: InputDecoration(
                             hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
-                            border: InputBorder.none),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                         style: TextStyle(
                             color: Styles().colors.textBackground,
                             fontSize: 16,
                             fontFamily: Styles().fontFamilies.regular),
                         onChanged: (link){ _group.webURL = link;},
+                        maxLines: 1,
                       ),
                     ),
                   ),

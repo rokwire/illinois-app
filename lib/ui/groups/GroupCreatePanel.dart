@@ -204,8 +204,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
          _buildSectionTitle(title,null, true),
           Container(
-            height: 48,
-            padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
                 label: fieldTitle,
@@ -215,7 +213,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 child: TextField(
                   controller: _groupTitleController,
                   onChanged: onNameChanged,
-                  decoration: InputDecoration(border: InputBorder.none,),
+                  maxLines: 1,
+                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 )),
           ),
@@ -241,8 +240,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           _buildSectionTitle(title,description),
           Container(height: 5,),
           Container(
-            height: 114,
-            padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child:
             Row(children: [
@@ -258,8 +255,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           _group.description = text;
                       },
                       controller: _groupDescriptionController,
-                      maxLines: 100,
-                      decoration: InputDecoration(border: InputBorder.none,),
+                      maxLines: 5,
+                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                       style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                     )),
             )],)
