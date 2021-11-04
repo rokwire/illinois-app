@@ -71,12 +71,25 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "polls",
   ];
 
+  static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
+
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
     'event_reminders'  : 'event_reminders',
-    'athletic_updates' : 'athletic_updates',
+    _athleticsUpdatesNotificationKey : _athleticsUpdatesNotificationKey,
     'dining_specials'  : 'dinning_specials',
   };
+
+  // Athletics Notification updates
+  static const String _athleticsStartNotificationKey = 'start';
+  static const String _athleticsEndNotificationKey = 'end';
+  static const String _athleticsNewsNotificationKey = 'news';
+
+  static const List<String> _athleticsNotificationsKeyList = [_athleticsStartNotificationKey, _athleticsEndNotificationKey, _athleticsNewsNotificationKey];
+
+  static const String _athleticsUpdatesStartNotificationSetting = '$_athleticsUpdatesNotificationKey.$_athleticsStartNotificationKey';
+  static const String _athleticsUpdatesEndNotificationSetting = '$_athleticsUpdatesNotificationKey.$_athleticsEndNotificationKey';
+  static const String _athleticsUpdatesNewsNotificationSetting = '$_athleticsUpdatesNotificationKey.$_athleticsNewsNotificationKey';
 
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
@@ -394,8 +407,17 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool get notifyEventReminders               { return _getNotifySetting('event_reminders'); } 
        set notifyEventReminders(bool value)   { _setNotifySetting('event_reminders', value); }
 
-  bool get notifyAthleticsUpdates             { return _getNotifySetting('athletic_updates'); } 
-       set notifyAthleticsUpdates(bool value) { _setNotifySetting('athletic_updates', value); }
+  bool get notifyAthleticsUpdates             { return _getNotifySetting(_athleticsUpdatesNotificationKey); }
+       set notifyAthleticsUpdates(bool value) { _setNotifySetting(_athleticsUpdatesNotificationKey, value); }
+
+  bool get notifyStartAthleticsUpdates              { return _getNotifySetting(_athleticsUpdatesStartNotificationSetting); }
+       set notifyStartAthleticsUpdates(bool value)  { _setNotifySetting(_athleticsUpdatesStartNotificationSetting, value); }
+
+  bool get notifyEndAthleticsUpdates                { return _getNotifySetting(_athleticsUpdatesEndNotificationSetting); }
+       set notifyEndAthleticsUpdates(bool value)    { _setNotifySetting(_athleticsUpdatesEndNotificationSetting, value); }
+
+  bool get notifyNewsAthleticsUpdates               { return _getNotifySetting(_athleticsUpdatesNewsNotificationSetting); }
+       set notifyNewsAthleticsUpdates(bool value)   { _setNotifySetting(_athleticsUpdatesNewsNotificationSetting, value); }
 
   bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
@@ -411,7 +433,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     else {
       return false;
     }
-  } 
+  }
 
   void _setNotifySetting(String name, bool value) {
     if (_notifySettingsAvailable && (_getNotifySetting(name) != value)) {
@@ -419,9 +441,17 @@ class FirebaseMessaging with Service implements NotificationsListener {
       NotificationService().notify(notifySettingUpdated, name);
 
       Set<String> subscribedTopis = Storage().firebaseMessagingSubscriptionTopis;
-      _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopis: subscribedTopis);
-      if (name == 'athletic_updates') {
+
+      if (name == _athleticsUpdatesNotificationKey) {
         _processAthleticsSubscriptions(subscribedTopis: subscribedTopis);
+      } else if (name == _athleticsUpdatesStartNotificationSetting) {
+        _processAthleticsSingleSubscription(_athleticsStartNotificationKey);
+      } else if (name == _athleticsUpdatesEndNotificationSetting) {
+        _processAthleticsSingleSubscription(_athleticsEndNotificationKey);
+      } else if (name == _athleticsUpdatesNewsNotificationSetting) {
+        _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
+      } else {
+        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopis: subscribedTopis);
       }
     }
   }
@@ -500,25 +530,39 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void _processAthleticsSubscriptions({Set<String> subscribedTopis}) {
     bool notifyAthletics = notifyAthleticsUpdates;
-    Set<String> selectedSports = Auth2().prefs?.sportsInterests;
     List<SportDefinition> sportDefs = Sports().sports;
     if (sportDefs != null) {
       for (SportDefinition sportDef in sportDefs) {
         String sport = sportDef.shortName;
-        bool sportSelected = (selectedSports != null) && selectedSports.contains(sport);
-        bool sportSubscribstionValue = notifyAthletics && sportSelected;
-
-        String sportTopic = '${sport}_notification';
-        bool sportSubscribed = (subscribedTopis != null) && subscribedTopis.contains(sportTopic);
-
-        if (sportSubscribstionValue && !sportSubscribed) {
-          FirebaseMessaging().subscribeToTopic(sportTopic);
-        }
-        else if (!sportSubscribstionValue && sportSubscribed) {
-          FirebaseMessaging().unsubscribeFromTopic(sportTopic);
+        for (String key in _athleticsNotificationsKeyList) {
+          _processAthleticsSubscriptionForSport(notifyAllowed: notifyAthletics, athleticsKey: key, sport: sport, subscribedTopics: subscribedTopis);
         }
       }
     }
   }
 
+  void _processAthleticsSingleSubscription(String athleticsKey) {
+    List<SportDefinition> sports = Sports().sports;
+    if (AppCollection.isCollectionNotEmpty(sports)) {
+      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopis;
+      for (SportDefinition sport in sports) {
+        _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
+      }
+    }
+  }
+
+  void _processAthleticsSubscriptionForSport({bool notifyAllowed, String athleticsKey, String sport, Set<String> subscribedTopics}) {
+    if (AppString.isStringNotEmpty(sport)) {
+      bool notify = notifyAllowed && _getNotifySetting('$_athleticsUpdatesNotificationKey.$athleticsKey');
+      bool sportSelected = Auth2().prefs?.sportsInterests?.contains(sport) ?? false;
+      bool subscriptionValue = notify && sportSelected;
+      String topic = 'athletics.$sport.notification.$athleticsKey';
+      bool subscribed = subscribedTopics?.contains(topic) ?? false;
+      if (subscriptionValue && !subscribed) {
+        FirebaseMessaging().subscribeToTopic(topic);
+      } else if (!subscriptionValue && subscribed) {
+        FirebaseMessaging().unsubscribeFromTopic(topic);
+      }
+    }
+  }
 }

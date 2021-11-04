@@ -140,8 +140,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.start.label", "Start"),
-          //TBD: implement
-          toggled: true,
+          toggled: FirebaseMessaging().notifyStartAthleticsUpdates,
           context: context,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesStartToggled : (){},
           style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
@@ -150,8 +149,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.end.label", "End"),
-          //TBD: implement
-          toggled: true,
+          toggled: FirebaseMessaging().notifyEndAthleticsUpdates,
           context: context,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesEndToggled : (){},
           style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
@@ -160,8 +158,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           enabled: _athleticsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates.news.label", "News"),
-          //TBD: implement
-          toggled: true,
+          toggled: FirebaseMessaging().notifyNewsAthleticsUpdates,
           context: context,
           onTap: _athleticsSubNotificationsEnabled ? _onAthleticsUpdatesNewsToggled : (){},
           style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
@@ -228,15 +225,27 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   void _onAthleticsUpdatesStartToggled() {
-    //TBD
+    if(!_athleticsSubNotificationsEnabled) {
+      return;
+    }
+    Analytics.instance.logSelect(target: "Athletics updates: Start");
+    FirebaseMessaging().notifyStartAthleticsUpdates = !FirebaseMessaging().notifyStartAthleticsUpdates;
   }
 
   void _onAthleticsUpdatesEndToggled() {
-    //TBD
+    if(!_athleticsSubNotificationsEnabled) {
+      return;
+    }
+    Analytics.instance.logSelect(target: "Athletics updates: End");
+    FirebaseMessaging().notifyEndAthleticsUpdates = !FirebaseMessaging().notifyEndAthleticsUpdates;
   }
 
   void _onAthleticsUpdatesNewsToggled() {
-    //TBD
+    if(!_athleticsSubNotificationsEnabled) {
+      return;
+    }
+    Analytics.instance.logSelect(target: "Athletics updates: News");
+    FirebaseMessaging().notifyNewsAthleticsUpdates = !FirebaseMessaging().notifyNewsAthleticsUpdates;
   }
 
   void _onDiningSpecialsToggled() {
@@ -269,7 +278,9 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
         _checkNotificationsEnabled();
       }
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 }
