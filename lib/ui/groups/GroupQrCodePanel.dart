@@ -82,7 +82,11 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       String message = result
           ? (Localization().getStringEx("panel.group_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
           : Localization().getStringEx("panel.group_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
-      AppAlert.showDialogResult(context, message);
+      AppAlert.showDialogResult(context, message).then((value) {
+        if(result) {
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
 
@@ -111,7 +115,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode so you can share or print it.'),
+                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode to your photo library, so you can share or print it to promote your group.'),
                   style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
                 ),
                 Padding(
