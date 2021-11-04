@@ -5,12 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed TextFields usage in GroupSettingsPanel and GroupCreatePanel [#906](https://github.com/rokwire/illinois-app/issues/906).
+
 ## [3.0.40] - 2021-11-03
 ### Fixed
-- Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/safer-illinois-app/issues/900).
-- DINING/RECENTLY VIEWED doesn't show dining schedule accurately [#835](https://github.com/rokwire/safer-illinois-app/issues/835).
+- Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/illinois-app/issues/900).
+- DINING/RECENTLY VIEWED doesn't show dining schedule accurately [#835](https://github.com/rokwire/illinois-app/issues/835).
 ### Changed
-- Android: Update to API level 30 [#896](https://github.com/rokwire/safer-illinois-app/issues/896).
+- Android: Update to API level 30 [#896](https://github.com/rokwire/illinois-app/issues/896).
 
 ## [3.0.39] - 2021-11-02
 ### Added
@@ -608,27 +611,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Using Onboarding2 [#176](https://github.com/rokwire/illinois-app/issues/176)
 ### Fixed
-- Handled location error in iOS Directions controller [#254](https://github.com/rokwire/safer-illinois-app/issues/254).
+- Handled location error in iOS Directions controller [#254](https://github.com/rokwire/illinois-app/issues/254).
 
 ## [2.4.11] - 2021-05-26
 ### Fixed
-- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/safer-illinois-app/issues/252).
+- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/illinois-app/issues/252).
 
 ## [2.4.10] - 2021-05-21
 ### Changed
-- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/safer-illinois-app/issues/250).
+- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/illinois-app/issues/250).
 
 ## [2.4.9] - 2021-05-18
 ### Changed
-- Flutter 2.0 integration [#245](https://github.com/rokwire/safer-illinois-app/issues/245).
+- Flutter 2.0 integration [#245](https://github.com/rokwire/illinois-app/issues/245).
 
 ## [2.4.8] - 2021-05-14
 ### Added
-- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/safer-illinois-app/issues/246).
+- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/illinois-app/issues/246).
 
 ## [2.4.7] - 2021-05-13
 ### Fixed
-- Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/safer-illinois-app/issues/243).
+- Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/illinois-app/issues/243).
 
 ## [2.4.6] - 2021-04-12
 ### Fixed
@@ -737,7 +740,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.17] - 2020-11-05
 ### Added
-- Pass application id as header field in FCM API calls from sports service [#154](https://github.com/rokwire/safer-illinois-app/issues/154).
+- Pass application id as header field in FCM API calls from sports service [#154](https://github.com/rokwire/illinois-app/issues/154).
 
 ### Fixed
 - Fix location permission request in Android [#153](https://github.com/rokwire/illinois-app/issues/153)
@@ -791,7 +794,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix typo in notifications title [#27] (https://github.com/rokwire/illinois-app/issues/27)
 
 ### Changed
-- Locale strings from net just override the built-in asset strings [104](https://github.com/rokwire/safer-illinois-app/issues/104).
+- Locale strings from net just override the built-in asset strings [104](https://github.com/rokwire/illinois-app/issues/104).
 
 ## [2.3.7] - 2020-10-01
 ### Added
