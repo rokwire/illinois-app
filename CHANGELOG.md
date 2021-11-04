@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed TextFields usage in GroupSettingsPanel and GroupCreatePanel [#906](https://github.com/rokwire/safer-illinois-app/issues/906).
+
 ## [3.0.40] - 2021-11-03
 ### Fixed
 - Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/safer-illinois-app/issues/900).
