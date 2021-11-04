@@ -178,35 +178,29 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
     if (!AppString.isStringEmpty(article.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
-        child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
-          child: Html(
-            data:article.description,
-            style: {
-              "body": Style(color: Styles().colors.textBackground,)
-            },
-          ),
-        ),
+        child: Html(
+          data:article.description,
+          style: {
+            "body": Style(color: Styles().colors.textBackground,)
+          },
+        )
       ));
     }
     String fullText = article.fillText;
     if (!AppString.isStringEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
-        child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 3.0),
-          child: Html(
-            data:fullText,
-              onLinkTap: (String url,
-                  RenderContext context1,
-                  Map<String, String> attributes,
-                  dom.Element element){
-                Navigator.push(context, CupertinoPageRoute(
-                  builder: (context) => WebPanel(url: url,)
-                ));
-              },
-          ),
-        ),
+        child: Html(
+          data:fullText,
+          onLinkTap: (String url,
+              RenderContext context1,
+              Map<String, String> attributes,
+              dom.Element element){
+            Navigator.push(context, CupertinoPageRoute(
+                builder: (context) => WebPanel(url: url,)
+            ));
+          },
+        )
       ));
     }
     return widgets;
