@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed TextFields usage in GroupSettingsPanel and GroupCreatePanel [#906](https://github.com/rokwire/illinois-app/issues/906).
+- QRCode panel improvementl [#908](https://github.com/rokwire/illinois-app/issues/908).
 
 ## [3.0.40] - 2021-11-03
 ### Fixed
