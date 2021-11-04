@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.7.5] - 2021-11-04
 ### Fixed
 - Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/illinois-app/issues/900).
 - Fix large font in Athletics News [#855](https://github.com/rokwire/illinois-app/issues/855).
