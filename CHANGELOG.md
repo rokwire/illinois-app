@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/illinois-app/issues/900).
+- Fix large font in Athletics News [#855](https://github.com/rokwire/illinois-app/issues/855).
 
 ## [2.7.4] - 2021-11-03
 ### Changed
