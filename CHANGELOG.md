@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed TextFields usage in GroupSettingsPanel and GroupCreatePanel [#906](https://github.com/rokwire/illinois-app/issues/906).
 - QRCode panel improvement [#908](https://github.com/rokwire/illinois-app/issues/908).
+### Added
+- Athletics notifications preferences for Start, End and News [#907](https://github.com/rokwire/illinois-app/issues/907).
 
 ## [3.0.40] - 2021-11-03
 ### Fixed
