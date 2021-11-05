@@ -1110,7 +1110,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
                               child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
                           )),
@@ -1245,7 +1245,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       Expanded(
                           child: Container(
                             child: Semantics(child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,
