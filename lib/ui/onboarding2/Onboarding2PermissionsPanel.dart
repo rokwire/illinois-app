@@ -77,7 +77,6 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   }
 
   void _goNext(){
-    //TBD Login Panels
-    Onboarding2().finish(context);
+    Onboarding2().proceedToLogin(context);
   }
 }

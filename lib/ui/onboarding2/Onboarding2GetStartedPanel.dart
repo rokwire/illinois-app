@@ -33,59 +33,45 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
     App.instance.homeContext = context;
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
-    return Scaffold(body: SafeArea(child:
-            Container(
-              color: Styles().colors.background,
-              child: Column(children: [
-                Expanded(child:
-                  SingleChildScrollView(child:
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Semantics(
-                          hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
-                          header: true,
-                          child: Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A smart campus in your pocket",)),
-                        ),
-                        Container(height: 14,),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: Styles().fontFamilies.regular,
-                                  fontSize: 16,
-                                  color: Styles().colors.fillColorPrimary,
-                                  ),
-                          ),
-                        ),
-                    ]),
-                )),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ScalableRoundedButton(
-                      label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
-                      hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
-                      fontSize: 16,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.white,
-                      textColor: Styles().colors.fillColorPrimary,
-                      onTap: () => _onGoNext(context),
-                    ),
-                   Onboarding2UnderlinedButton(
-                     title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
-                     hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
-                     onTap: (){_onReturningUser(context);},
-                   )
-                  ],
+    return Scaffold(body:
+      Container(color: Styles().colors.background, child:
+        Column(children: [
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+                Semantics(hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"), header: true, child: 
+                  Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A smart campus in your pocket",)),
                 ),
-              ),
-            ])))
+                Container(height: 14,),
+                Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."), textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),),
+                ),
+              ]),
+            )
+          ),
+          //SafeArea(child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8), child:
+              Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                ScalableRoundedButton(
+                  label: Localization().getStringEx("panel.onboarding2.get_started.button.continue.title", 'Continue'),
+                  hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
+                  fontSize: 16,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  borderColor: Styles().colors.fillColorSecondary,
+                  backgroundColor: Styles().colors.white,
+                  textColor: Styles().colors.fillColorPrimary,
+                  onTap: () => _onGoNext(context),
+                ),
+                Onboarding2UnderlinedButton(
+                  title: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.title", "Returning user?"),
+                  hint: Localization().getStringEx("panel.onboarding2.get_started.button.returning_user.hint", ""),
+                  onTap: (){_onReturningUser(context);},
+                )
+              ],),
+            ),
+          //),
+        ]),
+      )
     );
   }
 
