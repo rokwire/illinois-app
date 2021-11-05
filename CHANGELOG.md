@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Include OnboardingAuthNotificationsPanel in Onboarding2 [#915](https://github.com/rokwire/illinois-app/issues/915).
+### Fixed 
+- Fix missing image in Group Event Detail Panel [#918](https://github.com/rokwire/illinois-app/issues/918).
+- Hide Dining Specials [#920](https://github.com/rokwire/illinois-app/issues/920).
+
 
 ## [3.0.41] - 2021-11-04
 ### Fixed

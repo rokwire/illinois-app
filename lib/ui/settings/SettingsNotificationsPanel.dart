@@ -166,15 +166,16 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     ]))))]));
 
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
-    widgets.add(_CustomToggleButton(
-          enabled: _notificationsEnabled,
-          borderRadius: _bottomRounding,
-          label: Localization().getStringEx("panel.settings.notifications.dining", "Dining specials"),
-          toggled: FirebaseMessaging().notifyDiningSpecials,
-          context: context,
-          onTap: _notificationsEnabled? _onDiningSpecialsToggled: (){},
-          style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
-              TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
+
+//    widgets.add(_CustomToggleButton(
+//          enabled: _notificationsEnabled,
+//          borderRadius: _bottomRounding,
+//          label: Localization().getStringEx("panel.settings.notifications.dining", "Dining specials"),
+//          toggled: FirebaseMessaging().notifyDiningSpecials,
+//          context: context,
+//          onTap: _notificationsEnabled? _onDiningSpecialsToggled: (){},
+//          style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
+//              TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
 
     return Container(
       child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),
@@ -248,12 +249,12 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     FirebaseMessaging().notifyNewsAthleticsUpdates = !FirebaseMessaging().notifyNewsAthleticsUpdates;
   }
 
-  void _onDiningSpecialsToggled() {
-    if(!_notificationsEnabled)
-      return ;
-    Analytics.instance.logSelect(target: "Dining Specials");
-    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials;
-  }
+//  void _onDiningSpecialsToggled() {
+//    if(!_notificationsEnabled)
+//      return ;
+//    Analytics.instance.logSelect(target: "Dining Specials");
+//    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials;
+//  }
 
   bool get _notificationsEnabled{
     return _notificationsAuthorized && _matchPrivacyLevel;

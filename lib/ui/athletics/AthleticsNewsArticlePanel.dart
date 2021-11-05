@@ -181,9 +181,9 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
         child: Html(
           data:article.description,
           style: {
-            "body": Style(color: Styles().colors.textBackground,)
+            "body": Style(color: Styles().colors.textBackground)
           },
-        )
+        ),
       ));
     }
     String fullText = article.fillText;
@@ -200,7 +200,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                 builder: (context) => WebPanel(url: url,)
             ));
           },
-        )
+        ),
       ));
     }
     return widgets;
