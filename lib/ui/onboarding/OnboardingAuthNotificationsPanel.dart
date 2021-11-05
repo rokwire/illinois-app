@@ -95,15 +95,17 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                       ),]),
               )),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       ScalableRoundedButton(
                         label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.background,
+                        backgroundColor: Styles().colors.white,
                         textColor: Styles().colors.fillColorPrimary,
                         onTap: () => _onReceiveNotifications(context),
                       ),
@@ -203,7 +205,13 @@ Widget _buildDialogWidget(BuildContext context) {
   }
 
   void _goNext(BuildContext context, {bool replace = false}) {
-    Onboarding().next(context, this, replace: replace);
+    Function onContinue = (onboardingContext != null) ? onboardingContext["onContinueAction"] : null;
+    if (onContinue != null) {
+      onContinue();
+    }
+    else {
+      Onboarding().next(context, this, replace: replace);
+    }
   }
 
   void _goBack(BuildContext context) {
