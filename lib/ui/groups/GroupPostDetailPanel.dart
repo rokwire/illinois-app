@@ -273,7 +273,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   AppString.getDefaultEmptyString(
                                       value: _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies.medium,
