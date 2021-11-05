@@ -47,18 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added building access status in ID Card panel [#806](https://github.com/rokwire/illinois-app/issues/806).
 
-## [2.7.2] - 2021-10-18
-### Changed
-- Updated again layout of ID Card panel [#819](https://github.com/rokwire/illinois-app/issues/819).
-
-## [2.7.1] - 2021-10-15
-### Changed
-- Updated layout of ID Card panel [#810](https://github.com/rokwire/illinois-app/issues/810).
-
-## [2.7.0] - 2021-10-14
-### Added
-- Added building access status in ID Card panel [#806](https://github.com/rokwire/illinois-app/issues/806).
-
 ## [2.6.28] - 2021-09-27
 ### Changed
 - Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
