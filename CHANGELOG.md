@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
 - Fix missing image in Group Event Detail Panel [#918](https://github.com/rokwire/illinois-app/issues/918).
+- Hide Dining Specials [#920](https://github.com/rokwire/illinois-app/issues/920).
 
 ## [2.7.5] - 2021-11-04
 ### Fixed
