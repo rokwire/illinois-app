@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [2.7.6] - 2021-11-05
 ### Fixed
 - Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
 - Fix missing image in Group Event Detail Panel [#918](https://github.com/rokwire/illinois-app/issues/918).
