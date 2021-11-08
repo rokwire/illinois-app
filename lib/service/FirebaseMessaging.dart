@@ -72,11 +72,16 @@ class FirebaseMessaging with Service implements NotificationsListener {
   ];
 
   static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
+  static const String _groupUpdatesNotificationKey = 'group';
 
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
     'event_reminders'  : 'event_reminders',
     _athleticsUpdatesNotificationKey : _athleticsUpdatesNotificationKey,
+    _groupUpdatesNotificationKey : _groupUpdatesNotificationKey,
+    _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
+    _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
+    _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
     'dining_specials'  : 'dinning_specials',
   };
 
@@ -90,6 +95,18 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String _athleticsUpdatesStartNotificationSetting = '$_athleticsUpdatesNotificationKey.$_athleticsStartNotificationKey';
   static const String _athleticsUpdatesEndNotificationSetting = '$_athleticsUpdatesNotificationKey.$_athleticsEndNotificationKey';
   static const String _athleticsUpdatesNewsNotificationSetting = '$_athleticsUpdatesNotificationKey.$_athleticsNewsNotificationKey';
+
+  // Group Notification updates
+  static const String _groupPostsNotificationKey = 'posts';
+  static const String _groupInvitationsNotificationKey = 'invitations';
+  static const String _groupEventsNotificationKey = 'events';
+
+  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey];
+
+
+  static const String _groupUpdatesPostsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPostsNotificationKey';
+  static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
+  static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
 
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
@@ -419,6 +436,18 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool get notifyNewsAthleticsUpdates               { return _getNotifySetting(_athleticsUpdatesNewsNotificationSetting); }
        set notifyNewsAthleticsUpdates(bool value)   { _setNotifySetting(_athleticsUpdatesNewsNotificationSetting, value); }
 
+  bool get notifyGroupUpdates             { return _getNotifySetting(_groupUpdatesNotificationKey); }
+  set notifyGroupUpdates(bool value) { _setNotifySetting(_groupUpdatesNotificationKey, value); }
+
+  bool get notifyGroupPostUpdates              { return _getNotifySetting(_groupUpdatesPostsNotificationSetting); }
+  set notifyGroupPostUpdates(bool value)  { _setNotifySetting(_groupUpdatesPostsNotificationSetting, value); }
+
+  bool get notifyGroupInvitationsUpdates                { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
+  set notifyGroupInvitationsUpdates(bool value)    { _setNotifySetting(_groupUpdatesInvitationsNotificationSetting, value); }
+
+  bool get notifyGroupEventsUpdates               { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
+  set notifyGroupEventsUpdates(bool value)   { _setNotifySetting(_groupUpdatesEventsNotificationSetting, value); }
+
   bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
 
@@ -450,6 +479,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
         _processAthleticsSingleSubscription(_athleticsEndNotificationKey);
       } else if (name == _athleticsUpdatesNewsNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
+      } else if (name == _groupUpdatesNotificationKey) {
+        _processGroupsSubscriptions(subscribedTopics: subscribedTopics);
       } else {
         _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: subscribedTopics);
       }
@@ -465,6 +496,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       _processRolesSubscriptions(subscribedTopics: subscribedTopics);
       _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
       _processAthleticsSubscriptions(subscribedTopics: subscribedTopics);
+      _processGroupsSubscriptions(subscribedTopics: subscribedTopics);
     }
   }
 
@@ -565,4 +597,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
       }
     }
   }
+
+  void _processGroupsSubscriptions({Set<String> subscribedTopics}) {
+    bool value = notifyGroupUpdates;
+    if (value != null) {
+      for (String key in _groupNotificationsKeyList) {
+        String topic = "$_groupUpdatesNotificationKey.$key";
+//        bool subscribed = subscribedTopics?.contains(topic) ?? false;
+        if(value){
+          FirebaseMessaging().subscribeToTopic(topic);
+        } else {
+          FirebaseMessaging().unsubscribeFromTopic(topic);
+        }
+      }
+    }
+  }
+
+
 }
