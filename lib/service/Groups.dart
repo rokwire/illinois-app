@@ -20,6 +20,7 @@ import 'dart:core';
 import 'package:http/http.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Analytics.dart';
 //import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -265,6 +266,7 @@ class Groups with Service implements NotificationsListener {
         String body = AppJson.encode(json);
         Response response = await Network().post(url, auth: NetworkAuth.Auth2, body: body);
         if((response?.statusCode ?? -1) == 200){
+          Analytics().logGroup(action: Analytics.LogGroupMembershipRequested, attributes: group.analyticsAttributes);
           NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
@@ -275,13 +277,14 @@ class Groups with Service implements NotificationsListener {
     return false; // fail
   }
 
-  Future<bool> cancelRequestMembership(String groupId) async{
-    if(groupId != null) {
-      String url = '${Config().groupsUrl}/group/$groupId/pending-members';
+  Future<bool> cancelRequestMembership(Group group) async{
+    if(group?.id != null) {
+      String url = '${Config().groupsUrl}/group/${group.id}/pending-members';
       try {
         Response response = await Network().delete(url, auth: NetworkAuth.Auth2,);
         if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupUpdated, groupId);
+          Analytics().logGroup(action: Analytics.LogGroupMembershipRequestCanceled, attributes: group.analyticsAttributes);
+          NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
       } catch (e) {
@@ -291,33 +294,34 @@ class Groups with Service implements NotificationsListener {
     return false; // fail
   }
 
-  Future<bool> leaveGroup(String groupId) async {
-    if (AppString.isStringEmpty(groupId)) {
+  Future<bool> leaveGroup(Group group) async {
+    if (AppString.isStringEmpty(group?.id)) {
       return false;
     }
-    String url = '${Config().groupsUrl}/group/$groupId/members';
+    String url = '${Config().groupsUrl}/group/${group.id}/members';
     Response response = await Network().delete(url, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
     if (responseCode == 200) {
-      NotificationService().notify(notifyGroupUpdated, groupId);
+      Analytics().logGroup(action: Analytics.LogGroupMembershipQuit, attributes: group.analyticsAttributes);
+      NotificationService().notify(notifyGroupUpdated, group.id);
       return true;
     } else {
-      print('Failed to leave group with id {$groupId}. Response:');
       String responseString = response?.body;
       print(responseString);
       return false;
     }
   }
 
-  Future<bool> acceptMembership(String groupId, String memberId, bool decision, String reason) async{
-    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId) && decision != null) {
+  Future<bool> acceptMembership(Group group, Member member, bool decision, String reason) async{
+    if(AppString.isStringNotEmpty(group?.id) && AppString.isStringNotEmpty(member?.id) && decision != null) {
       Map<String, dynamic> bodyMap = {"approve": decision, "reject_reason": reason};
       String body = AppJson.encode(bodyMap);
-      String url = '${Config().groupsUrl}/memberships/$memberId/approval';
+      String url = '${Config().groupsUrl}/memberships/${member.id}/approval';
       try {
         Response response = await Network().put(url, auth: NetworkAuth.Auth2, body: body);
         if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupUpdated, groupId);
+          Analytics().logGroup(action: decision ? Analytics.LogGroupMembershipApproved : Analytics.LogGroupMembershipRejected, attributes: group.analyticsAttributes);    
+          NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
       } catch (e) {
@@ -327,15 +331,21 @@ class Groups with Service implements NotificationsListener {
     return false; // fail
   }
 
-  Future<bool> updateMembership(String groupId, String memberId, GroupMemberStatus status) async{
-    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId)) {
+  Future<bool> updateMembership(Group group, Member member, GroupMemberStatus status) async{
+    if(AppString.isStringNotEmpty(group?.id) && AppString.isStringNotEmpty(member?.id)) {
       Map<String, dynamic> bodyMap = {"status":groupMemberStatusToString(status)};
       String body = AppJson.encode(bodyMap);
-      String url = '${Config().groupsUrl}/memberships/$memberId';
+      String url = '${Config().groupsUrl}/memberships/${member.id}';
       try {
         Response response = await Network().put(url, auth: NetworkAuth.Auth2, body: body);
         if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupUpdated, groupId);
+          if (status == GroupMemberStatus.admin) {
+            Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToAdmin, attributes: group.analyticsAttributes);    
+          }
+          else if (status == GroupMemberStatus.member) {
+            Analytics().logGroup(action: Analytics.LogGroupMembershipSwitchToMember, attributes: group.analyticsAttributes);    
+          }
+          NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
       } catch (e) {
@@ -345,13 +355,14 @@ class Groups with Service implements NotificationsListener {
     return false; // fail
   }
 
-  Future<bool> deleteMembership(String groupId, String memberId) async{
-    if(AppString.isStringNotEmpty(groupId) && AppString.isStringNotEmpty(memberId)) {
-      String url = '${Config().groupsUrl}/memberships/$memberId';
+  Future<bool> deleteMembership(Group group, Member member) async{
+    if(AppString.isStringNotEmpty(group?.id) && AppString.isStringNotEmpty(member?.id)) {
+      String url = '${Config().groupsUrl}/memberships/${member.id}';
       try {
         Response response = await Network().delete(url, auth: NetworkAuth.Auth2,);
         if((response?.statusCode ?? -1) == 200){
-          NotificationService().notify(notifyGroupUpdated, groupId);
+          Analytics().logGroup(action: Analytics.LogGroupMembershipRemoved, attributes: group.analyticsAttributes);    
+          NotificationService().notify(notifyGroupUpdated, group.id);
           return true;
         }
       } catch (e) {

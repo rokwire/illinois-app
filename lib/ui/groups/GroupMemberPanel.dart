@@ -107,7 +107,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
       bool newIsAdmin = !_isAdmin;
 
       GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
-      Groups().updateMembership(widget.groupId, widget.memberId, status).then((bool succeed) {
+      Groups().updateMembership(widget.group, widget.member, status).then((bool succeed) {
         if (mounted) {
           setState(() {
             _updating = false;
@@ -125,7 +125,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Future<void> _removeMembership() async{
-    bool success = await Groups().deleteMembership(widget.groupId, widget.memberId);
+    bool success = await Groups().deleteMembership(widget.group, widget.member);
     if(!success){
       throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.name ?? ""]);
     }

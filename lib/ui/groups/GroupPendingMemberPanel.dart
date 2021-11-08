@@ -308,7 +308,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       _updating = true;
     });
 
-    Groups().acceptMembership(widget.group.id, widget.member.id, _approved, _reasonController.text).then((bool result) {
+    Groups().acceptMembership(widget.group, widget.member, _approved, _reasonController.text).then((bool result) {
       if (mounted) {
         setState(() {
           _updating = false;
