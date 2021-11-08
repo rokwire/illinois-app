@@ -103,7 +103,7 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   Widget _buildSettings(){
-    BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
+//  BorderRadius _bottomRounding = BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5));
     BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
     List<Widget> widgets = [];
 
