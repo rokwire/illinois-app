@@ -281,7 +281,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _cancelMembershipRequest() {
     _setConfirmationLoading(true);
-    Groups().cancelRequestMembership(widget.groupId).whenComplete(() {
+    Groups().cancelRequestMembership(widget.group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup();
@@ -291,7 +291,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Future<void> _leaveGroup() {
     _setConfirmationLoading(true);
-    return Groups().leaveGroup(widget.groupId).whenComplete(() {
+    return Groups().leaveGroup(widget.group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup(loadEvents: true);
