@@ -164,8 +164,46 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           style: _athleticsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
           TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies.bold))
     ]))))]));
-
+    //TBD localisation fro groups settings
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
+    widgets.add(_CustomToggleButton(
+        enabled: _notificationsEnabled,
+        borderRadius: BorderRadius.zero,
+        label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group updates"),
+        toggled: FirebaseMessaging().notifyGroupUpdates,
+        context: context,
+        onTap: _notificationsEnabled? _onGroupsUpdatesToggled : (){},
+        style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
+        TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+      _CustomToggleButton(
+          enabled: _groupsSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
+          toggled: FirebaseMessaging().notifyGroupPostUpdates,
+          context: context,
+          onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesPostsToggled : (){},
+          style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
+          TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies.bold)),
+      _CustomToggleButton(
+          enabled: _groupsSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.event.label", "Event"),
+          toggled: FirebaseMessaging().notifyGroupEventsUpdates,
+          context: context,
+          onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesEventsToggled : (){},
+          style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
+          TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies.bold)),
+      _CustomToggleButton(
+          enabled: _groupsSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Invitations"),
+          toggled: FirebaseMessaging().notifyGroupInvitationsUpdates,
+          context: context,
+          onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesInvitationsToggled: (){},
+          style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
+          TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies.bold))
+    ]))))]));
 
 //    widgets.add(_CustomToggleButton(
 //          enabled: _notificationsEnabled,
@@ -249,6 +287,34 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     FirebaseMessaging().notifyNewsAthleticsUpdates = !FirebaseMessaging().notifyNewsAthleticsUpdates;
   }
 
+  void _onGroupsUpdatesToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics.instance.logSelect(target: "Groups updates");
+    FirebaseMessaging().notifyGroupUpdates = !FirebaseMessaging().notifyGroupUpdates;
+  }
+
+  void _onGroupsUpdatesPostsToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics.instance.logSelect(target: "Posts updates");
+    FirebaseMessaging().notifyGroupPostUpdates = !FirebaseMessaging().notifyGroupPostUpdates;
+  }
+
+  void _onGroupsUpdatesInvitationsToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics.instance.logSelect(target: "Invitations updates");
+    FirebaseMessaging().notifyGroupInvitationsUpdates = !FirebaseMessaging().notifyGroupInvitationsUpdates;
+  }
+
+  void _onGroupsUpdatesEventsToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics.instance.logSelect(target: "Events updates");
+    FirebaseMessaging().notifyGroupEventsUpdates = !FirebaseMessaging().notifyGroupEventsUpdates;
+  }
+
 //  void _onDiningSpecialsToggled() {
 //    if(!_notificationsEnabled)
 //      return ;
@@ -262,6 +328,10 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
 
   bool get _athleticsSubNotificationsEnabled {
     return (_notificationsEnabled && FirebaseMessaging().notifyAthleticsUpdates);
+  }
+
+  bool get _groupsSubNotificationsEnabled {
+    return (_notificationsEnabled && FirebaseMessaging().notifyGroupUpdates);
   }
 
   bool get _matchPrivacyLevel{

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created Analytics logs for group membership actions [#924](https://github.com/rokwire/illinois-app/issues/924).
+- Add Groups Notification settings buttons [#926](https://github.com/rokwire/illinois-app/issues/926).
 
 ## [3.0.42] - 2021-11-05
 ### Added
