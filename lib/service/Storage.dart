@@ -42,7 +42,12 @@ class Storage with Service {
   Future<ServiceError> initService() async {
     Log.d("Init Storage");
     _sharedPreferences = await SharedPreferences.getInstance();
-    return null;
+    return (_sharedPreferences == null) ? ServiceError(
+      source: this,
+      severity: ServiceErrorSeverity.fatal,
+      title: 'Storage initialization failed',
+      description: 'Failed to initialize application preferences storage.',
+    ) : null;
   }
 
   void deleteEverything(){
