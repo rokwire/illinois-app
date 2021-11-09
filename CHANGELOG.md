@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.44] - 2021-11-09
+###Fixed 
+- Fixed Firebase subscription for Groups Update Settings [#926](https://github.com/rokwire/illinois-app/issues/926).
+
 ## [3.0.43] - 2021-11-08
 ### Added
 - Created Analytics logs for group membership actions [#924](https://github.com/rokwire/illinois-app/issues/924).
