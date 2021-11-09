@@ -49,8 +49,9 @@ class RecentItems with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     _loadRecentItems();
+    return null;
   }
 
   @override

@@ -39,9 +39,10 @@ class Storage with Service {
   SharedPreferences _sharedPreferences;
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     Log.d("Init Storage");
     _sharedPreferences = await SharedPreferences.getInstance();
+    return null;
   }
 
   void deleteEverything(){

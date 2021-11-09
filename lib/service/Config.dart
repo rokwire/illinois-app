@@ -226,7 +226,7 @@ class Config with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
 
     _configEnvironment = configEnvFromString(Storage().configEnvironment) ??
       (kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev);
@@ -236,6 +236,7 @@ class Config with Service implements NotificationsListener {
     Log.d('Application Documents Directory: ${_appDocumentsDir.path}');
 
     await _init();
+    return null;
   }
 
   @override

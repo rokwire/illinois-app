@@ -71,7 +71,7 @@ class Styles extends Service implements NotificationsListener{
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     await _getCacheFile();
     
     _contentMode = stylesContentModeFromString(Storage().stylesContentMode) ?? StylesContentMode.auto;
@@ -91,6 +91,7 @@ class Styles extends Service implements NotificationsListener{
         await _loadFromAssets();
       }
     }
+    return null;
   }
 
   @override

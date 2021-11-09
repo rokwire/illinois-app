@@ -57,10 +57,11 @@ class LiveStats with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     if(_enabled) {
       _loadLiveGames();
     }
+    return null;
   }
 
   @override

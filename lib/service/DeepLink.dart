@@ -30,7 +30,7 @@ class DeepLink with Service {
   DeepLink._internal();
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
 
     // 1. Initial Uri
     getInitialUri().then((uri) {
@@ -45,5 +45,6 @@ class DeepLink with Service {
         NotificationService().notify(notifyUri, uri);
       }
     });
+    return null;
   }
 }

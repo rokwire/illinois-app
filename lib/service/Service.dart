@@ -57,7 +57,8 @@ abstract class Service {
   void destroyService() {
   }
 
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
+    return null;
   }
 
   void initServiceUI() async {
@@ -137,10 +138,14 @@ class Services {
     }
   }
 
-  Future<void> init() async {
+  Future<ServiceError> init() async {
     for (Service service in _services) {
-      await service.initService();
+      ServiceError error = await service.initService();
+      if (error?.severity == ServiceErrorSeverity.fatal) {
+        return error;
+      }
     }
+    return null;
   }
 
   void initUI() {
@@ -178,3 +183,16 @@ class Services {
 
 }
 
+class ServiceError {
+  final String title;
+  final String description;
+  final Service source;
+  final ServiceErrorSeverity severity;
+
+  ServiceError({this.title, this.description, this.source, this.severity});
+}
+
+enum ServiceErrorSeverity {
+  fatal,
+  nonFatal
+}

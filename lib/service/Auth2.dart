@@ -90,7 +90,7 @@ class Auth2 with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     _token = Storage().auth2Token;
     _uiucToken = Storage().auth2UiucToken;
     _account = Storage().auth2Account;
@@ -118,6 +118,7 @@ class Auth2 with Service implements NotificationsListener {
         Log.d("Anonymous Authentication Failed");
       }
     }
+    return null;
   }
 
   @override

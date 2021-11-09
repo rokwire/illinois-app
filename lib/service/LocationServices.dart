@@ -68,8 +68,9 @@ class LocationServices with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     _lastStatus = await this.status;
+    return null;
   }
 
   Future<LocationServicesStatus> get status async {

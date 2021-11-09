@@ -294,7 +294,7 @@ class Analytics with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
 
     await _initDatabase();
     _initTimer();
@@ -325,6 +325,7 @@ class Analytics with Service implements NotificationsListener {
         _osVersion = _iosDeviceInfo.systemVersion;
       });
     }
+    return null;
   }
 
   @override

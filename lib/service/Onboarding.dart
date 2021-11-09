@@ -66,8 +66,9 @@ class Onboarding with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     _contentCodes = FlexUI()['onboarding'];
+    return null;
   }
 
   @override

@@ -28,9 +28,9 @@ class FirebaseService extends Service{
   bool _initialized = false;
 
   @override
-  Future<void> initService() async{
-    await super.initService();
+  Future<ServiceError> initService() async{
     await initFirebase();
+    return null;
   }
 
   Future<void> initFirebase() async{

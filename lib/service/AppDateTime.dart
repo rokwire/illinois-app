@@ -56,8 +56,9 @@ class AppDateTime with Service {
 
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     _init();
+    return null;
   }
 
   _init() async {

@@ -43,9 +43,9 @@ class HttpProxy extends Service implements NotificationsListener{
   }
 
   @override
-  Future<void> initService() {
+  Future<ServiceError> initService() {
     _handleChanged();
-    return super.initService();
+    return null;
   }
 
   @override

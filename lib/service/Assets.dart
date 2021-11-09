@@ -68,11 +68,12 @@ class Assets with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
     _cacheFile = await _getCacheFile();
     _internalContent = await _loadFromAssets();
     _externalContent = await _loadFromCache();
     _updateFromNet();
+    return null;
   }
 
   @override

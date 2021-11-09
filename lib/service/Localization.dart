@@ -76,7 +76,7 @@ class Localization with Service implements NotificationsListener {
   }
 
   @override
-  Future<void> initService() async {
+  Future<ServiceError> initService() async {
 
     _assetsDir = await _getAssetsDir();
     
@@ -89,6 +89,7 @@ class Localization with Service implements NotificationsListener {
       _currentLocale = Locale.fromSubtags(languageCode : curentLanguage);
       _initLocaleStirngs(curentLanguage);
     }
+    return null;
   }
 
   @override
