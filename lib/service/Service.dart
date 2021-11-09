@@ -141,8 +141,14 @@ class Services {
   Future<ServiceError> init() async {
     for (Service service in _services) {
       ServiceError error = await service.initService();
-      if (error?.severity == ServiceErrorSeverity.fatal) {
-        return error;
+      if (error != null) {
+        if (error.severity == ServiceErrorSeverity.fatal) {
+          return error;
+        }
+        else {
+          
+          print("${error.source.runtimeType.toString()}.initService()\n\t${error.title}\n\t${error.description}");
+        }
       }
     }
     return null;
