@@ -7,6 +7,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
@@ -152,6 +153,9 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _onTestLocations() {
     Analytics().logSelect(target: 'Test Locaations');
+    Navigator.push(context, CupertinoPageRoute(
+      builder: (context) => HomeSaferTestLocationsPanel()
+    ));
   }
 
   void _onMyMcKinley() {
