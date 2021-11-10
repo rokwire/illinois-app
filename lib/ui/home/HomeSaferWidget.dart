@@ -9,6 +9,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
 
@@ -153,6 +154,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'My McKinley');
+    launch('https://mymckinley.illinois.edu/');
   }
 
   void _onWellnessAnswerCenter() {
