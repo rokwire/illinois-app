@@ -1856,6 +1856,16 @@
 	"widget.home_student_guide_highlights.button.more.title": "查看全部",
 	"widget.home_student_guide_highlights.button.more.hint": "點按即可查看所有亮點",
 
+	"widget.home.safer.label.title": "Building Access",
+	"widget.home.safer.button.building_access.title": "Building Access",
+	"widget.home.safer.button.building_access.description": "Check your current building access.",
+	"widget.home.safer.button.test_locations.title": "Test Locations",
+	"widget.home.safer.button.test_locations.description": "Find test locations",
+	"widget.home.safer.button.my_mckinley.title": "My McKinley",
+	"widget.home.safer.button.my_mckinley.description": "My McKinley Patient Health Portal",
+	"widget.home.safer.button.wellness_answer_center.title": "Wellness Answer Center",
+	"widget.home.safer.button.wellness_answer_center.description": "Contact Wellness Answer Center for issues",
+
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
 

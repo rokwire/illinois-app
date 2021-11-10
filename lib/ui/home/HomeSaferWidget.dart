@@ -7,6 +7,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class HomeSaferWidget extends StatefulWidget {
 
@@ -53,46 +54,52 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      SectionTitlePrimary(title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-        iconPath: 'images/campus-tools.png',
-        children: _buildCommandsList(),),
-      Container(height: 48,),
-    ],);
+    return SectionTitlePrimary(
+      title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
+      iconPath: 'images/campus-tools.png',
+      children: _buildCommandsList(),);
   }
 
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
-    List<dynamic> contentListCodes = FlexUI()['home.campus_tools'];
+    List<dynamic> contentListCodes = FlexUI()['home.safer'];
     if (contentListCodes != null) {
       for (dynamic contentListCode in contentListCodes) {
+        Widget contentEntry;
         if (contentListCode == 'building_access') {
-          contentList.add(_buildCommandEntry(
+          contentEntry = _buildCommandEntry(
             title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
             description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
             onTap: _onBuildingAccess,
-          ));
+          );
         }
         else if (contentListCode == 'test_locations') {
-          contentList.add(_buildCommandEntry(
+          contentEntry = _buildCommandEntry(
             title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
-            description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations.'),
+            description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
             onTap: _onTestLocations,
-          ));
+          );
         }
         else if (contentListCode == 'my_mckinley') {
-          contentList.add(_buildCommandEntry(
+          contentEntry = _buildCommandEntry(
             title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'My McKinley'),
-            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'My McKinley Patient Health Portal.'),
+            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'My McKinley Patient Health Portal'),
             onTap: _onMyMcKinley,
-          ));
+          );
         }
         else if (contentListCode == 'wellness_answer_center') {
-          contentList.add(_buildCommandEntry(
+          contentEntry = _buildCommandEntry(
             title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Wellness Answer Center'),
-            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Contact Wellness Answer Center for issues.'),
+            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Contact Wellness Answer Center for issues'),
             onTap: _onWellnessAnswerCenter,
-          ));
+          );
+        }
+
+        if (contentEntry != null) {
+          if (contentList.isNotEmpty) {
+            contentList.add(Container(height: 6,));
+          }
+          contentList.add(contentEntry);
         }
       }
 
@@ -113,9 +120,11 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
               ),
               Image.asset('images/chevron-right.png'),
             ],),
-            Padding(padding: EdgeInsets.only(top: 5), child:
-              Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textSurface),),
-            ),
+            AppString.isStringNotEmpty(description) ?
+              Padding(padding: EdgeInsets.only(top: 5), child:
+                Text(description, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textSurface),),
+              ) :
+              Container(),
           ],),),),
       );
   }
