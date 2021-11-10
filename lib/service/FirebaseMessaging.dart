@@ -600,15 +600,18 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _processGroupsSubscriptions({Set<String> subscribedTopics}) {
-    bool value = notifyGroupUpdates;
-    if (value != null) {
+    bool groupSettingsAvailable  = notifyGroupUpdates;
+    if (groupSettingsAvailable  != null) {
       for (String key in _groupNotificationsKeyList) {
         String topic = "$_groupUpdatesNotificationKey.$key";
-//        bool subscribed = subscribedTopics?.contains(topic) ?? false;
-        if(value){
-          FirebaseMessaging().subscribeToTopic(topic);
-        } else {
+        bool subscribed = subscribedTopics?.contains(topic) ?? false;
+        bool value = true;
+        try{value = _getNotifySetting(topic) ?? false;} catch (e){print(e);}
+        if ((!groupSettingsAvailable || !value) && subscribed){
           FirebaseMessaging().unsubscribeFromTopic(topic);
+        }
+        if(groupSettingsAvailable && value /* && !subscribed*/){ // value && subscribed - after login we need to reset UserInfo in Storage
+          FirebaseMessaging().subscribeToTopic(topic);
         }
       }
     }
