@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Add Semantics label for Building Access image in IDCardPanel [#881](https://github.com/rokwire/illinois-app/issues/881).
+
 ## [3.0.44] - 2021-11-09
 ###Fixed 
 - Fixed Firebase subscription for Groups Update Settings [#926](https://github.com/rokwire/illinois-app/issues/926).
