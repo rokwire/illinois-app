@@ -16,7 +16,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
       backgroundColor: Styles().colors.background,
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.home.wellness_answer_center.header.title", "Wellness Answer Center"),
+        titleWidget: Text(Localization().getStringEx("panel.home.safer.wellness_answer_center.header.title", "Wellness Answer Center"),
           style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),
         ),
       ),
@@ -27,7 +27,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                Localization().getStringEx("panel.home.wellness_answer_center.label.description", "If you having issues with the app or getting a test result, contact the Wellness Answer Center for assistance."),
+                Localization().getStringEx("panel.home.safer.wellness_answer_center.label.description", "If you having issues with the app or getting a test result, contact the Wellness Answer Center for assistance."),
                 style: TextStyle(
                   fontFamily: Styles().fontFamilies.regular,
                   fontSize: 16,
@@ -39,7 +39,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
                 textScaleFactor: MediaQuery.textScaleFactorOf(context),
                 textAlign: TextAlign.start,
                 text: TextSpan(
-                  text: Localization().getStringEx("panel.home.wellness_answer_center.label.email", "Email the Wellness Answer Center at "),
+                  text: Localization().getStringEx("panel.home.safer.wellness_answer_center.label.email", "Email the Wellness Answer Center at "),
                   style: TextStyle(
                       fontFamily: Styles().fontFamilies.regular,
                       fontSize: 16,
@@ -64,7 +64,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
                 textScaleFactor: MediaQuery.textScaleFactorOf(context),
                 textAlign: TextAlign.start,
                 text: TextSpan(
-                    text: Localization().getStringEx("panel.home.wellness_answer_center.label.phone", "Phone the Answer Center at "),
+                    text: Localization().getStringEx("panel.home.safer.wellness_answer_center.label.phone", "Phone the Answer Center at "),
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies.regular,
                         fontSize: 16,

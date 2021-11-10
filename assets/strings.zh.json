@@ -1756,10 +1756,10 @@
 
 	"panel.student_guide_detail.label.content.empty": "空的指南內容",
 
-	"panel.home.wellness_answer_center.header.title": "Wellness Answer Center",
-	"panel.home.wellness_answer_center.label.description": "If you having issues with the app or getting a test result, contact the Wellness Answer Center for assistance.",
-	"panel.home.wellness_answer_center.label.email": "Email the Wellness Answer Center at ",
-	"panel.home.wellness_answer_center.label.phone": "Phone the Answer Center at ",
+	"panel.home.safer.wellness_answer_center.header.title": "Wellness Answer Center",
+	"panel.home.safer.wellness_answer_center.label.description": "If you having issues with the app or getting a test result, contact the Wellness Answer Center for assistance.",
+	"panel.home.safer.wellness_answer_center.label.email": "Email the Wellness Answer Center at ",
+	"panel.home.safer.wellness_answer_center.label.phone": "Phone the Answer Center at ",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
