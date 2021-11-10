@@ -83,7 +83,12 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
 
   Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
-  List<dynamic> get supportedLocales                { return (_config != null) ? (_config['languages']) : null; }
+  List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
+
+  Map<String, dynamic> get safer                   { return (_config != null) ? (_config['safer'] ?? {}) : {}; }
+  Map<String, dynamic> get saferMcKinley           { return safer['mckinley'] ?? {}; }
+  Map<String, dynamic> get saferWellness           { return safer['wellness'] ?? {}; }
+  Map<String, dynamic> get saferKocations          { return safer['locations'] ?? {}; }
 
 //NA: String get redirectAuthUrl        { return otherUniversityServices['redirect_auth_url']; }      // "edu.illinois.ncsa.rokwireauthpoc:rokwireauthpoc.ncsa.illinois.edu/oauth2-cb"
   String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
@@ -116,6 +121,7 @@ class Config with Service implements NotificationsListener {
   String get locationsUrl           { return platformBuildingBlocks["locations_url"]; }               // "https://api-dev.rokwire.illinois.edu/location/api";
   String get groupsUrl              { return platformBuildingBlocks["groups_url"]; }                  // "https://api-dev.rokwire.illinois.edu/gr/api";
   String get contentUrl             { return platformBuildingBlocks["content_url"]; }                 // "https://api-dev.rokwire.illinois.edu/content";
+  String get healthUrl              { return platformBuildingBlocks['health_url']; }                  // "https://api-dev.rokwire.illinois.edu/health"
   
   String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
   String get twitterHostUrl         { return thirdPartyServices['twitter_host_url']; }          // "https://twitter.com/"

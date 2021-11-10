@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -155,7 +156,10 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'My McKinley');
-    launch('https://mymckinley.illinois.edu/');
+    String url = Config().saferMcKinley['url'];
+    if (AppString.isStringNotEmpty(url)) {
+      launch(url);
+    }
   }
 
   void _onWellnessAnswerCenter() {

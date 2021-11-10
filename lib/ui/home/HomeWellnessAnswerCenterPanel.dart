@@ -1,9 +1,11 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeWellnessAnswerCenterPanel extends StatelessWidget{
@@ -45,7 +47,7 @@ class HomeWellnessAnswerCenterPanel extends StatelessWidget{
                   ),
                   children: [
                     TextSpan(
-                      text: 'covidwellness@illinois.edu',
+                      text: this.displayEmail,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 16,
@@ -70,14 +72,14 @@ class HomeWellnessAnswerCenterPanel extends StatelessWidget{
                     ),
                     children: [
                       TextSpan(
-                        text: '217 333-1900',
+                        text: this.displayPhone,
                         style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 16,
                           color: Styles().colors.fillColorSecondary,
                           decoration: TextDecoration.underline,
                         ),
-                        recognizer: TapGestureRecognizer()..onTap = ()=>onCallTapped(),
+                        recognizer: TapGestureRecognizer()..onTap = ()=>onPhoneTapped(),
                       ),
                     ]
                 ),
@@ -89,11 +91,36 @@ class HomeWellnessAnswerCenterPanel extends StatelessWidget{
     );
   }
 
-  void onEmailTapped(){
-    launch('mailto:covidwellness@illinois.edu');
+  String get displayEmail {
+    return Config().saferWellness['email']  ?? '';
   }
 
-  void onCallTapped(){
-    launch('tel:+12173331900');
+  void onEmailTapped(){
+    String email = Config().saferWellness['email'];
+    if (AppString.isStringNotEmpty(email)) {
+      launch('mailto:$email');
+    }
+  }
+
+  String get displayPhone {
+    String displayPhone;
+    String phone = Config().saferWellness['phone'];
+    if (AppString.isStringNotEmpty(phone)) {
+      displayPhone = phone;
+      if (displayPhone.startsWith('+1')) {
+        displayPhone = displayPhone.substring(2);
+      }
+      if (displayPhone.length == 10) {
+        displayPhone = '${displayPhone.substring(0, 3)} ${displayPhone.substring(3, 6)}-${displayPhone.substring(6)}';
+      }
+    }
+    return displayPhone ?? '';
+  }
+
+  void onPhoneTapped(){
+    String phone = Config().saferWellness['phone'];
+    if (AppString.isStringNotEmpty(phone)) {
+      launch('tel:$phone');
+    }
   }
 }
