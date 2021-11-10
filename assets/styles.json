@@ -48,7 +48,12 @@
     "disabledTextColor"                     :"#BDBDBD",
     "disabledTextColorTwo"                  :"#868F9D",
 
-    "mango"                                 :"#f29835"
+    "mango"                                 :"#f29835",
+
+    "saferLocationWaitTimeColorRed"        :"#ff0000",
+    "saferLocationWaitTimeColorYellow"     :"#ffff00",
+    "saferLocationWaitTimeColorGreen"      :"#00ff00",
+    "saferLocationWaitTimeColorGrey"       :"#808080"
   },
   "font_family": {
     "black": "ProximaNovaBlack",

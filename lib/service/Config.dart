@@ -88,7 +88,7 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get safer                   { return (_config != null) ? (_config['safer'] ?? {}) : {}; }
   Map<String, dynamic> get saferMcKinley           { return safer['mckinley'] ?? {}; }
   Map<String, dynamic> get saferWellness           { return safer['wellness'] ?? {}; }
-  Map<String, dynamic> get saferKocations          { return safer['locations'] ?? {}; }
+  Map<String, dynamic> get saferLocations          { return safer['locations'] ?? {}; }
 
 //NA: String get redirectAuthUrl        { return otherUniversityServices['redirect_auth_url']; }      // "edu.illinois.ncsa.rokwireauthpoc:rokwireauthpoc.ncsa.illinois.edu/oauth2-cb"
   String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
