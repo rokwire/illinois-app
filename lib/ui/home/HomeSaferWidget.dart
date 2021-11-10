@@ -6,6 +6,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -131,7 +132,20 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   void _onBuildingAccess() {
     Analytics().logSelect(target: 'Building Access');
-  }
+    //Navigator.push(context, CupertinoPageRoute(
+    //  builder: (context) => IDCardPanel()
+    //));
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        builder: (context){
+          return IDCardPanel();
+        }
+    );
+}
 
   void _onTestLocations() {
     Analytics().logSelect(target: 'Test Locaations');
