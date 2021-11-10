@@ -7,7 +7,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/home/HomeWellnessAnswerCenterPanel.dart';
+import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -165,7 +165,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   void _onWellnessAnswerCenter() {
     Analytics().logSelect(target: 'Wellness Answer Center');
     Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => HomeWellnessAnswerCenterPanel()
+      builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));
   }
 }

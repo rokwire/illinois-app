@@ -8,7 +8,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomeWellnessAnswerCenterPanel extends StatelessWidget{
+class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
