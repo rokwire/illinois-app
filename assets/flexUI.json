@@ -72,7 +72,7 @@
 
 			"onboarding.sport_prefs"          : ["fan"],
 
-			"bus_pass"                        : ["NOT",["resident"]]
+			"bus_pass"                        : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -115,7 +115,6 @@
 			"wallet.cards"                        : { "loggedIn": true },
 			"illini_id"                           : { "iCardNum": true },
 			"library_card"                        : { "iCardLibraryNum": true },
-			"bus_pass"                            : { "shibbolethLoggedIn": true },
 			"inbox"                               : { "shibbolethLoggedIn": true },
 
 			"settings.user_info"                  : { "loggedIn": true },
