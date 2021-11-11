@@ -87,8 +87,8 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
         }
         else if (contentListCode == 'my_mckinley') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'My McKinley'),
-            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'My McKinley Patient Health Portal'),
+            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
+            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
             onTap: _onMyMcKinley,
           );
         }
@@ -152,14 +152,14 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 }
 
   void _onTestLocations() {
-    Analytics().logSelect(target: 'Test Locaations');
+    Analytics().logSelect(target: 'Locations');
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferTestLocationsPanel()
     ));
   }
 
   void _onMyMcKinley() {
-    Analytics().logSelect(target: 'My McKinley');
+    Analytics().logSelect(target: 'MyMcKinley');
     String url = Config().saferMcKinley['url'];
     if (AppString.isStringNotEmpty(url)) {
       launch(url);
