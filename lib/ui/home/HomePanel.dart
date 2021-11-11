@@ -42,6 +42,7 @@ import 'package:illinois/ui/home/HomeLoginWidget.dart';
 import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
 import 'package:illinois/ui/home/HomePreferredSportsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
+import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeStudentGuideHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeUpgradeVersionWidget.dart';
@@ -177,6 +178,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       }
       else if (code == 'my_groups') {
         widget = HomeMyGroupsWidget(refreshController: _refreshController,);
+      }
+      else if (code == 'safer') {
+        widget = HomeSaferWidget();
       }
       else {
         widget = FlexContentWidget.fromAssets(code);

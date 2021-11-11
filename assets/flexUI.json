@@ -3,11 +3,13 @@
 		"tabbar": ["home", "athletics", "explore", "wallet", "browse"],
 
 		"home": ["content", "gies_only_content"],
-		"home.content": ["emergency", "upgrade_version_message", "connect", "twitter", "gies", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
+		"home.content": ["emergency", "upgrade_version_message", "connect", "safer", "twitter", "gies", "highlighted_features", "my_groups", "voter_registration", "game_day", "campus_tools", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "student_guide_highlights"],
 		"home.content.connect": ["netid", "phone_or_email"],
+		"home.content.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
+		"home.content.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
+
 		"home.gies_only_content": ["twitter", "gies"],
-		
-		"home.campus_tools": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness"],
+
 		"home.twitter.user": ["gies"],
 
 		"wallet": ["connect", "content", "cards"],
@@ -101,24 +103,25 @@
 			"onboarding.sport_prefs"          : 3
 		},
 		"auth": {
-			"home.content.connect"            : {"loggedIn": false },
-			"laundry"                         : { "shibbolethLoggedIn": true },
-			"create_event"                    : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },
-			"create_stadium_poll"             : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager" },
-			"upgrade_version_message"         : { "shibbolethLoggedIn": true },
+			"home.content.connect"                : {"loggedIn": false },
+			"home.content.safer.building_access"  : { "shibbolethLoggedIn": true },
+			"laundry"                             : { "shibbolethLoggedIn": true },
+			"create_event"                        : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },
+			"create_stadium_poll"                 : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager" },
+			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
 
-			"wallet.connect"                  : { "loggedIn": false },
-			"wallet.content"                  : { "loggedIn": true },
-			"wallet.cards"                    : { "loggedIn": true },
-			"illini_id"                       : { "iCardNum": true },
-			"library_card"                    : { "iCardLibraryNum": true },
-			"bus_pass"                        : { "shibbolethLoggedIn": true },
-			"inbox"                           : { "shibbolethLoggedIn": true },
+			"wallet.connect"                      : { "loggedIn": false },
+			"wallet.content"                      : { "loggedIn": true },
+			"wallet.cards"                        : { "loggedIn": true },
+			"illini_id"                           : { "iCardNum": true },
+			"library_card"                        : { "iCardLibraryNum": true },
+			"bus_pass"                            : { "shibbolethLoggedIn": true },
+			"inbox"                               : { "shibbolethLoggedIn": true },
 
-			"settings.user_info"              : { "loggedIn": true },
-			"settings.connect"                : { "loggedIn": false },
-			"settings.connected"              : { "loggedIn": true },
-			"settings.account"                : { "loggedIn": true },
+			"settings.user_info"                  : { "loggedIn": true },
+			"settings.connect"                    : { "loggedIn": false },
+			"settings.connected"                  : { "loggedIn": true },
+			"settings.account"                    : { "loggedIn": true },
 			"settings.connected.netid"            : { "shibbolethLoggedIn": true },
 			"settings.connected.netid.info"       : { "shibbolethLoggedIn": true },
 			"settings.connected.netid.disconnect" : { "shibbolethLoggedIn": true },

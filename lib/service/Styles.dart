@@ -394,6 +394,11 @@ class UiColors {
 
   Color get mango                      => _colorMap['mango'];
 
+  Color get saferLocationWaitTimeColorRed        => _colorMap['saferLocationWaitTimeColorRed'];
+  Color get saferLocationWaitTimeColorYellow     => _colorMap['saferLocationWaitTimeColorYellow'];
+  Color get saferLocationWaitTimeColorGreen      => _colorMap['saferLocationWaitTimeColorGreen'];
+  Color get saferLocationWaitTimeColorGrey       => _colorMap['saferLocationWaitTimeColorGrey'];
+
   Color getColor(String key){
     dynamic color = _colorMap[key];
     return (color is Color) ? color : null;
