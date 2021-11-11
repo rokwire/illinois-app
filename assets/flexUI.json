@@ -105,6 +105,7 @@
 		"auth": {
 			"home.content.connect"                : {"loggedIn": false },
 			"home.content.safer.building_access"  : { "shibbolethLoggedIn": true },
+			"home.content.safer.my_mckinley"      : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },
 			"create_stadium_poll"                 : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager" },
