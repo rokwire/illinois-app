@@ -152,7 +152,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 }
 
   void _onTestLocations() {
-    Analytics().logSelect(target: 'Locaations');
+    Analytics().logSelect(target: 'Locations');
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferTestLocationsPanel()
     ));
