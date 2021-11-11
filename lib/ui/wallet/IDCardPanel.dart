@@ -217,7 +217,8 @@ class _IDCardPanelState extends State<IDCardPanel>
         ,),);
     }
     else if (_buildingAccess != null) {
-      buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, excludeFromSemantics: true);
+
+      buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access",);
       buildingAccessStatus = (_buildingAccess == true) ? Localization().getStringEx('widget.id_card.label.building_access.granted', 'GRANTED') : Localization().getStringEx('widget.id_card.label.building_access.denied', 'DENIED');
     }
     else {
