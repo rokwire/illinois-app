@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created building access widget [#932](https://github.com/rokwire/illinois-app/issues/932).
 ### Changed
 - Open MyMcKinley web app in WebPanel instead of in external browser [#938](https://github.com/rokwire/illinois-app/issues/938).
+- Use device camera to read and execute group promotion QR code [#940](https://github.com/rokwire/illinois-app/issues/940).
 ### Fixed
 - Show buss pass panel for residents [#936](https://github.com/rokwire/illinois-app/issues/936).
 

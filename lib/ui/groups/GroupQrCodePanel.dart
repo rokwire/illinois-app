@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -54,13 +55,17 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   Future<Uint8List> _loadQrImageBytes() async {
-    String groupPromotionKey = '${Groups.GROUP_URI}?group_id=${widget.group?.id}';
-    return (groupPromotionKey != null) ? await NativeCommunicator().getBarcodeImageData({
-      'content': groupPromotionKey,
-      'format': 'qrCode',
-      'width': _imageSize,
-      'height': _imageSize,
-    }) : null;
+    if (AppString.isStringNotEmpty(Config().groupPromotionPageUrl) && AppString.isStringNotEmpty(widget.group?.id)) {
+      String groupPromotionKey = '${Config().groupPromotionPageUrl}?group_id=${widget.group.id}';
+      return await NativeCommunicator().getBarcodeImageData({
+        'content': groupPromotionKey,
+        'format': 'qrCode',
+        'width': _imageSize,
+        'height': _imageSize,
+      });
+    } else {
+      return null;
+    }
   }
 
   Future<void> _saveQrCode() async {
