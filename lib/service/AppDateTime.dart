@@ -305,5 +305,6 @@ class AppDateTime with Service {
         return DateTime.tryParse(dateTimeString);
       }
     }
+    return null;
   }
 }

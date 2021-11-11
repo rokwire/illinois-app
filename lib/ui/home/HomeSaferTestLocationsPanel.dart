@@ -128,7 +128,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     String countyId = Config().saferLocations['county_id'];
     if ((healthUrl != null) && (countyId != null)) {
       String url = "$healthUrl/covid19/locations?county-id=$countyId";
-      Response response = await Network().get(url, auth: NetworkAuth.App);
+      Response response = await Network().get(url, auth: NetworkAuth.ApiKey);
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
     }
     return null;

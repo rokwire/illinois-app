@@ -67,7 +67,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
-    List<dynamic> contentListCodes = FlexUI()['home.safer'];
+    List<dynamic> contentListCodes = FlexUI()['home.content.safer'];
     if (contentListCodes != null) {
       for (dynamic contentListCode in contentListCodes) {
         Widget contentEntry;
