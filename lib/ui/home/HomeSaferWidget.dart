@@ -7,12 +7,12 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
 
@@ -87,8 +87,8 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
         }
         else if (contentListCode == 'my_mckinley') {
           contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'My McKinley'),
-            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'My McKinley Patient Health Portal'),
+            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
+            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
             onTap: _onMyMcKinley,
           );
         }
@@ -152,17 +152,22 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 }
 
   void _onTestLocations() {
-    Analytics().logSelect(target: 'Test Locaations');
+    Analytics().logSelect(target: 'Locations');
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferTestLocationsPanel()
     ));
   }
 
   void _onMyMcKinley() {
-    Analytics().logSelect(target: 'My McKinley');
-    String url = Config().saferMcKinley['url'];
-    if (AppString.isStringNotEmpty(url)) {
-      launch(url);
+    Analytics().logSelect(target: 'MyMcKinley');
+    if (AppString.isStringNotEmpty(Config().saferMcKinley['url'])) {
+    Navigator.push(context, CupertinoPageRoute(
+      builder: (context) => WebPanel(
+        url: Config().saferMcKinley['url'],
+        title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
+        analyticsName: 'MyMcKinley',
+        hideToolBar: true,)
+    ));
     }
   }
 
