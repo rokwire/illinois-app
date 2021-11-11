@@ -1856,6 +1856,28 @@
 
     "panel.student_guide_detail.label.content.empty": "Contenido de la guía vacía",
 
+	"panel.home.safer.wellness_answer_center.header.title": "Wellness Answer Center",
+	"panel.home.safer.wellness_answer_center.label.description": "If you having issues with the app or getting a test result, contact the Wellness Answer Center for assistance.",
+	"panel.home.safer.wellness_answer_center.label.email": "Email the Wellness Answer Center at ",
+	"panel.home.safer.wellness_answer_center.label.phone": "Phone the Answer Center at ",
+
+	"panel.home.safer.test_locations.header.title": "Test Locations",
+	"panel.home.safer.test_locations.label.contact.title": "Contact",
+	"panel.home.safer.test_locations.distance.text": "mi away",
+	"panel.home.safer.test_locations.distance.directions.text": "get directions",
+	"panel.home.safer.test_locations.location.unknown": "unknown location",
+	"panel.home.safer.test_locations.work_time.unknown": "Unknown working time",
+	"panel.home.safer.test_locations.work_time.open_until": "Open until",
+	"panel.home.safer.test_locations.work_time.closed_until": "Closed until",
+	"panel.home.safer.test_locations.no_locations.text": "No available locations",
+	"panel.home.safer.test_locations.error.locations.text": "Failed to load locations",
+	"panel.home.safer.test_locations.call.hint": "Call",
+	"panel.home.safer.test_locations.wait_time.label": "Wait Time",
+	"panel.home.safer.test_locations.wait_time.unavailable": "Unknown wait time",
+	"panel.home.safer.test_locations.wait_time.status.label.red": "Long wait time",
+	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
+	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",
@@ -1955,6 +1977,16 @@
     "widget.home_student_guide_highlights.label.heading": "Campus Guide Highlights",
     "widget.home_student_guide_highlights.button.more.title": "Ver todo",
     "widget.home_student_guide_highlights.button.more.hint": "Toca para ver todos los aspectos destacados",
+
+    "widget.home.safer.label.title": "Building Access",
+    "widget.home.safer.button.building_access.title": "Building Access",
+    "widget.home.safer.button.building_access.description": "Check your current building access.",
+    "widget.home.safer.button.test_locations.title": "Test Locations",
+    "widget.home.safer.button.test_locations.description": "Find test locations",
+    "widget.home.safer.button.my_mckinley.title": "My McKinley",
+    "widget.home.safer.button.my_mckinley.description": "My McKinley Patient Health Portal",
+    "widget.home.safer.button.wellness_answer_center.title": "Wellness Answer Center",
+    "widget.home.safer.button.wellness_answer_center.description": "Contact Wellness Answer Center for issues",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",

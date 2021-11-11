@@ -294,4 +294,16 @@ class AppDateTime with Service {
     }
     return null;
   }
+
+  static DateTime parseDateTime(String dateTimeString, {String format, bool isUtc = false}) {
+    if (AppString.isStringNotEmpty(dateTimeString)) {
+      if (AppString.isStringNotEmpty(format)) {
+        try { return DateFormat(format).parse(dateTimeString, isUtc); }
+        catch (e) { print(e?.toString()); }
+      }
+      else {
+        return DateTime.tryParse(dateTimeString);
+      }
+    }
+  }
 }

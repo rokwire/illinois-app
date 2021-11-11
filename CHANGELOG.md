@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add Semantics label for Building Access image in IDCardPanel [#881](https://github.com/rokwire/illinois-app/issues/881).
+- Created building access widget [#932](https://github.com/rokwire/illinois-app/issues/932).
 
 ## [3.0.44] - 2021-11-09
 ###Fixed 
