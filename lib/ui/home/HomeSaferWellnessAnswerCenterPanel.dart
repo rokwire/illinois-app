@@ -27,7 +27,7 @@ class HomeSaferWellnessAnswerCenterPanel extends StatelessWidget{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                Localization().getStringEx("panel.home.safer.wellness_answer_center.label.description", "If you having issues with the app or getting a test result, contact the Wellness Answer Center for assistance."),
+                Localization().getStringEx("panel.home.safer.wellness_answer_center.label.description", "If you are having issues with the app or getting a test result, contact the Wellness Answer Center for assistance."),
                 style: TextStyle(
                   fontFamily: Styles().fontFamilies.regular,
                   fontSize: 16,
