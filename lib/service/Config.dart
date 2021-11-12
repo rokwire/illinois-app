@@ -103,7 +103,6 @@ class Config with Service implements NotificationsListener {
   String get userAuthUrl            { return otherUniversityServices['user_auth_url']; }              // "https://shibboleth.illinois.edu/idp/profile/oidc/userinfo"
   String get assetsUrl              { return otherUniversityServices['assets_url']; }                 // "https://rokwire-assets.s3.us-east-2.amazonaws.com"
   String get eatSmartUrl            { return otherUniversityServices['eat_smart_url']; }              // "https://eatsmart.housing.illinois.edu/NetNutrition/46"
-  String get groupPromotionPageUrl  { return otherUniversityServices['group_promotion_page_url']; }   // "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Assets/group_promotion.html"
   String get illiniCashBaseUrl      { return otherUniversityServices['illini_cash_base_url']; }       // "https://shibtest.housing.illinois.edu/MobileAppWS/api"
   String get illiniCashTrustcommerceHost { return otherUniversityServices['illini_cash_trustcommerce_host']; } // "https://vault.trustcommerce.com"
   String get illiniCashTokenHost    { return otherUniversityServices['illini_cash_token_host']; }     // "https://webservices.admin.uillinois.edu"

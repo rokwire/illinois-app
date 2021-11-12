@@ -55,17 +55,14 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   Future<Uint8List> _loadQrImageBytes() async {
-    if (AppString.isStringNotEmpty(Config().groupPromotionPageUrl) && AppString.isStringNotEmpty(widget.group?.id)) {
-      String groupPromotionKey = '${Config().groupPromotionPageUrl}?group_id=${widget.group.id}';
-      return await NativeCommunicator().getBarcodeImageData({
-        'content': groupPromotionKey,
-        'format': 'qrCode',
-        'width': _imageSize,
-        'height': _imageSize,
-      });
-    } else {
-      return null;
-    }
+    String deepLink = '${Groups.GROUP_URI}?group_id=${widget.group.id}';
+    String qrCodeValue = AppUrl.getDeepLinkRedirectUrl(deepLink);
+    return await NativeCommunicator().getBarcodeImageData({
+      'content': qrCodeValue,
+      'format': 'qrCode',
+      'width': _imageSize,
+      'height': _imageSize,
+    });
   }
 
   Future<void> _saveQrCode() async {
