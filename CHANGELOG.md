@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.8.0] - [not published yet]
 ### Changed
 - Allow MTD BussPass for residents [#936](https://github.com/rokwire/illinois-app/issues/936).
+- "Safer Illinois" button replaced by "Building Status" button in Browse panel [#952](https://github.com/rokwire/illinois-app/issues/952).
 ### Deleted
 - Removed UPACE activity button from Wellness content [#947](https://github.com/rokwire/illinois-app/issues/947).
 
