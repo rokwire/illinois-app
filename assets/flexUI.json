@@ -59,7 +59,7 @@
 
 			"onboarding.sport_prefs"          : ["fan"],
 
-			"wallet.cards.mtd"                : ["NOT",["resident"]]
+			"wallet.cards.mtd"                : ["student", "OR", "employee", "OR", "resident"]
 		},
 		"privacy" : {
 			"illini_cash"                     : 3,
@@ -103,7 +103,6 @@
 			"wallet.cards"                    : { "loggedIn": true },
 			"wallet.cards.id"                 : { "iCardNum": true },
 			"wallet.cards.library"            : { "iCardLibraryNum": true },
-			"wallet.cards.mtd"            	  : { "shibbolethLoggedIn": true },
 
 			"settings.user_info"              : { "loggedIn": true },
 			"settings.connect"                : { "loggedIn": false },
