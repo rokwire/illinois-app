@@ -45,6 +45,7 @@ import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
+import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
@@ -282,6 +283,15 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         icon: 'images/icon-browse-safer.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToSaferIllinois(),
+      );
+    }
+    else if (code == 'building_status') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Status'),
+        hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
+        icon: 'images/icon-browse-building-status.png',
+        color: Styles().colors.fillColorPrimary,
+        onTap: () => _navigateToBuildingStatus(),
       );
     }
     else if (code == 'student_guide') {
@@ -642,6 +652,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   Future<void> _navigateToSaferIllinois() async{
+    Analytics.instance.logSelect(target: "Safer Illinois");
     try {
 
       if (await url_launcher.canLaunch(_saferIllonoisAppDeeplink)) {
@@ -662,6 +673,23 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     catch(e) {
       print(e);
     }
+  }
+
+  void _navigateToBuildingStatus() {
+    Analytics().logSelect(target: 'Building Status');
+    //Navigator.push(context, CupertinoPageRoute(
+    //  builder: (context) => IDCardPanel()
+    //));
+    showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        builder: (context){
+          return IDCardPanel();
+        }
+    );
   }
 
   void _navigateToAddIlliniCash(){
