@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - "Safer Illinois" button replaced by "Building Status" button in Browse panel [#952](https://github.com/rokwire/illinois-app/issues/952).
+- Reuse existing html page for deep link redirect in groups [#955](https://github.com/rokwire/illinois-app/issues/955).
 
 ## [3.0.45] - 2021-11-11
 ### Added
