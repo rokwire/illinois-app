@@ -9,13 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.8.0] - [not published yet]
 ### Changed
 - Allow MTD BussPass for residents [#936](https://github.com/rokwire/illinois-app/issues/936).
+### Deleted
+- Removed UPACE activity button from Wellness content [#947](https://github.com/rokwire/illinois-app/issues/947).
 
 ## [2.7.8] - 2021-11-11
 ### Changed
 - Open MyMcKinley web app in WebPanel instead of in external browser [#938](https://github.com/rokwire/illinois-app/issues/938).
 ### Added
 - Add Semantics label for Building Access image in IDCardPanel [#881](https://github.com/rokwire/illinois-app/issues/881).
-
 
 ## [2.7.7] - 2021-11-10
 ### Added
