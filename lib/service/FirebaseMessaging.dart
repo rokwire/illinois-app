@@ -62,7 +62,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String notifyGameDetail            = "edu.illinois.rokwire.firebase.messaging.game.detail";
   static const String notifyAthleticsGameStarted  = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
   static const String notifySettingUpdated        = "edu.illinois.rokwire.firebase.messaging.setting.updated";
-  static const String notifyGroupsNotification         = "edu.illinois.rokwire.firebase.messaging.groups.updated";
+  static const String notifyGroupsNotification    = "edu.illinois.rokwire.firebase.messaging.groups.updated";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -77,8 +77,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
     'event_reminders'  : 'event_reminders',
-    _athleticsUpdatesNotificationKey : _athleticsUpdatesNotificationKey,
-    _groupUpdatesNotificationKey : _groupUpdatesNotificationKey,
     _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
@@ -255,7 +253,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   Future<bool> subscribeToTopic(String topic) async {
     if (await Inbox().subscribeToTopic(topic: topic, token: _token)) {
-      Storage().addFirebaseMessagingSubscriptionTopic(topic);
+      _storeTopic(topic);
       return true;
     }
     return false;
@@ -263,7 +261,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   Future<bool> unsubscribeFromTopic(String topic) async {
     if (await Inbox().unsubscribeFromTopic(topic: topic, token: _token)) {
-      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
+      _removeStoredTopic(topic);
       return true;
     }
     return false;
@@ -458,22 +456,20 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   bool _getNotifySetting(String name) {
     if (_notifySettingsAvailable) {
-      return Storage().getNotifySetting(name) ?? true;
+      return _getStoredSetting(name);
     }
     else {
       return false;
     }
   }
 
-  void _setNotifySetting(String name, bool value) {
+  void _setNotifySetting(String name, bool value) async{
     if (_notifySettingsAvailable && (_getNotifySetting(name) != value)) {
-      Storage().setNotifySetting(name, value);
+      _storeSetting(name, value);
       NotificationService().notify(notifySettingUpdated, name);
 
-      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
-
       if (name == _athleticsUpdatesNotificationKey) {
-        _processAthleticsSubscriptions(subscribedTopics: subscribedTopics);
+        _processAthleticsSubscriptions(subscribedTopics: await currentTopics);
       } else if (name == _athleticsUpdatesStartNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsStartNotificationKey);
       } else if (name == _athleticsUpdatesEndNotificationSetting) {
@@ -481,18 +477,18 @@ class FirebaseMessaging with Service implements NotificationsListener {
       } else if (name == _athleticsUpdatesNewsNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
       } else if (name == _groupUpdatesNotificationKey) {
-        _processGroupsSubscriptions(subscribedTopics: subscribedTopics);
+        _processGroupsSubscriptions(subscribedTopics: await currentTopics);
       } else {
-        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: subscribedTopics);
+        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: await currentTopics);
       }
     }
   }
 
   // Subscription Management
 
-  void _updateSubscriptions() {
+  void _updateSubscriptions() async{
     if (hasToken) {
-      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+      Set<String> subscribedTopics = await currentTopics;
       _processPermanentSubscriptions(subscribedTopics: subscribedTopics);
       _processRolesSubscriptions(subscribedTopics: subscribedTopics);
       _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
@@ -501,21 +497,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _updateRolesSubscriptions() {
+  void _updateRolesSubscriptions() async{
     if (hasToken) {
-      _processRolesSubscriptions(subscribedTopics: Storage().firebaseMessagingSubscriptionTopics);
+      _processRolesSubscriptions(subscribedTopics: await currentTopics);
     }
   }
 
-  void _updateNotifySettingsSubscriptions() {
+  void _updateNotifySettingsSubscriptions() async{
     if (hasToken) {
-      _processNotifySettingsSubscriptions(subscribedTopics: Storage().firebaseMessagingSubscriptionTopics);
+      _processNotifySettingsSubscriptions(subscribedTopics: await currentTopics);
     }
   }
 
-  void _updateAthleticsSubscriptions() {
+  void _updateAthleticsSubscriptions() async{
     if (hasToken) {
-      _processAthleticsSubscriptions(subscribedTopics: Storage().firebaseMessagingSubscriptionTopics);
+      _processAthleticsSubscriptions(subscribedTopics: await currentTopics);
     }
   }
 
@@ -574,10 +570,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processAthleticsSingleSubscription(String athleticsKey) {
+  void _processAthleticsSingleSubscription(String athleticsKey) async{
     List<SportDefinition> sports = Sports().sports;
     if (AppCollection.isCollectionNotEmpty(sports)) {
-      Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+      Set<String> subscribedTopics = await currentTopics;
       for (SportDefinition sport in sports) {
         _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
       }
@@ -610,12 +606,48 @@ class FirebaseMessaging with Service implements NotificationsListener {
         if ((!groupSettingsAvailable || !value) && subscribed){
           FirebaseMessaging().unsubscribeFromTopic(topic);
         }
-        if(groupSettingsAvailable && value /* && !subscribed*/){ // value && subscribed - after login we need to reset UserInfo in Storage
+        if(groupSettingsAvailable && value  && !subscribed){
           FirebaseMessaging().subscribeToTopic(topic);
         }
       }
     }
   }
 
+  bool _getStoredSetting(name){
+    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
+      return Auth2()?.prefs?.getSetting(settingName: name, defaultValue: true);
+    }
+    return Storage().getNotifySetting(name) ?? true;
+  }
 
+  void _storeSetting(name, value) {
+      //// Logged user choice stored in the UserPrefs
+      if (Auth2().isLoggedIn) {
+        Auth2().prefs?.applySetting(name, value);
+      } else {
+        Storage().setNotifySetting(name, value);
+      }
+  }
+
+  void _storeTopic(String topic){
+    if(!Auth2().isLoggedIn){
+      Storage().addFirebaseMessagingSubscriptionTopic(topic);
+    } // else we store to the backend
+  }
+
+  void _removeStoredTopic(String topic){
+    if(!Auth2().isLoggedIn){
+      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
+    } // else we store to the backend
+  }
+
+
+  Future<Set<String>> get currentTopics async{
+    Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
+    if(Auth2().isLoggedIn){
+      subscribedTopics = (await Inbox().loadUserInfo())?.topics?.toSet();
+    }
+
+    return subscribedTopics;
+  }
 }

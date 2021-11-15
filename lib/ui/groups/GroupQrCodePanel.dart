@@ -21,7 +21,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
