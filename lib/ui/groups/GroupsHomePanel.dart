@@ -43,10 +43,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
 
   bool _isFilterLoading = false;
-  bool _isAllGroupsLoading = false;
-  bool _isMyGroupsLoading = false;
+  bool _isGroupsLoading = false;
   bool _myGroupsSelected = true;
-  bool _initMyGroupsPassed = false;
 
   List<Group> _allGroups;
   List<Group> _myGroups;
@@ -59,7 +57,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   _FilterType __activeFilterType = _FilterType.none;
 
   //TBD: this filtering has to be done on the server side.
-  List<Group> get _allFilteredGroups {
+  List<Group> _getFilteredAllGroupsContent() {
     if (AppCollection.isCollectionEmpty(_allGroups)) {
       return _allGroups;
     }
@@ -81,7 +79,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _isLoading {
-    return _isFilterLoading || _isAllGroupsLoading || _isMyGroupsLoading;
+    return _isFilterLoading || _isGroupsLoading;
   }
 
   bool get _hasActiveFilter {
@@ -115,7 +113,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
     _loadFilters();
-    _loadMyGroups();
+    _loadInitialGroupsContent();
   }
 
   @override
@@ -124,44 +122,119 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroups(){
+  void _loadInitialGroupsContent() {
+
     setState(() {
-      _isAllGroupsLoading = true;
+      _isGroupsLoading = true;
     });
 
-    Groups().loadGroups(myGroups: false).then((List<Group> groups){
-      if(groups != null) {
-        _allGroups = _sortGroups(groups);
+    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group> groups) {
+      if (mounted) {
+        if (groups != null) {
+          // Initial request succeded
+          List<Group> sortedGroups = _sortGroups(groups);
+          if (_myGroupsSelected) {
+            List<Group> myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+            List<Group> myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+            if (myGroups.isNotEmpty || myPendingGroups.isNotEmpty) {
+              // Non-Empty My Groups content => apply it
+              setState(() {
+                _isGroupsLoading = false;
+                _myGroups = myGroups;
+                _myPendingGroups = myPendingGroups;
+              });
+            }
+            else {
+              // Empty My Groups content => Load All Groups content
+              Groups().loadGroups(myGroups: false).then((List<Group> groups2) {
+                if (mounted) {
+                  if (groups2 != null) {
+                    // Empty My Groups content; All Groups request succeded => apply everything collected + switch tab seletion
+                    List<Group> allGroups = _sortGroups(groups2);
+                    setState(() {
+                      _isGroupsLoading = false;
+                      _myGroupsSelected = false;
+                      _myGroups = myGroups;
+                      _myPendingGroups = myPendingGroups;
+                      _allGroups = allGroups;
+                    });
+                  }
+                  else {
+                    // Empty My Groups content; All Groups request failed => apply everything collected
+                    setState(() {
+                      _isGroupsLoading = false;
+                      _myGroups = myGroups;
+                      _myPendingGroups = myPendingGroups;
+                    });
+                  }
+                }
+              });
+            }
+          }
+          else {
+            // Apply All Groups content
+            setState(() {
+              _isGroupsLoading = false;
+              _allGroups = sortedGroups;
+            });
+          }
+        }
+        else {
+          // Initial request failed
+          setState(() {
+            _isGroupsLoading = false;
+          });
+        }
       }
-    }).whenComplete((){
-      setState(() {
-        _isAllGroupsLoading = false;
-      });
     });
   }
 
-  void _loadMyGroups() {
+  void _loadTabContentIfNeeded() {
+    bool needsLoad = _myGroupsSelected ? ((_myGroups == null) || (_myPendingGroups == null)) : (_allGroups == null);
+    if (needsLoad) {
+      _loadCurrentTabContent();
+    }
+  }
+
+  void _refreshGroups() {
+    // Force other tab content reload on next tab switch
+    if (_myGroupsSelected) {
+      _allGroups = null;
+    }
+    else {
+      _myGroups = _myPendingGroups = null;
+    }
+    _loadCurrentTabContent();
+  }
+
+  void _loadCurrentTabContent() {
     setState(() {
-      _isMyGroupsLoading = true;
+      _isGroupsLoading = true;
     });
-    Groups().loadGroups(myGroups: true).then((List<Group> groups){
-      if(groups != null) {
-        List<Group> sortedGroups = _sortGroups(groups);
-        _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
-        _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group> groups) {
+      if (mounted) {
+        if (groups != null) {
+          List<Group> sortedGroups = _sortGroups(groups);
+          if (_myGroupsSelected) {
+            setState(() {
+              _isGroupsLoading = false;
+              _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+              _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+            });
+          }
+          else {
+            setState(() {
+              _isGroupsLoading = false;
+              _allGroups = sortedGroups;
+            });
+          }
+        }
+        else {
+          setState(() {
+            _isGroupsLoading = false;
+          });
+        }
       }
-      else{
-        _myGroups = [];
-        _myPendingGroups = [];
-      }
-    }).whenComplete(() {
-      if (!_initMyGroupsPassed) {
-        _initMyGroupsPassed = true;
-        _switchToAllGroupsIfNeeded();
-      }
-      setState(() {
-        _isMyGroupsLoading = false;
-      });
     });
   }
 
@@ -181,17 +254,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isFilterLoading = false;
     });
-  }
-
-  void _loadContentFromNet({bool force = false}){
-    if(_myGroupsSelected){
-      if(force || _myGroups == null && _myPendingGroups == null){
-        _loadMyGroups();
-      }
-    }
-    else if(force || _allGroups == null){
-      _loadGroups();
-    }
   }
 
   List<Group> _sortGroups(List<Group> groups) {
@@ -440,20 +502,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyGroupsContent(){
-    return Column(
-      children: [
-        _buildMyGroupsSection(),
-        _buildMyPendingGroupsSection(),
-      ],
-    );
-  }
-
-  Widget _buildMyGroupsSection(){
-    if(AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_myPendingGroups)) {
+    if (AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_myPendingGroups)) {
+      String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
+        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet") :
+        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(
-          Localization().getStringEx("panel.groups_home.label.no_results", "There are no groups for the desired filter"),
+        child: Text(text,
           style: TextStyle(
               fontFamily: Styles().fontFamilies.regular,
               fontSize: 16,
@@ -461,21 +516,28 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           ),
         ),
       );
-    } else {
-      List<Widget> widgets = [];
-      if(AppCollection.isCollectionNotEmpty(_myGroups)) {
-        widgets.add(Container(height: 8,));
-        for (Group group in _myGroups) {
-          widgets.add(Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
-          ));
-        }
-        widgets.add(Container(height: 8,));
-      }
-
-      return Column(children: widgets,);
     }
+    else {
+      return Column(children: [
+        _buildMyGroupsSection(),
+        _buildMyPendingGroupsSection(),
+      ],);
+    }
+  }
+
+  Widget _buildMyGroupsSection() {
+    List<Widget> widgets = [];
+    if(AppCollection.isCollectionNotEmpty(_myGroups)) {
+      widgets.add(Container(height: 8,));
+      for (Group group in _myGroups) {
+        widgets.add(Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
+        ));
+      }
+      widgets.add(Container(height: 8,));
+    }
+    return Column(children: widgets,);
   }
 
   Widget _buildMyPendingGroupsSection(){
@@ -527,10 +589,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    if(AppCollection.isCollectionNotEmpty(_allFilteredGroups)){
+    List<Group> filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
+    if(AppCollection.isCollectionNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
-      for(Group group in _allFilteredGroups){
+      for(Group group in filteredGroups){
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GroupCard(group: group),
@@ -539,10 +602,19 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Column(children: widgets,);
     }
     else{
+      String text;
+      if (_allGroups == null) {
+        text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
+      }
+      else if (_allGroups.isEmpty) {
+        text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
+      }
+      else {
+        text = Localization().getStringEx("panel.groups_home.label.all_groups.filtered.empty", "No groups match the selected filter");
+      }
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(
-          Localization().getStringEx("panel.groups_home.label.no_results", "There are no groups for the desired filter"),
+        child: Text(text,
           style: TextStyle(
             fontFamily: Styles().fontFamilies.regular,
             fontSize: 16,
@@ -554,15 +626,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   void switchTabSelection() {
-    setState((){ _myGroupsSelected = !_myGroupsSelected; });
-    _loadContentFromNet();
-  }
-
-  void _switchToAllGroupsIfNeeded() {
-    if (AppCollection.isCollectionEmpty(_myGroups) &&
-        AppCollection.isCollectionEmpty(_myPendingGroups)) {
-      switchTabSelection();
-    }
+    setState(() {
+      _myGroupsSelected = !_myGroupsSelected;
+    });
+    _loadTabContentIfNeeded();
   }
 
   void _onTapFilterEntry(dynamic entry) {
@@ -607,19 +674,18 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Future<void> _onPullToRefresh() async {
     Analytics.instance.logSelect(target: "Pull To Refresh");
     List<Group> groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
-    if (groups != null) {
+    if (mounted && (groups != null)) {
+      List<Group> sortedGroups = _sortGroups(groups);
       setState(() {
         if (_myGroupsSelected) {
-          List<Group> sortedGroups = _sortGroups(groups);
           _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
           _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
         }
         else {
-          _allGroups = _sortGroups(groups);
+          _allGroups = sortedGroups;
         }
       });
     }
-
   }
 
   bool get _canCreateGroup {
@@ -630,13 +696,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   // NotificationsListener
 
   void onNotification(String name, dynamic param){
-    if(name == Groups.notifyUserMembershipUpdated){
-      setState(() {});
+    if (name == Groups.notifyUserMembershipUpdated) {
+      if (mounted) {
+        setState(() {});
+      }
     }
     else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
       if (mounted) {
-        _loadGroups();
-        _loadMyGroups();
+        _refreshGroups();
       }
     }
   }
