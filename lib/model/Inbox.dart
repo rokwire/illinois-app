@@ -273,3 +273,24 @@ String inboxSenderTypeToString(InboxSenderType value) {
   }
   return null;
 }
+
+class InboxUserInfo{
+  final String userId;
+  final List<String> topics;
+  final DateTime dateCreated;
+  final DateTime dateUpdated;
+
+  InboxUserInfo({this.userId, this.topics, this.dateCreated, this.dateUpdated});
+
+  factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
+    List<dynamic> topics = json['topics'];
+    String dateCreatedStr = json['date_created'];
+    String dateUpdatedStr = json['date_updated'];
+    return InboxUserInfo(
+      userId: json['user_id'],
+      topics:  AppCollection.isCollectionNotEmpty(topics) ? topics.map((e) => e.toString()).toList() : [],
+      dateCreated: AppString.isStringNotEmpty(dateCreatedStr) ? AppDateTime().dateTimeFromString(dateCreatedStr) : null,
+      dateUpdated: AppString.isStringNotEmpty(dateUpdatedStr) ? AppDateTime().dateTimeFromString(dateUpdatedStr) : null,
+    );
+  }
+}
