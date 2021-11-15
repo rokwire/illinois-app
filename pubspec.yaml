@@ -74,6 +74,8 @@ dependencies:
   notification_permissions: ^0.5.0
 # system_setting: ^0.1.4
   app_settings: ^4.1.0
+  currency_text_input_formatter: ^2.1.5
+  flutter_multi_formatter: ^2.4.1
 
 dev_dependencies:
   flutter_test:

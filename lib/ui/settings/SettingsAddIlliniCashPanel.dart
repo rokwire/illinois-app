@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
@@ -29,6 +30,8 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class SettingsAddIlliniCashPanel extends StatefulWidget {
 
@@ -391,6 +394,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
+                                              inputFormatters: [CreditCardNumberInputFormatter()],
                                               onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_expiryFocusNode); },
                                               style: TextStyle(
                                                 fontFamily: Styles().fontFamilies.bold,
@@ -426,6 +430,7 @@ class _SettingsAddIlliniCashPanelState
                                               controller: _expiryController,
                                               keyboardType: TextInputType.number,
                                               textInputAction: TextInputAction.next,
+                                              inputFormatters: [CreditCardExpirationDateFormatter()],
                                               onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_cvvFocusNode); },
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
@@ -478,6 +483,7 @@ class _SettingsAddIlliniCashPanelState
                                               controller: _cvvController,
                                               keyboardType: TextInputType.number,
                                               textInputAction: TextInputAction.next,
+                                              inputFormatters: [CreditCardCvcInputFormatter()],
                                               onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_amountFocusNode); },
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
@@ -532,6 +538,7 @@ class _SettingsAddIlliniCashPanelState
                                               controller: _amountController,
                                               keyboardType: TextInputType.numberWithOptions(decimal: true),
                                               textInputAction: TextInputAction.done,
+                                              inputFormatters: [CurrencyTextInputFormatter(locale: 'en', symbol: '\$', decimalDigits: 2)],
                                               onFieldSubmitted: (_){ _unfocus(); },
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
@@ -722,23 +729,37 @@ class _SettingsAddIlliniCashPanelState
   }
 
   bool get _isCCValid{
-    return (_ccController?.text ?? "").isNotEmpty;
+    return isCardValidNumber(_ccNumber ?? "", checkLength: true);
+  }
+
+  String get _ccNumber{
+    return _ccController?.text?.replaceAll(' ', '');
   }
 
   bool get _isExpiryValid{
-    return (_expiryController?.text ?? "").isNotEmpty;
+    return _expiryDate?.length == 4;
+  }
+
+  String get _expiryDate{
+    return _expiryController?.text?.replaceAll('/', '');
   }
 
   bool get _isCvvValid{
-    return (_cvvController?.text ?? "").isNotEmpty;
+    int cvvLenght = _cvvNumber?.length ?? 0;
+    return (3 <= cvvLenght) && (cvvLenght <= 4);
+  }
+
+  String get _cvvNumber{
+    return _cvvController?.text;
   }
 
   bool get _isAmountValid{
-    return Config().configEnvironment == ConfigEnvironment.dev ? _amountInDouble > 0 : _amountInDouble > 4.999999;
+    double ammount = _amountInDolars;
+    return (ammount != null) && (ammount >= 5.00);
   }
 
-  double get _amountInDouble{
-    return double.tryParse((_amountController?.text ?? "0").replaceAll(",", "."),);
+  double get _amountInDolars{
+    return double.tryParse(_amountController?.text?.replaceAll('\$', '')?.replaceAll(',', '') ?? '');
   }
 
   void _validate(){
@@ -843,15 +864,15 @@ class _SettingsAddIlliniCashPanelState
           lastName: _lastNameController.text,
           uin: _uinController.text,
           email: _emailController.text,
-          cc: _ccController.text,
-          expiry: _expiryController.text,
-          cvv: _cvvController.text,
-          amount: _amountInDouble,
+          cc: _ccNumber,
+          expiry: _expiryDate,
+          cvv: _cvvNumber,
+          amount: _amountInDolars,
         ).then((_) {
           _isLoading = false;
 
           Analytics().logIlliniCash(action: Analytics.LogIllniCashPurchaseActionName, attributes: {
-            Analytics.LogIllniCashPurchaseAmount: _amountInDouble
+            Analytics.LogIllniCashPurchaseAmount: _amountInDolars
           });
 
           _finish();
