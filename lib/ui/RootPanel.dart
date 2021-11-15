@@ -205,7 +205,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _initTabBarController() {
-    _tabBarController = TabController(length: _tabs.length, vsync: this);
+    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _tabBarController?.index ?? 0);
   }
 
   void _selectTabAtIndex(int index) {

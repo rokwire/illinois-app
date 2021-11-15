@@ -167,6 +167,11 @@ class Group {
     return (currentUserAsMember?.isPendingMember ?? false);
   }
 
+  bool get currentUserIsMember{
+    Member currentUser = currentUserAsMember;
+    return (currentUser?.isMember ?? false);
+  }
+
   bool get currentUserIsMemberOrAdmin{
     Member currentUser = currentUserAsMember;
     return (currentUser?.isMember ?? false) || (currentUser?.isAdmin ?? false);
@@ -174,17 +179,6 @@ class Group {
 
   bool get currentUserCanJoin{
     return currentUserAsMember == null;
-  }
-
-  bool get currentUserIsUserMember{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)){
-      for(Member member in members){
-        if(member.email == Auth()?.authInfo?.email && member.status != GroupMemberStatus.pending){
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   Color get currentUserStatusColor{
@@ -885,7 +879,7 @@ class GroupPost {
     return (dateUpdatedUtc != null) && (dateCreatedUtc != dateUpdatedUtc);
   }
 
-  String getDisplayDateTime({bool fullLabels = false}){
+  String getDisplayDateTime(){
     DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateCreatedUtc);
     //return AppDateTime().formatDateTime(deviceDateTime, format: AppDateTime.groupPostDateTimeFormat);
     if (deviceDateTime != null) {
@@ -896,18 +890,18 @@ class GroupPost {
           return "now";
         }
         else if (difference.inMinutes < 60) {
-          return "${difference.inMinutes}${fullLabels? " minutes": "min"}";
+          return "${difference.inMinutes} ${Localization().getStringEx("generic.minutes", "minutes")}";
         }
         else if (difference.inHours < 24) {
-          return "${difference.inHours}${fullLabels? " hours": "h"}";
+          return "${difference.inHours} ${Localization().getStringEx("generic.hours", "hours")}";
         }
         else if (difference.inDays < 30) {
-          return "${difference.inDays}${fullLabels? " days": "d"}";
+          return "${difference.inDays} ${Localization().getStringEx("generic.days", "days")}";
         }
         else {
           int differenceInMonths = difference.inDays ~/ 30;
           if (differenceInMonths < 12) {
-            return "$differenceInMonths${fullLabels? " months": "m"}";
+            return "$differenceInMonths ${Localization().getStringEx("generic.months", "months")}";
           }
         }
       }

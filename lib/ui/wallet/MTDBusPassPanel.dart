@@ -84,7 +84,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth().authCard.photoBytes;
+    Uint8List photoBytes = await  Auth().authCard?.photoBytes;
     return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
@@ -111,7 +111,6 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    Widget contentWidget = (Auth().authCard != null) ? _buildBusContent() : Container();
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -136,7 +135,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             ],
           ),
           Column(children: <Widget>[
-            Expanded(child:contentWidget),
+            Expanded(child:_buildBusContent()),
             SafeArea(
               child: Align(
                   alignment: Alignment.bottomCenter, child:
@@ -176,13 +175,12 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusContent() {
-    String role = Auth().authCard?.role;
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(
         children: <Widget>[
           _buildAvatar(),
           Text(
-            role,
+            Auth().authCard?.role ?? '',
             style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 36, color: Styles().colors.white),
           ),
           BusClockWidget(),

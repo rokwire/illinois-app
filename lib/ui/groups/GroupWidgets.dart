@@ -37,6 +37,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Network.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -520,7 +521,7 @@ class _EventContent extends StatefulWidget {
 }
 
 class _EventContentState extends State<_EventContent> implements NotificationsListener {
-
+  static const double _smallImageSize = 64;
 
   @override
   void initState() {
@@ -549,9 +550,10 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     bool isFavorite = User().isExploreFavorite(widget.event);
 
     List<Widget> content = [
-      Padding(padding: EdgeInsets.only(bottom: 8, right: 48), child:
-      Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
-      ),
+      Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
+        Container(constraints: BoxConstraints(minHeight: 64), child:
+          Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
+      )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
@@ -565,38 +567,52 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
         Analytics().logSelect(target: "Group Event");
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
       },
-          child: Padding(padding: EdgeInsets.all(16), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
+          child: Padding(padding: EdgeInsets.only(left:16, right: 80, top: 16, bottom: 16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: content),
           )
       ),
       Align(alignment: Alignment.topRight, child:
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Semantics(
-              label: isFavorite ? Localization().getStringEx(
-                  'widget.card.button.favorite.off.title',
-                  'Remove From Favorites') : Localization().getStringEx(
-                  'widget.card.button.favorite.on.title',
-                  'Add To Favorites'),
-              hint: isFavorite ? Localization().getStringEx(
-                  'widget.card.button.favorite.off.hint', '') : Localization()
-                  .getStringEx('widget.card.button.favorite.on.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: GestureDetector(onTap: _onFavoriteTap, child:
-                Container(width: 42, height: 42, alignment: Alignment.center, child:
-                  Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Semantics(
+                label: isFavorite ? Localization().getStringEx(
+                    'widget.card.button.favorite.off.title',
+                    'Remove From Favorites') : Localization().getStringEx(
+                    'widget.card.button.favorite.on.title',
+                    'Add To Favorites'),
+                hint: isFavorite ? Localization().getStringEx(
+                    'widget.card.button.favorite.off.hint', '') : Localization()
+                    .getStringEx('widget.card.button.favorite.on.hint', ''),
+                button: true,
+                excludeSemantics: true,
+                child: GestureDetector(onTap: _onFavoriteTap, child:
+                  Container(width: 42, height: 42, alignment: Alignment.center, child:
+                    Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'),
+                  ),
+                )),
+
+              !widget.isAdmin? Container(width: 0, height: 0) :
+              Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                GestureDetector(onTap: () { _onOptionsTap();}, child:
+                  Container(width: 42, height: 42, alignment: Alignment.center, child:
+                    Image.asset('images/icon-groups-options-orange.png'),
+                  ),
                 ),
-              )),
-                
-            !widget.isAdmin? Container(width: 0, height: 0) :
-            Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-              GestureDetector(onTap: () { _onOptionsTap();}, child:
-                Container(width: 42, height: 42, alignment: Alignment.center, child:
-                  Image.asset('images/icon-groups-options-orange.png'),
-                ),
-              ),
-            )
-      ],),)
+              )
+            ],),
+            Visibility(visible:
+                AppString.isStringNotEmpty(widget?.event?.exploreImageURL),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
+                  child: SizedBox(
+                    width: _smallImageSize,
+                    height: _smallImageSize,
+                    child: Image.network(
+                      widget.event.exploreImageURL, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
+                ])
+                )
     ],);
   }
 
@@ -1094,7 +1110,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
                               child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),
                           )),
@@ -1229,7 +1245,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       Expanded(
                           child: Container(
                             child: Semantics(child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime),
-                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime(fullLabels: true) ?? ""} ago",
+                                semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14, color: Styles().colors.fillColorPrimary))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,

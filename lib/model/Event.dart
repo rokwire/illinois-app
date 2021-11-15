@@ -611,7 +611,7 @@ class Event with Explore implements Favorite {
 
   String get displayStartEndTime {
     if (allDay) {
-      return Localization().getStringEx('model.explore.time.all_day', 'All Day');
+      return Localization().getStringEx('model.explore.time.all_day', 'All day');
     }
     String startTime = AppDateTime().getDisplayTime(dateTimeUtc: startDateGmt, allDay: allDay);
     String endTime = AppDateTime().getDisplayTime(dateTimeUtc: endDateGmt, allDay: allDay);

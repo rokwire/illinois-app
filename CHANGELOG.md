@@ -6,6 +6,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.8.1] - 2021-11-15
+### Changed
+- Rework content loading and processing in GroupsHomePanel [#948](https://github.com/rokwire/illinois-app/issues/948).
+- Validate transfer amount and other CC fields in AddIlliniCash panel [#957](https://github.com/rokwire/illinois-app/issues/957).
+- Do not list rejected groups in "My Groups" tab of GroupsHomePanel [#958](https://github.com/rokwire/illinois-app/issues/958).
+
+## [2.8.0] - 2021-11-12
+### Changed
+- Allow MTD BussPass for residents [#936](https://github.com/rokwire/illinois-app/issues/936).
+- "Safer Illinois" button replaced by "Building Status" button in Browse panel [#952](https://github.com/rokwire/illinois-app/issues/952).
+### Deleted
+- Removed UPACE activity button from Wellness content [#947](https://github.com/rokwire/illinois-app/issues/947).
+
+## [2.7.8] - 2021-11-11
+### Changed
+- Open MyMcKinley web app in WebPanel instead of in external browser [#938](https://github.com/rokwire/illinois-app/issues/938).
+### Added
+- Add Semantics label for Building Access image in IDCardPanel [#881](https://github.com/rokwire/illinois-app/issues/881).
+
+## [2.7.7] - 2021-11-10
+### Added
+- Created building access widget [#932](https://github.com/rokwire/illinois-app/issues/932).
+
+## [2.7.6] - 2021-11-05
+### Fixed
+- Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
+- Fix missing image in Group Event Detail Panel [#918](https://github.com/rokwire/illinois-app/issues/918).
+- Hide Dining Specials [#920](https://github.com/rokwire/illinois-app/issues/920).
+
+## [2.7.5] - 2021-11-04
+### Fixed
+- Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/illinois-app/issues/900).
+- Fix large font in Athletics News [#855](https://github.com/rokwire/illinois-app/issues/855).
+
+## [2.7.4] - 2021-11-03
+### Changed
+- Make the edit controls in phone login in Personal Info panel with white background to indicate that they are editable [#842](https://github.com/rokwire/illinois-app/issues/842).
+- Rename "Student Guide" to "Campus Guide" [#875](https://github.com/rokwire/illinois-app/issues/875).
+- Android: Update to API level 30 [#896](https://github.com/rokwire/illinois-app/issues/896).
+### Fixed
+- RootPanel: fix broken Tab content when recreating the TabBarController [#879](https://github.com/rokwire/illinois-app/issues/879).
+- DINING/RECENTLY VIEWED doesn't show dining schedule accurately [#835](https://github.com/rokwire/illinois-app/issues/835).
+
+## [2.7.3] - 2021-10-22
+### Fixed
+- Fixed spelling in Wallet  [#830](https://github.com/rokwire/illinois-app/issues/830).
+- GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Changed
+- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836).
+- GroupDetailPanel: place "show older" button at the end of the posts list [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Added
+- Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
+
 ## [2.7.2] - 2021-10-18
 ### Changed
 - Updated again layout of ID Card panel [#819](https://github.com/rokwire/illinois-app/issues/819).
@@ -438,27 +491,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Using Onboarding2 [#176](https://github.com/rokwire/illinois-app/issues/176)
 ### Fixed
-- Handled location error in iOS Directions controller [#254](https://github.com/rokwire/safer-illinois-app/issues/254).
+- Handled location error in iOS Directions controller [#254](https://github.com/rokwire/illinois-app/issues/254).
 
 ## [2.4.11] - 2021-05-26
 ### Fixed
-- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/safer-illinois-app/issues/252).
+- Illini Cash isn't displaying unless logged in [#252](https://github.com/rokwire/illinois-app/issues/252).
 
 ## [2.4.10] - 2021-05-21
 ### Changed
-- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/safer-illinois-app/issues/250).
+- Name change - "Cafe Credits" to "Dining Dollars" [#250](https://github.com/rokwire/illinois-app/issues/250).
 
 ## [2.4.9] - 2021-05-18
 ### Changed
-- Flutter 2.0 integration [#245](https://github.com/rokwire/safer-illinois-app/issues/245).
+- Flutter 2.0 integration [#245](https://github.com/rokwire/illinois-app/issues/245).
 
 ## [2.4.8] - 2021-05-14
 ### Added
-- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/safer-illinois-app/issues/246).
+- Added capability to override Styles content from Settings Debug panel [#246](https://github.com/rokwire/illinois-app/issues/246).
 
 ## [2.4.7] - 2021-05-13
 ### Fixed
-- Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/safer-illinois-app/issues/243).
+- Handled exceptions when system date time is much behind the current date time [#243](https://github.com/rokwire/illinois-app/issues/243).
 
 ## [2.4.6] - 2021-04-12
 ### Fixed
@@ -567,7 +620,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.17] - 2020-11-05
 ### Added
-- Pass application id as header field in FCM API calls from sports service [#154](https://github.com/rokwire/safer-illinois-app/issues/154).
+- Pass application id as header field in FCM API calls from sports service [#154](https://github.com/rokwire/illinois-app/issues/154).
 
 ### Fixed
 - Fix location permission request in Android [#153](https://github.com/rokwire/illinois-app/issues/153)
@@ -621,7 +674,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix typo in notifications title [#27] (https://github.com/rokwire/illinois-app/issues/27)
 
 ### Changed
-- Locale strings from net just override the built-in asset strings [104](https://github.com/rokwire/safer-illinois-app/issues/104).
+- Locale strings from net just override the built-in asset strings [104](https://github.com/rokwire/illinois-app/issues/104).
 
 ## [2.3.7] - 2020-10-01
 ### Added
