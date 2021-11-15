@@ -167,6 +167,11 @@ class Group {
     return (currentUserAsMember?.isPendingMember ?? false);
   }
 
+  bool get currentUserIsMember{
+    Member currentUser = currentUserAsMember;
+    return (currentUser?.isMember ?? false);
+  }
+
   bool get currentUserIsMemberOrAdmin{
     Member currentUser = currentUserAsMember;
     return (currentUser?.isMember ?? false) || (currentUser?.isAdmin ?? false);
@@ -174,17 +179,6 @@ class Group {
 
   bool get currentUserCanJoin{
     return currentUserAsMember == null;
-  }
-
-  bool get currentUserIsUserMember{
-    if(Auth2().isLoggedIn && AppCollection.isCollectionNotEmpty(members)){
-      for(Member member in members){
-        if(member.userId == Auth2().accountId && member.status != GroupMemberStatus.pending){
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   Color get currentUserStatusColor{
