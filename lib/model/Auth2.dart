@@ -626,6 +626,7 @@ class Auth2UserPrefs {
   static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
   static const String notifyVoterChanged  = "edu.illinois.rokwire.user.prefs.voter.changed";
   static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
+  static const String notifySettingsChanged  = "edu.illinois.rokwire.user.prefs.settings.changed";
   static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
 
   int _privacyLevel;
@@ -633,14 +634,16 @@ class Auth2UserPrefs {
   Map<String, Set<String>>  _favorites;
   Map<String, Set<String>>  _interests;
   Map<String, bool> _tags;
+  Map<String, bool> _settings;
   Auth2VoterPrefs _voter;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Auth2VoterPrefs voter}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, bool> settings, Auth2VoterPrefs voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
     _interests = interests;
     _tags = tags;
+    _settings = settings;
     _voter = Auth2VoterPrefs.fromOther(voter, onChanged: _onVoterChanged);
   }
 
@@ -651,6 +654,7 @@ class Auth2UserPrefs {
       favorites: mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
       interests: mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
       tags: _tagsFromJson(AppJson.mapValue(json['tags'])),
+      settings: _settingsFromJson(AppJson.mapValue(json['settings'])),
       voter: Auth2VoterPrefs.fromJson(AppJson.mapValue(json['voter'])),
     ) : null;
   }
@@ -662,6 +666,7 @@ class Auth2UserPrefs {
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
       tags: Map<String, bool>(),
+      settings: Map<String, bool>(),
       voter: Auth2VoterPrefs(),
     );
   }
@@ -673,6 +678,7 @@ class Auth2UserPrefs {
       'favorites': mapOfStringSetsToJson(_favorites),
       'interests': mapOfStringSetsToJson(_interests),
       'tags': _tags,
+      'settings': _settings,
       'voter': _voter
     };
   }
@@ -684,6 +690,7 @@ class Auth2UserPrefs {
       DeepCollectionEquality().equals(o._favorites, _favorites) &&
       DeepCollectionEquality().equals(o._interests, _interests) &&
       DeepCollectionEquality().equals(o._tags, _tags) &&
+      DeepCollectionEquality().equals(o._settings, _settings) &&
       (o._voter == _voter);
 
   int get hashCode =>
@@ -692,6 +699,7 @@ class Auth2UserPrefs {
     (DeepCollectionEquality().hash(_favorites) ?? 0) ^
     (DeepCollectionEquality().hash(_interests) ?? 0) ^
     (DeepCollectionEquality().hash(_tags) ?? 0) ^
+    (DeepCollectionEquality().hash(_settings) ?? 0) ^
     (_voter?.hashCode ?? 0);
 
   bool apply(Auth2UserPrefs prefs, { bool notify }) {
@@ -730,6 +738,13 @@ class Auth2UserPrefs {
         _tags = prefs._tags;
         if (notify == true) {
           NotificationService().notify(notifyTagsChanged);
+        }
+        modified = true;
+      }
+      if ((prefs._settings != null) && prefs._settings.isNotEmpty && !DeepCollectionEquality().equals(prefs._settings, _settings)) {
+        _settings = prefs._settings;
+        if (notify == true) {
+          NotificationService().notify(notifySettingsChanged);
         }
         modified = true;
       }
@@ -1068,6 +1083,23 @@ class Auth2UserPrefs {
       }
     }
   }
+  // Settings
+  bool getSetting({String settingName, defaultValue = false}){
+    if(_settings?.isNotEmpty ?? false){
+      return _settings[settingName] ?? defaultValue;
+    }
+
+    return defaultValue;//consider default TBD
+  }
+
+  void applySetting(String settingName, bool settingValue){
+    if(_settings == null)
+      _settings = Map<String, bool>();
+    _settings[settingName] = settingValue;
+
+    NotificationService().notify(notifySettingsChanged);
+    NotificationService().notify(notifyChanged, this);
+  }
 
   // Voter
 
@@ -1103,6 +1135,11 @@ class Auth2UserPrefs {
   }
 
   static _tagsFromJson(Map<String, dynamic> json) {
+    try { return json?.cast<String, bool>(); }
+    catch(e) { print(e?.toString()); }
+  }
+
+  static _settingsFromJson(Map<String, dynamic> json) {
     try { return json?.cast<String, bool>(); }
     catch(e) { print(e?.toString()); }
   }
