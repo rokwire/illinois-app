@@ -559,7 +559,7 @@
     "panel.onboarding2.personalize.learn_more.location_services.content4": "The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data.",
     "panel.onboarding2.personalize.label.title": "Store your app activity and personal information?",
     "panel.onboarding2.personalize.label.description": "This includes content you view, teams you follow, and sign-in information. ",
-    "panel.onboarding2.personalize.button.toggle.title": "Store my app activity and information I share.",
+    "panel.onboarding2.personalize.button.toggle.title": "Store my app activity and my preferences.",
     "panel.onboarding2.personalize.button.untoggle.title": "Don't store my app activity or information.",
 
     "panel.onboarding2.privacy.button.privacy_policy.title": "Privacy notice ",
