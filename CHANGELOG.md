@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Rework content loading and processing in GroupsHomePanel [#948](https://github.com/rokwire/illinois-app/issues/948).
 - Store Notification settings in the User Prefs [#961](https://github.com/rokwire/illinois-app/issues/961).
+### Add 
+- Add Privacy level slider in to the Onboarding2PrivaciPanel[#963](https://github.com/rokwire/illinois-app/issues/963)
 
 ## [3.0.46] - 2021-11-12
 ### Changed

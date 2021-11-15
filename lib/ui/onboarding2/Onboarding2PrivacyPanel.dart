@@ -25,6 +25,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
+import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'package:illinois/service/Styles.dart';
@@ -198,7 +199,8 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                             fontSize: 16,
                             color: Styles().colors.fillColorPrimary),
                       )
-                    )
+                    ),
+                    _buildPrivacySlider(),
                   ]),
               )),
               Padding(
@@ -478,6 +480,23 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
           )
         )
       );
+  }
+
+  Widget _buildPrivacySlider(){
+    return
+      Container(
+          padding: EdgeInsets.symmetric(vertical:24, horizontal: 20),
+          color: Styles().colors.background,
+          child: SafeArea(
+              top: false,
+              child: Column(children: <Widget>[
+                Container(height: 6,),
+                PrivacyLevelSlider(
+                  color: Styles().colors.background,
+                  initialValue: _privacyLevel?.toDouble() ?? 1,
+                  onValueChanged: (){}),
+              ],)
+          ));
   }
 
   int get _privacyLevel{
