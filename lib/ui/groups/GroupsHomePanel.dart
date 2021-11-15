@@ -135,7 +135,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           // Initial request succeded
           List<Group> sortedGroups = _sortGroups(groups);
           if (_myGroupsSelected) {
-            List<Group> myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+            List<Group> myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
             List<Group> myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
             if (myGroups.isNotEmpty || myPendingGroups.isNotEmpty) {
               // Non-Empty My Groups content => apply it
@@ -219,7 +219,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           if (_myGroupsSelected) {
             setState(() {
               _isGroupsLoading = false;
-              _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+              _myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
               _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
             });
           }
@@ -679,7 +679,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       List<Group> sortedGroups = _sortGroups(groups);
       setState(() {
         if (_myGroupsSelected) {
-          _myGroups = sortedGroups?.where((group) => group?.currentUserIsUserMember)?.toList();
+          _myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
           _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
         }
         else {
