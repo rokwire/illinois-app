@@ -271,7 +271,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   }
 
   String get _toggledButtonTitle{
-    return Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and information I share.');
+    return Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and my preferences.');
   }
 
   String get _unToggledButtonTitle{
