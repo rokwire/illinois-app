@@ -1172,7 +1172,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   bool _isDeleteVisible(GroupPost item) {
     if (widget.group?.currentUserIsAdmin ?? false) {
       return true;
-    } else if (widget.group?.currentUserIsUserMember ?? false) {
+    } else if (widget.group?.currentUserIsMember ?? false) {
       return _isCurrentUserCreator(item);
     } else {
       return false;
