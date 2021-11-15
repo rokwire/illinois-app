@@ -312,6 +312,12 @@ class AppUrl {
       return Config().gameDayAllUrl;
     }
   }
+
+  static String getDeepLinkRedirectUrl(String deepLink) {
+    Uri assetsUri = AppString.isStringNotEmpty(Config().assetsUrl) ? Uri.tryParse(Config().assetsUrl) : null;
+    String redirectUrl = assetsUri != null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
+  }
 }
 
 class AppLocation {

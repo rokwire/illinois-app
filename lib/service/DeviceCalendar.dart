@@ -4,7 +4,6 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -302,15 +301,8 @@ class _DeviceCalendarEvent {
       calendarEvent.end = AppDateTime().localEndOfDay(startDate);
     }
 
-    calendarEvent.description = _constructRedirectLinkUrl(deepLinkUrl);
+    calendarEvent.description = AppUrl.getDeepLinkRedirectUrl(deepLinkUrl);
 
     return calendarEvent;
-  }
-
-  static String _constructRedirectLinkUrl(String url){
-    Uri assetsUri = Uri.parse(Config().assetsUrl);
-    String redirectUrl = assetsUri!= null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
-
-    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$url" : url;
   }
 }
