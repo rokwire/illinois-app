@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:flutter/services.dart';
@@ -755,7 +756,8 @@ class _SettingsAddIlliniCashPanelState
 
   bool get _isAmountValid{
     double ammount = _amountInDolars;
-    return (ammount != null) && (ammount >= 5.00);
+    double minAmount = (kReleaseMode && (Config().configEnvironment != ConfigEnvironment.dev)) ? 5.00 : 0.00;
+    return (ammount != null) && (ammount >= minAmount);
   }
 
   double get _amountInDolars{
