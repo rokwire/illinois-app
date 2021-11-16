@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Save Reminders to Calendar when marked as favourite [#975](https://github.com/rokwire/illinois-app/issues/975).
 ### Fixed
 - Home MyGroups widget not refreshing after user login [#977](https://github.com/rokwire/illinois-app/issues/977).
+### Added
+- Redirect user to news detail panel when FCM notification is tapped [#972](https://github.com/rokwire/illinois-app/issues/972).
 
 ## [3.0.47] - 2021-11-15
 ### Changed
@@ -20,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not list rejected groups in "My Groups" tab of GroupsHomePanel [#958](https://github.com/rokwire/illinois-app/issues/958).
 ### Added
 - Add Privacy level slider in to the Onboarding2PrivaciPanel[#963](https://github.com/rokwire/illinois-app/issues/963)
-- Redirect user to news detail panel when FCM notification is tapped [#972](https://github.com/rokwire/illinois-app/issues/972)
 
 ## [3.0.46] - 2021-11-12
 ### Changed
