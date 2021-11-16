@@ -9,6 +9,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -20,6 +21,9 @@ import 'package:path_provider/path_provider.dart';
 enum StudentGuideContentSource { Net, Debug }
 
 class StudentGuide with Service implements NotificationsListener {
+  static const String GUIDE_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail';
+
+  static const String notifyGuideDetail = "edu.illinois.rokwire.student.guide.detail";
 
   static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
 
@@ -33,6 +37,8 @@ class StudentGuide with Service implements NotificationsListener {
   File          _cacheFile;
   DateTime      _pausedDateTime;
 
+  List<Map<String, dynamic>> _guideDetailsCache;
+
   static final StudentGuide _service = StudentGuide._internal();
   StudentGuide._internal();
 
@@ -45,8 +51,10 @@ class StudentGuide with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
+      DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
     ]);
+    _guideDetailsCache = [];
   }
 
   @override
@@ -74,6 +82,11 @@ class StudentGuide with Service implements NotificationsListener {
       }
     }
   }
+  
+  @override
+  void initServiceUI() {
+    _processCachedGuideDetails();
+  }
 
   @override
   Set<Service> get serviceDependsOn {
@@ -86,6 +99,8 @@ class StudentGuide with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    } else if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
     }
   }
 
@@ -359,6 +374,53 @@ class StudentGuide with Service implements NotificationsListener {
     }
     else {
       return null;
+    }
+  }
+
+  /////////////////////////
+  // DeepLinks
+
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri guideUri = Uri.tryParse(GUIDE_URI);
+      if ((guideUri != null) &&
+          (guideUri.scheme == uri.scheme) &&
+          (guideUri.authority == uri.authority) &&
+          (guideUri.path == uri.path))
+      {
+        try { _handleGuideDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  void _handleGuideDetail(Map<String, dynamic> params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_guideDetailsCache != null) {
+        _cacheGuideDetail(params);
+      }
+      else {
+        _processGuideDetail(params);
+      }
+    }
+  }
+
+  void _processGuideDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyGuideDetail, params);
+  }
+
+  void _cacheGuideDetail(Map<String, dynamic> params) {
+    _guideDetailsCache?.add(params);
+  }
+
+  void _processCachedGuideDetails() {
+    if (_guideDetailsCache != null) {
+      List<Map<String, dynamic>> guideDetailsCache = _guideDetailsCache;
+      _guideDetailsCache = null;
+
+      for (Map<String, dynamic> guideDetail in guideDetailsCache) {
+        _processGuideDetail(guideDetail);
+      }
     }
   }
 
