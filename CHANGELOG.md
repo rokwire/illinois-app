@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- WalletPanel listens for IlliniCash.notifyBallanceUpdated event and updates state when received [#971](https://github.com/rokwire/illinois-app/issues/971).
+
+## [3.0.47] - 2021-11-15
+### Changed
 - Rework content loading and processing in GroupsHomePanel [#948](https://github.com/rokwire/illinois-app/issues/948).
 - Store Notification settings in the User Prefs [#961](https://github.com/rokwire/illinois-app/issues/961).
 - Change Onboarding string. [#965](https://github.com/rokwire/illinois-app/issues/965)
