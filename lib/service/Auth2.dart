@@ -205,7 +205,7 @@ class Auth2 with Service implements NotificationsListener {
   bool get isDebugManager => hasRole("debug");
   bool get isGroupsAccess => hasRole("groups access");
 
-  bool hasRole(String role) => (_account?.roles?.firstWhere((roleObj) => (roleObj.name == role)) != null) ?? false;
+  bool hasRole(String role) => _account?.roles?.firstWhere((roleObj) => (roleObj?.name == role), orElse: () => null) != null ?? false;
 
   bool isShibbolethMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
 
