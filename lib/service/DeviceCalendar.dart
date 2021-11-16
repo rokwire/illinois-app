@@ -9,6 +9,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 
@@ -264,6 +265,9 @@ class _DeviceCalendarEvent {
     else if (data is Game){
       return _DeviceCalendarEvent.fromGame(data);
     }
+    else if (data is StudentGuideFavorite){
+      return _DeviceCalendarEvent.fromStudentGuide(data);
+    }
 
     return null;
   }
@@ -284,6 +288,23 @@ class _DeviceCalendarEvent {
     return _DeviceCalendarEvent(title: game.title, internalEventId: game.id, startDate: game.dateTimeUniLocal,
         endDate:  AppDateTime().getUniLocalTimeFromUtcTime(game.endDateTimeUtc),
         deepLinkUrl: "${Sports.GAME_URI}?game_id=${game.id}%26sport=${game.sport?.shortName}");
+  }
+
+  factory _DeviceCalendarEvent.fromStudentGuide(StudentGuideFavorite guide){
+    if(guide==null)
+      return null;
+    Map<String, dynamic> guideEntryData = StudentGuide().entryById(guide.id);
+    //Only reminders are allowed to save
+    if (StudentGuide().isEntryReminder(guideEntryData)){
+      return _DeviceCalendarEvent(
+        title: guide.title,
+        internalEventId: guide.id,
+        startDate: StudentGuide().reminderDate(guideEntryData),
+        deepLinkUrl: "${StudentGuide.GUIDE_URI}?guide_id=${guide.id}"
+      );
+    }
+
+    return null;
   }
 
   Event toCalendarEvent(String calendarId){

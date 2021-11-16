@@ -27,7 +27,6 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
@@ -64,7 +63,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     NotificationService().subscribe(this, [
       Auth2.notifyCardChanged,
       FlexUI.notifyChanged,
-      Storage.notifySettingChanged,
+      IlliniCash.notifyBallanceUpdated,
     ]);
     _loadLibraryBarcode();
 
@@ -572,6 +571,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       _updateLibraryBarcode();
     }
     else if(name == FlexUI.notifyChanged){
+      setState(() {});
+    }
+    else if(name == IlliniCash.notifyBallanceUpdated){
       setState(() {});
     }
   }

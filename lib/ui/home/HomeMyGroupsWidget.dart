@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
@@ -25,7 +26,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted]);
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted, Auth2.notifyLoginChanged]);
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
         _loadGroups();
@@ -136,7 +137,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     if(name == Groups.notifyUserMembershipUpdated){
       setState(() {});
     }
-    else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
+    else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted) || (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
         _loadGroups();
       }
