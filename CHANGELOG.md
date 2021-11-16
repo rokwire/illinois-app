@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - WalletPanel listens for IlliniCash.notifyBallanceUpdated event and updates state when received [#971](https://github.com/rokwire/illinois-app/issues/971).
 - Save Reminders to Calendar when marked as favourite [#975](https://github.com/rokwire/illinois-app/issues/975).
+### Fixed
+- Home MyGroups widget not refreshing after user login [#977](https://github.com/rokwire/illinois-app/issues/977).
 
 ## [3.0.47] - 2021-11-15
 ### Changed
