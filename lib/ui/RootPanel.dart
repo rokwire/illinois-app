@@ -38,6 +38,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
@@ -105,6 +106,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
+      FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyGroupsNotification,
       ExploreService.notifyEventDetail,
       Sports.notifyGameDetail,
@@ -213,6 +215,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
+      _onFirebaseAthleticsNewsNotification(param);
     }
   }
 
@@ -606,6 +611,17 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: value)));
         } else {
           AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+        }
+      });
+    }
+  }
+
+  void _onFirebaseAthleticsNewsNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String newsId = param["news_id"];
+      Sports().loadNewsArticle(newsId).then((article) {
+        if (article != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
         }
       });
     }

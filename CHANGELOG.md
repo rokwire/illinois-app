@@ -18,8 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change Onboarding string. [#965](https://github.com/rokwire/illinois-app/issues/965)
 - Validate transfer amount and other CC fields in AddIlliniCash panel [#957](https://github.com/rokwire/illinois-app/issues/957).
 - Do not list rejected groups in "My Groups" tab of GroupsHomePanel [#958](https://github.com/rokwire/illinois-app/issues/958).
-### Add 
+### Added
 - Add Privacy level slider in to the Onboarding2PrivaciPanel[#963](https://github.com/rokwire/illinois-app/issues/963)
+- Redirect user to news detail panel when FCM notification is tapped [#972](https://github.com/rokwire/illinois-app/issues/972)
 
 ## [3.0.46] - 2021-11-12
 ### Changed
