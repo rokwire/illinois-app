@@ -35,10 +35,12 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/StudentGuide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
@@ -107,6 +109,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       ExploreService.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
+      StudentGuide.notifyGuideDetail,
       Localization.notifyStringsUpdated,
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
@@ -182,6 +185,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
+    }
+    else if (name == StudentGuide.notifyGuideDetail) {
+      _onGuideDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -451,6 +457,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onGroupDetail(Map<String, dynamic> content) async {
     String groupId = (content != null) ? AppJson.stringValue(content['group_id']) : null;
     _presentGroupDetailPanel(groupId);
+  }
+
+  Future<void> _onGuideDetail(Map<String, dynamic> content) async {
+    String guideId = (content != null) ? AppJson.stringValue(content['guide_id']) : null;
+    if(AppString.isStringNotEmpty(guideId)){
+      WidgetsBinding.instance.addPostFrameCallback((_) { //Fix navigator.dart failed assertion line 5307
+        Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+            StudentGuideDetailPanel(guideEntryId: guideId,)));});
+    }
   }
 
   void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
