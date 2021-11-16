@@ -160,7 +160,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     // Cache messages until UI is displayed
     _messagesCache = [];
 
@@ -198,7 +198,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     NativeCommunicator().queryFirebaseInfo().then((String info) {
       _projectID = info;
     });
-    return null;
   }
 
   @override

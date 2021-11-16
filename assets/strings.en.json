@@ -492,6 +492,9 @@
     "panel.onboarding.upgrade.button.dont_show.title":"Don't show again",
     "panel.onboarding.upgrade.button.dont_show.hint":"",
 
+    "panel.onboarding.error.button.try_again.title":"Try Again",
+    "panel.onboarding.error.button.try_again.hint":"",
+
     "panel.onboarding.base.not_now.hint":"",
     "panel.onboarding.base.not_now.title":"Not right now",
 

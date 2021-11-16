@@ -29,14 +29,13 @@ class FirebaseCrashlytics with Service {
   FirebaseCrashlytics._internal();
 
   @override
-  Future<ServiceError> initService() async{
+  Future<void> initService() async{
 
     // Enable automatic data collection
     GoogleFirebase.FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
     // Pass all uncaught errors to Firebase.Crashlytics.
     FlutterError.onError = handleFlutterError;
-    return null;
   }
 
   void handleFlutterError(FlutterErrorDetails details) {

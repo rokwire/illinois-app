@@ -79,7 +79,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     if(_enabled) {
       PollsPlugin().pollStarted.stream.listen((pollId) {
         _onPollStarted(pollId);
@@ -89,7 +89,6 @@ class Polls with Service implements NotificationsListener {
 
       await _loadPollChunks();
     }
-    return null;
   }
 
   @override

@@ -78,13 +78,12 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     _cacheFile = await _getCacheFile();
     _contentSource = await _loadContentSource();
     _content = _buildContent(_contentSource);
     _features = _buildFeatures(_content);
     _updateContentSourceFromNet();
-    return null;
   }
 
   @override

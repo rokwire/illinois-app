@@ -57,7 +57,7 @@ abstract class Service {
   void destroyService() {
   }
 
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     return null;
   }
 
@@ -140,15 +140,15 @@ class Services {
 
   Future<ServiceError> init() async {
     for (Service service in _services) {
-      ServiceError error = await service.initService();
-      if (error != null) {
-        if (error.severity == ServiceErrorSeverity.fatal) {
+      try { await service.initService(); }
+      on ServiceError catch (error) {
+        print(error?.toString());
+        if (error?.severity == ServiceErrorSeverity.fatal) {
           return error;
         }
-        else {
-          
-          print("${error.source.runtimeType.toString()}.initService()\n\t${error.title}\n\t${error.description}");
-        }
+      }
+      catch(e) {
+        print(e?.toString());
       }
     }
     return null;
@@ -196,6 +196,23 @@ class ServiceError {
   final ServiceErrorSeverity severity;
 
   ServiceError({this.title, this.description, this.source, this.severity});
+
+  String toString() {
+    return "ServiceError: ${source?.runtimeType?.toString()}: $title\n$description";
+  }
+
+  bool operator ==(o) =>
+    (o is ServiceError) &&
+      (o.title == title) &&
+      (o.description == description) &&
+      (o.source == source) &&
+      (o.severity == severity);
+
+  int get hashCode =>
+    (title?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (source?.hashCode ?? 0) ^
+    (severity?.hashCode ?? 0);
 }
 
 enum ServiceErrorSeverity {

@@ -63,7 +63,7 @@ class StudentGuide with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     _cacheFile = await _getCacheFile();
     _contentList = await _loadContentJsonFromCache();
     _contentSource = studentGuideContentSourceFromString(Storage().studentGuideContentSource);
@@ -81,7 +81,6 @@ class StudentGuide with Service implements NotificationsListener {
         _saveContentStringToCache(contentString);
       }
     }
-    return null;
   }
   
   @override

@@ -50,12 +50,11 @@ class Inbox with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     _fcmToken = Storage().inboxFirebaseMessagingToken;
     _fcmUserId = Storage().inboxFirebaseMessagingUserId;
     _isServiceInitialized = true;
     _processFcmToken();
-    return null;
   }
 
   @override

@@ -75,7 +75,7 @@ class GeoFence with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     _cacheFile = await _getCacheFile();
 
     _regions = _useAssets ? _loadRegionsFromAssets() : await _loadRegionsFromCache();
@@ -90,7 +90,6 @@ class GeoFence with Service implements NotificationsListener {
       }
     }
     _monitorRegions();
-    return null;
   }
 
   @override

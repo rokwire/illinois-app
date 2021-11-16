@@ -42,11 +42,10 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     _deviceCalendarPlugin = new DeviceCalendarPlugin();
     dynamic storedTable = Storage().calendarEventsTable ?? Map();
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
-    return null;
   }
 
   @override

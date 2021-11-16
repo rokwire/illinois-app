@@ -73,12 +73,11 @@ class IlliniCash with Service implements NotificationsListener {
   }
 
   @override
-  Future<ServiceError> initService() async {
+  Future<void> initService() async {
     if(_enabled) {
       _ballance = Storage().illiniCashBallance;
       updateBalance();
     }
-    return null;
   }
 
   @override
