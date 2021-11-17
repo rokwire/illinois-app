@@ -24,6 +24,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
@@ -1765,28 +1766,86 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     }
   }
 
-  void _onTapCreate() {
+  Future<void> _onTapCreate() async {
     Analytics.instance.logSelect(target: "Create");
     if (_validateWithResult()) {
       Event event = _constructEventFromData();
-      //post event
-      ExploreService().postNewEvent(event).then((String eventId){
-        if(eventId!=null){
-          Groups().linkEventToGroup(groupId: widget?.group?.id, eventId: eventId).then((value){
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => GroupEventDetailPanel(
-                        event: event, group: widget?.group, previewMode: true))).then((dynamic data) {
-              Navigator.pop(context);
-            });
-          });
-        }else {
-          AppToast.show("Unable to create Event");
-        }
-      });
+      List<Event> eventsToSave = await _buildEventsForCreate(event);
 
+      if (AppCollection.isCollectionNotEmpty(eventsToSave)) {
+        _setLoading(true);
+        bool canShowMainEvent = true;
+        for (Event event in eventsToSave) {
+          String eventId = await ExploreService().postNewEvent(event);
+          if (AppString.isStringNotEmpty(eventId)) {
+            if (AppString.isStringNotEmpty(event.createdByGroupId)) {
+              bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: event.createdByGroupId, eventId: eventId);
+              if (!eventLinkedToGroup) {
+                // Do not throw error if the event is not linked to a group. Only log the error.
+                Log.e('Failed to link event "$eventId: ${event.title}" to group "${event.createdByGroupId}"');
+              }
+            }
+          } else {
+            if (AppString.isStringEmpty(event.createdByGroupId) || (event.createdByGroupId == widget.group?.id)) {
+              // Break the loop for creating events only if the main event failed to be saved. Do not do that for the copy events.
+              AppAlert.showDialogResult(context, Localization().getStringEx('panel.create_event.failed.msg', 'Failed to create event.'));
+              canShowMainEvent = false;
+              break;
+            } else {
+              // Log error if a copy-event is not saved.
+              Log.e('Failed to create event for group "${event.createdByGroupId}".');
+            }
+          }
+        }
+        _setLoading(false);
+
+        if (canShowMainEvent) {
+          // Preview only the main event if all goes well (replay the old behaviour where we saved only one event)
+          Navigator.push(
+                  context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventsToSave.first, group: widget?.group, previewMode: true)))
+              .then((dynamic data) {
+            Navigator.pop(context);
+          });
+        }
+      }
     }
+  }
+
+  ///
+  /// Allow Group Admin to select more than one group that one can create the event for.
+  ///
+  Future<List> _buildEventsForCreate(Event mainEvent) async {
+    if (mainEvent == null) {
+      return null;
+    }
+    List<Event> eventsToSave = [mainEvent];
+    if (widget.group != null) {
+      List<Group> otherGroups = await _loadOtherAdminUserGroups();
+      List<Group> selectedOtherGroups = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
+      if (AppCollection.isCollectionNotEmpty(selectedOtherGroups)) {
+        for (Group group in selectedOtherGroups) {
+          Event groupEvent = Event(other: mainEvent);
+          groupEvent.createdByGroupId = group.id;
+          eventsToSave.add(groupEvent);
+        }
+      }
+    }
+    return eventsToSave;
+  }
+
+  Future<List<Group>> _loadOtherAdminUserGroups() async {
+    List<Group> userGroups = await Groups().loadGroups(myGroups: true);
+    List<Group> userAdminGroups;
+    if (AppCollection.isCollectionNotEmpty(userGroups)) {
+      userAdminGroups = [];
+      String currentGroupId = widget?.group?.id;
+      for (Group group in userGroups) {
+        if (group.currentUserIsAdmin && (group.id != currentGroupId)) {
+          userAdminGroups.add(group);
+        }
+      }
+    }
+    return userAdminGroups;
   }
 
   void _onTapUpdate() {
@@ -2245,5 +2304,109 @@ class _AddImageWidgetState extends State<AddImageWidget> {
           break;
       }
     });
+  }
+}
+
+class _GroupsSelectionPopup extends StatefulWidget {
+  final List<Group> groups;
+
+  _GroupsSelectionPopup({this.groups});
+
+  @override
+  _GroupsSelectionPopupState createState() => _GroupsSelectionPopupState();
+}
+
+class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
+  List<String> _selectedGroupIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedGroupIds = [];
+    if (AppCollection.isCollectionNotEmpty(widget.groups)) {
+      for (Group group in widget.groups) {
+        _selectedGroupIds.add(group.id);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
+    return Dialog(
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      Container(
+          decoration: BoxDecoration(
+            color: Styles().colors.fillColorPrimary,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+          ),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.max, children: <Widget>[
+            Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                    Localization().getStringEx("widget.groups.selection.heading", "Select Group"),
+                    style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies.medium, fontSize: 24)))
+          ])),
+      Padding(
+          padding: EdgeInsets.all(10),
+          child: AppCollection.isCollectionNotEmpty(widget.groups)
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) => ToggleRibbonButton(
+                      borderRadius: _topRounding,
+                      label: widget.groups[index].title,
+                      toggled: _isGroupSelected(index),
+                      context: context,
+                      onTap: () => _onTapGroup(index),
+                      style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold)),
+                  itemCount: widget.groups.length)
+              : Container()),
+      Padding(
+          padding: EdgeInsets.all(10),
+          child: RoundedButton(
+              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+              borderColor: Styles().colors.fillColorSecondary,
+              backgroundColor: Styles().colors.white,
+              textColor: Styles().colors.fillColorPrimary,
+              onTap: _onTapSelect))
+    ]));
+  }
+
+  void _onTapGroup(int index) {
+    Group group = widget.groups[index];
+    String groupId = group?.id;
+    if (_isGroupSelected(index)) {
+      _selectedGroupIds.remove(groupId);
+    } else {
+      _selectedGroupIds.add(groupId);
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool _isGroupSelected(int index) {
+    if ((index >= 0) && (index < widget.groups.length) && AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+      Group group = widget.groups[index];
+      for (String groupId in _selectedGroupIds) {
+        if (groupId == group.id) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  void _onTapSelect() {
+    List<Group> selectedGroups;
+    if (AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+      selectedGroups = [];
+      for (Group group in widget.groups) {
+        if (_selectedGroupIds.contains(group.id)) {
+          selectedGroups.add(group);
+        }
+      }
+    }
+    Navigator.of(context).pop(selectedGroups);
   }
 }
