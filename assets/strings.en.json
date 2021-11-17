@@ -1182,6 +1182,7 @@
     "panel.create_event.additional_info.button.confirm.website":"Confirm website URL",
     "panel.create_event.additional_info.button.confirm.purchase_tickets":"Confirm purchase tickets URL",
     "panel.create_event.back.prompt":"Do you want to save your changes?",
+    "panel.create_event.failed.msg":"Failed to create event.",
 
     "panel.profile_info.header.title":"PERSONAL INFO",
     "panel.profile_info.net_id.title":"NetID",
@@ -2122,6 +2123,9 @@
     "widget.group_card.status.private": "Private",
     "widget.group_card.status.hidden": "Hidden",
     "widget.group_card.status.hint": "status: %s ,for: ",
+
+    "widget.groups.selection.button.select.label": "Select",
+    "widget.groups.selection.heading": "Select Group",
 
     "widget.gies.title": "iMBA New student checklist",
     "widget.gies.button.notes": "Notes",
