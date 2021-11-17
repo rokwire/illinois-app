@@ -276,11 +276,12 @@ String inboxSenderTypeToString(InboxSenderType value) {
 
 class InboxUserInfo{
   final String userId;
-  final List<String> topics;
   final DateTime dateCreated;
   final DateTime dateUpdated;
+  List<String> topics;
+  bool notificationsDisabled;
 
-  InboxUserInfo({this.userId, this.topics, this.dateCreated, this.dateUpdated});
+  InboxUserInfo({this.userId, this.topics, this.dateCreated, this.dateUpdated, this.notificationsDisabled});
 
   factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
     List<dynamic> topics = json['topics'];
@@ -291,6 +292,14 @@ class InboxUserInfo{
       topics:  AppCollection.isCollectionNotEmpty(topics) ? topics.map((e) => e.toString()).toList() : [],
       dateCreated: AppString.isStringNotEmpty(dateCreatedStr) ? AppDateTime().dateTimeFromString(dateCreatedStr) : null,
       dateUpdated: AppString.isStringNotEmpty(dateUpdatedStr) ? AppDateTime().dateTimeFromString(dateUpdatedStr) : null,
+      notificationsDisabled: json["notifications_disabled"]
     );
+  }
+
+  Map<String, dynamic> toNotificationDisablingJson() {
+    return {
+      'user_id': userId,
+      "notifications_disabled": notificationsDisabled
+    };
   }
 }
