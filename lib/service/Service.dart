@@ -50,7 +50,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
-  
+
   void createService() {
   }
 
@@ -87,17 +87,18 @@ class Services {
 
     FirebaseService(),
     FirebaseCrashlytics(),
-    Storage(),
-    HttpProxy(),
-    Config(),
-
     AppLivecycle(),
     AppDateTime(),
     Connectivity(),
     LocationServices(),
     BluetoothServices(),
-    NativeCommunicator(),
     DeepLink(),
+
+    Storage(),
+    HttpProxy(),
+
+    Config(),
+    NativeCommunicator(),
 
     Auth2(),
     Localization(),

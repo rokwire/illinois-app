@@ -115,7 +115,12 @@ class Auth2 with Service implements NotificationsListener {
 
     if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValid) {
       if (!await authenticateAnonymously()) {
-        Log.d("Anonymous Authentication Failed");
+        throw ServiceError(
+          source: this,
+          severity: ServiceErrorSeverity.fatal,
+          title: 'Authentication Initialization Failed',
+          description: 'Failed to initialize anonymous authentication token.',
+        );
       }
     }
   }
@@ -225,6 +230,7 @@ class Auth2 with Service implements NotificationsListener {
   // Anonymous Authentication
 
   Future<bool> authenticateAnonymously() async {
+    return false; //TMP
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
