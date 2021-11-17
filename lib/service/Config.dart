@@ -226,6 +226,14 @@ class Config with Service implements NotificationsListener {
         _checkUpgrade();
         _checkOnboarding();
       }
+      else {
+        throw ServiceError(
+          source: this,
+          severity: ServiceErrorSeverity.fatal,
+          title: 'Config Initialization Failed',
+          description: 'Failed to initialize application configuration.',
+        );
+      }
     }
     else {
       _checkUpgrade();
@@ -507,7 +515,9 @@ class Config with Service implements NotificationsListener {
       _configEnvironment = configEnvironment;
       Storage().configEnvironment = configEnvToString(_configEnvironment);
 
-      _init().then((_){
+      _init().catchError((e){
+        print(e?.toString());
+      }).whenComplete((){
         NotificationService().notify(notifyEnvironmentChanged, null);
       });
     }
