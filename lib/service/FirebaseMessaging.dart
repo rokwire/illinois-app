@@ -74,6 +74,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
   static const String _groupUpdatesNotificationKey = 'group';
+  static const String _pauseNotificationKey = 'pause_notifications';
 
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
@@ -82,6 +83,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
     'dining_specials'  : 'dinning_specials',
+  };
+
+  static const Map<String, bool> _defaultNotificationSettings = {
+    _pauseNotificationKey : false
   };
 
   // Athletics Notification updates
@@ -453,6 +458,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
 
+  set notificationsPaused(bool value)   { _setNotifySetting(_pauseNotificationKey, value); }
+  bool get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
+
   bool get _notifySettingsAvailable  {
     return Auth2().privacyMatch(4);
   }
@@ -481,6 +489,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
       } else if (name == _groupUpdatesNotificationKey) {
         _processGroupsSubscriptions(subscribedTopics: await currentTopics);
+      } else if (name == _pauseNotificationKey) {
+        _processPauseSubscriptions(subscribedTopics: await currentTopics);
       } else {
         _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: await currentTopics);
       }
@@ -497,6 +507,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
       _processAthleticsSubscriptions(subscribedTopics: subscribedTopics);
       _processGroupsSubscriptions(subscribedTopics: subscribedTopics);
+      _processPauseSubscriptions(subscribedTopics: subscribedTopics);
     }
   }
 
@@ -616,11 +627,25 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  bool _getStoredSetting(name){
-    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return Auth2()?.prefs?.getSetting(settingName: name, defaultValue: true);
+  void _processPauseSubscriptions({Set<String> subscribedTopics}){
+    if(subscribedTopics?.isEmpty ?? true){
+      return;
     }
-    return Storage().getNotifySetting(name) ?? true;
+
+    //TBD notify the back end to pause the notifications
+//    if(notificationsPaused) {
+//      for (String topic in subscribedTopics) {
+//        FirebaseMessaging().unsubscribeFromTopic(topic);
+//      }
+//    }
+  }
+
+  bool _getStoredSetting(name){
+    bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
+    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
+      return Auth2()?.prefs?.getSetting(settingName: name, defaultValue: defaultValue);
+    }
+    return Storage().getNotifySetting(name) ?? defaultValue;
   }
 
   void _storeSetting(name, value) {
