@@ -460,8 +460,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
 
-  set notificationsPaused(bool value)   { _setNotifySetting(_pauseNotificationKey, value); }
-  bool get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
+  set notificationsPaused(bool value)   {
+    _setNotifySetting(_pauseNotificationKey, value);
+    if(Auth2().isLoggedIn && Inbox().userInfo!= null) {
+      Inbox().updateNotificationsEnabled(value);
+    }else {
+      print("set notificationsPaused : Auth2().isLoggedIn[${Auth2().isLoggedIn}] && Inbox().userInfo!= null[${Inbox().userInfo!= null}]");
+    }
+  }
+
+  bool get notificationsPaused {
+    if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
+      return Inbox()?.userInfo?.notificationsDisabled ?? false;
+    } // else for Anonymous users
+    return _getStoredSetting(_pauseNotificationKey,);
+  }
 
   bool get _notifySettingsAvailable  {
     return Auth2().privacyMatch(4);
@@ -476,13 +489,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _setNotifySetting(String name, bool value) async{
+  void _setNotifySetting(String name, bool value) {
     if (_notifySettingsAvailable && (_getNotifySetting(name) != value)) {
       _storeSetting(name, value);
       NotificationService().notify(notifySettingUpdated, name);
 
       if (name == _athleticsUpdatesNotificationKey) {
-        _processAthleticsSubscriptions(subscribedTopics: await currentTopics);
+        _processAthleticsSubscriptions(subscribedTopics: currentTopics);
       } else if (name == _athleticsUpdatesStartNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsStartNotificationKey);
       } else if (name == _athleticsUpdatesEndNotificationSetting) {
@@ -490,44 +503,41 @@ class FirebaseMessaging with Service implements NotificationsListener {
       } else if (name == _athleticsUpdatesNewsNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
       } else if (name == _groupUpdatesNotificationKey) {
-        _processGroupsSubscriptions(subscribedTopics: await currentTopics);
-      } else if (name == _pauseNotificationKey) {
-        _processPauseSubscriptions(subscribedTopics: await currentTopics);
+        _processGroupsSubscriptions(subscribedTopics: currentTopics);
       } else {
-        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: await currentTopics);
+        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: currentTopics);
       }
     }
   }
 
   // Subscription Management
 
-  void _updateSubscriptions() async{
+  void _updateSubscriptions(){
     if (hasToken) {
-      Set<String> subscribedTopics = await currentTopics;
+      Set<String> subscribedTopics = currentTopics;
       _processPermanentSubscriptions(subscribedTopics: subscribedTopics);
       _processRolesSubscriptions(subscribedTopics: subscribedTopics);
       _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
       _processAthleticsSubscriptions(subscribedTopics: subscribedTopics);
       _processGroupsSubscriptions(subscribedTopics: subscribedTopics);
-      _processPauseSubscriptions(subscribedTopics: subscribedTopics);
     }
   }
 
-  void _updateRolesSubscriptions() async{
+  void _updateRolesSubscriptions(){
     if (hasToken) {
-      _processRolesSubscriptions(subscribedTopics: await currentTopics);
+      _processRolesSubscriptions(subscribedTopics: currentTopics);
     }
   }
 
-  void _updateNotifySettingsSubscriptions() async{
+  void _updateNotifySettingsSubscriptions(){
     if (hasToken) {
-      _processNotifySettingsSubscriptions(subscribedTopics: await currentTopics);
+      _processNotifySettingsSubscriptions(subscribedTopics: currentTopics);
     }
   }
 
-  void _updateAthleticsSubscriptions() async{
+  void _updateAthleticsSubscriptions(){
     if (hasToken) {
-      _processAthleticsSubscriptions(subscribedTopics: await currentTopics);
+      _processAthleticsSubscriptions(subscribedTopics: currentTopics);
     }
   }
 
@@ -586,10 +596,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processAthleticsSingleSubscription(String athleticsKey) async{
+  void _processAthleticsSingleSubscription(String athleticsKey) {
     List<SportDefinition> sports = Sports().sports;
     if (AppCollection.isCollectionNotEmpty(sports)) {
-      Set<String> subscribedTopics = await currentTopics;
+      Set<String> subscribedTopics = currentTopics;
       for (SportDefinition sport in sports) {
         _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
       }
@@ -629,19 +639,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processPauseSubscriptions({Set<String> subscribedTopics}){
-    if(subscribedTopics?.isEmpty ?? true){
-      return;
-    }
-
-    //TBD notify the back end to pause the notifications
-//    if(notificationsPaused) {
-//      for (String topic in subscribedTopics) {
-//        FirebaseMessaging().unsubscribeFromTopic(topic);
-//      }
-//    }
-  }
-
   bool _getStoredSetting(name){
     bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
     if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
@@ -662,20 +659,28 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void _storeTopic(String topic){
     if(!Auth2().isLoggedIn){
       Storage().addFirebaseMessagingSubscriptionTopic(topic);
-    } // else we store to the backend
+    } else {
+      if(Inbox().userInfo?.topics!=null){ //Instead of refreshing every time store the value;
+        Inbox().userInfo.topics.add(topic);
+      }
+    }
   }
 
   void _removeStoredTopic(String topic){
     if(!Auth2().isLoggedIn){
       Storage().removeFirebaseMessagingSubscriptionTopic(topic);
-    } // else we store to the backend
+    } else {
+      if (Inbox().userInfo?.topics != null) { //Instead of refreshing every time store the value;
+        Inbox().userInfo.topics.remove(topic);
+      }
+    }
   }
 
 
-  Future<Set<String>> get currentTopics async{
+  Set<String> get currentTopics{
     Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
     if(Auth2().isLoggedIn){
-      subscribedTopics = (await Inbox().loadUserInfo())?.topics?.toSet();
+      subscribedTopics = (Inbox().userInfo)?.topics?.toSet();
     }
 
     return subscribedTopics;
