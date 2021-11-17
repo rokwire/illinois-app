@@ -46,7 +46,7 @@ class Storage with Service {
       throw ServiceError(
         source: this,
         severity: ServiceErrorSeverity.fatal,
-        title: 'Storage initialization failed',
+        title: 'Storage Initialization Failed',
         description: 'Failed to initialize application preferences storage.',
       );
     }

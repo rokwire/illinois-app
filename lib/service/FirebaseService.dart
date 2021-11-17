@@ -34,7 +34,7 @@ class FirebaseService extends Service{
       throw ServiceError(
         source: this,
         severity: ServiceErrorSeverity.nonFatal,
-        title: 'Firebase initialization failed',
+        title: 'Firebase Initialization Failed',
         description: 'Failed to initialize Firebase application.',
       );
     }
