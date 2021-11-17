@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Log.dart';
@@ -101,7 +102,7 @@ class Config with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage()]);
+    return Set.from([Storage(), Connectivity()]);
   }
   
   // NotificationsListener
@@ -215,24 +216,34 @@ class Config with Service implements NotificationsListener {
     _config = await _loadFromFile(_configFile);
 
     if (_config == null) {
-      _configAsset = await _loadFromAssets();
-      String configString = await _loadAsStringFromNet();
-      _configAsset = null;
+      if (Connectivity().isNotOffline) {
+        _configAsset = await _loadFromAssets();
+        String configString = await _loadAsStringFromNet();
+        _configAsset = null;
 
-      _config = (configString != null) ? _configFromJsonString(configString) : null;
-      if (_config != null) {
-        _configFile.writeAsStringSync(configString, flush: true);
-        NotificationService().notify(notifyConfigChanged, null);
-        
-        _checkUpgrade();
-        _checkOnboarding();
+        _config = (configString != null) ? _configFromJsonString(configString) : null;
+        if (_config != null) {
+          _configFile.writeAsStringSync(configString, flush: true);
+          NotificationService().notify(notifyConfigChanged, null);
+          
+          _checkUpgrade();
+          _checkOnboarding();
+        }
+        else {
+          throw ServiceError(
+            source: this,
+            severity: ServiceErrorSeverity.fatal,
+            title: 'Config Initialization Failed',
+            description: 'Failed to initialize application configuration.',
+          );
+        }
       }
       else {
         throw ServiceError(
           source: this,
           severity: ServiceErrorSeverity.fatal,
-          title: 'Config Initialization Failed',
-          description: 'Failed to initialize application configuration.',
+          title: 'Initialization Failed',
+          description: 'You must be online when you start this product for first time.',
         );
       }
     }
