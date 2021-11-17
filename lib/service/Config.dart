@@ -69,6 +69,219 @@ class Config with Service implements NotificationsListener {
     return _instance;
   }
 
+  // Initialization
+
+  @override
+  void createService() {
+
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+      FirebaseMessaging.notifyConfigUpdate
+    ]);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
+  Future<void> initService() async {
+
+    _configEnvironment = configEnvFromString(Storage().configEnvironment) ??
+      (kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev);
+
+    _packageInfo = await PackageInfo.fromPlatform();
+    _appDocumentsDir = await getApplicationDocumentsDirectory();
+    Log.d('Application Documents Directory: ${_appDocumentsDir.path}');
+
+    await _init();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([Storage()]);
+  }
+  
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == FirebaseMessaging.notifyConfigUpdate) {
+      _updateFromNet();
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (refreshTimeout < pausedDuration.inSeconds) {
+          _updateFromNet();
+        }
+      }
+    }
+  }
+
+  // Implementation
+
+  String get _configName {
+    String configTarget = configEnvToString(_configEnvironment);
+    return "config.$configTarget.json";
+  }
+
+  File get _configFile {
+    String configFilePath = join(_appDocumentsDir.path, _configName);
+    return File(configFilePath);
+  }
+
+  Future<Map<String, dynamic>> _loadFromFile(File configFile) async {
+    try {
+      String configContent = (configFile != null) ? await configFile.readAsString() : null;
+      return _configFromJsonString(configContent);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> _loadFromAssets() async {
+    try {
+      String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
+      String configsStr = (configsStrEnc != null) ? AESCrypt.decode(configsStrEnc) : null;
+      Map<String, dynamic> configs = AppJson.decode(configsStr);
+      String configTarget = configEnvToString(_configEnvironment);
+      return (configs != null) ? configs[configTarget] : null;
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<String> _loadAsStringFromNet() async {
+    try {
+      http.Response response = await Network().get(appConfigUrl, auth: NetworkAuth.ApiKey);
+      return ((response != null) && (response.statusCode == 200)) ? response.body : null;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Map<String, dynamic> _configFromJsonString(String configJsonString) {
+    dynamic configJson =  AppJson.decode(configJsonString);
+    List<dynamic> jsonList = (configJson is List) ? configJson : null;
+    if (jsonList != null) {
+      
+      jsonList.sort((dynamic cfg1, dynamic cfg2) {
+        return ((cfg1 is Map) && (cfg2 is Map)) ? AppVersion.compareVersions(cfg1['mobileAppVersion'], cfg2['mobileAppVersion']) : 0;
+      });
+
+      for (int index = jsonList.length - 1; index >= 0; index--) {
+        Map<String, dynamic> cfg = jsonList[index];
+        if (AppVersion.compareVersions(cfg['mobileAppVersion'], _packageInfo.version) <= 0) {
+          _decodeSecretKeys(cfg);
+          return cfg;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  bool _decodeSecretKeys(Map<String, dynamic> config) {
+    dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
+    if (secretKeys is String) {
+      String jsonString = AESCrypt.decode(secretKeys);
+      dynamic jsonData = AppJson.decode(jsonString);
+      if (jsonData is Map) {
+        config['secretKeys'] = jsonData;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<void> _init() async {
+    
+    _config = await _loadFromFile(_configFile);
+
+    if (_config == null) {
+      _configAsset = await _loadFromAssets();
+      String configString = await _loadAsStringFromNet();
+      _configAsset = null;
+
+      _config = (configString != null) ? _configFromJsonString(configString) : null;
+      if (_config != null) {
+        _configFile.writeAsStringSync(configString, flush: true);
+        NotificationService().notify(notifyConfigChanged, null);
+        
+        _checkUpgrade();
+        _checkOnboarding();
+      }
+    }
+    else {
+      _checkUpgrade();
+      _checkOnboarding();
+      _updateFromNet();
+    }
+  }
+
+  void _updateFromNet() {
+    _loadAsStringFromNet().then((String configString) {
+      Map<String, dynamic> config = _configFromJsonString(configString);
+      if ((config != null) && (AppVersion.compareVersions(_config['mobileAppVersion'], config['mobileAppVersion']) <= 0) && !DeepCollectionEquality().equals(_config, config))  {
+        _config = config;
+        _configFile.writeAsString(configString, flush: true);
+        NotificationService().notify(notifyConfigChanged, null);
+
+        _checkUpgrade();
+        _checkOnboarding();
+      }
+    });
+  }
+
+  // App Id & Version
+
+  String get appId {
+    return _packageInfo?.packageName;
+  }
+
+  String get appCanonicalId {
+    if (_appCanonicalId == null) {
+      _appCanonicalId = appId;
+      
+      String platformSuffix = ".${Platform.operatingSystem.toLowerCase()}";
+      if ((_appCanonicalId != null) && _appCanonicalId.endsWith(platformSuffix)) {
+        _appCanonicalId = _appCanonicalId.substring(0, _appCanonicalId.length - platformSuffix.length);
+      }
+    }
+    return _appCanonicalId;
+  }
+
+  String get appPlatformId {
+    if (_appPlatformId == null) {
+      _appPlatformId = appId;
+
+      String platformSuffix = ".${Platform.operatingSystem.toLowerCase()}";
+      if ((_appPlatformId != null) && !_appPlatformId.endsWith(platformSuffix)) {
+        _appPlatformId = _appPlatformId + platformSuffix;
+      }
+    }
+    return _appPlatformId;
+  }
+
+  String get appVersion {
+    return _packageInfo?.version;
+  }
+
   // Getters
 
   Map<String, dynamic> get otherUniversityServices { return (_config != null) ? (_config['otherUniversityServices'] ?? {}) : {}; }
@@ -214,216 +427,7 @@ class Config with Service implements NotificationsListener {
     return settings['privacyVersion'] ?? (_config['mobileAppVersion'] ?? '0.0.0');
   }
 
-  // Initialization
-
-  @override
-  void createService() {
-
-    NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
-      FirebaseMessaging.notifyConfigUpdate
-    ]);
-  }
-
-  @override
-  void destroyService() {
-    NotificationService().unsubscribe(this);
-  }
-
-  @override
-  Future<void> initService() async {
-
-    _configEnvironment = configEnvFromString(Storage().configEnvironment) ??
-      (kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev);
-
-    _packageInfo = await PackageInfo.fromPlatform();
-    _appDocumentsDir = await getApplicationDocumentsDirectory();
-    Log.d('Application Documents Directory: ${_appDocumentsDir.path}');
-
-    await _init();
-  }
-
-  @override
-  Set<Service> get serviceDependsOn {
-    return Set.from([Storage()]);
-  }
-
-  String get _configName {
-    String configTarget = configEnvToString(_configEnvironment);
-    return "config.$configTarget.json";
-  }
-
-  File get _configFile {
-    String configFilePath = join(_appDocumentsDir.path, _configName);
-    return File(configFilePath);
-  }
-
-  Future<Map<String, dynamic>> _loadFromFile(File configFile) async {
-    try {
-      String configContent = (configFile != null) ? await configFile.readAsString() : null;
-      return _configFromJsonString(configContent);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
-  Future<Map<String, dynamic>> _loadFromAssets() async {
-    try {
-      String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
-      String configsStr = (configsStrEnc != null) ? AESCrypt.decode(configsStrEnc) : null;
-      Map<String, dynamic> configs = AppJson.decode(configsStr);
-      String configTarget = configEnvToString(_configEnvironment);
-      return (configs != null) ? configs[configTarget] : null;
-    } catch (e) {
-      print(e.toString());
-    }
-    return null;
-  }
-
-  Future<String> _loadAsStringFromNet() async {
-    try {
-      http.Response response = await Network().get(appConfigUrl, auth: NetworkAuth.ApiKey);
-      return ((response != null) && (response.statusCode == 200)) ? response.body : null;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
-  Map<String, dynamic> _configFromJsonString(String configJsonString) {
-    dynamic configJson =  AppJson.decode(configJsonString);
-    List<dynamic> jsonList = (configJson is List) ? configJson : null;
-    if (jsonList != null) {
-      
-      jsonList.sort((dynamic cfg1, dynamic cfg2) {
-        return ((cfg1 is Map) && (cfg2 is Map)) ? AppVersion.compareVersions(cfg1['mobileAppVersion'], cfg2['mobileAppVersion']) : 0;
-      });
-
-      for (int index = jsonList.length - 1; index >= 0; index--) {
-        Map<String, dynamic> cfg = jsonList[index];
-        if (AppVersion.compareVersions(cfg['mobileAppVersion'], _packageInfo.version) <= 0) {
-          _decodeSecretKeys(cfg);
-          return cfg;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  bool _decodeSecretKeys(Map<String, dynamic> config) {
-    dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
-    if (secretKeys is String) {
-      String jsonString = AESCrypt.decode(secretKeys);
-      dynamic jsonData = AppJson.decode(jsonString);
-      if (jsonData is Map) {
-        config['secretKeys'] = jsonData;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  Future<void> _init() async {
-    
-    _config = await _loadFromFile(_configFile);
-
-    if (_config == null) {
-      _configAsset = await _loadFromAssets();
-      String configString = await _loadAsStringFromNet();
-      _configAsset = null;
-
-      _config = (configString != null) ? _configFromJsonString(configString) : null;
-      if (_config != null) {
-        _configFile.writeAsStringSync(configString, flush: true);
-        NotificationService().notify(notifyConfigChanged, null);
-        
-        _checkUpgrade();
-        _checkOnboarding();
-      }
-    }
-    else {
-      _checkUpgrade();
-      _checkOnboarding();
-      _updateFromNet();
-    }
-  }
-
-  void _updateFromNet() {
-    _loadAsStringFromNet().then((String configString) {
-      Map<String, dynamic> config = _configFromJsonString(configString);
-      if ((config != null) && (AppVersion.compareVersions(_config['mobileAppVersion'], config['mobileAppVersion']) <= 0) && !DeepCollectionEquality().equals(_config, config))  {
-        _config = config;
-        _configFile.writeAsString(configString, flush: true);
-        NotificationService().notify(notifyConfigChanged, null);
-
-        _checkUpgrade();
-        _checkOnboarding();
-      }
-    });
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-    else if (name == FirebaseMessaging.notifyConfigUpdate) {
-      _updateFromNet();
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
-        if (refreshTimeout < pausedDuration.inSeconds) {
-          _updateFromNet();
-        }
-      }
-    }
-  }
-
   // Upgrade
-
-  String get appId {
-    return _packageInfo?.packageName;
-  }
-
-  String get appCanonicalId {
-    if (_appCanonicalId == null) {
-      _appCanonicalId = appId;
-      
-      String platformSuffix = ".${Platform.operatingSystem.toLowerCase()}";
-      if ((_appCanonicalId != null) && _appCanonicalId.endsWith(platformSuffix)) {
-        _appCanonicalId = _appCanonicalId.substring(0, _appCanonicalId.length - platformSuffix.length);
-      }
-    }
-    return _appCanonicalId;
-  }
-
-  String get appPlatformId {
-    if (_appPlatformId == null) {
-      _appPlatformId = appId;
-
-      String platformSuffix = ".${Platform.operatingSystem.toLowerCase()}";
-      if ((_appPlatformId != null) && !_appPlatformId.endsWith(platformSuffix)) {
-        _appPlatformId = _appPlatformId + platformSuffix;
-      }
-    }
-    return _appPlatformId;
-  }
-
-  String get appVersion {
-    return _packageInfo?.version;
-  }
 
   String get upgradeRequiredVersion {
     dynamic requiredVersion = _upgradeStringEntry('required_version');
