@@ -55,101 +55,103 @@ class Storage with Service {
   }
 
   void deleteEverything(){
-    for(String key in _sharedPreferences.getKeys()){
-      if(key != _configEnvKey){  // skip selected environment
-        _sharedPreferences.remove(key);
+    if (_sharedPreferences != null) {
+      for(String key in _sharedPreferences.getKeys()){
+        if(key != _configEnvKey){  // skip selected environment
+          _sharedPreferences.remove(key);
+        }
       }
     }
   }
 
   String _getStringWithName(String name, {String defaultValue}) {
-    return _sharedPreferences.getString(name) ?? defaultValue;
+    return _sharedPreferences?.getString(name) ?? defaultValue;
   }
 
   void _setStringWithName(String name, String value) {
     if(value != null) {
-      _sharedPreferences.setString(name, value);
+      _sharedPreferences?.setString(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   List<String> _getStringListWithName(String name, {List<String> defaultValue}) {
-    return _sharedPreferences.getStringList(name) ?? defaultValue;
+    return _sharedPreferences?.getStringList(name) ?? defaultValue;
   }
 
   void _setStringListWithName(String name, List<String> value) {
     if(value != null) {
-      _sharedPreferences.setStringList(name, value);
+      _sharedPreferences?.setStringList(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   bool _getBoolWithName(String name, {bool defaultValue = false}) {
-    return _sharedPreferences.getBool(name) ?? defaultValue;
+    return _sharedPreferences?.getBool(name) ?? defaultValue;
   }
 
   void _setBoolWithName(String name, bool value) {
     if(value != null) {
-      _sharedPreferences.setBool(name, value);
+      _sharedPreferences?.setBool(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   int _getIntWithName(String name, {int defaultValue = 0}) {
-    return _sharedPreferences.getInt(name) ?? defaultValue;
+    return _sharedPreferences?.getInt(name) ?? defaultValue;
   }
 
   void _setIntWithName(String name, int value) {
     if(value != null) {
-      _sharedPreferences.setInt(name, value);
+      _sharedPreferences?.setInt(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
-    return _sharedPreferences.getDouble(name) ?? defaultValue;
+    return _sharedPreferences?.getDouble(name) ?? defaultValue;
   }
 
   void _setDoubleWithName(String name, double value) {
     if(value != null) {
-      _sharedPreferences.setDouble(name, value);
+      _sharedPreferences?.setDouble(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
 
   dynamic operator [](String name) {
-    return _sharedPreferences.get(name);
+    return _sharedPreferences?.get(name);
   }
 
   void operator []=(String key, dynamic value) {
     if (value is String) {
-      _sharedPreferences.setString(key, value);
+      _sharedPreferences?.setString(key, value);
     }
     else if (value is int) {
-      _sharedPreferences.setInt(key, value);
+      _sharedPreferences?.setInt(key, value);
     }
     else if (value is double) {
-      _sharedPreferences.setDouble(key, value);
+      _sharedPreferences?.setDouble(key, value);
     }
     else if (value is bool) {
-      _sharedPreferences.setBool(key, value);
+      _sharedPreferences?.setBool(key, value);
     }
     else if (value is List) {
-      _sharedPreferences.setStringList(key, value.cast<String>());
+      _sharedPreferences?.setStringList(key, value.cast<String>());
     }
     else if (value == null) {
-      _sharedPreferences.remove(key);
+      _sharedPreferences?.remove(key);
     }
   }
 
@@ -384,18 +386,6 @@ class Storage with Service {
 
   //////////////////
   // Favorites
-
-  static const String favoritesKey  = 'user_favorites_list';
-
-  List<Object> get favorites{
-    List<String> storedValue = _sharedPreferences.getStringList(favoritesKey);
-    return storedValue?? [];
-  }
-
-  set favorites(List<Object> favorites){
-    List<String> storeValue = favorites.map((Object e){return e.toString();}).toList();
-    _sharedPreferences.setStringList(favoritesKey, storeValue);
-  }
 
   static const String favoritesDialogWasVisibleKey  = 'favorites_dialog_was_visible';
 
