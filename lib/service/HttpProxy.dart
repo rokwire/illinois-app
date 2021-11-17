@@ -55,7 +55,7 @@ class HttpProxy extends Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(),Config()]);
+    return Set.from([Storage()]);
   }
 
   void onNotification(String name, dynamic param){
