@@ -158,6 +158,9 @@ class Auth2Account {
     return ((authTypes != null) && (0 < authTypes.length)) ? authTypes?.first : null;
   }
 
+  bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);
+  bool hasPermission(String premission) => (Auth2StringEntry.findInList(permissions, name: premission) != null);
+  bool bellongsToGroup(String group) => (Auth2StringEntry.findInList(groups, name: group) != null);
 }
 
 ////////////////////////////////
@@ -425,6 +428,17 @@ class Auth2StringEntry {
       }
     }
     return jsonList;
+  }
+
+  static Auth2StringEntry findInList(List<Auth2StringEntry> contentList, { String name }) {
+    if (contentList != null) {
+      for (Auth2StringEntry contentEntry in contentList) {
+        if (contentEntry.name == name) {
+          return contentEntry;
+        }
+      }
+    }
+    return null;
   }
 }
 

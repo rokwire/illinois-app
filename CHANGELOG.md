@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Create events for all selected groups that the user is admin of [#980](https://github.com/rokwire/illinois-app/issues/980).
+
 ## [3.0.48] - 2021-11-16
 ### Changed
 - WalletPanel listens for IlliniCash.notifyBallanceUpdated event and updates state when received [#971](https://github.com/rokwire/illinois-app/issues/971).
