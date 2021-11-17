@@ -208,7 +208,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseService(), Storage(), Config(), Auth2()]);
+    return Set.from([FirebaseService(), Storage(), NativeCommunicator(), Auth2()]);
   }
 
   // NotificationsListener
