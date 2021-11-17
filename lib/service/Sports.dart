@@ -465,6 +465,24 @@ class Sports with Service implements NotificationsListener {
     return null;
   }
 
+  Future<News> loadNewsArticle(String id) async {
+    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(id)) {
+      String newsUrl = Config().sportsServiceUrl + '/api/v2/news?id=$id';
+      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
+      String responseBody = response?.body;
+      if (response?.statusCode == 200) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+          return News.fromJson(jsonData.first);
+        }
+      } else {
+        Log.e('Failed to load news');
+        Log.e(responseBody);
+      }
+    }
+    return null;
+  }
+
   Future<List<News>> loadNews(String sportKey, int count) async {
     if (Config().sportsServiceUrl != null) {
       String newsUrl = Config().sportsServiceUrl + '/api/v2/news';

@@ -61,6 +61,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String notifyEventDetail           = "edu.illinois.rokwire.firebase.messaging.event.detail";
   static const String notifyGameDetail            = "edu.illinois.rokwire.firebase.messaging.game.detail";
   static const String notifyAthleticsGameStarted  = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
+  static const String notifyAthleticsNewsUpdated  = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
   static const String notifySettingUpdated        = "edu.illinois.rokwire.firebase.messaging.setting.updated";
   static const String notifyGroupsNotification    = "edu.illinois.rokwire.firebase.messaging.groups.updated";
 
@@ -339,6 +340,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
     else if (type == "athletics_game_started") {
       NotificationService().notify(notifyAthleticsGameStarted, data);
+    }
+    else if (type == "athletics_news_detail") {
+      NotificationService().notify(notifyAthleticsNewsUpdated, data);
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);

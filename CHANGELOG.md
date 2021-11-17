@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.48] - 2021-11-16
 ### Changed
 - WalletPanel listens for IlliniCash.notifyBallanceUpdated event and updates state when received [#971](https://github.com/rokwire/illinois-app/issues/971).
 - Save Reminders to Calendar when marked as favourite [#975](https://github.com/rokwire/illinois-app/issues/975).
 ### Fixed
 - Home MyGroups widget not refreshing after user login [#977](https://github.com/rokwire/illinois-app/issues/977).
+### Added
+- Redirect user to news detail panel when FCM notification is tapped [#972](https://github.com/rokwire/illinois-app/issues/972).
 
 ## [3.0.47] - 2021-11-15
 ### Changed
@@ -18,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change Onboarding string. [#965](https://github.com/rokwire/illinois-app/issues/965)
 - Validate transfer amount and other CC fields in AddIlliniCash panel [#957](https://github.com/rokwire/illinois-app/issues/957).
 - Do not list rejected groups in "My Groups" tab of GroupsHomePanel [#958](https://github.com/rokwire/illinois-app/issues/958).
-### Add 
+### Added
 - Add Privacy level slider in to the Onboarding2PrivaciPanel[#963](https://github.com/rokwire/illinois-app/issues/963)
 
 ## [3.0.46] - 2021-11-12

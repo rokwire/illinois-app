@@ -103,13 +103,13 @@
 			"onboarding.sport_prefs"          : 3
 		},
 		"auth": {
-			"home.content.connect"                : {"loggedIn": false },
+			"home.content.connect"                : { "loggedIn": false },
 			"home.content.safer.building_access"  : { "shibbolethLoggedIn": true },
 			"home.content.safer.my_mckinley"      : { "shibbolethLoggedIn": true },
 			"browse.all.building_status"          : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
-			"create_event"                        : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers" },
-			"create_stadium_poll"                 : { "shibbolethMemberOf": "urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager" },
+			"create_event"                        : { "accountRole": "event approvers" },
+			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
 			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
 
 			"wallet.connect"                      : { "loggedIn": false },
