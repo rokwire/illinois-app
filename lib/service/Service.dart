@@ -50,7 +50,9 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
-  
+
+  bool _isInitialized;
+
   void createService() {
   }
 
@@ -58,10 +60,13 @@ abstract class Service {
   }
 
   Future<void> initService() async {
+    _isInitialized = true;
   }
 
   void initServiceUI() async {
   }
+
+  bool get isInitialized => _isInitialized ?? false;
 
   Set<Service> get serviceDependsOn {
     return null;
@@ -86,17 +91,18 @@ class Services {
 
     FirebaseService(),
     FirebaseCrashlytics(),
-    Storage(),
-    HttpProxy(),
-    Config(),
-
     AppLivecycle(),
     AppDateTime(),
     Connectivity(),
     LocationServices(),
     BluetoothServices(),
-    NativeCommunicator(),
     DeepLink(),
+
+    Storage(),
+    HttpProxy(),
+
+    Config(),
+    NativeCommunicator(),
 
     Auth2(),
     Localization(),
@@ -137,10 +143,30 @@ class Services {
     }
   }
 
-  Future<void> init() async {
+  Future<ServiceError> init() async {
     for (Service service in _services) {
-      await service.initService();
+      if (service.isInitialized != true) {
+        try { await service.initService(); }
+        on ServiceError catch (error) {
+          print(error?.toString());
+          if (error?.severity == ServiceErrorSeverity.fatal) {
+            return error;
+          }
+        }
+        catch(e) {
+          print(e?.toString());
+        }
+      }
     }
+
+    /*TMP:
+    return ServiceError(
+      source: null,
+      severity: ServiceErrorSeverity.fatal,
+      title: 'Text Initialization Error',
+      description: 'This is a test initialization error.',
+    );*/
+    return null;
   }
 
   void initUI() {
@@ -178,3 +204,33 @@ class Services {
 
 }
 
+class ServiceError {
+  final String title;
+  final String description;
+  final Service source;
+  final ServiceErrorSeverity severity;
+
+  ServiceError({this.title, this.description, this.source, this.severity});
+
+  String toString() {
+    return "ServiceError: ${source?.runtimeType?.toString()}: $title\n$description";
+  }
+
+  bool operator ==(o) =>
+    (o is ServiceError) &&
+      (o.title == title) &&
+      (o.description == description) &&
+      (o.source == source) &&
+      (o.severity == severity);
+
+  int get hashCode =>
+    (title?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (source?.hashCode ?? 0) ^
+    (severity?.hashCode ?? 0);
+}
+
+enum ServiceErrorSeverity {
+  fatal,
+  nonFatal
+}

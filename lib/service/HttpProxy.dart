@@ -43,9 +43,9 @@ class HttpProxy extends Service implements NotificationsListener{
   }
 
   @override
-  Future<void> initService() {
+  Future<void> initService() async {
     _handleChanged();
-    return super.initService();
+    await super.initService();
   }
 
   @override
@@ -56,7 +56,7 @@ class HttpProxy extends Service implements NotificationsListener{
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(),Config()]);
+    return Set.from([Storage()]);
   }
 
   void onNotification(String name, dynamic param){

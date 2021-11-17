@@ -59,6 +59,7 @@ class NativeCommunicator with Service {
   @override
   Future<void> initService() async {
     await _nativeInit();
+    await super.initService();
   }
 
   @override

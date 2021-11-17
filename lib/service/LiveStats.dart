@@ -60,6 +60,7 @@ class LiveStats with Service implements NotificationsListener {
   Future<void> initService() async {
     if(_enabled) {
       _loadLiveGames();
+      await super.initService();
     }
   }
 
@@ -167,7 +168,6 @@ class LiveStats with Service implements NotificationsListener {
     response.then((response) {
     String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        Log.d("Successfully loaded live games");
         List<dynamic> gamesList = AppJson.decode(responseBody);
         List<LiveGame> result = [];
         if (gamesList != null) {

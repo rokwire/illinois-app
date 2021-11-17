@@ -59,7 +59,19 @@ class BluetoothServices with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _status = await _getStatus();
-  }
+    
+    if (_status != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Location Services Initialization Failed',
+        description: 'Failed to retrieve location services status.',
+      );
+    }
+}
 
   // NotificationsListener
   
