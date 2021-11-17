@@ -325,6 +325,18 @@ class Analytics with Service implements NotificationsListener {
         _osVersion = _iosDeviceInfo.systemVersion;
       });
     }
+  
+    if (_database != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Analytics Initialization Failed',
+        description: 'Failed to create analytics database.',
+      );
+    }
   }
 
   @override

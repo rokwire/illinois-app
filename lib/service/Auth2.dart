@@ -123,6 +123,8 @@ class Auth2 with Service implements NotificationsListener {
         );
       }
     }
+
+    await super.initService();
   }
 
   @override
@@ -230,7 +232,6 @@ class Auth2 with Service implements NotificationsListener {
   // Anonymous Authentication
 
   Future<bool> authenticateAnonymously() async {
-    return false; //TMP
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (Config().rokwireApiKey != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {

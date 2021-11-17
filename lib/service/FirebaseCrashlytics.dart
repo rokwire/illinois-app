@@ -36,6 +36,8 @@ class FirebaseCrashlytics with Service {
 
     // Pass all uncaught errors to Firebase.Crashlytics.
     FlutterError.onError = handleFlutterError;
+
+    await super.initService();
   }
 
   void handleFlutterError(FlutterErrorDetails details) {

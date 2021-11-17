@@ -79,6 +79,8 @@ class AppDateTime with Service {
     if (_universityLocation == null) {
       print('AppDateTime: Failed to retrieve university location.');
     }
+
+    await super.initService();
   }
 
   DateTime get now {

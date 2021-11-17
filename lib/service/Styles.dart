@@ -80,7 +80,12 @@ class Styles extends Service implements NotificationsListener{
       if (_stylesData == null) {
         await _loadFromAssets();
       }
-      _loadFromNet();
+      if (_stylesData == null) {
+        await _loadFromNet();
+      }
+      else {
+        _loadFromNet();
+      }
     }
     else if (_contentMode == StylesContentMode.assets) {
       await _loadFromAssets();
@@ -90,6 +95,18 @@ class Styles extends Service implements NotificationsListener{
       if (_stylesData == null) {
         await _loadFromAssets();
       }
+    }
+    
+    if (_stylesData != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'Styles Configuration Initialization Failed',
+        description: 'Failed to initialize application styles configuration.',
+      );
     }
   }
 

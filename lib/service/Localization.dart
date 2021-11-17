@@ -87,8 +87,10 @@ class Localization with Service implements NotificationsListener {
     String curentLanguage = Storage().currentLanguage;
     if (curentLanguage != null) {
       _currentLocale = Locale.fromSubtags(languageCode : curentLanguage);
-      _initLocaleStirngs(curentLanguage);
+      await _initLocaleStirngs(curentLanguage);
     }
+
+    await super.initService();
   }
 
   @override

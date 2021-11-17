@@ -199,6 +199,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     NativeCommunicator().queryFirebaseInfo().then((String info) {
       _projectID = info;
     });
+
+    await super.initService();
   }
 
   @override

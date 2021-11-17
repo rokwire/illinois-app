@@ -52,7 +52,19 @@ class Connectivity with Service {
 
   @override
   Future<void> initService() async {
-    _setConnectivityStatus(_statusFromResult(await ConnectivityPlugin.Connectivity().checkConnectivity()));
+    _connectivityStatus = _statusFromResult(await ConnectivityPlugin.Connectivity().checkConnectivity());
+
+    if (_connectivityStatus != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Connectivity Initialization Failed',
+        description: 'Failed to retrieve connectivity status.',
+      );
+    }
   }
 
   @override

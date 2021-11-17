@@ -18,7 +18,6 @@ import 'dart:convert';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -40,9 +39,12 @@ class Storage with Service {
 
   @override
   Future<void> initService() async {
-    Log.d("Init Storage");
     _sharedPreferences = await SharedPreferences.getInstance();
-    if (_sharedPreferences == null) {
+    
+    if (_sharedPreferences != null) {
+      await super.initService();
+    }
+    else {
       throw ServiceError(
         source: this,
         severity: ServiceErrorSeverity.fatal,

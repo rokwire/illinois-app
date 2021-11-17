@@ -39,13 +39,14 @@ class DeviceCalendar with Service implements NotificationsListener{
       Auth2UserPrefs.notifyFavoriteChanged,
       DeviceCalendar.notifyPlaceEvent
     ]);
+    _deviceCalendarPlugin = new DeviceCalendarPlugin();
   }
 
   @override
   Future<void> initService() async {
-    _deviceCalendarPlugin = new DeviceCalendarPlugin();
     dynamic storedTable = Storage().calendarEventsTable ?? Map();
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
+    await super.initService();
   }
 
   @override

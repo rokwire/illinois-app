@@ -88,6 +88,7 @@ class Polls with Service implements NotificationsListener {
       startPlugin();
 
       await _loadPollChunks();
+      await super.initService();
     }
   }
 

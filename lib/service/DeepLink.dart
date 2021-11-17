@@ -45,5 +45,7 @@ class DeepLink with Service {
         NotificationService().notify(notifyUri, uri);
       }
     });
+
+    await super.initService();
   }
 }

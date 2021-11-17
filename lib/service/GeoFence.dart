@@ -87,9 +87,11 @@ class GeoFence with Service implements NotificationsListener {
       _regions = _regionsFromJsonString(jsonString);
       if (_regions != null) {
         _saveRegionsStringToCache(jsonString);
-      }
+      }      
     }
+    
     _monitorRegions();
+    await super.initService();
   }
 
   @override

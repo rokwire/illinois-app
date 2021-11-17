@@ -147,7 +147,7 @@ class _AppState extends State<App> implements NotificationsListener {
 
   @override
   void initState() {
-    Log.d("App init");
+    Log.d("App UI initialized");
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,

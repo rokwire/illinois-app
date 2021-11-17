@@ -96,6 +96,7 @@ class Config with Service implements NotificationsListener {
     Log.d('Application Documents Directory: ${_appDocumentsDir.path}');
 
     await _init();
+    await super.initService();
   }
 
   @override

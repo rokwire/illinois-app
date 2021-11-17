@@ -30,7 +30,11 @@ class FirebaseService extends Service{
   @override
   Future<void> initService() async{
     await initFirebase();
-    if (_firebaseApp == null) {
+    
+    if (_firebaseApp != null) {
+      await super.initService();
+    }
+    else {
       throw ServiceError(
         source: this,
         severity: ServiceErrorSeverity.nonFatal,

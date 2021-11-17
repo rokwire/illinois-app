@@ -55,6 +55,7 @@ class Inbox with Service implements NotificationsListener {
     _fcmUserId = Storage().inboxFirebaseMessagingUserId;
     _isServiceInitialized = true;
     _processFcmToken();
+    await super.initService();
   }
 
   @override
@@ -169,7 +170,7 @@ class Inbox with Service implements NotificationsListener {
         'token': token
       });
       Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
-      Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
+      //Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
@@ -209,7 +210,7 @@ class Inbox with Service implements NotificationsListener {
         'app_version': Config().appVersion,
       });
       Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
-      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
+      //Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;

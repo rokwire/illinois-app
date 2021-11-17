@@ -51,6 +51,8 @@ import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
 
+  bool _isInitialized;
+
   void createService() {
   }
 
@@ -58,11 +60,13 @@ abstract class Service {
   }
 
   Future<void> initService() async {
-    return null;
+    _isInitialized = true;
   }
 
   void initServiceUI() async {
   }
+
+  bool get isInitialized => _isInitialized ?? false;
 
   Set<Service> get serviceDependsOn {
     return null;
@@ -141,17 +145,27 @@ class Services {
 
   Future<ServiceError> init() async {
     for (Service service in _services) {
-      try { await service.initService(); }
-      on ServiceError catch (error) {
-        print(error?.toString());
-        if (error?.severity == ServiceErrorSeverity.fatal) {
-          return error;
+      if (service.isInitialized != true) {
+        try { await service.initService(); }
+        on ServiceError catch (error) {
+          print(error?.toString());
+          if (error?.severity == ServiceErrorSeverity.fatal) {
+            return error;
+          }
+        }
+        catch(e) {
+          print(e?.toString());
         }
       }
-      catch(e) {
-        print(e?.toString());
-      }
     }
+
+    /*TMP:
+    return ServiceError(
+      source: null,
+      severity: ServiceErrorSeverity.fatal,
+      title: 'Text Initialization Error',
+      description: 'This is a test initialization error.',
+    );*/
     return null;
   }
 
