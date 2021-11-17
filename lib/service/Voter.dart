@@ -46,6 +46,7 @@ class Voter with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _loadVoterRules();
+    await super.initService();
   }
 
   @override

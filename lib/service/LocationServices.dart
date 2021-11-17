@@ -70,6 +70,18 @@ class LocationServices with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
     _lastStatus = await this.status;
+    
+    if (_lastStatus != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Location Services Initialization Failed',
+        description: 'Failed to retrieve location services status.',
+      );
+    }
   }
 
   Future<LocationServicesStatus> get status async {

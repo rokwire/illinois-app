@@ -493,6 +493,9 @@
 	"panel.onboarding.upgrade.button.dont_show.title":"不再显示",
 	"panel.onboarding.upgrade.button.dont_show.hint":"",
 
+	"panel.onboarding.error.button.try_again.title":"Try Again",
+	"panel.onboarding.error.button.try_again.hint":"",
+
 	"panel.onboarding.base.not_now.hint":"",
 	"panel.onboarding.base.not_now.title":"暂时不",
 

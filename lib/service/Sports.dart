@@ -79,6 +79,7 @@ class Sports with Service implements NotificationsListener {
   Future<void> initService() async {
     await _loadSportDefinitions();
     await _loadSportSocialMedias();
+    await super.initService();
   }
 
   @override

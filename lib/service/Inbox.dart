@@ -8,7 +8,6 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
@@ -55,6 +54,7 @@ class Inbox with Service implements NotificationsListener {
     _fcmUserId = Storage().inboxFirebaseMessagingUserId;
     _isServiceInitialized = true;
     _processFcmToken();
+    await super.initService();
   }
 
   @override
@@ -169,7 +169,7 @@ class Inbox with Service implements NotificationsListener {
         'token': token
       });
       Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
-      Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
+      //Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
@@ -209,25 +209,14 @@ class Inbox with Service implements NotificationsListener {
         'app_version': Config().appVersion,
       });
       Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
-      Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
+      //Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
     return false;
   }
 
-  Future<InboxUserInfo> loadUserInfo() async{
-    try {
-      Response response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
-          auth: NetworkAuth.Auth2) : null;
-      Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-      if(jsonData != null){
-          return InboxUserInfo.fromJson(jsonData);
-        }
-    } catch (e) {
-      Log.e('Failed to load inbox user info');
-      Log.e(e.toString());
-    }
-
-    return null;
+  Future<InboxUserInfo> loadUserInfo() async {
+    Response response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
+    return (response?.statusCode == 200) ? InboxUserInfo.fromJson(AppJson.decodeMap(response?.body)) : null;
   }
 }

@@ -83,7 +83,18 @@ class FlexUI with Service implements NotificationsListener {
     _contentSource = await _loadContentSource();
     _content = _buildContent(_contentSource);
     _features = _buildFeatures(_content);
-    _updateContentSourceFromNet();
+    if (_content != null) {
+      await super.initService();
+      _updateContentSourceFromNet();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'FlexUI Initialization Failed',
+        description: 'Failed to initialize FlexUI content.',
+      );
+    }
   }
 
   @override

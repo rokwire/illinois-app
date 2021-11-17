@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Create events for all selected groups that the user is admin of [#980](https://github.com/rokwire/illinois-app/issues/980).
+### Changed
+- Handled initialization errors on app startup [#928](https://github.com/rokwire/illinois-app/issues/928).
 
 ## [3.0.48] - 2021-11-16
 ### Changed

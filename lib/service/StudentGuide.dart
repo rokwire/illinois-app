@@ -81,6 +81,19 @@ class StudentGuide with Service implements NotificationsListener {
         _saveContentStringToCache(contentString);
       }
     }
+
+    if (_contentMap != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Student Guide Initialization Failed',
+        description: 'Failed to initialize Student Guide content.',
+      );
+    }
+
   }
   
   @override
