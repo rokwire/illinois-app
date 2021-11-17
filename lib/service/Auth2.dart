@@ -200,12 +200,14 @@ class Auth2 with Service implements NotificationsListener {
   String get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.uiucUser?.email);
   String get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.phone);
 
-  bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
-  bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
-  bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
-  bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
+  bool get isEventEditor => hasRole("event approvers");
+  bool get isStadiumPollManager => hasRole("stadium poll manager");
+  bool get isDebugManager => hasRole("debug");
+  bool get isGroupsAccess => hasRole("groups access");
 
-  bool isMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
+  bool hasRole(String role) => _account?.roles?.firstWhere((roleObj) => (roleObj?.name == role), orElse: () => null) != null ?? false;
+
+  bool isShibbolethMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
 
   bool privacyMatch(int requredPrivacyLevel) => 
     (prefs?.privacyLevel == null) || (prefs?.privacyLevel == 0) || (prefs.privacyLevel >= requredPrivacyLevel);
