@@ -40,7 +40,7 @@ class DeepLink with Service {
     });
 
     // 2. Updated uri
-    uriLinkStream.listen((Uri uri) async {
+    uriLinkStream.listen((Uri uri) {
       if (uri != null) {
         NotificationService().notify(notifyUri, uri);
       }
