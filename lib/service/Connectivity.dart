@@ -48,9 +48,11 @@ class Connectivity with Service {
   @override
   void createService() {
     _connectivitySubscription = ConnectivityPlugin.Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
-    ConnectivityPlugin.Connectivity().checkConnectivity().then((ConnectivityPlugin.ConnectivityResult result) {
-      _setConnectivityStatus(_statusFromResult(result));
-    });
+  }
+
+  @override
+  Future<void> initService() async {
+    _setConnectivityStatus(_statusFromResult(await ConnectivityPlugin.Connectivity().checkConnectivity()));
   }
 
   @override
