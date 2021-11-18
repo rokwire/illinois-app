@@ -144,7 +144,9 @@ class Services {
   }
 
   Future<ServiceError> init() async {
+    bool offlineChecked = false;
     for (Service service in _services) {
+
       if (service.isInitialized != true) {
         try { await service.initService(); }
         on ServiceError catch (error) {
@@ -155,6 +157,20 @@ class Services {
         }
         catch(e) {
           print(e?.toString());
+        }
+      }
+
+      if ((offlineChecked != true) && Storage().isInitialized && Connectivity().isInitialized) {
+        if ((Storage().lastRunVersion == null) && Connectivity().isOffline) {
+          return ServiceError(
+            source: null,
+            severity: ServiceErrorSeverity.fatal,
+            title: 'Initialization Failed',
+            description: 'You must be online when you start this product for first time.',
+          );
+        }
+        else {
+          offlineChecked = true;
         }
       }
     }

@@ -216,34 +216,24 @@ class Config with Service implements NotificationsListener {
     _config = await _loadFromFile(_configFile);
 
     if (_config == null) {
-      if (Connectivity().isNotOffline) {
-        _configAsset = await _loadFromAssets();
-        String configString = await _loadAsStringFromNet();
-        _configAsset = null;
+      _configAsset = await _loadFromAssets();
+      String configString = await _loadAsStringFromNet();
+      _configAsset = null;
 
-        _config = (configString != null) ? _configFromJsonString(configString) : null;
-        if (_config != null) {
-          _configFile.writeAsStringSync(configString, flush: true);
-          NotificationService().notify(notifyConfigChanged, null);
-          
-          _checkUpgrade();
-          _checkOnboarding();
-        }
-        else {
-          throw ServiceError(
-            source: this,
-            severity: ServiceErrorSeverity.fatal,
-            title: 'Config Initialization Failed',
-            description: 'Failed to initialize application configuration.',
-          );
-        }
+      _config = (configString != null) ? _configFromJsonString(configString) : null;
+      if (_config != null) {
+        _configFile.writeAsStringSync(configString, flush: true);
+        NotificationService().notify(notifyConfigChanged, null);
+        
+        _checkUpgrade();
+        _checkOnboarding();
       }
       else {
         throw ServiceError(
           source: this,
           severity: ServiceErrorSeverity.fatal,
-          title: 'Initialization Failed',
-          description: 'You must be online when you start this product for first time.',
+          title: 'Config Initialization Failed',
+          description: 'Failed to initialize application configuration.',
         );
       }
     }
