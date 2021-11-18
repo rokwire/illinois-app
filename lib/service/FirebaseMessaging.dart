@@ -635,7 +635,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool _getStoredSetting(name){
     bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
     if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return Auth2()?.prefs?.getSetting(settingName: name, defaultValue: defaultValue);
+      return  Auth2()?.prefs?.getBoolSetting(settingName: name, defaultValue: defaultValue);
     }
     return Storage().getNotifySetting(name) ?? defaultValue;
   }

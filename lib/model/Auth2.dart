@@ -648,10 +648,10 @@ class Auth2UserPrefs {
   Map<String, Set<String>>  _favorites;
   Map<String, Set<String>>  _interests;
   Map<String, bool> _tags;
-  Map<String, bool> _settings;
+  Map<String, dynamic> _settings;
   Auth2VoterPrefs _voter;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, bool> settings, Auth2VoterPrefs voter}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, dynamic> settings, Auth2VoterPrefs voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
@@ -1098,17 +1098,22 @@ class Auth2UserPrefs {
     }
   }
   // Settings
-  bool getSetting({String settingName, defaultValue = false}){
-    if(_settings?.isNotEmpty ?? false){
-      return _settings[settingName] ?? defaultValue;
-    }
 
-    return defaultValue;//consider default TBD
+  bool getBoolSetting({String settingName, bool defaultValue}){
+    return AppJson.boolValue(getSetting(settingName: settingName)) ?? defaultValue;
   }
 
-  void applySetting(String settingName, bool settingValue){
+  dynamic getSetting({String settingName}){
+    if(_settings?.isNotEmpty ?? false){
+      return _settings[settingName];
+    }
+
+    return null;//consider default TBD
+  }
+
+  void applySetting(String settingName, dynamic settingValue){
     if(_settings == null)
-      _settings = Map<String, bool>();
+      _settings = Map<String, dynamic>();
     _settings[settingName] = settingValue;
 
     NotificationService().notify(notifySettingsChanged);
@@ -1154,7 +1159,7 @@ class Auth2UserPrefs {
   }
 
   static _settingsFromJson(Map<String, dynamic> json) {
-    try { return json?.cast<String, bool>(); }
+    try { return json?.cast<String, dynamic>(); }
     catch(e) { print(e?.toString()); }
   }
 }
