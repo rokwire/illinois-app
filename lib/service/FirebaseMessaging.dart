@@ -72,22 +72,41 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "polls",
   ];
 
-  static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
-  static const String _groupUpdatesNotificationKey = 'group';
-  static const String _pauseNotificationKey = 'pause_notifications';
-
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
     'event_reminders'  : 'event_reminders',
+    'dining_specials'  : 'dinning_specials',
     _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
-    'dining_specials'  : 'dinning_specials',
+  };
+
+  // Settings entry : setting name (User.prefs.setting name)
+  static const Map<String, String> _notifySettingNames = {
+    _eventRemindersUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
+    _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
+    _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
+    _groupUpdatesInvitationsNotificationSetting : 'edu.illinois.rokwire.settings.inbox.notification.group.invitations.enabled',
+    _groupUpdatesEventsNotificationSetting      : 'edu.illinois.rokwire.settings.inbox.notification.group.events.enabled',
+    _athleticsUpdatesStartNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.start.enabled',
+    _athleticsUpdatesEndNotificationSetting     : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.end.enabled',
+    _athleticsUpdatesNewsNotificationSetting    : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.news.enabled',
+    _athleticsUpdatesNotificationKey            : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.main.notifications.enabled',
+    _groupUpdatesNotificationKey                : 'edu.illinois.rokwire.settings.inbox.notification.group.main.notifications.enabled',
+    _pauseNotificationKey                       : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
   };
 
   static const Map<String, bool> _defaultNotificationSettings = {
     _pauseNotificationKey : false
   };
+
+  //settingKeys
+  static const String _eventRemindersUpdatesNotificationSetting = 'event_reminders';
+  static const String _diningSpecialsUpdatesNotificationSetting = 'dining_specials';
+  static const String _pauseNotificationKey = 'pause_notifications';
+
+  static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
+  static const String _groupUpdatesNotificationKey = 'group';
 
   // Athletics Notification updates
   static const String _athleticsStartNotificationKey = 'start';
@@ -118,7 +137,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "Receive notifications",
     importance: Importance.high,
   );
-
 
   String   _token;
   String   _projectID;
@@ -456,16 +474,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
 
-  set notificationsPaused(bool value)   {
-    _setNotifySetting(_pauseNotificationKey, value);
-  }
+  set notificationsPaused(bool value)   {_setNotifySetting(_pauseNotificationKey, value);}
 
-  bool get notificationsPaused {
-    if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
-      return Inbox()?.userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
-    } // else for Anonymous users
-    return _getStoredSetting(_pauseNotificationKey,);
-  }
+  bool get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
 
   bool get _notifySettingsAvailable  {
     return Auth2().privacyMatch(4);
@@ -500,6 +511,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       } else {
         _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: currentTopics);
       }
+
     }
   }
 
@@ -634,18 +646,23 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   bool _getStoredSetting(name){
     bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
-    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return  Auth2()?.prefs?.getBoolSetting(settingName: name, defaultValue: defaultValue);
+    if(name == _pauseNotificationKey){ // settings depending on userInfo
+      if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
+        return Inbox()?.userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
+      }
     }
-    return Storage().getNotifySetting(name) ?? defaultValue;
+    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
+      return  Auth2()?.prefs?.getBoolSetting(settingName: _notifySettingNames [name]?? name, defaultValue: defaultValue);
+    }
+    return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
   void _storeSetting(name, value) {
     //// Logged user choice stored in the UserPrefs
     if (Auth2().isLoggedIn) {
-      Auth2().prefs?.applySetting(name, value);
+      Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
     } else {
-      Storage().setNotifySetting(name, value);
+      Storage().setNotifySetting(_notifySettingNames[name] ?? name, value);
     }
   }
 

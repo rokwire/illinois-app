@@ -164,18 +164,22 @@ class Inbox with Service implements NotificationsListener {
   }
 
   Future<bool> subscribeToTopic({String topic, String token}) async {
+    _storeTopic(topic); // Store first, otherwise we have delay
     bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'subscribe');
-    if(result ?? false){
-      _storeTopic(topic);
+    if(!(result ?? false)){
+      //if failed and not already stored remove
+      Log.e("Unable to subscribe to topic: $topic");
     }
 
     return result;
   }
 
   Future<bool> unsubscribeFromTopic({String topic, String token}) async {
+    _removeStoredTopic(topic); //StoreFist, otherwise we have visual delay
     bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'unsubscribe');
-    if(result ?? false){
-      _removeStoredTopic(topic);
+    if(!(result ?? false)){
+      //if failed //TBD
+      Log.e("Unable to unsubscribe from topic: $topic");
     }
 
     return result;
@@ -289,6 +293,7 @@ class Inbox with Service implements NotificationsListener {
 
   Future<bool> applySettingNotificationsEnabled(bool value) async{
     if (_userInfo != null && value!=null){
+      userInfo.notificationsDisabled = value;
       return _putUserInfo(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value));
     }
     return false;

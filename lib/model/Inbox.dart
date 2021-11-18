@@ -300,7 +300,7 @@ class InboxUserInfo{
       "date_created" : dateCreated,
       "date_updated" : dateUpdated,
       "notifications_disabled": notificationsDisabled,
-      "topics" : topics,
+      "topics" : topics?.toList(),
     };
   }
 
