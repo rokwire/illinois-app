@@ -279,7 +279,7 @@ class InboxUserInfo{
   String userId;
   String dateCreated;
   String dateUpdated;
-  List<String> topics;
+  Set<String> topics;
   bool notificationsDisabled;
 
   InboxUserInfo({this.userId, this.dateCreated, this.dateUpdated, this.topics, this.notificationsDisabled});
@@ -290,7 +290,7 @@ class InboxUserInfo{
       dateCreated: AppJson.stringValue(json["date_created"]),
       dateUpdated: AppJson.stringValue(json["date_updated"]),
       notificationsDisabled: AppJson.boolValue(json["notifications_disabled"]),
-      topics: AppJson.stringListValue(json["topics"]),
+      topics: AppJson.stringSetValue(json["topics"]),
     ) : null;
   }
 

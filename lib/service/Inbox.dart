@@ -164,11 +164,21 @@ class Inbox with Service implements NotificationsListener {
   }
 
   Future<bool> subscribeToTopic({String topic, String token}) async {
-    return _manageFCMSubscription(topic: topic, token: token, action: 'subscribe');
+    bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'subscribe');
+    if(result ?? false){
+      _storeTopic(topic);
+    }
+
+    return result;
   }
 
   Future<bool> unsubscribeFromTopic({String topic, String token}) async {
-    return _manageFCMSubscription(topic: topic, token: token, action: 'unsubscribe');
+    bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'unsubscribe');
+    if(result ?? false){
+      _removeStoredTopic(topic);
+    }
+
+    return result;
   }
 
   Future<bool> _manageFCMSubscription({String topic, String token, String action}) async {
@@ -224,6 +234,30 @@ class Inbox with Service implements NotificationsListener {
     return false;
   }
 
+  //Topics storage
+  void _storeTopic(String topic){
+    if(!Auth2().isLoggedIn){
+      Storage().addFirebaseMessagingSubscriptionTopic(topic);
+    } else {
+      if(userInfo!=null){
+        if(_userInfo.topics == null){
+          _userInfo.topics = Set<String>();
+        }
+        userInfo.topics.add(topic);
+      }
+    }
+  }
+
+  void _removeStoredTopic(String topic){
+    if(!Auth2().isLoggedIn){
+      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
+    } else {
+      if (userInfo?.topics != null) {
+        userInfo.topics.remove(topic);
+      }
+    }
+  }
+
   //UserInfo
   Future<void> _loadUserInfo() async{
     try {
@@ -253,10 +287,10 @@ class Inbox with Service implements NotificationsListener {
     return false;
   }
 
-  Future<bool> updateNotificationsEnabled(bool value) async{
+  Future<bool> applyNotificationsEnabled(bool value) async{
     if (_userInfo != null && value!=null){
       return _putUserInfo(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value));
-    }
+    } // Else TBD Storage?
 
     return false;
   }

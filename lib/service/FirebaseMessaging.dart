@@ -157,6 +157,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Auth2.notifyProfileChanged,
       Auth2.notifyUserDeleted,
       AppLivecycle.notifyStateChanged,
+      Inbox.notifyInboxUserInfoChanged
     ]);
   }
 
@@ -240,6 +241,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param); 
     }
+    else if (name == Inbox.notifyInboxUserInfoChanged) {
+      _updateSubscriptions();
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState state) {
@@ -259,19 +263,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
   // Subscription APIs
 
   Future<bool> subscribeToTopic(String topic) async {
-    if (await Inbox().subscribeToTopic(topic: topic, token: _token)) {
-      _storeTopic(topic);
-      return true;
-    }
-    return false;
+    return await Inbox().subscribeToTopic(topic: topic, token: _token);
   }
 
   Future<bool> unsubscribeFromTopic(String topic) async {
-    if (await Inbox().unsubscribeFromTopic(topic: topic, token: _token)) {
-      _removeStoredTopic(topic);
-      return true;
-    }
-    return false;
+    return await Inbox().unsubscribeFromTopic(topic: topic, token: _token);
   }
 
   // Message Processing
@@ -462,11 +458,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   set notificationsPaused(bool value)   {
     _setNotifySetting(_pauseNotificationKey, value);
-    if(Auth2().isLoggedIn && Inbox().userInfo!= null) {
-      Inbox().updateNotificationsEnabled(value);
-    }else {
-      print("set notificationsPaused : Auth2().isLoggedIn[${Auth2().isLoggedIn}] && Inbox().userInfo!= null[${Inbox().userInfo!= null}]");
-    }
   }
 
   bool get notificationsPaused {
@@ -504,6 +495,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
       } else if (name == _groupUpdatesNotificationKey) {
         _processGroupsSubscriptions(subscribedTopics: currentTopics);
+      } else if (name == _pauseNotificationKey) {
+        Inbox().applyNotificationsEnabled(value);
       } else {
         _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: currentTopics);
       }
@@ -648,34 +641,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _storeSetting(name, value) {
-      //// Logged user choice stored in the UserPrefs
-      if (Auth2().isLoggedIn) {
-        Auth2().prefs?.applySetting(name, value);
-      } else {
-        Storage().setNotifySetting(name, value);
-      }
-  }
-
-  void _storeTopic(String topic){
-    if(!Auth2().isLoggedIn){
-      Storage().addFirebaseMessagingSubscriptionTopic(topic);
+    //// Logged user choice stored in the UserPrefs
+    if (Auth2().isLoggedIn) {
+      Auth2().prefs?.applySetting(name, value);
     } else {
-      if(Inbox().userInfo?.topics!=null){ //Instead of refreshing every time store the value;
-        Inbox().userInfo.topics.add(topic);
-      }
+      Storage().setNotifySetting(name, value);
     }
   }
-
-  void _removeStoredTopic(String topic){
-    if(!Auth2().isLoggedIn){
-      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
-    } else {
-      if (Inbox().userInfo?.topics != null) { //Instead of refreshing every time store the value;
-        Inbox().userInfo.topics.remove(topic);
-      }
-    }
-  }
-
 
   Set<String> get currentTopics{
     Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
