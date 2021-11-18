@@ -32,7 +32,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
 
   static const int _maxItems = 3;
 
-  List<dynamic> _promotedItems;
+  List<Map<String, dynamic>> _promotedItems;
 
   @override
   void initState() {
@@ -94,7 +94,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   }
 
   void _updatePromotedItems() {
-    List<dynamic> promotedItems = Guide().promotedList;
+    List<Map<String, dynamic>> promotedItems = Guide().promotedList;
     if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
         _promotedItems = promotedItems;
@@ -107,11 +107,11 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
     if (_promotedItems != null) {
       int promotedCount = min(_promotedItems.length, _maxItems);
       for (int index = 0; index < promotedCount; index++) {
-        dynamic promotedItem = _promotedItems[index];
+        Map<String, dynamic> promotedItem = _promotedItems[index];
         if (contentList.isNotEmpty) {
           contentList.add(Container(height: 8,));
         }
-        contentList.add(GuideEntryCard(AppJson.mapValue(promotedItem)));
+        contentList.add(GuideEntryCard(promotedItem));
       }
       if (_maxItems < _promotedItems.length) {
         contentList.add(Container(height: 16,));

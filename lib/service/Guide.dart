@@ -21,14 +21,16 @@ import 'package:path_provider/path_provider.dart';
 enum GuideContentSource { Net, Debug }
 
 class Guide with Service implements NotificationsListener {
+  
   static const String GUIDE_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail';
 
+  static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
 
-  static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
+  static const String campusGuide = "For students";
+  static const String campusReminderContentType = "campus-reminder";
 
   static const String _cacheFileName = "guide.json";
-  static const String campusReminderContentType = "campus-reminder";
 
   List<dynamic> _contentList;
   LinkedHashMap<String, Map<String, dynamic>> _contentMap;
@@ -263,12 +265,55 @@ class Guide with Service implements NotificationsListener {
     return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
   }
 
-  List<dynamic> get promotedList {
+  List<Map<String, dynamic>> getContentList({String guide, String category, GuideSection section}) {
     if (_contentList != null) {
-      List<dynamic> promotedList = <dynamic>[];
+      List<Map<String, dynamic>> guideList = <Map<String, dynamic>>[];
+      for (dynamic contentEntry in _contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if ((guideEntry != null) &&
+            ((guide == null) || (Guide().entryValue(guideEntry, 'guide') == guide)) &&
+            ((category == null) || (Guide().entryValue(guideEntry, 'category')) == category) &&
+            ((section == null) || (GuideSection.fromGuideEntry(guideEntry) == section)))
+        {
+          guideList.add(guideEntry);
+        }
+      }
+      return guideList;
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>> get remindersList {
+    if (_contentList != null) {
+      List<Map<String, dynamic>> remindersList = <Map<String, dynamic>>[];
+      DateTime nowUtc = DateTime.now().toUtc();
+      DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
       for (dynamic entry in _contentList) {
-        if (_isEntryPromoted(AppJson.mapValue(entry))) {
-          promotedList.add(entry);
+        Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
+        if (isEntryReminder(guideEntry)) {
+          DateTime entryDate = reminderDate(guideEntry);
+          if ((entryDate != null) && (midnightUtc.compareTo(entryDate) <= 0)) {
+            remindersList.add(guideEntry);
+          }
+        }
+      }
+
+      remindersList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        return AppSort.compareDateTimes(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
+      });
+
+      return remindersList;
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>> get promotedList {
+    if (_contentList != null) {
+      List<Map<String, dynamic>> promotedList = <Map<String, dynamic>>[];
+      for (dynamic contentEntry in _contentList) {
+        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+        if (_isEntryPromoted(guideEntry)) {
+          promotedList.add(guideEntry);
         }
       }
       return promotedList;
@@ -329,30 +374,6 @@ class Guide with Service implements NotificationsListener {
     return true;
   }
   
-  List<dynamic> get remindersList {
-    if (_contentList != null) {
-      List<dynamic> remindersList = <dynamic>[];
-      DateTime nowUtc = DateTime.now().toUtc();
-      DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
-      for (dynamic entry in _contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
-        if (isEntryReminder(guideEntry)) {
-          DateTime entryDate = reminderDate(guideEntry);
-          if ((entryDate != null) && (midnightUtc.compareTo(entryDate) <= 0)) {
-            remindersList.add(entry);
-          }
-        }
-      }
-
-      remindersList.sort((dynamic entry1, dynamic entry2) {
-        return AppSort.compareDateTimes(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
-      });
-
-      return remindersList;
-    }
-    return null;
-  }
-
   // Debug
 
   Future<String> getContentString() async {

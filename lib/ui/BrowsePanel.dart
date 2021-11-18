@@ -32,7 +32,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
-import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
@@ -602,7 +602,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateCampusGuide() {
     Analytics.instance.logSelect(target: "Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
   void _navigateInbox() {

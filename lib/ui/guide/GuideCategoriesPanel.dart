@@ -14,7 +14,9 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GuideCategoriesPanel extends StatefulWidget {
-  GuideCategoriesPanel();
+  final String guide;
+
+  GuideCategoriesPanel({Key key, this.guide}) : super(key: key);
 
   _GuideCategoriesPanelState createState() => _GuideCategoriesPanelState();
 }
@@ -53,11 +55,12 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
 
   void _buildCategories() {
     
-    if (Guide().contentList != null) {
+    List<dynamic> contentList = Guide().getContentList(guide: widget.guide);
+    if (contentList != null) {
 
       LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
       
-      for (dynamic contentEntry in Guide().contentList) {
+      for (dynamic contentEntry in contentList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
         if (guideEntry != null) {
           String category = AppJson.stringValue(Guide().entryValue(guideEntry, 'category'));

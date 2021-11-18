@@ -32,7 +32,7 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String guide;
   final String category;
   final GuideSection section;
-  final List<dynamic> contentList;
+  final List<Map<String, dynamic>> contentList;
   final String contentTitle;
 
   GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle});
@@ -87,24 +87,8 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     if (widget.contentList != null) {
       _guideItems = List.from(widget.contentList);
     }
-    else if (((widget.guide != null) || (widget.category != null) || (widget.section != null)) && (Guide().contentList != null)) {
-      _guideItems = <Map<String, dynamic>>[];
-
-      for (dynamic contentEntry in Guide().contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
-        if (guideEntry != null) {
-          String guide = AppJson.stringValue(Guide().entryValue(guideEntry, 'guide'));
-          String category = AppJson.stringValue(Guide().entryValue(guideEntry, 'category'));
-          GuideSection section = GuideSection.fromGuideEntry(guideEntry);
-          if (((widget.guide == null) || (widget.guide == guide)) &&
-              ((widget.category == null) || (widget.category == category)) &&
-              ((widget.section == null) || (widget.section == section))
-             )
-          {
-            _guideItems.add(guideEntry);
-          }
-        }
-      }
+    else if ((widget.guide != null) || (widget.category != null) || (widget.section != null)) {
+      _guideItems = Guide().getContentList(guide: widget.guide, category: widget.category, section: widget.section);
     }
     else {
       _guideItems = null;

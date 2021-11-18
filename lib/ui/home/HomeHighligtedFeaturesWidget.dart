@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -66,6 +66,6 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
 
   void _onTapResources(){
     Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Resources");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -274,7 +274,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
   }
 
   void _onPreview() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
   void _nop() {

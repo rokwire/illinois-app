@@ -46,7 +46,7 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
   static const int _maxItems = 3;
 
-  List<dynamic> _reminderItems;
+  List<Map<String, dynamic>> _reminderItems;
 
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   void _updateReminderItems() {
-    List<dynamic> reminderItems = Guide().remindersList;
+    List<Map<String, dynamic>> reminderItems = Guide().remindersList;
     if (!DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
       setState(() {
         _reminderItems = reminderItems;
@@ -121,11 +121,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     if (_reminderItems != null) {
       int remindersCount = min(_reminderItems.length, _maxItems);
       for (int index = 0; index < remindersCount; index++) {
-        dynamic reminderItem = _reminderItems[index];
+        Map<String, dynamic> reminderItem = _reminderItems[index];
         if (contentList.isNotEmpty) {
           contentList.add(Container(height: 8,));
         }
-        contentList.add(GuideEntryCard(AppJson.mapValue(reminderItem)));
+        contentList.add(GuideEntryCard(reminderItem));
       }
       if (_maxItems < _reminderItems.length) {
         contentList.add(Container(height: 16,));
