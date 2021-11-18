@@ -16,6 +16,7 @@
 
 import 'dart:convert';
 import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/NotificationService.dart';
@@ -552,6 +553,21 @@ class Storage with Service {
 
   set inboxFirebaseMessagingUserId(String value) {
     _setStringWithName(inboxFirebaseMessagingUserIdKey, value);
+  }
+
+  static const String inboxUserInfoKey  = 'inbox_user_info';
+
+  InboxUserInfo get inboxUserInfo {
+    try {
+      String jsonString = _getStringWithName(inboxUserInfoKey);
+      dynamic jsonData = AppJson.decode(jsonString);
+      return (jsonData != null) ? InboxUserInfo.fromJson(jsonData) : null;
+    } on Exception catch (e) { print(e.toString()); }
+    return null;
+  }
+
+  set inboxUserInfo(InboxUserInfo value) {
+    _setStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
   }
 
   //////////////

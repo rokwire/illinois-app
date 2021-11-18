@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -275,31 +276,46 @@ String inboxSenderTypeToString(InboxSenderType value) {
 }
 
 class InboxUserInfo{
-  final String userId;
-  final DateTime dateCreated;
-  final DateTime dateUpdated;
-  List<String> topics;
+  String userId;
+  String dateCreated;
+  String dateUpdated;
+  Set<String> topics;
   bool notificationsDisabled;
 
-  InboxUserInfo({this.userId, this.topics, this.dateCreated, this.dateUpdated, this.notificationsDisabled});
+  InboxUserInfo({this.userId, this.dateCreated, this.dateUpdated, this.topics, this.notificationsDisabled});
 
   factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
-    List<dynamic> topics = json['topics'];
-    String dateCreatedStr = json['date_created'];
-    String dateUpdatedStr = json['date_updated'];
-    return InboxUserInfo(
-      userId: json['user_id'],
-      topics:  AppCollection.isCollectionNotEmpty(topics) ? topics.map((e) => e.toString()).toList() : [],
-      dateCreated: AppString.isStringNotEmpty(dateCreatedStr) ? AppDateTime().dateTimeFromString(dateCreatedStr) : null,
-      dateUpdated: AppString.isStringNotEmpty(dateUpdatedStr) ? AppDateTime().dateTimeFromString(dateUpdatedStr) : null,
-      notificationsDisabled: json["notifications_disabled"]
-    );
+    return (json != null) ? InboxUserInfo(
+      userId: AppJson.stringValue(json["user_id"]),
+      dateCreated: AppJson.stringValue(json["date_created"]),
+      dateUpdated: AppJson.stringValue(json["date_updated"]),
+      notificationsDisabled: AppJson.boolValue(json["notifications_disabled"]),
+      topics: AppJson.stringSetValue(json["topics"]),
+    ) : null;
   }
 
-  Map<String, dynamic> toNotificationDisablingJson() {
+  Map<String, dynamic> toJson() {
     return {
       'user_id': userId,
-      "notifications_disabled": notificationsDisabled
+      "date_created" : dateCreated,
+      "date_updated" : dateUpdated,
+      "notifications_disabled": notificationsDisabled,
+      "topics" : topics?.toList(),
     };
   }
+
+  bool operator ==(o) =>
+    (o is InboxUserInfo) &&
+      (o.userId == userId) &&
+      (o.dateCreated == dateCreated) &&
+      (o.dateUpdated == dateUpdated) &&
+      (o.notificationsDisabled == notificationsDisabled)&&
+      (DeepCollectionEquality().equals(o.topics, topics));
+
+  int get hashCode =>
+    (userId?.hashCode ?? 0) ^
+    (dateCreated?.hashCode ?? 0) ^
+    (dateUpdated?.hashCode ?? 0) ^
+    (notificationsDisabled?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(topics) ?? 0);
 }
