@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Display proper error message when group events failed to create [#992](https://github.com/rokwire/illinois-app/issues/992).
+- Allow Guide detail pages to be presented as Wellness details [#995](https://github.com/rokwire/illinois-app/issues/995).
 
 ## [3.0.49] - 2021-11-17
 ### Added

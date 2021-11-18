@@ -34,7 +34,7 @@ import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -43,7 +43,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
-import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/service/ExploreService.dart';
@@ -90,7 +90,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Assets.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      StudentGuide.notifyChanged
+      Guide.notifyChanged
     ]);
     _laundryAvailable = (IlliniCash().ballance?.housingResidenceStatus ?? false);
     _loadSavedItems();
@@ -184,7 +184,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                               headingIconResource: 'images/icon-news.png',
                               items: _laundries,),),
                             _buildItemsSection(
-                              headingTitle: Localization().getStringEx('panel.saved.label.student_guide', 'Campus Guide'),
+                              headingTitle: Localization().getStringEx('panel.saved.label.campus_guide', 'Campus Guide'),
                               headingIconResource: 'images/icon-news.png',
                               items: _guideItems,),
                             _buildItemsSection(
@@ -324,16 +324,16 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadGuideItems() {
 
-    Set<String> favoriteGuideIds = Auth2().prefs?.getFavorites(StudentGuideFavorite.favoriteKeyName);
+    Set<String> favoriteGuideIds = Auth2().prefs?.getFavorites(GuideFavorite.favoriteKeyName);
     List<Favorite> guideItems = <Favorite>[];
     if (favoriteGuideIds != null) {
-      for (dynamic contentEntry in StudentGuide().contentList) {
-        String guideEntryId = StudentGuide().entryId(AppJson.mapValue(contentEntry));
+      for (dynamic contentEntry in Guide().contentList) {
+        String guideEntryId = Guide().entryId(AppJson.mapValue(contentEntry));
         
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
-          guideItems.add(StudentGuideFavorite(
+          guideItems.add(GuideFavorite(
             id: guideEntryId,
-            title: StudentGuide().entryTitle(AppJson.mapValue(contentEntry), stripHtmlTags: true),
+            title: Guide().entryTitle(AppJson.mapValue(contentEntry), stripHtmlTags: true),
           ));
         }
       }
@@ -566,7 +566,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() { _loadSavedItems(); });
     }
-    else if (name == StudentGuide.notifyChanged) {
+    else if (name == Guide.notifyChanged) {
       setState(() { _loadGuideItems(); });
     }
   }
@@ -725,8 +725,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: item,)));
     } else if (item is LaundryRoom) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: item,)));
-    } else if (item is StudentGuideFavorite) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: item.id,)));
+    } else if (item is GuideFavorite) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: item.id,)));
     } else if (item is InboxMessage) {
     }
   }
@@ -746,7 +746,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return Styles().colors.fillColorPrimary;
     } else if (item is LaundryRoom) {
       return Styles().colors.accentColor2;
-    } else if (item is StudentGuideFavorite) {
+    } else if (item is GuideFavorite) {
       return Styles().colors.accentColor3;
     } else if (item is InboxMessage) {
       return Styles().colors.fillColorSecondary;
@@ -764,8 +764,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.title;
     } else if (item is LaundryRoom) {
       return item.title;
-    } else if (item is StudentGuideFavorite) {
-      return StudentGuide().entryListTitle(StudentGuide().entryById(item.id), stripHtmlTags: true);
+    } else if (item is GuideFavorite) {
+      return Guide().entryListTitle(Guide().entryById(item.id), stripHtmlTags: true);
     } else if (item is InboxMessage) {
       return item.subject;
     } else {
@@ -782,8 +782,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return item.displayTime;
     } else if (item is News) {
       return item.displayTime;
-    } else if (item is StudentGuideFavorite) {
-      return StudentGuide().entryListDescription(StudentGuide().entryById(item.id), stripHtmlTags: true);
+    } else if (item is GuideFavorite) {
+      return Guide().entryListDescription(Guide().entryById(item.id), stripHtmlTags: true);
     } else if (item is InboxMessage) {
       return item.body;
     } else
@@ -791,7 +791,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
   }
 
   String _cardDetailImageResource(Favorite item) {
-    if (item is StudentGuideFavorite || item is InboxMessage) {
+    if (item is GuideFavorite || item is InboxMessage) {
       return null;
     } else if (item is Event || item is Game || item is News) {
       return 'images/icon-calendar.png';

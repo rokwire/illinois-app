@@ -30,12 +30,12 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -188,8 +188,8 @@ class _RecentItemsList extends StatelessWidget{
       }
       return ExploreDetailPanel(explore: originalObject,);
     }
-    else if ((item.recentItemType == RecentItemType.studentGuide) && (originalObject is Map)) {
-      return StudentGuideDetailPanel(guideEntryId: StudentGuide().entryId(originalObject));
+    else if ((item.recentItemType == RecentItemType.guide) && (originalObject is Map)) {
+      return GuideDetailPanel(guideEntryId: Guide().entryId(originalObject));
     }
 
     return Container();
@@ -234,8 +234,8 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     if (originalItem is Favorite) {
       isFavorite = Auth2().isFavorite(originalItem);
     }
-    else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
+    else if ((widget.item.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
+      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(originalItem)));
     }
     else {
       isFavorite = false;
@@ -297,7 +297,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       }
       details.add(timeDetail);
     }
-    Widget descriptionDetail = ((widget.item.recentItemType == RecentItemType.studentGuide) && AppString.isStringNotEmpty(widget.item.recentDescripton)) ? _descriptionDetail() : null;
+    Widget descriptionDetail = ((widget.item.recentItemType == RecentItemType.guide) && AppString.isStringNotEmpty(widget.item.recentDescripton)) ? _descriptionDetail() : null;
     if (descriptionDetail != null) {
       if (details.isNotEmpty) {
         details.add(Container(height: 8,));
@@ -351,7 +351,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     if (originalItem is Explore) {
       borderColor = originalItem.uiColor;
     }
-    else if (widget.item.recentItemType == RecentItemType.studentGuide) {
+    else if (widget.item.recentItemType == RecentItemType.guide) {
       borderColor = Styles().colors.accentColor3;
     }
     else {
@@ -366,10 +366,10 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     if (originalItem is Favorite) {
       Auth2().prefs?.toggleFavorite(originalItem);
     }
-    else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      Auth2().prefs?.toggleFavorite(StudentGuideFavorite(
-        id: StudentGuide().entryId(originalItem),
-        title: StudentGuide().entryTitle(originalItem)
+    else if ((widget.item.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
+      Auth2().prefs?.toggleFavorite(GuideFavorite(
+        id: Guide().entryId(originalItem),
+        title: Guide().entryTitle(originalItem)
       ));
     }
   }

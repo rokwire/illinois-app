@@ -9,21 +9,21 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentGuideEntryCard extends StatefulWidget {
+class GuideEntryCard extends StatefulWidget {
   final Map<String, dynamic> guideEntry;
-  StudentGuideEntryCard(this.guideEntry);
+  GuideEntryCard(this.guideEntry);
 
-  _StudentGuideEntryCardState createState() => _StudentGuideEntryCardState();
+  _GuideEntryCardState createState() => _GuideEntryCardState();
 }
 
-class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implements NotificationsListener {
+class _GuideEntryCardState extends State<GuideEntryCard> implements NotificationsListener {
 
   bool _isFavorite;
 
@@ -33,7 +33,7 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: guideEntryId));
+    _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
   }
 
   @override
@@ -48,17 +48,17 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {
-        _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: guideEntryId));
+        _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String titleHtml = StudentGuide().entryListTitle(widget.guideEntry);
-    String descriptionHtml = StudentGuide().entryListDescription(widget.guideEntry);
-    bool isReminder = StudentGuide().isEntryReminder(widget.guideEntry);
-    String reminderDate = isReminder ? AppDateTime().formatDateTime(StudentGuide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
+    String titleHtml = Guide().entryListTitle(widget.guideEntry);
+    String descriptionHtml = Guide().entryListDescription(widget.guideEntry);
+    bool isReminder = Guide().isEntryReminder(widget.guideEntry);
+    String reminderDate = isReminder ? AppDateTime().formatDateTime(Guide().reminderDate(widget.guideEntry), format: 'MMM dd', ignoreTimeZone: true) : null;
     return Container(
       decoration: BoxDecoration(
           color: Styles().colors.white,
@@ -116,18 +116,18 @@ class _StudentGuideEntryCardState extends State<StudentGuideEntryCard> implement
   }
 
   void _onTapFavorite() {
-    String title = StudentGuide().entryTitle(widget.guideEntry, stripHtmlTags: true);
+    String title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
     Analytics.instance.logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(StudentGuideFavorite(id: guideEntryId, title: title,));
+    Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId, title: title,));
   }
 
   void _onTapEntry() {
     Analytics.instance.logSelect(target: "Guide Entry: $guideEntryId");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideDetailPanel(guideEntryId: guideEntryId,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId,)));
   }
 
   String get guideEntryId {
-    return StudentGuide().entryId(widget.guideEntry);
+    return Guide().entryId(widget.guideEntry);
   } 
 }
 
