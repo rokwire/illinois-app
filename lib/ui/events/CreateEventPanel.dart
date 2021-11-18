@@ -1766,73 +1766,99 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     }
   }
 
+  ///
+  /// Creates event
+  /// If this event is group event then the admin user is allowed to select all the groups that he is admin of.
+  /// In this case, the event is created for all the selected groups.
+  ///
+  /// If even one event is saved successfully - redirect the user to event detail panel.
+  /// Display all group titles that event is failed to be created or linked to.
+  ///
   Future<void> _onTapCreate() async {
     Analytics.instance.logSelect(target: "Create");
     if (_validateWithResult()) {
-      Event event = _constructEventFromData();
-      List<Event> eventsToSave = await _buildEventsForCreate(event);
-
-      if (AppCollection.isCollectionNotEmpty(eventsToSave)) {
-        _setLoading(true);
-        bool canShowMainEvent = true;
-        for (Event event in eventsToSave) {
-          String eventId = await ExploreService().postNewEvent(event);
-          if (AppString.isStringNotEmpty(eventId)) {
-            if (AppString.isStringNotEmpty(event.createdByGroupId)) {
-              bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: event.createdByGroupId, eventId: eventId);
-              if (!eventLinkedToGroup) {
-                // Do not throw error if the event is not linked to a group. Only log the error.
-                Log.e('Failed to link event "$eventId: ${event.title}" to group "${event.createdByGroupId}"');
-              }
-            }
+      _setLoading(true);
+      bool hasGroup = (widget.group != null);
+      Event mainEvent = _constructEventFromData();
+      Event eventToDisplay;
+      Group groupToDisplay;
+      String mainEventId = await ExploreService().postNewEvent(mainEvent);
+      List<String> createEventFailedForGroupNames = [];
+      if (AppString.isStringNotEmpty(mainEventId)) {
+        // Succeeded to create the main event
+        if (hasGroup) {
+          bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: mainEvent.createdByGroupId, eventId: mainEventId);
+          if (eventLinkedToGroup) {
+            // Succeeded to link event to group
+            eventToDisplay = mainEvent;
+            groupToDisplay = widget.group;
           } else {
-            if (AppString.isStringEmpty(event.createdByGroupId) || (event.createdByGroupId == widget.group?.id)) {
-              // Break the loop for creating events only if the main event failed to be saved. Do not do that for the copy events.
-              AppAlert.showDialogResult(context, Localization().getStringEx('panel.create_event.failed.msg', 'Failed to create event.'));
-              canShowMainEvent = false;
-              break;
+            // Failed to link event to group
+            createEventFailedForGroupNames.add(widget.group.title);
+          }
+        } else {
+          // Succeeded to create event that has no group
+          eventToDisplay = mainEvent;
+        }
+      } else if (hasGroup) {
+        createEventFailedForGroupNames.add(widget.group.title);
+      }
+
+      if (hasGroup) {
+        List<Group> otherGroups = await _loadOtherAdminUserGroups();
+        List<Group> selectedOtherGroups =
+            await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
+        if (AppCollection.isCollectionNotEmpty(selectedOtherGroups)) {
+          for (Group group in selectedOtherGroups) {
+            Event groupEvent = Event.fromOther(mainEvent);
+            groupEvent.createdByGroupId = group.id;
+            String groupEventId = await ExploreService().postNewEvent(groupEvent);
+            if (AppString.isStringNotEmpty(groupEventId)) {
+              bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent.createdByGroupId, eventId: groupEventId);
+              if (eventLinkedToGroup) {
+                // Succeeded to link event to group
+                if (eventToDisplay == null) {
+                  eventToDisplay = groupEvent;
+                  groupToDisplay = group;
+                }
+              } else {
+                // Failed to link event to group
+                createEventFailedForGroupNames.add(group.title);
+              }
             } else {
-              // Log error if a copy-event is not saved.
-              Log.e('Failed to create event for group "${event.createdByGroupId}".');
+              // Failed to create event for group
+              createEventFailedForGroupNames.add(group.title);
             }
           }
         }
-        _setLoading(false);
+      }
 
-        if (canShowMainEvent) {
-          // Preview only the main event if all goes well (replay the old behaviour where we saved only one event)
-          Navigator.push(
-                  context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventsToSave.first, group: widget?.group, previewMode: true)))
-              .then((dynamic data) {
-            Navigator.pop(context);
-          });
-        }
+      String failedMsg;
+      if (AppCollection.isCollectionNotEmpty(createEventFailedForGroupNames)) {
+        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
+        failedMsg += createEventFailedForGroupNames.join(', ');
+      } else if (AppString.isStringEmpty(mainEventId)) {
+        failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
+      }
+
+      _setLoading(false);
+      if (AppString.isStringNotEmpty(failedMsg)) {
+        AppAlert.showDialogResult(context, failedMsg);
+      }
+
+      if (eventToDisplay != null) {
+        Navigator.push(
+                context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)))
+            .then((dynamic data) {
+          Navigator.pop(context);
+        });
       }
     }
   }
 
   ///
-  /// Allow Group Admin to select more than one group that one can create the event for.
+  /// Returns the groups that current user is admin of without the current group
   ///
-  Future<List> _buildEventsForCreate(Event mainEvent) async {
-    if (mainEvent == null) {
-      return null;
-    }
-    List<Event> eventsToSave = [mainEvent];
-    if (widget.group != null) {
-      List<Group> otherGroups = await _loadOtherAdminUserGroups();
-      List<Group> selectedOtherGroups = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
-      if (AppCollection.isCollectionNotEmpty(selectedOtherGroups)) {
-        for (Group group in selectedOtherGroups) {
-          Event groupEvent = Event(other: mainEvent);
-          groupEvent.createdByGroupId = group.id;
-          eventsToSave.add(groupEvent);
-        }
-      }
-    }
-    return eventsToSave;
-  }
-
   Future<List<Group>> _loadOtherAdminUserGroups() async {
     List<Group> userGroups = await Groups().loadGroups(myGroups: true);
     List<Group> userAdminGroups;

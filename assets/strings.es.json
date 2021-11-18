@@ -1185,7 +1185,8 @@
     "panel.create_event.additional_info.button.confirm.website":"Confirmar URL del sitio web",
     "panel.create_event.additional_info.button.confirm.purchase_tickets":"Confirmar URL de los boletos de compra",
     "panel.create_event.back.prompt":"¿Quieres guardar tus cambios?",
-    "panel.create_event.failed.msg":"No se pudo crear el evento.",
+    "panel.create_event.failed.msg":"Hubo un error al crear este evento.",
+    "panel.create_event.groups.failed.msg": "Se produjo un error al crear este evento para los siguientes grupos: ",
 
     "panel.profile_info.header.title":"INFORMACIÓN PERSONAL",
     "panel.profile_info.net_id.title":"NetID",
