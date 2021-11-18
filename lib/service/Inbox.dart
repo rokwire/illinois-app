@@ -18,6 +18,8 @@ import 'package:illinois/utils/Utils.dart';
 /// Inbox service does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
 class Inbox with Service implements NotificationsListener {
 
+  static const String notifyInboxUserInfoChanged   = "edu.illinois.rokwire.inbox.user.info.changed";
+
   String   _fcmToken;
   String   _fcmUserId;
   bool     _isServiceInitialized;
@@ -55,9 +57,10 @@ class Inbox with Service implements NotificationsListener {
   Future<void> initService() async {
     _fcmToken = Storage().inboxFirebaseMessagingToken;
     _fcmUserId = Storage().inboxFirebaseMessagingUserId;
+    _userInfo = Storage().inboxUserInfo;
     _isServiceInitialized = true;
     _processFcmToken();
-    _refreshUserInfo();
+    _loadUserInfo();
     await super.initService();
   }
 
@@ -75,7 +78,7 @@ class Inbox with Service implements NotificationsListener {
     }
     else if (name == Auth2.notifyLoginChanged) {
       _processFcmToken();
-      _refreshUserInfo();
+      _loadUserInfo();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param); 
@@ -91,6 +94,7 @@ class Inbox with Service implements NotificationsListener {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _processFcmToken();
+          _loadUserInfo();
         }
       }
     }
@@ -221,44 +225,47 @@ class Inbox with Service implements NotificationsListener {
   }
 
   //UserInfo
-  Future<bool> _refreshUserInfo() async{
-    _userInfo = await _loadUserInfo();
-    if(_userInfo != null){
-      return true;
-    }
-    return false;
-  }
-  
-  Future<InboxUserInfo> _loadUserInfo() async{
+  Future<void> _loadUserInfo() async{
     try {
-      Response response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
-          auth: NetworkAuth.Auth2) : null;
-      Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-      if(jsonData != null){
-          return InboxUserInfo.fromJson(jsonData);
-        }
+      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
+      if(response?.statusCode == 200) {
+        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        InboxUserInfo userInfo = InboxUserInfo.fromJson(jsonData);
+        _applyUserInfo(userInfo);
+      }
     } catch (e) {
       Log.e('Failed to load inbox user info');
       Log.e(e.toString());
     }
-
-    return null;
   }
 
-  Future<bool> updateNotificationsEnabled(bool value) async{ // Update user API do not receive topics. Only update enable/disable notifications for now
-    if (Config().notificationsUrl != null && _userInfo != null && value!=null){
-      String body = AppJson.encode(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value)?.toJson());
+  Future<bool> _putUserInfo(InboxUserInfo userInfo) async {
+    if (Auth2().isLoggedIn && Config().notificationsUrl != null && userInfo != null){
+      String body = AppJson.encode(userInfo?.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
       Response response = await Network().put("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body);
-      Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-      if(jsonData != null){
+      if(response?.statusCode == 200) {
+        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
         InboxUserInfo userInfo = InboxUserInfo.fromJson(jsonData);
-        if(userInfo!=null){
-          _userInfo = userInfo;
-        }
+        _applyUserInfo(userInfo);
+        return true;
       }
-      return (response?.statusCode == 200);
     }
     return false;
+  }
+
+  Future<bool> updateNotificationsEnabled(bool value) async{
+    if (_userInfo != null && value!=null){
+      return _putUserInfo(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value));
+    }
+
+    return false;
+  }
+  
+  void _applyUserInfo(InboxUserInfo userInfo){
+    if(_userInfo != userInfo){
+      Storage().inboxUserInfo = _userInfo = userInfo;
+      NotificationService().notify(notifyInboxUserInfoChanged);
+    } //else it's the same
   }
 
   InboxUserInfo get userInfo{

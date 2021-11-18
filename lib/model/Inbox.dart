@@ -285,13 +285,13 @@ class InboxUserInfo{
   InboxUserInfo({this.userId, this.dateCreated, this.dateUpdated, this.topics, this.notificationsDisabled});
 
   factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
-    return InboxUserInfo(
-      userId: AppJson.stringValue("user_id"),
-      dateCreated: AppJson.stringValue("date_created"),
-      dateUpdated: AppJson.stringValue("date_updated"),
-      notificationsDisabled: AppJson.boolValue("notifications_disabled"),
-      topics: AppJson.stringListValue("topics"),
-    );
+    return (json != null) ? InboxUserInfo(
+      userId: AppJson.stringValue(json["user_id"]),
+      dateCreated: AppJson.stringValue(json["date_created"]),
+      dateUpdated: AppJson.stringValue(json["date_updated"]),
+      notificationsDisabled: AppJson.boolValue(json["notifications_disabled"]),
+      topics: AppJson.stringListValue(json["topics"]),
+    ) : null;
   }
 
   Map<String, dynamic> toJson() {
