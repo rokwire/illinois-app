@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assets.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -400,7 +401,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
 
     String url = AppMapPathKey.entry(ribbonButton, 'url');
     String guideId = AppMapPathKey.entry(ribbonButton, 'guide_id');
-    if (AppString.isStringNotEmpty(guideId)) {
+    Map<String, dynamic> guideEntry = (guideId != null) ? Guide().entryById(guideId) : null;
+    if (guideEntry != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideId,)));
     }
     else if (AppString.isStringNotEmpty(url)) {
