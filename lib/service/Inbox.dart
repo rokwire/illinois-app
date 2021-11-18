@@ -247,8 +247,7 @@ class Inbox with Service implements NotificationsListener {
 
   Future<bool> updateNotificationsEnabled(bool value) async{ // Update user API do not receive topics. Only update enable/disable notifications for now
     if (Config().notificationsUrl != null && _userInfo != null && value!=null){
-      userInfo.notificationsDisabled = value;
-      String body = AppJson.encode(_userInfo?.toNotificationDisablingJson());
+      String body = AppJson.encode(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value)?.toJson());
       Response response = await Network().put("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body);
       Map<String, dynamic> jsonData = AppJson.decode(response?.body);
       if(jsonData != null){
