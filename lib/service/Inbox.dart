@@ -287,11 +287,10 @@ class Inbox with Service implements NotificationsListener {
     return false;
   }
 
-  Future<bool> applyNotificationsEnabled(bool value) async{
+  Future<bool> applySettingNotificationsEnabled(bool value) async{
     if (_userInfo != null && value!=null){
       return _putUserInfo(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value));
-    } // Else TBD Storage?
-
+    }
     return false;
   }
   

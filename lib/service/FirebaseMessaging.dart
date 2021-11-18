@@ -462,7 +462,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   bool get notificationsPaused {
     if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
-      return Inbox()?.userInfo?.notificationsDisabled ?? false;
+      return Inbox()?.userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
     } // else for Anonymous users
     return _getStoredSetting(_pauseNotificationKey,);
   }
@@ -496,7 +496,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       } else if (name == _groupUpdatesNotificationKey) {
         _processGroupsSubscriptions(subscribedTopics: currentTopics);
       } else if (name == _pauseNotificationKey) {
-        Inbox().applyNotificationsEnabled(value);
+        Inbox().applySettingNotificationsEnabled(value);
       } else {
         _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: currentTopics);
       }
@@ -652,7 +652,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   Set<String> get currentTopics{
     Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
     if(Auth2().isLoggedIn){
-      subscribedTopics = (Inbox().userInfo)?.topics?.toSet();
+      subscribedTopics = (Inbox().userInfo)?.topics;
     }
 
     return subscribedTopics;
