@@ -24,7 +24,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
