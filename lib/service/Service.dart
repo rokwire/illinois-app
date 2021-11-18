@@ -45,7 +45,7 @@ import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Voter.dart';
 
@@ -120,7 +120,7 @@ class Services {
     Polls(),
     GeoFence(),
     Voter(),
-    StudentGuide(),
+    Guide(),
     Inbox(),
     DeviceCalendar(),
     ExploreService(),

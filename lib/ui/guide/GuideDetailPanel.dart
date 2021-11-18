@@ -10,10 +10,10 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
+import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
@@ -22,26 +22,27 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentGuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String guideEntryId;
-  StudentGuideDetailPanel({ this.guideEntryId });
+  GuideDetailPanel({ this.guideEntryId });
 
   @override
-  _StudentGuideDetailPanelState createState() => _StudentGuideDetailPanelState();
+  _GuideDetailPanelState createState() => _GuideDetailPanelState();
 
   @override
   Map<String, dynamic> get analyticsPageAttributes {
-    Map<String, dynamic> guideEntry = StudentGuide().entryById(guideEntryId);
+    Map<String, dynamic> guideEntry = Guide().entryById(guideEntryId);
     return {
-      Analytics.LogAttributeStudentGuideId : guideEntryId,
-      Analytics.LogAttributeStudentGuideTitle : AppJson.stringValue(StudentGuide().entryTitle(guideEntry, stripHtmlTags: true)),
-      Analytics.LogAttributeStudentGuideCategory :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category')),
-      Analytics.LogAttributeStudentGuideSection :  AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
+      Analytics.LogAttributeGuideId : guideEntryId,
+      Analytics.LogAttributeGuideTitle : AppJson.stringValue(Guide().entryTitle(guideEntry, stripHtmlTags: true)),
+      Analytics.LogAttributeGuide : AppJson.stringValue(Guide().entryValue(guideEntry, 'guide')),
+      Analytics.LogAttributeGuideCategory :  AppJson.stringValue(Guide().entryValue(guideEntry, 'category')),
+      Analytics.LogAttributeGuideSection :  AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
     };
   }
 }
 
-class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> implements NotificationsListener {
+class _GuideDetailPanelState extends State<GuideDetailPanel> implements NotificationsListener {
 
   Map<String, dynamic> _guideEntry;
   bool _isFavorite = false;
@@ -50,13 +51,13 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      StudentGuide.notifyChanged,
+      Guide.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
     ]);
-    _guideEntry = StudentGuide().entryById(widget.guideEntryId);
-    _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+    _guideEntry = Guide().entryById(widget.guideEntryId);
+    _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
     
-    RecentItems().addRecentItem(RecentItem.fromStudentGuideItem(_guideEntry));
+    RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
   }
 
   @override
@@ -69,14 +70,14 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == StudentGuide.notifyChanged) {
+    if (name == Guide.notifyChanged) {
       setState(() {
-        _guideEntry = StudentGuide().entryById(widget.guideEntryId);
+        _guideEntry = Guide().entryById(widget.guideEntryId);
       });
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {
-        _isFavorite = Auth2().isFavorite(StudentGuideFavorite(id: widget.guideEntryId));
+        _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
       });
     }
   }
@@ -86,7 +87,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     String headerTitle;
     Widget contentWidget;
     if (_guideEntry != null) {
-      headerTitle = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'header_title'));
+      headerTitle = AppJson.stringValue(Guide().entryValue(_guideEntry, 'header_title'));
       contentWidget = SingleChildScrollView(child:
         SafeArea(child:
           Stack(children: [
@@ -115,7 +116,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     else {
       contentWidget = Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.student_guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+          Text(Localization().getStringEx('panel.guide_detail.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
         ,)
       );
     }
@@ -148,13 +149,13 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   Widget _buildHeading() {
     List<Widget> contentList = <Widget>[];
 
-    String category = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'category'));
+    String category = AppJson.stringValue(Guide().entryValue(_guideEntry, 'category'));
     contentList.add(
       Padding(padding: EdgeInsets.only(bottom: 8), child:
         Semantics(hint: "Heading", child:Text(category?.toUpperCase() ?? '', style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)),
     ),);
 
-    String titleHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'title'));
+    String titleHtml = AppJson.stringValue(Guide().entryValue(_guideEntry, 'detail_title')) ?? AppJson.stringValue(Guide().entryValue(_guideEntry, 'title'));
     if (AppString.isStringNotEmpty(titleHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -164,9 +165,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       ),);
     }
     
-    DateTime date = StudentGuide().isEntryReminder(_guideEntry) ? StudentGuide().reminderDate(_guideEntry) : null;
+    DateTime date = Guide().isEntryReminder(_guideEntry) ? Guide().reminderDate(_guideEntry) : null;
     if (date != null) {
-      String dateString = AppDateTime().formatDateTime(StudentGuide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
+      String dateString = AppDateTime().formatDateTime(Guide().reminderDate(_guideEntry), format: 'MMM dd', ignoreTimeZone: true);
       contentList.add(
         Padding(padding: EdgeInsets.zero, child:
           Text(dateString ?? '',
@@ -174,7 +175,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       ),);
     }
 
-    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'detail_description')) ?? AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'description'));
+    String descriptionHtml = AppJson.stringValue(Guide().entryValue(_guideEntry, 'detail_description')) ?? AppJson.stringValue(Guide().entryValue(_guideEntry, 'description'));
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -185,7 +186,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
     }
 
 
-    List<dynamic> links = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'links'));
+    List<dynamic> links = AppJson.listValue(Guide().entryValue(_guideEntry, 'links'));
     if (links != null) {
       for (dynamic link in links) {
         if (link is Map) {
@@ -230,7 +231,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   Widget _buildImage() {
-    String imageUrl = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'image'));
+    String imageUrl = AppJson.stringValue(Guide().entryValue(_guideEntry, 'image'));
     Uri imageUri = (imageUrl != null) ? Uri.tryParse(imageUrl) : null;
     if (AppString.isStringNotEmpty(imageUri?.scheme)) {
       return Stack(alignment: Alignment.bottomCenter, children: [
@@ -263,7 +264,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   Widget _buildDetails() {
     List<Widget> contentList = <Widget>[];
 
-    String title = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'sub_details_title'));
+    String title = AppJson.stringValue(Guide().entryValue(_guideEntry, 'sub_details_title'));
     if (AppString.isStringNotEmpty(title)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -271,7 +272,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       ),);
     }
 
-    String descriptionHtml = AppJson.stringValue(StudentGuide().entryValue(_guideEntry, 'sub_details_description'));
+    String descriptionHtml = AppJson.stringValue(Guide().entryValue(_guideEntry, 'sub_details_description'));
     if (AppString.isStringNotEmpty(descriptionHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -281,7 +282,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       ),),);
     }
 
-    List<dynamic> subDetails = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'sub_details'));
+    List<dynamic> subDetails = AppJson.listValue(Guide().entryValue(_guideEntry, 'sub_details'));
     if (subDetails != null) {
       for (dynamic subDetail in subDetails) {
         if (subDetail is Map) {
@@ -390,7 +391,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
       }
     }
 
-    List<dynamic> buttons = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'buttons'));
+    List<dynamic> buttons = AppJson.listValue(Guide().entryValue(_guideEntry, 'buttons'));
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
@@ -439,7 +440,7 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
 
   Widget _buildRelated() {
     List<Widget> contentList;
-    List<dynamic> related = AppJson.listValue(StudentGuide().entryValue(_guideEntry, 'related'));
+    List<dynamic> related = AppJson.listValue(Guide().entryValue(_guideEntry, 'related'));
     if (related != null) {
       contentList = <Widget>[];
       for (dynamic relatedEntry in related) {
@@ -448,12 +449,12 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
           guideEntry = relatedEntry;
         }
         else if (relatedEntry is String) {
-          guideEntry = StudentGuide().entryById(relatedEntry);
+          guideEntry = Guide().entryById(relatedEntry);
         }
         if (guideEntry != null) {
           contentList.add(
             Padding(padding: EdgeInsets.only(bottom: 16), child:
-              StudentGuideEntryCard(guideEntry)
+              GuideEntryCard(guideEntry)
           ),);
         }
       }
@@ -470,9 +471,9 @@ class _StudentGuideDetailPanelState extends State<StudentGuideDetailPanel> imple
   }
 
   void _onTapFavorite() {
-    String title = StudentGuide().entryTitle(_guideEntry, stripHtmlTags: true);
+    String title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics.instance.logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(StudentGuideFavorite(id: StudentGuide().entryId(_guideEntry), title: title, ));
+    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry), title: title, ));
   }
 
   void _onTapLink(String url) {
