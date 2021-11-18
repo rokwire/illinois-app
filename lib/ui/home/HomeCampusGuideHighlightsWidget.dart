@@ -10,25 +10,25 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
-import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
+import 'package:illinois/ui/guide/GuideEntryCard.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class HomeStudentGuideHighlightsWidget extends StatefulWidget {
+class HomeCampusGuideHighlightsWidget extends StatefulWidget {
 
   final StreamController<void> refreshController;
 
-  HomeStudentGuideHighlightsWidget({this.refreshController});
+  HomeCampusGuideHighlightsWidget({this.refreshController});
 
   @override
-  _HomeStudentGuideHighlightsWidgetState createState() => _HomeStudentGuideHighlightsWidgetState();
+  _HomeCampusGuideHighlightsWidgetState createState() => _HomeCampusGuideHighlightsWidgetState();
 }
 
-class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighlightsWidget> implements NotificationsListener {
+class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlightsWidget> implements NotificationsListener {
 
   static const int _maxItems = 3;
 
@@ -39,7 +39,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
     super.initState();
 
     NotificationService().subscribe(this, [
-      StudentGuide.notifyChanged,
+      Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
@@ -51,7 +51,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
       });
     }
 
-    _promotedItems = StudentGuide().promotedList;
+    _promotedItems = Guide().promotedList;
   }
 
   @override
@@ -64,7 +64,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == StudentGuide.notifyChanged) {
+    if (name == Guide.notifyChanged) {
       _updatePromotedItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
@@ -85,7 +85,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
     return Visibility(visible: AppCollection.isCollectionNotEmpty(_promotedItems), child:
       Column(children: [
           SectionTitlePrimary(
-            title: Localization().getStringEx('widget.home_student_guide_highlights.label.heading', 'Campus Guide Highlights'),
+            title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
             iconPath: 'images/campus-tools.png',
             children: _buildPromotedList()
           ),
@@ -94,7 +94,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
   }
 
   void _updatePromotedItems() {
-    List<dynamic> promotedItems = StudentGuide().promotedList;
+    List<dynamic> promotedItems = Guide().promotedList;
     if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
         _promotedItems = promotedItems;
@@ -111,13 +111,13 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
         if (contentList.isNotEmpty) {
           contentList.add(Container(height: 8,));
         }
-        contentList.add(StudentGuideEntryCard(AppJson.mapValue(promotedItem)));
+        contentList.add(GuideEntryCard(AppJson.mapValue(promotedItem)));
       }
       if (_maxItems < _promotedItems.length) {
         contentList.add(Container(height: 16,));
         contentList.add(ScalableRoundedButton(
-          label: Localization().getStringEx('widget.home_student_guide_highlights.button.more.title', 'View All'),
-          hint: Localization().getStringEx('widget.home_student_guide_highlights.button.more.hint', 'Tap to view all highlights'),
+          label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All'),
+          hint: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
           borderColor: Styles().colors.fillColorSecondary,
           textColor: Styles().colors.fillColorPrimary,
           backgroundColor: Styles().colors.white,
@@ -129,7 +129,7 @@ class _HomeStudentGuideHighlightsWidgetState extends State<HomeStudentGuideHighl
   }
 
   void _showAll() {
-    Analytics.instance.logSelect(target: "HomeStudentGuideHighlightsWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.student_guide_list.label.highlights.section', 'Highlights'))));
+    Analytics.instance.logSelect(target: "HomeCampusGuideHighlightsWidget View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
   }
 }

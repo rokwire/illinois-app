@@ -32,7 +32,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
-import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
 import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
@@ -294,13 +294,13 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         onTap: () => _navigateToBuildingStatus(),
       );
     }
-    else if (code == 'student_guide') {
+    else if (code == 'campus_guide') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Campus Guide'),
-        hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
+        title: Localization().getStringEx('panel.browse.button.campus_guide.title', 'Campus Guide'),
+        hint: Localization().getStringEx('panel.browse.button.campus_guide.hint', ''),
         icon: 'images/icon-browse-student-guide.png',
         color: Styles().colors.accentColor3,
-        onTap: () => _navigateStudentGuide(),
+        onTap: () => _navigateCampusGuide(),
       );
     }
     else if (code == 'inbox') {
@@ -600,9 +600,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  void _navigateStudentGuide() {
+  void _navigateCampusGuide() {
     Analytics.instance.logSelect(target: "Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel()));
   }
 
   void _navigateInbox() {

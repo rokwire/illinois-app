@@ -640,16 +640,16 @@ class Storage with Service {
   }
 
   //////////////////
-  // Student Guide
+  // Guide
 
-  static const String _studentGuideContentSourceKey = 'student_guide_content_source';
+  static const String _guideContentSourceKey = 'guide_content_source';
 
-  String get studentGuideContentSource {
-    return _getStringWithName(_studentGuideContentSourceKey);
+  String get guideContentSource {
+    return _getStringWithName(_guideContentSourceKey);
   }
 
-  set studentGuideContentSource(String value) {
-    _setStringWithName(_studentGuideContentSourceKey, value);
+  set guideContentSource(String value) {
+    _setStringWithName(_guideContentSourceKey, value);
   }
 
   //////////////////

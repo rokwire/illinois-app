@@ -18,31 +18,31 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum StudentGuideContentSource { Net, Debug }
+enum GuideContentSource { Net, Debug }
 
-class StudentGuide with Service implements NotificationsListener {
+class Guide with Service implements NotificationsListener {
   static const String GUIDE_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/guide_detail';
 
-  static const String notifyGuideDetail = "edu.illinois.rokwire.student.guide.detail";
+  static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
 
-  static const String notifyChanged  = "edu.illinois.rokwire.student.guide.changed";
+  static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
 
-  static const String _cacheFileName = "student.guide.json";
+  static const String _cacheFileName = "guide.json";
   static const String campusReminderContentType = "campus-reminder";
 
   List<dynamic> _contentList;
   LinkedHashMap<String, Map<String, dynamic>> _contentMap;
-  StudentGuideContentSource _contentSource;
+  GuideContentSource _contentSource;
 
   File          _cacheFile;
   DateTime      _pausedDateTime;
 
   List<Map<String, dynamic>> _guideDetailsCache;
 
-  static final StudentGuide _service = StudentGuide._internal();
-  StudentGuide._internal();
+  static final Guide _service = Guide._internal();
+  Guide._internal();
 
-  factory StudentGuide() {
+  factory Guide() {
     return _service;
   }
 
@@ -66,7 +66,7 @@ class StudentGuide with Service implements NotificationsListener {
   Future<void> initService() async {
     _cacheFile = await _getCacheFile();
     _contentList = await _loadContentJsonFromCache();
-    _contentSource = studentGuideContentSourceFromString(Storage().studentGuideContentSource);
+    _contentSource = guideContentSourceFromString(Storage().guideContentSource);
     if (_contentList != null) {
       _contentMap = _buildContentMap(_contentList);
       _updateContentFromNet();
@@ -76,8 +76,8 @@ class StudentGuide with Service implements NotificationsListener {
       _contentList = AppJson.decodeList(contentString);
       if (_contentList != null) {
         _contentMap = _buildContentMap(_contentList);
-        _contentSource = StudentGuideContentSource.Net;
-        Storage().studentGuideContentSource = studentGuideContentSourceToString(_contentSource);
+        _contentSource = GuideContentSource.Net;
+        Storage().guideContentSource = guideContentSourceToString(_contentSource);
         _saveContentStringToCache(contentString);
       }
     }
@@ -170,14 +170,14 @@ class StudentGuide with Service implements NotificationsListener {
   }
 
   Future<void> _updateContentFromNet() async {
-    if ((_contentSource == null) || (_contentSource == StudentGuideContentSource.Net)) {
+    if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
       String contentString = await _loadContentStringFromNet();
       List<dynamic> contentList = AppJson.decodeList(contentString);
       if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
-        _contentSource = StudentGuideContentSource.Net;
-        Storage().studentGuideContentSource = studentGuideContentSourceToString(_contentSource);
+        _contentSource = GuideContentSource.Net;
+        Storage().guideContentSource = guideContentSourceToString(_contentSource);
         _saveContentStringToCache(contentString);
         NotificationService().notify(notifyChanged);
       }
@@ -205,7 +205,7 @@ class StudentGuide with Service implements NotificationsListener {
     return _contentList;
   }
 
-  StudentGuideContentSource get contentSource {
+  GuideContentSource get contentSource {
     return _contentSource;
   }
 
@@ -259,7 +259,7 @@ class StudentGuide with Service implements NotificationsListener {
   }
 
   DateTime reminderSectionDate(Map<String, dynamic> entry) {
-    DateTime entryDate = StudentGuide().reminderDate(entry);
+    DateTime entryDate = Guide().reminderDate(entry);
     return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
   }
 
@@ -345,7 +345,7 @@ class StudentGuide with Service implements NotificationsListener {
       }
 
       remindersList.sort((dynamic entry1, dynamic entry2) {
-        return AppSort.compareDateTimes(StudentGuide().reminderDate(entry1), StudentGuide().reminderDate(entry2));
+        return AppSort.compareDateTimes(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
       });
 
       return remindersList;
@@ -362,20 +362,20 @@ class StudentGuide with Service implements NotificationsListener {
   Future<String> setDebugContentString(String value) async {
     String contentString;
     List<dynamic> contentList;
-    StudentGuideContentSource contentSource;
+    GuideContentSource contentSource;
     if (value != null) {
       contentString = value;
-      contentSource = StudentGuideContentSource.Debug;
+      contentSource = GuideContentSource.Debug;
     }
     else {
       contentString = await _loadContentStringFromNet();
-      contentSource = StudentGuideContentSource.Net;
+      contentSource = GuideContentSource.Net;
     }
 
     contentList = AppJson.decodeList(contentString);
     if (contentList != null) {
       _contentSource = contentSource;
-      Storage().studentGuideContentSource = studentGuideContentSourceToString(_contentSource);
+      Storage().guideContentSource = guideContentSourceToString(_contentSource);
       _saveContentStringToCache(contentString);
 
       if (!DeepCollectionEquality().equals(_contentList, contentList)) {
@@ -653,21 +653,21 @@ class StudentGuide with Service implements NotificationsListener {
 
 }
 
-class StudentGuideSection {
+class GuideSection {
   final String name;
   final DateTime date;
   
-  StudentGuideSection({this.name, this.date});
+  GuideSection({this.name, this.date});
 
-  factory StudentGuideSection.fromGuideEntry(Map<String, dynamic> guideEntry) {
-    return (guideEntry != null) ? StudentGuideSection(
-        name: AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'section')),
-        date: StudentGuide().isEntryReminder(guideEntry) ? StudentGuide().reminderSectionDate(guideEntry) : null,
+  factory GuideSection.fromGuideEntry(Map<String, dynamic> guideEntry) {
+    return (guideEntry != null) ? GuideSection(
+        name: AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
+        date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,
     ) : null;
   }
 
   bool operator ==(o) =>
-    (o is StudentGuideSection) &&
+    (o is GuideSection) &&
       (o.name == name) &&
       (o.date == date);
 
@@ -675,7 +675,7 @@ class StudentGuideSection {
     (name?.hashCode ?? 0) ^
     (date?.hashCode ?? 0);
 
-  int compareTo(StudentGuideSection section) {
+  int compareTo(GuideSection section) {
     if (date != null) {
       if (section.date != null) {
         return date.compareTo(section.date);
@@ -705,13 +705,13 @@ class StudentGuideSection {
 }
 
 
-class StudentGuideFavorite implements Favorite {
+class GuideFavorite implements Favorite {
   
   final String id;
   final String title;
-  StudentGuideFavorite({this.id, this.title});
+  GuideFavorite({this.id, this.title});
 
-  bool operator == (o) => o is StudentGuideFavorite && o.id == id;
+  bool operator == (o) => o is GuideFavorite && o.id == id;
 
   int get hashCode => (id?.hashCode ?? 0);
 
@@ -727,22 +727,22 @@ class StudentGuideFavorite implements Favorite {
   static String favoriteKeyName = "studentGuideIds";
 }
 
-StudentGuideContentSource studentGuideContentSourceFromString(String value) {
+GuideContentSource guideContentSourceFromString(String value) {
   if (value == 'Net') {
-    return StudentGuideContentSource.Net;
+    return GuideContentSource.Net;
   }
   else if (value == 'Debug') {
-    return StudentGuideContentSource.Debug;
+    return GuideContentSource.Debug;
   }
   else {
     return null;
   }
 }
 
-String studentGuideContentSourceToString(StudentGuideContentSource value) {
+String guideContentSourceToString(GuideContentSource value) {
   switch (value) {
-    case StudentGuideContentSource.Net:   return 'Net';
-    case StudentGuideContentSource.Debug: return 'Debug';
+    case GuideContentSource.Net:   return 'Net';
+    case GuideContentSource.Debug: return 'Debug';
   }
   return null;
 }

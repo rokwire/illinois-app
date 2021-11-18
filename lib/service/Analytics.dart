@@ -229,10 +229,11 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAttributeLaundryName            = "laundry_name";
   static const String   LogAttributeGroupId                = "group_id";
   static const String   LogAttributeGroupName              = "group_name";
-  static const String   LogAttributeStudentGuideId         = "student_guide_id";
-  static const String   LogAttributeStudentGuideTitle      = "student_guide_title";
-  static const String   LogAttributeStudentGuideCategory   = "student_guide_category";
-  static const String   LogAttributeStudentGuideSection    = "student_guide_section";
+  static const String   LogAttributeGuide                  = "guide";
+  static const String   LogAttributeGuideId                = "guide_id";
+  static const String   LogAttributeGuideTitle             = "guide_title";
+  static const String   LogAttributeGuideCategory          = "guide_category";
+  static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
 
 

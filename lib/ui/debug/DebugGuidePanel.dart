@@ -1,23 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class DebugStudentGuidePanel extends StatefulWidget {
-  DebugStudentGuidePanel();
+class DebugGuidePanel extends StatefulWidget {
+  DebugGuidePanel();
 
-  _DebugStudentGuidePanelState createState() => _DebugStudentGuidePanelState();
+  _DebugGuidePanelState createState() => _DebugGuidePanelState();
 }
 
-class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
+class _DebugGuidePanelState extends State<DebugGuidePanel> {
 
   String _contentString;
-  StudentGuideContentSource _contentSource;
+  GuideContentSource _contentSource;
   bool _processingContent;
   bool _contentModified;
   TextEditingController _contentTextController;
@@ -26,10 +26,10 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   void initState() {
     super.initState();
     _contentTextController = TextEditingController();
-    _contentSource = StudentGuide().contentSource;
+    _contentSource = Guide().contentSource;
     _contentModified = false;
     _processingContent = true;
-    StudentGuide().getContentString().then((String jsonContent) {
+    Guide().getContentString().then((String jsonContent) {
       setState(() {
         _processingContent = false;
       });
@@ -63,7 +63,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   }
 
   Widget _buildContent() {
-    String contentSource = (((_contentSource != null) && (_contentModified != true)) ? studentGuideContentSourceToString(_contentSource) : 'Custom');
+    String contentSource = (((_contentSource != null) && (_contentModified != true)) ? guideContentSourceToString(_contentSource) : 'Custom');
     String contentLabel = (_processingContent != true) ? '$contentSource Content:' : '';
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(bottom: 4),
@@ -195,13 +195,13 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
       });
       _contentTextController.text = '';
       
-      rootBundle.loadString('assets/student.guide.json').then((String assetsContentString) {
+      rootBundle.loadString('assets/guide.json').then((String assetsContentString) {
         if (assetsContentString != null) {
-          StudentGuide().setDebugContentString(assetsContentString).then((String contentString) {
+          Guide().setDebugContentString(assetsContentString).then((String contentString) {
             if (contentString != null) {
               setState(() {
                 _contentString = contentString;
-                _contentSource = StudentGuide().contentSource;
+                _contentSource = Guide().contentSource;
                 _contentModified = false;
                 _processingContent = false;
                 _contentTextController.text = contentString ?? '';
@@ -235,11 +235,11 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
       });
       _contentTextController.text = '';
       
-      StudentGuide().setDebugContentString(null).then((String contentString) {
+      Guide().setDebugContentString(null).then((String contentString) {
         if (contentString != null) {
           setState(() {
             _contentString = contentString;
-            _contentSource = StudentGuide().contentSource;
+            _contentSource = Guide().contentSource;
             _contentModified = false;
             _processingContent = false;
             _contentTextController.text = contentString ?? '';
@@ -256,11 +256,11 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   }
 
   void _onApply() {
-    StudentGuide().setDebugContentString(_contentTextController.text).then((String contentString) {
+    Guide().setDebugContentString(_contentTextController.text).then((String contentString) {
       if (contentString != null) {
         setState(() {
           _contentString = contentString;
-          _contentSource = StudentGuide().contentSource;
+          _contentSource = Guide().contentSource;
           _contentModified = false;
           _processingContent = false;
           _contentTextController.text = contentString ?? '';
@@ -274,7 +274,7 @@ class _DebugStudentGuidePanelState extends State<DebugStudentGuidePanel> {
   }
 
   void _onPreview() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel()));
   }
 
   void _nop() {

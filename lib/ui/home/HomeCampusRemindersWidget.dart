@@ -26,10 +26,10 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/guide/StudentGuideEntryCard.dart';
-import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
+import 'package:illinois/ui/guide/GuideEntryCard.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -53,7 +53,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     super.initState();
 
     NotificationService().subscribe(this, [
-      StudentGuide.notifyChanged,
+      Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
@@ -61,11 +61,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        StudentGuide().refresh();
+        Guide().refresh();
       });
     }
 
-    _reminderItems = StudentGuide().remindersList;
+    _reminderItems = Guide().remindersList;
   }
 
   @override
@@ -78,7 +78,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == StudentGuide.notifyChanged) {
+    if (name == Guide.notifyChanged) {
       _updateReminderItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
@@ -108,7 +108,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   void _updateReminderItems() {
-    List<dynamic> reminderItems = StudentGuide().remindersList;
+    List<dynamic> reminderItems = Guide().remindersList;
     if (!DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
       setState(() {
         _reminderItems = reminderItems;
@@ -125,7 +125,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
         if (contentList.isNotEmpty) {
           contentList.add(Container(height: 8,));
         }
-        contentList.add(StudentGuideEntryCard(AppJson.mapValue(reminderItem)));
+        contentList.add(GuideEntryCard(AppJson.mapValue(reminderItem)));
       }
       if (_maxItems < _reminderItems.length) {
         contentList.add(Container(height: 16,));
@@ -144,7 +144,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   void _showAll() {
     Analytics.instance.logSelect(target: "HomeCampusRemindersWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.student_guide_list.label.campus_reminders.section', 'Campus Reminders'))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
   }
 }
 

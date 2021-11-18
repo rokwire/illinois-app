@@ -6,32 +6,32 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/guide/StudentGuideListPanel.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class StudentGuideCategoriesPanel extends StatefulWidget {
-  StudentGuideCategoriesPanel();
+class GuideCategoriesPanel extends StatefulWidget {
+  GuideCategoriesPanel();
 
-  _StudentGuideCategoriesPanelState createState() => _StudentGuideCategoriesPanelState();
+  _GuideCategoriesPanelState createState() => _GuideCategoriesPanelState();
 }
 
-class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPanel> implements NotificationsListener {
+class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements NotificationsListener {
 
   List<String> _categories;
-  Map<String, List<StudentGuideSection>> _categorySections;
+  Map<String, List<GuideSection>> _categorySections;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      StudentGuide.notifyChanged,
+      Guide.notifyChanged,
     ]);
     _buildCategories();
-    StudentGuide().refresh();
+    Guide().refresh();
   }
 
   @override
@@ -44,7 +44,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == StudentGuide.notifyChanged) {
+    if (name == Guide.notifyChanged) {
       setState(() {
         _buildCategories();
       });
@@ -53,20 +53,20 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
 
   void _buildCategories() {
     
-    if (StudentGuide().contentList != null) {
+    if (Guide().contentList != null) {
 
-      LinkedHashMap<String, LinkedHashSet<StudentGuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<StudentGuideSection>>();
+      LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
       
-      for (dynamic contentEntry in StudentGuide().contentList) {
+      for (dynamic contentEntry in Guide().contentList) {
         Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
         if (guideEntry != null) {
-          String category = AppJson.stringValue(StudentGuide().entryValue(guideEntry, 'category'));
-          StudentGuideSection section = StudentGuideSection.fromGuideEntry(guideEntry);
+          String category = AppJson.stringValue(Guide().entryValue(guideEntry, 'category'));
+          GuideSection section = GuideSection.fromGuideEntry(guideEntry);
 
           if (AppString.isStringNotEmpty(category) && (section != null)) {
-            LinkedHashSet<StudentGuideSection> categorySections = categoriesMap[category];
+            LinkedHashSet<GuideSection> categorySections = categoriesMap[category];
             if (categorySections == null) {
-              categoriesMap[category] = categorySections = LinkedHashSet<StudentGuideSection>();
+              categoriesMap[category] = categorySections = LinkedHashSet<GuideSection>();
             }
             if (!categorySections.contains(section)) {
               categorySections.add(section);
@@ -78,10 +78,10 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       _categories = List.from(categoriesMap.keys) ;
       _categories.sort();
 
-      _categorySections = Map<String, List<StudentGuideSection>>();
-      categoriesMap.forEach((String category, LinkedHashSet<StudentGuideSection> sectionsSet) {
-        List<StudentGuideSection> sections = List.from(sectionsSet);
-        sections.sort((StudentGuideSection section1, StudentGuideSection section2) {
+      _categorySections = Map<String, List<GuideSection>>();
+      categoriesMap.forEach((String category, LinkedHashSet<GuideSection> sectionsSet) {
+        List<GuideSection> sections = List.from(sectionsSet);
+        sections.sort((GuideSection section1, GuideSection section2) {
           return section1.compareTo(section2);
         });
         _categorySections[category] = sections;
@@ -99,7 +99,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.student_guide_categories.label.heading', 'Campus Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(Localization().getStringEx('panel.guide_categories.label.heading', 'Campus Guide'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       ),
       body: Column(children: <Widget>[
           Expanded(child:
@@ -116,7 +116,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
       List<Widget> contentList = <Widget>[];
       for (String category in _categories) {
         contentList.add(_buildHeading(category));
-        for (StudentGuideSection section in _categorySections[category]) {
+        for (GuideSection section in _categorySections[category]) {
           contentList.add(_buildEntry(section, category: category));
         }
       }
@@ -132,7 +132,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     else {
       return Padding(padding: EdgeInsets.all(32), child:
         Center(child:
-          Text(Localization().getStringEx('panel.student_guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
         ,)
       );
     }
@@ -154,7 +154,7 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
     );
   }
 
-  Widget _buildEntry(StudentGuideSection section, { String category }) {
+  Widget _buildEntry(GuideSection section, { String category }) {
     return GestureDetector(onTap: () => _onTapSection(section, category: category), child:
       Padding(padding: EdgeInsets.only(left:16, right: 16, top: 4), child:
         Container(color: Styles().colors.fillColorPrimary, child:
@@ -174,11 +174,11 @@ class _StudentGuideCategoriesPanelState extends State<StudentGuideCategoriesPane
 
   void _onTapCategory(String category) {
     Analytics.instance.logSelect(target: category);
-    //Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category,)));
+    //Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category,)));
   }
 
-  void _onTapSection(StudentGuideSection section, {String category}) {
+  void _onTapSection(GuideSection section, {String category}) {
     Analytics.instance.logSelect(target: "$category / ${section.name}");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideListPanel(category: category, section: section,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category, section: section,)));
   }
 }
