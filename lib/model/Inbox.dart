@@ -54,9 +54,9 @@ class InboxMessage with Favorite {
       'priority': priority,
       'topic': topic,
 
-      'date_created': AppDateTime().utcDateTimeToString(dateCreatedUtc),
-      'date_updated': AppDateTime().utcDateTimeToString(dateUpdatedUtc),
-      'date_sent': AppDateTime().utcDateTimeToString(dateSentUtc),
+      'date_created': AppDateTime.utcDateTimeToString(dateCreatedUtc),
+      'date_updated': AppDateTime.utcDateTimeToString(dateUpdatedUtc),
+      'date_sent': AppDateTime.utcDateTimeToString(dateSentUtc),
 
       'subject': subject,
       'body': body,

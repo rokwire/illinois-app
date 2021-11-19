@@ -94,7 +94,7 @@ class Tweet {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime().utcDateTimeToString(createdAtUtc),
+      'created_at': AppDateTime.utcDateTimeToString(createdAtUtc),
       'text': text,
       'lang': lang,
       'conversation_id': conversationId,
@@ -1071,7 +1071,7 @@ class TwitterUser {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'created_at': AppDateTime().utcDateTimeToString(createdAtUtc),
+      'created_at': AppDateTime.utcDateTimeToString(createdAtUtc),
       'name': name,
       'username': userName,
       'description': description,

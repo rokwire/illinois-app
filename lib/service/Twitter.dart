@@ -32,10 +32,10 @@ class Twitter  /* with Service */ {
         url += "&pagination_token=$token";
       }
       if (startTimeUtc != null) {
-        url += "&start_time=${AppDateTime().utcDateTimeToString(startTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
+        url += "&start_time=${AppDateTime.utcDateTimeToString(startTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
       }
       if (endTimeUtc != null) {
-        url += "&end_time=${AppDateTime().utcDateTimeToString(endTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
+        url += "&end_time=${AppDateTime.utcDateTimeToString(endTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
       }
       url += "&max_results=${count ?? Config().twitterTweetsCount}";
 
@@ -58,10 +58,10 @@ class Twitter  /* with Service */ {
         url += "&pagination_token=$token";
       }
       if (startTimeUtc != null) {
-        url += "&start_time=${AppDateTime().utcDateTimeToString(startTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
+        url += "&start_time=${AppDateTime.utcDateTimeToString(startTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
       }
       if (endTimeUtc != null) {
-        url += "&end_time=${AppDateTime().utcDateTimeToString(endTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
+        url += "&end_time=${AppDateTime.utcDateTimeToString(endTimeUtc, format: "yyyy-MM-ddTHH:mm:ss")}";
       }
       url += "&max_results=${count ?? Config().twitterTweetsCount}";
 
