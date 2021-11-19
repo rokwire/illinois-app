@@ -307,6 +307,7 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
   Map<String, dynamic> get secretPadaapi           { return secretKeys['padaapi'] ?? {}; }
   Map<String, dynamic> get secretTwitter           { return secretKeys['twitter'] ?? {}; }
+  Map<String, dynamic> get secretCanvas            { return secretKeys['canvas'] ?? {}; }
   
   Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
   List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
@@ -336,6 +337,7 @@ class Config with Service implements NotificationsListener {
   String get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
   String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
   String get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
+  String get canvasUrl              { return otherUniversityServices['canvas_url']; }                 // "https://canvas.illinois.edu"
 
   String get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
   String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
@@ -409,6 +411,9 @@ class Config with Service implements NotificationsListener {
 
   String get twitterToken          { return secretTwitter['token']; }
   String get twitterTokenType      { return secretTwitter['token_type']; }
+
+  String get canvasToken          { return secretCanvas['token']; }
+  String get canvasTokenType      { return secretCanvas['token_type']; }
 
   String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
     String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
