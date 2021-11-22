@@ -500,7 +500,7 @@ class Auth2 with Service implements NotificationsListener {
 
   // Email Authentication
 
-  Future<bool> authenticateWithEmail(String email, String password) async {
+  Future<Auth2EmailSignInResult> authenticateWithEmail(String email, String password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -521,12 +521,22 @@ class Auth2 with Service implements NotificationsListener {
       });
 
       Response response = await Network().post(url, headers: headers, body: post);
-      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson)) {
-        return true;
+      if (response?.statusCode == 200) {
+        if (await _processLoginResponse(AppJson.decodeMap(response?.body))) {
+          return Auth2EmailSignInResult.succeded;
+        }
+      }
+      else {
+        Auth2Error error = Auth2Error.fromJson(AppJson.decodeMap(response?.body));
+        if (error?.status == 'unverified') {
+          return Auth2EmailSignInResult.failedNotActivated;
+        }
+        else if (error?.status == 'verification-expired') {
+          return Auth2EmailSignInResult.failedActivationExpired;
+        }
       }
     }
-    return false;
+    return Auth2EmailSignInResult.failed;
   }
 
   Future<Auth2EmailSignUpResult> signUpWithEmail(String email, String password) async {
@@ -562,6 +572,29 @@ class Auth2 with Service implements NotificationsListener {
       }
     }
     return Auth2EmailSignUpResult.failed;
+  }
+
+  Future<Auth2EmailAccountState> checkEmailAccountState(String email) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/account-exists";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      if (response?.statusCode == 200) {
+        //TBD: handle Auth2EmailAccountState.unverified
+        return AppJson.boolValue(AppJson.decode(response?.body)) ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent;
+      }
+    }
+    return null;
   }
 
   Future<bool> resetEmailPassword(String email) async {
@@ -604,26 +637,6 @@ class Auth2 with Service implements NotificationsListener {
       return (response?.statusCode == 200);
     }
     return false;
-  }
-
-  Future<bool> hasEmailAccount(String email) async {
-    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
-      String url = "${Config().coreUrl}/services/auth/account-exists";
-      Map<String, String> headers = {
-        'Content-Type': 'application/json'
-      };
-      String post = AppJson.encode({
-        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
-        'app_type_identifier': Config().appPlatformId,
-        'api_key': Config().rokwireApiKey,
-        'org_id': Config().coreOrgId,
-        'user_identifier': email,
-      });
-
-      Response response = await Network().post(url, headers: headers, body: post);
-      return (response?.statusCode == 200) ? AppJson.boolValue(AppJson.decode(response?.body)) : null;
-    }
-    return null;
   }
 
   // Device Info
@@ -1004,9 +1017,21 @@ class _OidcLogin {
 
 }
 
+enum Auth2EmailAccountState {
+  nonExistent,
+  unverified,
+  verified,
+}
+
 enum Auth2EmailSignUpResult {
   succeded,
   failed,
   failedAccountExist,
 }
 
+enum Auth2EmailSignInResult {
+  succeded,
+  failed,
+  failedActivationExpired,
+  failedNotActivated,
+}
