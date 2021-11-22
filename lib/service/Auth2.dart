@@ -564,16 +564,46 @@ class Auth2 with Service implements NotificationsListener {
     return Auth2SignUpResult.failed;
   }
 
-  Future<bool> forgotEmailPassword(String email) async {
-    //TBD: handle Core BB API
-    await Future.delayed(Duration(seconds: 3));
-    return true;
+  Future<bool> resetEmailPassword(String email) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/credential/forgot/initiate";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+        'identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200);
+    }
+    return false;
   }
 
   Future<bool> resentActivationEmail(String email) async {
-    //TBD: handle Core BB API
-    await Future.delayed(Duration(seconds: 3));
-    return true;
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/credential/send-verify";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+        'identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200);
+    }
+    return false;
   }
 
   Future<bool> hasEmailAccount(String email) async {
