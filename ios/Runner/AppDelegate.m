@@ -156,9 +156,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}];
 	
 	// Push Notifications
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-    [self queryNotificationsAuthorizationStatusWithCompletionHandler:^(bool authorized){
-		if (authorized) {
+	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
+	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
+		if ((settings.authorizationStatus != UNAuthorizationStatusNotDetermined) && (settings.authorizationStatus != UNAuthorizationStatusDenied)) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[weakSelf registerForRemoteNotifications];
 			});
@@ -649,28 +649,32 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 #pragma mark Push Notifications
 
 - (void)queryNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
-    [self queryNotificationsAuthorizationStatusWithCompletionHandler:^(bool authorized){
-		result(authorized ? @(YES) : @(NO));
+	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
+		result([self.class notificationServicesPermisionFromAuthorizationStatus:settings.authorizationStatus]);
 	}];
 }
 
-- (void)queryNotificationsAuthorizationStatusWithCompletionHandler:(void(^)(bool authorized)) completionHandler {
-	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
-		completionHandler((settings.authorizationStatus != UNAuthorizationStatusNotDetermined) && (settings.authorizationStatus != UNAuthorizationStatusDenied));
-	}];
++ (NSString*)notificationServicesPermisionFromAuthorizationStatus:(UNAuthorizationStatus)authorizationStatus {
+	switch (authorizationStatus) {
+		case UNAuthorizationStatusNotDetermined:       return @"not_determined";
+		case UNAuthorizationStatusDenied:              return @"denied";
+		default:                                       return @"allowed";
+	}
+	return nil;
 }
+
 
 - (void)requestNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
 	__weak typeof(self) weakSelf = self;
 	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
 		if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
-			result(@(NO));
+			result([self.class notificationServicesPermisionFromAuthorizationStatus:UNAuthorizationStatusDenied]);
 		}
 		else {
 			UNAuthorizationOptions options = UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound;
 			[UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:options completionHandler:^(BOOL granted, NSError * _Nullable error){
 				dispatch_async(dispatch_get_main_queue(), ^{
-					result(granted ? @(YES) : @(NO));
+					result([self.class notificationServicesPermisionFromAuthorizationStatus:granted ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusDenied]);
 					if (granted) {
 						[weakSelf registerForRemoteNotifications];
 					}

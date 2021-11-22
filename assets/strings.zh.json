@@ -405,7 +405,8 @@
 	"panel.onboarding.notifications.button.allow.hint":"",
 	"panel.onboarding.notifications.button.dont_allow.title":"暂时不",
 	"panel.onboarding.notifications.button.dont_allow.hint":"跳过接收通知",
-	"panel.onboarding.notifications.label.access_granted":"您的设置已更改.",
+	"panel.onboarding.notifications.label.access_granted":"您已授予訪問此應用的權限。",
+	"panel.onboarding.notifications.label.access_denied":"您已拒絕訪問此應用程序。",
 
 	"panel.onboarding.roles.label.title":"你是",
 	"panel.onboarding.roles.label.title.hint":"标题1",

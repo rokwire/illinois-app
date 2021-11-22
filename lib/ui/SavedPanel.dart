@@ -106,8 +106,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _requestPermissionsStatus(){
     if (Platform.isIOS && Auth2().privacyMatch(4)) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((bool authorized){
-        if(!authorized){
+      NativeCommunicator().queryNotificationsAuthorization("query").then((NotificationsAuthorizationStatus authorizationStatus){
+        if((NotificationsAuthorizationStatus.NotDetermined == authorizationStatus)){
           setState(() {
             _showNotificationPermissionPrompt = true;
           });
@@ -117,15 +117,15 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestAuthorization() async {
-    bool notificationsAuthorized = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (notificationsAuthorized) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context));
-    } else {
-      bool granted = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (granted) {
+    NotificationsAuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationStatus != NotificationsAuthorizationStatus.NotDetermined) {
+      showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context, authorizationStatus));
+    }
+    else {
+      authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
+      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
-      print('Notifications granted: $granted');
       setState(() {
         _showNotificationPermissionPrompt = false;
       });
@@ -382,7 +382,14 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return result;
   }
 
-  Widget _buildNotificationPermissionDialogWidget(BuildContext context) {
+  Widget _buildNotificationPermissionDialogWidget(BuildContext context, NotificationsAuthorizationStatus authorizationStatus) {
+    String message;
+    if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+      message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
+    }
+    else if (authorizationStatus == NotificationsAuthorizationStatus.Denied) {
+      message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
+    }
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -396,7 +403,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.'),
+                message ?? '',
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies.medium,
