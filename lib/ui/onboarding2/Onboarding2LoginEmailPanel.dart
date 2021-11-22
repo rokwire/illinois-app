@@ -91,6 +91,10 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
+    String showPassword = (_state == Auth2EmailAccountState.nonExistent) ?
+      Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords") :
+      Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
+
     String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
       Localization().getStringEx('panel.onboarding2.email.button.sign_up.text', 'Sign Up') :
       Localization().getStringEx('panel.onboarding2.email.button.sign_in.text', 'Sign In');
@@ -220,7 +224,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             Row(mainAxisSize: MainAxisSize.min, children: [
                               Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png'),
                               Container(width: 6),
-                              Text(Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
+                              Text(showPassword, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold),),
                             ],)
                           ),
                         ),

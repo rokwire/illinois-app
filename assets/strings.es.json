@@ -626,6 +626,8 @@
 	"panel.onboarding2.email.label.password.hint": "",
     "panel.onboarding2.email.label.confirm_password.text": "Confirm Password:",
     "panel.onboarding2.email.label.confirm_password.hint": "",
+    "panel.onboarding2.email.label.show_passwords.text": "Show Passwords",
+    "panel.onboarding2.email.label.show_passwords.hint": "",
     "panel.onboarding2.email.label.show_password.text": "Show Password",
     "panel.onboarding2.email.label.show_password.hint": "",
     "panel.onboarding2.email.button.sign_in.text": "Sign In",
