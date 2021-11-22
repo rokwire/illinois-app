@@ -364,11 +364,11 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       else {
         setState(() { _isLoading = true; });
 
-        Auth2().signUpWithEmail(widget.email, password).then((Auth2SignUpResult result) {
+        Auth2().signUpWithEmail(widget.email, password).then((Auth2EmailSignUpResult result) {
           
           setState(() { _isLoading = false; });
           
-          if (result == Auth2SignUpResult.succeded) {
+          if (result == Auth2EmailSignUpResult.succeded) {
             _emailFocusNode.unfocus();
             _passwordFocusNode.unfocus();
             _confirmPasswordFocusNode.unfocus();
@@ -379,10 +379,10 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
               _showingPassword = false;
             });
           }
-          else if (result == Auth2SignUpResult.failedAccountExist) {
+          else if (result == Auth2EmailSignUpResult.failedAccountExist) {
             setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.account_exists.text", "Sign in failed - account already exists."));
           }
-          else /*if (result == Auth2SignUpResult.failed)*/ {
+          else /*if (result == Auth2EmailSignUpResult.failed)*/ {
             setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_up.failed.text", "Sign up failed."));
           }
         });

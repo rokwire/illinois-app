@@ -529,7 +529,7 @@ class Auth2 with Service implements NotificationsListener {
     return false;
   }
 
-  Future<Auth2SignUpResult> signUpWithEmail(String email, String password) async {
+  Future<Auth2EmailSignUpResult> signUpWithEmail(String email, String password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -555,13 +555,13 @@ class Auth2 with Service implements NotificationsListener {
 
       Response response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
-        return Auth2SignUpResult.succeded;
+        return Auth2EmailSignUpResult.succeded;
       }
       else if (Auth2Error.fromJson(AppJson.decodeMap(response?.body))?.status == 'already-exists') {
-        return Auth2SignUpResult.failedAccountExist;
+        return Auth2EmailSignUpResult.failedAccountExist;
       }
     }
-    return Auth2SignUpResult.failed;
+    return Auth2EmailSignUpResult.failed;
   }
 
   Future<bool> resetEmailPassword(String email) async {
@@ -1004,7 +1004,7 @@ class _OidcLogin {
 
 }
 
-enum Auth2SignUpResult {
+enum Auth2EmailSignUpResult {
   succeded,
   failed,
   failedAccountExist,
