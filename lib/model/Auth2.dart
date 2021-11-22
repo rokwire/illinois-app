@@ -535,6 +535,40 @@ class Auth2Type {
 }
 
 ////////////////////////////////
+// Auth2Error
+
+class Auth2Error {
+  final String status;
+  final String message;
+  
+  Auth2Error({this.status, this.message});
+
+  factory Auth2Error.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2Error(
+      status: AppJson.stringValue(json['status']),
+      message: AppJson.stringValue(json['message']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status' : status,
+      'message': message,
+    };
+  }
+
+  bool operator ==(o) =>
+    (o is Auth2Error) &&
+      (o.status == status) &&
+      (o.message == message);
+
+  int get hashCode =>
+    (status?.hashCode ?? 0) ^
+    (message?.hashCode ?? 0);
+
+}
+
+////////////////////////////////
 // Auth2UiucUser
 
 class Auth2UiucUser {
