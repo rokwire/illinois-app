@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update Inbox sender data information [#999](https://github.com/rokwire/illinois-app/issues/999).
+- Inbox: Ignore missing message subject for foreground alert title [#1001](https://github.com/rokwire/illinois-app/issues/1001).
 
 ## [3.0.50] - 2021-11-18
 ### Changed
