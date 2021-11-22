@@ -284,7 +284,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
       setState(() { _isLoading = true; });
 
-      Auth2().forgotEmailPassword(widget.email).then((bool result) {
+      Auth2().resetEmailPassword(widget.email).then((bool result) {
         
         setState(() { _isLoading = false; });
         
