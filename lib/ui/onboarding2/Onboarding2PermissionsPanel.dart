@@ -77,6 +77,6 @@ class _Onboarding2PermissionsPanelState extends State <Onboarding2PermissionsPan
   }
 
   void _goNext(){
-    Onboarding2().proceedToLogin(context);
+    Onboarding2().finalize(context);
   }
 }
