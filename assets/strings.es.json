@@ -405,7 +405,8 @@
     "panel.onboarding.notifications.button.allow.hint":"",
     "panel.onboarding.notifications.button.dont_allow.title":"No en este momento",
     "panel.onboarding.notifications.button.dont_allow.hint":"Omitir recibir notificaciones",
-    "panel.onboarding.notifications.label.access_granted":"Su configuración ha sido cambiada.",
+    "panel.onboarding.notifications.label.access_granted":"Ya ha concedido acceso a esta aplicación.",
+    "panel.onboarding.notifications.label.access_denied":"Ya has denegado el acceso a esta aplicación.",
 
     "panel.onboarding.roles.label.title":"Quién eres",
     "panel.onboarding.roles.label.title.hint":"Encabezado 1",

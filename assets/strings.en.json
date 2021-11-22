@@ -404,7 +404,8 @@
     "panel.onboarding.notifications.button.allow.hint":"",
     "panel.onboarding.notifications.button.dont_allow.title":"Not right now",
     "panel.onboarding.notifications.button.dont_allow.hint":"Skip receiving notifications",
-    "panel.onboarding.notifications.label.access_granted":"Your settings have been changed.",
+    "panel.onboarding.notifications.label.access_granted":"You already have granted access to this app.",
+    "panel.onboarding.notifications.label.access_denied":"You already have denied access to this app.",
 
     "panel.onboarding.roles.label.title":"Who are you?",
     "panel.onboarding.roles.label.title.hint":"Header 1",

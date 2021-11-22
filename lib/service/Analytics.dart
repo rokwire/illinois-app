@@ -563,8 +563,8 @@ class Analytics with Service implements NotificationsListener {
     if (Platform.isAndroid) {
       _notificationServices = 'enabled';
     } else if (Platform.isIOS) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((bool notificationsAuthorized) {
-        _notificationServices = notificationsAuthorized ? 'enabled' : "not_enabled";
+      NativeCommunicator().queryNotificationsAuthorization("query").then((NotificationsAuthorizationStatus authorizationStatus) {
+        _notificationServices = (authorizationStatus == NotificationsAuthorizationStatus.Allowed) ? 'enabled' : "not_enabled";
       });
     }
   }

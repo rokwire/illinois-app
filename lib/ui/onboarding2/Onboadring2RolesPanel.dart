@@ -260,7 +260,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
       setState(() { _updating = true; });
       setState(() { _updating = false; });
       if(widget.returningUser){
-        Onboarding2().proceedToLogin(context);
+        Onboarding2().finalize(context);
       } else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PrivacyStatementPanel()));
       }
