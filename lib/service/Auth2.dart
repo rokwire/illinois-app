@@ -557,7 +557,7 @@ class Auth2 with Service implements NotificationsListener {
       if (response?.statusCode == 200) {
         return Auth2SignUpResult.succeded;
       }
-      else if (response?.body?.contains('account already exists') ?? false) {
+      else if (Auth2Error.fromJson(AppJson.decodeMap(response?.body))?.status == 'already-exists') {
         return Auth2SignUpResult.failedAccountExist;
       }
     }
@@ -1009,3 +1009,4 @@ enum Auth2SignUpResult {
   failed,
   failedAccountExist,
 }
+
