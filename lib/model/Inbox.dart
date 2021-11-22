@@ -96,10 +96,10 @@ class InboxMessage with Favorite {
       return 'System';
     }
     else if (sender?.type == InboxSenderType.User) {
-      return sender?.user?.email ?? 'Unkown';
+      return sender?.user?.name ?? 'Unknown';
     }
     else {
-      return 'Unkown';
+      return 'Unknown';
     }
   }
 
@@ -227,28 +227,22 @@ class InboxSender {
 }
 
 class InboxSenderUser {
-  final String uin;
-  final String email;
-  final String phone;
-  final List<String> groupsMembership;
+  final String userId;
+  final String name;
 
-  InboxSenderUser({this.uin, this.email, this.phone, this.groupsMembership});
+  InboxSenderUser({this.userId, this.name,});
 
   factory InboxSenderUser.fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxSenderUser(
-      uin: AppJson.stringValue(json['uiucedu_uin']),
-      email: AppJson.stringValue(json['email']),
-      phone: AppJson.stringValue(json['phone']),
-      groupsMembership: AppJson.listStringsValue(json['uiucedu_is_member_of']),
+      userId: AppJson.stringValue(json['user_id']),
+      name: AppJson.stringValue(json['name']),
     ) : null;
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'uiucedu_uin': uin,
-      'email': email,
-      'phone': phone,
-      'uiucedu_is_member_of': groupsMembership,
+      'user_id': userId,
+      'name': name,
     };
   }
 }
