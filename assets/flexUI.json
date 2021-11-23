@@ -137,7 +137,8 @@
 			"settings.connected.email.login"      : { "emailLoggedIn": false }
 		},
 		"platform":{
-			"onboarding.bluetooth_auth"     : { "os": "ios" }
+			"onboarding.bluetooth_auth"     : { "os": "ios" },
+			"onboarding.notifications_auth" : { "os": "ios" }
 		},
 		"illini_cash": {
 			"laundry"                       : { "housingResidenceStatus" : true }

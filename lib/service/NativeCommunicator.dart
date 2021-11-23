@@ -237,10 +237,10 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<bool> queryNotificationsAuthorization(String method) async {
-    bool result = false;
+  Future<NotificationsAuthorizationStatus> queryNotificationsAuthorization(String method) async {
+    NotificationsAuthorizationStatus result;
     try {
-      result = await _platformChannel.invokeMethod('notifications_authorization', {"method": method });
+      result = _notificationsAuthorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -394,4 +394,21 @@ class NativeCommunicator with Service {
   void _notifyGeoFenceBeaconsChanged(dynamic arguments) {
     NotificationService().notify(notifyGeoFenceBeaconsChanged, arguments);
   }
+}
+
+enum NotificationsAuthorizationStatus {
+  NotDetermined,
+  Denied,
+  Allowed
+}
+
+NotificationsAuthorizationStatus _notificationsAuthorizationStatusFromString(String value){
+  if("not_determined" == value)
+    return NotificationsAuthorizationStatus.NotDetermined;
+  else if("denied" == value)
+    return NotificationsAuthorizationStatus.Denied;
+  else if("allowed" == value)
+    return NotificationsAuthorizationStatus.Allowed;
+  else
+    return null;
 }

@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.51] - 2021-11-22
 ### Changed
 - Update Inbox sender data information [#999](https://github.com/rokwire/illinois-app/issues/999).
 - Inbox: Ignore missing message subject for foreground alert title [#1001](https://github.com/rokwire/illinois-app/issues/1001).
+- Tuned and cleanup email login [#1003](https://github.com/rokwire/illinois-app/issues/1003).
+- Tuned and cleanup notifications authorization in onboarding [#1005](https://github.com/rokwire/illinois-app/issues/1005).
 
 ## [3.0.50] - 2021-11-18
 ### Changed

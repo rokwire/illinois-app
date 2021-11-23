@@ -88,30 +88,36 @@ class Onboarding with Service implements NotificationsListener {
   // Implementation
 
   Widget get startPanel {
-    dynamic widget = _nextPanel(null);
-    return (widget is Widget) ? widget : null;
+    for (int index = 0; index < _contentCodes.length; index++) {
+      OnboardingPanel nextPanel = _createPanel(code: _contentCodes[index], context: {});
+      if ((nextPanel != null) && nextPanel.onboardingCanDisplay) {
+        return nextPanel as Widget;
+      }
+    }
+    return null;
   }
 
   void next(BuildContext context, OnboardingPanel panel, {bool replace = false}) {
-    dynamic nextPanel = _nextPanel(panel);
-    if (nextPanel is Widget) {
-      if (replace) {
-        Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => nextPanel));
+    _nextPanel(panel).then((dynamic nextPanel) {
+      if (nextPanel is Widget) {
+        if (replace) {
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => nextPanel));
+        }
+        else {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+        }
       }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => nextPanel));
+      else if ((nextPanel is bool) && !nextPanel) {
+        finish(context);
       }
-    }
-    else if ((nextPanel is bool) && !nextPanel) {
-      finish(context);
-    }
+    });
   }
 
   void finish(BuildContext context) {
     NotificationService().notify(notifyFinished, context);
   }
 
-  dynamic _nextPanel(OnboardingPanel panel) {
+  Future<dynamic> _nextPanel(OnboardingPanel panel) async {
     if (_contentCodes != null) {
       int nextPanelIndex;
       if (panel == null) {
@@ -129,7 +135,7 @@ class Onboarding with Service implements NotificationsListener {
         while (nextPanelIndex < _contentCodes.length) {
           String nextPanelCode = _contentCodes[nextPanelIndex];
           OnboardingPanel nextPanel = _createPanel(code: nextPanelCode, context: panel?.onboardingContext ?? {});
-          if (nextPanel.onboardingCanDisplay) {
+          if ((nextPanel != null) && nextPanel.onboardingCanDisplay && await nextPanel.onboardingCanDisplayAsync) {
             return nextPanel as Widget;
           }
           else {
@@ -233,6 +239,10 @@ abstract class OnboardingPanel {
   }
   
   bool get onboardingCanDisplay {
+    return true;
+  }
+
+  Future<bool> get onboardingCanDisplayAsync async {
     return true;
   }
 }
