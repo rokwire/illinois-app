@@ -2386,14 +2386,16 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold)),
                   itemCount: widget.groups.length)
               : Container()),
-      Padding(
+      Semantics(
+        container: true,
+        child:Padding(
           padding: EdgeInsets.all(10),
           child: RoundedButton(
               label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
               borderColor: Styles().colors.fillColorSecondary,
               backgroundColor: Styles().colors.white,
               textColor: Styles().colors.fillColorPrimary,
-              onTap: _onTapSelect))
+              onTap: _onTapSelect)))
     ]));
   }
 

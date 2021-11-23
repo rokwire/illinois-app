@@ -60,7 +60,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
             SingleChildScrollView(child:
               Padding(padding: EdgeInsets.only(left: 18, right: 18, top: 148 + 24 + MediaQuery.of(context).padding.top, bottom: 24), child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, child:
+                  Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, header:true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                       Center(child:
                         Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
