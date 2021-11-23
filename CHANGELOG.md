@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Do not use AES encryption with embedded key in the blob and zero based IV [#1009](https://github.com/rokwire/illinois-app/issues/1009).
+- Show pending member badge in Group detail panel [#1011](https://github.com/rokwire/illinois-app/issues/1011).
 
 ## [3.0.51] - 2021-11-22
 ### Changed
