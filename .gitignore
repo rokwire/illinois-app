@@ -48,6 +48,7 @@ xcuserdata
 /secrets.tar.enc
 
 /assets/configs.json.enc
+/assets/config.keys.json
 
 /ios/Runner/GoogleService-Info-Dev.plist
 /ios/Runner/GoogleService-Info-Prod.plist

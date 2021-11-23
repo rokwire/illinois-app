@@ -39,6 +39,7 @@ import 'package:path_provider/path_provider.dart';
 class Config with Service implements NotificationsListener {
 
   static const String _configsAsset       = "configs.json.enc";
+  static const String _configKeysAsset    = "config.keys.json";
 
   static const String notifyUpgradeRequired     = "edu.illinois.rokwire.config.upgrade.required";
   static const String notifyUpgradeAvailable    = "edu.illinois.rokwire.config.upgrade.available";
@@ -48,6 +49,7 @@ class Config with Service implements NotificationsListener {
 
   Map<String, dynamic> _config;
   Map<String, dynamic> _configAsset;
+  Map<String, dynamic> _encryptionKeys;
   ConfigEnvironment    _configEnvironment;
   PackageInfo          _packageInfo;
   Directory            _appDocumentsDir; 
@@ -157,7 +159,7 @@ class Config with Service implements NotificationsListener {
   Future<Map<String, dynamic>> _loadFromAssets() async {
     try {
       String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
-      String configsStr = (configsStrEnc != null) ? AESCrypt.decode(configsStrEnc) : null;
+      String configsStr = (configsStrEnc != null) ? AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV) : null;
       Map<String, dynamic> configs = AppJson.decode(configsStr);
       String configTarget = configEnvToString(_configEnvironment);
       return (configs != null) ? configs[configTarget] : null;
@@ -189,7 +191,7 @@ class Config with Service implements NotificationsListener {
       for (int index = jsonList.length - 1; index >= 0; index--) {
         Map<String, dynamic> cfg = jsonList[index];
         if (AppVersion.compareVersions(cfg['mobileAppVersion'], _packageInfo.version) <= 0) {
-          _decodeSecretKeys(cfg);
+          _decryptSecretKeys(cfg);
           return cfg;
         }
       }
@@ -198,21 +200,34 @@ class Config with Service implements NotificationsListener {
     return null;
   }
 
-  bool _decodeSecretKeys(Map<String, dynamic> config) {
+  void _decryptSecretKeys(Map<String, dynamic> config) {
     dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
     if (secretKeys is String) {
-      String jsonString = AESCrypt.decode(secretKeys);
-      dynamic jsonData = AppJson.decode(jsonString);
-      if (jsonData is Map) {
-        config['secretKeys'] = jsonData;
-        return true;
-      }
+      config['secretKeys'] = AppJson.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
     }
-    return false;
+  }
+
+  Future<Map<String, dynamic>> _loadEncryptionKeysFromAssets() async {
+    try {
+      return AppJson.decode(await rootBundle.loadString('assets/$_configKeysAsset'));
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
   }
 
   Future<void> _init() async {
     
+    _encryptionKeys = await _loadEncryptionKeysFromAssets();
+    if (_encryptionKeys == null) {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'Config Initialization Failed',
+        description: 'Failed to load config encryption keys.',
+      );
+    }
+
     _config = await _loadFromFile(_configFile);
 
     if (_config == null) {
@@ -292,7 +307,7 @@ class Config with Service implements NotificationsListener {
     return _packageInfo?.version;
   }
 
-  // Getters
+  // Getters: compound entries
 
   Map<String, dynamic> get otherUniversityServices { return (_config != null) ? (_config['otherUniversityServices'] ?? {}) : {}; }
   Map<String, dynamic> get platformBuildingBlocks  { return (_config != null) ? (_config['platformBuildingBlocks'] ?? {}) : {}; }
@@ -320,7 +335,44 @@ class Config with Service implements NotificationsListener {
   Map<String, dynamic> get saferWellness           { return safer['wellness'] ?? {}; }
   Map<String, dynamic> get saferLocations          { return safer['locations'] ?? {}; }
 
-//NA: String get redirectAuthUrl        { return otherUniversityServices['redirect_auth_url']; }      // "edu.illinois.ncsa.rokwireauthpoc:rokwireauthpoc.ncsa.illinois.edu/oauth2-cb"
+  // Getters: Encryption Keys
+
+  String get encryptionKey                         { return (_encryptionKeys != null) ? _encryptionKeys['key'] : null; }
+  String get encryptionIV                          { return (_encryptionKeys != null) ? _encryptionKeys['iv'] : null; }
+
+  // Getters: Config Asset Ackwowledgement
+
+  String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
+    String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
+    return assetUrl ?? platformBuildingBlocks['appconfig_url'];
+  } 
+  
+  String get rokwireApiKey          {
+    String assetKey = (_configAsset != null) ? _configAsset['api_key'] : null;
+    return assetKey ?? secretRokwire['api_key'];
+  }
+
+  // Getters: Secret Keys
+  String get coreOrgId              { return secretCore['org_id']; }
+
+  String get shibbolethClientId     { return secretShibboleth['client_id']; }
+  String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
+
+  String get illiniCashAppKey       { return secretIlliniCash['app_key']; }
+  String get illiniCashHmacKey      { return secretIlliniCash['hmac_key']; }
+  String get illiniCashSecretKey    { return secretIlliniCash['secret_key']; }
+
+  String get laundryApiKey          { return secretLaundry['api_key']; }
+
+  String get padaapiApiKey          { return secretPadaapi['api_key']; }
+
+  String get twitterToken           { return secretTwitter['token']; }
+  String get twitterTokenType       { return secretTwitter['token_type']; }
+
+  String get canvasToken            { return secretCanvas['token']; }
+  String get canvasTokenType        { return secretCanvas['token_type']; }
+
+  // Getters: Other University Services
   String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
   String get shibbolethOauthHostUrl { return otherUniversityServices['shibboleth_oauth_host_url']; }  // "shibboleth.illinois.edu"
   String get shibbolethOauthPathUrl { return otherUniversityServices['shibboleth_oauth_path_url']; }  // "/idp/profile/oidc/authorize"
@@ -339,6 +391,7 @@ class Config with Service implements NotificationsListener {
   String get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
   String get canvasUrl              { return otherUniversityServices['canvas_url']; }                 // "https://canvas.illinois.edu"
 
+  // Getters: Platform Building Blocks
   String get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
   String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
   String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
@@ -355,6 +408,7 @@ class Config with Service implements NotificationsListener {
   String get notificationsUrl       { return platformBuildingBlocks["notifications_url"]; }           // "https://api-dev.rokwire.illinois.edu/notifications";
   String get healthUrl              { return platformBuildingBlocks['health_url']; }                  // "https://api-dev.rokwire.illinois.edu/health"
   
+  // Getters: Third Party Services
   String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
   String get twitterHostUrl         { return thirdPartyServices['twitter_host_url']; }          // "https://twitter.com/"
   String get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
@@ -376,8 +430,7 @@ class Config with Service implements NotificationsListener {
   String get gameDayAllUrl          { return thirdPartyServices['gameday_all_url']; }           // "https://fightingillini.com/sports/2015/7/25/gameday.aspx"
   String get convergeUrl            { return thirdPartyServices['converge_url']; }              // "https://api.converge-engine.com/v1/rokwire"
 
-  String get coreOrgId              { return secretCore['org_id']; }
-
+  // Getters: Twitter
   String get twitterUrl             { return twitter['url']; }                                  // "https://api.twitter.com/2"
   int    get twitterTweetsCount     { return twitter['tweets_count']; }                         // 5
   
@@ -398,33 +451,7 @@ class Config with Service implements NotificationsListener {
     return (userAccount != null) ? userAccount['name'] : null;
   }
 
-  String get shibbolethClientId     { return secretShibboleth['client_id']; }
-  String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
-
-  String get illiniCashAppKey       { return secretIlliniCash['app_key']; }
-  String get illiniCashHmacKey      { return secretIlliniCash['hmac_key']; }
-  String get illiniCashSecretKey    { return secretIlliniCash['secret_key']; }
-
-  String get laundryApiKey          { return secretLaundry['api_key']; }
-
-  String get padaapiApiKey          { return secretPadaapi['api_key']; }
-
-  String get twitterToken          { return secretTwitter['token']; }
-  String get twitterTokenType      { return secretTwitter['token_type']; }
-
-  String get canvasToken          { return secretCanvas['token']; }
-  String get canvasTokenType      { return secretCanvas['token_type']; }
-
-  String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
-    String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
-    return assetUrl ?? platformBuildingBlocks['appconfig_url'];
-  } 
-  
-  String get rokwireApiKey          {
-    String assetKey = (_configAsset != null) ? _configAsset['api_key'] : null;
-    return assetKey ?? secretRokwire['api_key'];
-  }
-
+  // Getters: Other Entries
   String get eventsOrConvergeUrl    {
     String convergeURL = FlexUI().hasFeature('converge') ? convergeUrl : null;
     return ((convergeURL != null) && convergeURL.isNotEmpty) ? convergeURL : eventsUrl;
