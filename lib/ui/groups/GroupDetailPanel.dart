@@ -104,6 +104,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isMember || _isAdmin;
   }
 
+  bool get _isPending{
+    return _group?.currentUserAsMember?.isPendingMember ?? false;
+  }
+
   bool get _isPublic {
     return _group?.privacy == GroupPrivacy.public;
   }
@@ -593,14 +597,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _isMemberOrAdmin ? Container():
+               _showMembershipBadge ? Container():
                 Padding(padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(children: <Widget>[
                     Expanded(child:
                       Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
                     ),
                   ],),),
-              (!_isMemberOrAdmin)? Container():
+              (!_showMembershipBadge)? Container():
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(
@@ -1277,6 +1281,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _isLoading {
     return _progress > 0;
+  }
+
+  bool get _showMembershipBadge {
+    return _isMemberOrAdmin || _isPending;
   }
 }
 
