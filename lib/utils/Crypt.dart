@@ -20,83 +20,8 @@ import 'dart:typed_data';
 
 import "package:asn1lib/asn1lib.dart";
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/Log.dart';
 import "package:pointycastle/export.dart";
 import 'package:encrypt/encrypt.dart' as Encrypt;
-
-class HealthServiceTest {
-
-  static void test() {
-    AsymmetricKeyPair<PublicKey, PrivateKey> rsaKeyPair = RsaKeyHelper.getRsaKeyPair(RsaKeyHelper.getSecureRandom());
-    String rsaPublicKeyString = RsaKeyHelper.encodePublicKeyToPemPKCS1(rsaKeyPair.publicKey);
-    String rsaPrivateKeyString = RsaKeyHelper.encodePrivateKeyToPemPKCS1(rsaKeyPair.privateKey);
-
-    //Log.d('''Health Service Provider:
-    //- Input: RSA Public Key, Plain Blob;
-    //- Output: Ecrypted Blob, Ecrypted Key.
-    //''');
-
-    //Log.d("RSA Public Key: $rsaPublicKeyString");
-
-    String plainBlob = '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut id sagittis nibh. Ut porttitor interdum bibendum. Sed in interdum ante, ac efficitur felis. In diam justo, molestie sed fermentum rhoncus, euismod nec mauris. Donec interdum at sem vitae volutpat. Quisque fermentum lobortis neque, vitae feugiat est malesuada nec. Cras vehicula dapibus elementum. In at nisi in leo gravida dapibus. Nulla facilisi. Fusce varius tortor non nibh euismod varius. Aenean condimentum velit a felis ornare congue. Donec interdum, leo sit amet iaculis elementum, nunc orci fringilla nulla, non pulvinar lectus turpis vitae ligula. Nam ullamcorper feugiat enim in ullamcorper. Phasellus dignissim nulla et mattis imperdiet.''';
-    //Log.d("Plain Blob: $plainBlob");
-
-    String aesKey = AESCrypt.randomKey();
-    //Log.d("Random AES Key: $aesKey");
-
-    String encryptedBlob = AESCrypt.encrypt(plainBlob, aesKey);
-    //Log.d("Ecrypted Blob: $encryptedBlob");
-
-    PublicKey rsaPublicKey = RsaKeyHelper.parsePublicKeyFromPem(rsaPublicKeyString);
-    String encryptedKey = RSACrypt.encrypt(aesKey, rsaPublicKey);
-    //Log.d("Ecrypted Key: $encryptedKey");
-
-    //Log.d('''Client Processing:
-    //- Input: RSA Private Key, Ecrypted Blob, Ecrypted Key;
-    //- Output: Decrypted Blob.
-    //''');
-
-    //Log.d("RSA Private Key: $rsaPrivateKeyString");
-
-    PrivateKey rsaPrivateKey = RsaKeyHelper.parsePrivateKeyFromPem(rsaPrivateKeyString);
-    String decryptedKey = RSACrypt.decrypt(encryptedKey, rsaPrivateKey);
-    //Log.d("Decrypted Key: $decryptedKey");
-
-    String decryptedBlob = AESCrypt.decrypt(encryptedBlob, decryptedKey);
-    //Log.d("Decrypted Blob: $decryptedBlob");
-
-    String status = (plainBlob == decryptedBlob) ? "Test Succeeded" : "Test Failed";
-    //Log.d("$status");
-
-    Log.d('''
-    Health Service Provider:
-      - Input: Plain Blob, RSA Public Key;
-      - Output: Ecrypted Blob, Ecrypted Key.
-    
-    Plain Blob: $plainBlob
-
-    RSA Public Key: $rsaPublicKeyString
-
-    Random AES Key: $aesKey
-
-    Ecrypted Blob: $encryptedBlob
-
-    Ecrypted Key: $encryptedKey
-
-    Client Processing:
-      - Input: RSA Private Key, Ecrypted Blob, Ecrypted Key;
-      - Output: Decrypted Blob;
-    
-    RSA Private Key: $rsaPrivateKeyString
-    
-    Decrypted Key: $decryptedKey
-    
-    Decrypted Blob: $decryptedBlob
-    
-    $status
-    ''');
-  }
-}
 
 class AESCrypt {
 
