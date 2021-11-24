@@ -1054,9 +1054,9 @@
     "panel.settings.verify_identity.label.connect_id.desription4":"Miembro de facultad ",
     "panel.settings.verify_identity.label.connect_id.desription5":"? Inicie sesión con su NetID para ver información de Illinois específica para usted, como su Illini Cash y su plan de comidas.",
     "panel.settings.verify_identity.button.connect_net_id.title":"Conecte su NetID",
-    "panel.settings.verify_identity.label.verify_phone.desription1":"No tienes un NetID",
-    "panel.settings.verify_identity.label.verify_phone.desription2":"? Verifique su número de teléfono para guardar sus preferencias y tener la misma experiencia en más de un dispositivo. ",
-    "panel.settings.verify_identity.button.verify_phone.title":"Verifica tu numero de telefono",
+    "panel.settings.verify_identity.label.phone_or_email.desription1":"No tienes un NetID",
+    "panel.settings.verify_identity.label.phone_or_email.desription2":"? Verifique su número de teléfono o inicie sesión por correo electrónico para guardar sus preferencias y tener la misma experiencia en más de un dispositivo.",
+    "panel.settings.verify_identity.button.phone_or_phone.title":"Continuar",
 
     "panel.settings.login.netid.label.title":"Conecte su NetID",
     "panel.settings.login.netid.button.dont_continue.title":"No ahora",
