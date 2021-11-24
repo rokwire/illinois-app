@@ -73,10 +73,6 @@
             android:value="${mapsApiKey}"/>
 
         <meta-data
-            android:name="com.google.android.backup.api_key"
-            android:value="${backupApiKey}" />
-
-        <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
 

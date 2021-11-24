@@ -417,7 +417,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             return null;
         }
         String storageKey = String.format("%s.%s", category, name);
-        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, storageKey);
+        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, storageKey, null);
         byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
         if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
             return base64KeyValue;
