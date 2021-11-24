@@ -60,7 +60,7 @@
     </queries>
 
     <application
-        android:name=".App"
+        android:name="App"
         android:allowBackup="true"
         android:restoreAnyVersion="true"
         android:icon="@mipmap/ic_launcher"

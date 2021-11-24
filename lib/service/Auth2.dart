@@ -797,7 +797,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromCache() async {
     try {
-      return ((_authCardCacheFile != null) && await _authCardCacheFile.exists()) ? await _authCardCacheFile.readAsString() : null;
+      return ((_authCardCacheFile != null) && await _authCardCacheFile.exists()) ? Storage().decrypt(await _authCardCacheFile.readAsString()) : null;
     }
     on Exception catch (e) {
       print(e.toString());
@@ -809,7 +809,7 @@ class Auth2 with Service implements NotificationsListener {
     try {
       if (_authCardCacheFile != null) {
         if (value != null) {
-          await _authCardCacheFile.writeAsString(value, flush: true);
+          await _authCardCacheFile.writeAsString(Storage().encrypt(value), flush: true);
         }
         else if (await _authCardCacheFile.exists()) {
           await _authCardCacheFile.delete();
