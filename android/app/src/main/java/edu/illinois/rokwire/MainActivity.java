@@ -404,6 +404,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     private Object handleEncryptionKey(Object params) {
+        String category = Utils.Map.getValueFromPath(params, "category", null);
+        if (Utils.Str.isEmpty(category)) {
+            return null;
+        }
         String name = Utils.Map.getValueFromPath(params, "name", null);
         if (Utils.Str.isEmpty(name)) {
             return null;
@@ -412,7 +416,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         if (keySize <= 0) {
             return null;
         }
-        String base64KeyValue = Utils.BackupStorage.getString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, name);
+        String storageKey = String.format("%s.%s", category, name);
+        String base64KeyValue = Utils.BackupStorage.getString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, storageKey);
         byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
         if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
             return base64KeyValue;
@@ -421,7 +426,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             SecureRandom secRandom = new SecureRandom();
             secRandom.nextBytes(keyBytes);
             base64KeyValue = Utils.Base64.encode(keyBytes);
-            Utils.BackupStorage.saveString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, name, base64KeyValue);
+            Utils.BackupStorage.saveString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, storageKey, base64KeyValue);
             return base64KeyValue;
         }
     }

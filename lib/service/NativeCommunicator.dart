@@ -277,13 +277,13 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<Uint8List> encryptionKey({String name, int size}) async {
+  Future<String> encryptionKey({String category, String name, int size}) async {
     try {
-      String base64String = await _platformChannel.invokeMethod('encryptionKey', {
+      return await _platformChannel.invokeMethod('encryptionKey', {
+        'category': category,
         'name': name,
         'size': size,
       });
-      return (base64String != null) ? base64Decode(base64String) : null;
     } catch (e) {
       print(e?.toString());
     }
