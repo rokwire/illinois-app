@@ -60,8 +60,9 @@
     </queries>
 
     <application
-        android:name=".App"
+        android:name="edu.illinois.rokwire.App"
         android:allowBackup="true"
+        android:backupAgent="edu.illinois.rokwire.AppBackupAgent"
         android:restoreAnyVersion="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -71,6 +72,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${mapsApiKey}"/>
+
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="${backupApiKey}" />
 
         <meta-data
             android:name="flutterEmbedding"

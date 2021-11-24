@@ -74,7 +74,10 @@ android {
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        manifestPlaceholders = [mapsApiKey: "${keysProperties.getProperty('googleMapsApiKey')}"]
+        manifestPlaceholders = [
+            mapsApiKey: "${keysProperties.getProperty('googleMapsApiKey')}",
+            backupApiKey: "${keysProperties.getProperty('androidBackupApiKey')}"
+        ]
     }
 
     def isRunningOnTravis = System.getenv("CI") == "true"

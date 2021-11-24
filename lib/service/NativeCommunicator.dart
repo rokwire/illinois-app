@@ -277,6 +277,19 @@ class NativeCommunicator with Service {
     return result;
   }
 
+  Future<Uint8List> encryptionKey({String name, int size}) async {
+    try {
+      String base64String = await _platformChannel.invokeMethod('encryptionKey', {
+        'name': name,
+        'size': size,
+      });
+      return (base64String != null) ? base64Decode(base64String) : null;
+    } catch (e) {
+      print(e?.toString());
+    }
+    return null;
+  }
+
   Future<Uint8List> getBarcodeImageData(Map<String, dynamic> params) async {
     try {
       String base64String = await _platformChannel.invokeMethod('barcode', params);

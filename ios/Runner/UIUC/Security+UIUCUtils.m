@@ -20,7 +20,7 @@
 
 #import "Security+UIUCUtils.h"
 
-NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite) {
+id uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite) {
 	NSDictionary *spec = @{
 		(id)kSecClass:       (id)kSecClassGenericPassword,
 		(id)kSecAttrAccount: account,
@@ -80,16 +80,16 @@ NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite
 			status = SecItemAdd((CFDictionaryRef)createRequest, NULL);
 		}
 		
-		return (status == 0) ? valueToWrite : nil;
+		return (status == 0) ? @(YES) : @(NO);
 	}
 	else { // delete existing entry
 		if (status == 0) {
 			status = SecItemDelete((CFDictionaryRef)spec);
-			return (status == 0) ? valueToWrite : nil;
+			return (status == 0) ? @(YES) : @(NO);
 		}
 		else {
 			// nothing to do
-			return valueToWrite;
+			return nil;
 		}
 	}
 }

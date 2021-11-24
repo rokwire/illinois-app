@@ -36,6 +36,7 @@ public class Constants {
     static final String FIREBASE_INFO = "firebaseInfo";
     static final String GEOFENCE_KEY = "geoFence";
     static final String DEVICE_ID_KEY = "deviceId";
+    static final String ENCRYPTION_KEY_KEY = "encryptionKey";
     static final String BARCODE_KEY = "barcode";
     static final String LAUNCH_APP = "launchApp";
 
@@ -55,4 +56,7 @@ public class Constants {
     // Shared Prefs
     static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
     static final String LOCATION_PERMISSIONS_REQUESTED_KEY = "location_permissions_requested";
+
+    //Encryption Key
+    static final String ENCRYPTION_SHARED_PREFS_FILE_NAME = "encryption_shared_prefs";
 }

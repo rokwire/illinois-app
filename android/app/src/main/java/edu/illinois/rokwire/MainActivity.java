@@ -46,6 +46,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mapsindoors.mapssdk.MapsIndoors;
 
 import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -402,6 +403,29 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return deviceId;
     }
 
+    private Object handleEncryptionKey(Object params) {
+        String name = Utils.Map.getValueFromPath(params, "name", null);
+        if (Utils.Str.isEmpty(name)) {
+            return null;
+        }
+        int keySize = Utils.Map.getValueFromPath(params, "size", 0);
+        if (keySize <= 0) {
+            return null;
+        }
+        String base64KeyValue = Utils.BackupStorage.getString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, name);
+        byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
+        if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
+            return base64KeyValue;
+        } else {
+            byte[] keyBytes = new byte[keySize];
+            SecureRandom secRandom = new SecureRandom();
+            secRandom.nextBytes(keyBytes);
+            base64KeyValue = Utils.Base64.encode(keyBytes);
+            Utils.BackupStorage.saveString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, name, base64KeyValue);
+            return base64KeyValue;
+        }
+    }
+
     private int getScreenOrientationFromString(String orientationString) {
         if (Utils.Str.isEmpty(orientationString)) {
             return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
@@ -609,6 +633,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.DEVICE_ID_KEY:
                     String deviceId = getDeviceId();
                     result.success(deviceId);
+                    break;
+                case Constants.ENCRYPTION_KEY_KEY:
+                    Object encryptionKey = handleEncryptionKey(methodCall.arguments);
+                    result.success(encryptionKey);
                     break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
