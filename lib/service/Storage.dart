@@ -117,7 +117,7 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
+  /*double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
     return _sharedPreferences?.getDouble(name) ?? defaultValue;
   }
 
@@ -128,7 +128,7 @@ class Storage with Service {
       _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
-  }
+  }*/
 
 
   dynamic operator [](String name) {
@@ -273,20 +273,6 @@ class Storage with Service {
   }
 
   ////////////////////////////
-  // User Relogin Version
-
-  static const String userRefreshPiiVersionKey  = 'user_refresh_pii_version';
-
-  String get userRefreshPiiVersion {
-    return _getStringWithName(userRefreshPiiVersionKey);
-  }
-
-  set userRefreshPiiVersion(String value) {
-    _setStringWithName(userRefreshPiiVersionKey, value);
-
-  }
-
-  ////////////////////////////
   // Upgrade Message Version
 
   static const String _userLoginVersionKey = 'user_login_version';
@@ -343,33 +329,6 @@ class Storage with Service {
     String dateString = _getStringWithName(offsetDateKey);
     return AppString.isStringNotEmpty(dateString) ? AppDateTime()
         .dateTimeFromString(dateString) : null;
-  }
-
-  ////////////////
-  // Privacy level
-
-  static const String privacyLevelKey  = 'illinois_privacy_level';
-
-  set privacyLevel(int value) {
-     _setDoubleWithName(privacyLevelKey, value?.toDouble());
-  }
-
-  int get privacyLevel {
-    return _getDoubleWithName(privacyLevelKey, defaultValue: 5)?.toInt();
-  }
-  
-
-  /////////////////
-  // Face id
-
-  static const String toggleFaceIdKey  = 'toggle_faceid';
-
-  bool get toggleFaceId {
-    return _getBoolWithName(toggleFaceIdKey);
-  }
-
-  set toggleFaceId(bool value) {
-    _setBoolWithName(toggleFaceIdKey, value);
   }
 
   /////////////////
