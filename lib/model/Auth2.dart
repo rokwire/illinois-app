@@ -158,6 +158,9 @@ class Auth2Account {
     return ((authTypes != null) && (0 < authTypes.length)) ? authTypes?.first : null;
   }
 
+  bool hasRole(String role) => (Auth2StringEntry.findInList(roles, name: role) != null);
+  bool hasPermission(String premission) => (Auth2StringEntry.findInList(permissions, name: premission) != null);
+  bool bellongsToGroup(String group) => (Auth2StringEntry.findInList(groups, name: group) != null);
 }
 
 ////////////////////////////////
@@ -426,6 +429,17 @@ class Auth2StringEntry {
     }
     return jsonList;
   }
+
+  static Auth2StringEntry findInList(List<Auth2StringEntry> contentList, { String name }) {
+    if (contentList != null) {
+      for (Auth2StringEntry contentEntry in contentList) {
+        if (contentEntry.name == name) {
+          return contentEntry;
+        }
+      }
+    }
+    return null;
+  }
 }
 
 ////////////////////////////////
@@ -518,6 +532,40 @@ class Auth2Type {
     }
     return jsonList;
   }
+}
+
+////////////////////////////////
+// Auth2Error
+
+class Auth2Error {
+  final String status;
+  final String message;
+  
+  Auth2Error({this.status, this.message});
+
+  factory Auth2Error.fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Auth2Error(
+      status: AppJson.stringValue(json['status']),
+      message: AppJson.stringValue(json['message']),
+    ) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status' : status,
+      'message': message,
+    };
+  }
+
+  bool operator ==(o) =>
+    (o is Auth2Error) &&
+      (o.status == status) &&
+      (o.message == message);
+
+  int get hashCode =>
+    (status?.hashCode ?? 0) ^
+    (message?.hashCode ?? 0);
+
 }
 
 ////////////////////////////////
@@ -634,10 +682,10 @@ class Auth2UserPrefs {
   Map<String, Set<String>>  _favorites;
   Map<String, Set<String>>  _interests;
   Map<String, bool> _tags;
-  Map<String, bool> _settings;
+  Map<String, dynamic> _settings;
   Auth2VoterPrefs _voter;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, bool> settings, Auth2VoterPrefs voter}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, dynamic> settings, Auth2VoterPrefs voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
@@ -1084,17 +1132,22 @@ class Auth2UserPrefs {
     }
   }
   // Settings
-  bool getSetting({String settingName, defaultValue = false}){
-    if(_settings?.isNotEmpty ?? false){
-      return _settings[settingName] ?? defaultValue;
-    }
 
-    return defaultValue;//consider default TBD
+  bool getBoolSetting({String settingName, bool defaultValue}){
+    return AppJson.boolValue(getSetting(settingName: settingName)) ?? defaultValue;
   }
 
-  void applySetting(String settingName, bool settingValue){
+  dynamic getSetting({String settingName}){
+    if(_settings?.isNotEmpty ?? false){
+      return _settings[settingName];
+    }
+
+    return null;//consider default TBD
+  }
+
+  void applySetting(String settingName, dynamic settingValue){
     if(_settings == null)
-      _settings = Map<String, bool>();
+      _settings = Map<String, dynamic>();
     _settings[settingName] = settingValue;
 
     NotificationService().notify(notifySettingsChanged);
@@ -1140,7 +1193,7 @@ class Auth2UserPrefs {
   }
 
   static _settingsFromJson(Map<String, dynamic> json) {
-    try { return json?.cast<String, bool>(); }
+    try { return json?.cast<String, dynamic>(); }
     catch(e) { print(e?.toString()); }
   }
 }

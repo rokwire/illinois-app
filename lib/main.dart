@@ -29,6 +29,7 @@ import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/service/Log.dart';
@@ -50,7 +51,10 @@ void main() async {
   // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
   WidgetsFlutterBinding.ensureInitialized();
 
-  await _init();
+  NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
+
+  Services().create();
+  ServiceError serviceError = await Services().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -61,22 +65,8 @@ void main() async {
   Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
 
   runZonedGuarded(() async {
-    runApp(App());
+    runApp(App(initializeError: serviceError));
   }, FirebaseCrashlytics().handleZoneError);
-}
-
-Future<void> _init() async {
-  NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
-
-  Services().create();
-  await Services().init();
-}
-
-Future<void> _destroy() async {
-
-  NotificationService().unsubscribe(appExitListener);
-
-  Services().destroy();
 }
 
 class AppExitListener implements NotificationsListener {
@@ -86,7 +76,8 @@ class AppExitListener implements NotificationsListener {
   void onNotification(String name, param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
-        _destroy();
+        NotificationService().unsubscribe(appExitListener);
+        Services().destroy();
       });
     }
   }
@@ -100,9 +91,10 @@ class _AppData {
 class App extends StatefulWidget {
 
   final _AppData _data = _AppData();
+  final ServiceError initializeError;
   static App _instance;
 
-  App() {
+  App({this.initializeError}) {
     _instance = this;
   }
 
@@ -114,6 +106,7 @@ class App extends StatefulWidget {
     return _data._panelState;
   }
 
+  @override
   _AppState createState() {
     _AppState appState = _AppState();
     if ((_data._homeContext != null) && (_data._panelState == null)) {
@@ -147,12 +140,14 @@ class _AppState extends State<App> implements NotificationsListener {
   String _upgradeRequiredVersion;
   String _upgradeAvailableVersion;
   Widget _launchPopup;
+  ServiceError _initializeError;
+  Future<ServiceError> _retryInitialzeFuture;
   DateTime _pausedDateTime;
   RootPanel rootPanel;
 
   @override
   void initState() {
-    Log.d("App init");
+    Log.d("App UI initialized");
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,
@@ -168,6 +163,7 @@ class _AppState extends State<App> implements NotificationsListener {
     AppLivecycle.instance.ensureBinding();
 
     rootPanel = RootPanel();
+    _initializeError = widget.initializeError;
 
     _lastRunVersion = Storage().lastRunVersion;
     _upgradeRequiredVersion = Config().upgradeRequiredVersion;
@@ -207,13 +203,16 @@ class _AppState extends State<App> implements NotificationsListener {
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois'),
       theme: ThemeData(
-          primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.extraBold),
+          primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
+          fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
       home: _homePanel,
     );
   }
 
   Widget get _homePanel {
+    if (_initializeError != null) {
+      return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
+    }
     if (_upgradeRequiredVersion != null) {
       return OnboardingUpgradePanel(requiredVersion:_upgradeRequiredVersion);
     }
@@ -259,6 +258,28 @@ class _AppState extends State<App> implements NotificationsListener {
       return true;
     }
     return false;
+  }
+
+  Future<ServiceError> _retryInitialze() async {
+    if (_retryInitialzeFuture != null) {
+      return await _retryInitialzeFuture;
+    }
+    else {
+      _retryInitialzeFuture = Services().init();
+      ServiceError serviceError = await _retryInitialzeFuture;
+      _retryInitialzeFuture = null;
+
+      if (_initializeError != serviceError) {
+        Future.delayed(Duration(milliseconds: 300)).then((_) {
+          setState(() {
+            _initializeError = serviceError;
+          });
+        });
+      }
+
+      return serviceError;
+    }
+    
   }
 
   void _presentLaunchPopup(BuildContext context) {
@@ -334,7 +355,10 @@ class _AppState extends State<App> implements NotificationsListener {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
+      if (_initializeError != null) {
+        _retryInitialze();
+      }
+      else if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _presentLaunchPopup(App.instance.homeContext);

@@ -186,12 +186,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
   void _loginByEmail(String email) {
     setState(() { _isLoading = true; });
     
-    Auth2().hasEmailAccount(email).then((success) {
+    Auth2().checkEmailAccountState(email).then((Auth2EmailAccountState state) {
       if (mounted) {
         setState(() { _isLoading = false; });
-        if (success != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, signUp: (success == false), onboardingContext: widget.onboardingContext)));
-          
+        if (state != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginEmailPanel(email: email, state: state, onboardingContext: widget.onboardingContext)));
         }
         else {
           setErrorMsg(Localization().getStringEx("panel.onboarding2.phone_or_email.email.failed", "Failed to verify email address."));

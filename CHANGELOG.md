@@ -5,6 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.53] - 2021-11-24
+### Changed
+- "Building Entry" button title in Browse panel changed to "Building Entry" [#1008](https://github.com/rokwire/illinois-app/issues/1008).
+- Encrypt sensitive data stored on local storage and settings [#1016](https://github.com/rokwire/illinois-app/issues/1016).
+### Fixed
+- Allow user to sign in via email or phone in Settings -> Personal Information [#1015](https://github.com/rokwire/illinois-app/issues/1015).
+
+## [3.0.52] - 2021-11-23
+### Changed
+- Do not use AES encryption with embedded key in the blob and zero based IV [#1009](https://github.com/rokwire/illinois-app/issues/1009).
+- Show pending member badge in Group detail panel [#1011](https://github.com/rokwire/illinois-app/issues/1011).
+
+## [3.0.51] - 2021-11-22
+### Changed
+- Update Inbox sender data information [#999](https://github.com/rokwire/illinois-app/issues/999).
+- Inbox: Ignore missing message subject for foreground alert title [#1001](https://github.com/rokwire/illinois-app/issues/1001).
+- Tuned and cleanup email login [#1003](https://github.com/rokwire/illinois-app/issues/1003).
+- Tuned and cleanup notifications authorization in onboarding [#1005](https://github.com/rokwire/illinois-app/issues/1005).
+
+## [3.0.50] - 2021-11-18
+### Changed
+- Display proper error message when group events failed to create [#992](https://github.com/rokwire/illinois-app/issues/992).
+- Allow Guide detail pages to be presented as Wellness details [#995](https://github.com/rokwire/illinois-app/issues/995).
+- Cleanup Inbox service [#986](https://github.com/rokwire/illinois-app/issues/986).
+
+## [3.0.49] - 2021-11-17
+### Added
+- Create events for all selected groups that the user is admin of [#980](https://github.com/rokwire/illinois-app/issues/980).
+- Add pause notifications switch to Notification settings panel [#986](https://github.com/rokwire/illinois-app/issues/986).
+### Changed
+- Handled initialization errors on app startup [#928](https://github.com/rokwire/illinois-app/issues/928).
+
 ## [3.0.48] - 2021-11-16
 ### Changed
 - WalletPanel listens for IlliniCash.notifyBallanceUpdated event and updates state when received [#971](https://github.com/rokwire/illinois-app/issues/971).

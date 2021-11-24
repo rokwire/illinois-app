@@ -29,7 +29,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
 import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
-import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
@@ -107,10 +107,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   String get _userDebugData{
-    String userDataText = AppJson.encode(Auth2().account?.prefs?.toJson(), prettify: true);
-    String authInfoText = AppJson.encode(Auth2().account?.authType?.uiucUser?.toJson(), prettify: true);
-    String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
-        "AuthInfo: " + (authInfoText ?? "unknown");
+    String userData = AppJson.encode(Auth2().account?.toJson(), prettify: true);
     return userData;
   }
 
@@ -318,7 +315,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onTapStudentGuide))
+                              onTap: _onTapGuide))
                     ),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
@@ -575,7 +572,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(textContent, style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(value: textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies.bold, fontSize: 14)))
             )
           ),
         ])
@@ -595,8 +592,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 
-  void _onTapStudentGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentGuidePanel()));
+  void _onTapGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
   }
 
   void _onConfigChanged(dynamic env) {

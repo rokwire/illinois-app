@@ -115,9 +115,16 @@ class Auth2 with Service implements NotificationsListener {
 
     if ((_anonymousId == null) || (_anonymousToken == null) || !_anonymousToken.isValid) {
       if (!await authenticateAnonymously()) {
-        Log.d("Anonymous Authentication Failed");
+        throw ServiceError(
+          source: this,
+          severity: ServiceErrorSeverity.fatal,
+          title: 'Authentication Initialization Failed',
+          description: 'Failed to initialize anonymous authentication token.',
+        );
       }
     }
+
+    await super.initService();
   }
 
   @override
@@ -200,12 +207,14 @@ class Auth2 with Service implements NotificationsListener {
   String get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.uiucUser?.email);
   String get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.phone);
 
-  bool get isEventEditor => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire event approvers');
-  bool get isStadiumPollManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire stadium poll manager');
-  bool get isDebugManager => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire debug');
-  bool get isGroupsAccess => isMemberOf('urn:mace:uiuc.edu:urbana:authman:app-rokwire-service-policy-rokwire groups access');
+  bool get isEventEditor => hasRole("event approvers");
+  bool get isStadiumPollManager => hasRole("stadium poll manager");
+  bool get isDebugManager => hasRole("debug");
+  bool get isGroupsAccess => hasRole("groups access");
 
-  bool isMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
+  bool hasRole(String role) => _account?.hasRole(role) ?? false;
+
+  bool isShibbolethMemberOf(String group) => _account?.authType?.uiucUser?.groupsMembership?.contains(group) ?? false;
 
   bool privacyMatch(int requredPrivacyLevel) => 
     (prefs?.privacyLevel == null) || (prefs?.privacyLevel == 0) || (prefs.privacyLevel >= requredPrivacyLevel);
@@ -491,7 +500,7 @@ class Auth2 with Service implements NotificationsListener {
 
   // Email Authentication
 
-  Future<bool> authenticateWithEmail(String email, String password) async {
+  Future<Auth2EmailSignInResult> authenticateWithEmail(String email, String password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -512,15 +521,25 @@ class Auth2 with Service implements NotificationsListener {
       });
 
       Response response = await Network().post(url, headers: headers, body: post);
-      Map<String, dynamic> responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;
-      if (await _processLoginResponse(responseJson)) {
-        return true;
+      if (response?.statusCode == 200) {
+        if (await _processLoginResponse(AppJson.decodeMap(response?.body))) {
+          return Auth2EmailSignInResult.succeded;
+        }
+      }
+      else {
+        Auth2Error error = Auth2Error.fromJson(AppJson.decodeMap(response?.body));
+        if (error?.status == 'unverified') {
+          return Auth2EmailSignInResult.failedNotActivated;
+        }
+        else if (error?.status == 'verification-expired') {
+          return Auth2EmailSignInResult.failedActivationExpired;
+        }
       }
     }
-    return false;
+    return Auth2EmailSignInResult.failed;
   }
 
-  Future<Auth2SignUpResult> signUpWithEmail(String email, String password) async {
+  Future<Auth2EmailSignUpResult> signUpWithEmail(String email, String password) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null) && (password != null)) {
       String url = "${Config().coreUrl}/services/auth/login";
       Map<String, String> headers = {
@@ -546,28 +565,16 @@ class Auth2 with Service implements NotificationsListener {
 
       Response response = await Network().post(url, headers: headers, body: post);
       if (response?.statusCode == 200) {
-        return Auth2SignUpResult.succeded;
+        return Auth2EmailSignUpResult.succeded;
       }
-      else if (response?.body?.contains('account already exists') ?? false) {
-        return Auth2SignUpResult.failedAccountExist;
+      else if (Auth2Error.fromJson(AppJson.decodeMap(response?.body))?.status == 'already-exists') {
+        return Auth2EmailSignUpResult.failedAccountExist;
       }
     }
-    return Auth2SignUpResult.failed;
+    return Auth2EmailSignUpResult.failed;
   }
 
-  Future<bool> forgotEmailPassword(String email) async {
-    //TBD: handle Core BB API
-    await Future.delayed(Duration(seconds: 3));
-    return true;
-  }
-
-  Future<bool> resentActivationEmail(String email) async {
-    //TBD: handle Core BB API
-    await Future.delayed(Duration(seconds: 3));
-    return true;
-  }
-
-  Future<bool> hasEmailAccount(String email) async {
+  Future<Auth2EmailAccountState> checkEmailAccountState(String email) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
       String url = "${Config().coreUrl}/services/auth/account-exists";
       Map<String, String> headers = {
@@ -582,9 +589,54 @@ class Auth2 with Service implements NotificationsListener {
       });
 
       Response response = await Network().post(url, headers: headers, body: post);
-      return (response?.statusCode == 200) ? AppJson.boolValue(AppJson.decode(response?.body)) : null;
+      if (response?.statusCode == 200) {
+        //TBD: handle Auth2EmailAccountState.unverified
+        return AppJson.boolValue(AppJson.decode(response?.body)) ? Auth2EmailAccountState.verified : Auth2EmailAccountState.nonExistent;
+      }
     }
     return null;
+  }
+
+  Future<bool> resetEmailPassword(String email) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/credential/forgot/initiate";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+        'identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200);
+    }
+    return false;
+  }
+
+  Future<bool> resentActivationEmail(String email) async {
+    if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
+      String url = "${Config().coreUrl}/services/auth/credential/send-verify";
+      Map<String, String> headers = {
+        'Content-Type': 'application/json'
+      };
+      String post = AppJson.encode({
+        'auth_type': auth2LoginTypeToString(Auth2LoginType.email),
+        'app_type_identifier': Config().appPlatformId,
+        'api_key': Config().rokwireApiKey,
+        'org_id': Config().coreOrgId,
+        'user_identifier': email,
+        'identifier': email,
+      });
+
+      Response response = await Network().post(url, headers: headers, body: post);
+      return (response?.statusCode == 200);
+    }
+    return false;
   }
 
   // Device Info
@@ -745,7 +797,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<String> _loadAuthCardStringFromCache() async {
     try {
-      return ((_authCardCacheFile != null) && await _authCardCacheFile.exists()) ? await _authCardCacheFile.readAsString() : null;
+      return ((_authCardCacheFile != null) && await _authCardCacheFile.exists()) ? Storage().decrypt(await _authCardCacheFile.readAsString()) : null;
     }
     on Exception catch (e) {
       print(e.toString());
@@ -757,7 +809,7 @@ class Auth2 with Service implements NotificationsListener {
     try {
       if (_authCardCacheFile != null) {
         if (value != null) {
-          await _authCardCacheFile.writeAsString(value, flush: true);
+          await _authCardCacheFile.writeAsString(Storage().encrypt(value), flush: true);
         }
         else if (await _authCardCacheFile.exists()) {
           await _authCardCacheFile.delete();
@@ -965,8 +1017,21 @@ class _OidcLogin {
 
 }
 
-enum Auth2SignUpResult {
+enum Auth2EmailAccountState {
+  nonExistent,
+  unverified,
+  verified,
+}
+
+enum Auth2EmailSignUpResult {
   succeded,
   failed,
   failedAccountExist,
+}
+
+enum Auth2EmailSignInResult {
+  succeded,
+  failed,
+  failedActivationExpired,
+  failedNotActivated,
 }

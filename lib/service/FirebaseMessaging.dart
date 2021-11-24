@@ -72,17 +72,41 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "polls",
   ];
 
-  static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
-  static const String _groupUpdatesNotificationKey = 'group';
-
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
     'event_reminders'  : 'event_reminders',
+    'dining_specials'  : 'dinning_specials',
     _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
-    'dining_specials'  : 'dinning_specials',
   };
+
+  // Settings entry : setting name (User.prefs.setting name)
+  static const Map<String, String> _notifySettingNames = {
+    _eventRemindersUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
+    _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
+    _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
+    _groupUpdatesInvitationsNotificationSetting : 'edu.illinois.rokwire.settings.inbox.notification.group.invitations.enabled',
+    _groupUpdatesEventsNotificationSetting      : 'edu.illinois.rokwire.settings.inbox.notification.group.events.enabled',
+    _athleticsUpdatesStartNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.start.enabled',
+    _athleticsUpdatesEndNotificationSetting     : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.end.enabled',
+    _athleticsUpdatesNewsNotificationSetting    : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.news.enabled',
+    _athleticsUpdatesNotificationKey            : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.main.notifications.enabled',
+    _groupUpdatesNotificationKey                : 'edu.illinois.rokwire.settings.inbox.notification.group.main.notifications.enabled',
+    _pauseNotificationKey                       : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
+  };
+
+  static const Map<String, bool> _defaultNotificationSettings = {
+    _pauseNotificationKey : false
+  };
+
+  //settingKeys
+  static const String _eventRemindersUpdatesNotificationSetting = 'event_reminders';
+  static const String _diningSpecialsUpdatesNotificationSetting = 'dining_specials';
+  static const String _pauseNotificationKey = 'pause_notifications';
+
+  static const String _athleticsUpdatesNotificationKey = 'athletic_updates';
+  static const String _groupUpdatesNotificationKey = 'group';
 
   // Athletics Notification updates
   static const String _athleticsStartNotificationKey = 'start';
@@ -113,7 +137,6 @@ class FirebaseMessaging with Service implements NotificationsListener {
     "Receive notifications",
     importance: Importance.high,
   );
-
 
   String   _token;
   String   _projectID;
@@ -152,6 +175,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
       Auth2.notifyProfileChanged,
       Auth2.notifyUserDeleted,
       AppLivecycle.notifyStateChanged,
+      Inbox.notifyInboxUserInfoChanged
     ]);
   }
 
@@ -199,6 +223,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
     NativeCommunicator().queryFirebaseInfo().then((String info) {
       _projectID = info;
     });
+
+    await super.initService();
   }
 
   @override
@@ -208,7 +234,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([FirebaseService(), Storage(), Config(), Auth2()]);
+    return Set.from([FirebaseService(), Storage(), NativeCommunicator(), Auth2()]);
   }
 
   // NotificationsListener
@@ -233,6 +259,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param); 
     }
+    else if (name == Inbox.notifyInboxUserInfoChanged) {
+      _updateSubscriptions();
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState state) {
@@ -252,19 +281,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
   // Subscription APIs
 
   Future<bool> subscribeToTopic(String topic) async {
-    if (await Inbox().subscribeToTopic(topic: topic, token: _token)) {
-      _storeTopic(topic);
-      return true;
-    }
-    return false;
+    return await Inbox().subscribeToTopic(topic: topic, token: _token);
   }
 
   Future<bool> unsubscribeFromTopic(String topic) async {
-    if (await Inbox().unsubscribeFromTopic(topic: topic, token: _token)) {
-      _removeStoredTopic(topic);
-      return true;
-    }
-    return false;
+    return await Inbox().unsubscribeFromTopic(topic: topic, token: _token);
   }
 
   // Message Processing
@@ -301,11 +322,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
     if (message?.data != null) {
       try {
         if(AppLivecycle.instance.state == AppLifecycleState.resumed &&
-          AppString.isStringNotEmpty(message.notification?.title) &&
-            AppString.isStringNotEmpty(message.notification?.body)
+          AppString.isStringNotEmpty(message.notification?.body)
         ){
           NotificationService().notify(notifyForegroundMessage, {
-            "title": message.notification.title,
             "body": message.notification.body,
             "onComplete": (){
               _processDataMessage(message.data);
@@ -453,6 +472,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
   bool get notifyDiningSpecials               { return _getNotifySetting('dining_specials'); } 
        set notifyDiningSpecials(bool value)   { _setNotifySetting('dining_specials', value); }
 
+  set notificationsPaused(bool value)   {_setNotifySetting(_pauseNotificationKey, value);}
+
+  bool get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
+
   bool get _notifySettingsAvailable  {
     return Auth2().privacyMatch(4);
   }
@@ -466,13 +489,13 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _setNotifySetting(String name, bool value) async{
+  void _setNotifySetting(String name, bool value) {
     if (_notifySettingsAvailable && (_getNotifySetting(name) != value)) {
       _storeSetting(name, value);
       NotificationService().notify(notifySettingUpdated, name);
 
       if (name == _athleticsUpdatesNotificationKey) {
-        _processAthleticsSubscriptions(subscribedTopics: await currentTopics);
+        _processAthleticsSubscriptions(subscribedTopics: currentTopics);
       } else if (name == _athleticsUpdatesStartNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsStartNotificationKey);
       } else if (name == _athleticsUpdatesEndNotificationSetting) {
@@ -480,18 +503,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
       } else if (name == _athleticsUpdatesNewsNotificationSetting) {
         _processAthleticsSingleSubscription(_athleticsNewsNotificationKey);
       } else if (name == _groupUpdatesNotificationKey) {
-        _processGroupsSubscriptions(subscribedTopics: await currentTopics);
+        _processGroupsSubscriptions(subscribedTopics: currentTopics);
+      } else if (name == _pauseNotificationKey) {
+        Inbox().applySettingNotificationsEnabled(value);
       } else {
-        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: await currentTopics);
+        _processNotifySettingSubscription(topic: _notifySettingTopics[name], value: value, subscribedTopics: currentTopics);
       }
+
     }
   }
 
   // Subscription Management
 
-  void _updateSubscriptions() async{
+  void _updateSubscriptions(){
     if (hasToken) {
-      Set<String> subscribedTopics = await currentTopics;
+      Set<String> subscribedTopics = currentTopics;
       _processPermanentSubscriptions(subscribedTopics: subscribedTopics);
       _processRolesSubscriptions(subscribedTopics: subscribedTopics);
       _processNotifySettingsSubscriptions(subscribedTopics: subscribedTopics);
@@ -500,21 +526,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _updateRolesSubscriptions() async{
+  void _updateRolesSubscriptions(){
     if (hasToken) {
-      _processRolesSubscriptions(subscribedTopics: await currentTopics);
+      _processRolesSubscriptions(subscribedTopics: currentTopics);
     }
   }
 
-  void _updateNotifySettingsSubscriptions() async{
+  void _updateNotifySettingsSubscriptions(){
     if (hasToken) {
-      _processNotifySettingsSubscriptions(subscribedTopics: await currentTopics);
+      _processNotifySettingsSubscriptions(subscribedTopics: currentTopics);
     }
   }
 
-  void _updateAthleticsSubscriptions() async{
+  void _updateAthleticsSubscriptions(){
     if (hasToken) {
-      _processAthleticsSubscriptions(subscribedTopics: await currentTopics);
+      _processAthleticsSubscriptions(subscribedTopics: currentTopics);
     }
   }
 
@@ -573,10 +599,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processAthleticsSingleSubscription(String athleticsKey) async{
+  void _processAthleticsSingleSubscription(String athleticsKey) {
     List<SportDefinition> sports = Sports().sports;
     if (AppCollection.isCollectionNotEmpty(sports)) {
-      Set<String> subscribedTopics = await currentTopics;
+      Set<String> subscribedTopics = currentTopics;
       for (SportDefinition sport in sports) {
         _processAthleticsSubscriptionForSport(notifyAllowed: true, athleticsKey: athleticsKey, sport: sport.shortName, subscribedTopics: subscribedTopics);
       }
@@ -617,38 +643,31 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   bool _getStoredSetting(name){
-    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return Auth2()?.prefs?.getSetting(settingName: name, defaultValue: true);
+    bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
+    if(name == _pauseNotificationKey){ // settings depending on userInfo
+      if(Auth2().isLoggedIn && Inbox()?.userInfo != null){
+        return Inbox()?.userInfo?.notificationsDisabled ?? false; //This is the only setting stored in the userInfo
+      }
     }
-    return Storage().getNotifySetting(name) ?? true;
+    if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
+      return  Auth2()?.prefs?.getBoolSetting(settingName: _notifySettingNames [name]?? name, defaultValue: defaultValue);
+    }
+    return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
   void _storeSetting(name, value) {
-      //// Logged user choice stored in the UserPrefs
-      if (Auth2().isLoggedIn) {
-        Auth2().prefs?.applySetting(name, value);
-      } else {
-        Storage().setNotifySetting(name, value);
-      }
+    //// Logged user choice stored in the UserPrefs
+    if (Auth2().isLoggedIn) {
+      Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
+    } else {
+      Storage().setNotifySetting(_notifySettingNames[name] ?? name, value);
+    }
   }
 
-  void _storeTopic(String topic){
-    if(!Auth2().isLoggedIn){
-      Storage().addFirebaseMessagingSubscriptionTopic(topic);
-    } // else we store to the backend
-  }
-
-  void _removeStoredTopic(String topic){
-    if(!Auth2().isLoggedIn){
-      Storage().removeFirebaseMessagingSubscriptionTopic(topic);
-    } // else we store to the backend
-  }
-
-
-  Future<Set<String>> get currentTopics async{
+  Set<String> get currentTopics{
     Set<String> subscribedTopics = Storage().firebaseMessagingSubscriptionTopics;
     if(Auth2().isLoggedIn){
-      subscribedTopics = (await Inbox().loadUserInfo())?.topics?.toSet();
+      subscribedTopics = (Inbox().userInfo)?.topics;
     }
 
     return subscribedTopics;

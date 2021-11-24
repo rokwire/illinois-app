@@ -48,9 +48,23 @@ class Connectivity with Service {
   @override
   void createService() {
     _connectivitySubscription = ConnectivityPlugin.Connectivity().onConnectivityChanged.listen(_onConnectivityChanged);
-    ConnectivityPlugin.Connectivity().checkConnectivity().then((ConnectivityPlugin.ConnectivityResult result) {
-      _setConnectivityStatus(_statusFromResult(result));
-    });
+  }
+
+  @override
+  Future<void> initService() async {
+    _connectivityStatus = _statusFromResult(await ConnectivityPlugin.Connectivity().checkConnectivity());
+
+    if (_connectivityStatus != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Connectivity Initialization Failed',
+        description: 'Failed to retrieve connectivity status.',
+      );
+    }
   }
 
   @override

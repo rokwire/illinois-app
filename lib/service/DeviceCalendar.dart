@@ -9,7 +9,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
 
@@ -39,13 +39,14 @@ class DeviceCalendar with Service implements NotificationsListener{
       Auth2UserPrefs.notifyFavoriteChanged,
       DeviceCalendar.notifyPlaceEvent
     ]);
+    _deviceCalendarPlugin = new DeviceCalendarPlugin();
   }
 
   @override
   Future<void> initService() async {
-    _deviceCalendarPlugin = new DeviceCalendarPlugin();
     dynamic storedTable = Storage().calendarEventsTable ?? Map();
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
+    await super.initService();
   }
 
   @override
@@ -265,8 +266,8 @@ class _DeviceCalendarEvent {
     else if (data is Game){
       return _DeviceCalendarEvent.fromGame(data);
     }
-    else if (data is StudentGuideFavorite){
-      return _DeviceCalendarEvent.fromStudentGuide(data);
+    else if (data is GuideFavorite){
+      return _DeviceCalendarEvent.fromGuide(data);
     }
 
     return null;
@@ -290,17 +291,17 @@ class _DeviceCalendarEvent {
         deepLinkUrl: "${Sports.GAME_URI}?game_id=${game.id}%26sport=${game.sport?.shortName}");
   }
 
-  factory _DeviceCalendarEvent.fromStudentGuide(StudentGuideFavorite guide){
+  factory _DeviceCalendarEvent.fromGuide(GuideFavorite guide){
     if(guide==null)
       return null;
-    Map<String, dynamic> guideEntryData = StudentGuide().entryById(guide.id);
+    Map<String, dynamic> guideEntryData = Guide().entryById(guide.id);
     //Only reminders are allowed to save
-    if (StudentGuide().isEntryReminder(guideEntryData)){
+    if (Guide().isEntryReminder(guideEntryData)){
       return _DeviceCalendarEvent(
         title: guide.title,
         internalEventId: guide.id,
-        startDate: StudentGuide().reminderDate(guideEntryData),
-        deepLinkUrl: "${StudentGuide.GUIDE_URI}?guide_id=${guide.id}"
+        startDate: Guide().reminderDate(guideEntryData),
+        deepLinkUrl: "${Guide.GUIDE_URI}?guide_id=${guide.id}"
       );
     }
 

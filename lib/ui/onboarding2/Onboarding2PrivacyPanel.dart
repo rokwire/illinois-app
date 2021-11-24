@@ -24,7 +24,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/widgets/PrivacySlider.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -542,16 +541,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   void _goNext(BuildContext context) {
     Auth2().prefs?.privacyLevel = _privacyLevel;
     Storage().privacyUpdateVersion = Config().appVersion;
-    if(Onboarding2().getExploreCampusChoice) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingAuthNotificationsPanel(onboardingContext: {
-        'onContinueAction':  () {
-          Onboarding2().proceedToLogin(context);
-        }
-      })));
-    }
-    else {
-      Onboarding2().proceedToLogin(context);
-    }
+    Onboarding2().finalize(context);
   }
 
   void _goBack(BuildContext context) {

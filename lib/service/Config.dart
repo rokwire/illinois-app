@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/AppLivecycle.dart';
+import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Log.dart';
@@ -38,6 +39,7 @@ import 'package:path_provider/path_provider.dart';
 class Config with Service implements NotificationsListener {
 
   static const String _configsAsset       = "configs.json.enc";
+  static const String _configKeysAsset    = "config.keys.json";
 
   static const String notifyUpgradeRequired     = "edu.illinois.rokwire.config.upgrade.required";
   static const String notifyUpgradeAvailable    = "edu.illinois.rokwire.config.upgrade.available";
@@ -47,6 +49,7 @@ class Config with Service implements NotificationsListener {
 
   Map<String, dynamic> _config;
   Map<String, dynamic> _configAsset;
+  Map<String, dynamic> _encryptionKeys;
   ConfigEnvironment    _configEnvironment;
   PackageInfo          _packageInfo;
   Directory            _appDocumentsDir; 
@@ -67,151 +70,6 @@ class Config with Service implements NotificationsListener {
   
   static Config get instance {
     return _instance;
-  }
-
-  // Getters
-
-  Map<String, dynamic> get otherUniversityServices { return (_config != null) ? (_config['otherUniversityServices'] ?? {}) : {}; }
-  Map<String, dynamic> get platformBuildingBlocks  { return (_config != null) ? (_config['platformBuildingBlocks'] ?? {}) : {}; }
-  Map<String, dynamic> get thirdPartyServices      { return (_config != null) ? (_config['thirdPartyServices'] ?? {}) : {}; }
-
-  Map<String, dynamic> get secretKeys              { return (_config != null) ? (_config['secretKeys'] ?? {}) : {}; }
-  Map<String, dynamic> get secretRokwire           { return secretKeys['rokwire'] ?? {}; }
-  Map<String, dynamic> get secretCore              { return secretKeys['core'] ?? {}; }
-  Map<String, dynamic> get secretShibboleth        { return secretKeys['shibboleth'] ?? {}; }
-  Map<String, dynamic> get secretIlliniCash        { return secretKeys['illini_cash'] ?? {}; }
-  Map<String, dynamic> get secretLaundry           { return secretKeys['laundry'] ?? {}; }
-  Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
-  Map<String, dynamic> get secretPadaapi           { return secretKeys['padaapi'] ?? {}; }
-  Map<String, dynamic> get secretTwitter           { return secretKeys['twitter'] ?? {}; }
-  
-  Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
-  List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
-  Map<String, dynamic> get twitter                 { return (_config != null) ? (_config['twitter'] ?? {}) : {}; }
-  Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
-  Map<String, dynamic> get onboardingInfo          { return (_config != null) ? (_config['onboarding'] ?? {}) : {}; }
-
-  Map<String, dynamic> get safer                   { return (_config != null) ? (_config['safer'] ?? {}) : {}; }
-  Map<String, dynamic> get saferMcKinley           { return safer['mckinley'] ?? {}; }
-  Map<String, dynamic> get saferWellness           { return safer['wellness'] ?? {}; }
-  Map<String, dynamic> get saferLocations          { return safer['locations'] ?? {}; }
-
-//NA: String get redirectAuthUrl        { return otherUniversityServices['redirect_auth_url']; }      // "edu.illinois.ncsa.rokwireauthpoc:rokwireauthpoc.ncsa.illinois.edu/oauth2-cb"
-  String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
-  String get shibbolethOauthHostUrl { return otherUniversityServices['shibboleth_oauth_host_url']; }  // "shibboleth.illinois.edu"
-  String get shibbolethOauthPathUrl { return otherUniversityServices['shibboleth_oauth_path_url']; }  // "/idp/profile/oidc/authorize"
-  String get userAuthUrl            { return otherUniversityServices['user_auth_url']; }              // "https://shibboleth.illinois.edu/idp/profile/oidc/userinfo"
-  String get assetsUrl              { return otherUniversityServices['assets_url']; }                 // "https://rokwire-assets.s3.us-east-2.amazonaws.com"
-  String get eatSmartUrl            { return otherUniversityServices['eat_smart_url']; }              // "https://eatsmart.housing.illinois.edu/NetNutrition/46"
-  String get illiniCashBaseUrl      { return otherUniversityServices['illini_cash_base_url']; }       // "https://shibtest.housing.illinois.edu/MobileAppWS/api"
-  String get illiniCashTrustcommerceHost { return otherUniversityServices['illini_cash_trustcommerce_host']; } // "https://vault.trustcommerce.com"
-  String get illiniCashTokenHost    { return otherUniversityServices['illini_cash_token_host']; }     // "https://webservices.admin.uillinois.edu"
-  String get illiniCashPaymentHost  { return otherUniversityServices['illini_cash_payment_host']; }   //"https://web.housing.illinois.edu"
-  String get illiniCashTosUrl       { return otherUniversityServices['illini_cash_tos_url']; }        // "https://housing.illinois.edu/resources/illini-cash/terms"
-  String get myIlliniUrl            { return otherUniversityServices['myillini_url']; }               // "https://myillini.illinois.edu/Dashboard"
-  String get feedbackUrl            { return otherUniversityServices['feedback_url']; }               // "https://forms.illinois.edu/sec/1971889"
-  String get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
-  String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
-  String get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
-
-  String get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
-  String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
-  String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
-  String get rokwireAuthUrl         { return platformBuildingBlocks['rokwire_auth_url']; }            // "https://api-dev.rokwire.illinois.edu/authentication"
-  String get imagesServiceUrl       { return platformBuildingBlocks['images_service_url']; }          // "https://api-dev.rokwire.illinois.edu/images-service";
-  String get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
-  String get eventsUrl              { return platformBuildingBlocks['events_url']; }                  // "https://api-dev.rokwire.illinois.edu/events"
-  String get talentChooserUrl       { return platformBuildingBlocks['talent_chooser_url']; }          // "https://api-dev.rokwire.illinois.edu/talent-chooser/api/ui-content"
-  String get transportationUrl      { return platformBuildingBlocks["transportation_url"]; }          // "https://api-dev.rokwire.illinois.edu/transportation"
-  String get quickPollsUrl          { return platformBuildingBlocks["polls_url"]; }                   // "https://api-dev.rokwire.illinois.edu/poll/api";
-  String get locationsUrl           { return platformBuildingBlocks["locations_url"]; }               // "https://api-dev.rokwire.illinois.edu/location/api";
-  String get groupsUrl              { return platformBuildingBlocks["groups_url"]; }                  // "https://api-dev.rokwire.illinois.edu/gr/api";
-  String get contentUrl             { return platformBuildingBlocks["content_url"]; }                 // "https://api-dev.rokwire.illinois.edu/content";
-  String get notificationsUrl       { return platformBuildingBlocks["notifications_url"]; }           // "https://api-dev.rokwire.illinois.edu/notifications";
-  String get healthUrl              { return platformBuildingBlocks['health_url']; }                  // "https://api-dev.rokwire.illinois.edu/health"
-  
-  String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
-  String get twitterHostUrl         { return thirdPartyServices['twitter_host_url']; }          // "https://twitter.com/"
-  String get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
-  String get ticketsUrl             { return thirdPartyServices['tickets_url']; }               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"
-  String get youtubeUrl             { return thirdPartyServices['youtube_url']; }               // "https://www.youtube.com/c/fightingilliniathletics"
-  String get voterRegistrationUrl   { return thirdPartyServices['voter_registration_url']; }    // "https://ova.elections.il.gov/"
-  String get gameDayFootballUrl     { return thirdPartyServices['gameday_football_url']; }      // "https://fightingillini.com/sports/2015/7/31/football_gamedayguide.aspx"
-  String get gameDayBasketballUrl   { return thirdPartyServices['gameday_basketball_url']; }    // "https://fightingillini.com/sports/2015/11/30/sfc_fanguide.aspx"
-  String get gameDayTennisUrl       { return thirdPartyServices['gameday_tennis_url']; }        // "https://fightingillini.com/sports/2015/6/27/tennis_facilities.aspx#eventinfo"
-  String get gameDayVolleyballUrl   { return thirdPartyServices['gameday_volleyball_url']; }    // "https://fightingillini.com/sports/2015/3/24/huffhall_volleyball.aspx#eventinfo"
-  String get gameDaySoftballUrl     { return thirdPartyServices['gameday_softball_url']; }      // "https://fightingillini.com/sports/2015/3/24/eichelbergerfield.aspx#eventinfo"
-  String get gameDaySwimDiveUrl     { return thirdPartyServices['gameday_swim_dive_url']; }     // "https://fightingillini.com/sports/2015/3/24/arcpool.aspx#eventinfo"
-  String get gameDayCrossCountryUrl { return thirdPartyServices['gameday_cross_country_url']; } // "https://fightingillini.com/sports/2015/3/24/arboretum.aspx#eventinfo"
-  String get gameDayBaseballUrl     { return thirdPartyServices['gameday_baseball_url']; }      // "https://fightingillini.com/sports/2015/3/24/illinoisfield.aspx#eventinfo"
-  String get gameDayGymnasticsUrl   { return thirdPartyServices['gameday_gymnastics_url']; }    // "https://fightingillini.com/sports/2015/6/27/huffhall_gymnastics.aspx#eventinfo"
-  String get gameDayWrestlingUrl    { return thirdPartyServices['gameday_wrestling_url']; }     // "https://fightingillini.com/sports/2015/6/27/huffhall_wrestling.aspx#eventinfo"
-  String get gameDaySoccerUrl       { return thirdPartyServices['gameday_soccer_url']; }        // "https://fightingillini.com/sports/2015/8/19/soccerstadium.aspx#eventinfo"
-  String get gameDayTrackFieldUrl   { return thirdPartyServices['gameday_track_field_url']; }   // "https://fightingillini.com/sports/2015/3/24/armory.aspx#eventinfo"
-  String get gameDayAllUrl          { return thirdPartyServices['gameday_all_url']; }           // "https://fightingillini.com/sports/2015/7/25/gameday.aspx"
-  String get convergeUrl            { return thirdPartyServices['converge_url']; }              // "https://api.converge-engine.com/v1/rokwire"
-
-  String get coreOrgId              { return secretCore['org_id']; }
-
-  String get twitterUrl             { return twitter['url']; }                                  // "https://api.twitter.com/2"
-  int    get twitterTweetsCount     { return twitter['tweets_count']; }                         // 5
-  
-  // ""     : { "id":"18165866", "name":"illinois_alma" },
-  // "gies" : { "id":"19615559", "name":"giesbusiness" }
-  Map<String, dynamic> twitterUserAccount([String category]) {
-    Map<String, dynamic> users = twitter['users'];
-    return (users != null) ? users[category ?? ''] : null;
-  }
-  
-  String twitterUserId([String category]) {
-    Map<String, dynamic> userAccount = twitterUserAccount(category);
-    return (userAccount != null) ? userAccount['id'] : null;
-  }
-  
-  String twitterUserName([String category]) {
-    Map<String, dynamic> userAccount = twitterUserAccount(category);
-    return (userAccount != null) ? userAccount['name'] : null;
-  }
-
-  String get shibbolethClientId     { return secretShibboleth['client_id']; }
-  String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
-
-  String get illiniCashAppKey       { return secretIlliniCash['app_key']; }
-  String get illiniCashHmacKey      { return secretIlliniCash['hmac_key']; }
-  String get illiniCashSecretKey    { return secretIlliniCash['secret_key']; }
-
-  String get laundryApiKey          { return secretLaundry['api_key']; }
-
-  String get padaapiApiKey          { return secretPadaapi['api_key']; }
-
-  String get twitterToken          { return secretTwitter['token']; }
-  String get twitterTokenType      { return secretTwitter['token_type']; }
-
-  String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
-    String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
-    return assetUrl ?? platformBuildingBlocks['appconfig_url'];
-  } 
-  
-  String get rokwireApiKey          {
-    String assetKey = (_configAsset != null) ? _configAsset['api_key'] : null;
-    return assetKey ?? secretRokwire['api_key'];
-  }
-
-  String get eventsOrConvergeUrl    {
-    String convergeURL = FlexUI().hasFeature('converge') ? convergeUrl : null;
-    return ((convergeURL != null) && convergeURL.isNotEmpty) ? convergeURL : eventsUrl;
-  }
-
-  int get refreshTimeout {
-    return kReleaseMode ? (settings['refreshTimeout'] ?? 0) : 0;
-  }
-
-  int get refreshTokenRetriesCount {
-    return (settings['refreshTokenRetriesCount'] ?? 3);
-  }
-
-  String get appPrivacyVersion {
-    return settings['privacyVersion'] ?? (_config['mobileAppVersion'] ?? '0.0.0');
   }
 
   // Initialization
@@ -241,12 +99,42 @@ class Config with Service implements NotificationsListener {
     Log.d('Application Documents Directory: ${_appDocumentsDir.path}');
 
     await _init();
+    await super.initService();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage()]);
+    return Set.from([Storage(), Connectivity()]);
   }
+  
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == FirebaseMessaging.notifyConfigUpdate) {
+      _updateFromNet();
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (refreshTimeout < pausedDuration.inSeconds) {
+          _updateFromNet();
+        }
+      }
+    }
+  }
+
+  // Implementation
 
   String get _configName {
     String configTarget = configEnvToString(_configEnvironment);
@@ -271,7 +159,7 @@ class Config with Service implements NotificationsListener {
   Future<Map<String, dynamic>> _loadFromAssets() async {
     try {
       String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
-      String configsStr = (configsStrEnc != null) ? AESCrypt.decode(configsStrEnc) : null;
+      String configsStr = (configsStrEnc != null) ? AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV) : null;
       Map<String, dynamic> configs = AppJson.decode(configsStr);
       String configTarget = configEnvToString(_configEnvironment);
       return (configs != null) ? configs[configTarget] : null;
@@ -303,7 +191,7 @@ class Config with Service implements NotificationsListener {
       for (int index = jsonList.length - 1; index >= 0; index--) {
         Map<String, dynamic> cfg = jsonList[index];
         if (AppVersion.compareVersions(cfg['mobileAppVersion'], _packageInfo.version) <= 0) {
-          _decodeSecretKeys(cfg);
+          _decryptSecretKeys(cfg);
           return cfg;
         }
       }
@@ -312,21 +200,34 @@ class Config with Service implements NotificationsListener {
     return null;
   }
 
-  bool _decodeSecretKeys(Map<String, dynamic> config) {
+  void _decryptSecretKeys(Map<String, dynamic> config) {
     dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
     if (secretKeys is String) {
-      String jsonString = AESCrypt.decode(secretKeys);
-      dynamic jsonData = AppJson.decode(jsonString);
-      if (jsonData is Map) {
-        config['secretKeys'] = jsonData;
-        return true;
-      }
+      config['secretKeys'] = AppJson.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
     }
-    return false;
+  }
+
+  Future<Map<String, dynamic>> _loadEncryptionKeysFromAssets() async {
+    try {
+      return AppJson.decode(await rootBundle.loadString('assets/$_configKeysAsset'));
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
   }
 
   Future<void> _init() async {
     
+    _encryptionKeys = await _loadEncryptionKeysFromAssets();
+    if (_encryptionKeys == null) {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'Config Initialization Failed',
+        description: 'Failed to load config encryption keys.',
+      );
+    }
+
     _config = await _loadFromFile(_configFile);
 
     if (_config == null) {
@@ -341,6 +242,14 @@ class Config with Service implements NotificationsListener {
         
         _checkUpgrade();
         _checkOnboarding();
+      }
+      else {
+        throw ServiceError(
+          source: this,
+          severity: ServiceErrorSeverity.fatal,
+          title: 'Config Initialization Failed',
+          description: 'Failed to initialize application configuration.',
+        );
       }
     }
     else {
@@ -364,34 +273,7 @@ class Config with Service implements NotificationsListener {
     });
   }
 
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-    else if (name == FirebaseMessaging.notifyConfigUpdate) {
-      _updateFromNet();
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
-        if (refreshTimeout < pausedDuration.inSeconds) {
-          _updateFromNet();
-        }
-      }
-    }
-  }
-
-  // Upgrade
+  // App Id & Version
 
   String get appId {
     return _packageInfo?.packageName;
@@ -424,6 +306,166 @@ class Config with Service implements NotificationsListener {
   String get appVersion {
     return _packageInfo?.version;
   }
+
+  // Getters: compound entries
+
+  Map<String, dynamic> get otherUniversityServices { return (_config != null) ? (_config['otherUniversityServices'] ?? {}) : {}; }
+  Map<String, dynamic> get platformBuildingBlocks  { return (_config != null) ? (_config['platformBuildingBlocks'] ?? {}) : {}; }
+  Map<String, dynamic> get thirdPartyServices      { return (_config != null) ? (_config['thirdPartyServices'] ?? {}) : {}; }
+
+  Map<String, dynamic> get secretKeys              { return (_config != null) ? (_config['secretKeys'] ?? {}) : {}; }
+  Map<String, dynamic> get secretRokwire           { return secretKeys['rokwire'] ?? {}; }
+  Map<String, dynamic> get secretCore              { return secretKeys['core'] ?? {}; }
+  Map<String, dynamic> get secretShibboleth        { return secretKeys['shibboleth'] ?? {}; }
+  Map<String, dynamic> get secretIlliniCash        { return secretKeys['illini_cash'] ?? {}; }
+  Map<String, dynamic> get secretLaundry           { return secretKeys['laundry'] ?? {}; }
+  Map<String, dynamic> get secretParkhub           { return secretKeys['parkhub'] ?? {}; }
+  Map<String, dynamic> get secretPadaapi           { return secretKeys['padaapi'] ?? {}; }
+  Map<String, dynamic> get secretTwitter           { return secretKeys['twitter'] ?? {}; }
+  
+  Map<String, dynamic> get settings                { return (_config != null) ? (_config['settings'] ?? {}) : {}; }
+  List<dynamic> get supportedLocales               { return (_config != null) ? (_config['languages']) : null; }
+  Map<String, dynamic> get twitter                 { return (_config != null) ? (_config['twitter'] ?? {}) : {}; }
+  Map<String, dynamic> get upgradeInfo             { return (_config != null) ? (_config['upgrade'] ?? {}) : {}; }
+  Map<String, dynamic> get onboardingInfo          { return (_config != null) ? (_config['onboarding'] ?? {}) : {}; }
+
+  Map<String, dynamic> get safer                   { return (_config != null) ? (_config['safer'] ?? {}) : {}; }
+  Map<String, dynamic> get saferMcKinley           { return safer['mckinley'] ?? {}; }
+  Map<String, dynamic> get saferWellness           { return safer['wellness'] ?? {}; }
+  Map<String, dynamic> get saferLocations          { return safer['locations'] ?? {}; }
+
+  // Getters: Encryption Keys
+
+  String get encryptionKey                         { return (_encryptionKeys != null) ? _encryptionKeys['key'] : null; }
+  String get encryptionIV                          { return (_encryptionKeys != null) ? _encryptionKeys['iv'] : null; }
+
+  // Getters: Config Asset Ackwowledgement
+
+  String get appConfigUrl           {                                                                 // "https://api-dev.rokwire.illinois.edu/app/configs"
+    String assetUrl = (_configAsset != null) ? _configAsset['config_url'] : null;
+    return assetUrl ?? platformBuildingBlocks['appconfig_url'];
+  } 
+  
+  String get rokwireApiKey          {
+    String assetKey = (_configAsset != null) ? _configAsset['api_key'] : null;
+    return assetKey ?? secretRokwire['api_key'];
+  }
+
+  // Getters: Secret Keys
+  String get coreOrgId              { return secretCore['org_id']; }
+
+  String get shibbolethClientId     { return secretShibboleth['client_id']; }
+  String get shibbolethClientSecret { return secretShibboleth['client_secret']; }
+
+  String get illiniCashAppKey       { return secretIlliniCash['app_key']; }
+  String get illiniCashHmacKey      { return secretIlliniCash['hmac_key']; }
+  String get illiniCashSecretKey    { return secretIlliniCash['secret_key']; }
+
+  String get laundryApiKey          { return secretLaundry['api_key']; }
+
+  String get padaapiApiKey          { return secretPadaapi['api_key']; }
+
+  String get twitterToken          { return secretTwitter['token']; }
+  String get twitterTokenType      { return secretTwitter['token_type']; }
+
+  // Getters: Other University Services
+  String get shibbolethAuthTokenUrl { return otherUniversityServices['shibboleth_auth_token_url']; }  // "https://{shibboleth_client_id}:{shibboleth_client_secret}@shibboleth.illinois.edu/idp/profile/oidc/token"
+  String get shibbolethOauthHostUrl { return otherUniversityServices['shibboleth_oauth_host_url']; }  // "shibboleth.illinois.edu"
+  String get shibbolethOauthPathUrl { return otherUniversityServices['shibboleth_oauth_path_url']; }  // "/idp/profile/oidc/authorize"
+  String get userAuthUrl            { return otherUniversityServices['user_auth_url']; }              // "https://shibboleth.illinois.edu/idp/profile/oidc/userinfo"
+  String get assetsUrl              { return otherUniversityServices['assets_url']; }                 // "https://rokwire-assets.s3.us-east-2.amazonaws.com"
+  String get eatSmartUrl            { return otherUniversityServices['eat_smart_url']; }              // "https://eatsmart.housing.illinois.edu/NetNutrition/46"
+  String get illiniCashBaseUrl      { return otherUniversityServices['illini_cash_base_url']; }       // "https://shibtest.housing.illinois.edu/MobileAppWS/api"
+  String get illiniCashTrustcommerceHost { return otherUniversityServices['illini_cash_trustcommerce_host']; } // "https://vault.trustcommerce.com"
+  String get illiniCashTokenHost    { return otherUniversityServices['illini_cash_token_host']; }     // "https://webservices.admin.uillinois.edu"
+  String get illiniCashPaymentHost  { return otherUniversityServices['illini_cash_payment_host']; }   //"https://web.housing.illinois.edu"
+  String get illiniCashTosUrl       { return otherUniversityServices['illini_cash_tos_url']; }        // "https://housing.illinois.edu/resources/illini-cash/terms"
+  String get myIlliniUrl            { return otherUniversityServices['myillini_url']; }               // "https://myillini.illinois.edu/Dashboard"
+  String get feedbackUrl            { return otherUniversityServices['feedback_url']; }               // "https://forms.illinois.edu/sec/1971889"
+  String get iCardUrl               { return otherUniversityServices['icard_url']; }                  // "https://www.icard.uillinois.edu/rest/rw/rwIDData/rwCardInfo"
+  String get privacyPolicyUrl       { return otherUniversityServices['privacy_policy_url']; }         // "https://go.illinois.edu/illinois-app-privacy"
+  String get padaapiUrl             { return otherUniversityServices['padaapi_url']; }                // "https://api-test.test-compliance.rokwire.illinois.edu/padaapi"
+
+  // Getters: Platform Building Blocks
+  String get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
+  String get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
+  String get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
+  String get rokwireAuthUrl         { return platformBuildingBlocks['rokwire_auth_url']; }            // "https://api-dev.rokwire.illinois.edu/authentication"
+  String get imagesServiceUrl       { return platformBuildingBlocks['images_service_url']; }          // "https://api-dev.rokwire.illinois.edu/images-service";
+  String get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
+  String get eventsUrl              { return platformBuildingBlocks['events_url']; }                  // "https://api-dev.rokwire.illinois.edu/events"
+  String get talentChooserUrl       { return platformBuildingBlocks['talent_chooser_url']; }          // "https://api-dev.rokwire.illinois.edu/talent-chooser/api/ui-content"
+  String get transportationUrl      { return platformBuildingBlocks["transportation_url"]; }          // "https://api-dev.rokwire.illinois.edu/transportation"
+  String get quickPollsUrl          { return platformBuildingBlocks["polls_url"]; }                   // "https://api-dev.rokwire.illinois.edu/poll/api";
+  String get locationsUrl           { return platformBuildingBlocks["locations_url"]; }               // "https://api-dev.rokwire.illinois.edu/location/api";
+  String get groupsUrl              { return platformBuildingBlocks["groups_url"]; }                  // "https://api-dev.rokwire.illinois.edu/gr/api";
+  String get contentUrl             { return platformBuildingBlocks["content_url"]; }                 // "https://api-dev.rokwire.illinois.edu/content";
+  String get notificationsUrl       { return platformBuildingBlocks["notifications_url"]; }           // "https://api-dev.rokwire.illinois.edu/notifications";
+  String get healthUrl              { return platformBuildingBlocks['health_url']; }                  // "https://api-dev.rokwire.illinois.edu/health"
+  
+  // Getters: Third Party Services
+  String get instagramHostUrl       { return thirdPartyServices['instagram_host_url']; }        // "https://instagram.com/"
+  String get twitterHostUrl         { return thirdPartyServices['twitter_host_url']; }          // "https://twitter.com/"
+  String get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
+  String get ticketsUrl             { return thirdPartyServices['tickets_url']; }               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"
+  String get youtubeUrl             { return thirdPartyServices['youtube_url']; }               // "https://www.youtube.com/c/fightingilliniathletics"
+  String get voterRegistrationUrl   { return thirdPartyServices['voter_registration_url']; }    // "https://ova.elections.il.gov/"
+  String get gameDayFootballUrl     { return thirdPartyServices['gameday_football_url']; }      // "https://fightingillini.com/sports/2015/7/31/football_gamedayguide.aspx"
+  String get gameDayBasketballUrl   { return thirdPartyServices['gameday_basketball_url']; }    // "https://fightingillini.com/sports/2015/11/30/sfc_fanguide.aspx"
+  String get gameDayTennisUrl       { return thirdPartyServices['gameday_tennis_url']; }        // "https://fightingillini.com/sports/2015/6/27/tennis_facilities.aspx#eventinfo"
+  String get gameDayVolleyballUrl   { return thirdPartyServices['gameday_volleyball_url']; }    // "https://fightingillini.com/sports/2015/3/24/huffhall_volleyball.aspx#eventinfo"
+  String get gameDaySoftballUrl     { return thirdPartyServices['gameday_softball_url']; }      // "https://fightingillini.com/sports/2015/3/24/eichelbergerfield.aspx#eventinfo"
+  String get gameDaySwimDiveUrl     { return thirdPartyServices['gameday_swim_dive_url']; }     // "https://fightingillini.com/sports/2015/3/24/arcpool.aspx#eventinfo"
+  String get gameDayCrossCountryUrl { return thirdPartyServices['gameday_cross_country_url']; } // "https://fightingillini.com/sports/2015/3/24/arboretum.aspx#eventinfo"
+  String get gameDayBaseballUrl     { return thirdPartyServices['gameday_baseball_url']; }      // "https://fightingillini.com/sports/2015/3/24/illinoisfield.aspx#eventinfo"
+  String get gameDayGymnasticsUrl   { return thirdPartyServices['gameday_gymnastics_url']; }    // "https://fightingillini.com/sports/2015/6/27/huffhall_gymnastics.aspx#eventinfo"
+  String get gameDayWrestlingUrl    { return thirdPartyServices['gameday_wrestling_url']; }     // "https://fightingillini.com/sports/2015/6/27/huffhall_wrestling.aspx#eventinfo"
+  String get gameDaySoccerUrl       { return thirdPartyServices['gameday_soccer_url']; }        // "https://fightingillini.com/sports/2015/8/19/soccerstadium.aspx#eventinfo"
+  String get gameDayTrackFieldUrl   { return thirdPartyServices['gameday_track_field_url']; }   // "https://fightingillini.com/sports/2015/3/24/armory.aspx#eventinfo"
+  String get gameDayAllUrl          { return thirdPartyServices['gameday_all_url']; }           // "https://fightingillini.com/sports/2015/7/25/gameday.aspx"
+  String get convergeUrl            { return thirdPartyServices['converge_url']; }              // "https://api.converge-engine.com/v1/rokwire"
+
+  // Getters: Twitter
+  String get twitterUrl             { return twitter['url']; }                                  // "https://api.twitter.com/2"
+  int    get twitterTweetsCount     { return twitter['tweets_count']; }                         // 5
+  
+  // ""     : { "id":"18165866", "name":"illinois_alma" },
+  // "gies" : { "id":"19615559", "name":"giesbusiness" }
+  Map<String, dynamic> twitterUserAccount([String category]) {
+    Map<String, dynamic> users = twitter['users'];
+    return (users != null) ? users[category ?? ''] : null;
+  }
+  
+  String twitterUserId([String category]) {
+    Map<String, dynamic> userAccount = twitterUserAccount(category);
+    return (userAccount != null) ? userAccount['id'] : null;
+  }
+  
+  String twitterUserName([String category]) {
+    Map<String, dynamic> userAccount = twitterUserAccount(category);
+    return (userAccount != null) ? userAccount['name'] : null;
+  }
+
+  // Getters: Other Entries
+
+  String get eventsOrConvergeUrl    {
+    String convergeURL = FlexUI().hasFeature('converge') ? convergeUrl : null;
+    return ((convergeURL != null) && convergeURL.isNotEmpty) ? convergeURL : eventsUrl;
+  }
+
+  int get refreshTimeout {
+    return kReleaseMode ? (settings['refreshTimeout'] ?? 0) : 0;
+  }
+
+  int get refreshTokenRetriesCount {
+    return (settings['refreshTokenRetriesCount'] ?? 3);
+  }
+
+  String get appPrivacyVersion {
+    return settings['privacyVersion'] ?? (_config['mobileAppVersion'] ?? '0.0.0');
+  }
+
+  // Upgrade
 
   String get upgradeRequiredVersion {
     dynamic requiredVersion = _upgradeStringEntry('required_version');
@@ -503,7 +545,9 @@ class Config with Service implements NotificationsListener {
       _configEnvironment = configEnvironment;
       Storage().configEnvironment = configEnvToString(_configEnvironment);
 
-      _init().then((_){
+      _init().catchError((e){
+        print(e?.toString());
+      }).whenComplete((){
         NotificationService().notify(notifyEnvironmentChanged, null);
       });
     }

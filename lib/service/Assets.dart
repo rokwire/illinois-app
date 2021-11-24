@@ -72,7 +72,19 @@ class Assets with Service implements NotificationsListener {
     _cacheFile = await _getCacheFile();
     _internalContent = await _loadFromAssets();
     _externalContent = await _loadFromCache();
-    _updateFromNet();
+
+    if (_internalContent != null) {
+      await super.initService();
+      _updateFromNet();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Assets Initialization Failed',
+        description: 'Failed to initialize application assets content.',
+      );
+    }
   }
 
   @override

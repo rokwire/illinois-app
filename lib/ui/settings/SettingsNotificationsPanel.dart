@@ -108,23 +108,23 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     List<Widget> widgets = [];
 
     widgets.add(_CustomToggleButton(
-          enabled: _notificationsEnabled,
+          enabled: _toggleButtonEnabled,
           borderRadius: _topRounding,
           label: Localization().getStringEx("panel.settings.notifications.reminders", "Event reminders"),
           toggled: FirebaseMessaging().notifyEventReminders,
           context: context,
-          onTap: _notificationsEnabled?_onEventRemindersToggled : (){},
-          style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
+          onTap: _toggleButtonEnabled?_onEventRemindersToggled : (){},
+          style: _toggleButtonEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
               TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
-          enabled: _notificationsEnabled,
+          enabled: _toggleButtonEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates", "Athletics updates"),
           toggled: FirebaseMessaging().notifyAthleticsUpdates,
           context: context,
-          onTap: _notificationsEnabled? _onAthleticsUpdatesToggled : (){},
-          style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
+          onTap: _toggleButtonEnabled? _onAthleticsUpdatesToggled : (){},
+          style: _toggleButtonEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
               TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
     widgets.add(Row(children: [
       Expanded(
@@ -167,13 +167,13 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     //TBD localisation fro groups settings
     widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
-        enabled: _notificationsEnabled,
+        enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group updates"),
         toggled: FirebaseMessaging().notifyGroupUpdates,
         context: context,
-        onTap: _notificationsEnabled? _onGroupsUpdatesToggled : (){},
-        style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
+        onTap: _toggleButtonEnabled? _onGroupsUpdatesToggled : (){},
+        style: _toggleButtonEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
         TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
@@ -204,7 +204,18 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
           style: _groupsSubNotificationsEnabled ? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies.bold) :
           TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 14, fontFamily: Styles().fontFamilies.bold))
     ]))))]));
-
+    widgets.add(Container(color: Styles().colors.white, height: 20));
+    widgets.add(_CustomToggleButton(
+        enabled: _notificationsEnabled,
+        borderRadius: BorderRadius.zero,
+        label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
+        toggled: FirebaseMessaging().notificationsPaused,
+        context: context,
+        onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
+        style: _notificationsEnabled? TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold) :
+        TextStyle(color: Styles().colors.fillColorPrimaryTransparent015, fontSize: 16, fontFamily: Styles().fontFamilies.bold)));
+    widgets.add(Container(color:Styles().colors.surfaceAccent,height: 1,));
+    widgets.add(Container(color: Styles().colors.white, height: 20));
 //    widgets.add(_CustomToggleButton(
 //          enabled: _notificationsEnabled,
 //          borderRadius: _bottomRounding,
@@ -232,15 +243,14 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   void _requestAuthorization(BuildContext context) async {
-    bool notificationsAuthorized = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (notificationsAuthorized) {
+    NotificationsAuthorizationStatus authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationSttus != NotificationsAuthorizationStatus.NotDetermined) {
       _onOpenSystemSettings();
     } else {
-      bool granted = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (granted) {
+      authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("request");
+      if (authorizationSttus == NotificationsAuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
-      print('Notifications granted: $granted');
       _onOpenSystemSettings();
     }
   }
@@ -294,6 +304,13 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
     FirebaseMessaging().notifyGroupUpdates = !FirebaseMessaging().notifyGroupUpdates;
   }
 
+  void _onPauseNotificationsToggled() {
+    if(!_notificationsEnabled)
+      return ;
+    Analytics.instance.logSelect(target: "Pause Notifications");
+    FirebaseMessaging().notificationsPaused = !FirebaseMessaging().notificationsPaused;
+  }
+
   void _onGroupsUpdatesPostsToggled() {
     if(!_notificationsEnabled)
       return ;
@@ -327,11 +344,15 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   bool get _athleticsSubNotificationsEnabled {
-    return (_notificationsEnabled && FirebaseMessaging().notifyAthleticsUpdates);
+    return (FirebaseMessaging().notifyAthleticsUpdates && _toggleButtonEnabled);
   }
 
   bool get _groupsSubNotificationsEnabled {
-    return (_notificationsEnabled && FirebaseMessaging().notifyGroupUpdates);
+    return (FirebaseMessaging().notifyGroupUpdates && _toggleButtonEnabled);
+  }
+
+  bool get _toggleButtonEnabled{
+    return _notificationsEnabled && !FirebaseMessaging().notificationsPaused;
   }
 
   bool get _matchPrivacyLevel{

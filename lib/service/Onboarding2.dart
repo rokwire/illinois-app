@@ -1,10 +1,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Auth2.dart';
-import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
@@ -26,33 +26,53 @@ class Onboarding2 with Service{
     return _instance;
   }
 
-  void finish(BuildContext context) {
-
-    NotificationService().notify(notifyFinished, context);
+  void finalize(BuildContext context) {
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('notifications_auth')) {
+      OnboardingAuthNotificationsPanel authNotificationsPanel = OnboardingAuthNotificationsPanel(onboardingContext:{
+        'onContinueAction':  () {
+          _proceedToLogin(context);
+        }
+      });
+      authNotificationsPanel.onboardingCanDisplayAsync.then((bool result) {
+        if (result) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => authNotificationsPanel));
+        }
+        else {
+          _proceedToLogin(context);
+        }
+      });
+    }
+    else {
+      _proceedToLogin(context);
+    }
   }
-  
-  void proceedToLogin(BuildContext context){
-    if(getPrivacyLevel>=3) {
-      if (Auth2().prefs?.roles?.intersection(Set.from([UserRole.employee, UserRole.student]))?.isNotEmpty ?? false) { //Roles that requires NetId Login
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            OnboardingLoginNetIdPanel(
-              onboardingContext: {"onContinueAction": () {
-                finish(context);
-              }},
-            )));
-      } else { //Phone or Email Login
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            Onboarding2LoginPhoneOrEmailStatementPanel(
-              onboardingContext: {"onContinueAction": () {
-                finish(context);
-              }},
-            )));
-      }
-    } else { //Proceed without login
+
+  void _proceedToLogin(BuildContext context){
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('login_netid')) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
+        "onContinueAction": () {
+          finish(context);
+        }
+      })));
+    }
+    else if (codes.contains('login_phone')) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
+        "onContinueAction": () {
+          finish(context);
+        }
+      })));
+    }
+    else {
       finish(context);
     }
   }
 
+  void finish(BuildContext context) {
+    NotificationService().notify(notifyFinished, context);
+  }
+  
   void storeExploreCampusChoice(bool choice){
     Storage().onBoardingExploreCampus = choice;
   }

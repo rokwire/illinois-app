@@ -49,30 +49,43 @@ class AppDateTime with Service {
   timezone.Location _universityLocation;
   String _localTimeZone;
 
+  @override
+  Future<void> initService() async {
+
+    var byteData = await rootBundle.load('assets/timezone2019a.tzf');
+    var rawData = byteData?.buffer?.asUint8List();
+    if (rawData != null) {
+      timezone.initializeDatabase(rawData);
+    }
+    else {
+      print('AppDateTime: Failed to initialze Timezone database.');
+    }
+
+    _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    if (_localTimeZone != null) {
+      timezone.Location deviceLocation = timezone.getLocation(_localTimeZone);
+      if (deviceLocation != null) {
+        timezone.setLocalLocation(deviceLocation);
+      }
+      else {
+        print('AppDateTime: Failed to initialze Timezone device location.');
+      }
+    }
+    else {
+      print('AppDateTime: Failed to retrieve local timezone.');
+    }
+
+    _universityLocation = timezone.getLocation('America/Chicago');
+    if (_universityLocation == null) {
+      print('AppDateTime: Failed to retrieve university location.');
+    }
+
+    await super.initService();
+  }
+
   DateTime get now {
     DateTime now = Storage().offsetDate;
     return now != null ? now : DateTime.now();
-  }
-
-
-  @override
-  Future<void> initService() async {
-    _init();
-  }
-
-  _init() async {
-    _loadDefaultData().then((rawData) {
-      timezone.initializeDatabase(rawData);
-      timezone.Location deviceLocation = timezone.getLocation(_localTimeZone);
-      timezone.setLocalLocation(deviceLocation);
-      _universityLocation = timezone.getLocation('America/Chicago');
-    });
-  }
-
-  Future<List<int>> _loadDefaultData() async {
-    _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-    var byteData = await rootBundle.load('assets/timezone2019a.tzf');
-    return byteData.buffer.asUint8List();
   }
 
   DateTime dateTimeFromString(String dateTimeString, {String format, bool isUtc = false}) {
@@ -89,10 +102,6 @@ class AppDateTime with Service {
       Log.e(e.toString());
     }
     return dateTime;
-  }
-
-  String utcDateTimeToString(DateTime dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
-    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 
   DateTime getUtcTimeFromDeviceTime(DateTime dateTime) {
@@ -306,5 +315,9 @@ class AppDateTime with Service {
       }
     }
     return null;
+  }
+
+  static String utcDateTimeToString(DateTime dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 }

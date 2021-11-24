@@ -83,7 +83,18 @@ class FlexUI with Service implements NotificationsListener {
     _contentSource = await _loadContentSource();
     _content = _buildContent(_contentSource);
     _features = _buildFeatures(_content);
-    _updateContentSourceFromNet();
+    if (_content != null) {
+      await super.initService();
+      _updateContentSourceFromNet();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'FlexUI Initialization Failed',
+        description: 'Failed to initialize FlexUI content.',
+      );
+    }
   }
 
   @override
@@ -397,9 +408,11 @@ class FlexUI with Service implements NotificationsListener {
           else if ((key == 'phoneOrEmailLoggedIn') && (value is bool)) {
             result = result && ((Auth2().isPhoneLoggedIn || Auth2().isEmailLoggedIn) == value) ;
           }
-          
+          else if ((key == 'accountRole') && (value is String)) {
+            result = result && Auth2().hasRole(value);
+          }
           else if ((key == 'shibbolethMemberOf') && (value is String)) {
-            result = result && Auth2().isMemberOf(value);
+            result = result && Auth2().isShibbolethMemberOf(value);
           }
           else if ((key == 'eventEditor') && (value is bool)) {
             result = result && (Auth2().isEventEditor == value);
