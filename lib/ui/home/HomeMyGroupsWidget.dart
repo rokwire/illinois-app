@@ -125,7 +125,16 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   List<Group> _sortGroups(List<Group> groups){
     if(groups?.isNotEmpty ?? false){
-      groups.sort((group1, group2) => group2.dateUpdatedUtc.compareTo(group1.dateUpdatedUtc));
+      groups.sort((group1, group2) {
+        if (group2.dateUpdatedUtc == null) {
+          return -1;
+        }
+        if (group1.dateUpdatedUtc == null) {
+          return 1;
+        }
+
+        return group2.dateUpdatedUtc.compareTo(group1.dateUpdatedUtc);
+      });
     }
 
     return groups;
