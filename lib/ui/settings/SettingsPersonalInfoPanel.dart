@@ -21,6 +21,7 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -31,7 +32,7 @@ class SettingsPersonalInfoPanel extends StatefulWidget {
   _SettingsPersonalInfoPanelState createState() => _SettingsPersonalInfoPanelState();
 }
 
-class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
+class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> implements NotificationsListener {
 
   TextEditingController _nameController;
   TextEditingController _emailController;
@@ -45,6 +46,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [Auth2.notifyLogout]);
     _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
     _emailController = TextEditingController(text: _initialEmail = Auth2().email ?? "");
     _phoneController = TextEditingController(text: _initialPhone = Auth2().phone ?? "");
@@ -53,10 +55,20 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> {
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLogout) {
+      Navigator.of(context).pop();
+    }
   }
 
   Future<void> _deleteUserData() async{

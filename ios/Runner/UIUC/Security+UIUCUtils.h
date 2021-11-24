@@ -20,5 +20,5 @@
 
 #import <Foundation/Foundation.h>
 
-NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite);
+id uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite);
 

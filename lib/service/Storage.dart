@@ -19,8 +19,10 @@ import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/utils/Crypt.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,15 +39,16 @@ class Storage with Service {
   Storage._internal();
 
   SharedPreferences _sharedPreferences;
+  String _encryptionKey;
+  String _encryptionIV;
 
   @override
   Future<void> initService() async {
     _sharedPreferences = await SharedPreferences.getInstance();
+    _encryptionKey = await NativeCommunicator().encryptionKey(category: 'storage', name: 'iv', size: AESCrypt.kCCBlockSizeAES128);
+    _encryptionIV = await NativeCommunicator().encryptionKey(category: 'storage', name: 'iv', size: AESCrypt.kCCBlockSizeAES128);
     
-    if (_sharedPreferences != null) {
-      await super.initService();
-    }
-    else {
+    if (_sharedPreferences == null) {
       throw ServiceError(
         source: this,
         severity: ServiceErrorSeverity.fatal,
@@ -53,6 +56,30 @@ class Storage with Service {
         description: 'Failed to initialize application preferences storage.',
       );
     }
+    else if ((_encryptionKey == null) || (_encryptionIV == null)) {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'Storage Initialization Failed',
+        description: 'Failed to initialize encryption keys.',
+      );
+    }
+    else {
+      await super.initService();
+    }
+  }
+
+  String get encryptionKey => _encryptionKey;
+  String get encryptionIV => _encryptionIV;
+
+  String encrypt(String value) {
+    return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
+      AESCrypt.encrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
+  }
+
+  String decrypt(String value) {
+    return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
+      AESCrypt.decrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
   }
 
   void deleteEverything(){
@@ -70,8 +97,33 @@ class Storage with Service {
   }
 
   void _setStringWithName(String name, String value) {
-    if(value != null) {
+    if (value != null) {
       _sharedPreferences?.setString(name, value);
+    } else {
+      _sharedPreferences?.remove(name);
+    }
+    NotificationService().notify(notifySettingChanged, name);
+  }
+
+  String _getEncryptedStringWithName(String name, {String defaultValue}) {
+    String value = _sharedPreferences?.getString(name);
+    if (value != null) {
+      if ((_encryptionKey != null) && (_encryptionIV != null)) {
+        value = decrypt(value);
+      }
+      else {
+        value = null;
+      }
+    }
+    return value ?? defaultValue;
+  }
+
+  void _setEncryptedStringWithName(String name, String value) {
+    if (value != null) {
+      if ((_encryptionKey != null) && (_encryptionIV != null)) {
+        value = encrypt(value);
+        _sharedPreferences?.setString(name, value);
+      }
     } else {
       _sharedPreferences?.remove(name);
     }
@@ -83,7 +135,7 @@ class Storage with Service {
   }
 
   void _setStringListWithName(String name, List<String> value) {
-    if(value != null) {
+    if (value != null) {
       _sharedPreferences?.setStringList(name, value);
     } else {
       _sharedPreferences?.remove(name);
@@ -109,7 +161,7 @@ class Storage with Service {
   }
 
   void _setIntWithName(String name, int value) {
-    if(value != null) {
+    if (value != null) {
       _sharedPreferences?.setInt(name, value);
     } else {
       _sharedPreferences?.remove(name);
@@ -117,18 +169,18 @@ class Storage with Service {
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
+  /*double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
     return _sharedPreferences?.getDouble(name) ?? defaultValue;
   }
 
   void _setDoubleWithName(String name, double value) {
-    if(value != null) {
+    if (value != null) {
       _sharedPreferences?.setDouble(name, value);
     } else {
       _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
-  }
+  }*/
 
 
   dynamic operator [](String name) {
@@ -273,20 +325,6 @@ class Storage with Service {
   }
 
   ////////////////////////////
-  // User Relogin Version
-
-  static const String userRefreshPiiVersionKey  = 'user_refresh_pii_version';
-
-  String get userRefreshPiiVersion {
-    return _getStringWithName(userRefreshPiiVersionKey);
-  }
-
-  set userRefreshPiiVersion(String value) {
-    _setStringWithName(userRefreshPiiVersionKey, value);
-
-  }
-
-  ////////////////////////////
   // Upgrade Message Version
 
   static const String _userLoginVersionKey = 'user_login_version';
@@ -318,16 +356,11 @@ class Storage with Service {
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
 
   IlliniCashBallance get illiniCashBallance {
-    try {
-      String jsonString = _getStringWithName(illiniCashBallanceKey);
-      dynamic jsonData = AppJson.decode(jsonString);
-      return (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
-    } on Exception catch (e) { print(e.toString()); }
-    return null;
+    return IlliniCashBallance.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(illiniCashBallanceKey)));
   }
 
   set illiniCashBallance(IlliniCashBallance value) {
-    _setStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
+    _setEncryptedStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
   }
 
   /////////////////////
@@ -343,33 +376,6 @@ class Storage with Service {
     String dateString = _getStringWithName(offsetDateKey);
     return AppString.isStringNotEmpty(dateString) ? AppDateTime()
         .dateTimeFromString(dateString) : null;
-  }
-
-  ////////////////
-  // Privacy level
-
-  static const String privacyLevelKey  = 'illinois_privacy_level';
-
-  set privacyLevel(int value) {
-     _setDoubleWithName(privacyLevelKey, value?.toDouble());
-  }
-
-  int get privacyLevel {
-    return _getDoubleWithName(privacyLevelKey, defaultValue: 5)?.toInt();
-  }
-  
-
-  /////////////////
-  // Face id
-
-  static const String toggleFaceIdKey  = 'toggle_faceid';
-
-  bool get toggleFaceId {
-    return _getBoolWithName(toggleFaceIdKey);
-  }
-
-  set toggleFaceId(bool value) {
-    _setBoolWithName(toggleFaceIdKey, value);
   }
 
   /////////////////
@@ -684,61 +690,61 @@ class Storage with Service {
   static const String _auth2AnonymousTokenKey = 'auth2AnonymousToken';
 
   Auth2Token get auth2AnonymousToken {
-    return Auth2Token.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AnonymousTokenKey)));
+    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousTokenKey)));
   }
 
   set auth2AnonymousToken(Auth2Token value) {
-    _setStringWithName(_auth2AnonymousTokenKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AnonymousTokenKey, AppJson.encode(value?.toJson()));
   }
 
   static const String _auth2AnonymousPrefsKey = 'auth2AnonymousPrefs';
 
   Auth2UserPrefs get auth2AnonymousPrefs {
-    return Auth2UserPrefs.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AnonymousPrefsKey)));
+    return Auth2UserPrefs.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousPrefsKey)));
   }
 
   set auth2AnonymousPrefs(Auth2UserPrefs value) {
-    _setStringWithName(_auth2AnonymousPrefsKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AnonymousPrefsKey, AppJson.encode(value?.toJson()));
   }
 
   static const String _auth2AnonymousProfileKey = 'auth2AnonymousProfile';
 
   Auth2UserProfile get auth2AnonymousProfile {
-    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AnonymousProfileKey)));
+    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousProfileKey)));
   }
 
   set auth2AnonymousProfile(Auth2UserProfile value) {
-    _setStringWithName(_auth2AnonymousProfileKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AnonymousProfileKey, AppJson.encode(value?.toJson()));
   }
 
   static const String _auth2TokenKey = 'auth2Token';
 
   Auth2Token get auth2Token {
-    return Auth2Token.fromJson(AppJson.decodeMap(_getStringWithName(_auth2TokenKey)));
+    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2TokenKey)));
   }
 
   set auth2Token(Auth2Token value) {
-    _setStringWithName(_auth2TokenKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2TokenKey, AppJson.encode(value?.toJson()));
   }
 
   static const String _auth2UiucTokenKey = 'auth2UiucToken';
 
   Auth2Token get auth2UiucToken {
-    return Auth2Token.fromJson(AppJson.decodeMap(_getStringWithName(_auth2UiucTokenKey)));
+    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2UiucTokenKey)));
   }
 
   set auth2UiucToken(Auth2Token value) {
-    _setStringWithName(_auth2UiucTokenKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2UiucTokenKey, AppJson.encode(value?.toJson()));
   }
 
   static const String _auth2AccountKey = 'auth2Account';
 
   Auth2Account get auth2Account {
-    return Auth2Account.fromJson(AppJson.decodeMap(_getStringWithName(_auth2AccountKey)));
+    return Auth2Account.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AccountKey)));
   }
 
   set auth2Account(Auth2Account value) {
-    _setStringWithName(_auth2AccountKey, AppJson.encode(value?.toJson()));
+    _setEncryptedStringWithName(_auth2AccountKey, AppJson.encode(value?.toJson()));
   }
 
   static const String auth2CardTimeKey  = 'auth2CardTime';

@@ -34,6 +34,7 @@
 #import "CGGeometry+InaUtils.h"
 #import "UIColor+InaParse.h"
 #import "Bluetooth+InaUtils.h"
+#import "Security+UIUCUtils.h"
 
 #import <GoogleMaps/GoogleMaps.h>
 #import <MapsIndoors/MapsIndoors.h>
@@ -267,6 +268,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"deviceId"]) {
 		[self handleDeviceIdWithParameters:parameters result:result];
 	}
+	else if ([call.method isEqualToString:@"encryptionKey"]) {
+		[self handleEncryptionKeyWithParameters:parameters result:result];
+	}
 	else if ([call.method isEqualToString:@"enabledOrientations"]) {
 		[self handleEnabledOrientationsWithParameters:parameters result:result];
 	}
@@ -448,6 +452,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleDeviceIdWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	result(self.deviceUUID.UUIDString);
+}
+
+- (void)handleEncryptionKeyWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	result([self encryptionKeyWithParameters:parameters]);
 }
 
 - (void)handleTestWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -855,72 +863,59 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 #pragma mark Device UUID
 
 - (NSUUID*)deviceUUID {
-	static const NSString *deviceUUID = @"deviceUUID";
-
-	NSDictionary *spec = @{
-		(id)kSecClass:       (id)kSecClassGenericPassword,
-		(id)kSecAttrAccount: deviceUUID,
-		(id)kSecAttrGeneric: deviceUUID,
-		(id)kSecAttrService: NSBundle.mainBundle.bundleIdentifier,
-	};
-	
-	NSMutableDictionary *searchRequest = [NSMutableDictionary dictionaryWithDictionary:spec];
-	[searchRequest setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
-	[searchRequest setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
-  [searchRequest setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];
-
-	CFDictionaryRef response = NULL;
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)searchRequest, (CFTypeRef*)&response);
-	if (status == errSecInteractionNotAllowed) {
-		// Could not access data. Error: errSecInteractionNotAllowed
-		return nil;
-	}
-	else if (status == 0) {
-		NSDictionary *attribs = CFBridgingRelease(response);
-		NSData *data = [attribs objectForKey:(id)kSecValueData];
-		NSString *security = [attribs objectForKey:(id)kSecAttrAccessible];
-
-		// If not always accessible then update it to be so
-		if (![security isEqualToString:(id)kSecAttrAccessibleAlways]) {
-			NSDictionary *update = @{
-				(id)kSecAttrAccessible:(id)kSecAttrAccessibleAlways,
-				(id)kSecValueData:data ?: [[NSData alloc] init],
-			};
-
-			SecItemUpdate((CFDictionaryRef)spec, (CFDictionaryRef)update);
-		}
-
-		if (data.length == sizeof(uuid_t)) {
-			return [[NSUUID alloc] initWithUUIDBytes:data.bytes];
-		}
-		else {
-			// update entry bellow
-		}
-	}
-
-	uuid_t uuidData;
-	int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(uuidData), uuidData);
-	if (rndStatus == errSecSuccess) {
-		if (status == 0) {
-			// update existing entry
-			NSDictionary *update = @{
-				(id)kSecAttrAccessible:(id)kSecAttrAccessibleAlways,
-				(id)kSecValueData:[NSData dataWithBytes:uuidData length:sizeof(uuidData)]
-			};
-			status = SecItemUpdate((CFDictionaryRef)spec, (CFDictionaryRef)update);
-		}
-		else {
-			// create new entry
-			NSMutableDictionary *createRequest = [NSMutableDictionary dictionaryWithDictionary:spec];
-			[createRequest setObject:[NSData dataWithBytes:uuidData length:sizeof(uuidData)] forKey:(id)kSecValueData];
-			[createRequest setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
-			status = SecItemAdd((CFDictionaryRef)createRequest, NULL);
-		}
-		return (status == 0) ? [[NSUUID alloc] initWithUUIDBytes:uuidData] : nil;
+	static NSString* const deviceUUID = @"deviceUUID";
+	NSData *data = uiucSecStorageData(deviceUUID, deviceUUID, nil);
+	if ([data isKindOfClass:[NSData class]] && (data.length == sizeof(uuid_t))) {
+		return [[NSUUID alloc] initWithUUIDBytes:data.bytes];
 	}
 	else {
+		uuid_t uuidData;
+		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(uuidData), uuidData);
+		if (rndStatus == errSecSuccess) {
+			NSNumber *result = uiucSecStorageData(deviceUUID, deviceUUID, [NSData dataWithBytes:uuidData length:sizeof(uuidData)]);
+			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
+				return [[NSUUID alloc] initWithUUIDBytes:uuidData];
+			}
+		}
+	}
+	return nil;
+}
+
+#pragma mark Encryption Key
+
+- (id)encryptionKeyWithParameters:(NSDictionary*)parameters {
+	
+	NSString *category = [parameters inaStringForKey:@"category"];
+	if (category == nil) {
 		return nil;
 	}
+
+	NSString *name = [parameters inaStringForKey:@"name"];
+	if (name == nil) {
+		return nil;
+	}
+	
+	NSInteger keySize = [parameters inaIntegerForKey:@"size"];
+	if (keySize <= 0) {
+		return nil;
+	}
+
+	NSData *data = uiucSecStorageData(category, name, nil);
+	if ([data isKindOfClass:[NSData class]] && (data.length == keySize)) {
+		return [data base64EncodedStringWithOptions:0];
+	}
+	else {
+		UInt8 key[keySize];
+		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(key), key);
+		if (rndStatus == errSecSuccess) {
+			data = [NSData dataWithBytes:key length:sizeof(key)];
+			NSNumber *result = uiucSecStorageData(category, name, data);
+			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
+				return [data base64EncodedStringWithOptions:0];
+			}
+		}
+	}
+	return nil;
 }
 
 #pragma mark PKAddPassesViewControllerDelegate
