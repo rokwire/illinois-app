@@ -69,6 +69,19 @@ class Storage with Service {
     }
   }
 
+  String get encryptionKey => _encryptionKey;
+  String get encryptionIV => _encryptionIV;
+
+  String encrypt(String value) {
+    return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
+      AESCrypt.encrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
+  }
+
+  String decrypt(String value) {
+    return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
+      AESCrypt.decrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
+  }
+
   void deleteEverything(){
     if (_sharedPreferences != null) {
       for(String key in _sharedPreferences.getKeys()){
@@ -96,7 +109,7 @@ class Storage with Service {
     String value = _sharedPreferences?.getString(name);
     if (value != null) {
       if ((_encryptionKey != null) && (_encryptionIV != null)) {
-        value = AESCrypt.decrypt(value, key: _encryptionKey, iv: _encryptionIV);
+        value = decrypt(value);
       }
       else {
         value = null;
@@ -108,7 +121,7 @@ class Storage with Service {
   void _setEncryptedStringWithName(String name, String value) {
     if (value != null) {
       if ((_encryptionKey != null) && (_encryptionIV != null)) {
-        value = AESCrypt.encrypt(value, key: _encryptionKey, iv: _encryptionIV);
+        value = encrypt(value);
         _sharedPreferences?.setString(name, value);
       }
     } else {
