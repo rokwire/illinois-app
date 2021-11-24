@@ -55,8 +55,6 @@ public class Constants {
 
     // Shared Prefs
     static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
+    static final String SECURE_SHARED_PREFS_FILE_NAME = "secure_shared_prefs";
     static final String LOCATION_PERMISSIONS_REQUESTED_KEY = "location_permissions_requested";
-
-    //Encryption Key
-    static final String ENCRYPTION_SHARED_PREFS_FILE_NAME = "encryption_shared_prefs";
 }

@@ -788,37 +788,24 @@ public class Utils {
         }
     }
 
+    public static class AppSecureSharedPrefs {
 
-    public static class BackupStorage {
-
-        public static String getString(Context context, String fileName, String key) {
-            if ((context == null) || Str.isEmpty(fileName) || Str.isEmpty(key)) {
-                return null;
+        public static String getString(Context context, String key, String defaults) {
+            if ((context == null) || Str.isEmpty(key)) {
+                return defaults;
             }
-            SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-            return sharedPreferences.getString(key, null);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SECURE_SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+            return sharedPreferences.getString(key, defaults);
         }
 
-        public static void saveString(Context context, String fileName, String key, String value) {
-            if ((context == null) || Str.isEmpty(fileName) || Str.isEmpty(key)) {
+        public static void saveString(Context context, String key, String value) {
+            if ((context == null) || Str.isEmpty(key)) {
                 return;
             }
-            SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SECURE_SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(key, value);
             editor.apply();
-            AppBackupAgent.requestBackup(context);
-        }
-
-        public static void remove(Context context, String fileName, String key) {
-            if ((context == null) || Str.isEmpty(fileName) || Str.isEmpty(key)) {
-                return;
-            }
-            SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(key);
-            editor.apply();
-            AppBackupAgent.requestBackup(context);
         }
     }
 

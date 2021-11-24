@@ -417,7 +417,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             return null;
         }
         String storageKey = String.format("%s.%s", category, name);
-        String base64KeyValue = Utils.BackupStorage.getString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, storageKey);
+        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, storageKey);
         byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
         if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
             return base64KeyValue;
@@ -426,7 +426,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             SecureRandom secRandom = new SecureRandom();
             secRandom.nextBytes(keyBytes);
             base64KeyValue = Utils.Base64.encode(keyBytes);
-            Utils.BackupStorage.saveString(this, Constants.ENCRYPTION_SHARED_PREFS_FILE_NAME, storageKey, base64KeyValue);
+            Utils.AppSecureSharedPrefs.saveString(this, storageKey, base64KeyValue);
             return base64KeyValue;
         }
     }
