@@ -908,7 +908,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		UInt8 key[keySize];
 		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(key), key);
 		if (rndStatus == errSecSuccess) {
-			NSNumber *result = uiucSecStorageData(category, name, [NSData dataWithBytes:key length:sizeof(key)]);
+			data = [NSData dataWithBytes:key length:sizeof(key)];
+			NSNumber *result = uiucSecStorageData(category, name, data);
 			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
 				return [data base64EncodedStringWithOptions:0];
 			}
