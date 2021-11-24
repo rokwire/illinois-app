@@ -1054,9 +1054,9 @@
 	"panel.settings.verify_identity.label.connect_id.desription4":"教员 ",
 	"panel.settings.verify_identity.label.connect_id.desription5":"? 用你的NetID登陆查看伊利诺伊的具体信息，比如你的Illini现金和膳食计划.",
 	"panel.settings.verify_identity.button.connect_net_id.title":"连接您的NETID",
-	"panel.settings.verify_identity.label.verify_phone.desription1":"没有NETID",
-	"panel.settings.verify_identity.label.verify_phone.desription2":"? 验证您的电话号码以保存您的首选项，并在多个设备上拥有相同的体验. ",
-	"panel.settings.verify_identity.button.verify_phone.title":"验证您的电话号码",
+	"panel.settings.verify_identity.label.phone_or_email.desription1":"没有NETID",
+	"panel.settings.verify_identity.label.phone_or_email.desription2":"? 驗證您的電話號碼或通過電子郵件登錄以保存您的偏好並在多台設備上獲得相同的體驗.",
+	"panel.settings.verify_identity.button.phone_or_phone.title":"繼續",
 
 	"panel.settings.login.netid.label.title":"连接您的NETID",
 	"panel.settings.login.netid.button.dont_continue.title":"现在不行",

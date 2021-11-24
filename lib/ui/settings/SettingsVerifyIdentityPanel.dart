@@ -16,10 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/settings/SettingsLoginNetIdPanel.dart';
-import 'package:illinois/ui/settings/SettingsLoginPhonePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -94,9 +95,9 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
               text: TextSpan(
                 style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
                 children: <TextSpan>[
-                  TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.verify_phone.desription1", "Don’t have a NetID"),
+                  TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription1", "Don’t have a NetID"),
                       style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.bold, fontSize: 16)),
-                  TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.verify_phone.desription2", "? Verify your phone number to save your preferences and have the same experience on more than one device. ")),
+                  TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.phone_or_email.desription2", "? Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
                 ],
               ),
             )
@@ -104,24 +105,41 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
         Container(height: 12,),
         Container(padding: EdgeInsets.symmetric(horizontal: 16),
             child:RibbonButton(
-                label: Localization().getStringEx("panel.settings.verify_identity.button.verify_phone.title", "Verify Your Phone Number"),
+                label: Localization().getStringEx("panel.settings.verify_identity.button.phone_or_phone.title", "Proceed"),
                 borderRadius: BorderRadius.circular(4),
-                onTap: _onTapVerifyPhone
+                onTap: _onTapProceed
             )),
     ],);
   }
 
-  _onTapConnectNetId(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginNetIdPanel())).then((success){
-      if(success??false){
-        Navigator.pop(context);
+  void _onTapConnectNetId() {
+    Auth2().authenticateWithOidc().then((success) {
+      if (success) {
+        _didLogin(context);
       }
     });
   }
-  _onTapVerifyPhone(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsLoginPhonePanel())).then((success){
-      if(success??false){
-        Navigator.pop(context);
+
+  void _onTapProceed() {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            settings: RouteSettings(),
+            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(onboardingContext: {
+                  "onContinueAction": () {
+                    _didLogin(context);
+                  }
+                })));
+  }
+
+  void _didLogin(_) {
+    Navigator.of(context)?.popUntil((Route route) {
+      bool isCurrent = (AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
+      if (isCurrent) {
+        Navigator.of(context).pop();
+        return true;
+      } else {
+        return false;
       }
     });
   }
