@@ -287,7 +287,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'building_status') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Status'),
+        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         color: Styles().colors.fillColorPrimary,
@@ -676,7 +676,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateToBuildingStatus() {
-    Analytics().logSelect(target: 'Building Status');
+    Analytics().logSelect(target: 'Building Entry');
     //Navigator.push(context, CupertinoPageRoute(
     //  builder: (context) => IDCardPanel()
     //));
