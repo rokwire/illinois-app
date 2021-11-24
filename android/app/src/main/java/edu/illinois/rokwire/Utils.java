@@ -54,8 +54,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.lang.Exception;
 
 import androidx.core.content.ContextCompat;
+import androidx.security.crypto.MasterKeys;
+import androidx.security.crypto.EncryptedSharedPreferences;
 import edu.illinois.rokwire.maps.MapMarkerViewType;
 
 import static android.view.View.GONE;
@@ -791,22 +794,46 @@ public class Utils {
     public static class AppSecureSharedPrefs {
 
         public static String getString(Context context, String key, String defaults) {
-            if ((context == null) || Str.isEmpty(key)) {
-                return defaults;
+            if ((context != null) && !Str.isEmpty(key)) {
+                try {
+                    SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                        Constants.SECURE_SHARED_PREFS_FILE_NAME,
+                        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+                        context,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    );
+                    return sharedPreferences.getString(key, defaults);
+                }
+                catch (Exception e) {
+                    Log.e("Error", "Failed to create EncryptedSharedPreferences");
+                    e.printStackTrace();
+                }
             }
-            SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SECURE_SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE);
-            return sharedPreferences.getString(key, defaults);
+            return defaults;
         }
 
         public static void saveString(Context context, String key, String value) {
-            if ((context == null) || Str.isEmpty(key)) {
-                return;
+            if ((context != null) && !Str.isEmpty(key)) {
+                try {
+                    SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                        Constants.SECURE_SHARED_PREFS_FILE_NAME,
+                        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+                        context,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    );
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(key, value);
+                    editor.apply();
+                }
+                catch (Exception e) {
+                    Log.e("Error", "Failed to create EncryptedSharedPreferences");
+                    e.printStackTrace();
+                }
             }
-            SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SECURE_SHARED_PREFS_FILE_NAME, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(key, value);
-            editor.apply();
         }
+
     }
 
     public enum ExploreType {
