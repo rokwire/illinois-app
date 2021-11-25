@@ -404,20 +404,15 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     }
 
     private Object handleEncryptionKey(Object params) {
-        String category = Utils.Map.getValueFromPath(params, "category", null);
-        if (Utils.Str.isEmpty(category)) {
-            return null;
-        }
-        String name = Utils.Map.getValueFromPath(params, "name", null);
-        if (Utils.Str.isEmpty(name)) {
+        String identifier = Utils.Map.getValueFromPath(params, "identifier", null);
+        if (Utils.Str.isEmpty(identifier)) {
             return null;
         }
         int keySize = Utils.Map.getValueFromPath(params, "size", 0);
         if (keySize <= 0) {
             return null;
         }
-        String storageKey = String.format("%s.%s", category, name);
-        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, storageKey, null);
+        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, identifier, null);
         byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
         if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
             return base64KeyValue;
@@ -426,7 +421,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             SecureRandom secRandom = new SecureRandom();
             secRandom.nextBytes(keyBytes);
             base64KeyValue = Utils.Base64.encode(keyBytes);
-            Utils.AppSecureSharedPrefs.saveString(this, storageKey, base64KeyValue);
+            Utils.AppSecureSharedPrefs.saveString(this, identifier, base64KeyValue);
             return base64KeyValue;
         }
     }

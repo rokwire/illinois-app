@@ -21,12 +21,16 @@
 #import "Security+UIUCUtils.h"
 
 id uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite) {
-	NSDictionary *spec = @{
+	NSMutableDictionary *spec = [NSMutableDictionary dictionaryWithDictionary:@{
 		(id)kSecClass:       (id)kSecClassGenericPassword,
 		(id)kSecAttrAccount: account,
-		(id)kSecAttrGeneric: generic,
+//	(id)kSecAttrGeneric: generic,
 		(id)kSecAttrService: NSBundle.mainBundle.bundleIdentifier,
-	};
+	}];
+	
+	if (generic != nil) {
+		[spec setObject:generic forKey:(id)kSecAttrGeneric];
+	}
 	
 	NSMutableDictionary *searchRequest = [NSMutableDictionary dictionaryWithDictionary:spec];
 	[searchRequest setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
