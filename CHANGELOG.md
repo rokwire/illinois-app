@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- My Groups widget not displaying on home page [#1021](https://github.com/rokwire/illinois-app/issues/1021)
+- Disable local data backup on Android [#1019](https://github.com/rokwire/illinois-app/issues/1019)
+- Use different values for storage encryption key and IV [#1016](https://github.com/rokwire/illinois-app/issues/1016)
+
+## [3.0.53] - 2021-11-24
 ### Changed
 - "Building Entry" button title in Browse panel changed to "Building Entry" [#1008](https://github.com/rokwire/illinois-app/issues/1008).
 - Encrypt sensitive data stored on local storage and settings [#1016](https://github.com/rokwire/illinois-app/issues/1016).
