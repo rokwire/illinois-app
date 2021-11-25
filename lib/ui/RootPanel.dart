@@ -45,6 +45,7 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
@@ -108,6 +109,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifyHomeNotification,
+      FirebaseMessaging.notifyInboxNotification,
       ExploreService.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -218,6 +221,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyHomeNotification) {
+      _onFirebaseHomeNotification();
+    }
+    else if (name == FirebaseMessaging.notifyInboxNotification) {
+      _onFirebaseInboxNotification();
     }
   }
 
@@ -625,6 +634,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         }
       });
     }
+  }
+
+  void _onFirebaseHomeNotification() {
+    // Pop to Home Panel and select the first tab
+    Navigator.of(context)?.popUntil((route) => route.isFirst);
+    selectTab(rootTab: RootTab.Home);
+  }
+
+  void _onFirebaseInboxNotification() {
+    Navigator.of(context)?.push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 }
 

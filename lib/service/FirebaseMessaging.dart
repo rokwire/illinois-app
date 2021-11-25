@@ -64,6 +64,8 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String notifyAthleticsNewsUpdated  = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
   static const String notifySettingUpdated        = "edu.illinois.rokwire.firebase.messaging.setting.updated";
   static const String notifyGroupsNotification    = "edu.illinois.rokwire.firebase.messaging.groups.updated";
+  static const String notifyHomeNotification      = "edu.illinois.rokwire.firebase.messaging.home";
+  static const String notifyInboxNotification     = "edu.illinois.rokwire.firebase.messaging.inbox";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -368,6 +370,12 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
     else if (type == "group") {
       NotificationService().notify(notifyGroupsNotification, data);
+    }
+    else if (type == "home") {
+      NotificationService().notify(notifyHomeNotification, data);
+    }
+    else if (type == "inbox") {
+      NotificationService().notify(notifyInboxNotification, data);
     }
     else {
       Log.d("FCM: unknown message type: $type");
