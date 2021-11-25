@@ -1091,6 +1091,11 @@
     "panel.settings.notifications.dining":"Especiales gastronómicos",
     "panel.settings.notifications.label.status.enabled":"Habilitado",
     "panel.settings.notifications.label.status.disabled":"Dishabilitado",
+    "panel.settings.notifications.group_updates": "Group updates",
+    "panel.settings.notifications.group_updates.posts.label": "Posts",
+    "panel.settings.notifications.group_updates.event.label": "Event",
+    "panel.settings.notifications.group_updates.invitations.label": "Invitations",
+    "panel.settings.notifications.pause_notifications": "Pause all notifications",
 
     "panel.settings.personal_information.label.title":"Informacion personal",
     "panel.settings.personal_information.button.delete_data.title":"Borrar mis datos personales",
@@ -1837,6 +1842,7 @@
     "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
+    "panel.groups_all_events.label.heading": "Upcoming Events",
 
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
