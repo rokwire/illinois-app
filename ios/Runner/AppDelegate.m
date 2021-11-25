@@ -885,13 +885,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (id)encryptionKeyWithParameters:(NSDictionary*)parameters {
 	
-	NSString *category = [parameters inaStringForKey:@"category"];
-	if (category == nil) {
-		return nil;
-	}
-
-	NSString *name = [parameters inaStringForKey:@"name"];
-	if (name == nil) {
+	NSString *identifier = [parameters inaStringForKey:@"identifier"];
+	if (identifier == nil) {
 		return nil;
 	}
 	
@@ -900,7 +895,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		return nil;
 	}
 
-	NSData *data = uiucSecStorageData(category, name, nil);
+	NSData *data = uiucSecStorageData(identifier, nil, nil);
 	if ([data isKindOfClass:[NSData class]] && (data.length == keySize)) {
 		return [data base64EncodedStringWithOptions:0];
 	}
@@ -909,7 +904,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(key), key);
 		if (rndStatus == errSecSuccess) {
 			data = [NSData dataWithBytes:key length:sizeof(key)];
-			NSNumber *result = uiucSecStorageData(category, name, data);
+			NSNumber *result = uiucSecStorageData(identifier, nil, data);
 			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
 				return [data base64EncodedStringWithOptions:0];
 			}
