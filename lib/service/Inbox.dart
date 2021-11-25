@@ -15,7 +15,6 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
-/// Inbox service does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
 class Inbox with Service implements NotificationsListener {
 
   static const String notifyInboxUserInfoChanged   = "edu.illinois.rokwire.inbox.user.info.changed";
