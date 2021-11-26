@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduce groups BB login API [#1030](https://github.com/rokwire/illinois-app/issues/1030).
 ### Changed
 - Personal Info pane enhancement [#1027](https://github.com/rokwire/illinois-app/issues/1027).
+- Settings enhancement [#1028](https://github.com/rokwire/illinois-app/issues/1028).
 
 ## [3.0.54] - 2021-11-25
 ### Fixed
