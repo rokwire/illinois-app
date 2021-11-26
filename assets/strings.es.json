@@ -1098,7 +1098,11 @@
     "panel.settings.notifications.pause_notifications": "Pause all notifications",
 
     "panel.settings.personal_information.label.title":"Informacion personal",
+<<<<<<< .merge_file_gl6KL2
+    "panel.settings.personal_information.button.delete_data.title":"Borrar mis datos personales",
+=======
     "panel.settings.personal_information.button.delete_data.title":"Delete my personal information",
+>>>>>>> .merge_file_5ZaT1D
     "panel.settings.personal_information.label.description":"Elimina tu historial de ubicaciones, tus etiquetas y categorías, y los eventos guardados y los lugares para comer.",
     "panel.settings.personal_information.button.personal_information.title":"Informacion personal",
     "panel.settings.personal_information.button.personal_information.description":"Tu nombre e información de contacto que has compartido",
@@ -1108,11 +1112,19 @@
     "panel.settings.personal_information.button.interest.description":"Categorías, equipos y etiquetas que sigues",
     "panel.settings.personal_information.button.food_filters.title":"Filtro de alimentos",
     "panel.settings.personal_information.button.food_filters.description":"Agrega o edita tus preferencias de comida",
+<<<<<<< .merge_file_gl6KL2
+    "panel.settings.personal_information.label.delete_message.title":"¿Eliminar sus datos personales?",
+    "panel.settings.personal_information.label.delete_message.description1":"Seleccione todo lo que le gustaría ",
+    "panel.settings.personal_information.label.delete_message.description2":"Permanentemente ",
+    "panel.settings.personal_information.label.delete_message.description3":"Eliminar:",
+    "panel.settings.personal_information.button.forget_info.title": "Eliminar mis datos",
+=======
     "panel.settings.personal_information.label.delete_message.title":"Delete your personal information?",
     "panel.settings.personal_information.label.delete_message.description1":"Seleccione todo lo que le gustaría ",
     "panel.settings.personal_information.label.delete_message.description2":"Permanentemente ",
     "panel.settings.personal_information.label.delete_message.description3":"Eliminar:",
     "panel.settings.personal_information.button.forget_info.title": "Delete My Information",
+>>>>>>> .merge_file_5ZaT1D
 
     "panel.settings.new_privacy.privacy.label.title": "Elija su nivel de privacidad",
     "panel.settings.new_privacy.privacy.label.slider_help": "Ajuste el control deslizante para cambiar su nivel de privacidad",
