@@ -1098,7 +1098,7 @@
     "panel.settings.notifications.pause_notifications": "Pause all notifications",
 
     "panel.settings.personal_information.label.title":"Personal Information",
-    "panel.settings.personal_information.button.delete_data.title":"Delete my personal data",
+    "panel.settings.personal_information.button.delete_data.title":"Delete my personal information",
     "panel.settings.personal_information.label.description":"Delete your location history, your tags and categories, and saved events and dining locations.",
     "panel.settings.personal_information.button.personal_information.title":"Personal Information",
     "panel.settings.personal_information.button.personal_information.description":"Your name and contact info you’ve shared",
@@ -1108,11 +1108,11 @@
     "panel.settings.personal_information.button.interest.description":"Categories, teams, and tags you follow",
     "panel.settings.personal_information.button.food_filters.title":"Food Filters",
     "panel.settings.personal_information.button.food_filters.description":"Add or edit your food preferences",
-    "panel.settings.personal_information.label.delete_message.title":"Delete your personal data?",
+    "panel.settings.personal_information.label.delete_message.title":"Delete your personal information?",
     "panel.settings.personal_information.label.delete_message.description1":"Select all that you would like to ",
     "panel.settings.personal_information.label.delete_message.description2":"Permanently ",
     "panel.settings.personal_information.label.delete_message.description3":"delete:",
-    "panel.settings.personal_information.button.forget_info.title": "Delete My Data",
+    "panel.settings.personal_information.button.forget_info.title": "Delete My Information",
 
     "panel.settings.new_privacy.privacy.label.title": "Choose Your Privacy Level",
     "panel.settings.new_privacy.privacy.label.slider_help": "Adjust slider to change your privacy level",
