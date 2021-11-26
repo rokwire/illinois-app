@@ -824,11 +824,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
           onTap: _onTapDeleteData,
         ),
-        Container(height: 16,),
-        ExcludeSemantics(
-        child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),)),
     ],),);
   }
 
