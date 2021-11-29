@@ -138,7 +138,7 @@ class Network  {
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await _refreshToken(auth)) {
+        if (await _refreshToken(auth) == true) {
           response = await _get(url, body: body, headers: headers, auth: auth, client: client, timeout: timeout);
         }
       }
@@ -177,7 +177,7 @@ class Network  {
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await _refreshToken(auth)) {
+        if (await _refreshToken(auth) == true) {
           response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
         }
       }
@@ -222,7 +222,7 @@ class Network  {
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await _refreshToken(auth)) {
+        if (await _refreshToken(auth) == true) {
           response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
         }
       }
@@ -261,7 +261,7 @@ class Network  {
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await _refreshToken(auth)) {
+        if (await _refreshToken(auth) == true) {
           response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
         }
       }
@@ -299,7 +299,7 @@ class Network  {
       response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       
       if ((response is Http.Response) && _requiresRefreshToken(response, auth)) {
-        if (await _refreshToken(auth)) {
+        if (await _refreshToken(auth) == true) {
           response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
         }
       }
@@ -368,9 +368,10 @@ class Network  {
           url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
 
       if (refreshToken && (response is Http.BaseResponse) && _requiresRefreshToken(response, auth)) {
-        await Auth2().refreshToken();
-        response = await _multipartPost(
-            url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
+        if (await _refreshToken(auth) == true) {
+          response = await _multipartPost(
+              url: url, fileKey: fileKey, fileBytes: fileBytes, fileName: fileName, contentType: contentType, headers: headers, fields: fields, auth: auth);
+        }
       }
     } catch (e) {
       Log.d(e?.toString());
