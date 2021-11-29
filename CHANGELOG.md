@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.56] - 2021-11-29
 ### Fixed
 - Fixed Group my Home Panel widget refresh issue [#1037](https://github.com/rokwire/illinois-app/issues/1037). 
 - Fixed token creation in refresh token [#1036](https://github.com/rokwire/illinois-app/issues/1036). 
