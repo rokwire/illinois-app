@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- "Are you student or faculty member" updated to "Are you university student or employee" [#1007](https://github.com/rokwire/illinois-app/issues/1007).
 
 ## [3.0.55] - 2021-11-26
 ### Added

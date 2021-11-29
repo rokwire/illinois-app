@@ -266,11 +266,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 children: <TextSpan>[
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "student"),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "faculty member"),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
