@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed Group my Home Panel widget refresh issue [#1037](https://github.com/rokwire/illinois-app/issues/1037). 
 ### Changed
 - "Are you student or faculty member" updated to "Are you university student or employee" [#1007](https://github.com/rokwire/illinois-app/issues/1007).
 
