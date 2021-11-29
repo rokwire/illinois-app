@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed Group my Home Panel widget refresh issue [#1037](https://github.com/rokwire/illinois-app/issues/1037). 
 - Fixed token creation in refresh token [#1036](https://github.com/rokwire/illinois-app/issues/1036). 
+- Fixed adding existing event to a group does not work if you search for the event [#981](https://github.com/rokwire/illinois-app/issues/981).
 ### Changed
 - "Are you student or faculty member" updated to "Are you university student or employee" [#1007](https://github.com/rokwire/illinois-app/issues/1007).
 

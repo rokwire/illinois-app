@@ -246,6 +246,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ExploreDisplayTypeHeader(
           displayType: _displayType,
           searchVisible: (_selectedTab != ExploreTab.Dining),
+          additionalData: {"group_id": widget.browseGroupId},
           onTapList: () => _selectDisplayType(ListMapDisplayType.List),
           onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
           Padding(padding: EdgeInsets.all(12), child:
