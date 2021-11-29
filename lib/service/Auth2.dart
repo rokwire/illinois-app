@@ -711,8 +711,9 @@ class Auth2 with Service implements NotificationsListener {
         if (_refreshTokenFuture != null) {
           Log.d("Auth2: will await refresh token");
           Response response = await _refreshTokenFuture;
-          Auth2Token responseToken = (response?.statusCode == 200) ? Auth2Token.fromJson(AppJson.decodeMap(response?.body)) : null;
-          Log.d("Auth2: did await refresh token: ${response?.statusCode}\n${response?.body}");
+          Map<String, dynamic> responseJson = AppJson.decodeMap(response?.body);
+          Auth2Token responseToken = (responseJson != null) ? Auth2Token.fromJson(AppJson.mapValue(responseJson['token'])) : null;
+          Log.d("Auth2: did await refresh token: ${responseToken?.isValid} ${response?.statusCode} ${response?.body}");
           return ((responseToken != null) && responseToken.isValid) ? responseToken : null;
         }
         else {
