@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Change Core BB account exists endpoint path [#1054](https://github.com/rokwire/illinois-app/issues/1054)
+
 ## [3.0.58] - 2021-12-01
 ### Fixed
 - Handle FCM data notifications (iOS) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
