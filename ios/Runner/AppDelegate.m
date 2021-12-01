@@ -706,10 +706,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
 }
 
-- (void)processPushNotification:(NSDictionary*)userInfo {
-	[[FIRMessaging messaging] appDidReceiveMessage:userInfo];
-}
-
 #pragma mark LocationServices
 
 - (void)queryLocationServicesPermisionWithFlutterResult:(FlutterResult)result {
@@ -885,13 +881,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (id)encryptionKeyWithParameters:(NSDictionary*)parameters {
 	
-	NSString *category = [parameters inaStringForKey:@"category"];
-	if (category == nil) {
-		return nil;
-	}
-
-	NSString *name = [parameters inaStringForKey:@"name"];
-	if (name == nil) {
+	NSString *identifier = [parameters inaStringForKey:@"identifier"];
+	if (identifier == nil) {
 		return nil;
 	}
 	
@@ -900,7 +891,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		return nil;
 	}
 
-	NSData *data = uiucSecStorageData(category, name, nil);
+	NSData *data = uiucSecStorageData(identifier, nil, nil);
 	if ([data isKindOfClass:[NSData class]] && (data.length == keySize)) {
 		return [data base64EncodedStringWithOptions:0];
 	}
@@ -909,7 +900,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(key), key);
 		if (rndStatus == errSecSuccess) {
 			data = [NSData dataWithBytes:key length:sizeof(key)];
-			NSNumber *result = uiucSecStorageData(category, name, data);
+			NSNumber *result = uiucSecStorageData(identifier, nil, data);
 			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
 				return [data base64EncodedStringWithOptions:0];
 			}
@@ -974,23 +965,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSLog(@"UIApplication: UNUserNotificationCenter willPresentNotification:\n%@", userInfoString);
 	
 	completionHandler(UNNotificationPresentationOptionAlert|UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
-	NSDictionary *userInfo = response.notification.request.content.userInfo;
-	NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:userInfo options:0 error:NULL];
-	NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-	NSLog(@"UIApplication: UNUserNotificationCenter didReceiveNotificationResponse (%@):\n%@", response.actionIdentifier, userInfoString);
-
-	if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
-		// The user dismissed the notification without taking action.
-	}
-	else if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-		// The user launched the app.
-		[self processPushNotification:response.notification.request.content.userInfo];
-	}
-
-	completionHandler();
 }
 
 #pragma mark FIRMessagingDelegate

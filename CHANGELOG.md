@@ -5,6 +5,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.58] - 2021-12-01
+### Fixed
+- Handle FCM data notifications (iOS) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
+- Android: release builds [#1046](https://github.com/rokwire/illinois-app/issues/1046).
+### Added
+- Implement Inbox group message tap action [#1048](https://github.com/rokwire/illinois-app/issues/1048).
+- Hook Notifications Delete user API [#1050](https://github.com/rokwire/illinois-app/issues/1050).
+- Hook Groups delete user API [#1052](https://github.com/rokwire/illinois-app/issues/1052).
+
+## [3.0.57] - 2021-11-30
+### Fixed
+- Handle FCM data notifications when app is on background or killed (Android only) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
+
+## [3.0.56] - 2021-11-29
+### Fixed
+- Fixed Group my Home Panel widget refresh issue [#1037](https://github.com/rokwire/illinois-app/issues/1037). 
+- Fixed token creation in refresh token [#1036](https://github.com/rokwire/illinois-app/issues/1036). 
+- Fixed adding existing event to a group does not work if you search for the event [#981](https://github.com/rokwire/illinois-app/issues/981).
+### Changed
+- "Are you student or faculty member" updated to "Are you university student or employee" [#1007](https://github.com/rokwire/illinois-app/issues/1007).
+
+## [3.0.55] - 2021-11-26
+### Added
+- Introduce groups BB login API [#1030](https://github.com/rokwire/illinois-app/issues/1030).
+### Changed
+- Personal Info pane enhancement [#1027](https://github.com/rokwire/illinois-app/issues/1027).
+- Settings enhancement [#1028](https://github.com/rokwire/illinois-app/issues/1028).
+
+## [3.0.54] - 2021-11-25
+### Fixed
+- My Groups widget not displaying on home page [#1021](https://github.com/rokwire/illinois-app/issues/1021).
+- Disable local data backup on Android [#1019](https://github.com/rokwire/illinois-app/issues/1019).
+- Use different values for storage encryption key and IV [#1016](https://github.com/rokwire/illinois-app/issues/1016).
+- Improve Accessibility [#1013](https://github.com/rokwire/illinois-app/issues/1013).
+### Added
+- Acknowledge FCM messages to redirect user to Home panel and Inbox [#1024](https://github.com/rokwire/illinois-app/issues/1024).
+
 ## [3.0.53] - 2021-11-24
 ### Changed
 - "Building Entry" button title in Browse panel changed to "Building Entry" [#1008](https://github.com/rokwire/illinois-app/issues/1008).

@@ -509,7 +509,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.1.title', "Browse privately");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore privately ");
       case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.3.title', "Personalized for you");
-      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.4.title', "Personalized for you");//TBD 4
+      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.4.title', "Personalized for you");
       case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.5.title', "Full access");
     }
     return description;
@@ -522,7 +522,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.1.title', "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.2.title', "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.");
       case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.3.title', "Based on your answers, your data will be securely stored for you to access.");
-      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.4.title', "Based on your answers, your data will be securely stored for you to access.");//TBD 4
+      case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.4.title', "Based on your answers, your data will be securely stored for you to access.");
       case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.5.title', "Based on your answers, your data will be securely stored and shared to enable the full smarts of the Illinois app.");
     }
     return description;

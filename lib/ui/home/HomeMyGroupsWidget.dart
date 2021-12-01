@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:illinois/model/Groups.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
@@ -22,11 +24,18 @@ class HomeMyGroupsWidget extends StatefulWidget {
 class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
   List<Group> _myGroups;
   PageController _pageController;
+  DateTime _pausedDateTime;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated, Groups.notifyGroupDeleted, Auth2.notifyLoginChanged]);
+    NotificationService().subscribe(this, [
+      Groups.notifyUserMembershipUpdated,
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupDeleted,
+      Auth2.notifyLoginChanged,
+      AppLivecycle.notifyStateChanged,]);
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
         _loadGroups();
@@ -125,7 +134,16 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   List<Group> _sortGroups(List<Group> groups){
     if(groups?.isNotEmpty ?? false){
-      groups.sort((group1, group2) => group2.dateUpdatedUtc.compareTo(group1.dateUpdatedUtc));
+      groups.sort((group1, group2) {
+        if (group2.dateUpdatedUtc == null) {
+          return -1;
+        }
+        if (group1.dateUpdatedUtc == null) {
+          return 1;
+        }
+
+        return group2.dateUpdatedUtc.compareTo(group1.dateUpdatedUtc);
+      });
     }
 
     return groups;
@@ -134,12 +152,28 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   @override
   void onNotification(String name, param) {
-    if(name == Groups.notifyUserMembershipUpdated){
-      setState(() {});
+    if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
-    else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted) || (name == Auth2.notifyLoginChanged)) {
-      if (mounted) {
+    else if ((name == Groups.notifyGroupCreated) ||
+      (name == Groups.notifyGroupUpdated) ||
+      (name == Groups.notifyGroupDeleted) ||
+      (name == Groups.notifyUserMembershipUpdated) ||
+      (name == Auth2.notifyLoginChanged)) {
         _loadGroups();
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadGroups();
+        }
       }
     }
   }

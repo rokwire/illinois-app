@@ -72,7 +72,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies.regular,
-                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal data"),
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
                   shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
@@ -171,13 +171,13 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   void _onTapDeleteData(){
     SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.personal_information.label.delete_message.title", "Delete your personal data?"),
+        title: Localization().getStringEx("panel.settings.personal_information.label.delete_message.title", "Delete your personal information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description1", "Select all that you would like to ")),
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description3", "delete:")),
         ],
-        continueTitle: Localization().getStringEx("panel.settings.personal_information.button.forget_info.title","Delete My Data"),
+        continueTitle: Localization().getStringEx("panel.settings.personal_information.button.forget_info.title","Delete My Information"),
         options: [OptionYourInterests,OptionFoodFilters],
         onContinue: _onDelete
     );

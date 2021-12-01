@@ -15,7 +15,6 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
-/// Inbox service does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
 class Inbox with Service implements NotificationsListener {
 
   static const String notifyInboxUserInfoChanged   = "edu.illinois.rokwire.inbox.user.info.changed";
@@ -44,6 +43,7 @@ class Inbox with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifyToken,
       Auth2.notifyLoginChanged,
+      Auth2.notifyPrepareUserDelete,
       AppLivecycle.notifyStateChanged,
     ]);
   }
@@ -82,6 +82,8 @@ class Inbox with Service implements NotificationsListener {
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param); 
+    } else if (name == Auth2.notifyPrepareUserDelete){
+      _deleteUser();
     }
   }
 
@@ -304,6 +306,19 @@ class Inbox with Service implements NotificationsListener {
       Storage().inboxUserInfo = _userInfo = userInfo;
       NotificationService().notify(notifyInboxUserInfoChanged);
     } //else it's the same
+  }
+
+  //Delete User
+  void _deleteUser() async{
+    try {
+      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
+      if(response?.statusCode == 200) {
+        _applyUserInfo(null);
+      }
+    } catch (e) {
+      Log.e('Failed to load inbox user info');
+      Log.e(e.toString());
+    }
   }
 
   InboxUserInfo get userInfo{

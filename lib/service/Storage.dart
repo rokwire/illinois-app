@@ -45,8 +45,8 @@ class Storage with Service {
   @override
   Future<void> initService() async {
     _sharedPreferences = await SharedPreferences.getInstance();
-    _encryptionKey = await NativeCommunicator().encryptionKey(category: 'storage', name: 'iv', size: AESCrypt.kCCBlockSizeAES128);
-    _encryptionIV = await NativeCommunicator().encryptionKey(category: 'storage', name: 'iv', size: AESCrypt.kCCBlockSizeAES128);
+    _encryptionKey = await NativeCommunicator().encryptionKey(identifier: 'edu.illinois.rokwire.encryption.storage.key', size: AESCrypt.kCCBlockSizeAES128);
+    _encryptionIV = await NativeCommunicator().encryptionKey(identifier: 'edu.illinois.rokwire.encryption.storage.iv', size: AESCrypt.kCCBlockSizeAES128);
     
     if (_sharedPreferences == null) {
       throw ServiceError(

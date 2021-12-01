@@ -277,11 +277,10 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<String> encryptionKey({String category, String name, int size}) async {
+  Future<String> encryptionKey({String identifier, int size}) async {
     try {
       return await _platformChannel.invokeMethod('encryptionKey', {
-        'category': category,
-        'name': name,
+        'identifier': identifier,
         'size': size,
       });
     } catch (e) {
