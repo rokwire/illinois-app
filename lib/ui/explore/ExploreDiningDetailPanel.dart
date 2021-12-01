@@ -17,13 +17,14 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -44,6 +45,7 @@ import 'package:illinois/ui/widgets/RoundedTab.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:url_launcher/url_launcher.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Dining dining;
@@ -554,8 +556,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: HtmlWidget(
-          dining.exploreLongDescription,
+        child: Html(
+          data: dining.exploreLongDescription,
+          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+          style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
         ));
   }
 
@@ -601,6 +605,16 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (!appLaunched) {
       String storeUrl = orderOnlineDetails['store_url'];
       url_launcher.launch(storeUrl);
+    }
+  }
+
+  void _launchUrl(String url, {BuildContext context}) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (AppUrl.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
     }
   }
 

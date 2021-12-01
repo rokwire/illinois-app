@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/ModalImageDialog.dart';
@@ -26,7 +28,8 @@ import 'package:illinois/model/Coach.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class AthleticsCoachDetailPanel extends StatefulWidget {
@@ -89,13 +92,10 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                         color: Styles().colors.background,
                         child: Visibility(visible: AppString.isStringNotEmpty(widget.coach.htmlBio), child: Container(
-                          child: HtmlWidget(
-                            AppString.getDefaultEmptyString(value: widget.coach.htmlBio),
-                            webView: false,
-                            textStyle: TextStyle(
-                                fontFamily: Styles().fontFamilies.regular,
-                                fontSize: 16
-                            ),
+                          child: Html(
+                            data: AppString.getDefaultEmptyString(value: widget.coach.htmlBio),
+                            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                            style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                           ),
                         ))
                     )
@@ -121,6 +121,16 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
         setState(() {});
       }
     ) : Container();
+  }
+
+  void _launchUrl(String url, {BuildContext context}) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (AppUrl.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
+    }
   }
 }
 

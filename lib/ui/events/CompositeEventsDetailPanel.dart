@@ -15,7 +15,7 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
@@ -46,6 +46,7 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
@@ -446,9 +447,10 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     if (!showDescription) {
       return Container();
     }
-    return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: Styles().colors.background, child: HtmlWidget(
-      longDescription,
-      textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground),
+    return Container(padding: EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 24), color: Styles().colors.background, child: Html(
+      data: longDescription,
+      onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+      style: { "body": Style(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
     ),);
   }
 
@@ -606,6 +608,16 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       });
       Navigator.pop(context);
     });
+  }
+
+  void _launchUrl(String url, {BuildContext context}) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (AppUrl.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
+    }
   }
 
   // NotificationsListener

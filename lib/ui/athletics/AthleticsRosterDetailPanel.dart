@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/model/Roster.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -25,7 +27,8 @@ import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsRosterDetailPanel extends StatefulWidget{
   final SportDefinition sport;
@@ -99,14 +102,11 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                         color: Styles().colors.background,
                         child: Column(
                             children: <Widget>[
-                              HtmlWidget(
-                                AppString.getDefaultEmptyString(value: widget.roster.htmlBio),
-                                webView: false,
-                                textStyle: TextStyle(
-                                    fontFamily: Styles().fontFamilies.regular,
-                                    fontSize: 16
-                                ),
-                              )
+                              Html(
+                                data: AppString.getDefaultEmptyString(value: widget.roster.htmlBio),
+                                onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+                                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                              ),
                             ]
                         )
                     ))
@@ -163,6 +163,16 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
       }
     }
     else{return Container();}
+  }
+
+  void _launchUrl(String url, {BuildContext context}) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (AppUrl.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
+    }
   }
 }
 

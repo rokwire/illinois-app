@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
@@ -24,6 +24,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -402,7 +403,11 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: HtmlWidget(longDescription, textStyle: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textSurface)));
+        child: Html(
+          data: longDescription,
+          onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
+          style: { "body": Style(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+      ));
   }
 
   Widget _eventUrlButtons(){
@@ -656,6 +661,16 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           );
         }
     );
+  }
+
+  void _launchUrl(String url, {BuildContext context}) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (AppUrl.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        launch(url);
+      }
+    }
   }
 
   bool get isFavorite => Auth2().isFavorite(_event);
