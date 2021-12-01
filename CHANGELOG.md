@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Implement Inbox group message tap action [#1048](https://github.com/rokwire/illinois-app/issues/1048).
 - Hook Notifications Delete user API [#1050](https://github.com/rokwire/illinois-app/issues/1050).
+- Hook Groups delete user API [#1052](https://github.com/rokwire/illinois-app/issues/1052).
 
 ## [3.0.57] - 2021-11-30
 ### Fixed
