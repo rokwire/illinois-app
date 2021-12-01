@@ -34,7 +34,8 @@ import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:location/location.dart';
+import 'package:location/location.dart' as Location;
+import 'package:notification_permissions/notification_permissions.dart' as Notifications;
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -543,7 +544,7 @@ class Analytics with Service implements NotificationsListener {
   }
 
   Map<String, dynamic> get _location {
-    LocationData location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
+    Location.LocationData location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
@@ -559,14 +560,9 @@ class Analytics with Service implements NotificationsListener {
   }
 
   void _updateNotificationServices() {
-    // Android does not need for permission for user notifications
-    if (Platform.isAndroid) {
-      _notificationServices = 'enabled';
-    } else if (Platform.isIOS) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((NotificationsAuthorizationStatus authorizationStatus) {
-        _notificationServices = (authorizationStatus == NotificationsAuthorizationStatus.Allowed) ? 'enabled' : "not_enabled";
-      });
-    }
+    Notifications.NotificationPermissions.getNotificationPermissionStatus().then((Notifications.PermissionStatus status) {
+      _notificationServices = (status == Notifications.PermissionStatus.granted) ? 'enabled' : "not_enabled";
+    });
   }
 
   // Sesssion Uuid

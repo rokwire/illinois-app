@@ -607,9 +607,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
                     break;
-                case Constants.APP_NOTIFICATIONS_AUTHORIZATION:
-                    result.success("allowed"); // notifications are allowed in Android by default
-                    break;
                 case Constants.APP_LOCATION_SERVICES_PERMISSION:
                     String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);
                     if ("query".equals(locationServicesMethod)) {

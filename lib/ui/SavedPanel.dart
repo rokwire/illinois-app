@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -31,7 +30,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LaundryService.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Guide.dart';
@@ -54,6 +52,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 
 import 'athletics/AthleticsNewsArticlePanel.dart';
 import 'events/CompositeEventsDetailPanel.dart';
@@ -105,25 +104,27 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestPermissionsStatus(){
-    if (Platform.isIOS && Auth2().privacyMatch(4)) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((NotificationsAuthorizationStatus authorizationStatus){
-        if((NotificationsAuthorizationStatus.NotDetermined == authorizationStatus)){
+    if (Auth2().privacyMatch(4)) {
+
+      NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
+        if (status == PermissionStatus.unknown) {
           setState(() {
             _showNotificationPermissionPrompt = true;
           });
         }
       });
+
     }
   }
 
   void _requestAuthorization() async {
-    NotificationsAuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationStatus != NotificationsAuthorizationStatus.NotDetermined) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context, authorizationStatus));
+    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
+    if (permissionStatus != PermissionStatus.unknown) {
+      showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context, permissionStatus));
     }
     else {
-      authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
+      if (permissionStatus == PermissionStatus.granted) {
         Analytics.instance.updateNotificationServices();
       }
       setState(() {
@@ -382,12 +383,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return result;
   }
 
-  Widget _buildNotificationPermissionDialogWidget(BuildContext context, NotificationsAuthorizationStatus authorizationStatus) {
+  Widget _buildNotificationPermissionDialogWidget(BuildContext context, PermissionStatus permissionStatus) {
     String message;
-    if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+    if (permissionStatus == PermissionStatus.granted) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (authorizationStatus == NotificationsAuthorizationStatus.Denied) {
+    else if (permissionStatus == PermissionStatus.denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(

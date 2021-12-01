@@ -21,10 +21,11 @@ import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'dart:io' show Platform;
+
+import 'package:notification_permissions/notification_permissions.dart';
 
 class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPanel {
   final Map<String, dynamic> onboardingContext;
@@ -32,7 +33,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
 
   @override
   Future<bool> get onboardingCanDisplayAsync async {
-    return (await NativeCommunicator().queryNotificationsAuthorization("query") == NotificationsAuthorizationStatus.NotDetermined);
+    return (await NotificationPermissions.getNotificationPermissionStatus() == PermissionStatus.unknown);
   }
 
   @override
@@ -157,24 +158,24 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
   }
 
 void _requestAuthorization(BuildContext context) async {
-    NotificationsAuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationStatus != NotificationsAuthorizationStatus.NotDetermined) {
-      showDialog(context: context, builder: (context) => _buildDialogWidget(context, authorizationStatus));
+    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
+    if (permissionStatus != PermissionStatus.unknown) {
+      showDialog(context: context, builder: (context) => _buildDialogWidget(context, permissionStatus));
     } else {
-      authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
+      if (permissionStatus == PermissionStatus.granted) {
         Analytics.instance.updateNotificationServices();
       }
       _goNext(context);
     }
   }
 
-  Widget _buildDialogWidget(BuildContext context, NotificationsAuthorizationStatus authorizationStatus) {
+  Widget _buildDialogWidget(BuildContext context, PermissionStatus permissionStatus) {
     String message;
-    if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+    if (permissionStatus == PermissionStatus.granted) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (authorizationStatus == NotificationsAuthorizationStatus.Denied) {
+    else if (permissionStatus == PermissionStatus.denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(

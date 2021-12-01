@@ -23,7 +23,6 @@ import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -242,12 +241,12 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   void _requestAuthorization(BuildContext context) async {
-    NotificationsAuthorizationStatus authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationSttus != NotificationsAuthorizationStatus.NotDetermined) {
+    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
+    if (permissionStatus != PermissionStatus.unknown) {
       _onOpenSystemSettings();
     } else {
-      authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationSttus == NotificationsAuthorizationStatus.Allowed) {
+      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
+      if (permissionStatus == PermissionStatus.granted) {
         Analytics.instance.updateNotificationServices();
       }
       _onOpenSystemSettings();
