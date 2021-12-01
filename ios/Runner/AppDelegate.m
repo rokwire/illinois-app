@@ -706,10 +706,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
 }
 
-- (void)processPushNotification:(NSDictionary*)userInfo {
-	[[FIRMessaging messaging] appDidReceiveMessage:userInfo];
-}
-
 #pragma mark LocationServices
 
 - (void)queryLocationServicesPermisionWithFlutterResult:(FlutterResult)result {
@@ -969,23 +965,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSLog(@"UIApplication: UNUserNotificationCenter willPresentNotification:\n%@", userInfoString);
 	
 	completionHandler(UNNotificationPresentationOptionAlert|UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
-}
-
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
-	NSDictionary *userInfo = response.notification.request.content.userInfo;
-	NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:userInfo options:0 error:NULL];
-	NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-	NSLog(@"UIApplication: UNUserNotificationCenter didReceiveNotificationResponse (%@):\n%@", response.actionIdentifier, userInfoString);
-
-	if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
-		// The user dismissed the notification without taking action.
-	}
-	else if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-		// The user launched the app.
-		[self processPushNotification:response.notification.request.content.userInfo];
-	}
-
-	completionHandler();
 }
 
 #pragma mark FIRMessagingDelegate
