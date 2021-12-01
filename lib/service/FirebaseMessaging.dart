@@ -124,7 +124,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
     "Illinois",
-    "Receive notifications",
+    description: "Receive notifications",
     importance: Importance.high,
   );
 

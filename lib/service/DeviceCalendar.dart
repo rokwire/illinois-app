@@ -95,11 +95,11 @@ class DeviceCalendar with Service implements NotificationsListener{
         _storeEventId(event.internalEventId, createEventResult?.data);
       }
 
-      _debugMessage("result.data: ${createEventResult?.data}, result.errorMessages: ${createEventResult?.errorMessages}");
+      _debugMessage("result.data: ${createEventResult?.data}, result?.errors?.toString(): ${createEventResult?.errors?.toString()}");
 
       if(!createEventResult.isSuccess) {
-        AppToast.show(createEventResult?.data ?? createEventResult?.errorMessages ?? "Unable to save Event to calendar");
-        print(createEventResult?.errorMessages);
+        AppToast.show(createEventResult?.data ?? createEventResult?.errors?.toString() ?? "Unable to save Event to calendar");
+        print(createEventResult?.errors?.toString());
         return false;
       }
     } else {
@@ -128,13 +128,13 @@ class DeviceCalendar with Service implements NotificationsListener{
     }
 
     final deleteEventResult = await _deviceCalendarPlugin.deleteEvent(calendar?.id, eventId);
-    _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult.errorMessages}");
+    _debugMessage("delete result.data: ${deleteEventResult.data}, result.error: ${deleteEventResult?.errors?.toString()}");
     if(deleteEventResult.isSuccess){
       _eraseEventId(event?.internalEventId);
     }
     return deleteEventResult?.isSuccess;
   }
-  
+
   Future<bool> _loadDefaultCalendarIfNeeded() async{
     if(calendar!=null)
       return true;

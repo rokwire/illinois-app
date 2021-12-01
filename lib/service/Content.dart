@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:illinois/service/Config.dart';
@@ -59,19 +58,23 @@ class Content /* with Service */ {
   }
 
   Future<ImagesResult> selectImageFromDevice({String storagePath, int width}) async {
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    XFile image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) {
       // User has cancelled operation
       return ImagesResult.cancel();
     }
-    if ((image != null) && (await image.exists())) {
-      List<int> imageBytes = image.readAsBytesSync();
-      String fileName = basename(image.path);
-      String contentType = mime(fileName);
-      return _uploadImage(storagePath: storagePath, imageBytes: imageBytes, width: width, fileName: fileName, mediaType: contentType);
-    } else {
-      return null;
+    try {
+      if ((image != null) && (0 < await image.length())) {
+        List<int> imageBytes = await image.readAsBytes();
+        String fileName = basename(image.path);
+        String contentType = mime(fileName);
+        return _uploadImage(storagePath: storagePath, imageBytes: imageBytes, width: width, fileName: fileName, mediaType: contentType);
+      }
     }
+    catch(e) {
+      print(e?.toString());
+    }
+    return null;
   }
 
   Future<ImagesResult> _uploadImage({List<int> imageBytes, String fileName, String storagePath, int width, String mediaType}) async {
