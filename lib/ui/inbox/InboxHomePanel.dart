@@ -8,10 +8,12 @@ import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -147,7 +149,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       return _InboxMessageCard(
         message: entry,
         selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
-        onTap: () => _onSelectMessage(entry));
+        onTap: () => _onTapMessage(entry));
     }
     else if (entry is String) {
       return _buildListHeading(text: entry);
@@ -172,18 +174,32 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),),),),);
   }
 
-  void _onSelectMessage(InboxMessage message) {
+  void _onTapMessage(InboxMessage message) {
     if (_isEditMode == true) {
+      //Select
       setState(() {
-        if (_selectedMessageIds.contains(message.messageId)) {
-          _selectedMessageIds.remove(message.messageId);
+        if (_selectedMessageIds.contains(message?.messageId)) {
+          _selectedMessageIds.remove(message?.messageId);
           AppSemantics.announceMessage(context, "Deselected");
         }
         else {
-          _selectedMessageIds.add(message.messageId);
+          _selectedMessageIds.add(message?.messageId);
           AppSemantics.announceMessage(context, "Selected");
         }
       });
+    } else {
+      //Tap
+      Map<String, dynamic> data = message?.data;
+      if(data!= null && data["type"] == "group") {
+        String groupId = data["entity_id"];
+        Groups().loadGroup(groupId).then(
+                (group) {
+              if (group != null) {
+                Navigator.push(context, CupertinoPageRoute(
+                    builder: (context) => GroupDetailPanel(group: group,)));
+              }
+            });
+      }
     }
   }
 
