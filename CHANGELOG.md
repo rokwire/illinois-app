@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Handle FCM data notifications (iOS) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
 - Android: release builds [#1046](https://github.com/rokwire/illinois-app/issues/1046).
+### Added
+- Implement Inbox group message tap action [#1048](https://github.com/rokwire/illinois-app/issues/1048).
 
 ## [3.0.57] - 2021-11-30
 ### Fixed
