@@ -51,7 +51,7 @@ dependencies:
   collection: ^1.15.0
   convert: ^3.0.1
   uuid: ^3.0.5
-  image_picker: ^0.6.5+3
+  image_picker: ^0.8.4+1
   roundcheckbox: ^2.0.4+1
   timezone: ^0.7.0
   flutter_native_timezone: ^2.0.0
@@ -65,7 +65,7 @@ dependencies:
   app_settings: ^4.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1
-  device_calendar: ^3.1.0
+  device_calendar: ^3.9.0
   gallery_saver: ^2.3.2
 
 dev_dependencies:
