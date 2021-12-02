@@ -695,9 +695,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                                     button: true,
                                     excludeSemantics: true,
                                     child: Container(
-                                        child: Padding(
-                                            padding: EdgeInsets.only(left: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png'))))),
+                                            padding: EdgeInsets.only(left: 24, bottom: 24),
+                                            child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')))),
                           )
                         ],
                       )

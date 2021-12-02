@@ -688,7 +688,7 @@ class Auth2UserPrefs {
   Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, dynamic> settings, Auth2VoterPrefs voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
-    _favorites = favorites;
+    _favorites = favorites ?? Map<String, Set<String>>(); // Not null
     _interests = interests;
     _tags = tags;
     _settings = settings;
@@ -714,7 +714,7 @@ class Auth2UserPrefs {
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
       tags: Map<String, bool>(),
-      settings: Map<String, bool>(),
+      settings: Map<String, dynamic>(),
       voter: Auth2VoterPrefs(),
     );
   }
