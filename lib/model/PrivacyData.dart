@@ -28,7 +28,7 @@ class PrivacyData{
 
   PrivacyData({this.levels,this.types,this.categories,this.features2, this.privacyDescription, this.jsonData});
 
-  factory PrivacyData.fromJson(Map<String, dynamic> json) {
+  static PrivacyData fromJson(Map<String, dynamic> json) {
     List<dynamic> levelsJson = json['levels'];
     List<PrivacyLevel> levels = (levelsJson != null) ? levelsJson.map((
         value) => PrivacyLevel.fromJson(value))
@@ -93,7 +93,7 @@ class PrivacyCategory{
 
   PrivacyCategory({this.title, this.titleKey, this.description,this.entries, this.entries2});
 
-  factory PrivacyCategory.fromJson(Map<String, dynamic> json) {
+  static PrivacyCategory fromJson(Map<String, dynamic> json) {
     List<dynamic> entriesJson = json['entries'];
     List<PrivacyEntry> entries = (entriesJson != null) ? entriesJson.map((
         value) => PrivacyEntry.fromJson(value))
@@ -121,13 +121,13 @@ class PrivacyEntry{
 
   PrivacyEntry({this.key,this.text,this.type,this.minLevel});
 
-  factory PrivacyEntry.fromJson(Map<String, dynamic> json) {
-    return PrivacyEntry(
+  static PrivacyEntry fromJson(Map<String, dynamic> json) {
+    return (json != null) ? PrivacyEntry(
         key:json["key"],
         text: PrivacyData().getLocalizedString(json["text"]),
         type:json["type"],
         minLevel:json["min_level"]
-    );
+    ) : null;
   }
 }
 
@@ -150,8 +150,8 @@ class PrivacyEntry2{
   PrivacyEntry2({this.title, this.titleKey, this.description, this.descriptionKey, this.dataUsage, this.dataUsageKey,this.additionalDescription, this.additionalDescriptionKey, this.additionalDataUsage, this.additionalDataUsageKey,
     this.iconRes, this.offIconRes, this.minLevel, this.additionalDataMinLevel});
 
-  factory PrivacyEntry2.fromJson(Map<String, dynamic> json) {
-    return PrivacyEntry2(
+  static PrivacyEntry2 fromJson(Map<String, dynamic> json) {
+    return (json != null) ? PrivacyEntry2(
         title: json["title"],
         titleKey: json["title_key"],
         description: json["description"],
@@ -166,7 +166,7 @@ class PrivacyEntry2{
         offIconRes: json["off_icon_resource"],
         minLevel:json["min_level"],
         additionalDataMinLevel:json["additional_min_level"]
-    );
+    ) : null;
   }
 }
 
@@ -177,7 +177,7 @@ class PrivacyDescription{
 
   PrivacyDescription({this.key, this.text, this.level});
 
-  factory PrivacyDescription.fromJson(Map<String, dynamic> json) {
+  static PrivacyDescription fromJson(Map<String, dynamic> json) {
     if(json!=null){
       return PrivacyDescription(
           key:json["key"],
@@ -195,11 +195,11 @@ class PrivacyLevel{
 
   PrivacyLevel({this.value,this.title});
 
-  factory PrivacyLevel.fromJson(Map<String, dynamic> json) {
-    return PrivacyLevel(
+  static PrivacyLevel fromJson(Map<String, dynamic> json) {
+    return (json != null) ? PrivacyLevel(
         value:json["value"],
         title:PrivacyData().getLocalizedString(json["title"])
-    );
+    ) : null;
   }
 }
 
@@ -209,7 +209,7 @@ class PrivacyType{
 
   PrivacyType({this.value,this.title});
 
-  factory PrivacyType.fromJson(Map<String, dynamic> json) {
+  static PrivacyType fromJson(Map<String, dynamic> json) {
     if(json!=null){
      return  PrivacyType(
         value:json["value"],
@@ -226,7 +226,7 @@ class PrivacyCategoryDescription{
 
   PrivacyCategoryDescription({this.type,this.text});
 
-  factory PrivacyCategoryDescription.fromJson(Map<String, dynamic> json) {
+  static PrivacyCategoryDescription fromJson(Map<String, dynamic> json) {
     if(json!=null){
       return PrivacyCategoryDescription(
           type:json["type"],
@@ -244,7 +244,7 @@ class PrivacyFeature2{
 
   PrivacyFeature2({this.key, this.text, this.maxLevel});
 
-  factory PrivacyFeature2.fromJson(Map<String, dynamic> json) {
+  static PrivacyFeature2 fromJson(Map<String, dynamic> json) {
     if(json!=null){
       return PrivacyFeature2(
           key:json["key"],

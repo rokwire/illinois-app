@@ -49,7 +49,7 @@ class FlexContentWidget extends StatefulWidget {
 
   FlexContentWidget({this.assetsKey, this.jsonContent, this.onClose});
 
-  factory FlexContentWidget.fromAssets(dynamic assetsKey, { void Function(BuildContext context) onClose }) {
+  static FlexContentWidget fromAssets(dynamic assetsKey, { void Function(BuildContext context) onClose }) {
     Map<String, dynamic> jsonContent;
     dynamic assetsContent = Assets()[assetsKey];
     try { jsonContent = (assetsContent is Map) ? assetsContent.cast<String, dynamic>() : null; }

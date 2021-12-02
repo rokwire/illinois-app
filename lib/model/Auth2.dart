@@ -19,7 +19,7 @@ class Auth2Token {
   
   Auth2Token({this.accessToken, this.refreshToken, this.idToken, this.tokenType});
 
-  factory Auth2Token.fromOther(Auth2Token value, {String idToken, String accessToken, String refreshToken, String tokenType }) {
+  static Auth2Token fromOther(Auth2Token value, {String idToken, String accessToken, String refreshToken, String tokenType }) {
     return (value != null) ? Auth2Token(
       idToken: idToken ?? value?.idToken,
       accessToken: accessToken ?? value?.accessToken,
@@ -28,7 +28,7 @@ class Auth2Token {
     ) : null;
   }
 
-  factory Auth2Token.fromJson(Map<String, dynamic> json) {
+  static Auth2Token fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2Token(
       idToken: AppJson.stringValue(json['id_token']),
       accessToken: AppJson.stringValue(json['access_token']),
@@ -109,7 +109,7 @@ class Auth2Account {
   
   Auth2Account({this.id, this.profile, this.prefs, this.permissions, this.roles, this.groups, this.authTypes});
 
-  factory Auth2Account.fromJson(Map<String, dynamic> json, { Auth2UserPrefs prefs, Auth2UserProfile profile }) {
+  static Auth2Account fromJson(Map<String, dynamic> json, { Auth2UserPrefs prefs, Auth2UserProfile profile }) {
     return (json != null) ? Auth2Account(
       id: AppJson.stringValue(json['id']),
       profile: Auth2UserProfile.fromJson(AppJson.mapValue(json['profile'])) ?? profile,
@@ -202,7 +202,7 @@ class Auth2UserProfile {
     _country = country;
   
 
-  factory Auth2UserProfile.fromJson(Map<String, dynamic> json) {
+  static Auth2UserProfile fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UserProfile(
       id: AppJson.stringValue(json['id']),
       firstName: AppJson.stringValue(json['first_name']),
@@ -225,7 +225,7 @@ class Auth2UserProfile {
     return Auth2UserProfile();
   }
 
-  factory Auth2UserProfile.fromOther(Auth2UserProfile other, {
+  static Auth2UserProfile fromOther(Auth2UserProfile other, {
     String id, String firstName, String middleName, String lastName, int birthYear, String photoUrl,
     String email, String phone,
     String address, String state, String zip, String country}) {
@@ -385,7 +385,7 @@ class Auth2StringEntry {
   
   Auth2StringEntry({this.id, this.name});
 
-  factory Auth2StringEntry.fromJson(Map<String, dynamic> json) {
+  static Auth2StringEntry fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2StringEntry(
       id: AppJson.stringValue(json['id']),
       name: AppJson.stringValue(json['name']),
@@ -460,7 +460,7 @@ class Auth2Type {
     uiucUser = (params != null) ? Auth2UiucUser.fromJson(AppJson.mapValue(params['user'])) : null,
     loginType = auth2LoginTypeFromString(code);
 
-  factory Auth2Type.fromJson(Map<String, dynamic> json) {
+  static Auth2Type fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2Type(
       id: AppJson.stringValue(json['id']),
       identifier: AppJson.stringValue(json['identifier']),
@@ -543,7 +543,7 @@ class Auth2Error {
   
   Auth2Error({this.status, this.message});
 
-  factory Auth2Error.fromJson(Map<String, dynamic> json) {
+  static Auth2Error fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2Error(
       status: AppJson.stringValue(json['status']),
       message: AppJson.stringValue(json['message']),
@@ -584,7 +584,7 @@ class Auth2UiucUser {
   Auth2UiucUser({this.email, this.firstName, this.lastName, this.middleName, this.identifier, this.groups, this.systemSpecific}) :
     groupsMembership = (groups != null) ? Set.from(groups) : null;
 
-  factory Auth2UiucUser.fromJson(Map<String, dynamic> json) {
+  static Auth2UiucUser fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UiucUser(
       email: AppJson.stringValue(json['email']),
       firstName: AppJson.stringValue(json['first_name']),
@@ -695,7 +695,7 @@ class Auth2UserPrefs {
     _voter = Auth2VoterPrefs.fromOther(voter, onChanged: _onVoterChanged);
   }
 
-  factory Auth2UserPrefs.fromJson(Map<String, dynamic> json) {
+  static Auth2UserPrefs fromJson(Map<String, dynamic> json) {
     return (json != null) ? Auth2UserPrefs(
       privacyLevel: AppJson.intValue(json['privacy_level']),
       roles: UserRole.setFromJson(AppJson.listValue(json['roles'])),
@@ -1212,7 +1212,7 @@ class Auth2VoterPrefs {
     _voterByMail = voterByMail,
     _voted = voted;
 
-  factory Auth2VoterPrefs.fromJson(Map<String, dynamic> json, { Function onChanged }) {
+  static Auth2VoterPrefs fromJson(Map<String, dynamic> json, { Function onChanged }) {
     return (json != null) ? Auth2VoterPrefs(
       registeredVoter: AppJson.boolValue(json['registered_voter']),
       votePlace: AppJson.stringValue(json['vote_place']),
@@ -1230,7 +1230,7 @@ class Auth2VoterPrefs {
     };
   }
 
-  factory Auth2VoterPrefs.fromOther(Auth2VoterPrefs other, { Function onChanged }) {
+  static Auth2VoterPrefs fromOther(Auth2VoterPrefs other, { Function onChanged }) {
     return (other != null) ? Auth2VoterPrefs(
       registeredVoter: other.registeredVoter,
       votePlace: other.votePlace,
@@ -1349,11 +1349,11 @@ class UserRole {
 
   const UserRole._internal(this._value);
 
-  factory UserRole.fromString(String value) {
+  static UserRole fromString(String value) {
     return (value != null) ? UserRole._internal(value) : null;
   }
 
-  factory UserRole.fromJson(dynamic value) {
+  static UserRole fromJson(dynamic value) {
     return (value is String) ? UserRole._internal(value) : null;
   }
 
@@ -1448,7 +1448,7 @@ class AuthCard {
 
   AuthCard({this.uin, this.cardNumber, this.libraryNumber, this.expirationDate, this.fullName, this.role, this.studentLevel, this.magTrack2, this.photoBase64});
 
-  factory AuthCard.fromJson(Map<String, dynamic> json) {
+  static AuthCard fromJson(Map<String, dynamic> json) {
     return (json != null) ? AuthCard(
       uin: json['UIN'],
       fullName: json['full_name'],

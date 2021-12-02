@@ -35,13 +35,14 @@ class LaundryRoom implements Favorite {
 
   int get hashCode => title.hashCode ^ id.hashCode ^ campusName.hashCode;
 
-  factory LaundryRoom.fromJson(Map<String, dynamic> json) {
-    return LaundryRoom(
+  static LaundryRoom fromJson(Map<String, dynamic> json) {
+    return (json != null) ? LaundryRoom(
         id: json['id'],
         title: json['title'],
         campusName: json['campus_name'],
         status: roomStatusFromString(json['status']),
-        location: Location.fromJSON(json['location']));
+        location: Location.fromJSON(json['location'])
+      ) : null;
   }
 
   toJson() {

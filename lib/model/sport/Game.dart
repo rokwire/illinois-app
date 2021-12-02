@@ -77,7 +77,7 @@ class Game with Explore implements Favorite {
       this.results,
       this.jsonData});
 
-  factory Game.fromJson(Map<String, dynamic> json) {
+  static Game fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -337,7 +337,7 @@ class Sport {
     return {"title": title, "shortname": shortName};
   }
 
-  factory Sport.fromJson(Map<String, dynamic> json) {
+  static Sport fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -355,7 +355,7 @@ class GameLocation {
     return {"location": location, "HAN": han};
   }
 
-  factory GameLocation.fromJson(Map<String, dynamic> json) {
+  static GameLocation fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -380,7 +380,7 @@ class Links {
     return {"livestats": liveStats, "video": video, "audio": audio, "tickets": tickets, "pregame": preGame?.toJson()};
   }
 
-  factory Links.fromJson(Map<String, dynamic> json) {
+  static Links fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -402,7 +402,7 @@ class GameStory {
     return {"id": id, "url": url, "story_image_url": storyImageUrl, "text": text};
   }
 
-  factory GameStory.fromJson(Map<String, dynamic> json) {
+  static GameStory fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -420,7 +420,7 @@ class Opponent {
     return {"name": name, "logo_image": logoImage};
   }
 
-  factory Opponent.fromJson(Map<String, dynamic> json) {
+  static Opponent fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -439,7 +439,7 @@ class GameResult {
     return {"status": status, "team_score": teamScore, "opponent_score": opponentScore};
   }
 
-  factory GameResult.fromJson(Map<String, dynamic> json) {
+  static GameResult fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }

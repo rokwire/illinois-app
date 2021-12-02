@@ -34,7 +34,7 @@ class News implements Favorite {
 
   News({this.id, this.title, this.link, this.category, this.description, this.fullText, this.fullTextRaw, this.imageUrl, this.pubDateUtc, this.json});
 
-  factory News.fromJson(Map<String, dynamic> json) {
+  static News fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

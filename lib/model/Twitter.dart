@@ -16,7 +16,7 @@ class TweetsPage {
     Tweet.applyIncludesToList(tweets, includes);
   }
 
-  factory TweetsPage.fromJson(Map<String, dynamic> json) {
+  static TweetsPage fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetsPage(
       tweets: Tweet.listFromJson(AppJson.listValue(json['data'])),
       includes: TweetsIncludes.fromJson(AppJson.mapValue(json['includes'])),
@@ -72,7 +72,7 @@ class Tweet {
   }) :
     html = _buildHtml(text, entities);
  
-  factory Tweet.fromJson(Map<String, dynamic> json) {
+  static Tweet fromJson(Map<String, dynamic> json) {
     return (json != null) ? Tweet(
       id: AppJson.stringValue(json['id']),
       createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
@@ -271,7 +271,7 @@ class TweetEntities {
   TweetEntities({this.urls, this.annotations, this.hashtags, this.mentions}) :
     entities = _buildEntities([urls, annotations, hashtags, mentions]);
 
-  factory TweetEntities.fromJson(Map<String, dynamic> json) {
+  static TweetEntities fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntities(
         urls: TweetEntityUrl.listFromJson(AppJson.listValue(json['urls'])),
         annotations: TweetEntityAnnotation.listFromJson(AppJson.listValue(json['annotations'])),
@@ -357,7 +357,7 @@ class TweetEntityUrl with TweetEntity {
 
   TweetEntityUrl({this.start, this.end, this.url, this.expandedUrl, this.displayUrl, this.status, this.title, this.description, this.unwoundUrl});
 
-  factory TweetEntityUrl.fromJson(Map<String, dynamic> json) {
+  static TweetEntityUrl fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntityUrl(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -469,7 +469,7 @@ class TweetEntityAnnotation with TweetEntity {
 
   TweetEntityAnnotation({this.start, this.end, this.probability, this.type, this.normalizedText});
 
-  factory TweetEntityAnnotation.fromJson(Map<String, dynamic> json) {
+  static TweetEntityAnnotation fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntityAnnotation(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -537,7 +537,7 @@ class TweetEntityHashtag with TweetEntity {
 
   TweetEntityHashtag({this.start, this.end, this.tag});
 
-  factory TweetEntityHashtag.fromJson(Map<String, dynamic> json) {
+  static TweetEntityHashtag fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntityHashtag(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -602,7 +602,7 @@ class TweetEntityMention with TweetEntity {
 
   TweetEntityMention({this.start, this.end, this.userName, this.id});
 
-  factory TweetEntityMention.fromJson(Map<String, dynamic> json) {
+  static TweetEntityMention fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetEntityMention(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -670,7 +670,7 @@ class TweetRef {
 
   TweetRef({this.id, this.type});
 
-  factory TweetRef.fromJson(Map<String, dynamic> json) {
+  static TweetRef fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetRef(
       id: AppJson.stringValue(json['id']),
       type: AppJson.stringValue(json['type']),
@@ -751,7 +751,7 @@ class TweetAttachments {
 
   TweetAttachments({this.mediaKeys});
 
-  factory TweetAttachments.fromJson(Map<String, dynamic> json) {
+  static TweetAttachments fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetAttachments(
       mediaKeys: AppJson.listStringsValue(json['media_keys']),
     ) : null;
@@ -787,7 +787,7 @@ class TweetPublicMetrics {
   final int quoteCount;
   TweetPublicMetrics({this.retweetCount, this.replyCount, this.likeCount, this.quoteCount});
 
-  factory TweetPublicMetrics.fromJson(Map<String, dynamic> json) {
+  static TweetPublicMetrics fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetPublicMetrics(
       retweetCount: AppJson.intValue(json['retweet_count']),
       replyCount: AppJson.intValue(json['reply_count']),
@@ -829,7 +829,7 @@ class TweetContextAnotation {
 
   TweetContextAnotation({this.id, this.name, this.description});
 
-  factory TweetContextAnotation.fromJson(Map<String, dynamic> json) {
+  static TweetContextAnotation fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetContextAnotation(
       id: AppJson.stringValue(json['id']),
       name: AppJson.stringValue(json['name']),
@@ -866,7 +866,7 @@ class TweetContextAnotations {
 
   TweetContextAnotations({this.domain, this.entity});
 
-  factory TweetContextAnotations.fromJson(Map<String, dynamic> json) {
+  static TweetContextAnotations fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetContextAnotations(
       domain: TweetContextAnotation.fromJson(AppJson.mapValue(json['domain'])),
       entity: TweetContextAnotation.fromJson(AppJson.mapValue(json['entity'])),
@@ -900,7 +900,7 @@ class TweetsIncludes {
 
   TweetsIncludes({this.media, this.users, this.tweets});
 
-  factory TweetsIncludes.fromJson(Map<String, dynamic> json) {
+  static TweetsIncludes fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetsIncludes(
       media: TwitterMedia.listFromJson(AppJson.listValue(json['media'])),
       users: TwitterUser.listFromJson(AppJson.listValue(json['users'])),
@@ -941,7 +941,7 @@ class TwitterMedia {
   
   TwitterMedia({this.key, this.type, this.url, this.altText, this.width, this.height});
 
-  factory TwitterMedia.fromJson(Map<String, dynamic> json) {
+  static TwitterMedia fromJson(Map<String, dynamic> json) {
     return (json != null) ? TwitterMedia(
       key: AppJson.stringValue(json['media_key']),
       type: AppJson.stringValue(json['type']),
@@ -1046,7 +1046,7 @@ class TwitterUser {
 
   TwitterUser({this.id, this.createdAtUtc, this.name, this.userName, this.description, this.url, this.profileImageUrl, this.location, this.protected, this.verified, this.publicMetrics, this.entetityUrls});
 
-  factory TwitterUser.fromJson(Map<String, dynamic> json) {
+  static TwitterUser fromJson(Map<String, dynamic> json) {
     if (json != null) {
       Map<String, dynamic> entities = AppJson.mapValue(json['entities']);
       Map<String, dynamic> entitiesUrl = (entities != null) ? AppJson.mapValue(entities['url']) : null;
@@ -1166,7 +1166,7 @@ class TweeterUserPublicMetrics {
   final int listedCount;
   TweeterUserPublicMetrics({this.followersCount, this.followingCount, this.tweetCount, this.listedCount});
 
-  factory TweeterUserPublicMetrics.fromJson(Map<String, dynamic> json) {
+  static TweeterUserPublicMetrics fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweeterUserPublicMetrics(
       followersCount: AppJson.intValue(json['followers_count']),
       followingCount: AppJson.intValue(json['following_count']),
@@ -1209,7 +1209,7 @@ class TweetsMeta {
   final int resultCount;
   TweetsMeta({this.newestId, this.oldestId, this.nextToken, this.previousToken, this.resultCount});
 
-  factory TweetsMeta.fromJson(Map<String, dynamic> json) {
+  static TweetsMeta fromJson(Map<String, dynamic> json) {
     return (json != null) ? TweetsMeta(
       oldestId: AppJson.stringValue(json['oldest_id']),
       newestId: AppJson.stringValue(json['newest_id']),

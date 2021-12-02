@@ -41,8 +41,8 @@ class Poll {
     this.status, this.results, this.userVote
   });
 
-  factory Poll.fromJson(Map<String, dynamic> json) {
-    return Poll(
+  static Poll fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Poll(
       pollId: json['id'],
       title: json['question'],
       options: List<String>.from(json['options']),
@@ -63,7 +63,7 @@ class Poll {
       status: pollStatusFromString(json['status']),
       results: PollVote.fromJson(results:json['results'], total:json['total']),
       userVote: PollVote.fromJson(votes:json['voted']),
-    );
+    ) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -193,7 +193,7 @@ class PollVote {
     _total = total;
   }
 
-  factory PollVote.fromJson({List<dynamic> results, List<dynamic> votes, int total}) {
+  static PollVote fromJson({List<dynamic> results, List<dynamic> votes, int total}) {
     Map<int, int> votesMap;
     if (results != null) {
       votesMap = {};
@@ -211,7 +211,7 @@ class PollVote {
       }
     }
 
-    return PollVote(votes:votesMap, total: total);
+    return (votesMap != null) ? PollVote(votes:votesMap, total: total) : null;
   }
 
   List<dynamic>toResultsJson({int length}) {

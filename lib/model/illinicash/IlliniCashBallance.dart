@@ -56,7 +56,7 @@ class IlliniCashBallance {
   }
 
 
-  factory IlliniCashBallance.fromJson(Map<String, dynamic> json) {
+  static IlliniCashBallance fromJson(Map<String, dynamic> json) {
     return (json != null) ? IlliniCashBallance(
         mealPlanName: json['MealPlanName'],
         balance: json['IllinCashBalance'],

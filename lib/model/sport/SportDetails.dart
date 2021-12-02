@@ -22,7 +22,7 @@ class SportSeasons {
 
   SportSeasons({this.code, this.label, this.staff, this.seasons});
 
-  factory SportSeasons.fromJson(Map<String, dynamic> json) {
+  static SportSeasons fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -45,7 +45,7 @@ class SportSeasonSchedule {
 
   SportSeasonSchedule({this.year, this.roster, this.schedule});
 
-  factory SportSeasonSchedule.fromJson(Map<String, dynamic> json) {
+  static SportSeasonSchedule fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -65,7 +65,7 @@ class SportSocialMedia {
 
   SportSocialMedia({this.shortName, this.twitterName, this.instagramName, this.facebookPage});
 
-  factory SportSocialMedia.fromJson(Map<String, dynamic> json) {
+  static SportSocialMedia fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -96,7 +96,7 @@ class SportDefinition {
     this.hasSortByNumber, this.hasScores, this.gender, this.ticketed,
     this.iconPath});
 
-  factory SportDefinition.fromJson(Map<String, dynamic> json) {
+  static SportDefinition fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }

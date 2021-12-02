@@ -205,11 +205,11 @@ class Event with Explore implements Favorite {
     isEventFree = other?.isEventFree;
   }
 
-  factory Event.fromJson(Map<String, dynamic> json) {
+  static Event fromJson(Map<String, dynamic> json) {
     return (json != null) ? Event(json: json) : null;
   }
 
-  factory Event.fromOther(Event other) {
+  static Event fromOther(Event other) {
     return (other != null) ? Event(other: other) : null;
   }
 
@@ -746,13 +746,13 @@ class Contact {
     this.phone,
     this.organization});
 
-  factory Contact.fromJson(Map<String, dynamic> json) {
-    return Contact(
+  static Contact fromJson(Map<String, dynamic> json) {
+    return (json != null) ? Contact(
         firstName: json['firstName'],
         lastName: json['lastName'],
         email: json['email'],
         phone: json['phone'],
-        organization: json['organization']);
+        organization: json['organization']) : null;
   }
 
   Map<String, dynamic> toJson() {

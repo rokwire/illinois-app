@@ -135,18 +135,14 @@ class InboxUserInfo{
 
   InboxUserInfo({this.userId, this.firebaseTokens, this.topics, this.dateCreated, this.dateUpdated});
 
-  factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
-    List<dynamic> tokensData = json['firebase_tokens'];
-    List<dynamic> topics = json['topics'];
-    String dateCreatedStr = json['date_created'];
-    String dateUpdatedStr = json['date_updated'];
-    return InboxUserInfo(
+  static InboxUserInfo fromJson(Map<String, dynamic> json) {
+    return (json != null) ? InboxUserInfo(
       userId: json['user_id'],
-      firebaseTokens: AppCollection.isCollectionNotEmpty(tokensData) ? tokensData.map((e) => FirebaseToken.fromJson(e)).toList() : [],
-      topics:  AppCollection.isCollectionNotEmpty(topics) ? topics.map((e) => e.toString()).toList() : [],
-      dateCreated: AppString.isStringNotEmpty(dateCreatedStr) ? AppDateTime().dateTimeFromString(dateCreatedStr) : null,
-      dateUpdated: AppString.isStringNotEmpty(dateUpdatedStr) ? AppDateTime().dateTimeFromString(dateUpdatedStr) : null,
-    );
+      firebaseTokens: json['firebase_tokens']?.map((e) => FirebaseToken.fromJson(e))?.toList(),
+      topics:  json['topics']?.map((e) => e.toString())?.toList(),
+      dateCreated: AppDateTime().dateTimeFromString(json['date_created']),
+      dateUpdated: AppDateTime().dateTimeFromString(json['date_updated']),
+    ) : null;
   }
 }
 
@@ -157,12 +153,12 @@ class FirebaseToken{
   final DateTime dateCreated;
   FirebaseToken({this.token, this.appPlatform, this.appVersion, this.dateCreated});
 
-  factory FirebaseToken.fromJson(Map<String, dynamic> json) {
-    return FirebaseToken(
+  static FirebaseToken fromJson(Map<String, dynamic> json) {
+    return (json != null) ? FirebaseToken(
       token: json['token'] ?? "",
       appPlatform: json['app_platform'] ?? "",
       appVersion: json['app_version'] ?? "",
       dateCreated: AppDateTime().dateTimeFromString(json['date_created'] ?? "", format: "yyyy-MM-ddTHH:mm:ssZ", isUtc: true),
-    );
+    ) : null;
   }
 }

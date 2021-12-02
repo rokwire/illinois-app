@@ -28,7 +28,7 @@ class InboxMessage with Favorite {
     this.sender, this.recepients
   });
 
-  factory InboxMessage.fromJson(Map<String, dynamic> json) {
+  static InboxMessage fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxMessage(
       messageId: AppJson.stringValue(json['id']),
       priority: AppJson.intValue(json['priority']),
@@ -170,7 +170,7 @@ class InboxRecepient {
   
   InboxRecepient({this.userId});
 
-  factory InboxRecepient.fromJson(Map<String, dynamic> json) {
+  static InboxRecepient fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxRecepient(
       userId: AppJson.stringValue(json['user_id'])
     ) : null;
@@ -211,7 +211,7 @@ class InboxSender {
 
   InboxSender({this.type, this.user});
 
-  factory InboxSender.fromJson(Map<String, dynamic> json) {
+  static InboxSender fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxSender(
       type: inboxSenderTypeFromString(AppJson.stringValue(json['type'])),
       user: InboxSenderUser.fromJson(AppJson.mapValue(json['user'])),
@@ -232,7 +232,7 @@ class InboxSenderUser {
 
   InboxSenderUser({this.userId, this.name,});
 
-  factory InboxSenderUser.fromJson(Map<String, dynamic> json) {
+  static InboxSenderUser fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxSenderUser(
       userId: AppJson.stringValue(json['user_id']),
       name: AppJson.stringValue(json['name']),
@@ -278,7 +278,7 @@ class InboxUserInfo{
 
   InboxUserInfo({this.userId, this.dateCreated, this.dateUpdated, this.topics, this.notificationsDisabled});
 
-  factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
+  static InboxUserInfo fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxUserInfo(
       userId: AppJson.stringValue(json["user_id"]),
       dateCreated: AppJson.stringValue(json["date_created"]),

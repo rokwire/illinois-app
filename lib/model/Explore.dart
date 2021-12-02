@@ -109,13 +109,11 @@ class ExploreCategory {
 
   ExploreCategory({this.name, this.subCategories});
 
-  factory ExploreCategory.fromJson(Map<String, dynamic> json) {
-    List<dynamic> subCategoriesData = json['subcategories'];
-    List<String> subCategoriesList = AppCollection.isCollectionNotEmpty(subCategoriesData) ? subCategoriesData.cast() : [];
-    return ExploreCategory(
+  static ExploreCategory fromJson(Map<String, dynamic> json) {
+    return (json != null) ? ExploreCategory(
       name: json['category'],
-      subCategories: subCategoriesList
-    );
+      subCategories: AppJson.listStringsValue(json['subcategories'])
+    ) : null;
   }
 
   toJson(){

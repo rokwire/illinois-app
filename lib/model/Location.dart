@@ -61,7 +61,7 @@ class Location {
     };
   }
 
-  factory Location.fromJSON(Map<String, dynamic> json) {
+  static Location fromJSON(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -158,7 +158,7 @@ class LatLng {
 
   LatLng({this.latitude, this.longitude});
 
-  factory LatLng.fromJson(Map<String, dynamic> json) {
+  static LatLng fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }

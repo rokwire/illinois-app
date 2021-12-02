@@ -48,7 +48,7 @@ class VoterRule {
     this.vbmText, this.vbmButtonTitle, this.vbmUrl,
     this.hideForPeriod, this.electionPeriod});
 
-  factory VoterRule.fromJson(Map<String, dynamic> json) {
+  static VoterRule fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
@@ -96,7 +96,7 @@ class RuleOption {
 
   RuleOption({this.label, this.value});
 
-  factory RuleOption.fromJson(Map<String, dynamic> json) {
+  static RuleOption fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

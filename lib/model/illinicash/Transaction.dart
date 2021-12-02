@@ -33,7 +33,7 @@ class IlliniCashTransaction extends BaseTransaction {
       {String dateString, String description, String location, String amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);
 
-  factory IlliniCashTransaction.fromJson(Map<String, dynamic> json) {
+  static IlliniCashTransaction fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -55,7 +55,7 @@ class MealPlanTransaction extends BaseTransaction{
       {String dateString, String description, String location, String amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);
 
-  factory MealPlanTransaction.fromJson(Map<String, dynamic> json) {
+  static MealPlanTransaction fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -75,7 +75,7 @@ class CafeCreditTransaction extends BaseTransaction{
       {String dateString, String description, String location, String amount}):
         super(dateString: dateString, description: description, location: location, amount: amount);
 
-  factory CafeCreditTransaction.fromJson(Map<String, dynamic> json) {
+  static CafeCreditTransaction fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }

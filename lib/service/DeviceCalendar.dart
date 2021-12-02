@@ -256,7 +256,7 @@ class _DeviceCalendarEvent {
 
   _DeviceCalendarEvent({this.internalEventId, this.title, this.deepLinkUrl, this.startDate, this.endDate});
 
-  factory _DeviceCalendarEvent.from(dynamic data){
+  static _DeviceCalendarEvent from(dynamic data){
     if(data==null)
       return null;
 
@@ -273,7 +273,7 @@ class _DeviceCalendarEvent {
     return null;
   }
 
-  factory _DeviceCalendarEvent.fromEvent(ExploreEvent.Event event){
+  static _DeviceCalendarEvent fromEvent(ExploreEvent.Event event){
     if(event==null)
       return null;
 
@@ -282,7 +282,7 @@ class _DeviceCalendarEvent {
         deepLinkUrl: "${ExploreService.EVENT_URI}?event_id=${event.id}");
   }
 
-  factory _DeviceCalendarEvent.fromGame(Game game){
+  static _DeviceCalendarEvent fromGame(Game game){
     if(game==null)
       return null;
 
@@ -291,7 +291,7 @@ class _DeviceCalendarEvent {
         deepLinkUrl: "${Sports.GAME_URI}?game_id=${game.id}%26sport=${game.sport?.shortName}");
   }
 
-  factory _DeviceCalendarEvent.fromGuide(GuideFavorite guide){
+  static _DeviceCalendarEvent fromGuide(GuideFavorite guide){
     if(guide==null)
       return null;
     Map<String, dynamic> guideEntryData = Guide().entryById(guide.id);

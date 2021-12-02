@@ -50,7 +50,7 @@ class Roster {
       this.fullSizePhotoUrl,
       this.thumbPhotoUrl});
 
-  factory Roster.fromJson(Map<String, dynamic> json) {
+  static Roster fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

@@ -60,7 +60,10 @@ class Dining with Explore implements Favorite {
       this.paymentTypes,
       this.diningSchedules});
 
-  factory Dining.fromJson(Map<String, dynamic> json) {
+  static Dining fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
     String id = json['DiningOptionID'].toString();
     String addressInfo = json["Address"];
     List<DiningSchedule> diningSchedules = [];
@@ -461,7 +464,7 @@ class DiningNutritionItem {
 
   DiningNutritionItem({this.itemID, this.name, this.serving, this.nutritionList});
 
-  factory DiningNutritionItem.fromJson(Map<String, dynamic> json) {
+  static DiningNutritionItem fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
@@ -490,7 +493,10 @@ class NutritionNameValuePair{
 
   NutritionNameValuePair({this.name, this.value});
 
-  factory NutritionNameValuePair.fromJson(Map<String,dynamic>json){
+  static NutritionNameValuePair fromJson(Map<String,dynamic>json){
+    if (json == null) {
+      return null;
+    }
     String name = json["Name"];
     String value = json["Value"];
 
@@ -577,8 +583,8 @@ class DiningProductItem {
     return false;
   }
 
-  factory DiningProductItem.fromJson(Map<String, dynamic> json) {
-    return DiningProductItem(
+  static DiningProductItem fromJson(Map<String, dynamic> json) {
+    return (json != null) ? DiningProductItem(
       itemID: json['ItemID'].toString(),
       scheduleId: json['ScheduleID'].toString(),
       name: json['FormalName'],
@@ -588,7 +594,7 @@ class DiningProductItem {
       course: json['Course'],
       courseSort: json['CourseSort'],
       meal: json['Meal'],
-    );
+    ) : null;
   }
 }
 
@@ -605,7 +611,10 @@ class DiningSchedule {
 
   DiningSchedule({this.scheduleId, this.diningLocationId, this.eventDateUtc, this.startTimeUtc, this.endTimeUtc, this.meal,});
 
-  factory DiningSchedule.fromJson(Map<String, dynamic> json) {
+  static DiningSchedule fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
     int timestampInSeconds = json['EventDateUTC'];
     int startTimeStampInSeconds = json['StartTimeUTC'];
     int endTimeStampInSeconds = json['EndTimeUTC'];
@@ -748,7 +757,10 @@ class DiningSpecial {
 
   DiningSpecial({this.id, this.title, this.text, this.startDateString, this.endDateString, this.imageUrl, this.locationIds});
 
-  factory DiningSpecial.fromJson(Map<String, dynamic>json){
+  static DiningSpecial fromJson(Map<String, dynamic>json){
+    if (json == null) {
+      return null;
+    }
     List<dynamic> _locationIds = json['DiningOptionIDs'];
     List<String> _castedIds = _locationIds != null ? _locationIds.map((entry)=>entry.toString()).toList() : null;
     return DiningSpecial(

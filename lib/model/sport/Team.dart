@@ -26,7 +26,7 @@ class TeamRecord {
 
   TeamRecord({this.overallRecordUnformatted, this.conferenceRecord, this.streak, this.homeRecord, this.awayRecord, this.neutralRecord});
 
-  factory TeamRecord.fromJson(Map<String, dynamic> json) {
+  static TeamRecord fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -47,7 +47,7 @@ class TeamSchedule {
 
   TeamSchedule({this.games, this.label});
 
-  factory TeamSchedule.fromJson(Map<String, dynamic> json) {
+  static TeamSchedule fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

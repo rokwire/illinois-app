@@ -42,7 +42,7 @@ class ParkingEvent {
     this.fromDateUtc, this.toDateUtc, this.parkingFromDateUtc, this.parkingToDateUtc,
     this.landMarkId, this.slug, this.live, this.lots});
 
-  factory ParkingEvent.fromJson(Map<String, dynamic> json) {
+  static ParkingEvent fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
@@ -125,7 +125,7 @@ class ParkingLot {
 
   ParkingLot({this.lotId, this.lotName, this.lotAddress, this.entrance, this.polygon, this.spotsSold, this.spotsPreSold, this.totalSpots});
 
-  factory ParkingLot.fromJson(Map<String, dynamic> json) {
+  static ParkingLot fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

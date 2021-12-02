@@ -27,14 +27,14 @@ class GeoFenceRegion {
   
   GeoFenceRegion({this.id, this.types, this.name, this.enabled, this.data});
 
-  factory GeoFenceRegion.fromJson(Map<String, dynamic> json) {
-    return GeoFenceRegion(
+  static GeoFenceRegion fromJson(Map<String, dynamic> json) {
+    return (json != null) ? GeoFenceRegion(
       id: json['id'],
       types: Set.from(json['types']),
       name: json['name'],
       enabled: json['enabled'],
       data: GeoFenceLocation.fromJson(json['location']) ?? GeoFenceBeacon.fromJson(json['beacon']),
-    );
+    ) : null;
   }
 
   toJson({double locationRadius}) {
@@ -120,7 +120,7 @@ class GeoFenceLocation {
 
   GeoFenceLocation({this.latitude, this.longitude, this.radius});
 
-  factory GeoFenceLocation.fromJson(Map<String, dynamic> json) {
+  static GeoFenceLocation fromJson(Map<String, dynamic> json) {
     return (json != null) ? GeoFenceLocation(
       latitude: json['latitude']?.toDouble(),
       longitude: json['longitude']?.toDouble(),
@@ -162,7 +162,7 @@ class GeoFenceBeacon {
 
   GeoFenceBeacon({this.uuid, this.major, this.minor});
 
-  factory GeoFenceBeacon.fromJson(Map<String, dynamic> json) {
+  static GeoFenceBeacon fromJson(Map<String, dynamic> json) {
     return (json != null) ? GeoFenceBeacon(
       uuid: json['uuid'],
       major: json['major']?.toInt(),

@@ -40,7 +40,7 @@ class RecentItem{
 
   RecentItem({this.recentItemType, this.recentTitle, this.recentDescripton,this.recentTime, this.recentOriginalJson});
 
-  factory RecentItem.fromJson(Map<String, dynamic> json){
+  static RecentItem fromJson(Map<String, dynamic> json){
     return (json != null) ? RecentItem(
       recentItemType: recentTypeFromString(json["recent_type"]),
       recentTitle: json["recent_title"],
@@ -50,7 +50,7 @@ class RecentItem{
     ) : null;
   }
 
-  factory RecentItem.fromOriginalType(dynamic item){
+  static RecentItem fromOriginalType(dynamic item){
     if(item is Event) {
       Event event = item;
       if (event != null) {
@@ -117,7 +117,7 @@ class RecentItem{
     return null;
   }
 
-  factory RecentItem.fromGuideItem(Map<String, dynamic> guideItem) {
+  static RecentItem fromGuideItem(Map<String, dynamic> guideItem) {
     return (guideItem != null) ? RecentItem(
       recentItemType: RecentItemType.guide,
       recentTitle: Guide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',

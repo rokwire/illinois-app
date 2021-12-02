@@ -28,7 +28,7 @@ class Coach {
 
   Coach({this.id, this.name, this.firstName, this.lastName, this.title, this.email, this.phone, this.htmlBio, this.fullSizePhotoUrl, this.thumbPhotoUrl});
 
-  factory Coach.fromJson(Map<String, dynamic> json) {
+  static Coach fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }

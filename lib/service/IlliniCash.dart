@@ -564,18 +564,20 @@ class _CreditCardResponse{
   final String exp;
   _CreditCardResponse({this.name, this.lastFour, this.exp});
 
-  factory _CreditCardResponse.fromXMLString(String xmlString){
-    XmlDocument document = XmlDocument.parse(xmlString);
+  static _CreditCardResponse fromXMLString(String xmlString){
+    XmlDocument document;
+    try {
+      document = (xmlString != null) ? XmlDocument.parse(xmlString) : null;
+    }
+    catch(e) {
+      print(e?.toString());
+    }
 
-    String name = _getValueFromXmlItem(document, "name");
-    String lastFour = _getValueFromXmlItem(document, "cc");
-    String exp = _getValueFromXmlItem(document, "exp");
-
-    return _CreditCardResponse(
-      name: name,
-      lastFour: lastFour,
-      exp: exp
-    );
+    return (document != null) ? _CreditCardResponse(
+      name: _getValueFromXmlItem(document, "name"),
+      lastFour: _getValueFromXmlItem(document, "cc"),
+      exp: _getValueFromXmlItem(document, "exp")
+    ) : null;
   }
 
   static _getValueFromXmlItem(XmlDocument document, String elementName){
@@ -600,38 +602,44 @@ class _StatusResponse{
 
   _StatusResponse({this.transId, this.authCode, this.billingId, this.status});
 
-  factory _StatusResponse.fromString(String value){
-    List<String> lines = value.split(" ");
+  static _StatusResponse fromString(String value){
+    List<String> lines = value?.split(" ");
 
-    String transId;
-    String authCode;
-    String billingId;
-    String status;
+    if (lines != null) {
+      String transId;
+      String authCode;
+      String billingId;
+      String status;
 
-    for(String line in lines){
-      List<String> cells = line.split("=");
-      if(cells != null && cells.length > 1){
-        if("authcode" == cells[0]){
-          authCode = cells[1];
-        }
-        if("transid" == cells[0]){
-          transId = cells[1];
-        }
-        else if("status" == cells[0]){
-          status = cells[1];
-        }
-        else if("billingid" == cells[0]){
-          billingId = cells[1];
+
+      for(String line in lines){
+        List<String> cells = line.split("=");
+        if(cells != null && cells.length > 1){
+          if("authcode" == cells[0]){
+            authCode = cells[1];
+          }
+          if("transid" == cells[0]){
+            transId = cells[1];
+          }
+          else if("status" == cells[0]){
+            status = cells[1];
+          }
+          else if("billingid" == cells[0]){
+            billingId = cells[1];
+          }
         }
       }
-    }
 
-    return _StatusResponse(
-      transId: transId,
-      authCode: authCode,
-      billingId: billingId,
-      status: status,
-    );
+      return _StatusResponse(
+        transId: transId,
+        authCode: authCode,
+        billingId: billingId,
+        status: status,
+      );
+    }
+    else {
+      return null;
+    }
   }
 }
 

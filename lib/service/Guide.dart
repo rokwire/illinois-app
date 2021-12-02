@@ -680,7 +680,7 @@ class GuideSection {
   
   GuideSection({this.name, this.date});
 
-  factory GuideSection.fromGuideEntry(Map<String, dynamic> guideEntry) {
+  static GuideSection fromGuideEntry(Map<String, dynamic> guideEntry) {
     return (guideEntry != null) ? GuideSection(
         name: AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
         date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,

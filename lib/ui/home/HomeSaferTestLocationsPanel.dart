@@ -508,9 +508,7 @@ class HealthServiceLocation {
   
   HealthServiceLocation({this.id, this.name, this.availableTests, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
 
-  factory HealthServiceLocation.fromJson(Map<String, dynamic> json) {
-    List jsoTests = json['available_tests'];
-    List jsonDaysOfOperation = json['days_of_operation'];
+  static HealthServiceLocation fromJson(Map<String, dynamic> json) {
     return (json != null) ? HealthServiceLocation(
       id: json['id'],
       name: json['name'],
@@ -526,8 +524,8 @@ class HealthServiceLocation {
       latitude: AppJson.doubleValue(json["latitude"]),
       longitude: AppJson.doubleValue(json["longitude"]),
       waitTimeColor: HealthServiceLocation.waitTimeColorFromString(json['wait_time_color']),
-      availableTests: jsoTests!=null ? List.from(jsoTests) : null,
-      daysOfOperation: jsonDaysOfOperation!=null ? HealthLocationDayOfOperation.listFromJson(jsonDaysOfOperation) : null,
+      availableTests: AppJson.listStringsValue(json['available_tests']),
+      daysOfOperation: HealthLocationDayOfOperation.listFromJson(json['days_of_operation']),
     ) : null;
   }
 
@@ -654,7 +652,7 @@ class HealthLocationDayOfOperation {
     openMinutes = _timeMinutes(openTime),
     closeMinutes = _timeMinutes(closeTime);
 
-  factory HealthLocationDayOfOperation.fromJson(Map<String,dynamic> json){
+  static HealthLocationDayOfOperation fromJson(Map<String,dynamic> json){
     return (json != null) ? HealthLocationDayOfOperation(
       name: json["name"],
       openTime: json["open_time"],

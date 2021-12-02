@@ -57,11 +57,11 @@ class Group {
     }
   }
 
-  factory Group.fromJson(Map<String, dynamic> json) {
+  static Group fromJson(Map<String, dynamic> json) {
     return (json != null) ? Group(json: json) : null;
   }
 
-  factory Group.fromOther(Group other) {
+  static Group fromOther(Group other) {
     return (other != null) ? Group(other: other) : null;
   }
 
@@ -386,11 +386,11 @@ class Member {
     dateUpdatedUtc = other?.dateUpdatedUtc;
   }
 
-  factory Member.fromJson(Map<String, dynamic> json) {
+  static Member fromJson(Map<String, dynamic> json) {
     return (json != null) ? Member(json: json) : null;
   }
 
-  factory Member.fromOther(Member other) {
+  static Member fromOther(Member other) {
     return (other != null) ? Member(other: other) : null;
   }
 
@@ -548,11 +548,11 @@ class GroupMembershipQuest {
     steps = GroupMembershipStep.listFromOthers(other?.steps);
   }
 
-  factory GroupMembershipQuest.fromJson(Map<String, dynamic> json) {
+  static GroupMembershipQuest fromJson(Map<String, dynamic> json) {
     return (json != null) ? GroupMembershipQuest(json: json) : null;
   }
 
-  factory GroupMembershipQuest.fromOther(GroupMembershipQuest other) {
+  static GroupMembershipQuest fromOther(GroupMembershipQuest other) {
     return (other != null) ? GroupMembershipQuest(other: other) : null;
   }
 
@@ -589,11 +589,11 @@ class GroupMembershipStep {
     eventIds    = (other?.eventIds != null) ? List.from(other?.eventIds) : null;
   }
 
-  factory GroupMembershipStep.fromJson(Map<String, dynamic> json) {
+  static GroupMembershipStep fromJson(Map<String, dynamic> json) {
     return (json != null) ? GroupMembershipStep(json: json) : null;
   }
 
-  factory GroupMembershipStep.fromOther(GroupMembershipStep other) {
+  static GroupMembershipStep fromOther(GroupMembershipStep other) {
     return (other != null) ? GroupMembershipStep(other: other) : null;
   }
 
@@ -649,7 +649,7 @@ class GroupMembershipQuestion {
 
   GroupMembershipQuestion({this.question});
 
-  factory GroupMembershipQuestion.fromString(String question) {
+  static GroupMembershipQuestion fromString(String question) {
     return (question != null) ? GroupMembershipQuestion(question: question) : null;
   }
 
@@ -700,7 +700,7 @@ class GroupMembershipAnswer {
 
   GroupMembershipAnswer({this.question, this.answer});
 
-  factory GroupMembershipAnswer.fromJson(Map<String, dynamic> json){
+  static GroupMembershipAnswer fromJson(Map<String, dynamic> json){
     return json != null ? GroupMembershipAnswer(question: json["question"], answer: json["answer"]) : null;
   }
 
@@ -754,7 +754,7 @@ class GroupEvent extends Event {
     try { comments = GroupEventComment.listFromJson(json['comments']); } catch(e) { print(e.toString()); }
   }
 
-  factory GroupEvent.fromJson(Map<String, dynamic> json) {
+  static GroupEvent fromJson(Map<String, dynamic> json) {
     return (json != null) ? GroupEvent(json: json) : null;
   }
 
@@ -785,7 +785,7 @@ class GroupEventComment {
     try { text         = json['text']; } catch(e) { print(e.toString()); }
   }
 
-  factory GroupEventComment.fromJson(Map<String, dynamic> json) {
+  static GroupEventComment fromJson(Map<String, dynamic> json) {
     return (json != null) ? GroupEventComment(json: json) : null;
   }
 
@@ -839,11 +839,8 @@ class GroupPost {
 
   GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.replies});
 
-  factory GroupPost.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
-    return GroupPost(
+  static GroupPost fromJson(Map<String, dynamic> json) {
+    return (json != null) ? GroupPost(
         id: json['id'],
         parentId: json['parent_id'],
         member: Member.fromJson(json['member']),
@@ -852,7 +849,8 @@ class GroupPost {
         dateCreatedUtc: groupUtcDateTimeFromString(json['date_created']),
         dateUpdatedUtc: groupUtcDateTimeFromString(json['date_updated']),
         private: json['private'],
-        replies: GroupPost.fromJsonList(json['replies']));
+        replies: GroupPost.fromJsonList(json['replies'])
+      ) : null;
   }
 
   Map<String, dynamic> toJson({bool create = false, bool update = false}) {
@@ -930,7 +928,7 @@ class GroupError {
 
   GroupError({this.code, this.text});
 
-  factory GroupError.fromJson(Map<String, dynamic> json){
+  static GroupError fromJson(Map<String, dynamic> json){
     return json != null ? GroupError(
       code: AppJson.intValue(json['code']),
       text: AppJson.stringValue(json['text'])
