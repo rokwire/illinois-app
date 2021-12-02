@@ -689,7 +689,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _canCreateGroup {
-    return Auth2().isGroupsAccess;
+    return Auth2().isOidcLoggedIn;
   }
 
   ///////////////////////////////////

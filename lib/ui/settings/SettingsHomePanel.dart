@@ -23,6 +23,7 @@ import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -838,16 +839,29 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _onTapDeleteData(){
+    final String groupsSwitchTitle = "Please delete all my contributions.";
+    bool contributeInGroups = true; //TBD
+
     SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+          //TBD localization
+          TextSpan(text: contributeInGroups?
+            Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+            ""
+          ),
         ],
+        options:contributeInGroups ? [groupsSwitchTitle] : null,
+        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
             progressController(loading: true);
+            if(selectedValues?.contains(groupsSwitchTitle) ?? false){
+              Groups().deleteUserData();
+            }
             _deleteUserData().then((_){
               progressController(loading: false);
               Navigator.pop(context);

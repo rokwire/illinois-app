@@ -5,11 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Change Core BB account exists endpoint path [#1054](https://github.com/rokwire/illinois-app/issues/1054)
+- Allow users signed in with oidc to create groups. [#1059](https://github.com/rokwire/illinois-app/issues/1059).
+
+## [3.0.58] - 2021-12-01
 ### Fixed
 - Handle FCM data notifications (iOS) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
 - Android: release builds [#1046](https://github.com/rokwire/illinois-app/issues/1046).
 ### Added
 - Implement Inbox group message tap action [#1048](https://github.com/rokwire/illinois-app/issues/1048).
+- Hook Notifications Delete user API [#1050](https://github.com/rokwire/illinois-app/issues/1050).
+- Hook Groups delete user API [#1052](https://github.com/rokwire/illinois-app/issues/1052).
 
 ## [3.0.57] - 2021-11-30
 ### Fixed

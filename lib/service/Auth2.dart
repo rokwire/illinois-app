@@ -22,18 +22,19 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
   
-  static const String REDIRECT_URI         = 'edu.illinois.rokwire://rokwire.illinois.edu/oidc-auth';
+  static const String REDIRECT_URI            = 'edu.illinois.rokwire://rokwire.illinois.edu/oidc-auth';
 
-  static const String notifyLoginStarted   = "edu.illinois.rokwire.auth2.login.started";
-  static const String notifyLoginSucceeded = "edu.illinois.rokwire.auth2.login.succeeded";
-  static const String notifyLoginFailed    = "edu.illinois.rokwire.auth2.login.failed";
-  static const String notifyLoginChanged   = "edu.illinois.rokwire.auth2.login.changed";
-  static const String notifyLoginFinished  = "edu.illinois.rokwire.auth2.login.finished";
-  static const String notifyLogout         = "edu.illinois.rokwire.auth2.logout";
-  static const String notifyProfileChanged = "edu.illinois.rokwire.auth2.profile.changed";
-  static const String notifyPrefsChanged   = "edu.illinois.rokwire.auth2.prefs.changed";
-  static const String notifyCardChanged    = "edu.illinois.rokwire.auth2.card.changed";
-  static const String notifyUserDeleted    = "edu.illinois.rokwire.auth2.user.deleted";
+  static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
+  static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";
+  static const String notifyLoginFailed       = "edu.illinois.rokwire.auth2.login.failed";
+  static const String notifyLoginChanged      = "edu.illinois.rokwire.auth2.login.changed";
+  static const String notifyLoginFinished     = "edu.illinois.rokwire.auth2.login.finished";
+  static const String notifyLogout            = "edu.illinois.rokwire.auth2.logout";
+  static const String notifyProfileChanged    = "edu.illinois.rokwire.auth2.profile.changed";
+  static const String notifyPrefsChanged      = "edu.illinois.rokwire.auth2.prefs.changed";
+  static const String notifyCardChanged       = "edu.illinois.rokwire.auth2.card.changed";
+  static const String notifyUserDeleted       = "edu.illinois.rokwire.auth2.user.deleted";
+  static const String notifyPrepareUserDelete = "edu.illinois.rokwire.auth2.user.prepare.delete";
 
   static const String analyticsUin         = 'UINxxxxxx';
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
@@ -576,7 +577,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2EmailAccountState> checkEmailAccountState(String email) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
-      String url = "${Config().coreUrl}/services/auth/account-exists";
+      String url = "${Config().coreUrl}/services/auth/account/exists";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };
@@ -684,6 +685,7 @@ class Auth2 with Service implements NotificationsListener {
   // Delete
 
   Future<bool> deleteUser() async {
+    NotificationService().notify(notifyPrepareUserDelete);
     if (await _deleteUserAccount()) {
       logout(prefs: Auth2UserPrefs.empty());
       NotificationService().notify(notifyUserDeleted);

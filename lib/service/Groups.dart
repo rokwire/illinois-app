@@ -646,6 +646,19 @@ class Groups with Service implements NotificationsListener {
     }
   }
 
+  //Delete User
+  void deleteUserData() async{
+    try {
+      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().groupsUrl}/user", auth: NetworkAuth.Auth2) : null;
+      if(response?.statusCode == 200) {
+        Log.d('Successfully deleted groups user data');
+      }
+    } catch (e) {
+      Log.e('Failed to load inbox user info');
+      Log.e(e.toString());
+    }
+  }
+
   /////////////////////////
   // DeepLinks
 
