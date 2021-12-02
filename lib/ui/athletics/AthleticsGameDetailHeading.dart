@@ -114,7 +114,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                   Container(
                     color: Styles().colors.fillColorPrimary,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      padding: EdgeInsets.only(left: 24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -147,9 +147,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   button: true,
                                   checked: isGameFavorite,
                                   child: GestureDetector(
-                                      child: Image.asset(
-                                        isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
-                                      ),
+                                      child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
+                                        child: Image.asset(isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
+                                      )),
                                       onTap: _onTapSwitchFavorite),
                                 ),
                               )

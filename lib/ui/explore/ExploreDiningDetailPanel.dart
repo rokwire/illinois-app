@@ -219,11 +219,11 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 onTap: (){
                   Analytics.instance.logSelect(target: "Favorite: ${dining?.title}");
                   Auth2().prefs?.toggleFavorite(dining);},
-                child: Semantics(
+                child: Container( child: Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png')))
+                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png'))))
             ),),
           ],
         ));

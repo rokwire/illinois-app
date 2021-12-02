@@ -76,7 +76,7 @@ class SectionTitlePrimary extends StatelessWidget{
         Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 16, top: 16, right: 16, bottom: 2),
+              padding: EdgeInsets.only(left: 16, top: 16),
               child: Row(
                 children: <Widget>[
                   iconPath != null ? Padding(
@@ -103,7 +103,7 @@ class SectionTitlePrimary extends StatelessWidget{
                       onTap: rightIconAction ?? (){},
                       child: Container(
                         padding: EdgeInsets.only(
-                            left: 16),
+                            left: 16, right: 16, top: 8, bottom: 2),
                         child: Image.asset(
                           rightIconPath, excludeFromSemantics: true,),
                       ))): Container(),
