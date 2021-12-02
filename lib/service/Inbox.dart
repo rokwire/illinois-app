@@ -311,7 +311,10 @@ class Inbox with Service implements NotificationsListener {
   //Delete User
   void _deleteUser() async{
     try {
-      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
+      String body = AppJson.encode({
+        'notifications_disabled': true,
+      });
+      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body) : null;
       if(response?.statusCode == 200) {
         _applyUserInfo(null);
       }
