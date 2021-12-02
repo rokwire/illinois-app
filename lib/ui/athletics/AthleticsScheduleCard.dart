@@ -132,10 +132,9 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
           ),
           Visibility(
             visible: starVisible,
-            child: Container(
-                child: Padding(
-                    padding: EdgeInsets.only(top: 20, right: 24),
-                    child: GestureDetector(child: Image.asset(isGameSaved ? 'images/icon-star-selected.png' : 'images/icon-star.png'), onTap: _onTapSaveGame))),
+            child: GestureDetector(child: Container(
+                  padding: EdgeInsets.only(top: 20, right: 24),
+                  child: Image.asset(isGameSaved ? 'images/icon-star-selected.png' : 'images/icon-star.png')), onTap: _onTapSaveGame),
           )
         ],
       ),

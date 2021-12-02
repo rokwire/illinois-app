@@ -195,7 +195,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     bool starVisible = Auth2().canFavorite;
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(left: _horizontalPadding,top: 16, bottom: 12), child: Row(
+      padding: EdgeInsets.only(left: _horizontalPadding), child: Row(
       children: <Widget>[
         Expanded(child:
           Text(
@@ -214,14 +214,16 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
                   Auth2().prefs?.toggleFavorite(widget.event);
                 },
-                child: Semantics(
+                child: Container(
+                  padding: EdgeInsets.only(left: _horizontalPadding,top: 16, bottom: 12),
+                  child:Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization()
                         .getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
                     child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
-                ))
+                )))
         )),)
       ],
     ),);

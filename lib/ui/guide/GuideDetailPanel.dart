@@ -105,7 +105,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                     : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
-                  Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child: 
+                  Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
                     Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
                   )
             ),),),),
