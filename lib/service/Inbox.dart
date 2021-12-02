@@ -319,7 +319,7 @@ class Inbox with Service implements NotificationsListener {
         _applyUserInfo(null);
       }
     } catch (e) {
-      Log.e('Failed to load inbox user info');
+      Log.e('Failed to delete inbox user info');
       Log.e(e.toString());
     }
   }
