@@ -17,16 +17,16 @@
 import 'package:illinois/model/sport/Game.dart';
 
 class TeamRecord {
-  final String overallRecordUnformatted;
-  final String conferenceRecord;
-  final String streak;
-  final String homeRecord;
-  final String awayRecord;
-  final String neutralRecord;
+  final String? overallRecordUnformatted;
+  final String? conferenceRecord;
+  final String? streak;
+  final String? homeRecord;
+  final String? awayRecord;
+  final String? neutralRecord;
 
   TeamRecord({this.overallRecordUnformatted, this.conferenceRecord, this.streak, this.homeRecord, this.awayRecord, this.neutralRecord});
 
-  static TeamRecord fromJson(Map<String, dynamic> json) {
+  static TeamRecord? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -42,17 +42,17 @@ class TeamRecord {
 }
 
 class TeamSchedule {
-  final List<Game> games;
-  final String label;
+  final List<Game?>? games;
+  final String? label;
 
   TeamSchedule({this.games, this.label});
 
-  static TeamSchedule fromJson(Map<String, dynamic> json) {
+  static TeamSchedule? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
-    List<dynamic> gamesJson = json['games'];
-    List<Game> games = (gamesJson != null) ? gamesJson.map((value) => Game.fromJson(value)).toList() : null;
+    List<dynamic>? gamesJson = json['games'];
+    List<Game?>? games = (gamesJson != null) ? gamesJson.map((value) => Game.fromJson(value)).toList() : null;
     return TeamSchedule(games: games, label: json['label']);
   }
 }

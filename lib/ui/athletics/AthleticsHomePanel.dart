@@ -59,8 +59,8 @@ class AthleticsHomePanel extends StatefulWidget {
 class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     implements NotificationsListener {
 
-  List<Game> _visibleGames;
-  List<Game> _todayGames;
+  List<Game>? _visibleGames;
+  List<Game>? _todayGames;
 
   bool _loading = false;
 
@@ -91,7 +91,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
               excludeSemantics:true,
               child:
               Text(
-                Localization().getStringEx('panel.athletics.header.title', 'Athletics'),
+                Localization().getStringEx('panel.athletics.header.title', 'Athletics')!,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -100,7 +100,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
               )
           ),
           rightButtonVisible: true,
-          rightButtonText: Localization().getStringEx('headerbar.teams.title', 'Teams'),
+          rightButtonText: Localization().getStringEx('headerbar.teams.title', 'Teams')!,
           onRightButtonTap: () {
             Analytics.instance.logSelect(target: "Teams");
             Navigator.push(
@@ -111,7 +111,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
           },
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: _buildContentWidget()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.showTabBar ? TabBarWidget() : null,
       );
   }
@@ -128,7 +128,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
             child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-              color: Styles().colors.background,
+              color: Styles().colors!.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -155,9 +155,9 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                   color: Colors.transparent,
                                   height: 20,
                                 ),
-                            itemCount: (_visibleGames != null) ? _visibleGames.length : 0,
+                            itemCount: (_visibleGames != null) ? _visibleGames!.length : 0,
                             itemBuilder: (context, index) {
-                              Game game = _visibleGames[index];
+                              Game game = _visibleGames![index];
                               return _AthleticsCard(
                                 game: game,
                                 onTap: () => _onTapAthleticsGame(context, game),
@@ -179,9 +179,9 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                   label: Localization().getStringEx("panel.athletics.button.see_more_events.title", 'See more events'),
                                   hint: Localization().getStringEx("panel.athletics.button.see_more_events.hint", ''),
                                   onTap: _onTapMoreUpcomingEvents,
-                                  backgroundColor: Styles().colors.background,
-                                  borderColor: Styles().colors.fillColorSecondary,
-                                  textColor: Styles().colors.fillColorPrimary,
+                                  backgroundColor: Styles().colors!.background,
+                                  borderColor: Styles().colors!.fillColorSecondary,
+                                  textColor: Styles().colors!.fillColorPrimary,
                                 ),
                               ),
                               Expanded(flex: 1, child: Container())
@@ -193,7 +193,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           alignment: Alignment.topCenter,
                           children: <Widget>[
                             Container(
-                              color: Styles().colors.backgroundVariant,
+                              color: Styles().colors!.backgroundVariant,
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(16, 16, 16, 40),
                                 child: Column(
@@ -202,9 +202,9 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports'),
+                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports')!,
                                         style: TextStyle(
-                                            color: Styles().colors.fillColorPrimary,
+                                            color: Styles().colors!.fillColorPrimary,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w900),
                                       ),
@@ -218,21 +218,21 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             MainAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
-                                            Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
+                                            Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the ")!,
                                             style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.medium,
-                                                color: Styles().colors.textBackground,
+                                                fontFamily: Styles().fontFamilies!.medium,
+                                                color: Styles().colors!.textBackground,
                                                 fontSize: 16),
                                           ),
                                           Image.asset(
                                               'images/icon-check-example.png'),
                                           Expanded(
                                             child:Text(
-                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
+                                              Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams")!,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
-                                                  color: Styles().colors.textBackground,
+                                                  fontFamily: Styles().fontFamilies!.medium,
+                                                  color: Styles().colors!.textBackground,
                                                   fontSize: 16),
                                             )
                                           )
@@ -261,7 +261,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       Column(
                                         children: <Widget>[
                                           Container(
-                                            color: Styles().colors.fillColorPrimary,
+                                            color: Styles().colors!.fillColorPrimary,
                                             height: 40,
                                           ),
                                           Container(
@@ -269,7 +269,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             width: double.infinity,
                                             child: Image.asset('images/slant-down-right-blue.png',
                                               fit:BoxFit.fill,
-                                              color: Styles().colors.fillColorPrimaryVariant
+                                              color: Styles().colors!.fillColorPrimaryVariant
                                             ),
                                           )
                                         ],
@@ -290,7 +290,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 ),
                                                 Expanded(child:
                                                   Text(
-                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
+                                                    Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics')!,
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 20),
@@ -418,12 +418,12 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   Widget _buildGameDayWidgets() {
-    if (_todayGames == null || _todayGames.isEmpty) {
+    if (_todayGames == null || _todayGames!.isEmpty) {
       return Container();
     }
     List<Widget> gameDayWidgets = [];
 
-    for (Game todayGame in _todayGames) {
+    for (Game todayGame in _todayGames!) {
       gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame));
     }
     return Column(children: gameDayWidgets);
@@ -442,11 +442,11 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     }
   }
 
-  void _onGamesLoaded(List<Game> games) {
+  void _onGamesLoaded(List<Game>? games) {
     _visibleGames = games;
     _todayGames = Sports().getTodayGames(_visibleGames);
-    if (_todayGames != null && _todayGames.isNotEmpty) {
-      _visibleGames.removeRange(0, _todayGames.length);
+    if (_todayGames != null && _todayGames!.isNotEmpty) {
+      _visibleGames!.removeRange(0, _todayGames!.length);
     }
     _setLoading(false);
   }
@@ -553,9 +553,9 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
 class _AthleticsCard extends StatefulWidget {
   final Game game;
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
 
-  _AthleticsCard({@required this.game, this.onTap}) {
+  _AthleticsCard({required this.game, this.onTap}) {
     assert(game != null);
   }
 
@@ -591,15 +591,15 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   @override
   Widget build(BuildContext context) {
-    String sportKey = widget.game.sport?.shortName;
-    SportDefinition sport = Sports().getSportByShortName(sportKey);
-    String sportName = (sport != null) ? sport.name : '';
-    bool isTicketedSport = (sport != null) ? sport.ticketed : false;
+    String? sportKey = widget.game.sport?.shortName;
+    SportDefinition? sport = Sports().getSportByShortName(sportKey);
+    String sportName = (sport != null) ? sport.name! : '';
+    bool isTicketedSport = (sport != null) ? sport.ticketed! : false;
     bool isGetTicketsVisible = isTicketedSport && (widget.game.links?.tickets != null);
     bool showImage =
         (isTicketedSport && !AppString.isStringEmpty(widget.game.imageUrl));
     bool isFavorite = Auth2().isFavorite(widget.game);
-    String interestsLabelValue = _getInterestsLabelValue();
+    String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = AppString.isStringNotEmpty(interestsLabelValue);
 
     return GestureDetector(
@@ -620,14 +620,14 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                     showImage
                         ? Positioned(
                         child: Image.network(
-                          widget.game.imageUrl,
+                          widget.game.imageUrl!,
                           semanticLabel: "Sports",
                         ))
                         : Container(height: 0),
                     showImage
                         ? Container(
                       height: 72,
-                      color: Styles().colors.fillColorSecondaryTransparent05,
+                      color: Styles().colors!.fillColorSecondaryTransparent05,
                     )
                         : Container(height: 0)
                   ],
@@ -637,14 +637,14 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                   height: 112,
                   width: double.infinity,
                   child: Image.asset('images/slant-down-right.png',
-                    color: Styles().colors.fillColorSecondary,
+                    color: Styles().colors!.fillColorSecondary,
                     fit: BoxFit.fill,
                   ),
                 )
                     : Container(height: 0),
                 Container(
                   height: 140,
-                  color: Styles().colors.background,
+                  color: Styles().colors!.background,
                 )
               ],
             ),
@@ -670,17 +670,17 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                             children: <Widget>[
                               Semantics(button: true,child:
                               GestureDetector(
-                                  onTap: () => _onTapSportCategory(sport),
+                                  onTap: () => _onTapSportCategory(sport!),
                                   child: Padding(
                                     padding: EdgeInsets.only(top:24),
                                     child:Container(
-                                      color: Styles().colors.fillColorPrimary,
+                                      color: Styles().colors!.fillColorPrimary,
                                       child: Padding(
                                         padding: EdgeInsets.all(5),
                                         child: Text(
                                           sportName.toUpperCase(),
                                           style: TextStyle(
-                                              fontFamily: Styles().fontFamilies.bold,
+                                              fontFamily: Styles().fontFamilies!.bold,
                                               fontSize: 14,
                                               letterSpacing: 1.0,
                                               color: Colors.white),
@@ -730,7 +730,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                             widget.game.title,
                             style: TextStyle(
                                 fontSize: 24,
-                                color: Styles().colors.fillColorPrimary,
+                                color: Styles().colors!.fillColorPrimary,
                                 fontWeight: FontWeight.w900),
                           ),
                         ),
@@ -743,7 +743,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                               children: <Widget>[
                                 Container(
                                   height: 1,
-                                  color: Styles().colors.surfaceAccent,),
+                                  color: Styles().colors!.surfaceAccent,),
                                 Padding(padding: EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 12),
                                   child: Column(
@@ -752,17 +752,17 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                     children: <Widget>[
                                       Text(Localization().getStringEx(
                                           'widget.card.label.interests',
-                                          'Because of your interest in:'),
+                                          'Because of your interest in:')!,
                                         style: TextStyle(
-                                            color: Styles().colors.textBackground,
+                                            color: Styles().colors!.textBackground,
                                             fontSize: 12,
-                                            fontFamily: Styles().fontFamilies.bold),),
+                                            fontFamily: Styles().fontFamilies!.bold),),
                                       Text(AppString.getDefaultEmptyString(
-                                          value: interestsLabelValue),
+                                          value: interestsLabelValue)!,
                                         style: TextStyle(
-                                            color: Styles().colors.textBackground,
+                                            color: Styles().colors!.textBackground,
                                             fontSize: 12,
-                                            fontFamily: Styles().fontFamilies.medium),)
+                                            fontFamily: Styles().fontFamilies!.medium),)
                                     ],),)
                               ],)),
                         Visibility(
@@ -775,8 +775,8 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                 hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
                                 backgroundColor: Colors.white,
                                 fontSize: 16,
-                                borderColor: Styles().colors.fillColorSecondary,
-                                textColor: Styles().colors.fillColorPrimary,
+                                borderColor: Styles().colors!.fillColorSecondary,
+                                textColor: Styles().colors!.fillColorPrimary,
                                 onTap: _onTapGetTickets,
                               ),
                             ))
@@ -786,7 +786,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                 ),
                 !showImage
                     ? Container(
-                    height: 7, color: Styles().colors.fillColorPrimary)
+                    height: 7, color: Styles().colors!.fillColorPrimary)
                     : Container(),
               ])),
         ],
@@ -813,12 +813,12 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   Widget _athleticsDetails() {
     List<Widget> details = [];
 
-    Widget time = _athleticsTimeDetail();
+    Widget? time = _athleticsTimeDetail();
     if (time != null) {
       details.add(time);
     }
 
-    Widget location = _athleticsLocationDetail();
+    Widget? location = _athleticsLocationDetail();
     if (location != null) {
       details.add(location);
     }
@@ -833,7 +833,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
         : Container();
   }
 
-  Widget _athleticsTimeDetail() {
+  Widget? _athleticsTimeDetail() {
     String displayTime = widget.game.displayTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
@@ -846,9 +846,9 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
             ),
             Text(displayTime,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
-                    color: Styles().colors.textBackground)),
+                    color: Styles().colors!.textBackground)),
           ],
         )),
       );
@@ -857,8 +857,8 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     }
   }
 
-  Widget _athleticsLocationDetail() {
-    String locationText = widget.game.location?.location;
+  Widget? _athleticsLocationDetail() {
+    String? locationText = widget.game.location?.location;
     if ((locationText != null) && locationText.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
@@ -874,9 +874,9 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.medium,
+                        fontFamily: Styles().fontFamilies!.medium,
                         fontSize: 16,
-                        color: Styles().colors.textBackground))),
+                        color: Styles().colors!.textBackground))),
           ],
         )),
       );
@@ -886,7 +886,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   Widget _athleticsDescription() {
-    String description = widget.game.shortDescription;
+    String? description = widget.game.shortDescription;
     return ((description != null) && description.isNotEmpty)
         ? Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -898,9 +898,9 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                     child: Text(
                       description,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.medium,
+                          fontFamily: Styles().fontFamilies!.medium,
                           fontSize: 16,
-                          color: Styles().colors.textBackground),
+                          color: Styles().colors!.textBackground),
                     ))
               ])
         : Container();
@@ -911,7 +911,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
       padding: EdgeInsets.symmetric(vertical: 0),
       child: Container(
         height: 1,
-        color: Styles().colors.fillColorPrimaryTransparent015,
+        color: Styles().colors!.fillColorPrimaryTransparent015,
       ),
     );
   }
@@ -922,7 +922,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapSportCategory(SportDefinition sport) {
-    Analytics.instance.logSelect(target: "AthleticsCard:Item:" + widget?.game?.title + " -category: " + sport.name);
+    Analytics.instance.logSelect(target: "AthleticsCard:Item:" + widget?.game?.title + " -category: " + sport.name!);
     if (sport != null) {
       if (Connectivity().isNotOffline) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
@@ -933,8 +933,8 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     }
   }
 
-  String _getInterestsLabelValue() {
-    String sportName = widget?.game?.sport?.shortName;
+  String? _getInterestsLabelValue() {
+    String? sportName = widget?.game?.sport?.shortName;
     bool isSportFavorite = Auth2().prefs?.hasSportInterest(sportName) ?? false;
     return isSportFavorite ? Sports().getSportByShortName(sportName)?.customName : null;
   }

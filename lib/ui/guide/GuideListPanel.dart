@@ -29,11 +29,11 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final String guide;
-  final String category;
-  final GuideSection section;
-  final List<Map<String, dynamic>> contentList;
-  final String contentTitle;
+  final String? guide;
+  final String? category;
+  final GuideSection? section;
+  final List<Map<String, dynamic>?>? contentList;
+  final String? contentTitle;
 
   GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle});
 
@@ -52,8 +52,8 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
 class _GuideListPanelState extends State<GuideListPanel> implements NotificationsListener {
 
-  List<Map<String, dynamic>> _guideItems = <Map<String, dynamic>>[];
-  LinkedHashSet<String> _features = LinkedHashSet<String>();
+  List<Map<String, dynamic>>? _guideItems = <Map<String, dynamic>>[];
+  LinkedHashSet<String>? _features = LinkedHashSet<String>();
 
   @override
   void initState() {
@@ -85,7 +85,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _buildGuideContent() {
     if (widget.contentList != null) {
-      _guideItems = List.from(widget.contentList);
+      _guideItems = List.from(widget.contentList!);
     }
     else if ((widget.guide != null) || (widget.category != null) || (widget.section != null)) {
       _guideItems = Guide().getContentList(guide: widget.guide, category: widget.category, section: widget.section);
@@ -96,7 +96,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
     if (_guideItems != null) {
 
-        _guideItems.sort((dynamic entry1, dynamic entry2) {
+        _guideItems!.sort((dynamic entry1, dynamic entry2) {
           return AppSort.compareIntegers(
             (entry1 is Map) ? AppJson.intValue(entry1['sort_order']) : null,
             (entry2 is Map) ? AppJson.intValue(entry2['sort_order']) : null
@@ -104,12 +104,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         });
 
       _features = LinkedHashSet<String>();
-      for (Map<String, dynamic> guideEntry in _guideItems) {
-        List<dynamic> features = AppJson.listValue(Guide().entryValue(guideEntry, 'features'));
+      for (Map<String, dynamic> guideEntry in _guideItems!) {
+        List<dynamic>? features = AppJson.listValue(Guide().entryValue(guideEntry, 'features'));
         if (features != null) {
           for (dynamic feature in features) {
-            if ((feature is String) && !_features.contains(feature)) {
-              _features.add(feature);
+            if ((feature is String) && !_features!.contains(feature)) {
+              _features!.add(feature);
             }
           }
         }
@@ -123,7 +123,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   @override
   Widget build(BuildContext context) {
 
-    String title;
+    String? title;
     if (widget.category != null) {
       title = widget.category;
     }
@@ -134,24 +134,24 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
+        titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
       ),
-      body: Column(children: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      body: Column(children: _buildContent() as List<Widget>),
+      backgroundColor: Styles().colors!.background,
     );
   }
 
-  List<Widget> _buildContent() {
-    List<Widget> contentList = <Widget>[];
+  List<Widget?> _buildContent() {
+    List<Widget?> contentList = <Widget?>[];
 
-    if ((_guideItems != null) && (0 < _guideItems.length)) {
+    if ((_guideItems != null) && (0 < _guideItems!.length)) {
 
-      if ((_features != null) && _features.isNotEmpty) {
+      if ((_features != null) && _features!.isNotEmpty) {
         contentList.add(_buildFeatures());
       }
 
       if (widget.section != null) {
-        contentList.add(_buildSectionHeading(widget.section.name));
+        contentList.add(_buildSectionHeading(widget.section!.name));
       }
       else if (widget.contentList != null) {
         contentList.add(_buildSectionHeading(widget.contentTitle));
@@ -159,7 +159,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
       List<Widget> cardsList = <Widget>[];
       if (_guideItems != null) {
-        for (Map<String, dynamic> guideEntry in _guideItems) {
+        for (Map<String, dynamic> guideEntry in _guideItems!) {
           cardsList.add(
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child:
               GuideEntryCard(guideEntry)
@@ -187,7 +187,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             ,)
           ),
         ),
@@ -198,13 +198,13 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     return contentList;
   }
 
-  Widget _buildSectionHeading(String title) {
-    return Container(color: Styles().colors.fillColorPrimary, child:
+  Widget _buildSectionHeading(String? title) {
+    return Container(color: Styles().colors!.fillColorPrimary, child:
       Row(children: [
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
             Semantics(hint: "Heading", child:
-              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+              Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             )
           ),
         )
@@ -212,12 +212,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     );
   }
 
-  Widget _buildFeatures() {
+  Widget? _buildFeatures() {
     if (_features != null) {
       List<Widget> rowWidgets = <Widget>[];
       List<Widget> colWidgets = <Widget>[];
-      for (String feature in _features) {
-        GuideFeatureButton featureButton = _buildFeatureButton(feature);
+      for (String feature in _features!) {
+        GuideFeatureButton? featureButton = _buildFeatureButton(feature);
         if (featureButton != null) {
           if (rowWidgets.isNotEmpty) {
             rowWidgets.add(Container(width: 6),);
@@ -278,7 +278,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
       );*/
   }
 
-  GuideFeatureButton _buildFeatureButton(String feature) {
+  GuideFeatureButton? _buildFeatureButton(String feature) {
 
     List<dynamic> features = AppJson.listValue(FlexUI()['campus_guide.features']) ?? [];
     
@@ -411,9 +411,9 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
 
 class GuideFeatureButton extends StatefulWidget {
-  final String title;
-  final String icon;
-  final Function onTap;
+  final String? title;
+  final String? icon;
+  final Function? onTap;
   GuideFeatureButton({this.title, this.icon, this.onTap});
 
   _GuideFeatureButtonState createState() => _GuideFeatureButtonState();
@@ -434,20 +434,20 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
   @override
   Widget build(BuildContext context) {
     return Semantics(button: true, child:
-      GestureDetector(onTap: widget.onTap ?? _nop, child:
+      GestureDetector(onTap: widget.onTap as void Function()? ?? _nop, child:
         Container(
           decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors!.white,
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.all(Radius.circular(4)),
           ), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
             Column(children: <Widget>[
-              Image.asset(widget.icon, excludeFromSemantics: true,),
+              Image.asset(widget.icon!, excludeFromSemantics: true,),
               Container(height: 12),
               Row(children: [
                 Expanded(child:
-                  Text(widget.title, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.semiBold)),
+                  Text(widget.title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold)),
                 ),
               ],)
 

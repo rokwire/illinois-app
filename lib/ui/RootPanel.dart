@@ -58,19 +58,19 @@ import 'package:illinois/service/Styles.dart';
 enum RootTab { Home, Athletics, Explore, Wallet, Browse }
 
 class _PanelData {
-  _RootPanelState _panelState;
+  _RootPanelState? _panelState;
 
-  RootTab         _rootTab;
-  ExploreTab      _exploreTab;
-  ExploreFilter   _exploreInitialFilter;
+  RootTab?         _rootTab;
+  ExploreTab?      _exploreTab;
+  ExploreFilter?   _exploreInitialFilter;
 }
 
 class RootPanel extends StatefulWidget {
   final _PanelData _data = _PanelData();
 
-  void selectTab({RootTab rootTab, ExploreTab exploreTab, ExploreFilter exploreInitialFilter, bool showHeaderBack = false}) {
-    if ((_data._panelState != null) && _data._panelState.mounted && (rootTab != null)) {
-      _data._panelState.selectTab(rootTab: rootTab, exploreTab: exploreTab, exploreInitialFilter: exploreInitialFilter);
+  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter, bool? showHeaderBack = false}) {
+    if ((_data._panelState != null) && _data._panelState!.mounted && (rootTab != null)) {
+      _data._panelState!.selectTab(rootTab: rootTab, exploreTab: exploreTab, exploreInitialFilter: exploreInitialFilter);
     }
     else {
       _data._rootTab = rootTab;
@@ -84,17 +84,17 @@ class RootPanel extends StatefulWidget {
     return _data._panelState = _RootPanelState();
   }
 
-  _RootPanelState get panelState {
+  _RootPanelState? get panelState {
     return _data._panelState;
   }
 }
 
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
 
-  List<RootTab>  _tabs = [];
-  Map<RootTab, Widget> _panels = {};
+  List<RootTab?>  _tabs = [];
+  Map<RootTab?, Widget> _panels = {};
 
-  TabController  _tabBarController;
+  TabController?  _tabBarController;
   int            _currentTabIndex = 0;
 
   _RootPanelState();
@@ -137,7 +137,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       }
 
       if (widget._data._rootTab == RootTab.Explore) {
-        ExplorePanel explorePanel = _panels[RootTab.Explore];
+        ExplorePanel? explorePanel = _panels[RootTab.Explore] as ExplorePanel?;
         explorePanel?.selectTab(widget._data._exploreTab, initialFilter: widget._data._exploreInitialFilter);
       }
 
@@ -236,7 +236,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     List<Widget> panels = [];
-    for (RootTab rootTab in _tabs) {
+    for (RootTab? rootTab in _tabs) {
       panels.add(_panels[rootTab] ?? Container());
     }
 
@@ -250,18 +250,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                 children: panels,
               ),
               bottomNavigationBar: TabBarWidget(tabController: _tabBarController),
-              backgroundColor: Styles().colors.background,
+              backgroundColor: Styles().colors!.background,
             ),
         ),
-        onWillPop: _onWillPop);
+        onWillPop: _onWillPop as Future<bool> Function()?);
   }
 
   ///Public interface
-  void selectTab({RootTab rootTab, ExploreTab exploreTab, ExploreFilter exploreInitialFilter}) {
+  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter}) {
 
     int newTabIndex = _getIndexByRootTab(rootTab);
     if ((newTabIndex >= 0) && (newTabIndex != _currentTabIndex)) {
-      _tabBarController.animateTo(newTabIndex);
+      _tabBarController!.animateTo(newTabIndex);
       _selectTabAtIndex(newTabIndex);
     }
   }
@@ -273,7 +273,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _selectTabAtIndex(int index) {
     if (_currentTabIndex != index) {
 
-      Widget tabPanel = _getTabPanelAtIndex(index);
+      Widget? tabPanel = _getTabPanelAtIndex(index);
       if (tabPanel != null) {
         Analytics.instance.logPage(name:tabPanel?.runtimeType?.toString());
       }
@@ -289,24 +289,24 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  RootTab getRootTabByIndex(int index) {
+  RootTab? getRootTabByIndex(int index) {
     return ((0 <= index) && (index < _tabs.length)) ? _tabs[index] : null;
   }
 
-  int _getIndexByRootTab(RootTab rootTab) {
+  int _getIndexByRootTab(RootTab? rootTab) {
     return _tabs.indexOf(rootTab);
   }
 
-  Widget _getTabPanelAtIndex(int index) {
-    RootTab rootTab = getRootTabByIndex(index);
+  Widget? _getTabPanelAtIndex(int index) {
+    RootTab? rootTab = getRootTabByIndex(index);
     return (rootTab != null) ? _panels[rootTab] : null;
   }
 
-  Widget get currentTabPanel {
+  Widget? get currentTabPanel {
     return _getTabPanelAtIndex(_currentTabIndex);
   }
 
-  Future<bool> _onWillPop() async {
+  Future<bool?> _onWillPop() async {
     if (_currentTabIndex != 0) {
       selectTab(rootTab: RootTab.Home);
       return Future.value(false);
@@ -334,12 +334,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               children: <Widget>[
                 Expanded(
                   child: Container(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.all(8),
                       child: Center(
                         child: Text(
-                          Localization().getStringEx("app.title", "Illinois"),
+                          Localization().getStringEx("app.title", "Illinois")!,
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                       ),
@@ -351,10 +351,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
             Container(height: 26,),
             Text(
               Localization().getStringEx(
-                  "app.exit_dialog.message", "Are you sure you want to exit?"),
+                  "app.exit_dialog.message", "Are you sure you want to exit?")!,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold,
+                  fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,
                   color: Colors.black),
             ),
@@ -371,8 +371,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(true);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      textColor: Styles().colors!.fillColorPrimary,
                       label: Localization().getStringEx("dialog.yes.title", 'Yes')),
                   Container(height: 10,),
                   RoundedButton(
@@ -382,8 +382,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
                         Navigator.of(context).pop(false);
                       },
                       backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors.fillColorSecondary,
-                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      textColor: Styles().colors!.fillColorPrimary,
                       label: Localization().getStringEx("dialog.no.title", 'No'))
                 ],
               ),
@@ -414,25 +414,25 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'prompt.device_calendar.msg.add_event',
-            'Do you want to save this event to your calendar?')),
+            'Do you want to save this event to your calendar?')!),
         actions: <Widget>[
           TextButton(
               child:
-              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Navigator.of(context).pop();
                   NotificationService().notify(
                       DeviceCalendar.notifyPlaceEvent, data);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
-    String body = content["body"];
-    Function completion = content["onComplete"];
+    String? body = content["body"];
+    Function? completion = content["onComplete"];
     AppAlert.showDialogResult(context, body).then((value){
       if(completion != null){
         completion();
@@ -441,8 +441,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
-    String displayText = content["display_text"];
-    String positiveButtonText = content["positive_button_text"];
+    String? displayText = content["display_text"];
+    String? positiveButtonText = content["positive_button_text"];
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -452,42 +452,42 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
-  Future<void> _onFirebaseEventDetail(Map<String, dynamic> content) async {
-    String eventId = (content != null) ? AppJson.stringValue(content['event_id']) : null;
+  Future<void> _onFirebaseEventDetail(Map<String, dynamic>? content) async {
+    String? eventId = (content != null) ? AppJson.stringValue(content['event_id']) : null;
     if (AppString.isStringNotEmpty(eventId)) {
       ExplorePanel.presentDetailPanel(context, eventId: eventId);
     }
   }
 
   
-  Future<void> _onFirebaseGameDetail(Map<String, dynamic> content) async {
-    String gameId = (content != null) ? AppJson.stringValue(content['game_id']) : null;
-    String sport = (content != null) ? AppJson.stringValue(content['sport']) : null;
+  Future<void> _onFirebaseGameDetail(Map<String, dynamic>? content) async {
+    String? gameId = (content != null) ? AppJson.stringValue(content['game_id']) : null;
+    String? sport = (content != null) ? AppJson.stringValue(content['sport']) : null;
     if (AppString.isStringNotEmpty(gameId) && AppString.isStringNotEmpty(sport)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId,)));
     }
   }
 
-  Future<void> _onGroupDetail(Map<String, dynamic> content) async {
-    String groupId = (content != null) ? AppJson.stringValue(content['group_id']) : null;
+  Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
+    String? groupId = (content != null) ? AppJson.stringValue(content['group_id']) : null;
     _presentGroupDetailPanel(groupId);
   }
 
-  Future<void> _onGuideDetail(Map<String, dynamic> content) async {
-    String guideId = (content != null) ? AppJson.stringValue(content['guide_id']) : null;
+  Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
+    String? guideId = (content != null) ? AppJson.stringValue(content['guide_id']) : null;
     if(AppString.isStringNotEmpty(guideId)){
-      WidgetsBinding.instance.addPostFrameCallback((_) { //Fix navigator.dart failed assertion line 5307
+      WidgetsBinding.instance!.addPostFrameCallback((_) { //Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
             GuideDetailPanel(guideEntryId: guideId,)));});
     }
   }
 
-  void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
+  void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
     if (athleticsGameDetails == null) {
       return;
     }
-    String sportShortName = athleticsGameDetails["Path"];
-    String gameId = athleticsGameDetails["GameId"];
+    String? sportShortName = athleticsGameDetails["Path"];
+    String? gameId = athleticsGameDetails["GameId"];
     if (AppString.isStringEmpty(sportShortName) || AppString.isStringEmpty(gameId)) {
       return;
     }
@@ -495,7 +495,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
   
   void _showPresentPoll() {
-    Poll presentPoll = Polls().presentPoll;
+    Poll? presentPoll = Polls().presentPoll;
     if (presentPoll != null) {
       Timer(Duration(milliseconds: 500), (){
         if (presentPoll.status == PollStatus.opened) {
@@ -508,11 +508,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _presentPollVote(String pollId) {
+  void _presentPollVote(String? pollId) {
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubblePromptPanel(pollId: pollId)));
   }
 
-  void _presentPollResult(String pollId) {
+  void _presentPollResult(String? pollId) {
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
   }
 
@@ -535,7 +535,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         ]);
   }
 
-  static List<String> _getTabbarCodes() {
+  static List<String>? _getTabbarCodes() {
     try {
       dynamic tabsList = FlexUI()['tabbar'];
       return (tabsList is List) ? tabsList.cast<String>() : null;
@@ -547,7 +547,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _updateContent() {
-    List<RootTab> tabs = _getTabs();
+    List<RootTab?> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
       _updatePanels(tabs);
       if (mounted) {
@@ -563,10 +563,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _updatePanels(List<RootTab> tabs) {
-    for (RootTab rootTab in tabs) {
+  void _updatePanels(List<RootTab?> tabs) {
+    for (RootTab? rootTab in tabs) {
       if (_panels[rootTab] == null) {
-      Widget panel = _createPanelForTab(rootTab);
+      Widget? panel = _createPanelForTab(rootTab);
       if (panel != null) {
         _panels[rootTab] = panel;
       }
@@ -574,9 +574,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  static List<RootTab> _getTabs() {
-    List<RootTab> tabs = [];
-    List<String> codes = _getTabbarCodes();
+  static List<RootTab?> _getTabs() {
+    List<RootTab?> tabs = [];
+    List<String>? codes = _getTabbarCodes();
     if (codes != null) {
       for (String code in codes) {
         tabs.add(rootTabFromString(code));
@@ -585,7 +585,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return tabs;
   }
 
-  static Widget _createPanelForTab(RootTab rootTab) {
+  static Widget? _createPanelForTab(RootTab? rootTab) {
     if (rootTab == RootTab.Home) {
       return HomePanel();
     }
@@ -608,12 +608,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseGroupsNotification(param) {
     if(param is Map<String, dynamic>){
-      String groupId = param["entity_id"];
+      String? groupId = param["entity_id"];
       _presentGroupDetailPanel(groupId);
     }
   }
 
-  void _presentGroupDetailPanel(String groupId) {
+  void _presentGroupDetailPanel(String? groupId) {
     if (AppString.isStringNotEmpty(groupId)) {
       Groups().loadGroup(groupId).then((value) {
         if (value != null) {
@@ -627,7 +627,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseAthleticsNewsNotification(param) {
     if (param is Map<String, dynamic>) {
-      String newsId = param["news_id"];
+      String? newsId = param["news_id"];
       Sports().loadNewsArticle(newsId).then((article) {
         if (article != null) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
@@ -647,7 +647,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 }
 
-RootTab rootTabFromString(String value) {
+RootTab? rootTabFromString(String value) {
   if (value != null) {
     if (value == 'home') {
       return RootTab.Home;
@@ -675,7 +675,7 @@ class _FavoritesSavedDialog extends StatefulWidget {
   }
 
   static void show(BuildContext context) {
-    bool favoriteDialogWasShown = Storage().favoritesDialogWasVisible;
+    bool favoriteDialogWasShown = Storage().favoritesDialogWasVisible!;
     if (favoriteDialogWasShown || context == null) {
       return;
     }
@@ -702,8 +702,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: Container(
               decoration: BoxDecoration(
-                color: Styles().colors.fillColorPrimary,
-                border: Border.all(color: Styles().colors.fillColorPrimary, width: 2.0),
+                color: Styles().colors!.fillColorPrimary,
+                border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2.0),
                 borderRadius: BorderRadius.circular(4.0),
               ),
               child: Padding(
@@ -713,12 +713,12 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.") :""),
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')!
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.")! :""),
                             style: TextStyle(
-                              color: Styles().colors.white,
+                              color: Styles().colors!.white,
                               fontSize: 16,
-                              fontFamily: Styles().fontFamilies.bold,
+                              fontFamily: Styles().fontFamilies!.bold,
                             ),
                           )),
                       InkWell(onTap: _onTapClose, child:
@@ -731,14 +731,14 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       child: GestureDetector(
                         onTap: _onViewAll,
                         child: Text(
-                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View"),
+                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View")!,
                           style: TextStyle(
-                              color: Styles().colors.white,
+                              color: Styles().colors!.white,
                               fontSize: 14,
-                              fontFamily: Styles().fontFamilies.medium,
+                              fontFamily: Styles().fontFamilies!.medium,
                               decoration: TextDecoration.underline,
                               decorationThickness: 1,
-                              decorationColor: Styles().colors.fillColorSecondary),
+                              decorationColor: Styles().colors!.fillColorSecondary),
                         ),
                       ),
                     ))

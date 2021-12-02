@@ -51,7 +51,7 @@ import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
 
-  bool _isInitialized;
+  bool? _isInitialized;
 
   void createService() {
   }
@@ -68,7 +68,7 @@ abstract class Service {
 
   bool get isInitialized => _isInitialized ?? false;
 
-  Set<Service> get serviceDependsOn {
+  Set<Service>? get serviceDependsOn {
     return null;
   }
 }
@@ -143,7 +143,7 @@ class Services {
     }
   }
 
-  Future<ServiceError> init() async {
+  Future<ServiceError?> init() async {
     bool offlineChecked = false;
     for (Service service in _services) {
 
@@ -156,7 +156,7 @@ class Services {
           }
         }
         catch(e) {
-          print(e?.toString());
+          print(e.toString());
         }
       }
 
@@ -200,7 +200,7 @@ class Services {
       _services.removeLast();
       
       // Move to TBD anyone from Queue that depends on svc
-      Set<Service> svcDependents = svc.serviceDependsOn;
+      Set<Service>? svcDependents = svc.serviceDependsOn;
       if (svcDependents != null) {
         for (int index = queue.length - 1; index >= 0; index--) {
           Service queuedSvc = queue[index];
@@ -221,10 +221,10 @@ class Services {
 }
 
 class ServiceError {
-  final String title;
-  final String description;
-  final Service source;
-  final ServiceErrorSeverity severity;
+  final String? title;
+  final String? description;
+  final Service? source;
+  final ServiceErrorSeverity? severity;
 
   ServiceError({this.title, this.description, this.source, this.severity});
 

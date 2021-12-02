@@ -24,7 +24,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 
 class HomeGameDayWidget extends StatefulWidget {
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomeGameDayWidget({this.refreshController});
 
@@ -33,7 +33,7 @@ class HomeGameDayWidget extends StatefulWidget {
 
 class _HomeGameDayState extends State<HomeGameDayWidget> implements NotificationsListener {
 
-  List<Game> _todayGames;
+  List<Game>? _todayGames;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _HomeGameDayState extends State<HomeGameDayWidget> implements Notification
     NotificationService().subscribe(this, Connectivity.notifyStatusChanged);
 
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _loadTodayGames();
       });
     }
@@ -57,9 +57,9 @@ class _HomeGameDayState extends State<HomeGameDayWidget> implements Notification
 
   @override
   Widget build(BuildContext context) {
-    if ((_todayGames != null) && (0 < _todayGames.length)) {
+    if ((_todayGames != null) && (0 < _todayGames!.length)) {
       List<Widget> gameDayWidgets = [];
-      for (Game todayGame in _todayGames) {
+      for (Game todayGame in _todayGames!) {
         gameDayWidgets.add(AthleticsGameDayWidget(game: todayGame));
       }
       return Column(children: gameDayWidgets);
@@ -71,7 +71,7 @@ class _HomeGameDayState extends State<HomeGameDayWidget> implements Notification
 
   void _loadTodayGames() {
     if (Connectivity().isNotOffline) {
-      Sports().loadTopScheduleGames().then((List<Game> games) {
+      Sports().loadTopScheduleGames().then((List<Game>? games) {
         setState(() {
           _todayGames = Sports().getTodayGames(games);
         });

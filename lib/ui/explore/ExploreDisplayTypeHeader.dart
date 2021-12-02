@@ -25,11 +25,11 @@ import 'package:illinois/service/Styles.dart';
 enum ListMapDisplayType { List, Map }
 
 class ExploreDisplayTypeHeader extends StatelessWidget {
-  final ListMapDisplayType displayType;
-  final GestureTapCallback onTapList;
-  final GestureTapCallback onTapMap;
+  final ListMapDisplayType? displayType;
+  final GestureTapCallback? onTapList;
+  final GestureTapCallback? onTapMap;
   final bool searchVisible;
-  final Map<String, dynamic> additionalData;
+  final Map<String, dynamic>? additionalData;
 
   ExploreDisplayTypeHeader({this.displayType, this.onTapList, this.onTapMap, this.searchVisible = false, this.additionalData});
 
@@ -37,7 +37,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         height: 24 + (16*(MediaQuery.of(context).textScaleFactor??1)),
-        color: Styles().colors.fillColorPrimaryVariant,
+        color: Styles().colors!.fillColorPrimaryVariant,
         child: Padding(
             padding: EdgeInsets.only(left: 18),
             child: Column(children: <Widget>[

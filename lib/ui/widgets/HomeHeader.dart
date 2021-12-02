@@ -19,10 +19,10 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class HomeHeader extends StatelessWidget {
-  final String title;
+  final String? title;
   final subTitle;
-  final String imageRes;
-  final Function onSettingsTap;
+  final String? imageRes;
+  final Function? onSettingsTap;
 
   HomeHeader({this.title, this.subTitle, this.imageRes, this.onSettingsTap});
 
@@ -31,7 +31,7 @@ class HomeHeader extends StatelessWidget {
     bool hasSubTitle = AppString.isStringNotEmpty(subTitle);
 
     return Container(
-      color: Styles().colors.fillColorPrimary,
+      color: Styles().colors!.fillColorPrimary,
       padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,22 +45,22 @@ class HomeHeader extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 12),
-                  child: ((imageRes != null) && imageRes.isNotEmpty)
+                  child: ((imageRes != null) && imageRes!.isNotEmpty)
                       ? Image.asset(
-                          imageRes,
+                          imageRes!,
                           excludeFromSemantics: true,
                         )
                       : Container(),
                 ),
                 Expanded(child:
                 Text(
-                  title,
+                  title!,
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 ),
                 (onSettingsTap == null) ? Container() :
                   GestureDetector(
-                      onTap: onSettingsTap,
+                      onTap: onSettingsTap as void Function()?,
                       child: Container(
                         padding: EdgeInsets.only(right: 20),
                           alignment: Alignment.centerRight,
@@ -80,11 +80,11 @@ class HomeHeader extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 30),
                   child: Text(
-                    AppString.getDefaultEmptyString(value: subTitle),
+                    AppString.getDefaultEmptyString(value: subTitle)!,
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
-                        fontFamily: Styles().fontFamilies.regular),
+                        fontFamily: Styles().fontFamilies!.regular),
                   ),
                 ),
               ))

@@ -27,7 +27,7 @@ class BluetoothServices with Service implements NotificationsListener {
 
   static const String notifyStatusChanged  = "edu.illinois.rokwire.bluetoothservices.status.changed";
 
-  BluetoothStatus _status;
+  BluetoothStatus? _status;
 
   // Singletone Instance
 
@@ -82,7 +82,7 @@ class BluetoothServices with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.resumed) {
       _checkStatus();
     }
@@ -90,11 +90,11 @@ class BluetoothServices with Service implements NotificationsListener {
 
   // API
 
-  BluetoothStatus get status {
+  BluetoothStatus? get status {
     return _status;
   }
 
-  Future<BluetoothStatus> _getStatus() async {
+  Future<BluetoothStatus?> _getStatus() async {
     if (Platform.isIOS) {
       return _bluetoothStatusFromString(await NativeCommunicator().queryBluetoothAuthorization('query'));
     }
@@ -104,7 +104,7 @@ class BluetoothServices with Service implements NotificationsListener {
   }
 
   void _checkStatus() {
-    _getStatus().then((BluetoothStatus status){
+    _getStatus().then((BluetoothStatus? status){
       if (_status != status) {
         _status = status;
         NotificationService().notify(notifyStatusChanged, null);
@@ -112,9 +112,9 @@ class BluetoothServices with Service implements NotificationsListener {
     });
   }
 
-  Future<BluetoothStatus> requestStatus() async {
+  Future<BluetoothStatus?> requestStatus() async {
     if (Platform.isIOS && (_status == BluetoothStatus.PermissionNotDetermined)) {
-      BluetoothStatus status = _bluetoothStatusFromString(await NativeCommunicator().queryBluetoothAuthorization('request'));
+      BluetoothStatus? status = _bluetoothStatusFromString(await NativeCommunicator().queryBluetoothAuthorization('request'));
       if (_status != status) {
         _status = status;
         NotificationService().notify(notifyStatusChanged, null);
@@ -131,7 +131,7 @@ enum BluetoothStatus {
   PermissionAllowed
 }
 
-BluetoothStatus _bluetoothStatusFromString(String value){
+BluetoothStatus? _bluetoothStatusFromString(String? value){
   if("not_determined" == value)
     return BluetoothStatus.PermissionNotDetermined;
   if("not_supported" == value)

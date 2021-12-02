@@ -36,12 +36,12 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.bluetooth.label.title", "Bluetooth"),
-          style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1.0),
+          Localization().getStringEx("panel.settings.bluetooth.label.title", "Bluetooth")!,
+          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -54,8 +54,8 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Create and answer quizzes and polls with people near you."),
-              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+              Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Create and answer quizzes and polls with people near you.")!,
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
           ),),
           Container(height: 24,),
           InfoButton(
@@ -77,7 +77,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
     return false; // tbd
   }
   
-  String get _bluetoothStatus{
+  String? get _bluetoothStatus{
       return _bluetoothEnabled?Localization().getStringEx("panel.settings.bluetooth.label.status.enabled", "Enabled"): Localization().getStringEx("panel.settings.bluetooth.label.status.disabled", "Disabled");
   }
 }

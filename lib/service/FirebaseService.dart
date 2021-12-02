@@ -25,7 +25,7 @@ class FirebaseService extends Service{
     return _service;
   }
 
-  FirebaseApp _firebaseApp;
+  FirebaseApp? _firebaseApp;
 
   @override
   Future<void> initService() async{

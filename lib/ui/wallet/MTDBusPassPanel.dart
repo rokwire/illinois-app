@@ -44,12 +44,12 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   final double _photoSize = 240;
   final double _iconSize = 64;
 
-  Color _activeBusColor;
-  String _activeBusNumber;
+  Color? _activeBusColor;
+  String? _activeBusNumber;
   Set<String> _rangingRegionIds = Set();
-  GeoFenceBeacon _currentBeacon;
+  GeoFenceBeacon? _currentBeacon;
 
-  MemoryImage _photoImage;
+  MemoryImage? _photoImage;
 
   @override
   void initState() {
@@ -76,15 +76,15 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   void _loadPhotoImage(){
-    _loadAsyncPhotoImage().then((MemoryImage photoImage){
+    _loadAsyncPhotoImage().then((MemoryImage? photoImage){
       _photoImage = photoImage;
       setState(() {});
     });
   }
 
-  Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth2().authCard?.photoBytes;
-    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
+  Future<MemoryImage?> _loadAsyncPhotoImage() async{
+    Uint8List? photoBytes = await  Auth2().authCard?.photoBytes;
+    return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes!) : null;
   }
 
   // NotificationsListener
@@ -154,8 +154,8 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 Padding(
                     padding: EdgeInsets.all(16),
                     child:Semantics(header: true, child: Text(
-                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"),
-                      style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies.extraBold, fontSize: 20),
+                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass")!,
+                      style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
                     ),
                     )),
                 Align(
@@ -180,7 +180,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
           _buildAvatar(),
           Text(
             Auth2().authCard?.role ?? '',
-            style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 36, color: Styles().colors.white),
+            style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 36, color: Styles().colors!.white),
           ),
           BusClockWidget(),
           Align(alignment: Alignment.center, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildBusNumberContent())),
@@ -191,12 +191,12 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board.")!,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
+                    fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
-                    color: Styles().colors.white,
+                    color: Styles().colors!.white,
                   ),
                 ),
               )),
@@ -245,7 +245,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             image: DecorationImage(
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              image: _photoImage,
+              image: _photoImage!,
             ),
           ))
         : Container(
@@ -263,11 +263,11 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         _buildBusIcon(),
         Container(width: 8,),
         Container(
-          child: Text(_busNumber,
+          child: Text(_busNumber!,
               style: TextStyle(
-                fontFamily: Styles().fontFamilies.bold,
+                fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 36,
-                color: Styles().colors.white,
+                color: Styles().colors!.white,
               )),
         ),
       ],
@@ -290,11 +290,11 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   void _loadBusPass() async {
-    String deviceId = await NativeCommunicator().getDeviceId(); //TMP: '1234'
-    Map<String, dynamic> beaconData = (_currentBeacon != null) ? {
-      'uuid': _currentBeacon.uuid,
-      'major': _currentBeacon.major.toString(),
-      'minor': _currentBeacon.minor.toString(),
+    String? deviceId = await NativeCommunicator().getDeviceId(); //TMP: '1234'
+    Map<String, dynamic>? beaconData = (_currentBeacon != null) ? {
+      'uuid': _currentBeacon!.uuid,
+      'major': _currentBeacon!.major.toString(),
+      'minor': _currentBeacon!.minor.toString(),
     } : null;
     TransportationService().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
 
@@ -305,7 +305,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
           });
       }
       else {
-        String message = ((result is int) && (result == 403)) ?
+        String? message = ((result is int) && (result == 403)) ?
           Localization().getStringEx("panel.bus_pass.error.duplicate.text", "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.") :
           Localization().getStringEx("panel.bus_pass.error.default.text", "Unable to load bus pass");
         AppAlert.showDialogResult(context, message,).then((result){
@@ -316,17 +316,17 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   void _updateCurrentBeacon() {
-    GeoFenceBeacon currentBeacon = _getCurrentBeacon();
+    GeoFenceBeacon? currentBeacon = _getCurrentBeacon();
     if (((_currentBeacon == null) && (currentBeacon != null)) || ((_currentBeacon != null) && (_currentBeacon != currentBeacon))) {
       _currentBeacon = currentBeacon;
       _loadBusPass();
     }
   }
 
-  GeoFenceBeacon _getCurrentBeacon() {
+  GeoFenceBeacon? _getCurrentBeacon() {
     // Just return the first beacon that we have for now.
     for (String regionId in _rangingRegionIds) {
-      List<GeoFenceBeacon> regionBacons = GeoFence().currentBeaconsInRegion(regionId);
+      List<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
       if ((regionBacons != null) && regionBacons.isNotEmpty) {
         return regionBacons.first;
       }
@@ -338,7 +338,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     Set<String> currentRegionIds = GeoFence().currentRegionIds;
     
     // 1. Remove all ranging regions that are not current (inside)
-    Set<String> removeRegionIds;
+    Set<String>? removeRegionIds;
     for (String regionId in _rangingRegionIds) {
       if (!currentRegionIds.contains(regionId)) {
         GeoFence().stopRangingBeaconsInRegion(regionId);
@@ -354,8 +354,8 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
     // 2. Start ranging for all current (inside) regions that are not already raning.
     for (String regionId in currentRegionIds) {
-      GeoFenceRegion region = GeoFence().regions[regionId];
-      if ((region.regionType == GeoFenceRegionType.Beacon) && region.types.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
+      GeoFenceRegion region = GeoFence().regions![regionId]!;
+      if ((region.regionType == GeoFenceRegionType.Beacon) && region.types!.contains('MTD') && !_rangingRegionIds.contains(regionId)) {
         GeoFence().startRangingBeaconsInRegion(regionId).then((_) {
           _rangingRegionIds.add(regionId);
         });
@@ -375,24 +375,24 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     Navigator.of(context).pop();
   }
 
-  Color get _activeColor {
-    return _activeBusColor??Styles().colors.fillColorSecondary;
+  Color? get _activeColor {
+    return _activeBusColor??Styles().colors!.fillColorSecondary;
   }
 
-  Color get _backgroundColor {
-    return Styles().colors.fillColorPrimaryVariant;
+  Color? get _backgroundColor {
+    return Styles().colors!.fillColorPrimaryVariant;
   }
 
-  String get _busNumber {
+  String? get _busNumber {
     return AppString.getDefaultEmptyString(value: _activeBusNumber, defaultValue: '');
   }
 }
 
 class RotatingBorder extends StatefulWidget{
-  final Widget child;
-  final Color activeColor;
-  final Color baseGradientColor;
-  const RotatingBorder({Key key, this.child, this.activeColor, this.baseGradientColor}) : super(key: key);
+  final Widget? child;
+  final Color? activeColor;
+  final Color? baseGradientColor;
+  const RotatingBorder({Key? key, this.child, this.activeColor, this.baseGradientColor}) : super(key: key);
 
   @override
   _RotatingBorderState createState() => _RotatingBorderState();
@@ -402,8 +402,8 @@ class RotatingBorder extends StatefulWidget{
 class _RotatingBorderState extends State<RotatingBorder>
     with SingleTickerProviderStateMixin{
   final double _photoSize = 240;
-  Animation<double> animation;
-  AnimationController controller;
+  late Animation<double> animation;
+  late AnimationController controller;
 
   @override
   void initState() {
@@ -434,7 +434,7 @@ class _RotatingBorderState extends State<RotatingBorder>
   Widget build(BuildContext context) {
     double angle = animation.value;
     return Container( width: _photoSize, height: _photoSize,
-        child:Stack(children: <Widget>[
+        child:Stack(children: <Widget?>[
       Transform.rotate(
           angle: angle,
           child:Container(
@@ -443,7 +443,7 @@ class _RotatingBorderState extends State<RotatingBorder>
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [widget.activeColor, widget.baseGradientColor ?? Styles().colors.fillColorSecondary],
+                  colors: [widget.activeColor!, widget.baseGradientColor ?? Styles().colors!.fillColorSecondary!],
                   stops:  [0.0, 1.0],
                 )
             ),
@@ -461,7 +461,7 @@ class BusClockWidget extends StatefulWidget{
 }
 
 class _BusClockState extends State<BusClockWidget> {
-  Timer _timer;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -472,7 +472,7 @@ class _BusClockState extends State<BusClockWidget> {
   @override
   void dispose() {
     if (_timer != null) {
-      _timer.cancel();
+      _timer!.cancel();
       _timer = null;
     }
     super.dispose();
@@ -481,8 +481,8 @@ class _BusClockState extends State<BusClockWidget> {
   @override
   Widget build(BuildContext context) {
     return Text(
-      _timeString,
-      style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 48, color: Styles().colors.white),
+      _timeString!,
+      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 48, color: Styles().colors!.white),
     );
   }
 
@@ -490,7 +490,7 @@ class _BusClockState extends State<BusClockWidget> {
     setState(() {});
   }
 
-  String get _timeString {
+  String? get _timeString {
     return AppDateTime().formatUniLocalTimeFromUtcTime(DateTime.now(), "hh:mm:ss");
   }
 

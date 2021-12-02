@@ -36,7 +36,7 @@ class Onboarding2PersonalizePanel extends StatefulWidget{
 }
 
 class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePanel> {
-  bool _toggled = false;
+  bool? _toggled = false;
 
   @override
   void initState() {
@@ -52,7 +52,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SafeArea(child:SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -60,7 +60,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
             Column(children: [
               Expanded(child: SingleChildScrollView(child:
                 Container(
-                    color: Styles().colors.white,
+                    color: Styles().colors!.white,
                     child:Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
@@ -70,17 +70,17 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                               child:Row(children: [
                                 Expanded(
                                     flex:1,
-                                    child: Container(color: Styles().colors.fillColorPrimary,)
+                                    child: Container(color: Styles().colors!.fillColorPrimary,)
                                 ),
                                 Container(width: 2,),
                                 Expanded(
                                     flex:1,
-                                    child: Container(color: Styles().colors.fillColorPrimary,)
+                                    child: Container(color: Styles().colors!.fillColorPrimary,)
                                 ),
                                 Container(width: 2,),
                                 Expanded(
                                     flex:1,
-                                    child: Container(color: Styles().colors.backgroundVariant,)
+                                    child: Container(color: Styles().colors!.backgroundVariant,)
                                 ),
                               ],)
                           ),
@@ -102,12 +102,12 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                 child: Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      _title,
+                                      _title!,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: Styles().colors.fillColorPrimary,
+                                        color: Styles().colors!.fillColorPrimary,
                                         fontSize: 24,
-                                        fontFamily: Styles().fontFamilies.bold,
+                                        fontFamily: Styles().fontFamilies!.bold,
                                         height: 1.2
                                     ))
                                 ),
@@ -120,12 +120,12 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                 child: Align(
                                     alignment: Alignment.topCenter,
                                     child: Text(
-                                      _description,
+                                      _description!,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          fontFamily: Styles().fontFamilies.regular,
+                                          fontFamily: Styles().fontFamilies!.regular,
                                           fontSize: 16,
-                                          color: Styles().colors.fillColorPrimary),
+                                          color: Styles().colors!.fillColorPrimary),
                                     )),
                               )),
                           Container(height: 10,),
@@ -146,12 +146,12 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                                       child:Column(
                                           children:[
                                             CustomPaint(
-                                              painter: TrianglePainter(painterColor: Styles().colors.background, left: false),
+                                              painter: TrianglePainter(painterColor: Styles().colors!.background, left: false),
                                               child: Container(
                                                 height: 100,
                                               ),
                                             ),
-                                            Container(height: 60, color: Styles().colors.background,)
+                                            Container(height: 60, color: Styles().colors!.background,)
                                           ]),
                                     ),
                                   ),
@@ -188,9 +188,9 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
                       hint: Localization().getStringEx('panel.onboarding2.personalize.button.continue.hint', ''),
                       fontSize: 16,
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Styles().colors.white,
-                      borderColor: Styles().colors.fillColorSecondaryVariant,
-                      textColor: Styles().colors.fillColorPrimary,
+                      backgroundColor: Styles().colors!.white,
+                      borderColor: Styles().colors!.fillColorSecondaryVariant,
+                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _goNext(context),
                     )
                   ],
@@ -201,13 +201,13 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   void _onToggleTap(){
     setState(() {
-      _toggled = !_toggled;
+      _toggled = !_toggled!;
     });
   }
 
   void _goNext(BuildContext context) {
     Onboarding2().storePersonalizeChoice(_toggled);
-    if (Onboarding2().getPersonalizeChoice) {
+    if (Onboarding2().getPersonalizeChoice!) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
     } else {
@@ -227,34 +227,34 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title1',"App activity"),
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title1',"App activity")!,
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content1',"Storing your app activity means that the app collects and remembers data about how you interact with it. The app stores your food preferences, your favorite teams, events you have starred, and other filters. Storing this information helps you use the app more efficiently."),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content1',"Storing your app activity means that the app collects and remembers data about how you interact with it. The app stores your food preferences, your favorite teams, events you have starred, and other filters. Storing this information helps you use the app more efficiently.")!,
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal information"),
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title2',"Personal information")!,
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and i-card information."),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content2',"The app also stores personal information you provide. This may include your name, telephone number, email address, NetID, and i-card information.")!,
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title3',"Storage"),
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title3',"Storage")!,
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content3',"Your data is stored safely on your mobile device and on our secure servers. Your stored information is not given or sold to any third parties. The app activity information is associated with your personal information only when you are signed in."),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content3',"Your data is stored safely on your mobile device and on our secure servers. Your stored information is not given or sold to any third parties. The app activity information is associated with your personal information only when you are signed in.")!,
               style: Onboarding2InfoDialog.contentStyle,
             ),
             Container(height: 24,),
             Text(
-              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title4',"Opting Out"),
+              Localization().getStringEx('panel.onboarding2.personalize.learn_more.title4',"Opting Out")!,
               style: Onboarding2InfoDialog.titleStyle,),
             Container(height: 8,),
-            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content4',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data."),
+            Text(Localization().getStringEx('panel.onboarding2.personalize.learn_more.location_services.content4',"The Privacy Center allows you to opt out of information collection at any time and provides the option to remove your data.")!,
               style: Onboarding2InfoDialog.contentStyle,
             ),
           ]
@@ -262,19 +262,19 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
     );
   }
 
-  String get _title{
+  String? get _title{
     return Localization().getStringEx('panel.onboarding2.personalize.label.title', 'Store your app activity and personal information?');
   }
 
-  String get _description{
+  String? get _description{
     return Localization().getStringEx('panel.onboarding2.personalize.label.description', 'This includes content you view, teams you follow, and sign-in information. ');
   }
 
-  String get _toggledButtonTitle{
+  String? get _toggledButtonTitle{
     return Localization().getStringEx('panel.onboarding2.personalize.button.toggle.title', 'Store my app activity and my preferences.');
   }
 
-  String get _unToggledButtonTitle{
+  String? get _unToggledButtonTitle{
     return Localization().getStringEx('panel.onboarding2.personalize.button.untoggle.title', 'Don\'t store my app activity or information.');
   }
 }

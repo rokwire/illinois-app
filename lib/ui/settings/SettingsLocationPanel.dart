@@ -35,12 +35,12 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.location.label.title", "Location"),
-          style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1.0),
+          Localization().getStringEx("panel.settings.location.label.title", "Location")!,
+          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
       body: SingleChildScrollView(child: _buildContent()),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -56,8 +56,8 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              Localization().getStringEx("panel.settings.location.label.desctiption", "Find events and places on campus near you."),
-              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+              Localization().getStringEx("panel.settings.location.label.desctiption", "Find events and places on campus near you.")!,
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
             ),
           ),
           Container(
@@ -103,7 +103,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
     return false; // tbd
   }
 
-  String get _locationStatus {
+  String? get _locationStatus {
     return _locationEnabled
         ? Localization().getStringEx("panel.settings.location.label.status.enabled", "Enabled")
         : Localization().getStringEx("panel.settings.location.label.status.disabled", "Disabled");
@@ -111,17 +111,17 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
 }
 
 class _InfoToggleButton extends StatefulWidget {
-  final String title;
-  final String iconRes;
+  final String? title;
+  final String? iconRes;
   final String iconResDisabled;
-  final String additionalInfo;
+  final String? additionalInfo;
   final bool enabled;
   final bool toggled;
   final double height;
 
-  final Function onTap;
+  final Function? onTap;
 
-  const _InfoToggleButton({Key key, this.title, this.iconRes, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconResDisabled="",}) : super(key: key);
+  const _InfoToggleButton({Key? key, this.title, this.iconRes, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconResDisabled="",}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _InfoToggleButtonState();
@@ -136,7 +136,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
           child: Semantics(
             container: true,
             child: InkWell(
-            onTap: widget.enabled? widget.onTap : (){},
+            onTap: widget.enabled? widget.onTap as void Function()? : (){},
               child: _buildButtonContent(),))
       );
   }
@@ -145,9 +145,9 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
     return Container(
           padding: EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-              color: Styles().colors.surface,
+              color: Styles().colors!.surface,
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
+              boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -157,7 +157,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 11,vertical: 4),
                     child: Image.asset(
-                      widget.enabled? widget.iconRes: widget.iconResDisabled,
+                      widget.enabled? widget.iconRes!: widget.iconResDisabled,
                       excludeFromSemantics: true,
                     ),
                   ),
@@ -169,8 +169,8 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                         Container(
                             padding: EdgeInsets.only(right: 14),
                             child: Text(
-                              widget.title,
-                              style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: widget.enabled?Styles().colors.fillColorPrimary : Styles().colors.fillColorPrimaryTransparent015),
+                              widget.title!,
+                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: widget.enabled?Styles().colors!.fillColorPrimary : Styles().colors!.fillColorPrimaryTransparent015),
                             )),
                         _buildAdditionalInfo(),
                       ],
@@ -207,12 +207,12 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
               ),
               Container(
                 height: 1,
-                color: widget.enabled? Styles().colors.surfaceAccent: Styles().colors.surfaceAccentTransparent15,
+                color: widget.enabled? Styles().colors!.surfaceAccent: Styles().colors!.surfaceAccentTransparent15,
               ),
               Container(height: 12),
               Text(
-                widget.additionalInfo,
-                style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: widget.enabled? Styles().colors.textSurface:  Styles().colors.textSurfaceTransparent15),
+                widget.additionalInfo!,
+                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: widget.enabled? Styles().colors!.textSurface:  Styles().colors!.textSurfaceTransparent15),
               ),
             ],
           );

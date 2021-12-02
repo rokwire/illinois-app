@@ -15,14 +15,14 @@
  */
 
 class LiveGame {
-  String gameId;
-  String path;
-  bool hasStarted;
-  bool isComplete;
-  int clockSeconds;
-  int period;
-  int homeScore;
-  int visitingScore;
+  String? gameId;
+  String? path;
+  bool? hasStarted;
+  bool? isComplete;
+  int? clockSeconds;
+  int? period;
+  int? homeScore;
+  int? visitingScore;
   dynamic custom;
 
   LiveGame(

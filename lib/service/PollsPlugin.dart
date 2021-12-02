@@ -30,7 +30,7 @@ class PollsPlugin{
 
   static const MethodChannel _bleChannel = const MethodChannel('edu.illinois.rokwire/polls');
 
-  final StreamController<String> pollStarted = StreamController<String>();
+  final StreamController<String?> pollStarted = StreamController<String?>();
 
   static final PollsPlugin _instance = PollsPlugin._internal();
   PollsPlugin._internal(){
@@ -49,7 +49,7 @@ class PollsPlugin{
     _bleChannel.invokeMethod(_bleStopScan);
   }
 
-  void openPoll(String pollId){
+  void openPoll(String? pollId){
     _bleChannel.invokeMethod(_bleOpenPoll, pollId);
   }
 
@@ -64,7 +64,7 @@ class PollsPlugin{
   Future<dynamic> _handleBleChannel(MethodCall call) async {
     switch (call.method) {
       case _blePollOpened:
-        pollStarted.add(call.arguments as String);
+        pollStarted.add(call.arguments as String?);
         break;
       default:
         break;

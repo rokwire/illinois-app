@@ -19,10 +19,10 @@ import 'package:illinois/service/Styles.dart';
 
 
 class ExploreViewTypeTab extends StatelessWidget {
-  final String label;
-  final String hint;
-  final String iconResource;
-  final GestureTapCallback onTap;
+  final String? label;
+  final String? hint;
+  final String? iconResource;
+  final GestureTapCallback? onTap;
   final bool selected;
 
   ExploreViewTypeTab(
@@ -46,12 +46,12 @@ class ExploreViewTypeTab extends StatelessWidget {
         Expanded(child: Container(),),
         Container(
           //color: Colors.amber,
-          decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors.fillColorSecondary,width: 2, style: BorderStyle.solid))) : null,
+          decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!,width: 2, style: BorderStyle.solid))) : null,
           child:Padding(padding: EdgeInsets.symmetric(vertical:3, horizontal: 5), child:Column(children: <Widget>[
             Row(children: <Widget>[
-              Image.asset(iconResource),
+              Image.asset(iconResource!),
               Container(width: 5,),
-              Text(label, style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.white, fontSize: 16,),textScaleFactor:( MediaQuery.of(context).textScaleFactor> 2 ? MediaQuery.of(context).textScaleFactor - 0.8 : MediaQuery.of(context).textScaleFactor),)
+              Text(label!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.white, fontSize: 16,),textScaleFactor:( MediaQuery.of(context).textScaleFactor> 2 ? MediaQuery.of(context).textScaleFactor - 0.8 : MediaQuery.of(context).textScaleFactor),)
             ]),
           ],)
         )),

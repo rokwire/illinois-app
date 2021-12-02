@@ -39,10 +39,10 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Game game;
+  final Game? game;
 
-  final String gameId;
-  final String sportName;
+  final String? gameId;
+  final String? sportName;
 
   AthleticsGameDetailPanel({this.game, this.gameId, this.sportName});
 
@@ -51,13 +51,13 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
       _AthleticsGameDetailPanelState(game);
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes {
+  Map<String, dynamic>? get analyticsPageAttributes {
     return game?.analyticsAttributes;
   }
 }
 
 class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
-  Game game;
+  Game? game;
   bool _newsExpanded = false;
 
   _AthleticsGameDetailPanelState(this.game);
@@ -73,10 +73,10 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   }
 
   _loadGame() {
-    String sportName = widget.sportName ?? game?.sport?.shortName;
-    String gameId = widget.gameId ?? game?.id;
+    String? sportName = widget.sportName ?? game?.sport?.shortName;
+    String? gameId = widget.gameId ?? game?.id;
 
-    Future<Game> result = Sports().loadGame(sportName, gameId);
+    Future<Game?> result = Sports().loadGame(sportName, gameId);
     result.then((loadedGame) {
       setState(() {
         game = loadedGame;
@@ -92,7 +92,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         onRefresh: _onPullToRefresh,
         child: _buildContent(),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -101,23 +101,23 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     if (game == null)
       return Center(child: CircularProgressIndicator(),);
 
-    String sportKey = game.sport?.shortName;
-    String sportName = game.sport?.title;
-    SportDefinition sportDefinition = Sports().getSportByShortName(sportKey);
+    String? sportKey = game!.sport?.shortName;
+    String sportName = game!.sport?.title!;
+    SportDefinition? sportDefinition = Sports().getSportByShortName(sportKey);
     return CustomScrollView(
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
           context: context,
-          imageUrl: game.imageUrl,
-          backColor: Styles().colors.fillColorPrimary,
-          leftTriangleColor: Styles().colors.fillColorPrimary,
-          rightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+          imageUrl: game!.imageUrl,
+          backColor: Styles().colors!.fillColorPrimary,
+          leftTriangleColor: Styles().colors!.fillColorPrimary,
+          rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
         ),
         SliverList(
           delegate: SliverChildListDelegate([
             Container(
-              color: Styles().colors.background,
+              color: Styles().colors!.background,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,14 +136,14 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       Column(
                         children: <Widget>[
                           Container(
-                            color: Styles().colors.fillColorPrimary,
+                            color: Styles().colors!.fillColorPrimary,
                             height: 40,
                           ),
                           Container(
                             height: 112,
                             width: double.infinity,
                             child: Image.asset('images/slant-down-right.png',
-                              color: Styles().colors.fillColorPrimary,
+                              color: Styles().colors!.fillColorPrimary,
                               fit: BoxFit.fill,
                             ),
                           )
@@ -162,7 +162,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 ),
                                 Expanded(child:
                                   Text(
-                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More") + " " + sportName,
+                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More")! + " " + sportName,
                                     style:
                                     TextStyle(color: Colors.white, fontSize: 20),
                                   )
@@ -272,28 +272,28 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   List<Widget> _buildNewsWidgets() {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(game.newsImageUrl)) {
+    if (!AppString.isStringEmpty(game!.newsImageUrl)) {
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
           child: Image.network(
-            game.newsImageUrl,
+            game!.newsImageUrl!,
             fit: BoxFit.fitWidth,
           ),
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game.newsTitle)) {
+    if (!AppString.isStringEmpty(game!.newsTitle)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Text(
-          game.newsTitle,
+          game!.newsTitle!,
           textAlign: TextAlign.left,
-          style: TextStyle(color: Styles().colors.textBackground, fontSize: 20),
+          style: TextStyle(color: Styles().colors!.textBackground, fontSize: 20),
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game.newsContent)) {
+    if (!AppString.isStringEmpty(game!.newsContent)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Column(
@@ -301,18 +301,18 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
             Container(
               height: (_newsExpanded ? null : 65),
               child: Text(
-                game.newsContent,
+                game!.newsContent!,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
-                    color: Styles().colors.textBackground,
+                    fontFamily: Styles().fontFamilies!.regular,
+                    color: Styles().colors!.textBackground,
                     fontSize: 16),
               ),
             ),
             Visibility(
                 visible: !_newsExpanded,
                 child: Container(
-                  color: Styles().colors.fillColorSecondary,
+                  color: Styles().colors!.fillColorSecondary,
                   height: 1,
                 )),
             GestureDetector(
@@ -324,11 +324,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                   children: <Widget>[
                     Text(
                       (_newsExpanded
-                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")
-                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")),
+                          ? Localization().getStringEx("panel.athletics_game_detail.label.see_less.title", "See less")!
+                          : Localization().getStringEx("panel.athletics_game_detail.label.see_more.title", "See more")!),
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.bold,
-                          color: Styles().colors.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.bold,
+                          color: Styles().colors!.fillColorPrimary,
                           fontSize: 16),
                     ),
                     Padding(
@@ -357,8 +357,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   void _onScheduleTap() {
     Analytics.instance.logSelect(target: "Schedule");
-    Sport sport = game?.sport;
-    SportDefinition sportDefinition = Sports().getSportByShortName(sport?.shortName);
+    Sport? sport = game?.sport;
+    SportDefinition? sportDefinition = Sports().getSportByShortName(sport?.shortName);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsSchedulePanel(sport: sportDefinition)));
   }
 

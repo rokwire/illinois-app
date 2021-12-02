@@ -36,7 +36,7 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class SettingsAddIlliniCashPanel extends StatefulWidget {
 
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   SettingsAddIlliniCashPanel({this.scrollController});
 
@@ -115,11 +115,11 @@ class _SettingsAddIlliniCashPanelState
                             ? 'images/chevron-left-white.png'
                             : 'images/chevron-left-blue.png',
                         titleWidget: Text(
-                          Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
+                          Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash")!,
                           style: TextStyle(
                               color: widget.scrollController == null
-                                  ? Styles().colors.white
-                                  : Styles().colors.fillColorPrimary,
+                                  ? Styles().colors!.white
+                                  : Styles().colors!.fillColorPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.0),
@@ -153,11 +153,11 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.recipient_uin.text",
-                                                  "RECIPIENT'S UIN"),
+                                                  "RECIPIENT'S UIN")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               controller: _uinController,
@@ -167,24 +167,24 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
                                             ),
                                           ])),
@@ -206,11 +206,11 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.first_name.text",
-                                                  "RECIPIENT'S FIRST NAME"),
+                                                  "RECIPIENT'S FIRST NAME")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               controller: _firstNameController,
@@ -221,24 +221,24 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
 
                                             ),
@@ -261,11 +261,11 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.last_name.text",
-                                                  "RECIPIENT'S LAST NAME"),
+                                                  "RECIPIENT'S LAST NAME")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               controller: _lastNameController,
@@ -276,24 +276,24 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
 
                                             ),
@@ -316,11 +316,11 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.email_address.text",
-                                                  "EMAIL RECEIPT TO"),
+                                                  "EMAIL RECEIPT TO")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               controller: _emailController,
@@ -330,24 +330,24 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
                                             ),
                                           ])),
@@ -367,11 +367,11 @@ class _SettingsAddIlliniCashPanelState
                                           children: <Widget>[
                                             Text(
                                               Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"),
+                                                  "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               focusNode: _ccFocusNode,
@@ -381,26 +381,26 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               inputFormatters: [CreditCardNumberInputFormatter()],
                                               onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_expiryFocusNode); },
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
                                             ),
                                           ])),
@@ -420,11 +420,11 @@ class _SettingsAddIlliniCashPanelState
                                           children: <Widget>[
                                             Text(
                                               Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)"),
+                                                  "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               focusNode: _expiryFocusNode,
@@ -436,24 +436,24 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
                                             ),
                                           ])),
@@ -473,11 +473,11 @@ class _SettingsAddIlliniCashPanelState
                                           children: <Widget>[
                                             Text(
                                               Localization().getStringEx(
-                                                  "panel.settings.add_illini_cash.label.cvv.text", "CVV"),
+                                                  "panel.settings.add_illini_cash.label.cvv.text", "CVV")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               focusNode: _cvvFocusNode,
@@ -489,24 +489,24 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                                 disabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
                                             ),
                                           ])),
@@ -528,11 +528,11 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.dollar_amount.text",
-                                                  "DOLLAR AMOUNT"),
+                                                  "DOLLAR AMOUNT")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                             TextFormField(
                                               focusNode: _amountFocusNode,
@@ -544,29 +544,29 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new InputDecoration(
                                                 focusedBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorSecondary,
+                                                      color: Styles().colors!.fillColorSecondary!,
                                                       width: 1.0),
                                                 ),
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: BorderSide(
-                                                      color: Styles().colors.fillColorPrimary,
+                                                      color: Styles().colors!.fillColorPrimary!,
                                                       width: 1.0),
                                                 ),
                                               ),
                                               style: TextStyle(
-                                                fontFamily: Styles().fontFamilies.bold,
+                                                fontFamily: Styles().fontFamilies!.bold,
                                                 fontSize: 20,
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                               ),
                                             ),
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.minimum_amount.text",
-                                                  "(\$5.00 minimum purchase)"),
+                                                  "(\$5.00 minimum purchase)")!,
                                               style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies.medium,
+                                                  fontFamily: Styles().fontFamilies!.medium,
                                                   fontSize: 14,
-                                                  color: Styles().colors.textBackground),
+                                                  color: Styles().colors!.textBackground),
                                             ),
                                           ])),
                                   Container(
@@ -577,10 +577,10 @@ class _SettingsAddIlliniCashPanelState
                                       Semantics(
                                         label: Localization().getStringEx(
                                             "panel.settings.add_illini_cash.label.agree",
-                                            "I agree to the") +
+                                            "I agree to the")! +
                                             Localization().getStringEx(
                                                 "panel.settings.add_illini_cash.label.agree",
-                                                "terms & conditions"),
+                                                "terms & conditions")!,
                                         hint: Localization().getStringEx(
                                             "panel.settings.add_illini_cash.label.agree.hint",
                                             ""),
@@ -588,9 +588,9 @@ class _SettingsAddIlliniCashPanelState
                                         excludeSemantics: true,
                                         child: RoundCheckBox(
                                           isChecked: _agreePrivacy,
-                                          checkedColor: Styles().colors.fillColorSecondary, 
+                                          checkedColor: Styles().colors!.fillColorSecondary, 
                                           size: 28,
-                                          onTap: (bool value) {
+                                          onTap: (bool? value) {
                                             Analytics.instance.logSelect(target: "Agree");
                                             _agreePrivacy = !_agreePrivacy;
                                             setState(() {});
@@ -603,11 +603,11 @@ class _SettingsAddIlliniCashPanelState
                                         child: Text(
                                           Localization().getStringEx(
                                               "panel.settings.add_illini_cash.label.agree",
-                                              "I agree to the"),
+                                              "I agree to the")!,
                                           style: TextStyle(
-                                              fontFamily: Styles().fontFamilies.regular,
+                                              fontFamily: Styles().fontFamilies!.regular,
                                               fontSize: 16,
-                                              color: Styles().colors.textBackground),
+                                              color: Styles().colors!.textBackground),
                                         ),
                                       ),
                                       Container(
@@ -619,17 +619,17 @@ class _SettingsAddIlliniCashPanelState
                                               decoration: new BoxDecoration(
                                                   border: new Border(
                                                       bottom: BorderSide(
-                                                          color: Styles().colors.fillColorSecondary))),
+                                                          color: Styles().colors!.fillColorSecondary!))),
                                               child: GestureDetector(
                                                 onTap: _onTermsAndConditionsTapped,
                                                 child: Text(
                                                   Localization().getStringEx(
                                                       "panel.settings.add_illini_cash.label.agree",
-                                                      "terms & conditions"),
+                                                      "terms & conditions")!,
                                                   style: TextStyle(
-                                                    fontFamily: Styles().fontFamilies.regular,
+                                                    fontFamily: Styles().fontFamilies!.regular,
                                                     fontSize: 16,
-                                                    color: Styles().colors.fillColorPrimary,
+                                                    color: Styles().colors!.fillColorPrimary,
                                                   ),
                                                 ),
                                               ))),
@@ -648,10 +648,10 @@ class _SettingsAddIlliniCashPanelState
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.cancel.hint',
                                               ''),
-                                          backgroundColor: Styles().colors.white,
+                                          backgroundColor: Styles().colors!.white,
                                           fontSize: 16.0,
-                                          textColor: Styles().colors.fillColorPrimary,
-                                          borderColor: Styles().colors.fillColorPrimary,
+                                          textColor: Styles().colors!.fillColorPrimary,
+                                          borderColor: Styles().colors!.fillColorPrimary,
                                           onTap: () {
                                             Analytics.instance.logSelect(target: "Cancel");
                                             Navigator.pop(context,);
@@ -669,10 +669,10 @@ class _SettingsAddIlliniCashPanelState
                                           hint: Localization().getStringEx(
                                               'panel.settings.add_illini_cash.button.submit.hint',
                                               ''),
-                                          backgroundColor: Styles().colors.white,
+                                          backgroundColor: Styles().colors!.white,
                                           fontSize: 16.0,
-                                          textColor: Styles().colors.fillColorPrimary,
-                                          borderColor: Styles().colors.fillColorSecondary,
+                                          textColor: Styles().colors!.fillColorPrimary,
+                                          borderColor: Styles().colors!.fillColorSecondary,
                                           onTap: _onSubmitIlliniCash,
                                         ),
                                       ),
@@ -692,7 +692,7 @@ class _SettingsAddIlliniCashPanelState
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
           ? TabBarWidget()
           : Container(height: 0,),
@@ -755,12 +755,12 @@ class _SettingsAddIlliniCashPanelState
   }
 
   bool get _isAmountValid{
-    double ammount = _amountInDolars;
+    double? ammount = _amountInDolars;
     double minAmount = (kReleaseMode && (Config().configEnvironment != ConfigEnvironment.dev)) ? 5.00 : 0.00;
     return (ammount != null) && (ammount >= minAmount);
   }
 
-  double get _amountInDolars{
+  double? get _amountInDolars{
     return double.tryParse(_amountController?.text?.replaceAll('\$', '')?.replaceAll(',', '') ?? '');
   }
 
@@ -840,10 +840,10 @@ class _SettingsAddIlliniCashPanelState
       AppAlert.showCustomDialog(
           context: context,
           contentWidget: Text(
-              Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")),
+              Localization().getStringEx("panel.settings.add_illini_cash.message.buy_illini_cash_success.text", "Transaction successfully processed.")!),
           actions: <Widget>[
             TextButton(
-                child: Text(Localization().getStringEx("dialog.ok.title", "Ok")),
+                child: Text(Localization().getStringEx("dialog.ok.title", "Ok")!),
                 onPressed: _onDismissAlert)
           ]
       ).then((value) {
@@ -891,10 +891,10 @@ class _SettingsAddIlliniCashPanelState
         if(mounted) {
           AppAlert.showCustomDialog(
               context: context,
-              contentWidget: Text(e.message),
+              contentWidget: Text(e.message!),
               actions: <Widget>[
                 TextButton(
-                    child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
+                    child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
                     onPressed: () {
                       Analytics.instance.logAlert(text: e.message, selection: "Ok");
                       Navigator.pop(context, true);
@@ -926,7 +926,7 @@ class _SettingsAddIlliniCashPanelState
 }
 
 class _ValidationException implements Exception {
-  String message;
-  FocusNode focusNode;
+  String? message;
+  FocusNode? focusNode;
   _ValidationException({this.message, this.focusNode});
 }

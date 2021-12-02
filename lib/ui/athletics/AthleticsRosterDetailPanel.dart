@@ -31,7 +31,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AthleticsRosterDetailPanel extends StatefulWidget{
-  final SportDefinition sport;
+  final SportDefinition? sport;
   final Roster roster;
 
   AthleticsRosterDetailPanel(this.sport, this.roster);
@@ -56,13 +56,13 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
 
   @override
   Widget build(BuildContext context) {
-    bool hasPosition = widget.sport != null ? widget.sport.hasPosition : false;
+    bool hasPosition = widget.sport != null ? widget.sport!.hasPosition! : false;
 
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster'),
+          Localization().getStringEx('panel.athletics_roster_detail.header.title', 'Roster')!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -99,13 +99,13 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                     ),
                     Visibility(visible: AppString.isStringNotEmpty(widget.roster.htmlBio), child: Container(
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
-                        color: Styles().colors.background,
+                        color: Styles().colors!.background,
                         child: Column(
                             children: <Widget>[
                               Html(
                                 data: AppString.getDefaultEmptyString(value: widget.roster.htmlBio),
                                 onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                                style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+                                style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                               ),
                             ]
                         )
@@ -119,7 +119,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -137,21 +137,21 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
 
   Widget _createdHeightWeightWidget(){
     if(widget.sport != null) {
-      if (widget.sport.hasWeight && widget.sport.hasHeight) {
+      if (widget.sport!.hasWeight! && widget.sport!.hasHeight!) {
         return _LineEntryWidget(
             title: Localization().getStringEx("panel.athletics_roster_detail.label.htwt.title", "Ht./Wt."),
             semanticTitle: Localization().getStringEx("panel.athletics_roster_detail.label.height_weight.title", "Height and Weight"),
             value: "${widget.roster.height} / ${widget.roster.weight}"
         );
       }
-      else if (widget.sport.hasHeight) {
+      else if (widget.sport!.hasHeight!) {
         return _LineEntryWidget(
             title: Localization().getStringEx("panel.athletics_roster_detail.label.ht.title", "Ht."),
             semanticTitle: Localization().getStringEx("panel.athletics_roster_detail.label.height.title", "Height"),
             value: widget.roster.height
         );
       }
-      else if (widget.sport.hasWeight) {
+      else if (widget.sport!.hasWeight!) {
         return _LineEntryWidget(
             title: Localization().getStringEx("panel.athletics_roster_detail.label.wt.title", "Wt."),
             semanticTitle: Localization().getStringEx("panel.athletics_roster_detail.label.weight.title", "Weight"),
@@ -165,12 +165,12 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
     else{return Container();}
   }
 
-  void _launchUrl(String url, {BuildContext context}) {
+  void _launchUrl(String? url, {BuildContext? context}) {
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url);
+        launch(url!);
       }
     }
   }
@@ -183,18 +183,18 @@ class _RosterDetailHeading extends StatelessWidget{
   final photoWidth = 80.0;
   final blueHeight = 48.0;
 
-  final SportDefinition sport;
-  final Roster roster;
+  final SportDefinition? sport;
+  final Roster? roster;
 
-  final GestureTapCallback onTapPhoto;
+  final GestureTapCallback? onTapPhoto;
 
   _RosterDetailHeading({this.sport, this.roster, this.onTapPhoto});
 
   @override
   Widget build(BuildContext context) {
-    String sportLabel = sport.name;
-    String rosterName = roster.name;
-    String number = roster.numberString;
+    String? sportLabel = sport!.name;
+    String? rosterName = roster!.name;
+    String? number = roster!.numberString;
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
@@ -205,7 +205,7 @@ class _RosterDetailHeading extends StatelessWidget{
             child: Stack(
               children: <Widget>[
                 Container(
-                  color: Styles().colors.fillColorPrimaryVariant,
+                  color: Styles().colors!.fillColorPrimaryVariant,
                   child: Container(
                     margin: EdgeInsets.only(right:(photoWidth + (photoMargin + horizontalMargin))),
                     child: Padding(
@@ -217,14 +217,14 @@ class _RosterDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(sport.iconPath, width: 16, height: 16,),
+                                Image.asset(sport!.iconPath!, width: 16, height: 16,),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
-                                    child: Text(sport.name,
+                                    child: Text(sport!.name!,
                                       style: TextStyle(
-                                          color: Styles().colors.surfaceAccent,
-                                          fontFamily: Styles().fontFamilies.medium,
+                                          color: Styles().colors!.surfaceAccent,
+                                          fontFamily: Styles().fontFamilies!.medium,
                                           fontSize: 16
                                       ),
                                     ),
@@ -238,18 +238,18 @@ class _RosterDetailHeading extends StatelessWidget{
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(roster.name,
+                                    child: Text(roster!.name!,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontFamily: Styles().fontFamilies.bold,
+                                          fontFamily: Styles().fontFamilies!.bold,
                                           fontSize: 20
                                       ),
                                     ),
                                   ),
-                                  Text(roster.numberString,
+                                  Text(roster!.numberString!,
                                     style: TextStyle(
-                                        color: Styles().colors.whiteTransparent06,
-                                        fontFamily: Styles().fontFamilies.medium,
+                                        color: Styles().colors!.whiteTransparent06,
+                                        fontFamily: Styles().fontFamilies!.medium,
                                         fontSize: 20
                                     ),
                                   ),
@@ -270,9 +270,9 @@ class _RosterDetailHeading extends StatelessWidget{
                     onTap: onTapPhoto,
                     child: Container(
                       margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                      decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
-                      child: (AppString.isStringNotEmpty(roster.thumbPhotoUrl) ?
-                      Image.network(roster.thumbPhotoUrl, width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
+                      child: (AppString.isStringNotEmpty(roster!.thumbPhotoUrl) ?
+                      Image.network(roster!.thumbPhotoUrl!, width: photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: photoWidth, color: Colors.white,)
                       ),
                     ),
@@ -288,9 +288,9 @@ class _RosterDetailHeading extends StatelessWidget{
 }
 
 class _LineEntryWidget extends StatelessWidget{
-  final String title;
-  final String semanticTitle;
-  final String value;
+  final String? title;
+  final String? semanticTitle;
+  final String? value;
 
   _LineEntryWidget({this.title, this.semanticTitle, this.value});
 
@@ -309,18 +309,18 @@ class _LineEntryWidget extends StatelessWidget{
               Container(
                 width: 120.0,
                 child: Text(
-                  title,
+                  title!,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
                   ),
                 ),
               ),
               Expanded(child:
               Text(
-                value,
+                value!,
                 style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold,
+                  fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,
                 ),
               ))

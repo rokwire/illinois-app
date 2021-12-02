@@ -20,7 +20,7 @@ import 'package:illinois/utils/Utils.dart';
 
 class HomeCampusGuideHighlightsWidget extends StatefulWidget {
 
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomeCampusGuideHighlightsWidget({this.refreshController});
 
@@ -32,7 +32,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
 
   static const int _maxItems = 3;
 
-  List<Map<String, dynamic>> _promotedItems;
+  List<Map<String, dynamic>?>? _promotedItems;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
     ]);
 
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _updatePromotedItems();
       });
     }
@@ -94,7 +94,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   }
 
   void _updatePromotedItems() {
-    List<Map<String, dynamic>> promotedItems = Guide().promotedList;
+    List<Map<String, dynamic>?>? promotedItems = Guide().promotedList;
     if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
         _promotedItems = promotedItems;
@@ -105,22 +105,22 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   List<Widget> _buildPromotedList() {
     List<Widget> contentList = <Widget>[];
     if (_promotedItems != null) {
-      int promotedCount = min(_promotedItems.length, _maxItems);
+      int promotedCount = min(_promotedItems!.length, _maxItems);
       for (int index = 0; index < promotedCount; index++) {
-        Map<String, dynamic> promotedItem = _promotedItems[index];
+        Map<String, dynamic>? promotedItem = _promotedItems![index];
         if (contentList.isNotEmpty) {
           contentList.add(Container(height: 8,));
         }
         contentList.add(GuideEntryCard(promotedItem));
       }
-      if (_maxItems < _promotedItems.length) {
+      if (_maxItems < _promotedItems!.length) {
         contentList.add(Container(height: 16,));
         contentList.add(ScalableRoundedButton(
           label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All'),
           hint: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
-          borderColor: Styles().colors.fillColorSecondary,
-          textColor: Styles().colors.fillColorPrimary,
-          backgroundColor: Styles().colors.white,
+          borderColor: Styles().colors!.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          backgroundColor: Styles().colors!.white,
           onTap: () => _showAll(),
         ));
       }

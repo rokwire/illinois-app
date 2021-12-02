@@ -38,7 +38,7 @@ class SettingsIlliniCashPanel extends StatefulWidget {
 
   static final String routeName = 'settings_illini_cash';
 
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   SettingsIlliniCashPanel({this.scrollController});
 
@@ -48,9 +48,9 @@ class SettingsIlliniCashPanel extends StatefulWidget {
 
 class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> implements NotificationsListener {
 
-  DateTime _startDate;
-  DateTime _endDate;
-  List<IlliniCashTransaction> _transactions;
+  DateTime? _startDate;
+  DateTime? _endDate;
+  List<IlliniCashTransaction?>? _transactions;
   bool _transactionHistoryVisible = false;
   bool _transactionsLoading = false;
   bool _authLoading = false;
@@ -109,7 +109,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildScaffoldBody(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
           ? TabBarWidget()
           : Container(height: 0,),
@@ -129,11 +129,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
               ? 'images/chevron-left-white.png'
               : 'images/chevron-left-blue.png',
           titleWidget: Text(
-            Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
+            Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash')!,
             style: TextStyle(
                 color: widget.scrollController == null
-                    ? Styles().colors.white
-                    : Styles().colors.fillColorPrimary,
+                    ? Styles().colors!.white
+                    : Styles().colors!.fillColorPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.0),
@@ -193,11 +193,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                             'Log in to view'),
                         hint: Localization().getStringEx(
                             'panel.settings.illini_cash.button.log_in.hint', ''),
-                        backgroundColor: Styles().colors.white,
+                        backgroundColor: Styles().colors!.white,
                         fontSize: 16.0,
-                        textColor: Styles().colors.fillColorPrimary,
+                        textColor: Styles().colors!.fillColorPrimary,
                         textAlign: TextAlign.center,
-                        borderColor: Styles().colors.fillColorSecondary,
+                        borderColor: Styles().colors!.fillColorSecondary,
                         onTap: _onTapLogIn,
                       ),
                     ),
@@ -220,11 +220,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
-                Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "For yourself or someone else"),
+                Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "For yourself or someone else")!,
                 style: TextStyle(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     fontSize: 14,
-                    fontFamily: Styles().fontFamilies.regular
+                    fontFamily: Styles().fontFamilies!.regular
                 ),
               ),
             ),
@@ -239,10 +239,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                           'Add Illini Cash'),
                       hint: Localization().getStringEx(
                           'panel.settings.illini_cash.button.add_cash.hint', ''),
-                      backgroundColor: Styles().colors.white,
+                      backgroundColor: Styles().colors!.white,
                       fontSize: 16.0,
-                      textColor: Styles().colors.fillColorPrimary,
-                      borderColor: Styles().colors.fillColorSecondary,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
                       onTap: _onAddIlliniCashTapped,
                     ),
                   ),
@@ -266,13 +266,13 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     );
   }
 
-  Widget _buildSettingsHeader(String title, String iconSrc){
+  Widget _buildSettingsHeader(String? title, String iconSrc){
     return Semantics(
       label: title,
       header: true,
       excludeSemantics: true,
       child: Container(
-        color: Styles().colors.fillColorPrimaryVariant,
+        color: Styles().colors!.fillColorPrimaryVariant,
         height: 56,
         child: Align(
           alignment: Alignment.centerLeft,
@@ -281,11 +281,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             child: Row(
               children: <Widget>[
                 Image.asset(AppString.getDefaultEmptyString(
-                    value: iconSrc, defaultValue: 'images/icon-settings.png')),
+                    value: iconSrc, defaultValue: 'images/icon-settings.png')!),
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
-                    AppString.getDefaultEmptyString(value: title),
+                    AppString.getDefaultEmptyString(value: title)!,
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 )
@@ -309,11 +309,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "CUSTOM PERIOD"),
+              Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "CUSTOM PERIOD")!,
               style: TextStyle(
-                  color: Styles().colors.fillColorPrimary,
+                  color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,
-                  fontFamily: Styles().fontFamilies.regular
+                  fontFamily: Styles().fontFamilies!.regular
               )
             ),
           ),
@@ -341,11 +341,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
             Expanded(child: RoundedButton(
-              textColor: Styles().colors.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.settings.illini_cash.button.view_history.title', 'View History'),
               hint: Localization().getStringEx('panel.settings.illini_cash.button.view_history.hint', ''),
               backgroundColor: Colors.white,
-              borderColor: Styles().colors.fillColorSecondary,
+              borderColor: Styles().colors!.fillColorSecondary,
               height: 32,
               fontSize: 16,
               onTap: _onTapViewHistory,)),
@@ -362,38 +362,38 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         child: CircularProgressIndicator(),),);
     }
     if (_startDate == null || _endDate == null ||
-        _startDate.isAfter(_endDate)) {
+        _startDate!.isAfter(_endDate!)) {
       String text = Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.start_end_validation.text',
-          'Start date must be before end date');
+          'Start date must be before end date')!;
       return Semantics(
         label: text, hint: Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.start_end_validation.hint',
           ''), excludeSemantics: true, child: Center(child: Padding(
         padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
         child: Text(text,
-          style: TextStyle(color: Styles().colors.fillColorPrimary,
+          style: TextStyle(color: Styles().colors!.fillColorPrimary,
               fontSize: 16,
-              fontFamily: Styles().fontFamilies.bold),),),),);
+              fontFamily: Styles().fontFamilies!.bold),),),),);
     }
-    if (_transactions == null || _transactions.isEmpty) {
+    if (_transactions == null || _transactions!.isEmpty) {
       String text = Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.no_transactions.text',
-          'There is no transactions for the selected period');
+          'There is no transactions for the selected period')!;
       return Semantics(label: text, hint: Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.no_transactions.hint',
           ''), excludeSemantics: true, child: Center(child: Padding(
         padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
         child: Text(text,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Styles().colors.fillColorPrimary,
+          style: TextStyle(color: Styles().colors!.fillColorPrimary,
               fontSize: 14,
-              fontFamily: Styles().fontFamilies.regular),),),),);
+              fontFamily: Styles().fontFamilies!.regular),),),),);
     }
-    String dateHeader = Localization().getStringEx('panel.settings.illini_cash.label.date', 'Date');
-    String locationHeader = Localization().getStringEx('panel.settings.illini_cash.label.location', 'Location');
-    String descriptionHeader = Localization().getStringEx('panel.settings.illini_cash.label.description', 'Description');
-    String amountHeader = Localization().getStringEx('panel.settings.illini_cash.label.amount', 'Amount');
+    String dateHeader = Localization().getStringEx('panel.settings.illini_cash.label.date', 'Date')!;
+    String locationHeader = Localization().getStringEx('panel.settings.illini_cash.label.location', 'Location')!;
+    String descriptionHeader = Localization().getStringEx('panel.settings.illini_cash.label.description', 'Description')!;
+    String amountHeader = Localization().getStringEx('panel.settings.illini_cash.label.amount', 'Amount')!;
     List<Widget> dateWidgets        =  [];
     List<Widget> locationWidgets    =  [];
     List<Widget> descriptionWidgets =  [];
@@ -410,18 +410,18 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     int locationLenght = locationHeader.length;
     int descriptionLenght = descriptionHeader.length;
     int amountLenght = amountHeader.length;
-    _transactions.forEach((IlliniCashTransaction balance){
+    _transactions!.forEach((IlliniCashTransaction? balance){
       //date
-      String date = balance.dateString;
+      String date = balance!.dateString!;
       dateLenght = dateLenght<date.length? date.length : dateLenght;
       //location
-      String location = balance.location;
+      String location = balance.location!;
       locationLenght = locationLenght<location.length? location.length : locationLenght;
       //description
-      String description = balance.description;
+      String description = balance.description!;
       descriptionLenght = descriptionLenght<description.length? description.length : descriptionLenght;
       //balance
-      String amount = balance.amount;
+      String amount = balance.amount!;
       amountLenght = max(amountLenght + 1, amount.length);
 
       dateWidgets.add(_buildBalanceTableItem(text: date));
@@ -469,29 +469,29 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildBalanceTableHeaderItem(String text){
-      return _buildBalanceTableItem(text: text, backColor: Styles().colors.fillColorPrimaryVariant,
+      return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
           showBorder: false,
           textStyle: TextStyle(
-              fontFamily: Styles().fontFamilies.regular,
-              color: Styles().colors.white,
+              fontFamily: Styles().fontFamilies!.regular,
+              color: Styles().colors!.white,
               fontWeight: FontWeight.bold,
               fontSize: 14));
   }
 
-  Widget _buildBalanceTableItem({String text, bool showBorder = true, Color backColor, TextStyle textStyle}) {
+  Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {
     return
            Container(
              width: double.infinity,
              height: 40,
              alignment: Alignment.centerLeft,
              decoration: BoxDecoration(
-               color: backColor ?? Styles().colors.background,
+               color: backColor ?? Styles().colors!.background,
                border: showBorder?
                Border.all(
-                   color: Styles().colors.surfaceAccent,
+                   color: Styles().colors!.surfaceAccent!,
                    width: 1,
                    style: BorderStyle.solid) :
-               Border.all(color: backColor ?? Styles().colors.background,width: 0)
+               Border.all(color: backColor ?? Styles().colors!.background!,width: 0)
              ),
               child: Padding(
                   padding: EdgeInsets.all(8),
@@ -500,8 +500,8 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                     maxLines: 1,
                     style: textStyle!=null? textStyle:
                     TextStyle(
-                        fontFamily: Styles().fontFamilies.regular,
-                        color: Styles().colors.textBackground,
+                        fontFamily: Styles().fontFamilies!.regular,
+                        color: Styles().colors!.textBackground,
                         fontSize: 14),),
 
               )
@@ -509,17 +509,17 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildAmountView(String balance){
-    return _buildBalanceTableItem(text: balance, backColor: Styles().colors.background,
+    return _buildBalanceTableItem(text: balance, backColor: Styles().colors!.background,
         textStyle: TextStyle(
-            fontFamily: Styles().fontFamilies.bold,
-            color: Styles().colors.textBackground,
+            fontFamily: Styles().fontFamilies!.bold,
+            color: Styles().colors!.textBackground,
             fontSize: 14));
   }
 
   Widget _buildDialogWidget(BuildContext context) {
     String text = Localization().getStringEx(
         'panel.settings.illini_cash.login.label.login_failed',
-        'Unable to login. Please try again later');
+        'Unable to login. Please try again later')!;
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -527,7 +527,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois'),
+              Localization().getStringEx('app.title', 'Illinois')!,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -536,7 +536,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 text,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),
@@ -549,7 +549,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       Analytics.instance.logAlert(text:text, selection: "Ok");
                       Navigator.pop(context);
                     },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
+                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
               ],
             )
           ],
@@ -558,7 +558,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     );
   }
 
-  void _onTransactionsLoaded(List<IlliniCashTransaction> transactions) {
+  void _onTransactionsLoaded(List<IlliniCashTransaction?>? transactions) {
     _showTransactionsProgress(false, changeState: false);
     if (mounted) {
       setState(() {
@@ -620,16 +620,16 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       firstDate: firstDate,
       lastDate: lastDate,
       initialDate: initialDate,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light(),
-          child: child,
+          child: child!,
         );
       },
     ).then((selectedDateTime) => _onStartDateChanged(selectedDateTime));
   }
 
-  void _onStartDateChanged(DateTime startDate) {
+  void _onStartDateChanged(DateTime? startDate) {
     if(mounted) {
       setState(() {
         _startDate = startDate;
@@ -651,16 +651,16 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       firstDate: firstDate,
       lastDate: lastDate,
       initialDate: initialDate,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light(),
-          child: child,
+          child: child!,
         );
       },
     ).then((selectedDateTime) => _onEndDateChanged(selectedDateTime));
   }
 
-  void _onEndDateChanged(DateTime endDate) {
+  void _onEndDateChanged(DateTime? endDate) {
     if(mounted) {
       setState(() {
         _endDate = endDate;
@@ -668,7 +668,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     }
   }
 
-  String _getFormattedDate(DateTime date) {
+  String? _getFormattedDate(DateTime? date) {
     return AppDateTime().formatDateTime(
         date, format: AppDateTime.scheduleServerQueryDateTimeFormat);
   }
@@ -688,7 +688,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 }
 
 class _DateLabel extends StatelessWidget {
-  final String label;
+  final String? label;
 
   _DateLabel({this.label});
 
@@ -697,34 +697,34 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label, style: TextStyle(color: Styles().colors.textBackground,
+        Text(label!, style: TextStyle(color: Styles().colors!.textBackground,
             fontSize: 16,
-            fontFamily: Styles().fontFamilies.regular),),
-        Container(height: 2, color: Styles().colors.surfaceAccent,)
+            fontFamily: Styles().fontFamilies!.regular),),
+        Container(height: 2, color: Styles().colors!.surfaceAccent,)
       ],),);
   }
 }
 
 class _DateValue extends StatelessWidget {
-  final String title;
-  final String label;
-  final String hint;
-  final GestureTapCallback onTap;
+  final String? title;
+  final String? label;
+  final String? hint;
+  final GestureTapCallback? onTap;
 
   _DateValue({this.title, this.label, this.hint, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: (0 < title.length) ? title : label, hint: hint, button: true, excludeSemantics: true, child:InkWell(onTap: onTap, child: Column(children: <Widget>[
+    return Semantics(label: (0 < title!.length) ? title : label, hint: hint, button: true, excludeSemantics: true, child:InkWell(onTap: onTap, child: Column(children: <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(title, style: TextStyle(
-              color: Styles().colors.fillColorPrimary,
+          Text(title!, style: TextStyle(
+              color: Styles().colors!.fillColorPrimary,
               fontSize: 16,
-              fontFamily: Styles().fontFamilies.bold),),
+              fontFamily: Styles().fontFamilies!.bold),),
           Image.asset('images/icon-down.png')
-        ],), Container(height: 2, color: Styles().colors.fillColorSecondary,)
+        ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);
   }
 }

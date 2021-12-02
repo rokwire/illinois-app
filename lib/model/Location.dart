@@ -20,17 +20,17 @@ import 'package:illinois/service/Analytics.dart';
 /// Location
 
 class Location {
-  String locationId;
-  String name;
-  String building;
-  String address;
-  String city;
-  String state;
-  String zip;
-  num latitude;
-  num longitude;
-  int floor;
-  String description;
+  String? locationId;
+  String? name;
+  String? building;
+  String? address;
+  String? city;
+  String? state;
+  String? zip;
+  num? latitude;
+  num? longitude;
+  int? floor;
+  String? description;
 
   Location(
       {this.locationId,
@@ -61,7 +61,7 @@ class Location {
     };
   }
 
-  static Location fromJSON(Map<String, dynamic> json) {
+  static Location? fromJSON(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -82,18 +82,18 @@ class Location {
   String getDisplayName() {
     String displayText = "";
 
-    if ((name != null) && (0 < name.length)) {
+    if ((name != null) && (0 < name!.length)) {
       if (0 < displayText.length) {
         displayText += ", ";
       }
-      displayText += name;
+      displayText += name!;
     }
 
-    if ((building != null) && (0 < building.length)) {
+    if ((building != null) && (0 < building!.length)) {
       if (0 < displayText.length) {
         displayText += ", ";
       }
-      displayText += building;
+      displayText += building!;
     }
 
     return displayText;
@@ -102,46 +102,46 @@ class Location {
   String getDisplayAddress() {
     String displayText = "";
 
-    if ((address != null) && (0 < address.length)) {
+    if ((address != null) && (0 < address!.length)) {
       if (0 < displayText.length) {
         displayText += ", ";
       }
-      displayText += address;
+      displayText += address!;
     }
 
-    if ((city != null) && (0 < city.length)) {
+    if ((city != null) && (0 < city!.length)) {
       if (0 < displayText.length) {
         displayText += ", ";
       }
-      displayText += city;
+      displayText += city!;
     }
 
     String delimiter = ", ";
 
-    if ((state != null) && (0 < state.length)) {
+    if ((state != null) && (0 < state!.length)) {
       if (0 < displayText.length) {
         displayText += ", ";
       }
-      displayText += state;
+      displayText += state!;
       delimiter = " ";
     }
 
-    if ((zip != null) && (0 < zip.length)) {
+    if ((zip != null) && (0 < zip!.length)) {
       if (0 < displayText.length) {
         displayText += delimiter;
       }
-      displayText += zip;
+      displayText += zip!;
     }
 
     return displayText;
   }
 
   Map<String, dynamic> get analyticsAttributes {
-    String value;
-    if ((name != null) && name.isNotEmpty) {
+    String? value;
+    if ((name != null) && name!.isNotEmpty) {
       value = name;
     }
-    else if ((description != null) && description.isNotEmpty) {
+    else if ((description != null) && description!.isNotEmpty) {
       value = description;
     }
 
@@ -153,12 +153,12 @@ class Location {
 /// LatLng
 
 class LatLng {
-  num latitude;
-  num longitude;
+  num? latitude;
+  num? longitude;
 
   LatLng({this.latitude, this.longitude});
 
-  static LatLng fromJson(Map<String, dynamic> json) {
+  static LatLng? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }

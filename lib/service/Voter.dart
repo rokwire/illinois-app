@@ -31,7 +31,7 @@ class Voter with Service implements NotificationsListener {
 
   Voter._internal();
 
-  List<VoterRule> _voterRules;
+  List<VoterRule>? _voterRules;
 
   @override
   void createService() {
@@ -54,23 +54,23 @@ class Voter with Service implements NotificationsListener {
     return Set.from([Assets()]);
   }
 
-  VoterRule getVoterRuleForToday() {
+  VoterRule? getVoterRuleForToday() {
     if (AppCollection.isCollectionEmpty(_voterRules)) {
       return null;
     }
     DateTime now = AppDateTime().now;
-    DateTime uniLocalTime = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc());
-    for (VoterRule rule in _voterRules) {
+    DateTime? uniLocalTime = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc());
+    for (VoterRule rule in _voterRules!) {
       bool afterStartDate = true;
       bool beforeEndDate = true;
       if (rule.startDate != null) {
-        bool isSameStartDay = (uniLocalTime.year == rule.startDate.year) && (uniLocalTime.month == rule.startDate.month) &&
-            (uniLocalTime.day == rule.startDate.day);
-        afterStartDate = (rule.startDate.isBefore(uniLocalTime)) || isSameStartDay;
+        bool isSameStartDay = (uniLocalTime!.year == rule.startDate!.year) && (uniLocalTime.month == rule.startDate!.month) &&
+            (uniLocalTime.day == rule.startDate!.day);
+        afterStartDate = (rule.startDate!.isBefore(uniLocalTime)) || isSameStartDay;
       }
       if (rule.endDate != null) {
-        bool isSameEndDay = (uniLocalTime.year == rule.endDate.year) && (uniLocalTime.month == rule.endDate.month) && (uniLocalTime.day == rule.endDate.day);
-        beforeEndDate = (rule.endDate.isAfter(uniLocalTime)) || isSameEndDay;
+        bool isSameEndDay = (uniLocalTime!.year == rule.endDate!.year) && (uniLocalTime.month == rule.endDate!.month) && (uniLocalTime.day == rule.endDate!.day);
+        beforeEndDate = (rule.endDate!.isAfter(uniLocalTime)) || isSameEndDay;
       }
       if (afterStartDate && beforeEndDate) {
         return rule;
@@ -80,11 +80,11 @@ class Voter with Service implements NotificationsListener {
   }
 
   void _loadVoterRules() {
-    List<dynamic> rulesJson = Assets()['voter.rules'];
+    List<dynamic>? rulesJson = Assets()['voter.rules'];
     if (AppCollection.isCollectionNotEmpty(rulesJson)) {
       _voterRules = [];
-      for (dynamic rule in rulesJson) {
-        _voterRules.add(VoterRule.fromJson(rule));
+      for (dynamic rule in rulesJson!) {
+        _voterRules!.add(VoterRule.fromJson(rule));
       }
     }
   }

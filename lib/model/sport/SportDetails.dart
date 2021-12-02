@@ -15,19 +15,19 @@
  */
 
 class SportSeasons {
-  String code;
-  String label;
-  String staff;
-  List<SportSeasonSchedule> seasons;
+  String? code;
+  String? label;
+  String? staff;
+  List<SportSeasonSchedule?>? seasons;
 
   SportSeasons({this.code, this.label, this.staff, this.seasons});
 
-  static SportSeasons fromJson(Map<String, dynamic> json) {
+  static SportSeasons? fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
-    List<dynamic> schedulesJson = json['schedules'];
-    List<SportSeasonSchedule> seasons = (schedulesJson != null)
+    List<dynamic>? schedulesJson = json['schedules'];
+    List<SportSeasonSchedule?>? seasons = (schedulesJson != null)
         ? schedulesJson.map((value) => SportSeasonSchedule.fromJson(value)).toList()
         : null;
     return SportSeasons(
@@ -39,13 +39,13 @@ class SportSeasons {
 }
 
 class SportSeasonSchedule {
-  String year;
-  String roster;
-  String schedule;
+  String? year;
+  String? roster;
+  String? schedule;
 
   SportSeasonSchedule({this.year, this.roster, this.schedule});
 
-  static SportSeasonSchedule fromJson(Map<String, dynamic> json) {
+  static SportSeasonSchedule? fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -58,14 +58,14 @@ class SportSeasonSchedule {
 }
 
 class SportSocialMedia {
-  final String shortName;
-  final String twitterName;
-  final String instagramName;
-  final String facebookPage;
+  final String? shortName;
+  final String? twitterName;
+  final String? instagramName;
+  final String? facebookPage;
 
   SportSocialMedia({this.shortName, this.twitterName, this.instagramName, this.facebookPage});
 
-  static SportSocialMedia fromJson(Map<String, dynamic> json) {
+  static SportSocialMedia? fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -78,25 +78,25 @@ class SportSocialMedia {
 }
 
 class SportDefinition {
-  String name;
-  String customName;
-  String shortName;
-  bool hasHeight;
-  bool hasWeight;
-  bool hasPosition;
-  bool hasSortByPosition;
-  bool hasSortByNumber;
-  bool hasScores;
-  String gender;
-  bool ticketed;
-  String iconPath;
+  String? name;
+  String? customName;
+  String? shortName;
+  bool? hasHeight;
+  bool? hasWeight;
+  bool? hasPosition;
+  bool? hasSortByPosition;
+  bool? hasSortByNumber;
+  bool? hasScores;
+  String? gender;
+  bool? ticketed;
+  String? iconPath;
 
   SportDefinition({this.name, this.customName, this.shortName, this.hasHeight,
     this.hasWeight, this.hasPosition, this.hasSortByPosition,
     this.hasSortByNumber, this.hasScores, this.gender, this.ticketed,
     this.iconPath});
 
-  static SportDefinition fromJson(Map<String, dynamic> json) {
+  static SportDefinition? fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }

@@ -31,9 +31,9 @@ import 'package:illinois/utils/ImageUtils.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
-  final Group group;
+  final Group? group;
 
-  const GroupQrCodePanel({@required this.group});
+  const GroupQrCodePanel({required this.group});
 
   @override
   _GroupQrCodePanelState createState() => _GroupQrCodePanelState();
@@ -41,7 +41,7 @@ class GroupQrCodePanel extends StatefulWidget {
 
 class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   static final int _imageSize = 1024;
-  Uint8List _qrCodeBytes;
+  Uint8List? _qrCodeBytes;
 
   @override
   void initState() {
@@ -53,9 +53,9 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
     });
   }
 
-  Future<Uint8List> _loadQrImageBytes() async {
-    String deepLink = '${Groups.GROUP_URI}?group_id=${widget.group.id}';
-    String qrCodeValue = AppUrl.getDeepLinkRedirectUrl(deepLink);
+  Future<Uint8List?> _loadQrImageBytes() async {
+    String deepLink = '${Groups.GROUP_URI}?group_id=${widget.group!.id}';
+    String? qrCodeValue = AppUrl.getDeepLinkRedirectUrl(deepLink);
     return await NativeCommunicator().getBarcodeImageData({
       'content': qrCodeValue,
       'format': 'qrCode',
@@ -70,19 +70,19 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
     if (_qrCodeBytes == null) {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_qr_code.alert.no_qr_code.msg", "There is no QR Code"));
     } else {
-      final String groupName = widget.group?.title;
-      Uint8List updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName, width: _imageSize.toDouble(), height: _imageSize.toDouble());
+      final String? groupName = widget.group?.title;
+      Uint8List? updatedImageBytes = await ImageUtils.applyLabelOverImage(_qrCodeBytes, groupName, width: _imageSize.toDouble(), height: _imageSize.toDouble());
       bool result = (updatedImageBytes != null);
       if (result) {
         final String fileName = 'Group - $groupName';
-        result = await ImageUtils.saveToFs(updatedImageBytes, fileName);
+        result = await (ImageUtils.saveToFs(updatedImageBytes, fileName) as FutureOr<bool>);
       }
-      String platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
+      String? platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.group_qr_code.alert.save.success.pictures", "Pictures")
           : Localization().getStringEx("panel.group_qr_code.alert.save.success.gallery", "Gallery");
       String message = result
-          ? (Localization().getStringEx("panel.group_qr_code.alert.save.success.msg", "Successfully saved qr code in ") + platformTargetText)
-          : Localization().getStringEx("panel.group_qr_code.alert.save.fail.msg", "Failed to save qr code in ") + platformTargetText;
+          ? (Localization().getStringEx("panel.group_qr_code.alert.save.success.msg", "Successfully saved qr code in ")! + platformTargetText!)
+          : Localization().getStringEx("panel.group_qr_code.alert.save.fail.msg", "Failed to save qr code in ")! + platformTargetText!;
       AppAlert.showDialogResult(context, message).then((value) {
         if(result) {
           Navigator.of(context).pop();
@@ -97,7 +97,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx('panel.group_qr_code.title', 'Promote this group'),
+          Localization().getStringEx('panel.group_qr_code.title', 'Promote this group')!,
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -109,15 +109,15 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: Styles().colors.background,
+          color: Styles().colors!.background,
           child: Padding(
             padding: EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode to your photo library, so you can share or print it to promote your group.'),
-                  style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),
+                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode to your photo library, so you can share or print it to promote your group.')!,
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 24),
@@ -125,10 +125,10 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                       ? Semantics(
                           label: Localization().getStringEx('panel.group_qr_code.code.hint', "QR code image"),
                           child: Container(
-                            decoration: BoxDecoration(color: Styles().colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(5))),
                             padding: EdgeInsets.all(5),
                             child: Image.memory(
-                              _qrCodeBytes,
+                              _qrCodeBytes!,
                               fit: BoxFit.fitWidth,
                               semanticLabel: Localization().getStringEx("panel.group_qr_code.primary.heading.title", "Group promotion Key"),
                             ),
@@ -140,7 +140,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                           child: Align(
                             alignment: Alignment.center,
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),
+                              valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),
                               strokeWidth: 2,
                             ),
                           ),
@@ -151,10 +151,10 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                   child: ScalableRoundedButton(
                     label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save'),
                     hint: '',
-                    backgroundColor: Styles().colors.background,
+                    backgroundColor: Styles().colors!.background,
                     fontSize: 16.0,
-                    textColor: Styles().colors.fillColorPrimary,
-                    borderColor: Styles().colors.fillColorSecondary,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorSecondary,
                     onTap: _onTapSave,
                   ),
                 ),
@@ -163,7 +163,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
           ),
         ),
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
     );
   }
 

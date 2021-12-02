@@ -23,11 +23,11 @@ import 'package:illinois/utils/Utils.dart';
 enum LaundryRoomStatus { online, offline }
 
 class LaundryRoom implements Favorite {
-  String id;
-  String title;
-  String campusName;
-  LaundryRoomStatus status;
-  Location location;
+  String? id;
+  String? title;
+  String? campusName;
+  LaundryRoomStatus? status;
+  Location? location;
 
   LaundryRoom({this.id, this.title, this.campusName, this.status, this.location});
 
@@ -35,7 +35,7 @@ class LaundryRoom implements Favorite {
 
   int get hashCode => title.hashCode ^ id.hashCode ^ campusName.hashCode;
 
-  static LaundryRoom fromJson(Map<String, dynamic> json) {
+  static LaundryRoom? fromJson(Map<String, dynamic> json) {
     return (json != null) ? LaundryRoom(
         id: json['id'],
         title: json['title'],
@@ -51,7 +51,7 @@ class LaundryRoom implements Favorite {
       "title": title,
       "campus_name": campusName,
       "status": _roomStatusToString(status),
-      "location": (location != null ? location.toJson() : null)
+      "location": (location != null ? location!.toJson() : null)
     };
   }
 
@@ -62,7 +62,7 @@ class LaundryRoom implements Favorite {
     };
   }
 
-  static LaundryRoomStatus roomStatusFromString(String roomStatusString) {
+  static LaundryRoomStatus? roomStatusFromString(String? roomStatusString) {
     if (AppString.isStringEmpty(roomStatusString)) {
       return null;
     }
@@ -76,7 +76,7 @@ class LaundryRoom implements Favorite {
     }
   }
 
-  static String _roomStatusToString(LaundryRoomStatus roomStatus) {
+  static String? _roomStatusToString(LaundryRoomStatus? roomStatus) {
     if (roomStatus == null) {
       return null;
     }
@@ -90,10 +90,10 @@ class LaundryRoom implements Favorite {
   }
 
   @override
-  String get favoriteId => id;
+  String? get favoriteId => id;
 
   @override
-  String get favoriteTitle => title;
+  String? get favoriteTitle => title;
 
   @override
   String get favoriteKey =>  favoriteKeyName;
@@ -102,14 +102,14 @@ class LaundryRoom implements Favorite {
 }
 
 class LaundryRoomAppliance {
-  String applianceDescKey;
-  String lrmStatus;
-  String applianceType;
-  String status;
-  String outOfService;
-  String label;
-  String avgCycleTime;
-  String timeRemaining;
+  String? applianceDescKey;
+  String? lrmStatus;
+  String? applianceType;
+  String? status;
+  String? outOfService;
+  String? label;
+  String? avgCycleTime;
+  String? timeRemaining;
 
   LaundryRoomAppliance(
       {this.applianceDescKey,
@@ -123,9 +123,9 @@ class LaundryRoomAppliance {
 }
 
 class LaundryRoomAvailability {
-  String location;
-  String availableWashers;
-  String availableDryers;
+  String? location;
+  String? availableWashers;
+  String? availableDryers;
 
   LaundryRoomAvailability({this.location, this.availableWashers, this.availableDryers});
 }

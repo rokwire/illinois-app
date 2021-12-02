@@ -60,8 +60,8 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
-  List<dynamic> _contentListCodes;
-  StreamController<void> _refreshController;
+  List<dynamic>? _contentListCodes;
+  StreamController<void>? _refreshController;
   GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
@@ -82,7 +82,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _refreshController.close();
+    _refreshController!.close();
     super.dispose();
   }
 
@@ -103,7 +103,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           SliverList(
             delegate: SliverChildListDelegate(<Widget>[
               Container(
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,7 +114,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           ),
         ],
       ),),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
     );
   }
 
@@ -122,8 +122,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    for (dynamic code in _contentListCodes) {
-      Widget widget;
+    for (dynamic code in _contentListCodes!) {
+      Widget? widget;
 
       if (code == 'game_day') {
         widget = HomeGameDayWidget(refreshController: _refreshController);
@@ -203,12 +203,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
-  List<dynamic> _buildContentListCodes({String source = 'home'}) {
-    List<dynamic> result;
-    List<dynamic> contentList = FlexUI()[source];
+  List<dynamic>? _buildContentListCodes({String source = 'home'}) {
+    List<dynamic>? result;
+    List<dynamic>? contentList = FlexUI()[source];
     if (contentList != null) {
       result = [];
-      for (String contentEntry in contentList) {
+      for (String contentEntry in contentList as Iterable<String>) {
         dynamic list = FlexUI()['$source.$contentEntry'];
         if (list is List) {
           result.addAll(list);
@@ -223,12 +223,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   Future<void> _onPullToRefresh() async {
     LiveStats().refresh();
-    _refreshController.add(null);
+    _refreshController!.add(null);
   }
 
   void _ensureGiesVisible() {
     if (_giesWidgetKey?.currentContext != null) {
-      Scrollable.ensureVisible(_giesWidgetKey.currentContext, duration: Duration(milliseconds: 300));
+      Scrollable.ensureVisible(_giesWidgetKey.currentContext!, duration: Duration(milliseconds: 300));
     }
   }
 
@@ -272,12 +272,12 @@ class _SliverHomeHeaderBar extends SliverAppBar {
   final bool settingsVisible;
 
   _SliverHomeHeaderBar(
-      {@required this.context,  this.searchVisible = false, this.savedVisible = false, this.settingsVisible = false})
+      {required this.context,  this.searchVisible = false, this.savedVisible = false, this.settingsVisible = false})
       : super(
       pinned: true,
       floating: true,
       primary:true,
-      backgroundColor: Styles().colors.fillColorPrimaryVariant,
+      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
       title: ExcludeSemantics(
           child: IconButton(
               icon: Image.asset('images/block-i-orange.png'),
@@ -326,12 +326,12 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Text(Localization().getStringEx(
-                    'headerbar.saved.title', 'Saved'),
+                    'headerbar.saved.title', 'Saved')!,
                     style: TextStyle(color: Colors.white,
                         fontSize: 16,
-                        fontFamily: Styles().fontFamilies.semiBold,
+                        fontFamily: Styles().fontFamilies!.semiBold,
                         decoration: TextDecoration.underline,
-                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationColor: Styles().colors!.fillColorSecondary,
                         decorationThickness: 1,
                         decorationStyle: TextDecorationStyle.solid)),),))),
 

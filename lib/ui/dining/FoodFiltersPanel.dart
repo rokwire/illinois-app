@@ -33,8 +33,8 @@ class FoodFiltersPanel extends StatefulWidget{
 class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   //Set<String> selectedPreferences;
-  Set<String> _selectedTypesPrefs;
-  Set<String> _selectedIngredientsPrefs;
+  late Set<String> _selectedTypesPrefs;
+  Set<String>? _selectedIngredientsPrefs;
 
   @override
   void initState() {
@@ -48,17 +48,17 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   void _loadFoodPreferences(){
-    _selectedTypesPrefs = Set.from(DiningService().getIncludedFoodTypesPrefs());
-    _selectedIngredientsPrefs = Set.from(DiningService().getExcludedFoodIngredientsPrefs());
+    _selectedTypesPrefs = Set.from(DiningService().getIncludedFoodTypesPrefs()!);
+    _selectedIngredientsPrefs = Set.from(DiningService().getExcludedFoodIngredientsPrefs()!);
   }
 
   @override
   Widget build(BuildContext context) {
-    String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE");
+    String onlyShow = Localization().getStringEx("panel.food_filters.label.only_show_food_that_are.title", "ONLY SHOW FOODS THAT ARE")!;
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_filters.header.title", "Food Filters"),
+        titleWidget: Text(Localization().getStringEx("panel.food_filters.header.title", "Food Filters")!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -78,7 +78,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
                     Container(height: 20,),
                     Container(
                       decoration: BoxDecoration(
-                          color: Styles().colors.fillColorPrimary,
+                          color: Styles().colors!.fillColorPrimary,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4),
                               topRight: Radius.circular(4))),
@@ -96,7 +96,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
                                 onlyShow,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontFamily: Styles().fontFamilies!.bold,
                                     color: Colors.white,
                                     fontSize: 14,
                                     letterSpacing: 1.0),
@@ -111,7 +111,7 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
                     Container(height: 20,),
                     Container(
                       decoration: BoxDecoration(
-                          color: Styles().colors.fillColorPrimary,
+                          color: Styles().colors!.fillColorPrimary,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4),
                               topRight: Radius.circular(4))),
@@ -126,10 +126,10 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
                             children: <Widget>[
                             Expanded(
                             child: Text(
-                              Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS"),
+                              Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS")!,
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontFamily: Styles().fontFamilies!.bold,
                                   color: Colors.white,
                                   fontSize: 14,
                                   letterSpacing: 1.0),
@@ -150,16 +150,16 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 //          _buildSaveButton()
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
   Widget _buildFoodTypes(){
     List<Widget> list = [];
-    for(String foodType in DiningService().foodTypes){
+    for(String foodType in DiningService().foodTypes!){
       bool selected = _selectedTypesPrefs.contains(foodType);
-      String foodLabel = DiningService().getLocalizedString(foodType);
+      String? foodLabel = DiningService().getLocalizedString(foodType);
       list.add(
           ToggleRibbonButton(
             height: null,
@@ -177,9 +177,9 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   Widget _buildFoodIngredients(){
     List<Widget> list = [];
-    for(String foodIngredient in DiningService().foodIngredients){
-      bool selected = (_selectedIngredientsPrefs == null) || _selectedIngredientsPrefs.contains(foodIngredient);
-      String ingredientLabel = DiningService().getLocalizedString(foodIngredient);
+    for(String foodIngredient in DiningService().foodIngredients!){
+      bool selected = (_selectedIngredientsPrefs == null) || _selectedIngredientsPrefs!.contains(foodIngredient);
+      String? ingredientLabel = DiningService().getLocalizedString(foodIngredient);
       list.add(
           ToggleRibbonButton(
             height: null,
@@ -210,13 +210,13 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   void _onFoodIngredientPrefTapped(String foodOption){
     Analytics.instance.logSelect(target: "FoodIngredient: "+foodOption);
-    if(_selectedIngredientsPrefs.contains(foodOption)){
-      _selectedIngredientsPrefs.remove(foodOption);
+    if(_selectedIngredientsPrefs!.contains(foodOption)){
+      _selectedIngredientsPrefs!.remove(foodOption);
     }
     else{
-      _selectedIngredientsPrefs.add(foodOption);
+      _selectedIngredientsPrefs!.add(foodOption);
     }
-    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs.toList());
+    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs!.toList());
 
     setState((){});
   }

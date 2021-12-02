@@ -73,36 +73,36 @@ class Onboarding2 with Service{
     NotificationService().notify(notifyFinished, context);
   }
   
-  void storeExploreCampusChoice(bool choice){
+  void storeExploreCampusChoice(bool? choice){
     Storage().onBoardingExploreCampus = choice;
   }
 
-  void storePersonalizeChoice(bool choice){
+  void storePersonalizeChoice(bool? choice){
     Storage().onBoardingPersonalizeChoice = choice;
   }
 
-  void storeImproveChoice(bool choice){
+  void storeImproveChoice(bool? choice){
     Storage().onBoardingImproveChoice = choice;
   }
 
-  bool get getExploreCampusChoice{
+  bool? get getExploreCampusChoice{
     return Storage().onBoardingExploreCampus;
   }
 
-  bool get getPersonalizeChoice{
+  bool? get getPersonalizeChoice{
     return Storage().onBoardingPersonalizeChoice;
   }
 
-  bool get getImproveChoice{
+  bool? get getImproveChoice{
     return Storage().onBoardingImproveChoice;
   }
 
   int get getPrivacyLevel{
     //TBD refactoring
     int privacyLevel = -1;
-    if(getExploreCampusChoice){
-      if(getPersonalizeChoice){
-        if(getImproveChoice){
+    if(getExploreCampusChoice!){
+      if(getPersonalizeChoice!){
+        if(getImproveChoice!){
           privacyLevel = 5;
         } else {
           //!getImproveChoice
@@ -114,8 +114,8 @@ class Onboarding2 with Service{
       }
     } else {
       //!getExploreCampusChoice
-      if(getPersonalizeChoice){
-        if(getImproveChoice){
+      if(getPersonalizeChoice!){
+        if(getImproveChoice!){
           privacyLevel = 5;
         } else {
           //!getImproveChoice

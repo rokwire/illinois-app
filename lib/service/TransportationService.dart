@@ -34,16 +34,16 @@ class TransportationService /* with Service */ {
 
   TransportationService._internal();
 
-  Future<List<ParkingEvent>> loadParkingEvents() async {
+  Future<List<ParkingEvent>?> loadParkingEvents() async {
     final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
     final response = await Network().get(url, auth: NetworkAuth.Auth2);
-    String responseBody = response?.body;
+    String? responseBody = response?.body;
     if ((response != null) && (response.statusCode == 200)) {
       if (AppString.isStringNotEmpty(responseBody)) {
         List<ParkingEvent> events = [];
-        List<dynamic> jsonData = AppJson.decode(responseBody);
+        List<dynamic>? jsonData = AppJson.decode(responseBody);
         if (jsonData != null) {
-          for (Map<String, dynamic> eventEntry in jsonData) {
+          for (Map<String, dynamic> eventEntry in jsonData as Iterable<Map<String, dynamic>>) {
             events.add(ParkingEvent.fromJson(eventEntry));
           }
           return events;
@@ -56,7 +56,7 @@ class TransportationService /* with Service */ {
     return null;
   }
 
-  Future<List<ParkingLot>> loadParkingEventInventory(String eventId) async {
+  Future<List<ParkingLot>?> loadParkingEventInventory(String? eventId) async {
     if (AppString.isStringNotEmpty(eventId)) {
       final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
       final response = await Network().get(url, auth: NetworkAuth.Auth2);
@@ -68,12 +68,12 @@ class TransportationService /* with Service */ {
       int responseStatusCode = response.statusCode;
       if (responseStatusCode == 200) {
         if (AppString.isStringNotEmpty(responseBody)) {
-          Map<String, dynamic> jsonData = AppJson.decode(responseBody);
+          Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
           if (jsonData != null) {
-            List<dynamic> lotsData = jsonData['items'];
+            List<dynamic>? lotsData = jsonData['items'];
             if (AppCollection.isCollectionNotEmpty(lotsData)) {
               List<ParkingLot> lots = [];
-              for (dynamic lotEntry in lotsData) {
+              for (dynamic lotEntry in lotsData!) {
                 ParkingLot lot = ParkingLot.fromJson(lotEntry);
                 lots.add(lot);
               }
@@ -90,8 +90,8 @@ class TransportationService /* with Service */ {
     return null;
   }
 
-  Future<Color> loadBusColor({String userId, String deviceId}) async {
-    String transportationUrl =Config().transportationUrl;
+  Future<Color?> loadBusColor({String? userId, String? deviceId}) async {
+    String? transportationUrl =Config().transportationUrl;
     String url = "$transportationUrl/bus/color";
     Map<String, dynamic> data = {
       'user_id': userId,
@@ -100,12 +100,12 @@ class TransportationService /* with Service */ {
 
     try {
       String body = json.encode(data);
-      final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
+      final response = await (Network().get(url, auth: NetworkAuth.Auth2, body:body) as FutureOr<Response>);
 
       String responseBody = response.body;
       if ((response != null) && (response.statusCode == 200)) {
         Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        String colorHex = jsonData["color"];
+        String? colorHex = jsonData["color"];
         return AppString.isStringNotEmpty(colorHex) ? UiColors.fromHex(colorHex) : null;
       } else {
         Log.e('Failed to load bus color');
@@ -115,7 +115,7 @@ class TransportationService /* with Service */ {
     return null;
   }
 
-  Future<dynamic> loadBusPass({String userId, String deviceId, Map<String, dynamic> iBeaconData}) async {
+  Future<dynamic> loadBusPass({String? userId, String? deviceId, Map<String, dynamic>? iBeaconData}) async {
     try {
       String url = "${Config().transportationUrl}/bus/pass";
       Map<String, dynamic> data = {

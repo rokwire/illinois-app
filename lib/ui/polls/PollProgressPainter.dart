@@ -17,27 +17,27 @@
 import 'package:flutter/material.dart';
 
 class PollProgressPainter extends CustomPainter {
-  final Color progressColor;
-  final Color backgroundColor;
-  final double progress;
+  final Color? progressColor;
+  final Color? backgroundColor;
+  final double? progress;
   final Paint _paintBackground = new Paint();
   final Paint _paintProgress = new Paint();
 
   PollProgressPainter({this.progressColor, this.backgroundColor, this.progress}) {
     if (backgroundColor != null) {
-      _paintBackground.color = backgroundColor;
+      _paintBackground.color = backgroundColor!;
       //_paintBackground.style = PaintingStyle.stroke;
       //_paintBackground.strokeWidth = 20;
     }
     if (progressColor != null) {
-      _paintProgress.color = progressColor;
+      _paintProgress.color = progressColor!;
     }
   }
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), _paintBackground);
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width * progress, size.height), _paintProgress);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width * progress!, size.height), _paintProgress);
   }
 
   @override

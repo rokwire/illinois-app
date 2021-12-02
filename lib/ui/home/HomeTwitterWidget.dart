@@ -18,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomeTwitterWidget extends StatefulWidget {
 
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomeTwitterWidget({this.refreshController});
 
@@ -29,10 +29,10 @@ class HomeTwitterWidget extends StatefulWidget {
 class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements NotificationsListener {
 
   List<TweetsPage> _tweetsPages = <TweetsPage>[];
-  String _tweetsUserCategory;
+  String? _tweetsUserCategory;
   bool _loadingPage = false;
-  DateTime _pausedDateTime;
-  PageController _pageController;
+  DateTime? _pausedDateTime;
+  PageController? _pageController;
 
   @override
   void initState() {
@@ -45,13 +45,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
 
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _refresh(noCache: true);
       });
     }
 
     _loadingPage = true;
-    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, userCategory: userCategory).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, userCategory: userCategory).then((TweetsPage? tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
@@ -82,13 +82,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _refresh(count: Config().twitterTweetsCount);
         }
@@ -119,21 +119,21 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   Widget _buildHeader() {
     return Semantics(container: true ,
-    child: Container(color: Styles().colors.fillColorPrimary, child:
+    child: Container(color: Styles().colors!.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
           Expanded(child: 
             Text("Twitter", style:
-              TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
       ],),),));
   }
 
   Widget _buildSlant() {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors.fillColorPrimary, height: 45,),
-      Container(color: Styles().colors.fillColorPrimary, child:
-        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background, left : true), child:
+      Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
+      Container(color: Styles().colors!.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, left : true), child:
           Container(height: 65,),
         )),
     ],);
@@ -143,7 +143,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     List<Widget> pages = <Widget>[];
     for (TweetsPage tweetsPage in _tweetsPages) {
       if (tweetsPage?.tweets != null) {
-        for (Tweet tweet in tweetsPage.tweets) {
+        for (Tweet? tweet in tweetsPage.tweets!) {
           pages.add(_TweetWidget(tweet: tweet,));
         }
       }
@@ -182,9 +182,9 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       setState(() {
         _loadingPage = true;
       });
-      TweetsPage lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
-      Tweet lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage.tweets.length)) ? lastTweetsPage.tweets.last : null;
-      Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, userCategory: userCategory).then((TweetsPage tweetsPage) {
+      TweetsPage? lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
+      Tweet? lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage!.tweets!.length)) ? lastTweetsPage.tweets!.last : null;
+      Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, userCategory: userCategory).then((TweetsPage? tweetsPage) {
         if (mounted) {
           setState(() {
             _loadingPage = false;
@@ -198,11 +198,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
   }
 
-  void _refresh({int count, bool noCache}) {
+  void _refresh({int? count, bool? noCache}) {
     setState(() {
       _loadingPage = true;
     });
-    Twitter().loadTweetsPage(count: count ?? max(tweetsCount, Config().twitterTweetsCount), noCache: noCache, userCategory: userCategory).then((TweetsPage tweetsPage) {
+    Twitter().loadTweetsPage(count: count ?? max(tweetsCount, Config().twitterTweetsCount!), noCache: noCache, userCategory: userCategory).then((TweetsPage? tweetsPage) {
       if (mounted) {
         setState(() {
           _loadingPage = false;
@@ -212,21 +212,21 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           }
         });
         if (tweetsPage != null) {
-          _pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+          _pageController!.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
         }
       }
     });
   }
 
-  String get userCategory {
-    List<dynamic> twitterUserList = FlexUI()['home.twitter.user'];
+  String? get userCategory {
+    List<dynamic>? twitterUserList = FlexUI()['home.twitter.user'];
     return ((twitterUserList != null) && twitterUserList.isNotEmpty) ? twitterUserList.first : null;
   }
 }
 
 class _TweetWidget extends StatelessWidget {
 
-  final Tweet tweet;
+  final Tweet? tweet;
 
   _TweetWidget({this.tweet});
 
@@ -235,8 +235,8 @@ class _TweetWidget extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors!.white,
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
         clipBehavior: Clip.none,
@@ -248,13 +248,13 @@ class _TweetWidget extends StatelessWidget {
                 Column(children: [
                   AppString.isStringNotEmpty(tweet?.media?.url) ?
                     InkWell(onTap: () => _onTap(context), child:
-                      Image.network(tweet?.media?.url)) :
+                      Image.network(tweet?.media?.url!)) :
                   Container(),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                     //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
-                    Html(data: tweet.html,
+                    Html(data: tweet!.html,
                       onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                      style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+                      style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
                   ),
                 ],)
               ),
@@ -266,10 +266,10 @@ class _TweetWidget extends StatelessWidget {
                   //Text("@${tweet?.author?.userName}", style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),) :
                   Html(data: tweet?.author?.html,
                     onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
-                    style: { "body": Style(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: FontSize(14), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },) :
+                    style: { "body": Style(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: FontSize(14), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },) :
                   Container(),
                 ),
-                Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors.textSurface, fontFamily: Styles().fontFamilies.medium, fontSize: 14, ),),
+                Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
               ],)
             )
           ])
@@ -278,15 +278,15 @@ class _TweetWidget extends StatelessWidget {
   }
 
   void _onTap(BuildContext context) {
-    _launchUrl(tweet.detailUrl, context: context);
+    _launchUrl(tweet!.detailUrl, context: context);
   }
 
-  void _launchUrl(String url, {BuildContext context}) {
+  void _launchUrl(String? url, {BuildContext? context}) {
     if (AppString.isStringNotEmpty(url)) {
       if (AppUrl.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url);
+        launch(url!);
       }
     }
   }
@@ -299,15 +299,15 @@ class _TweetLoadingWidget extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
       Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            color: Styles().colors!.white,
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
         clipBehavior: Clip.none,
         child:
           Center(child: 
             SizedBox(height: 24, width: 24, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), )
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
             ),
           ),
       )

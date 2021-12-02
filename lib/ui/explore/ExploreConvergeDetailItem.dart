@@ -21,10 +21,10 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ExploreConvergeDetailItem extends StatelessWidget{
-  final String eventConvergeUrl;
-  final int eventConvergeScore;
+  final String? eventConvergeUrl;
+  final int? eventConvergeScore;
 
-  const ExploreConvergeDetailItem({Key key, this.eventConvergeUrl, this.eventConvergeScore}) : super(key: key);
+  const ExploreConvergeDetailItem({Key? key, this.eventConvergeUrl, this.eventConvergeScore}) : super(key: key);
 
 
   @override
@@ -79,9 +79,9 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         eventConvergeScore.toString() + "% ",
 //           + Localization().getString("widget.card.label.converge"),
         style: TextStyle(
-            fontFamily: Styles().fontFamilies.medium,
+            fontFamily: Styles().fontFamilies!.medium,
             fontSize: 14,
-            color: Styles().colors.mediumGray)
+            color: Styles().colors!.mediumGray)
     );
   }
 
@@ -90,7 +90,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
   }
 
   bool hasConvergeScore(){
-    return (eventConvergeScore != null) && eventConvergeScore>0;
+    return (eventConvergeScore != null) && eventConvergeScore!>0;
   }
 
   bool hasConvergeContent(){
@@ -104,10 +104,10 @@ class ExploreConvergeDetailItem extends StatelessWidget{
 }
 
 class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
-  final String eventConvergeUrl;
-  final int eventConvergeScore;
+  final String? eventConvergeUrl;
+  final int? eventConvergeScore;
 
-  const ExploreConvergeDetailButton({Key key, this.eventConvergeUrl, this.eventConvergeScore}) : 
+  const ExploreConvergeDetailButton({Key? key, this.eventConvergeUrl, this.eventConvergeScore}) : 
         super(eventConvergeScore: eventConvergeScore, eventConvergeUrl: eventConvergeUrl);
 
   @override
@@ -121,7 +121,7 @@ class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
 
         ),
       ),
-      Text( Localization().getString("widget.card.label.converge")),
+      Text( Localization().getString("widget.card.label.converge")!),
       Container(width: 5,),
 //      Image.asset('images/chevron-right.png')
 

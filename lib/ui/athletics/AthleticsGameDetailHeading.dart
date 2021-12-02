@@ -38,7 +38,7 @@ import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
 class AthleticsGameDetailHeading extends StatefulWidget {
-  final Game game;
+  final Game? game;
   final bool showImageTout;
 
   AthleticsGameDetailHeading({this.game, this.showImageTout = true});
@@ -72,24 +72,24 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   @override
   Widget build(BuildContext context) {
-    String sportKey = widget.game.sport?.shortName;
-    String sportName = widget.game.sport?.title;
-    SportDefinition sportDefinition = Sports().getSportByShortName(sportKey);
+    String? sportKey = widget.game!.sport?.shortName;
+    String sportName = widget.game!.sport?.title!;
+    SportDefinition? sportDefinition = Sports().getSportByShortName(sportKey);
     bool isTicketedSport = sportDefinition?.ticketed ?? false;
     bool isMenBasketball = ('mbball' == sportKey);
-    bool isHomeGame = widget.game.isHomeGame;
-    bool isGameDay = widget.game.isGameDay;
+    bool isHomeGame = widget.game!.isHomeGame;
+    bool isGameDay = widget.game!.isGameDay;
     bool showOrderFoodAndDrink = (isMenBasketball && isHomeGame) || isGameDay;
-    bool showGetTickets = isTicketedSport && (widget.game.links?.tickets != null);
-    bool showParking = widget.game.parkingUrl != null;
-    bool showGameDayGuide = widget.game.isHomeGame;
+    bool showGetTickets = isTicketedSport && (widget.game!.links?.tickets != null);
+    bool showParking = widget.game!.parkingUrl != null;
+    bool showGameDayGuide = widget.game!.isHomeGame;
     bool hasScores = sportDefinition?.hasScores ?? false;
-    bool hasLiveGame = Storage().debugDisableLiveGameCheck ? true : LiveStats().hasLiveGame(widget.game.id);
-    bool showScore = hasScores && widget.game.isGameDay && hasLiveGame;
+    bool hasLiveGame = Storage().debugDisableLiveGameCheck! ? true : LiveStats().hasLiveGame(widget.game!.id);
+    bool showScore = hasScores && widget.game!.isGameDay && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
-    String liveStatsUrl = widget.game?.links?.liveStats;
-    String audioUrl = widget.game?.links?.audio;
-    String videoUrl = widget.game?.links?.video;
+    String? liveStatsUrl = widget.game?.links?.liveStats;
+    String? audioUrl = widget.game?.links?.audio;
+    String? videoUrl = widget.game?.links?.video;
 
     double wrapperHeight = 30;
     wrapperHeight += AppString.isStringNotEmpty(audioUrl) ? 48 : 0;
@@ -112,7 +112,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                     children: _buildHeaderWidgets(),
                   ),
                   Container(
-                    color: Styles().colors.fillColorPrimary,
+                    color: Styles().colors!.fillColorPrimary,
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                       child: Column(
@@ -122,7 +122,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             children: <Widget>[
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Styles().colors.whiteTransparent01,
+                                  color: Styles().colors!.whiteTransparent01,
                                   borderRadius: BorderRadius.all(Radius.circular(2)),
                                 ),
                                 
@@ -132,7 +132,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                                     child: Text(
                                       sportName.toUpperCase(),
-                                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
+                                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
                                     ),
                                   )),
                               ),
@@ -158,26 +158,26 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                           Padding(
                             padding: EdgeInsets.only(top: 12),
                             child: Text(
-                              widget.game.title,
+                              widget.game!.title,
                               style: TextStyle(fontSize: 32, color: Colors.white),
                             ),
                           ),
-                          (!AppString.isStringEmpty(widget.game.longDescription)
+                          (!AppString.isStringEmpty(widget.game!.longDescription)
                               ? Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   child: Text(
-                                    widget.game.longDescription,
+                                    widget.game!.longDescription!,
                                     textAlign: TextAlign.left,
-                                    style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.whiteTransparent06, fontSize: 16),
+                                    style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.whiteTransparent06, fontSize: 16),
                                   ),
                                 )
                               : Padding(
                                   padding: EdgeInsets.only(top: 16),
                                 )),
                           Visibility(
-                              visible: AppString.isStringNotEmpty(widget.game.displayTime),
+                              visible: AppString.isStringNotEmpty(widget.game!.displayTime),
                               child: Semantics(
-                                label: widget.game.displayTime,
+                                label: widget.game!.displayTime,
                                 button: false,
                                 child: Padding(
                                   padding: EdgeInsets.only(bottom: 10),
@@ -187,8 +187,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
-                                          widget.game.displayTime,
-                                          style: TextStyle(fontFamily: Styles().fontFamilies.medium, color: Styles().colors.whiteTransparent06, fontSize: 16),
+                                          widget.game!.displayTime,
+                                          style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
                                         ),
                                       )
                                     ],
@@ -200,7 +200,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 20),
                               child: Semantics(
-                                label: widget.game.location?.location ?? "",
+                                label: widget.game!.location?.location ?? "",
                                 button: false,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,10 +211,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     ),
                                     Flexible(
                                         child: Text(
-                                      widget.game.location?.location,
+                                      widget.game!.location?.location!,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
-                                      style: TextStyle(fontFamily: Styles().fontFamilies.medium, color: Styles().colors.whiteTransparent06, fontSize: 16),
+                                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
                                     ))
                                   ],
                                 ),
@@ -228,10 +228,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 ],
               ),
               Container(
-                child: Semantics(excludeSemantics: true, child: Image.asset('images/2.0x/slant-down-right-blue.png', color: Styles().colors.fillColorPrimary,)),
+                child: Semantics(excludeSemantics: true, child: Image.asset('images/2.0x/slant-down-right-blue.png', color: Styles().colors!.fillColorPrimary,)),
               ),
               Container(
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 height: wrapperHeight,
               )
             ],
@@ -258,7 +258,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 AppString.isStringEmpty(liveStatsUrl)
                     ? Container()
                     : Container(
-                        color: Styles().colors.fillColorPrimaryTransparent015,
+                        color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 AppString.isStringEmpty(audioUrl)
@@ -273,7 +273,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 AppString.isStringEmpty(audioUrl)
                     ? Container()
                     : Container(
-                        color: Styles().colors.fillColorPrimaryTransparent015,
+                        color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 AppString.isStringEmpty(videoUrl)
@@ -288,7 +288,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 AppString.isStringEmpty(videoUrl)
                     ? Container()
                     : Container(
-                        color: Styles().colors.fillColorPrimaryTransparent015,
+                        color: Styles().colors!.fillColorPrimaryTransparent015,
                         height: 1,
                       ),
                 Padding(
@@ -308,8 +308,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   hint: Localization().getStringEx('widget.game_detail_heading.button.get_tickets.hint', ''),
                                   backgroundColor: Colors.white,
                                   fontSize: 16.0,
-                                  textColor: Styles().colors.fillColorPrimary,
-                                  borderColor: Styles().colors.fillColorSecondary,
+                                  textColor: Styles().colors!.fillColorPrimary,
+                                  borderColor: Styles().colors!.fillColorSecondary,
                                   onTap: _onTapGetTickets,
                                 ),
                               ),
@@ -326,8 +326,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     hint: Localization().getStringEx('widget.game_detail_heading.button.parking.hint', ''),
                                     backgroundColor: Colors.white,
                                     fontSize: 16.0,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    borderColor: Styles().colors.fillColorSecondary,
+                                    textColor: Styles().colors!.fillColorPrimary,
+                                    borderColor: Styles().colors!.fillColorSecondary,
                                     onTap: _onTapParking),
                               ),
                             ),
@@ -345,8 +345,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                           hint: Localization().getStringEx('widget.game_detail_heading.button.game_day_guide.hint', ''),
                           backgroundColor: Colors.white,
                           fontSize: 16.0,
-                          textColor: Styles().colors.fillColorPrimary,
-                          borderColor: Styles().colors.fillColorSecondary,
+                          textColor: Styles().colors!.fillColorPrimary,
+                          borderColor: Styles().colors!.fillColorSecondary,
                           onTap: () {
                             _onTapGameDayGuide();
                           },
@@ -358,8 +358,8 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                         hint: Localization().getStringEx('widget.game_detail_heading.button.roster.hint', ''),
                         backgroundColor: Colors.white,
                         fontSize: 16.0,
-                        textColor: Styles().colors.fillColorPrimary,
-                        borderColor: Styles().colors.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        borderColor: Styles().colors!.fillColorSecondary,
                         onTap: () {
                           Analytics.instance.logSelect(target: "Roster");
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsRosterListPanel(sportDefinition, null)));
@@ -377,7 +377,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   Widget _createScoreBoard() {
-    String sport = widget.game.sport?.shortName;
+    String? sport = widget.game!.sport?.shortName;
     switch (sport) {
       case "football":
         {
@@ -409,18 +409,18 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   List<Widget> _buildHeaderWidgets() {
     List<Widget> widgets = [];
     if(widget.showImageTout) {
-      if (!AppString.isStringEmpty(widget.game.imageUrl)) {
+      if (!AppString.isStringEmpty(widget.game!.imageUrl)) {
         widgets.add(Positioned(
             child: Semantics(
                 excludeSemantics: true,
                 child: Image.network(
-                  widget.game.imageUrl,
+                  widget.game!.imageUrl!,
                 ))));
       }
       widgets.add(Semantics(
           excludeSemantics: true,
           child: CustomPaint(
-            painter: TrianglePainter(painterColor: Styles().colors.fillColorPrimary),
+            painter: TrianglePainter(painterColor: Styles().colors!.fillColorPrimary),
             child: Container(
               height: 60,
             ),
@@ -450,32 +450,32 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _showTicketsPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game.links.tickets)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game!.links!.tickets)));
   }
 
   void _onTapParking() {
     Analytics.instance.logSelect(target: "Parking");
 
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game.parkingUrl)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game!.parkingUrl)));
   }
 
   void _onTapGameDayGuide() {
     Analytics.instance.logSelect(target: "Game Day");
-    String sportKey = widget.game.sport?.shortName;
-    String url = AppUrl.getGameDayGuideUrl(sportKey);
+    String? sportKey = widget.game!.sport?.shortName;
+    String? url = AppUrl.getGameDayGuideUrl(sportKey);
     if (url != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
     }
   }
 
-  void _onTapListen(String audioUrl) {
+  void _onTapListen(String? audioUrl) {
     Analytics.instance.logSelect(target: "Listen");
     if (AppString.isStringNotEmpty(audioUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: audioUrl)));
     }
   }
 
-  void _onTapWatch(String videoUrl) {
+  void _onTapWatch(String? videoUrl) {
     Analytics.instance.logSelect(target: "Watch");
     if (AppString.isStringNotEmpty(videoUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: videoUrl)));
@@ -488,12 +488,12 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 ///
 class _DetailRibbonButton extends StatelessWidget {
   final String iconResource;
-  final String title;
-  final String subTitle;
-  final String hint;
-  final GestureTapCallback onTap;
+  final String? title;
+  final String? subTitle;
+  final String? hint;
+  final GestureTapCallback? onTap;
 
-  _DetailRibbonButton({@required this.iconResource, @required this.title, this.subTitle = '', this.hint = '', this.onTap});
+  _DetailRibbonButton({required this.iconResource, required this.title, this.subTitle = '', this.hint = '', this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -515,10 +515,10 @@ class _DetailRibbonButton extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
-                      title,
+                      title!,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.bold,
-                          color: Styles().colors.fillColorPrimary,
+                          fontFamily: Styles().fontFamilies!.bold,
+                          color: Styles().colors!.fillColorPrimary,
                           fontSize: 16),
                     ),
                   ),
@@ -529,10 +529,10 @@ class _DetailRibbonButton extends StatelessWidget {
                   ),
                   Visibility(
                       child: Text(
-                        (!AppString.isStringEmpty(subTitle) ? subTitle : ''),
+                        (!AppString.isStringEmpty(subTitle) ? subTitle! : ''),
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies.medium,
-                            color: Styles().colors.textBackground,
+                            fontFamily: Styles().fontFamilies!.medium,
+                            color: Styles().colors!.textBackground,
                             fontSize: 16),
                       ))
                 ],
@@ -547,17 +547,17 @@ class _DetailRibbonButton extends StatelessWidget {
 /// _SportScoreWidget
 ///
 class _SportScoreWidget extends StatefulWidget {
-  final Game _game;
+  final Game? _game;
 
-  _SportScoreWidget({@required Game game}) : _game = game;
+  _SportScoreWidget({required Game? game}) : _game = game;
 
   @override
   _SportScoreWidgetState createState() => _SportScoreWidgetState();
 }
 
 class _SportScoreWidgetState extends State<_SportScoreWidget> implements NotificationsListener {
-  LiveStats _livestatsLogic;
-  LiveGame _currentLiveGame;
+  late LiveStats _livestatsLogic;
+  LiveGame? _currentLiveGame;
 
   _SportScoreWidgetState() {
     _livestatsLogic = LiveStats();
@@ -570,17 +570,17 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       LiveStats.notifyLiveGamesUpdated,
     ]);
 
-    LiveGame liveGame = _livestatsLogic.getLiveGame(widget._game.id);
+    LiveGame? liveGame = _livestatsLogic.getLiveGame(widget._game!.id);
     _setCurrentData(liveGame);
 
-    _livestatsLogic.addTopic(widget._game.sport.shortName);
+    _livestatsLogic.addTopic(widget._game!.sport!.shortName);
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _livestatsLogic.removeTopic(widget._game.sport.shortName);
+    _livestatsLogic.removeTopic(widget._game!.sport!.shortName);
     super.dispose();
   }
 
@@ -608,8 +608,8 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                _currentLiveGame != null ? _formatPeriod(_currentLiveGame.period) : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16),
+                _currentLiveGame != null ? _formatPeriod(_currentLiveGame!.period!) : "-",
+                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
               ),
             ),
             Expanded(
@@ -618,8 +618,8 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
               ),
             ),
             Text(
-              _currentLiveGame != null ? _formatClock(_currentLiveGame.clockSeconds) : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textBackground, fontSize: 16),
+              _currentLiveGame != null ? _formatClock(_currentLiveGame!.clockSeconds!) : "-",
+              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
             ),
           ],
         ),
@@ -630,11 +630,11 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   String _formatPeriod(int period) {
     if (period <= 0) return "";
 
-    return _convertToOrdinal(period) + " " + _getPeriodName();
+    return _convertToOrdinal(period) + " " + _getPeriodName()!;
   }
 
-  String _getPeriodName() {
-    String shortName = widget._game.sport.shortName;
+  String? _getPeriodName() {
+    String? shortName = widget._game!.sport!.shortName;
     if (shortName == "football") {
       return Localization().getStringEx("widget.score.period.quarter", "Quarter");
     } else if (shortName == "mbball") {
@@ -654,7 +654,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
     }
   }
 
-  String _convertToOrdinal(int period) {
+  String _convertToOrdinal(int? period) {
     switch (period) {
       case 1:
         return "1st";
@@ -677,7 +677,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _buildBottomSection() {
     return Container(
         height: 68,
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(), _buildAwaySection()],
@@ -689,10 +689,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -709,8 +709,8 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
                 ),
               ),
               Text(
-                _currentLiveGame != null ? _currentLiveGame.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32),
+                _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
               ),
             ],
           ),
@@ -720,15 +720,15 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   }
 
   Widget _getHomeImage() {
-    if (widget._game.isHomeGame) {
+    if (widget._game!.isHomeGame) {
       //return illinois image
       return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      Opponent opponent = widget._game.opponent;
-      String opponentUrl = opponent != null ? opponent.logoImage : null;
+      Opponent? opponent = widget._game!.opponent;
+      String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(AppString.isStringNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl);
+        return Image.network(opponentUrl!);
       } else {
         return Container();
       }
@@ -740,10 +740,10 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -752,8 +752,8 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                _currentLiveGame != null ? _currentLiveGame.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32),
+                _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
               ),
               Expanded(
                 child: Container(
@@ -772,22 +772,22 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   }
 
   Widget _getAwayImage() {
-    if (!widget._game.isHomeGame) {
+    if (!widget._game!.isHomeGame) {
       //return illinois image
       return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      Opponent opponent = widget._game.opponent;
-      String opponentUrl = opponent != null ? opponent.logoImage : null;
+      Opponent? opponent = widget._game!.opponent;
+      String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(AppString.isStringNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl);
+        return Image.network(opponentUrl!);
       } else {
         return Container();
       }
     }
   }
 
-  void _setCurrentData(LiveGame liveGame) {
+  void _setCurrentData(LiveGame? liveGame) {
     setState(() {
       _currentLiveGame = liveGame;
     });
@@ -806,12 +806,12 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
 
   void _onLiveGamesLoaded() {
     setState(() {
-      _setCurrentData(_livestatsLogic.getLiveGame(widget._game.id));
+      _setCurrentData(_livestatsLogic.getLiveGame(widget._game!.id));
     });
   }
 
-  void _onLiveGameUpdated(LiveGame liveGame) {
-    if ((liveGame != null) && (widget._game.id == liveGame.gameId)) {
+  void _onLiveGameUpdated(LiveGame? liveGame) {
+    if ((liveGame != null) && (widget._game!.id == liveGame.gameId)) {
       _setCurrentData(liveGame);
     }
   }
@@ -822,7 +822,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
 ///
 class _VolleyballScoreWidget extends _SportScoreWidget {
 
-  _VolleyballScoreWidget({@required Game game}) : super(game: game);
+  _VolleyballScoreWidget({required Game? game}) : super(game: game);
 
   @override
   _VolleyballScoreWidgetState createState() => _VolleyballScoreWidgetState();
@@ -836,16 +836,16 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return _hasExtraData() ? _createRichContent(width, height) : _createLiteContent(width, height);
+    return _hasExtraData()! ? _createRichContent(width, height) : _createLiteContent(width, height);
   }
 
-  bool _hasExtraData() {
+  bool? _hasExtraData() {
     if (_currentLiveGame == null) return false;
 
-    dynamic customData = _currentLiveGame.custom;
+    dynamic customData = _currentLiveGame!.custom;
     if (AppString.isStringEmpty(customData)) return false;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(customData);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(customData);
     if (mapCustomData == null) {
       return null;
     }
@@ -863,44 +863,44 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
 
   String _getPeriod() {
     if (_currentLiveGame == null) return "-";
-    int period = _currentLiveGame.period;
+    int period = _currentLiveGame!.period!;
     if (period <= 0) return "";
 
-    return _convertToOrdinal(period) + " " + Localization().getStringEx("widget.score.period.set", "Set");
+    return _convertToOrdinal(period) + " " + Localization().getStringEx("widget.score.period.set", "Set")!;
   }
 
   String _getHomeScore() {
     if (_currentLiveGame == null) return "-";
 
-    return _currentLiveGame.homeScore.toString();
+    return _currentLiveGame!.homeScore.toString();
   }
 
   String _getVisitingScore() {
     if (_currentLiveGame == null) return "-";
 
-    return _currentLiveGame.visitingScore.toString();
+    return _currentLiveGame!.visitingScore.toString();
   }
 
   Image _getHomeImageFrom(double width, double height) {
-    if (widget._game.isHomeGame) {
+    if (widget._game!.isHomeGame) {
       //return illinois image
       return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      Opponent opponent = widget._game.opponent;
-      String opponentUrl = opponent != null ? opponent.logoImage : null;
+      Opponent? opponent = widget._game!.opponent;
+      String opponentUrl = opponent != null ? opponent.logoImage! : null;
       return Image.network(opponentUrl);
     }
   }
 
   Image _getVisitingImage(double width, double height) {
-    if (!widget._game.isHomeGame) {
+    if (!widget._game!.isHomeGame) {
       //return illinois image
       return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      Opponent opponent = widget._game.opponent;
-      String opponentUrl = opponent != null ? opponent.logoImage : null;
+      Opponent? opponent = widget._game!.opponent;
+      String opponentUrl = opponent != null ? opponent.logoImage! : null;
       return Image.network(opponentUrl);
     }
   }
@@ -908,19 +908,19 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget _createRichContent(double width, double height) {
     if (_currentLiveGame == null) return Container();
 
-    dynamic customData = _currentLiveGame.custom;
+    dynamic customData = _currentLiveGame!.custom;
     if (AppString.isStringEmpty(customData)) return Container();
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(customData);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(customData);
     if (mapCustomData == null) return Container();
 
-    String phase = mapCustomData["Phase"];
-    String phaseLabel = mapCustomData["PhaseLabel"];
-    String hScore = mapCustomData["HScore"];
-    String vScore = mapCustomData["VScore"];
-    String hPoints = mapCustomData["HPoints"];
-    String vPoints = mapCustomData["VPoints"];
-    String serving = mapCustomData["Serving"];
+    String? phase = mapCustomData["Phase"];
+    String? phaseLabel = mapCustomData["PhaseLabel"];
+    String? hScore = mapCustomData["HScore"];
+    String? vScore = mapCustomData["VScore"];
+    String? hPoints = mapCustomData["HPoints"];
+    String? vPoints = mapCustomData["VPoints"];
+    String? serving = mapCustomData["Serving"];
     Image homeImage = _getHomeImageFrom(width, height);
     Image visitingImage = _getVisitingImage(width, height);
     return _RichContent(
@@ -945,7 +945,7 @@ class _LiteContent extends StatelessWidget {
   final Image _homeImage;
   final Image _visitingImage;
 
-  _LiteContent({@required String period, @required String homeScore, @required String visitingScore, @required Image homeImage, @required Image visitingImage})
+  _LiteContent({required String period, required String homeScore, required String visitingScore, required Image homeImage, required Image visitingImage})
       : _period = period,
         _homeScore = homeScore,
         _visitingScore = visitingScore,
@@ -977,7 +977,7 @@ class _LiteContent extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _period,
-                style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
               ),
             ),
             Expanded(
@@ -994,7 +994,7 @@ class _LiteContent extends StatelessWidget {
   Widget _buildBottomSection() {
     return Container(
         height: 68,
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(), _buildAwaySection()],
@@ -1006,10 +1006,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -1023,7 +1023,7 @@ class _LiteContent extends StatelessWidget {
                   color: Colors.transparent,
                 ),
               ),
-              Text(_homeScore, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32)),
+              Text(_homeScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
             ],
           ),
         ),
@@ -1036,10 +1036,10 @@ class _LiteContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -1047,7 +1047,7 @@ class _LiteContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(_visitingScore, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32)),
+              Text(_visitingScore, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
               Expanded(
                 child: Container(
                   color: Colors.transparent,
@@ -1067,26 +1067,26 @@ class _LiteContent extends StatelessWidget {
 
 // Richer UI data containing more game details
 class _RichContent extends StatelessWidget {
-  final String _phase;
-  final String _phaseLabel;
-  final String _hScore;
-  final String _vScore;
-  final String _hPoints;
-  final String _vPoints;
-  final String _serving;
+  final String? _phase;
+  final String? _phaseLabel;
+  final String? _hScore;
+  final String? _vScore;
+  final String? _hPoints;
+  final String? _vPoints;
+  final String? _serving;
   final Image _homeImage;
   final Image _visitingImage;
 
   _RichContent(
-      {@required String phase,
-        @required String phaseLabel,
-        @required String hScore,
-        @required String vScore,
-        @required String hPoints,
-        @required String vPoints,
-        @required String serving,
-        @required Image homeImage,
-        @required Image visitingImage})
+      {required String? phase,
+        required String? phaseLabel,
+        required String? hScore,
+        required String? vScore,
+        required String? hPoints,
+        required String? vPoints,
+        required String? serving,
+        required Image homeImage,
+        required Image visitingImage})
       : _phase = phase,
         _phaseLabel = phaseLabel,
         _hScore = hScore,
@@ -1121,8 +1121,8 @@ class _RichContent extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                _phaseLabel,
-                style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16),
+                _phaseLabel!,
+                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
               ),
             ),
             Expanded(
@@ -1139,7 +1139,7 @@ class _RichContent extends StatelessWidget {
   Widget _buildBottomSection(BuildContext context) {
     return Container(
         height: 68,
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(context), _buildVisitingSection(context)],
@@ -1153,10 +1153,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -1185,7 +1185,7 @@ class _RichContent extends StatelessWidget {
         ? Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Text(_hPoints, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32)),
+        Text(_hPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
         SizedBox(width: 15),
         Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -1196,13 +1196,13 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: true),
               ),
-              Text(_hScore, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 23))
+              Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
             ],
           ),
         ),
       ],
     )
-        : Text(_hScore, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32));
+        : Text(_hScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
   }
 
   Widget _buildVisitingSection(BuildContext context) {
@@ -1212,10 +1212,10 @@ class _RichContent extends StatelessWidget {
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -1256,22 +1256,22 @@ class _RichContent extends StatelessWidget {
                 visible: serving,
                 child: _ServingControl(home: false),
               ),
-              Text(_vScore, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 23))
+              Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 23))
             ],
           ),
         ),
         SizedBox(width: 15),
-        Text(_vPoints, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32)),
+        Text(_vPoints!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32)),
       ],
     )
-        : Text(_vScore, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32));
+        : Text(_vScore!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32));
   }
 }
 
 class _ServingControl extends StatelessWidget {
   final bool _home;
 
-  _ServingControl({@required bool home}) : _home = home;
+  _ServingControl({required bool home}) : _home = home;
 
   @override
   Widget build(BuildContext context) {
@@ -1280,8 +1280,8 @@ class _ServingControl extends StatelessWidget {
 }
 
 class _ArrowPainter extends CustomPainter {
-  Paint _paint;
-  bool _home;
+  late Paint _paint;
+  late bool _home;
 
   _ArrowPainter(bool home) {
     _home = home;
@@ -1319,7 +1319,7 @@ class _ArrowPainter extends CustomPainter {
 /// _FootballScoreWidget
 ///
 class _FootballScoreWidget extends _SportScoreWidget {
-  _FootballScoreWidget({@required Game game}) : super(game: game);
+  _FootballScoreWidget({required Game? game}) : super(game: game);
 
   @override
   _FootballScoreWidgetState createState() => _FootballScoreWidgetState();
@@ -1356,7 +1356,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
               ),
             ),
             Expanded(
@@ -1366,7 +1366,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textBackground, fontSize: 16),
+              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
             ),
           ],
         ),
@@ -1375,26 +1375,26 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   Widget _buildMiddleSection() {
-    String possession = _getPossession();
+    String? possession = _getPossession();
     return Container(
         height: 68,
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSectionWithPossession(possession), _buildAwaySectionWithPossesion(possession)],
         ));
   }
 
-  Widget _buildHomeSectionWithPossession(String possession) {
+  Widget _buildHomeSectionWithPossession(String? possession) {
     bool isHomePossession = (possession == "H");
     return Expanded(
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 1, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 1, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -1418,8 +1418,8 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
                 ),
               ),
               Text(
-                _currentLiveGame != null ? _currentLiveGame.homeScore.toString() : "-",
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32),
+                _currentLiveGame != null ? _currentLiveGame!.homeScore.toString() : "-",
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
               ),
             ],
           ),
@@ -1428,16 +1428,16 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
     );
   }
 
-  Widget _buildAwaySectionWithPossesion(String possession) {
+  Widget _buildAwaySectionWithPossesion(String? possession) {
     bool isVisitingPossession = possession == "V";
     return Expanded(
       child: Container(
         decoration: new BoxDecoration(
             border: Border(
-              left: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              right: BorderSide(width: 0.5, color: Styles().colors.fillColorPrimaryTransparent015),
-              top: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              left: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              right: BorderSide(width: 0.5, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              top: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         height: 68,
         child: Padding(
@@ -1446,8 +1446,8 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                _currentLiveGame != null ? _currentLiveGame.visitingScore.toString() : "-",
-                style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32),
+                _currentLiveGame != null ? _currentLiveGame!.visitingScore.toString() : "-",
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32),
               ),
               Visibility(
                 visible: isVisitingPossession,
@@ -1473,39 +1473,39 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   Widget _buildBottomSection() {
-    String lastPlay = _getLastPlay();
+    String? lastPlay = _getLastPlay();
     bool hasLastPlay = AppString.isStringNotEmpty(lastPlay);
     return hasLastPlay
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s'), [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text(sprintf(Localization().getStringEx('widget.score.last_play', 'Last Play: %s')!, [lastPlay]), textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
         ))
         : Container();
   }
 
-  String _getLastPlay() {
+  String? _getLastPlay() {
     if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["LastPlay"];
   }
 
-  String _getPossession() {
+  String? _getPossession() {
     if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Possession"];
   }
 
   String _getClock() {
-    String customClock = _getCustomClock();
+    String? customClock = _getCustomClock();
     //empty value is valid
     if (customClock != null) return customClock;
 
@@ -1514,22 +1514,22 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String _getRegularClock() {
-    if (_currentLiveGame.clockSeconds < 0) return "";
+    if (_currentLiveGame!.clockSeconds! < 0) return "";
 
     final format = new DateFormat('mm:ss');
-    return format.format(new DateTime.fromMillisecondsSinceEpoch(_currentLiveGame.clockSeconds * 1000));
+    return format.format(new DateTime.fromMillisecondsSinceEpoch(_currentLiveGame!.clockSeconds! * 1000));
   }
 
-  String _getCustomClock() {
-    if (AppString.isStringEmpty(_currentLiveGame.custom)) return null;
+  String? _getCustomClock() {
+    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Clock"];
   }
 
   String _getPhase() {
-    String customPhase = _getCustomPhase();
+    String? customPhase = _getCustomPhase();
     //empty value is valid
     if (customPhase != null) return customPhase;
 
@@ -1537,18 +1537,18 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
     return _getPeriod();
   }
 
-  String _getCustomPhase() {
-    if (AppString.isStringEmpty(_currentLiveGame.custom)) return null;
+  String? _getCustomPhase() {
+    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Phase"];
   }
 
   String _getPeriod() {
-    if (_currentLiveGame.period <= 0) return "";
+    if (_currentLiveGame!.period! <= 0) return "";
 
-    return _convertToOrdinal(_currentLiveGame.period) + " " + Localization().getStringEx("widget.score.period.quarter", "Quarter");
+    return _convertToOrdinal(_currentLiveGame!.period) + " " + Localization().getStringEx("widget.score.period.quarter", "Quarter")!;
   }
 }
 
@@ -1557,7 +1557,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
 ///
 class _BasketballScoreWidget extends _SportScoreWidget {
 
-  _BasketballScoreWidget({@required Game game}) : super(game: game);
+  _BasketballScoreWidget({required Game? game}) : super(game: game);
 
   @override
   _BasketballScoreWidgetState createState() => _BasketballScoreWidgetState();
@@ -1594,7 +1594,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 _currentLiveGame != null ? _getPhase() : "-",
-                style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Styles().colors.fillColorPrimary, fontSize: 16),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),
               ),
             ),
             Expanded(
@@ -1604,7 +1604,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
             ),
             Text(
               _currentLiveGame != null ? _getClock() : "-",
-              style: TextStyle(fontFamily: Styles().fontFamilies.medium, color: Styles().colors.textBackground, fontSize: 16),
+              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.textBackground, fontSize: 16),
             ),
           ],
         ),
@@ -1615,7 +1615,7 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   Widget _buildMiddleSection() {
     return Container(
         height: 68,
-        color: Styles().colors.background,
+        color: Styles().colors!.background,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_buildHomeSection(), _buildAwaySection()],
@@ -1623,31 +1623,31 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   Widget _buildBottomSection() {
-    String lastPlay = _getLastPlay();
+    String? lastPlay = _getLastPlay();
     bool hasLastPlay = AppString.isStringNotEmpty(lastPlay);
     return hasLastPlay
         ? Container(
         decoration: new BoxDecoration(
             border: Border(
-              bottom: BorderSide(width: 1.0, color: Styles().colors.fillColorPrimaryTransparent015),
+              bottom: BorderSide(width: 1.0, color: Styles().colors!.fillColorPrimaryTransparent015!),
             )),
         child: Padding(
           padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
-          child: Text("Last Play: " + lastPlay, textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+          child: Text("Last Play: " + lastPlay!, textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
         ))
         : Container();
   }
 
-  String _getLastPlay() {
+  String? _getLastPlay() {
     if (AppString.isStringEmpty(_currentLiveGame?.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["LastPlay"];
   }
 
   String _getClock() {
-    String customClock = _getCustomClock();
+    String? customClock = _getCustomClock();
     //empty value is valid
     if (customClock != null) return customClock;
 
@@ -1656,22 +1656,22 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
   }
 
   String _getRegularClock() {
-    if (_currentLiveGame.clockSeconds < 0) return "";
+    if (_currentLiveGame!.clockSeconds! < 0) return "";
 
     final format = new DateFormat('mm:ss');
-    return format.format(new DateTime.fromMillisecondsSinceEpoch(_currentLiveGame.clockSeconds * 1000));
+    return format.format(new DateTime.fromMillisecondsSinceEpoch(_currentLiveGame!.clockSeconds! * 1000));
   }
 
-  String _getCustomClock() {
-    if (AppString.isStringEmpty(_currentLiveGame.custom)) return null;
+  String? _getCustomClock() {
+    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Clock"];
   }
 
   String _getPhase() {
-    String customPhase = _getCustomPhase();
+    String? customPhase = _getCustomPhase();
     //empty value is valid
     if (customPhase != null) return customPhase;
 
@@ -1679,22 +1679,22 @@ class _BasketballScoreWidgetState extends _SportScoreWidgetState {
     return _getPeriod();
   }
 
-  String _getCustomPhase() {
-    if (AppString.isStringEmpty(_currentLiveGame.custom)) return null;
+  String? _getCustomPhase() {
+    if (AppString.isStringEmpty(_currentLiveGame!.custom)) return null;
 
-    Map<String, dynamic> mapCustomData = AppJson.decode(_currentLiveGame.custom);
+    Map<String, dynamic>? mapCustomData = AppJson.decode(_currentLiveGame!.custom);
     if (mapCustomData == null) return null;
     return mapCustomData["Phase"];
   }
 
   String _getPeriod() {
-    if (_currentLiveGame.period <= 0) {
+    if (_currentLiveGame!.period! <= 0) {
       return "";
     }
-    String shortName = widget._game.sport.shortName;
-    String periodName = (shortName == "mbball") ? Localization().getStringEx("widget.score.period.half", "Half") : Localization().getStringEx(
-        "widget.score.period.quarter", "Quarter");
-    return _convertToOrdinal(_currentLiveGame.period) + " " + periodName;
+    String? shortName = widget._game!.sport!.shortName;
+    String periodName = (shortName == "mbball") ? Localization().getStringEx("widget.score.period.half", "Half")! : Localization().getStringEx(
+        "widget.score.period.quarter", "Quarter")!;
+    return _convertToOrdinal(_currentLiveGame!.period) + " " + periodName;
   }
 
 }

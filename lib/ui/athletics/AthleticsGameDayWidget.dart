@@ -26,14 +26,14 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsGameDayWidget extends StatefulWidget {
-  final Game game;
+  final Game? game;
   AthleticsGameDayWidget({this.game});
 
   _AthleticsGameDayWidgetState createState() => _AthleticsGameDayWidgetState();
 
-  SportDefinition get sportDefinition {
+  SportDefinition? get sportDefinition {
     return game?.sport?.shortName != null
-        ? Sports().getSportByShortName(game.sport.shortName)
+        ? Sports().getSportByShortName(game!.sport!.shortName)
         : null;
   }
 }
@@ -49,7 +49,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
     return Column(
       children: <Widget>[
         Container(
-          color: Styles().colors.fillColorPrimary,
+          color: Styles().colors!.fillColorPrimary,
           child: Semantics( excludeSemantics: true, header: true,
             label: Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
             child:Padding(
@@ -57,16 +57,16 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
               child: Row(
                 children: <Widget>[
                   AppString.isStringNotEmpty(widget.sportDefinition?.iconPath)
-                      ? Image.asset(widget.sportDefinition.iconPath)
+                      ? Image.asset(widget.sportDefinition!.iconPath!)
                       : Container(),
                   Container(
                     width: 10,
                   ),
                   Text(
-                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!'),
+                    Localization().getStringEx('widget.game_day.label.its_game_day', 'It\'s Game Day!')!,
                     style: TextStyle(
                         color: Colors.white,
-                        fontFamily: Styles().fontFamilies.extraBold,
+                        fontFamily: Styles().fontFamilies!.extraBold,
                         fontSize: 20),
                   )
                 ],

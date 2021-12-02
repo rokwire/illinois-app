@@ -32,20 +32,20 @@ import 'package:illinois/utils/Utils.dart';
 
 abstract class Explore {
 
-  String   get exploreId;
-  String   get exploreTitle;
-  String   get exploreSubTitle;
-  String   get exploreShortDescription;
-  String   get exploreLongDescription;
-  DateTime get exploreStartDateUtc;
-  String   get exploreImageURL;
-  String   get explorePlaceId;
-  Location get exploreLocation;
-  Color    get uiColor;
+  String?   get exploreId;
+  String?   get exploreTitle;
+  String?   get exploreSubTitle;
+  String?   get exploreShortDescription;
+  String?   get exploreLongDescription;
+  DateTime? get exploreStartDateUtc;
+  String?   get exploreImageURL;
+  String?   get explorePlaceId;
+  Location? get exploreLocation;
+  Color?    get uiColor;
   Map<String, dynamic> get analyticsAttributes;
   Map<String, dynamic> toJson();
 
-  Map<String, dynamic> get analyticsSharedExploreAttributes {
+  Map<String, dynamic>? get analyticsSharedExploreAttributes {
     return exploreLocation?.analyticsAttributes;
   }
 
@@ -63,7 +63,7 @@ abstract class Explore {
     return false;
   }
 
-  static Explore fromJson(Map<String, dynamic> json) {
+  static Explore? fromJson(Map<String, dynamic>? json) {
     if (Event.canJson(json)) {
       return Event.fromJson(json);
     }
@@ -77,7 +77,7 @@ abstract class Explore {
     List<Explore> explores = [];
     if (jsonList is List) {
       for (dynamic jsonEntry in jsonList) {
-        Explore explore = Explore.fromJson(jsonEntry);
+        Explore? explore = Explore.fromJson(jsonEntry);
         if (explore != null) {
           explores.add(explore);
         }
@@ -86,8 +86,8 @@ abstract class Explore {
     return explores;
   }
 
-  static List<dynamic> listToJson(List<Explore> explores) {
-    List<dynamic> result;
+  static List<dynamic>? listToJson(List<Explore> explores) {
+    List<dynamic>? result;
     if (explores != null) {
       result = [];
       for (Explore explore in explores) {
@@ -104,12 +104,12 @@ abstract class Explore {
 
 class ExploreCategory {
 
-  final String name;
-  final List<String> subCategories;
+  final String? name;
+  final List<String>? subCategories;
 
   ExploreCategory({this.name, this.subCategories});
 
-  static ExploreCategory fromJson(Map<String, dynamic> json) {
+  static ExploreCategory? fromJson(Map<String, dynamic> json) {
     return (json != null) ? ExploreCategory(
       name: json['category'],
       subCategories: AppJson.listStringsValue(json['subcategories'])
@@ -130,19 +130,19 @@ class ExploreCategory {
 
 class ExploreHelper {
 
-  static String getShortDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String? getShortDisplayLocation(Explore? explore, Core.LocationData? locationData) {
     if (explore != null) {
-      Location location = explore.exploreLocation;
+      Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude, location.longitude, locationData.latitude, locationData.longitude);
+          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude!, locationData.longitude!);
           return distance.toStringAsFixed(1) + " mi away";
         }
-        if ((location.description != null) && location.description.isNotEmpty) {
+        if ((location.description != null) && location.description!.isNotEmpty) {
           return location.description;
         }
         if ((location.name != null) && (explore.exploreTitle != null) && (location.name == explore.exploreTitle)) {
-          if ((location.building != null) && location.building.isNotEmpty) {
+          if ((location.building != null) && location.building!.isNotEmpty) {
             return location.building;
           }
         }
@@ -161,21 +161,21 @@ class ExploreHelper {
     return null;
   }
 
-  static String getLongDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String? getLongDisplayLocation(Explore? explore, Core.LocationData? locationData) {
     if (explore != null) {
       String displayText = "";
-      Location location = explore.exploreLocation;
+      Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude, location.longitude, locationData.latitude, locationData.longitude);
+          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude!, locationData.longitude!);
           displayText = distance.toStringAsFixed(1) + " mi away";
         }
-        if ((location.description != null) && location.description.isNotEmpty) {
-          return displayText += (displayText.isNotEmpty ? ", " : "")  + location.description;
+        if ((location.description != null) && location.description!.isNotEmpty) {
+          return displayText += (displayText.isNotEmpty ? ", " : "")  + location.description!;
         }
         if ((location.name != null) && (explore.exploreTitle != null) && (location.name == explore.exploreTitle)) {
-          if ((location.building != null) && location.building.isNotEmpty) {
-            return displayText += (displayText.isNotEmpty ? ", " : "")  + location.building;
+          if ((location.building != null) && location.building!.isNotEmpty) {
+            return displayText += (displayText.isNotEmpty ? ", " : "")  + location.building!;
           }
         }
         else {
@@ -193,8 +193,8 @@ class ExploreHelper {
     return null;
   }
 
-  static String getExploresListDisplayTitle(List<Explore> exploresList) {
-    String exploresType;
+  static String? getExploresListDisplayTitle(List<Explore>? exploresList) {
+    String? exploresType;
     if (exploresList != null) {
       for (Explore explore in exploresList) {
         String exploreType = explore.runtimeType.toString().toLowerCase();
@@ -222,7 +222,7 @@ class ExploreHelper {
     }
   }
 
-  static String getExploreTypeText(Explore explore) {
+  static String? getExploreTypeText(Explore? explore) {
     if (explore != null) {
       if (explore is Event) {
         bool isVirtual = explore.isVirtual ?? false;

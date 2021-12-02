@@ -59,7 +59,7 @@ class RecentItems with Service implements NotificationsListener {
     return Set.from([Storage()]);
   }
 
-  void addRecentItem(RecentItem item) {
+  void addRecentItem(RecentItem? item) {
 
     if ((item == null) || (recentItems?.contains(item) == true)) {
       return;
@@ -74,10 +74,10 @@ class RecentItems with Service implements NotificationsListener {
   }
 
   void _loadRecentItems() {
-    List<dynamic> jsonListData = Storage().recentItems;
+    List<dynamic>? jsonListData = Storage().recentItems;
     if (jsonListData != null) {
-      List<RecentItem> recentItemsList = [];
-      for (Map<String, dynamic> jsonData in jsonListData) {
+      List<RecentItem?> recentItemsList = [];
+      for (Map<String, dynamic> jsonData in jsonListData as Iterable<Map<String, dynamic>>) {
         recentItemsList.add(RecentItem.fromJson(jsonData));
       }
       _recentItems = Queue.from(recentItemsList);

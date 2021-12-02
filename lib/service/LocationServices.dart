@@ -35,9 +35,9 @@ class LocationServices with Service implements NotificationsListener {
   static const String notifyStatusChanged  = "edu.illinois.rokwire.locationservices.status.changed";
   static const String notifyLocationChanged  = "edu.illinois.rokwire.locationservices.location.changed";
 
-  LocationServicesStatus _lastStatus;
-  LocationData _lastLocation;
-  StreamSubscription<LocationData> _locationMonitor;
+  LocationServicesStatus? _lastStatus;
+  LocationData? _lastLocation;
+  StreamSubscription<LocationData>? _locationMonitor;
 
   // Singletone Instance
 
@@ -84,13 +84,13 @@ class LocationServices with Service implements NotificationsListener {
     }
   }
 
-  Future<LocationServicesStatus> get status async {
+  Future<LocationServicesStatus?> get status async {
     _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('query'));
     _updateLocationMonitor();
     return _lastStatus;
   }
 
-  Future<LocationServicesStatus> requestService() async {
+  Future<LocationServicesStatus?> requestService() async {
     
     if (!await Location().serviceEnabled()) {
       if (!await Location().requestService()) {
@@ -109,7 +109,7 @@ class LocationServices with Service implements NotificationsListener {
     return status;
   }
 
-  Future<LocationServicesStatus> requestPermission() async {
+  Future<LocationServicesStatus?> requestPermission() async {
     _lastStatus = await this.status;
     if (_lastStatus == LocationServicesStatus.PermissionNotDetermined) {
       _lastStatus = _locationServicesStatusFromString(await NativeCommunicator().queryLocationServicesPermission('request'));
@@ -120,13 +120,13 @@ class LocationServices with Service implements NotificationsListener {
     return _lastStatus;
   }
 
-  Future<LocationData> get location async {
+  Future<LocationData?> get location async {
     return (await this.status == LocationServicesStatus.PermissionAllowed) ? await Location().getLocation() : null;
   }
 
   // Location Monitor
 
-  LocationData get lastLocation {
+  LocationData? get lastLocation {
     return _lastLocation;
   }
 
@@ -151,7 +151,7 @@ class LocationServices with Service implements NotificationsListener {
 
   void _closeLocationMonitor() {
     if (_locationMonitor != null) {
-      _locationMonitor.cancel();
+      _locationMonitor!.cancel();
       _locationMonitor = null;
     }
   }
@@ -175,9 +175,9 @@ class LocationServices with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.resumed) {
-      LocationServicesStatus lastStatus = _lastStatus;
+      LocationServicesStatus? lastStatus = _lastStatus;
       this.status.then((_) {
         if (lastStatus != _lastStatus) {
           _notifyStatusChanged();
@@ -193,7 +193,7 @@ class LocationServices with Service implements NotificationsListener {
 }
 
 
-LocationServicesStatus _locationServicesStatusFromString(String value) {
+LocationServicesStatus? _locationServicesStatusFromString(String? value) {
   if (value == 'disabled') {
     return LocationServicesStatus.ServiceDisabled;
   } else if (value == 'not_determined') {

@@ -48,16 +48,16 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control your data privacy');
-    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '');
-    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Choose what information you want to store and share to get a recommended privacy level.');
+    String titleText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title', 'Control your data privacy')!;
+    String titleText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.title2', '')!;
+    String descriptionText = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description', 'Choose what information you want to store and share to get a recommended privacy level.')!;
 
-    String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ');
-    String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy notice ');
-    String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.');
+    String descriptionText1 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description1', 'Please read the ')!;
+    String descriptionText2 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description2', 'Privacy notice ')!;
+    String descriptionText3 = Localization().getStringEx('panel.onboarding2.privacy_statement.label.description3', '. Your continued use of the app assumes that you have read and agree with it.')!;
 
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SafeArea(child: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -89,8 +89,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                   children: <TextSpan>[
-                                    TextSpan(text:titleText , style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies.bold, fontWeight: FontWeight.w700, height: 1.25)),
-                                    TextSpan(text:titleText2, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
+                                    TextSpan(text:titleText , style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies!.bold, fontWeight: FontWeight.w700, height: 1.25)),
+                                    TextSpan(text:titleText2, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
                                   ]
                                 )
                               ),
@@ -108,9 +108,9 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   height: 1.4,
-                                  fontFamily: Styles().fontFamilies.regular,
+                                  fontFamily: Styles().fontFamilies!.regular,
                                   fontSize: 16,
-                                  color: Styles().colors.fillColorPrimary),
+                                  color: Styles().colors!.fillColorPrimary),
                             )),
                           )),
                     ]),
@@ -136,12 +136,12 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                     style: TextStyle(
-                                        fontFamily: Styles().fontFamilies.regular,
+                                        fontFamily: Styles().fontFamilies!.regular,
                                         fontSize: 14,
-                                        color: Styles().colors.textSurface),
+                                        color: Styles().colors!.textSurface),
                                     children: <TextSpan>[
                                       TextSpan(text:descriptionText1, semanticsLabel: "",),
-                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors.fillColorSecondary),
+                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary),
                                           children: [
                                             WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                           ]),
@@ -158,9 +158,9 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                         hint: Localization().getStringEx('panel.onboarding2.privacy_statement.button.continue.hint', ''),
                         fontSize: 16,
                         padding: EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Styles().colors.white,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
-                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
+                        borderColor: Styles().colors!.fillColorSecondaryVariant,
+                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                   ],

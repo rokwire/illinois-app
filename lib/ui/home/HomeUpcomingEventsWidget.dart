@@ -43,7 +43,7 @@ import 'package:illinois/service/Styles.dart';
 
 class HomeUpcomingEventsWidget extends StatefulWidget {
 
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomeUpcomingEventsWidget({this.refreshController});
 
@@ -53,10 +53,10 @@ class HomeUpcomingEventsWidget extends StatefulWidget {
 
 class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> implements NotificationsListener {
 
-  Set<String>   _availableCategories;
-  Set<String>   _categoriesFilter;
-  Set<String>   _tagsFilter;
-  List<Explore> _events;
+  Set<String>?   _availableCategories;
+  Set<String>?   _categoriesFilter;
+  Set<String>?   _tagsFilter;
+  List<Explore>? _events;
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Auth2UserPrefs.notifyTagsChanged,
     ]);
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _loadEvents();
       });
     }
@@ -93,7 +93,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   void _loadAvailableCategories() {
     if (Connectivity().isNotOffline) {
-      ExploreService().loadEventCategories().then((List<dynamic> categories) {
+      ExploreService().loadEventCategories().then((List<dynamic>? categories) {
         _applyAvailableCategories(categories);
         _loadEvents();
       });
@@ -104,7 +104,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     }
   }
 
-  void _applyAvailableCategories(List<dynamic> categories) {
+  void _applyAvailableCategories(List<dynamic>? categories) {
     if ((categories != null) && (0 < categories.length)) {
       for (dynamic category in categories) {
         if (category is Map) {
@@ -113,7 +113,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             if (_availableCategories == null) {
               _availableCategories = Set();
             }
-            _availableCategories.add(categoryName);
+            _availableCategories!.add(categoryName);
           }
         }
       }
@@ -124,16 +124,16 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
     if (Connectivity().isNotOffline) {
 
-      Set<String> userCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
-      if ((userCategories != null) && userCategories.isNotEmpty && (_availableCategories != null) && _availableCategories.isNotEmpty) {
-        userCategories = userCategories.intersection(_availableCategories);
+      Set<String> userCategories = Set.from((Auth2().prefs?.interestCategories ?? []) as Iterable<dynamic>);
+      if ((userCategories != null) && userCategories.isNotEmpty && (_availableCategories != null) && _availableCategories!.isNotEmpty) {
+        userCategories = userCategories.intersection(_availableCategories!);
       }
-      Set<String> categoriesFilter = ((userCategories != null) && userCategories.isNotEmpty) ? userCategories : null;
+      Set<String>? categoriesFilter = ((userCategories != null) && userCategories.isNotEmpty) ? userCategories : null;
 
-      Set<String> userTags = Auth2().prefs?.positiveTags;
-      Set<String> tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
+      Set<String>? userTags = Auth2().prefs?.positiveTags;
+      Set<String>? tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
-      ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {
+      ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore>? events) {
 
         bool haveEvents = (events != null) && events.isNotEmpty;
         bool haveTagsFilters = (tagsFilter != null) && tagsFilter.isNotEmpty;
@@ -155,7 +155,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           }
         }
         else {
-          ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Explore> events) {
+          ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Explore>? events) {
             setState(() {
               _tagsFilter = null;
               _categoriesFilter = null;
@@ -171,11 +171,11 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   }
 
   bool get _hasFiltersApplied {
-    return ((_categoriesFilter != null) && _categoriesFilter.isNotEmpty) ||
-        ((_tagsFilter != null) && _tagsFilter.isNotEmpty);
+    return ((_categoriesFilter != null) && _categoriesFilter!.isNotEmpty) ||
+        ((_tagsFilter != null) && _tagsFilter!.isNotEmpty);
   }
 
-  List<Explore> _randomSelection(List<Explore> events, int limit) {
+  List<Explore>? _randomSelection(List<Explore>? events, int limit) {
     if ((events != null) && (limit < events.length)) {
 
       // Generate random indexes
@@ -244,9 +244,9 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
                     'View all events'),
                 hint: Localization().getStringEx(
                     'widget.home_upcoming_events.button.more.hint', ''),
-                borderColor: Styles().colors.fillColorSecondary,
-                textColor: Styles().colors.fillColorPrimary,
-                backgroundColor: Styles().colors.white,
+                borderColor: Styles().colors!.fillColorSecondary,
+                textColor: Styles().colors!.fillColorPrimary,
+                backgroundColor: Styles().colors!.white,
                 onTap: () => _navigateToExploreEvents(),
               ),
           ),
@@ -259,10 +259,10 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   List<Widget> _buildListItems(BuildContext context) {
     List<Widget> widgets = [];
     if (_events?.isNotEmpty ?? false) {
-      for (int i = 0; i < _events.length; i++) {
-        Explore event = _events[i];
+      for (int i = 0; i < _events!.length; i++) {
+        Explore event = _events![i];
         widgets.add(ImageHolderListItem(
-            placeHolderDividerResource: Styles().colors.fillColorSecondaryTransparent05,
+            placeHolderDividerResource: Styles().colors!.fillColorSecondaryTransparent05,
             placeHolderSlantResource: 'images/slant-down-right.png',
             applyHorizontalPadding: false,
             child: _buildItemCard(
@@ -273,7 +273,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     return widgets;
   }
 
-  String _getImage(dynamic item) {
+  String? _getImage(dynamic item) {
     if (item != null && item is Event) {
       return item.exploreImageURL;
     } else if (item != null && item is Game) {
@@ -282,7 +282,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     return null;
   }
 
-  Widget _buildItemCard({BuildContext context, Explore item, bool showSmallImage}) {
+  Widget _buildItemCard({BuildContext? context, Explore? item, bool? showSmallImage}) {
     if (item != null) {
       return ExploreCard(
         explore: item,
@@ -295,16 +295,16 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   }
 
   void _onTapExplore(Explore explore) {
-    Favorite favorite = explore is Favorite? explore as Favorite: null;
-    String exploreid = favorite?.favoriteId;
+    Favorite? favorite = explore is Favorite? explore as Favorite: null;
+    String? exploreid = favorite?.favoriteId;
     Analytics.instance.logSelect(target: "HomeUpcomingEvents event: $exploreid");
 
-    Event event = (explore is Event) ? explore : null;
+    Event? event = (explore is Event) ? explore : null;
     if (event?.isComposite ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event)));
     }
     else if (event?.isGameEvent ?? false) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: explore)));

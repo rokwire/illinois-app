@@ -43,7 +43,7 @@ class HomeCampusToolsWidget extends StatefulWidget {
 
 class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implements NotificationsListener {
 
-  List<dynamic> _contentListCodes;
+  List<dynamic>? _contentListCodes;
 
   @override
   void initState() {
@@ -62,8 +62,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     super.dispose();
   }
 
-  Widget _widgetFromCode(BuildContext context, String code, int countPerRow) {
-    String label, hint, iconPath;
+  Widget? _widgetFromCode(BuildContext context, String code, int countPerRow) {
+    String? label, hint, iconPath;
     GestureTapCallback onTap;
     if (code == 'events') {
       label = Localization().getStringEx('widget.home_campus_tools.button.events.title', 'Events');
@@ -121,8 +121,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   Widget build(BuildContext context) {
     List<Widget> widgets = [];
     final int widgetsPerRow = 2;
-    for (String code in _contentListCodes) {
-      Widget widget = _widgetFromCode(context, code, widgetsPerRow);
+    for (String code in _contentListCodes as Iterable<String>) {
+      Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
       if (widget != null) {
         widgets.add(widget);
       }
@@ -152,7 +152,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _updateContentListCodes() {
-    List<dynamic> contentListCodes = FlexUI()['home.content.campus_tools'];
+    List<dynamic>? contentListCodes = FlexUI()['home.content.campus_tools'];
     if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
@@ -200,7 +200,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   void _onTapMyIllini() {
     Analytics.instance.logSelect(target: "My Illini");
     if (Connectivity().isNotOffline && (Config().myIlliniUrl != null)) {
-      String myIlliniPanelTitle = Localization().getStringEx(
+      String? myIlliniPanelTitle = Localization().getStringEx(
           'widget.home_campus_tools.header.my_illini.title', 'My Illini');
 
       //
@@ -211,7 +211,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       //      https://github.com/flutter/plugins/pull/2330
       //
       if (Platform.isAndroid) {
-        launch(Config().myIlliniUrl);
+        launch(Config().myIlliniUrl!);
       }
       else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));

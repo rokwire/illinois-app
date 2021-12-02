@@ -50,14 +50,14 @@ class Network  {
 
   Network._internal();
 
-  Future<Http.Response> _get2(dynamic url, { String body, Encoding encoding, Map<String, String> headers, int timeout, Http.Client client }) async {
+  Future<Http.Response?> _get2(dynamic url, { String? body, Encoding? encoding, Map<String, String?>? headers, int? timeout, Http.Client? client }) async {
     try {
       
-      Uri uri = _uriFromUrlString(url);
+      Uri? uri = _uriFromUrlString(url);
 
       if (uri != null) {
         
-        Http.Client localClient;
+        Http.Client? localClient;
         if (client == null) {
           client = localClient = Http.Client();
         }
@@ -65,8 +65,10 @@ class Network  {
         Http.Request request = Http.Request("GET", uri);
         
         if (headers != null) {
-          headers.forEach((String key, String value) {
-            request.headers[key] = value;
+          headers.forEach((String key, String? value) {
+            if (value != null) {
+              request.headers[key] = value;
+            }
           });
         }
         
@@ -78,12 +80,12 @@ class Network  {
           request.body = body;
         }
 
-        Future<Http.StreamedResponse> responseStreamFuture = client.send(request);
-        if ((responseStreamFuture != null) && (timeout != null)) {
+        Future<Http.StreamedResponse?>? responseStreamFuture = client.send(request);
+        if ((timeout != null)) {
           responseStreamFuture = responseStreamFuture.timeout(Duration(seconds: timeout));
         }
 
-        Http.StreamedResponse responseStream = await responseStreamFuture;
+        Http.StreamedResponse? responseStream = await responseStreamFuture;
 
         if (localClient != null) {
           localClient.close();
@@ -92,21 +94,21 @@ class Network  {
         return (responseStream != null) ? Http.Response.fromStream(responseStream) : null;
       }
     } catch (e) { 
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
     return null;
   }
 
-  Future<Http.Response> _get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client} ) async {
+  Future<Http.Response?> _get(url, { String? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout, Http.Client? client} ) async {
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
+        Uri? uri = _uriFromUrlString(url);
         if (uri != null) {
 
-          Map<String, String> requestHeaders = await _prepareHeaders(headers, auth, uri);
+          Map<String, String>? requestHeaders = await _prepareHeaders(headers, auth, uri);
 
-          Future<Http.Response> response;
+          Future<Http.Response?>? response;
           if (body != null) {
             response = _get2(uri, headers: requestHeaders, body: body, encoding: encoding, timeout: timeout, client: client);
           }
@@ -117,22 +119,22 @@ class Network  {
             response = Http.get(uri, headers: requestHeaders);
           }
           
-          if ((response != null) && (timeout != null)) {
+          if ((timeout != null)) {
             response = response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler);
           }
 
           return response;
         }
       } catch (e) { 
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> get(url, { String body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, Http.Client client, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
-    Http.Response response;
+  Future<Http.Response?> get(url, { String? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, Http.Client? client, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
+    Http.Response? response;
 
     try {
       response = await _get(url, headers: headers, body: body, encoding: encoding, auth: auth, client: client, timeout: timeout);
@@ -143,7 +145,7 @@ class Network  {
         }
       }
     } catch (e) { 
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
 
@@ -156,22 +158,22 @@ class Network  {
     return response;
   }
 
-  Future<Http.Response> _post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout}) async{
+  Future<Http.Response?> _post(url, { Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout}) async{
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Future<Http.Response> response = (uri != null) ? Http.post(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
+        Uri? uri = _uriFromUrlString(url);
+        Future<Http.Response?>? response = (uri != null) ? Http.post(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> post(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async{
-    Http.Response response;
+  Future<Http.Response?> post(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async{
+    Http.Response? response;
     
     try {
       response = await _post(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
@@ -182,7 +184,7 @@ class Network  {
         }
       }
     } catch (e) {
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
 
@@ -195,11 +197,11 @@ class Network  {
     return response;
   }
 
-  Future<Http.Response> _put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout, Http.Client client }) async {
+  Future<Http.Response?> _put(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout, Http.Client? client }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Future<Http.Response> response = (uri != null) ?
+        Uri? uri = _uriFromUrlString(url);
+        Future<Http.Response?>? response = (uri != null) ?
           ((client != null) ?
             client.put(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) :
               Http.put(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding)) :
@@ -208,15 +210,15 @@ class Network  {
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
 
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> put(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, Http.Client client, bool sendAnalytics = true, String analyticsUrl }) async {
-    Http.Response response;
+  Future<Http.Response?> put(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, Http.Client? client, bool sendAnalytics = true, String? analyticsUrl }) async {
+    Http.Response? response;
     
     try {    
       response = await _put(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout, client: client);
@@ -227,7 +229,7 @@ class Network  {
         }
       }
     } catch (e) {
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
 
@@ -240,22 +242,22 @@ class Network  {
     return response;
   }
 
-  Future<Http.Response> _patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout }) async {
+  Future<Http.Response?> _patch(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Future<Http.Response> response = (uri != null) ? Http.patch(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
+        Uri? uri = _uriFromUrlString(url);
+        Future<Http.Response?>? response = (uri != null) ? Http.patch(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> patch(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
-    Http.Response response;
+  Future<Http.Response?> patch(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
+    Http.Response? response;
     
     try {    
       response = await _patch(url, body: body, encoding: encoding, headers: headers, auth: auth, timeout: timeout);
@@ -266,7 +268,7 @@ class Network  {
         }
       }
     } catch (e) {
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
 
@@ -279,22 +281,22 @@ class Network  {
     return response;
   }
 
-  Future<Http.Response> _delete(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout }) async {
+  Future<Http.Response?> _delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Future<Http.Response> response = (uri != null) ? Http.delete(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
+        Uri? uri = _uriFromUrlString(url);
+        Future<Http.Response?>? response = (uri != null) ? Http.delete(uri, headers: await _prepareHeaders(headers, auth, uri), body: body, encoding: encoding) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler) : response;
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Http.Response> delete(url, { body, Encoding encoding, Map<String, String> headers, NetworkAuth auth, int timeout = 60, bool sendAnalytics = true, String analyticsUrl }) async {
-    Http.Response response;
+  Future<Http.Response?> delete(url, {Object? body, Encoding? encoding, Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60, bool sendAnalytics = true, String? analyticsUrl }) async {
+    Http.Response? response;
     try {
       response = await _delete(url, body: body, encoding:encoding, headers: headers, auth: auth, timeout: timeout);
       
@@ -304,7 +306,7 @@ class Network  {
         }
       }
     } catch (e) {
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
 
@@ -317,51 +319,51 @@ class Network  {
     return response;
   }
 
-  Future<String> _read(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60 }) async {
+  Future<String?> _read(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async {
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Future<String> response = (uri != null) ? Http.read(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
+        Uri? uri = _uriFromUrlString(url);
+        Future<String>? response = (uri != null) ? Http.read(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout)) : response;
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<String> read(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60 }) async {
+  Future<String?> read(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async {
     try {
       return await _read(url, headers: headers, auth: auth, timeout: timeout);
     }
     catch (e) {
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
     return null;
   }
 
-  Future<Uint8List> _readBytes(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60 }) async{
+  Future<Uint8List?> _readBytes(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async{
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Future<Uint8List> response = (uri != null) ? Http.readBytes(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
+        Uri? uri = _uriFromUrlString(url);
+        Future<Uint8List?>? response = (uri != null) ? Http.readBytes(uri, headers: await _prepareHeaders(headers, auth, uri)) : null;
         return ((response != null) && (timeout != null)) ? response.timeout(Duration(seconds: timeout), onTimeout: _responseBytesHandler) : response;
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
     return null;
   }
 
-  Future<Uint8List> readBytes(url, { Map<String, String> headers, NetworkAuth auth, int timeout = 60 }) async {
+  Future<Uint8List?> readBytes(url, { Map<String, String?>? headers, NetworkAuth? auth, int? timeout = 60 }) async {
     return _readBytes(url, headers: headers, auth: auth, timeout: timeout);
   }
 
-  Future<Http.StreamedResponse> multipartPost({String url, String fileKey, List<int> fileBytes, String fileName, String contentType, Map<String, String> headers, Map<String, String> fields, NetworkAuth auth, bool refreshToken = true, bool sendAnalytics = true, String analyticsUrl}) async {
-    Http.StreamedResponse response;
+  Future<Http.StreamedResponse?> multipartPost({String? url, String? fileKey, List<int>? fileBytes, String? fileName, String? contentType, Map<String, String?>? headers, Map<String, String>? fields, NetworkAuth? auth, bool refreshToken = true, bool sendAnalytics = true, String? analyticsUrl}) async {
+    Http.StreamedResponse? response;
 
     try {
       response = await _multipartPost(
@@ -374,7 +376,7 @@ class Network  {
         }
       }
     } catch (e) {
-      Log.d(e?.toString());
+      Log.d(e.toString());
       FirebaseCrashlytics().recordError(e, null);
     }
 
@@ -387,24 +389,30 @@ class Network  {
     return response;
   }
 
-  Future<Http.StreamedResponse> _multipartPost({String url, String fileKey, List<int> fileBytes, String fileName, String contentType, Map<String, String> headers, Map<String, String> fields, NetworkAuth auth}) async {
+  Future<Http.StreamedResponse?> _multipartPost({String? url, String? fileKey, List<int>? fileBytes, String? fileName, String? contentType, Map<String, String?>? headers, Map<String, String?>? fields, NetworkAuth? auth}) async {
     if (Connectivity().isNotOffline) {
       try {
-        Uri uri = _uriFromUrlString(url);
-        Map<String, String> preparedHeaders = await _prepareHeaders(headers, auth, uri);
-        Http.MultipartRequest request = Http.MultipartRequest("POST", uri);
-        if (preparedHeaders != null) {
-          request.headers.addAll(preparedHeaders);
+        Uri? uri = _uriFromUrlString(url);
+        if (uri != null) {
+          Map<String, String>? preparedHeaders = await _prepareHeaders(headers, auth, uri);
+          Http.MultipartRequest request = Http.MultipartRequest("POST", uri);
+          if (preparedHeaders != null) {
+            request.headers.addAll(preparedHeaders);
+          }
+
+          Map<String, String>? preparedFields = _ensureMapValues(fields);
+          if (preparedFields != null) {
+            request.fields.addAll(preparedFields);
+          }
+          if ((fileKey != null) && (fileBytes != null)) {
+            Http.MultipartFile multipartFile = Http.MultipartFile.fromBytes(fileKey, fileBytes, filename: fileName, contentType: (contentType != null) ? MediaType.parse(contentType) : null);
+            request.files.add(multipartFile);
+            Http.StreamedResponse response = await request.send();
+            return response;
+          }
         }
-        if (fields != null) {
-          request.fields.addAll(fields);
-        }
-        Http.MultipartFile multipartFile = Http.MultipartFile.fromBytes(fileKey, fileBytes, filename: fileName, contentType: MediaType.parse(contentType));
-        request.files.add(multipartFile);
-        Http.StreamedResponse response = await request.send();
-        return response;
       } catch (e) {
-        Log.d(e?.toString());
+        Log.d(e.toString());
         FirebaseCrashlytics().recordError(e, null);
       }
     }
@@ -412,76 +420,88 @@ class Network  {
   }
 
 
-  static Map<String, String> get authApiKeyHeader {
+  static Map<String, String>? get authApiKeyHeader {
     return authHeaders(NetworkAuth.ApiKey);
   }
 
-  static Map<String, String> authHeaders(NetworkAuth auth) {
+  static Map<String, String>? authHeaders(NetworkAuth? auth) {
     return _prepareAuthHeaders(null, auth);
   }
 
-  static Future<Map<String, String>> _prepareHeaders(Map<String, String> headers, NetworkAuth auth, Uri uri) async {
+  static Future<Map<String, String>?> _prepareHeaders(Map<String, String?>? headers, NetworkAuth? auth, Uri? uri) async {
 
     // authentication
-    headers = _prepareAuthHeaders(headers, auth);
+    Map<String, String>? result = _prepareAuthHeaders(headers, auth);
 
     // cookies
-    String cookies = (uri != null) ? await _loadCookiesForRequest(uri) : null;
-    if (AppString.isStringNotEmpty(cookies)) {
-      if (headers == null) {
-        headers = new Map();
+    String? cookies = (uri != null) ? await _loadCookiesForRequest(uri) : null;
+    if ((cookies != null) && (0 < cookies.length)) {
+      if (result == null) {
+        result = <String, String>{};
       }
-      headers["Cookie"] = cookies;
+      result["Cookie"] = cookies;
     }
 
-    return headers;
+    return result;
   }
 
-  static Map<String, String> _prepareAuthHeaders(Map<String, String> headers, NetworkAuth auth) {
+  static Map<String, String>? _prepareAuthHeaders(Map<String, String?>? headers, NetworkAuth? auth) {
+
+    Map<String, String>? result = (headers != null) ? _ensureMapValues(headers) : null;
 
     if (auth == NetworkAuth.ApiKey) {
-      String rokwireApiKey = Config().rokwireApiKey;
+      String? rokwireApiKey = Config().rokwireApiKey;
       if ((rokwireApiKey != null) && rokwireApiKey.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
+        if (result == null) {
+          result = <String, String>{};
         }
-        headers[RokwireApiKey] = rokwireApiKey;
+        result[RokwireApiKey] = rokwireApiKey;
       }
     }
     else if (auth == NetworkAuth.UIUC_Id) {
-      String idToken = Auth2().uiucToken?.idToken;
-      String tokenType = Auth2().uiucToken?.tokenType ?? 'Bearer';
+      String? idToken = Auth2().uiucToken?.idToken;
+      String? tokenType = Auth2().uiucToken?.tokenType ?? 'Bearer';
       if ((idToken != null) && idToken.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
+        if (result == null) {
+          result = <String, String>{};
         }
-        headers[HttpHeaders.authorizationHeader] = "$tokenType $idToken";
+        result[HttpHeaders.authorizationHeader] = "$tokenType $idToken";
       }
     }
     else if (auth == NetworkAuth.UIUC_Access) {
-      String accessToken = Auth2().uiucToken?.accessToken;
+      String? accessToken = Auth2().uiucToken?.accessToken;
       if ((accessToken != null) && accessToken.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
+        if (result == null) {
+          result = <String, String>{};
         }
-        headers['access_token'] = accessToken;
+        result['access_token'] = accessToken;
       }
     }
     else if (auth == NetworkAuth.Auth2) {
-      String accessToken = Auth2().token?.accessToken;
-      String tokenType = Auth2().token?.tokenType ?? 'Bearer';
+      String? accessToken = Auth2().token?.accessToken;
+      String? tokenType = Auth2().token?.tokenType ?? 'Bearer';
       if ((accessToken != null) && accessToken.isNotEmpty) {
-        if (headers == null) {
-          headers = new Map();
+        if (result == null) {
+          result = <String, String>{};
         }
-        headers[HttpHeaders.authorizationHeader] = "$tokenType $accessToken";
+        result[HttpHeaders.authorizationHeader] = "$tokenType $accessToken";
       }
     }
 
-    return headers;
+    return result;
   }
 
-  bool _requiresRefreshToken(Http.BaseResponse response, NetworkAuth auth){
+  static Map<String, String>? _ensureMapValues(Map<String, String?>? headers) {
+    Map<String, String>? result = <String, String>{};
+    headers?.forEach((key, value) {
+      if (value != null) {
+        result[key] = value;
+      }
+    });
+    return result;
+  }
+
+  bool _requiresRefreshToken(Http.BaseResponse? response, NetworkAuth? auth){
     return ((response != null)
        && (
 //          (response.statusCode == 400) || 
@@ -496,7 +516,7 @@ class Network  {
     );
   }
 
-  Future<bool> _refreshToken(NetworkAuth auth) async {
+  Future<bool?> _refreshToken(NetworkAuth? auth) async {
     if ((NetworkAuth.UIUC_Id == auth) || (NetworkAuth.UIUC_Access == auth) || (NetworkAuth.Auth2 == auth)) {
       return (await Auth2().refreshToken() != null);
     }
@@ -505,29 +525,27 @@ class Network  {
     }
   }
 
-  Http.Response _responseTimeoutHandler() {
+  Http.Response? _responseTimeoutHandler() {
     return null;
   }
 
-  Uint8List _responseBytesHandler() {
+  Uint8List? _responseBytesHandler() {
     return null;
   }
 
-  static void _saveCookiesFromResponse(String url, Http.BaseResponse response) {
-    Uri uri = _uriFromUrlString(url);
+  static void _saveCookiesFromResponse(String? url, Http.BaseResponse? response) {
+    Uri? uri = _uriFromUrlString(url);
     if ((uri == null) || response == null)
       return;
 
-    Map<String, String> responseHeaders = response.headers;
-    if (responseHeaders == null)
-      return;
+    Map<String, String?> responseHeaders = response.headers;
 
-    String setCookie = responseHeaders["set-cookie"];
+    String? setCookie = responseHeaders["set-cookie"];
     if (AppString.isStringEmpty(setCookie))
       return;
 
     //Split format like this "AWSALB2=12342; Path=/; Expires=Mon, 21 Oct 2019 12:48:37 GMT,AWSALB=1234; Path=/; Expires=Mon, 21 Oct 2019 12:48:37 GMT"
-    List<String> cookiesData = setCookie.split(new RegExp(",(?! )")); //comma not followed by a space
+    List<String>? cookiesData = setCookie?.split(new RegExp(",(?! )")); //comma not followed by a space
     if (cookiesData == null || cookiesData.length == 0)
       return;
 
@@ -541,10 +559,10 @@ class Network  {
     cj.saveFromResponse(uri, cookies);
   }
 
-  static Future<String> _loadCookiesForRequest(Uri uri) async{
+  static Future<String?> _loadCookiesForRequest(Uri uri) async{
     var cj = new CookieJar();
     List<Cookie> cookies = await cj.loadForRequest(uri);
-    if (cookies == null || cookies.length == 0)
+    if (cookies.length == 0)
       return null;
 
     String result = "";
@@ -558,8 +576,8 @@ class Network  {
     return result;
   }
 
-  static Uri _uriFromUrlString(dynamic url) {
-    Uri uri;
+  static Uri? _uriFromUrlString(dynamic url) {
+    Uri? uri;
     if (url is Uri) {
       uri = url;
     }

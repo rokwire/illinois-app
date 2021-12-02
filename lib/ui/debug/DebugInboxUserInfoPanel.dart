@@ -20,7 +20,7 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 
   bool _loading = false;
 
-  InboxUserInfo _info;
+  InboxUserInfo? _info;
 
   @override
   void initState() {
@@ -37,9 +37,9 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 
   Future<void> _lodUserInfo() async{
       try {
-        Response response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
+        Response? response = (Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user",
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
+        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
         if(jsonData != null){
           setState(() {
             _info = InboxUserInfo.fromJson(jsonData);
@@ -82,19 +82,19 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("User ID"),
-          Text(_info.userId ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Text(_info!.userId ?? ""),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Date Created"),
-          Text(_info.dateCreated.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Text(_info!.dateCreated!.toIso8601String() ?? ""),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Date Updated"),
-          Text(_info.dateUpdated.toIso8601String() ?? ""),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Text(_info!.dateUpdated!.toIso8601String() ?? ""),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Topics"),
           Wrap(
-            children: _info.topics.map((e) => Container(
+            children: _info!.topics!.map((e) => Container(
               decoration: BoxDecoration(
-                color: Styles().colors.fillColorPrimary,
+                color: Styles().colors!.fillColorPrimary,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               padding: EdgeInsets.all(8),
@@ -102,20 +102,20 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
               child: Text(e, style: TextStyle(color: Colors.white),),
             )).toList(),
           ),
-          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+          Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Tokens"),
 
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: _info.firebaseTokens.map((e) => Container(
+            children: _info!.firebaseTokens!.map((e) => Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(e.token, style: TextStyle(fontFamily: Styles().fontFamilies.bold),),
-                  Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
-                  Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
-                  Text("Date created: ${e.dateCreated.toIso8601String()}", style: TextStyle(fontFamily: Styles().fontFamilies.regular),),
-                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors.lightGray,),
+                  Text(e.token!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold),),
+                  Text("Platform: ${e.appPlatform}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
+                  Text("Version: ${e.appVersion}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
+                  Text("Date created: ${e.dateCreated!.toIso8601String()}", style: TextStyle(fontFamily: Styles().fontFamilies!.regular),),
+                  Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
                 ],
               ),
             )).toList(),
@@ -127,15 +127,15 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
 }
 
 class InboxUserInfo{
-  final String userId;
-  final List<FirebaseToken> firebaseTokens;
-  final List<String> topics;
-  final DateTime dateCreated;
-  final DateTime dateUpdated;
+  final String? userId;
+  final List<FirebaseToken>? firebaseTokens;
+  final List<String>? topics;
+  final DateTime? dateCreated;
+  final DateTime? dateUpdated;
 
   InboxUserInfo({this.userId, this.firebaseTokens, this.topics, this.dateCreated, this.dateUpdated});
 
-  static InboxUserInfo fromJson(Map<String, dynamic> json) {
+  static InboxUserInfo? fromJson(Map<String, dynamic> json) {
     return (json != null) ? InboxUserInfo(
       userId: json['user_id'],
       firebaseTokens: json['firebase_tokens']?.map((e) => FirebaseToken.fromJson(e))?.toList(),
@@ -147,13 +147,13 @@ class InboxUserInfo{
 }
 
 class FirebaseToken{
-  final String token;
-  final String appPlatform;
-  final String appVersion;
-  final DateTime dateCreated;
+  final String? token;
+  final String? appPlatform;
+  final String? appVersion;
+  final DateTime? dateCreated;
   FirebaseToken({this.token, this.appPlatform, this.appVersion, this.dateCreated});
 
-  static FirebaseToken fromJson(Map<String, dynamic> json) {
+  static FirebaseToken? fromJson(Map<String, dynamic> json) {
     return (json != null) ? FirebaseToken(
       token: json['token'] ?? "",
       appPlatform: json['app_platform'] ?? "",

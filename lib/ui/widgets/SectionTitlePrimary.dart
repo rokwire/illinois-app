@@ -20,18 +20,18 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class SectionTitlePrimary extends StatelessWidget{
-  final String title;
-  final String subTitle;
-  final String iconPath;
-  final List<Widget> children;
-  final EdgeInsetsGeometry listPadding;
+  final String? title;
+  final String? subTitle;
+  final String? iconPath;
+  final List<Widget>? children;
+  final EdgeInsetsGeometry? listPadding;
   final String slantImageRes;
-  final Color backgroundColor;
-  final Color slantColor;
-  final Color textColor;
-  final String rightIconPath;
-  final String rightIconLabel;
-  final Function rightIconAction;
+  final Color? backgroundColor;
+  final Color? slantColor;
+  final Color? textColor;
+  final String? rightIconPath;
+  final String? rightIconLabel;
+  final Function? rightIconAction;
 
   SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children, this.listPadding,
     this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor, this.rightIconAction, this.rightIconLabel});
@@ -46,27 +46,27 @@ class SectionTitlePrimary extends StatelessWidget{
         Column(
           children: <Widget>[
             Container(
-              color: slantColor ?? Styles().colors.fillColorPrimary,
+              color: slantColor ?? Styles().colors!.fillColorPrimary,
               height: 40,
             ),
 
             Visibility(visible:useImageSlant,child:Container(
               height: 112,
               width: double.infinity,
-              child: Image.asset(slantImageRes, excludeFromSemantics: true, color: slantColor ?? Styles().colors.fillColorPrimary, fit: BoxFit.fill),
+              child: Image.asset(slantImageRes, excludeFromSemantics: true, color: slantColor ?? Styles().colors!.fillColorPrimary, fit: BoxFit.fill),
               )
             ),
             Visibility(visible:!useImageSlant,child:
               Container(
-               color:  slantColor ?? Styles().colors.fillColorPrimary,
+               color:  slantColor ?? Styles().colors!.fillColorPrimary,
                height: 45,
               ),
             ),
             Visibility(visible:!useImageSlant,child:
               Container(
-                color:  slantColor ?? Styles().colors.fillColorPrimary,
+                color:  slantColor ?? Styles().colors!.fillColorPrimary,
                 child:CustomPaint(
-                  painter: TrianglePainter(painterColor: backgroundColor ?? Styles().colors.background, left : true),
+                  painter: TrianglePainter(painterColor: backgroundColor ?? Styles().colors!.background, left : true),
                   child: Container(
                     height: 67,
                   ),
@@ -83,14 +83,14 @@ class SectionTitlePrimary extends StatelessWidget{
                     padding: EdgeInsets.only(
                         right: 16),
                     child: Image.asset(
-                        iconPath, excludeFromSemantics: true,),
+                        iconPath!, excludeFromSemantics: true,),
                   ) : Container(),
                   Expanded(child:
                     Semantics(label:title, header: true, excludeSemantics: true, child:
                       Text(
-                        title,
+                        title!,
                         style: TextStyle(
-                          color: textColor ?? Styles().colors.textColorPrimary,
+                          color: textColor ?? Styles().colors!.textColorPrimary,
                           fontSize: 20),
                       )
                     )
@@ -100,12 +100,12 @@ class SectionTitlePrimary extends StatelessWidget{
                     button: true,
                     label: rightIconLabel,
                     child: GestureDetector(
-                      onTap: rightIconAction ?? (){},
+                      onTap: rightIconAction as void Function()? ?? (){},
                       child: Container(
                         padding: EdgeInsets.only(
                             left: 16),
                         child: Image.asset(
-                          rightIconPath, excludeFromSemantics: true,),
+                          rightIconPath!, excludeFromSemantics: true,),
                       ))): Container(),
                 ],
               ),
@@ -118,10 +118,10 @@ class SectionTitlePrimary extends StatelessWidget{
                   child: Padding(
                     padding: EdgeInsets.only(left: 50, right: 16),
                     child: Row(children: <Widget>[
-                      Text(AppString.getDefaultEmptyString(value: subTitle),
+                      Text(AppString.getDefaultEmptyString(value: subTitle)!,
                         style: TextStyle(fontSize: 16,
                             color: Colors.white,
-                            fontFamily: Styles().fontFamilies.regular),),
+                            fontFamily: Styles().fontFamilies!.regular),),
                       Expanded(child: Container(),)
                     ],),),)),
             Padding(
@@ -129,7 +129,7 @@ class SectionTitlePrimary extends StatelessWidget{
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: children,
+                children: children!,
               ),
             )
           ],

@@ -32,14 +32,14 @@ class Guide with Service implements NotificationsListener {
 
   static const String _cacheFileName = "guide.json";
 
-  List<dynamic> _contentList;
-  LinkedHashMap<String, Map<String, dynamic>> _contentMap;
-  GuideContentSource _contentSource;
+  List<dynamic>? _contentList;
+  LinkedHashMap<String, Map<String, dynamic>?>? _contentMap;
+  GuideContentSource? _contentSource;
 
-  File          _cacheFile;
-  DateTime      _pausedDateTime;
+  late File          _cacheFile;
+  DateTime?      _pausedDateTime;
 
-  List<Map<String, dynamic>> _guideDetailsCache;
+  List<Map<String, dynamic>>? _guideDetailsCache;
 
   static final Guide _service = Guide._internal();
   Guide._internal();
@@ -74,7 +74,7 @@ class Guide with Service implements NotificationsListener {
       _updateContentFromNet();
     }
     else {
-      String contentString = await _loadContentStringFromNet();
+      String? contentString = await _loadContentStringFromNet();
       _contentList = AppJson.decodeList(contentString);
       if (_contentList != null) {
         _contentMap = _buildContentMap(_contentList);
@@ -119,14 +119,14 @@ class Guide with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
       //TMP: _convertFile('student.guide.import.json', 'Illinois_Student_Guide_Final.json');
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateContentFromNet();
         }
@@ -142,11 +142,11 @@ class Guide with Service implements NotificationsListener {
     return File(cacheFilePath);
   }
 
-  Future<String> _loadContentStringFromCache() async {
+  Future<String?> _loadContentStringFromCache() async {
     return (await _cacheFile?.exists() == true) ? await _cacheFile.readAsString() : null;
   }
 
-  Future<void> _saveContentStringToCache(String value) async {
+  Future<void> _saveContentStringToCache(String? value) async {
     try {
       if (value != null) {
         await _cacheFile?.writeAsString(value, flush: true);
@@ -155,16 +155,16 @@ class Guide with Service implements NotificationsListener {
         await _cacheFile?.delete();
       }
     }
-    catch(e) { print(e?.toString()); }
+    catch(e) { print(e.toString()); }
   }
 
-  Future<List<dynamic>> _loadContentJsonFromCache() async {
+  Future<List<dynamic>?> _loadContentJsonFromCache() async {
     return AppJson.decodeList(await _loadContentStringFromCache());
   }
 
-  Future<String> _loadContentStringFromNet() async {
+  Future<String?> _loadContentStringFromNet() async {
     try {
-      Response response = await Network().get("${Config().contentUrl}/student_guides", auth: NetworkAuth.Auth2);
+      Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: NetworkAuth.Auth2);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }
@@ -173,8 +173,8 @@ class Guide with Service implements NotificationsListener {
 
   Future<void> _updateContentFromNet() async {
     if ((_contentSource == null) || (_contentSource == GuideContentSource.Net)) {
-      String contentString = await _loadContentStringFromNet();
-      List<dynamic> contentList = AppJson.decodeList(contentString);
+      String? contentString = await _loadContentStringFromNet();
+      List<dynamic>? contentList = AppJson.decodeList(contentString);
       if ((contentList != null) && !DeepCollectionEquality().equals(_contentList, contentList)) {
         _contentList = contentList;
         _contentMap = _buildContentMap(_contentList);
@@ -186,13 +186,13 @@ class Guide with Service implements NotificationsListener {
     }
   }
 
-  static LinkedHashMap<String, Map<String, dynamic>> _buildContentMap(List<dynamic> contentList) {
-    LinkedHashMap<String, Map<String, dynamic>> contentMap;
+  static LinkedHashMap<String, Map<String, dynamic>?>? _buildContentMap(List<dynamic>? contentList) {
+    LinkedHashMap<String, Map<String, dynamic>?>? contentMap;
     if (contentList != null) {
-      contentMap = LinkedHashMap<String, Map<String, dynamic>>();
+      contentMap = LinkedHashMap<String, Map<String, dynamic>?>();
       for (dynamic contentEntry in contentList) {
-        Map<String, dynamic> mapEntry = AppJson.mapValue(contentEntry);
-        String id = (mapEntry != null) ? AppJson.stringValue(mapEntry['_id']) : null;
+        Map<String, dynamic>? mapEntry = AppJson.mapValue(contentEntry);
+        String? id = (mapEntry != null) ? AppJson.stringValue(mapEntry['_id']) : null;
         if (id != null) {
           contentMap[id] = mapEntry;
         }
@@ -203,11 +203,11 @@ class Guide with Service implements NotificationsListener {
 
   // Content
 
-  List<dynamic> get contentList {
+  List<dynamic>? get contentList {
     return _contentList;
   }
 
-  GuideContentSource get contentSource {
+  GuideContentSource? get contentSource {
     return _contentSource;
   }
 
@@ -215,11 +215,11 @@ class Guide with Service implements NotificationsListener {
     await _updateContentFromNet();
   }
 
-  Map<String, dynamic> entryById(String id) {
-    return (_contentMap != null) ? _contentMap[id] : null;
+  Map<String, dynamic>? entryById(String? id) {
+    return (_contentMap != null) ? _contentMap![id!] : null;
   }
 
-  dynamic entryValue(Map<String, dynamic> entry, String key) {
+  dynamic entryValue(Map<String, dynamic>? entry, String key) {
     while (entry != null) {
       dynamic value = entry[key];
       if (value != null) {
@@ -230,46 +230,46 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
-  String entryId(Map<String, dynamic> entry) {
+  String? entryId(Map<String, dynamic>? entry) {
     return AppJson.stringValue(entryValue(entry, '_id'));
   }
 
-  String entryTitle(Map<String, dynamic> entry, { bool stripHtmlTags = true }) {
-    String result = AppJson.stringValue(entryValue(entry, 'title')) ?? AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'detail_title'));
+  String? entryTitle(Map<String, dynamic>? entry, { bool stripHtmlTags = true }) {
+    String? result = AppJson.stringValue(entryValue(entry, 'title')) ?? AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'detail_title'));
     return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
   }
 
-  String entryListTitle(Map<String, dynamic> entry, { bool stripHtmlTags }) {
-    String result = AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
+  String? entryListTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
+    String? result = AppJson.stringValue(entryValue(entry, 'list_title')) ?? AppJson.stringValue(entryValue(entry, 'title'));
     return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
   }
 
-  String entryListDescription(Map<String, dynamic> entry, { bool stripHtmlTags }) {
-    String result = AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
+  String? entryListDescription(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
+    String? result = AppJson.stringValue(entryValue(entry, 'list_description')) ?? AppJson.stringValue(entryValue(entry, 'description'));
     return ((result != null) && (stripHtmlTags == true)) ? AppString.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
   }
 
-  bool isEntryReminder(Map<String, dynamic> entry) {
+  bool isEntryReminder(Map<String, dynamic>? entry) {
     return AppJson.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
   }
 
-  DateTime reminderDate(Map<String, dynamic> entry) {
+  DateTime? reminderDate(Map<String, dynamic>? entry) {
     return AppDateTime().dateTimeFromString(AppJson.stringValue(entryValue(entry, 'date')), format: "yyyy-MM-dd", isUtc: true);
   }
 
-  DateTime reminderSectionDate(Map<String, dynamic> entry) {
-    DateTime entryDate = Guide().reminderDate(entry);
+  DateTime? reminderSectionDate(Map<String, dynamic> entry) {
+    DateTime? entryDate = Guide().reminderDate(entry);
     return (entryDate != null) ? DateTime(entryDate.year, entryDate.month) : null;
   }
 
-  List<Map<String, dynamic>> getContentList({String guide, String category, GuideSection section}) {
+  List<Map<String, dynamic>>? getContentList({String? guide, String? category, GuideSection? section}) {
     if (_contentList != null) {
       List<Map<String, dynamic>> guideList = <Map<String, dynamic>>[];
-      for (dynamic contentEntry in _contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+      for (dynamic contentEntry in _contentList!) {
+        Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
         if ((guideEntry != null) &&
             ((guide == null) || (Guide().entryValue(guideEntry, 'guide') == guide)) &&
             ((category == null) || (Guide().entryValue(guideEntry, 'category')) == category) &&
@@ -283,22 +283,22 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
-  List<Map<String, dynamic>> get remindersList {
+  List<Map<String, dynamic>?>? get remindersList {
     if (_contentList != null) {
-      List<Map<String, dynamic>> remindersList = <Map<String, dynamic>>[];
+      List<Map<String, dynamic>?> remindersList = <Map<String, dynamic>?>[];
       DateTime nowUtc = DateTime.now().toUtc();
       DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
-      for (dynamic entry in _contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(entry);
+      for (dynamic entry in _contentList!) {
+        Map<String, dynamic>? guideEntry = AppJson.mapValue(entry);
         if (isEntryReminder(guideEntry)) {
-          DateTime entryDate = reminderDate(guideEntry);
+          DateTime? entryDate = reminderDate(guideEntry);
           if ((entryDate != null) && (midnightUtc.compareTo(entryDate) <= 0)) {
             remindersList.add(guideEntry);
           }
         }
       }
 
-      remindersList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+      remindersList.sort((Map<String, dynamic>? entry1, Map<String, dynamic>? entry2) {
         return AppSort.compareDateTimes(Guide().reminderDate(entry1), Guide().reminderDate(entry2));
       });
 
@@ -307,11 +307,11 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
-  List<Map<String, dynamic>> get promotedList {
+  List<Map<String, dynamic>?>? get promotedList {
     if (_contentList != null) {
-      List<Map<String, dynamic>> promotedList = <Map<String, dynamic>>[];
-      for (dynamic contentEntry in _contentList) {
-        Map<String, dynamic> guideEntry = AppJson.mapValue(contentEntry);
+      List<Map<String, dynamic>?> promotedList = <Map<String, dynamic>?>[];
+      for (dynamic contentEntry in _contentList!) {
+        Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
         if (_isEntryPromoted(guideEntry)) {
           promotedList.add(guideEntry);
         }
@@ -321,8 +321,8 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
-  bool _isEntryPromoted(Map<String, dynamic> entry) {
-    Map<String, dynamic> promotion = (entry != null) ? AppJson.mapValue(entryValue(entry, 'promotion')) : null;
+  bool _isEntryPromoted(Map<String, dynamic>? entry) {
+    Map<String, dynamic>? promotion = (entry != null) ? AppJson.mapValue(entryValue(entry, 'promotion')) : null;
     return (promotion != null) ?
       _checkPromotionInterval(promotion) &&
       _checkPromotionRoles(promotion) &&
@@ -331,18 +331,18 @@ class Guide with Service implements NotificationsListener {
   }
 
   static bool _checkPromotionInterval(Map<String, dynamic> promotion) {
-    Map<String, dynamic> interval = (promotion != null) ? AppJson.mapValue(promotion['interval']) : null;
+    Map<String, dynamic>? interval = (promotion != null) ? AppJson.mapValue(promotion['interval']) : null;
     if (interval != null) {
       DateTime now = DateTime.now().toUtc();
       
-      String startString = AppJson.stringValue(interval['start']);
-      DateTime startTime = (startString != null) ? DateTime.tryParse(startString)?.toUtc() : null;
+      String? startString = AppJson.stringValue(interval['start']);
+      DateTime? startTime = (startString != null) ? DateTime.tryParse(startString)?.toUtc() : null;
       if ((startTime != null) && now.isBefore(startTime)) {
         return false;
       }
       
-      String endString = AppJson.stringValue(interval['end']);
-      DateTime endTime = (endString != null) ? DateTime.tryParse(endString)?.toUtc() : null;
+      String? endString = AppJson.stringValue(interval['end']);
+      DateTime? endTime = (endString != null) ? DateTime.tryParse(endString)?.toUtc() : null;
       if ((endTime != null) && now.isAfter(endTime)) {
         return false;
       }
@@ -353,13 +353,13 @@ class Guide with Service implements NotificationsListener {
   static bool _checkPromotionRoles(Map<String, dynamic> promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
     return (roles != null) ? AppBoolExpr.eval(roles, (String argument) {
-      UserRole userRole = UserRole.fromString(argument);
+      UserRole? userRole = UserRole.fromString(argument);
       return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     }) : true; 
   }
 
   static bool _checkPromotionCard(Map<String, dynamic> promotion) {
-    Map<String, dynamic> card = (promotion != null) ? AppJson.mapValue(promotion['card']) : null;
+    Map<String, dynamic>? card = (promotion != null) ? AppJson.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
       if ((cardRole != null) && !AppBoolExpr.eval(cardRole, (String role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
@@ -376,13 +376,13 @@ class Guide with Service implements NotificationsListener {
   
   // Debug
 
-  Future<String> getContentString() async {
+  Future<String?> getContentString() async {
     return await _loadContentStringFromCache();
   }
 
-  Future<String> setDebugContentString(String value) async {
-    String contentString;
-    List<dynamic> contentList;
+  Future<String?> setDebugContentString(String? value) async {
+    String? contentString;
+    List<dynamic>? contentList;
     GuideContentSource contentSource;
     if (value != null) {
       contentString = value;
@@ -414,16 +414,16 @@ class Guide with Service implements NotificationsListener {
   /////////////////////////
   // DeepLinks
 
-  void _onDeepLinkUri(Uri uri) {
+  void _onDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri guideUri = Uri.tryParse(GUIDE_URI);
+      Uri? guideUri = Uri.tryParse(GUIDE_URI);
       if ((guideUri != null) &&
           (guideUri.scheme == uri.scheme) &&
           (guideUri.authority == uri.authority) &&
           (guideUri.path == uri.path))
       {
-        try { _handleGuideDetail(uri.queryParameters?.cast<String, dynamic>()); }
-        catch (e) { print(e?.toString()); }
+        try { _handleGuideDetail(uri.queryParameters.cast<String, dynamic>()); }
+        catch (e) { print(e.toString()); }
       }
     }
   }
@@ -449,7 +449,7 @@ class Guide with Service implements NotificationsListener {
 
   void _processCachedGuideDetails() {
     if (_guideDetailsCache != null) {
-      List<Map<String, dynamic>> guideDetailsCache = _guideDetailsCache;
+      List<Map<String, dynamic>> guideDetailsCache = _guideDetailsCache!;
       _guideDetailsCache = null;
 
       for (Map<String, dynamic> guideDetail in guideDetailsCache) {
@@ -675,12 +675,12 @@ class Guide with Service implements NotificationsListener {
 }
 
 class GuideSection {
-  final String name;
-  final DateTime date;
+  final String? name;
+  final DateTime? date;
   
   GuideSection({this.name, this.date});
 
-  static GuideSection fromGuideEntry(Map<String, dynamic> guideEntry) {
+  static GuideSection? fromGuideEntry(Map<String, dynamic> guideEntry) {
     return (guideEntry != null) ? GuideSection(
         name: AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
         date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,
@@ -699,7 +699,7 @@ class GuideSection {
   int compareTo(GuideSection section) {
     if (date != null) {
       if (section.date != null) {
-        return date.compareTo(section.date);
+        return date!.compareTo(section.date!);
       }
       else {
         return -1;
@@ -710,7 +710,7 @@ class GuideSection {
     }
     else if (name != null) {
       if (section.name != null) {
-        return name.compareTo(section.name);
+        return name!.compareTo(section.name!);
       }
       else {
         return -1;
@@ -728,8 +728,8 @@ class GuideSection {
 
 class GuideFavorite implements Favorite {
   
-  final String id;
-  final String title;
+  final String? id;
+  final String? title;
   GuideFavorite({this.id, this.title});
 
   bool operator == (o) => o is GuideFavorite && o.id == id;
@@ -737,10 +737,10 @@ class GuideFavorite implements Favorite {
   int get hashCode => (id?.hashCode ?? 0);
 
   @override
-  String get favoriteId => id;
+  String? get favoriteId => id;
 
   @override
-  String get favoriteTitle => title;
+  String? get favoriteTitle => title;
 
   @override
   String get favoriteKey => favoriteKeyName;
@@ -748,7 +748,7 @@ class GuideFavorite implements Favorite {
   static String favoriteKeyName = "studentGuideIds";
 }
 
-GuideContentSource guideContentSourceFromString(String value) {
+GuideContentSource? guideContentSourceFromString(String? value) {
   if (value == 'Net') {
     return GuideContentSource.Net;
   }
@@ -760,7 +760,7 @@ GuideContentSource guideContentSourceFromString(String value) {
   }
 }
 
-String guideContentSourceToString(GuideContentSource value) {
+String? guideContentSourceToString(GuideContentSource? value) {
   switch (value) {
     case GuideContentSource.Net:   return 'Net';
     case GuideContentSource.Debug: return 'Debug';

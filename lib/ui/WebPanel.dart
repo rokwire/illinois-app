@@ -29,18 +29,18 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes{
-  final String url;
-  final String analyticsName;
-  final String title;
+  final String? url;
+  final String? analyticsName;
+  final String? title;
   final bool hideToolBar;
 
-  WebPanel({@required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
+  WebPanel({required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
 
   @override
   _WebPanelState createState() => _WebPanelState();
 
   @override
-  String get analyticsPageName {
+  String? get analyticsPageName {
     return analyticsName;
   }
 
@@ -52,7 +52,7 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
 
 class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
-  _OnlineStatus _onlineStatus;
+  _OnlineStatus? _onlineStatus;
   bool _pageLoaded = false;
 
   bool _isForeground = true;
@@ -73,8 +73,8 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   @override
   Widget build(BuildContext context) {
       return Scaffold(
-          appBar: _getHeaderBar(),
-          backgroundColor: Styles().colors.background,
+          appBar: _getHeaderBar() as PreferredSizeWidget?,
+          backgroundColor: Styles().colors!.background,
           body: Column(
             children: <Widget>[
               Expanded(
@@ -129,11 +129,11 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
           width: 280,
           child: Text(
             Localization().getStringEx(
-                'panel.web.offline.message', 'You need to be online in order to perform this operation. Please check your Internet connection.'),
+                'panel.web.offline.message', 'You need to be online in order to perform this operation. Please check your Internet connection.')!,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
-              color: Styles().colors.fillColorPrimary,
+              color: Styles().colors!.fillColorPrimary,
             ),
           )),
     );
@@ -157,7 +157,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   Widget _getHeaderBar() {
     return SimpleHeaderBarWithBack(context: context,
-      titleWidget: Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+      titleWidget: Text(widget.title!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
   }
 
   void onNotification(String name, dynamic param){

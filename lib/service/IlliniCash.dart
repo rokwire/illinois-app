@@ -43,8 +43,8 @@ class IlliniCash with Service implements NotificationsListener {
   static const String notifyPaymentSuccess  = "edu.illinois.rokwire.illinicash.payment.success";
   static const String notifyBallanceUpdated  = "edu.illinois.rokwire.illinicash.ballance.updated";
 
-  IlliniCashBallance  _ballance;
-  DateTime            _pausedDateTime;
+  IlliniCashBallance?  _ballance;
+  DateTime?            _pausedDateTime;
 
   bool                _buyIlliniCashInProgress = false;
 
@@ -99,14 +99,14 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           updateBalance();
         }
@@ -116,21 +116,21 @@ class IlliniCash with Service implements NotificationsListener {
 
   // Ballances
 
-  IlliniCashBallance get ballance {
+  IlliniCashBallance? get ballance {
     return _ballance;
   }
 
   Future<void> updateBalance() async {
     if(_enabled) {
-      bool eligible = await _isEligible();
+      bool? eligible = await _isEligible();
       if (eligible == true) {
         String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
         String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/${Auth2.analyticsUin}";
-        Response response = await Network().get(url, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
+        Response? response = await Network().get(url, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
         if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
           String responseBody = response.body;
-          Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-          IlliniCashBallance ballance = (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
+          Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
+          IlliniCashBallance? ballance = (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
           if (ballance != null) {
             _applyBallance(ballance);
           }
@@ -142,7 +142,7 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
-  Future<bool> _isEligible({String uin, String firstName, String lastName}) async {
+  Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
     uin = AppString.isStringNotEmpty(uin) ? uin : Auth2().uin;
     firstName =  AppString.isStringNotEmpty(firstName) ? firstName : Auth2().account?.authType?.uiucUser?.firstName;
     lastName = AppString.isStringNotEmpty(lastName) ? lastName : Auth2().account?.authType?.uiucUser?.lastName;
@@ -150,14 +150,14 @@ class IlliniCash with Service implements NotificationsListener {
     if ((Config().illiniCashBaseUrl != null) && !AppString.isStringEmpty(uin) && !AppString.isStringEmpty(firstName) && !AppString.isStringEmpty(lastName)) {
       String url =  "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/${Auth2.analyticsUin}/${Auth2.analyticsFirstName}/${Auth2.analyticsLastName}";
-      Response response;
+      Response? response;
       try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
       if ((response != null) && responseCode >= 200 && responseCode <= 301) {
         String responseString = response.body;
         Log.d('GET $url\n$responseCode $responseString');
-        Map<String, dynamic> jsonData = AppJson.decode(responseString);
-        bool eligible = (jsonData != null) ? jsonData['IlliniCashEligible'] : null;
+        Map<String, dynamic>? jsonData = AppJson.decode(responseString);
+        bool? eligible = (jsonData != null) ? jsonData['IlliniCashEligible'] : null;
         return eligible;
       }
       else {
@@ -171,8 +171,8 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
-  void _applyBallance(IlliniCashBallance ballance) {
-    if (((_ballance != null) && (ballance != null) && !_ballance.equals(ballance)) ||
+  void _applyBallance(IlliniCashBallance? ballance) {
+    if (((_ballance != null) && (ballance != null) && !_ballance!.equals(ballance)) ||
         ((_ballance != null) && (ballance == null)) ||
         ((_ballance == null) && (ballance != null)))
     {
@@ -181,26 +181,26 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
-  Future<List<IlliniCashTransaction>> loadTransactionHistory(DateTime startDate, DateTime endDate) async {
+  Future<List<IlliniCashTransaction?>?> loadTransactionHistory(DateTime? startDate, DateTime? endDate) async {
 
     if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
       return null;
     }
     
     String uin = Auth2().uin ?? "";
-    String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/IlliniCashTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
     final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl );
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
-      String responseBody = response?.body;
-      List<dynamic> jsonListData = AppJson.decode(responseBody);
+      String responseBody = response.body;
+      List<dynamic>? jsonListData = AppJson.decode(responseBody);
       if (jsonListData != null) {
-        List<IlliniCashTransaction> transactions = [];
+        List<IlliniCashTransaction?> transactions = [];
         for (var jsonData in jsonListData) {
-          IlliniCashTransaction transaction = IlliniCashTransaction.fromJson(
+          IlliniCashTransaction? transaction = IlliniCashTransaction.fromJson(
               jsonData);
           transactions.add(transaction);
         }
@@ -211,13 +211,13 @@ class IlliniCash with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<MealPlanTransaction>> loadMealPlanTransactionHistory(DateTime startDate, DateTime endDate) async {
+  Future<List<MealPlanTransaction?>?> loadMealPlanTransactionHistory(DateTime? startDate, DateTime? endDate) async {
     if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
       return null;
     }
     String uin = Auth2().uin ?? "";
-    String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/MealPlanTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
     final response = await Network().get(transactionHistoryUrl, auth: NetworkAuth.UIUC_Access, analyticsUrl: analyticsUrl);
@@ -225,12 +225,12 @@ class IlliniCash with Service implements NotificationsListener {
     // TMP: "[{\"Amount\":\"1\",\"Date\":\"2017-01-19 18:24:09 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-19 11:41:07 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 18:42:01 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-18 11:36:14 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 18:40:11 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-17 11:27:49 \",\"Location\":\"IKE\",\"Description\":\"EarlyLunch\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 18:40:20 \",\"Location\":\"IKE\",\"Description\":\"LateDinner\"},{\"Amount\":\"1\",\"Date\":\"2017-01-16 12:42:43 \",\"Location\":\"IKE\",\"Description\":\"Lunch\"}]";
 
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
-      String responseBody = response?.body;
-      List<dynamic> jsonListData = AppJson.decode(responseBody);
+      String responseBody = response.body;
+      List<dynamic>? jsonListData = AppJson.decode(responseBody);
       if (jsonListData != null) {
-        List<MealPlanTransaction> transactions = [];
+        List<MealPlanTransaction?> transactions = [];
         for (var jsonData in jsonListData) {
-          MealPlanTransaction transaction = MealPlanTransaction.fromJson(
+          MealPlanTransaction? transaction = MealPlanTransaction.fromJson(
               jsonData);
           transactions.add(transaction);
         }
@@ -241,14 +241,14 @@ class IlliniCash with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<CafeCreditTransaction>> loadCafeCreditTransactionHistory(DateTime startDate,
-      DateTime endDate) async {
+  Future<List<CafeCreditTransaction?>?> loadCafeCreditTransactionHistory(DateTime? startDate,
+      DateTime? endDate) async {
     if (!_enabled || startDate == null || endDate == null || startDate.isAfter(endDate)) {
       return null;
     }
     String uin = Auth2().uin ?? "";
-    String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
-    String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
+    String? endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.illiniCashTransactionHistoryDateFormat, ignoreTimeZone: true);
     String transactionHistoryUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/$uin/$startDateFormatted/$endDateFormatted";
     String analyticsUrl = "${Config().illiniCashBaseUrl}/CafeCreditTransactions/${Auth2.analyticsUin}/$startDateFormatted/$endDateFormatted";
 
@@ -257,12 +257,12 @@ class IlliniCash with Service implements NotificationsListener {
     // TMP "[{\"Date\":\"1/18/2019 10:55:06 AM\",\"Description\":\"Rollover\",\"Location\":\"OFFICE-CDHAYES1\",\"Amount\":\"100.0\"}]";
 
     if (response != null && response.statusCode >= 200 && response.statusCode <= 301) {
-      String responseBody = response?.body;
-      List<dynamic> jsonListData = AppJson.decode(responseBody);
+      String responseBody = response.body;
+      List<dynamic>? jsonListData = AppJson.decode(responseBody);
       if (jsonListData != null) {
-        List<CafeCreditTransaction> transactions = [];
+        List<CafeCreditTransaction?> transactions = [];
         for (var jsonData in jsonListData) {
-          CafeCreditTransaction transaction = CafeCreditTransaction.fromJson(jsonData);
+          CafeCreditTransaction? transaction = CafeCreditTransaction.fromJson(jsonData);
           transactions.add(transaction);
         }
         return transactions;
@@ -273,15 +273,15 @@ class IlliniCash with Service implements NotificationsListener {
   }
 
   Future<void> _saveCreditCard(_TransactionContext context) async{
-    String token = await _loadDataToken();
+    String? token = await _loadDataToken();
 
     if(AppString.isStringNotEmpty(token) && AppString.isStringNotEmpty(context.cc)){
-      String storeToken = await _loadStoreToken(token);
+      String? storeToken = await _loadStoreToken(token);
 
       if(AppString.isStringNotEmpty(storeToken)){
-        String baseUrl = (Config().illiniCashTrustcommerceHost != null) ? "${Config().illiniCashTrustcommerceHost}/trusteeapi/payment.php?action=store&cvv=${context.cvv}&cc=${context.cc}&name=${context.name}&exp=${context.expiry}&returnurl=xml&token=$storeToken" : null;
+        String? baseUrl = (Config().illiniCashTrustcommerceHost != null) ? "${Config().illiniCashTrustcommerceHost}/trusteeapi/payment.php?action=store&cvv=${context.cvv}&cc=${context.cc}&name=${context.name}&exp=${context.expiry}&returnurl=xml&token=$storeToken" : null;
 
-        Response response = await Network().get(baseUrl);
+        Response? response = await Network().get(baseUrl);
         if ((response != null) && response.statusCode >= 200 &&
             response.statusCode <= 301) {
 
@@ -295,13 +295,13 @@ class IlliniCash with Service implements NotificationsListener {
   /////////////////////////
   // BuyIlliniCash
 
-  Future<void> buyIlliniCash({String firstName, String lastName, String uin, String email, String cc, String expiry, String cvv, double amount}) async {
+  Future<void> buyIlliniCash({String? firstName, String? lastName, String? uin, String? email, String? cc, String? expiry, String? cvv, double? amount}) async {
     if(_enabled) {
       try {
         if (!_buyIlliniCashInProgress) {
           _buyIlliniCashInProgress = true;
 
-          bool eligible = await _isEligible(uin: uin, firstName: firstName, lastName: lastName);
+          bool eligible = await (_isEligible(uin: uin, firstName: firstName, lastName: lastName) as FutureOr<bool>);
           if (!eligible) {
             _throwBuyIlliniCashError(Localization().getStringEx("panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text", "The recipient is not eligible to buy Illini Cash"));
           }
@@ -322,11 +322,11 @@ class IlliniCash with Service implements NotificationsListener {
           // 1. Save Credit Card into the system and use the resulted billingId
           await _saveCreditCard(context);
 
-          if (context?.cardStatusResponse?.status == "accepted" && AppString.isStringNotEmpty(context?.cardStatusResponse?.billingId)) {
+          if (context.cardStatusResponse?.status == "accepted" && AppString.isStringNotEmpty(context.cardStatusResponse?.billingId)) {
             // 2. PreAuth
             await _preAuth(context);
 
-            if (context?.preAuthStatusResponse?.status == "approved") {
+            if (context.preAuthStatusResponse?.status == "approved") {
               // 3. Process Payment
               await _completeTransaction(context);
             }
@@ -334,7 +334,7 @@ class IlliniCash with Service implements NotificationsListener {
               _throwBuyIlliniCashError(null);
             }
           }
-          else if (context?.cardStatusResponse?.status == "baddata") {
+          else if (context.cardStatusResponse?.status == "baddata") {
             _throwBuyIlliniCashError(Localization().getStringEx(
                 "panel.settings.add_illini_cash.error.baddata.text",
                 "Unable to complete transaction. Please revise your credit card information."));
@@ -356,15 +356,15 @@ class IlliniCash with Service implements NotificationsListener {
   }
 
   Future<void> _preAuth(_TransactionContext context) async{
-    String token = await _loadDataToken();
+    String? token = await _loadDataToken();
 
     if(AppString.isStringNotEmpty(token)){
-      String preAuthToken = await _loadPreAuthToken(token, context.cardStatusResponse.billingId);
+      String? preAuthToken = await _loadPreAuthToken(token, context.cardStatusResponse!.billingId);
 
       if(AppString.isStringNotEmpty(preAuthToken)){
-        String baseUrl = (Config().illiniCashTrustcommerceHost != null) ? "${Config().illiniCashTrustcommerceHost}/trusteeapi/payment.php?action=preauth&returnurl=xml&amount=${context?.amount}&billingid=${context.cardStatusResponse.billingId}&exp=${context.expiry}&token=$preAuthToken" : null;
+        String? baseUrl = (Config().illiniCashTrustcommerceHost != null) ? "${Config().illiniCashTrustcommerceHost}/trusteeapi/payment.php?action=preauth&returnurl=xml&amount=${context.amount}&billingid=${context.cardStatusResponse!.billingId}&exp=${context.expiry}&token=$preAuthToken" : null;
 
-        Response response = await Network().get(baseUrl);
+        Response? response = await Network().get(baseUrl);
         if ((response != null) && response.statusCode >= 200 &&
             response.statusCode <= 301) {
           // Sample body: authcode=0YXLJH transid=032-0003229265 status=approved
@@ -378,30 +378,30 @@ class IlliniCash with Service implements NotificationsListener {
   Future<void> _completeTransaction(_TransactionContext context) async{
 
     // 1. Generate signature
-    String appKey =  Config().illiniCashAppKey;
-    String hmacKey = Config().illiniCashHmacKey;
-    String secretKey = Config().illiniCashSecretKey;
+    String? appKey =  Config().illiniCashAppKey;
+    String hmacKey = Config().illiniCashHmacKey!;
+    String? secretKey = Config().illiniCashSecretKey;
 
     String timestamp = (DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000).toInt().toString();
-    String signingString = "$timestamp|$appKey|${context.amount}|$secretKey|${context.preAuthStatusResponse.transId}";
+    String signingString = "$timestamp|$appKey|${context.amount}|$secretKey|${context.preAuthStatusResponse!.transId}";
     String signedString = _generateHmacSha1(signingString, hmacKey).toUpperCase();
 
     //String baseUrl = "https://web.housing.illinois.edu/Rokwirefinancial/TrustCommerce.asmx/ProcessTransaction"; //"$PROCESS_TRANSACTION_HOST/FinTrans/TrustCommerce.asmx/ProcessTransaction";
-    String baseUrl = (Config().illiniCashPaymentHost != null) ? "${Config().illiniCashPaymentHost}/FinTrans/TrustCommerce.asmx/PostAuth" : null;
+    String? baseUrl = (Config().illiniCashPaymentHost != null) ? "${Config().illiniCashPaymentHost}/FinTrans/TrustCommerce.asmx/PostAuth" : null;
 
 
     Map<String,dynamic> params = {
       "appKey" : appKey ?? "",
       "signature" : signedString,
       "timeStamp" : timestamp,
-      "uin" : context?.uin ?? "",
-      "emailAddress" : context?.email ?? "",
-      "amount" : context?.amount ?? "",
-      "ccID" : context?.preAuthStatusResponse?.transId ?? "",
-      "cclastfour" : context?.cardResponse?.lastFour ?? "",
-      "authcode" : context.preAuthStatusResponse.authCode,
-      "firstName" : context?.firstName ?? "",
-      "lastName" : context?.lastName ?? "",
+      "uin" : context.uin ?? "",
+      "emailAddress" : context.email ?? "",
+      "amount" : context.amount ?? "",
+      "ccID" : context.preAuthStatusResponse?.transId ?? "",
+      "cclastfour" : context.cardResponse?.lastFour ?? "",
+      "authcode" : context.preAuthStatusResponse!.authCode,
+      "firstName" : context.firstName ?? "",
+      "lastName" : context.lastName ?? "",
     };
 
     String paramsString = json.encode(params);
@@ -411,15 +411,15 @@ class IlliniCash with Service implements NotificationsListener {
         body: paramsString,
     );
 
-    String responseString = response?.body;
+    String? responseString = response?.body;
     if ((response != null) && response.statusCode >= 200 &&
         response.statusCode <= 301) {
-      Map<String, dynamic> jsonData = AppJson.decode(responseString);
+      Map<String, dynamic>? jsonData = AppJson.decode(responseString);
       if (jsonData != null) {
-        Map<String, dynamic> innerData = jsonData["d"];
+        Map<String, dynamic>? innerData = jsonData["d"];
         if (innerData != null && innerData.isNotEmpty) {
-          String status = innerData["Status"];
-          String message = innerData["Message"];
+          String? status = innerData["Status"];
+          String? message = innerData["Message"];
 
           if (status != "0") {
             _throwBuyIlliniCashError(message);
@@ -439,11 +439,11 @@ class IlliniCash with Service implements NotificationsListener {
     }
   }
 
-  Future<String> _loadPreAuthToken(String token, String billingId) async{
+  Future<String?> _loadPreAuthToken(String? token, String? billingId) async{
 
-    String baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/token/edu.uillinois.aits.uiDining/$token/preauth/$billingId" : null;
+    String? baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/token/edu.uillinois.aits.uiDining/$token/preauth/$billingId" : null;
 
-    Response response = await Network().get(baseUrl);
+    Response? response = await Network().get(baseUrl);
     if ((response != null) && response.statusCode >= 200 &&
         response.statusCode <= 301) {
       return response.body;
@@ -451,15 +451,15 @@ class IlliniCash with Service implements NotificationsListener {
     return null;
   }
 
-  Future<String> _loadDataToken() async {
+  Future<String?> _loadDataToken() async {
 
-    String url = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/aitsWS/security/generateDataToken" : null;
+    String? url = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/aitsWS/security/generateDataToken" : null;
     Map<String,String> headers = {
       "Content-Type": "application/json",
       "X-senderAppId": "edu.uillinois.aits.uiDining",
     };
 
-    Response response = await Network().post(url, headers: headers);
+    Response? response = await Network().post(url, headers: headers);
     if ((response != null) && response.statusCode >= 200 &&
         response.statusCode <= 301) {
       String xmlString = response.body;
@@ -467,7 +467,7 @@ class IlliniCash with Service implements NotificationsListener {
       XmlDocument document = XmlDocument.parse(xmlString);
       Iterable<XmlElement> tokenElements = document.findAllElements("Token");
 
-      if(tokenElements != null && tokenElements.isNotEmpty){
+      if(tokenElements.isNotEmpty){
         for(XmlElement element in tokenElements){
           if(element.name.local == "Token"){
             return element.text;
@@ -479,11 +479,11 @@ class IlliniCash with Service implements NotificationsListener {
     return null;
   }
 
-  Future<String> _loadStoreToken(String token) async{
+  Future<String?> _loadStoreToken(String? token) async{
 
-    String baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/token/edu.uillinois.aits.uiDining/$token/store" : null;
+    String? baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/token/edu.uillinois.aits.uiDining/$token/store" : null;
 
-    Response response = await Network().get(baseUrl);
+    Response? response = await Network().get(baseUrl);
     if ((response != null) && response.statusCode >= 200 &&
         response.statusCode <= 301) {
       return response.body;
@@ -491,12 +491,12 @@ class IlliniCash with Service implements NotificationsListener {
     return null;
   }
 
-  Future<_StatusResponse> _completeToken(String token, String paymentToken) async{
+  Future<_StatusResponse?> _completeToken(String? token, String? paymentToken) async{
 
     if(AppString.isStringNotEmpty(token) && AppString.isStringNotEmpty(paymentToken)) {
-      String baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/complete/edu.uillinois.aits.uiDining/$token/$paymentToken" : null;
+      String? baseUrl = (Config().illiniCashTokenHost != null) ? "${Config().illiniCashTokenHost}/financeWS/cc/complete/edu.uillinois.aits.uiDining/$token/$paymentToken" : null;
 
-      Response response = await Network().get(baseUrl);
+      Response? response = await Network().get(baseUrl);
       if ((response != null) && response.statusCode >= 200 &&
           response.statusCode <= 301) {
         return _StatusResponse.fromString(response.body);
@@ -513,7 +513,7 @@ class IlliniCash with Service implements NotificationsListener {
   /////////////////////////
   // Helpers
 
-  void _throwBuyIlliniCashError(String message){
+  void _throwBuyIlliniCashError(String? message){
     if(AppString.isStringEmpty(message)) {
       throw BuyIlliniCashException(Localization().getStringEx(
           "panel.settings.add_illini_cash.error.buy_illini_cash.text",
@@ -535,21 +535,21 @@ class IlliniCash with Service implements NotificationsListener {
 }
 
 class _TransactionContext{
-  final String firstName;
-  final String lastName;
-  final String uin;
-  final String email;
-  final String cc;
-  final String expiry;
-  final String cvv;
-  final String amount;
+  final String? firstName;
+  final String? lastName;
+  final String? uin;
+  final String? email;
+  final String? cc;
+  final String? expiry;
+  final String? cvv;
+  final String? amount;
 
-  _CreditCardResponse cardResponse;
-  _StatusResponse cardStatusResponse;
+  _CreditCardResponse? cardResponse;
+  _StatusResponse? cardStatusResponse;
 
   // No reason to keep this piece for now
   //_CreditCardResponse preAuthResponse;
-  _StatusResponse preAuthStatusResponse;
+  _StatusResponse? preAuthStatusResponse;
 
   String get name{
     return "$firstName $lastName";
@@ -559,18 +559,18 @@ class _TransactionContext{
 }
 
 class _CreditCardResponse{
-  final String name;
-  final String lastFour;
-  final String exp;
+  final String? name;
+  final String? lastFour;
+  final String? exp;
   _CreditCardResponse({this.name, this.lastFour, this.exp});
 
-  static _CreditCardResponse fromXMLString(String xmlString){
-    XmlDocument document;
+  static _CreditCardResponse? fromXMLString(String? xmlString){
+    XmlDocument? document;
     try {
       document = (xmlString != null) ? XmlDocument.parse(xmlString) : null;
     }
     catch(e) {
-      print(e?.toString());
+      print(e.toString());
     }
 
     return (document != null) ? _CreditCardResponse(
@@ -580,7 +580,7 @@ class _CreditCardResponse{
     ) : null;
   }
 
-  static _getValueFromXmlItem(XmlDocument document, String elementName){
+  static _getValueFromXmlItem(XmlDocument? document, String? elementName){
     if(document != null && elementName != null){
       var elements = document.findAllElements(elementName);
       for(XmlElement element in elements){
@@ -595,26 +595,26 @@ class _CreditCardResponse{
 }
 
 class _StatusResponse{
-  final String transId;
-  final String authCode;
-  final String billingId;
-  final String status;
+  final String? transId;
+  final String? authCode;
+  final String? billingId;
+  final String? status;
 
   _StatusResponse({this.transId, this.authCode, this.billingId, this.status});
 
-  static _StatusResponse fromString(String value){
-    List<String> lines = value?.split(" ");
+  static _StatusResponse? fromString(String? value){
+    List<String>? lines = value?.split(" ");
 
     if (lines != null) {
-      String transId;
-      String authCode;
-      String billingId;
-      String status;
+      String? transId;
+      String? authCode;
+      String? billingId;
+      String? status;
 
 
       for(String line in lines){
         List<String> cells = line.split("=");
-        if(cells != null && cells.length > 1){
+        if(cells.length > 1){
           if("authcode" == cells[0]){
             authCode = cells[1];
           }
@@ -644,6 +644,6 @@ class _StatusResponse{
 }
 
 class BuyIlliniCashException implements Exception{
-  final String message;
+  final String? message;
   BuyIlliniCashException(this.message);
 }

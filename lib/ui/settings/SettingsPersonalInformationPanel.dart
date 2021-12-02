@@ -52,8 +52,8 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
       appBar: SimpleHeaderBarWithBack(
         context: context,
         titleWidget: Text(
-          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information"),
-          style: TextStyle(color: Styles().colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold, letterSpacing: 1.0),
+          Localization().getStringEx("panel.settings.personal_information.label.title", "Personal Information")!,
+          style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, letterSpacing: 1.0),
         ),
       ),
       body: Column(
@@ -65,25 +65,25 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: <Widget>[
-                Container(height: 1, color: Styles().colors.surfaceAccent,),
+                Container(height: 1, color: Styles().colors!.surfaceAccent,),
                 Container(height: 24,),
                 ScalableRoundedButton(
-                  backgroundColor: Styles().colors.white,
+                  backgroundColor: Styles().colors!.white,
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
-                  fontFamily: Styles().fontFamilies.regular,
+                  fontFamily: Styles().fontFamilies!.regular,
                   label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
                   shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
                 Container(height: 16,),
-                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations."),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),),
+                Text(Localization().getStringEx("panel.settings.personal_information.label.description", "Delete your location history, your tags and categories, and saved events and dining locations.")!,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textSurface),),
                 Container(height: 30,),
             ],),
           ),
         ]),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -128,19 +128,19 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
               label: 'Add saved events to calendar',
               toggled: Storage().calendarEnabledToSave,
               context: context,
-              onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave;});}),
+              onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;});}),
           Container(height: 8,),
           ToggleRibbonButton(
               label: 'Prompt when saving events to calendar',
-              style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies.bold, color: Storage().calendarEnabledToSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,) ,
+              style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies!.bold, color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,) ,
               height: null,
               toggled: Storage().calendarCanPrompt,
               context: context,
               onTap: (){
-                if(!Storage().calendarEnabledToSave) {
+                if(!Storage().calendarEnabledToSave!) {
                   return;
                 }
-                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt;});
+                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt!;});
               }),
           Container(height: 29,),
         ],));
@@ -174,7 +174,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
         title: Localization().getStringEx("panel.settings.personal_information.label.delete_message.title", "Delete your personal information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description1", "Select all that you would like to ")),
-          TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
+          TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description3", "delete:")),
         ],
         continueTitle: Localization().getStringEx("panel.settings.personal_information.button.forget_info.title","Delete My Information"),

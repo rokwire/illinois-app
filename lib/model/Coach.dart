@@ -15,26 +15,26 @@
  */
 
 class Coach {
-  final String id;
-  final String name;
-  final String firstName;
-  final String lastName;
-  final String title;
-  final String email;
-  final String phone;
-  final String fullSizePhotoUrl;
-  final String thumbPhotoUrl;
-  final String htmlBio;
+  final String? id;
+  final String? name;
+  final String? firstName;
+  final String? lastName;
+  final String? title;
+  final String? email;
+  final String? phone;
+  final String? fullSizePhotoUrl;
+  final String? thumbPhotoUrl;
+  final String? htmlBio;
 
   Coach({this.id, this.name, this.firstName, this.lastName, this.title, this.email, this.phone, this.htmlBio, this.fullSizePhotoUrl, this.thumbPhotoUrl});
 
-  static Coach fromJson(Map<String, dynamic> json) {
+  static Coach? fromJson(Map<String, dynamic> json) {
     if (json == null) {
       return null;
     }
-    Map<String, dynamic> photosJson = json['photos'];
-    String fullSizePhotoUrl = photosJson != null ? photosJson['fullsize'] : null;
-    String thumbPhotoUrl = photosJson != null ? photosJson['thumbnail'] : null;
+    Map<String, dynamic>? photosJson = json['photos'];
+    String? fullSizePhotoUrl = photosJson != null ? photosJson['fullsize'] : null;
+    String? thumbPhotoUrl = photosJson != null ? photosJson['thumbnail'] : null;
     return Coach(
         id: json['id'],
         name: json['name'],

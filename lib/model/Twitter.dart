@@ -8,15 +8,15 @@ import 'package:sprintf/sprintf.dart';
 // TweetsPage
 
 class TweetsPage {
-  final List<Tweet> tweets;
-  final TweetsIncludes includes;
-  final TweetsMeta meta;
+  final List<Tweet>? tweets;
+  final TweetsIncludes? includes;
+  final TweetsMeta? meta;
 
   TweetsPage({this.tweets, this.includes, this.meta}) {
     Tweet.applyIncludesToList(tweets, includes);
   }
 
-  static TweetsPage fromJson(Map<String, dynamic> json) {
+  static TweetsPage? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetsPage(
       tweets: Tweet.listFromJson(AppJson.listValue(json['data'])),
       includes: TweetsIncludes.fromJson(AppJson.mapValue(json['includes'])),
@@ -39,7 +39,7 @@ class TweetsPage {
       (o.meta == meta);
 
   int get hashCode =>
-    (DeepCollectionEquality().hash(tweets) ?? 0) ^
+    (DeepCollectionEquality().hash(tweets)) ^
     (includes?.hashCode ?? 0) ^
     (meta?.hashCode ?? 0);
 }
@@ -48,31 +48,31 @@ class TweetsPage {
 // Tweet
 
 class Tweet {
-  final String id;
-  final DateTime createdAtUtc;
-  final String text;
-  final String lang;
-  final String conversationId;
-  final String authorId;
-  final String source;
-  final String replySettings;
-  final bool possiblySensitive;
+  final String? id;
+  final DateTime? createdAtUtc;
+  final String? text;
+  final String? lang;
+  final String? conversationId;
+  final String? authorId;
+  final String? source;
+  final String? replySettings;
+  final bool? possiblySensitive;
 
-  final TweetEntities entities;
-  final TweetPublicMetrics publicMetrics;
-  final TweetContextAnotations contextAnotations;
-  final TweetAttachments attachments;
-  final List<TweetRef> referencedTweets;
+  final TweetEntities? entities;
+  final TweetPublicMetrics? publicMetrics;
+  final TweetContextAnotations? contextAnotations;
+  final TweetAttachments? attachments;
+  final List<TweetRef>? referencedTweets;
 
-  final String html;
-  TwitterUser _author;
+  final String? html;
+  TwitterUser? _author;
 
   Tweet({this.id, this.createdAtUtc, this.text, this.lang, this.conversationId, this.authorId, this.source, this.replySettings, this.possiblySensitive,
     this.entities, this.publicMetrics, this.contextAnotations, this.attachments, this.referencedTweets,
   }) :
     html = _buildHtml(text, entities);
  
-  static Tweet fromJson(Map<String, dynamic> json) {
+  static Tweet? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Tweet(
       id: AppJson.stringValue(json['id']),
       createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
@@ -141,11 +141,11 @@ class Tweet {
     (publicMetrics?.hashCode ?? 0) ^
     (contextAnotations?.hashCode ?? 0) ^
     (attachments?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(referencedTweets) ?? 0);
+    (DeepCollectionEquality().hash(referencedTweets));
 
-  TwitterUser get author => _author;
+  TwitterUser? get author => _author;
 
-  TwitterMedia get media {
+  TwitterMedia? get media {
     if (AppCollection.isCollectionNotEmpty(attachments?.media)) {
       return attachments?.media?.first;
     }
@@ -155,11 +155,11 @@ class Tweet {
     return null;
   }
 
-  String get detailUrl => TweetEntityUrl.detailUrlFromList(entities?.urls);
+  String? get detailUrl => TweetEntityUrl.detailUrlFromList(entities?.urls);
 
-  String get displayTime {
+  String? get displayTime {
     
-    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(createdAtUtc);
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(createdAtUtc);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {
@@ -190,17 +190,17 @@ class Tweet {
     }
   }
 
-  static String _buildHtml(String text, TweetEntities entities) {
-    String html = text;
+  static String? _buildHtml(String? text, TweetEntities? entities) {
+    String? html = text;
     if ((html != null) && (entities?.entities != null)) {
-      int firstUpdated = text.length;
-      for (int entityIndex = entities.entities.length - 1; 0 <= entityIndex; entityIndex--) {
+      int? firstUpdated = text!.length;
+      for (int entityIndex = entities!.entities.length - 1; 0 <= entityIndex; entityIndex--) {
         TweetEntity entetity = entities.entities[entityIndex];
-        if ((entetity != null) && entetity.isValid && (entetity.end <= firstUpdated) && (entetity.end <= text.length)) {
-          String entetityText = text.substring(entetity.start, entetity.end);
-          String entetityHtml = entetity.buildHtml(entetityText);
+        if (entetity.isValid && (entetity.end! <= firstUpdated!) && (entetity.end! <= text.length)) {
+          String entetityText = text.substring(entetity.start!, entetity.end);
+          String? entetityHtml = entetity.buildHtml(entetityText);
           if (entetityHtml != null) {
-            html = html.replaceRange(entetity.start, entetity.end, entetityHtml);
+            html = html!.replaceRange(entetity.start!, entetity.end, entetityHtml);
             firstUpdated = entetity.start;
           }
         }
@@ -209,33 +209,33 @@ class Tweet {
     return html;
   }
 
-  void _applyIncludes(TweetsIncludes includes) {
+  void _applyIncludes(TweetsIncludes? includes) {
     _author = TwitterUser.entryInList(includes?.users, id: authorId);
     attachments?._applyIncludes(includes);
     TweetRef.applyIncludesToList(referencedTweets, includes);
   }
 
-  static void applyIncludesToList(List<Tweet> tweets, TweetsIncludes includes) {
+  static void applyIncludesToList(List<Tweet>? tweets, TweetsIncludes? includes) {
     if ((tweets != null) && (includes != null)) {
-      for (Tweet tweet in tweets) {
-        tweet._applyIncludes(includes);
+      for (Tweet? tweet in tweets) {
+        tweet!._applyIncludes(includes);
       }
     }
   }
 
-  static List<Tweet> listFromJson(List<dynamic> jsonList) {
-    List<Tweet> result;
+  static List<Tweet>? listFromJson(List<dynamic>? jsonList) {
+    List<Tweet>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? Tweet.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? Tweet.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<Tweet> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<Tweet>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -245,9 +245,9 @@ class Tweet {
     return jsonList;
   }
 
-  static Tweet entryInList(List<Tweet> contentList, {String id}) {
+  static Tweet? entryInList(List<Tweet>? contentList, {String? id}) {
     if (contentList != null) {
-      for (Tweet contentEntry in contentList) {
+      for (Tweet? contentEntry in contentList) {
         if (contentEntry?.id == id) {
           return contentEntry;
         }
@@ -261,17 +261,17 @@ class Tweet {
 // TweetEntities
 
 class TweetEntities {
-  final List<TweetEntityUrl> urls;
-  final List<TweetEntityAnnotation> annotations;
-  final List<TweetEntityHashtag> hashtags;
-  final List<TweetEntityMention> mentions;
+  final List<TweetEntityUrl>? urls;
+  final List<TweetEntityAnnotation>? annotations;
+  final List<TweetEntityHashtag>? hashtags;
+  final List<TweetEntityMention>? mentions;
   
   final List<TweetEntity> entities;
 
   TweetEntities({this.urls, this.annotations, this.hashtags, this.mentions}) :
     entities = _buildEntities([urls, annotations, hashtags, mentions]);
 
-  static TweetEntities fromJson(Map<String, dynamic> json) {
+  static TweetEntities? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntities(
         urls: TweetEntityUrl.listFromJson(AppJson.listValue(json['urls'])),
         annotations: TweetEntityAnnotation.listFromJson(AppJson.listValue(json['annotations'])),
@@ -297,12 +297,12 @@ class TweetEntities {
       DeepCollectionEquality().equals(o.mentions, mentions);
 
   int get hashCode =>
-    (DeepCollectionEquality().hash(urls) ?? 0) ^
-    (DeepCollectionEquality().hash(annotations) ?? 0) ^
-    (DeepCollectionEquality().hash(hashtags) ?? 0) ^
-    (DeepCollectionEquality().hash(mentions) ?? 0);
+    (DeepCollectionEquality().hash(urls)) ^
+    (DeepCollectionEquality().hash(annotations)) ^
+    (DeepCollectionEquality().hash(hashtags)) ^
+    (DeepCollectionEquality().hash(mentions));
 
-  static List<TweetEntity> _buildEntities(List<dynamic> sourceEntities, { int level }) {
+  static List<TweetEntity> _buildEntities(List<dynamic>? sourceEntities, { int? level }) {
     List<TweetEntity> entities = <TweetEntity>[];
     if (sourceEntities != null) {
       for (dynamic sourceEntity in sourceEntities) {
@@ -325,18 +325,18 @@ class TweetEntities {
 // TweetEntity
 
 abstract class TweetEntity implements Comparable<TweetEntity> {
-  int get start;
-  int get end;
+  int? get start;
+  int? get end;
 
   bool get isValid {
-    return (start != null) && (end != null) && (start < end);
+    return (start != null) && (end != null) && (start! < end!);
   }
 
-  int compareTo(TweetEntity other) {
-    return ((end != null) && (other?.end != null)) ? end.compareTo(other?.end) : 0;
+  int compareTo(TweetEntity? other) {
+    return ((end != null) && (other?.end != null)) ? end!.compareTo(other!.end!) : 0;
   }
 
-  String buildHtml(String sourceText) {
+  String? buildHtml(String sourceText) {
     return null;
   }
 }
@@ -345,19 +345,19 @@ abstract class TweetEntity implements Comparable<TweetEntity> {
 // TweetEntityUrl
 
 class TweetEntityUrl with TweetEntity {
-  final int start;
-  final int end;
-  final String url;
-  final String expandedUrl;
-  final String displayUrl;
-  final int status;
-  final String title;
-  final String description;
-  final String unwoundUrl;
+  final int? start;
+  final int? end;
+  final String? url;
+  final String? expandedUrl;
+  final String? displayUrl;
+  final int? status;
+  final String? title;
+  final String? description;
+  final String? unwoundUrl;
 
   TweetEntityUrl({this.start, this.end, this.url, this.expandedUrl, this.displayUrl, this.status, this.title, this.description, this.unwoundUrl});
 
-  static TweetEntityUrl fromJson(Map<String, dynamic> json) {
+  static TweetEntityUrl? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityUrl(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -372,8 +372,6 @@ class TweetEntityUrl with TweetEntity {
   }
 
   Map<String, dynamic> toJson() {
-    int a;
-    a.compareTo(22);
     return {
       'start': start,
       'end': end,
@@ -410,9 +408,9 @@ class TweetEntityUrl with TweetEntity {
     (description?.hashCode ?? 0) ^
     (unwoundUrl?.hashCode ?? 0);
 
-  String get detailUrl {
-    if ((expandedUrl != null) && expandedUrl.startsWith("https://twitter.com") &&
-        (displayUrl != null) && displayUrl.startsWith("pic.twitter.com")) {
+  String? get detailUrl {
+    if ((expandedUrl != null) && expandedUrl!.startsWith("https://twitter.com") &&
+        (displayUrl != null) && displayUrl!.startsWith("pic.twitter.com")) {
       return expandedUrl;
     }
     return null;
@@ -422,31 +420,31 @@ class TweetEntityUrl with TweetEntity {
     return "<a href='$expandedUrl'>$sourceText</a>";
   }
 
-  static String detailUrlFromList(List<TweetEntityUrl> contentList) {
+  static String? detailUrlFromList(List<TweetEntityUrl>? contentList) {
     if (contentList != null) {
       for (int index = contentList.length - 1; 0 <= index; index--) {
-        TweetEntityUrl contentEntry = contentList[index];
-        if (contentEntry?.detailUrl != null) {
-          return contentEntry?.detailUrl;
+        TweetEntityUrl? contentEntry = contentList[index];
+        if (contentEntry.detailUrl != null) {
+          return contentEntry.detailUrl;
         }
       }
     }
     return null;
   }
 
-  static List<TweetEntityUrl> listFromJson(List<dynamic> jsonList) {
-    List<TweetEntityUrl> result;
+  static List<TweetEntityUrl>? listFromJson(List<dynamic>? jsonList) {
+    List<TweetEntityUrl>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TweetEntityUrl.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TweetEntityUrl.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TweetEntityUrl> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TweetEntityUrl>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -461,15 +459,15 @@ class TweetEntityUrl with TweetEntity {
 // TweetEntityAnnotation
 
 class TweetEntityAnnotation with TweetEntity {
-  final int start;
-  final int end;
-  final double probability;
-  final String type;
-  final String normalizedText;
+  final int? start;
+  final int? end;
+  final double? probability;
+  final String? type;
+  final String? normalizedText;
 
   TweetEntityAnnotation({this.start, this.end, this.probability, this.type, this.normalizedText});
 
-  static TweetEntityAnnotation fromJson(Map<String, dynamic> json) {
+  static TweetEntityAnnotation? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityAnnotation(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -504,19 +502,19 @@ class TweetEntityAnnotation with TweetEntity {
     (type?.hashCode ?? 0) ^
     (normalizedText?.hashCode ?? 0);
 
-  static List<TweetEntityAnnotation> listFromJson(List<dynamic> jsonList) {
-    List<TweetEntityAnnotation> result;
+  static List<TweetEntityAnnotation>? listFromJson(List<dynamic>? jsonList) {
+    List<TweetEntityAnnotation>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TweetEntityAnnotation.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TweetEntityAnnotation.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TweetEntityAnnotation> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TweetEntityAnnotation>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -531,13 +529,13 @@ class TweetEntityAnnotation with TweetEntity {
 // TweetEntityHashtag
 
 class TweetEntityHashtag with TweetEntity {
-  final int start;
-  final int end;
-  final String tag;
+  final int? start;
+  final int? end;
+  final String? tag;
 
   TweetEntityHashtag({this.start, this.end, this.tag});
 
-  static TweetEntityHashtag fromJson(Map<String, dynamic> json) {
+  static TweetEntityHashtag? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityHashtag(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -568,19 +566,19 @@ class TweetEntityHashtag with TweetEntity {
     return "<a href='https://twitter.com/hashtag/$tag'>$sourceText</a>";
   }
 
-  static List<TweetEntityHashtag> listFromJson(List<dynamic> jsonList) {
-    List<TweetEntityHashtag> result;
+  static List<TweetEntityHashtag>? listFromJson(List<dynamic>? jsonList) {
+    List<TweetEntityHashtag>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TweetEntityHashtag.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TweetEntityHashtag.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TweetEntityHashtag> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TweetEntityHashtag>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -595,14 +593,14 @@ class TweetEntityHashtag with TweetEntity {
 // TweetEntityMention
 
 class TweetEntityMention with TweetEntity {
-  final int start;
-  final int end;
-  final String userName;
-  final String id;
+  final int? start;
+  final int? end;
+  final String? userName;
+  final String? id;
 
   TweetEntityMention({this.start, this.end, this.userName, this.id});
 
-  static TweetEntityMention fromJson(Map<String, dynamic> json) {
+  static TweetEntityMention? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetEntityMention(
       start: AppJson.intValue(json['start']),
       end: AppJson.intValue(json['end']),
@@ -637,19 +635,19 @@ class TweetEntityMention with TweetEntity {
     return "<a href='https://twitter.com/$userName'>$sourceText</a>";
   }
 
-  static List<TweetEntityMention> listFromJson(List<dynamic> jsonList) {
-    List<TweetEntityMention> result;
+  static List<TweetEntityMention>? listFromJson(List<dynamic>? jsonList) {
+    List<TweetEntityMention>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TweetEntityMention.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TweetEntityMention.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TweetEntityMention> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TweetEntityMention>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -664,13 +662,13 @@ class TweetEntityMention with TweetEntity {
 // TweetRef
 
 class TweetRef {
-  final String id;
-  final String type;
-  Tweet _tweet;
+  final String? id;
+  final String? type;
+  Tweet? _tweet;
 
   TweetRef({this.id, this.type});
 
-  static TweetRef fromJson(Map<String, dynamic> json) {
+  static TweetRef? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetRef(
       id: AppJson.stringValue(json['id']),
       type: AppJson.stringValue(json['type']),
@@ -693,24 +691,24 @@ class TweetRef {
     (id?.hashCode ?? 0) ^
     (type?.hashCode ?? 0);
 
-  Tweet get tweet => _tweet;
+  Tweet? get tweet => _tweet;
   
-  void _applyIncludes(TweetsIncludes includes) {
+  void _applyIncludes(TweetsIncludes? includes) {
     _tweet = Tweet.entryInList(includes?.tweets, id: id);
     _tweet?._applyIncludes(includes);
   }
 
-  static void applyIncludesToList(List<TweetRef> tweetRefs, TweetsIncludes includes) {
+  static void applyIncludesToList(List<TweetRef>? tweetRefs, TweetsIncludes? includes) {
     if ((tweetRefs != null) && (includes != null)) {
-      for (TweetRef tweetRef in tweetRefs) {
-        tweetRef._applyIncludes(includes);
+      for (TweetRef? tweetRef in tweetRefs) {
+        tweetRef!._applyIncludes(includes);
       }
     }
   }
 
-  static TwitterMedia mediaFromList(List<TweetRef> tweetRefs) {
+  static TwitterMedia? mediaFromList(List<TweetRef>? tweetRefs) {
     if (tweetRefs != null) {
-      for (TweetRef tweetRef in tweetRefs) {
+      for (TweetRef? tweetRef in tweetRefs) {
         if (tweetRef?.tweet?.media != null) {
           return tweetRef?.tweet?.media;
         }
@@ -719,19 +717,19 @@ class TweetRef {
     return null;
   }
 
-  static List<TweetRef> listFromJson(List<dynamic> jsonList) {
-    List<TweetRef> result;
+  static List<TweetRef>? listFromJson(List<dynamic>? jsonList) {
+    List<TweetRef>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TweetRef.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TweetRef.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TweetRef> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TweetRef>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -746,12 +744,12 @@ class TweetRef {
 // TweetAttachments
 
 class TweetAttachments {
-  final List<String> mediaKeys;
-  List<TwitterMedia> _media;
+  final List<String>? mediaKeys;
+  List<TwitterMedia>? _media;
 
   TweetAttachments({this.mediaKeys});
 
-  static TweetAttachments fromJson(Map<String, dynamic> json) {
+  static TweetAttachments? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetAttachments(
       mediaKeys: AppJson.listStringsValue(json['media_keys']),
     ) : null;
@@ -768,11 +766,11 @@ class TweetAttachments {
       DeepCollectionEquality().equals(o.mediaKeys, mediaKeys);
 
   int get hashCode =>
-    (DeepCollectionEquality().hash(mediaKeys) ?? 0);
+    (DeepCollectionEquality().hash(mediaKeys));
 
-  List<TwitterMedia> get media => _media;
+  List<TwitterMedia>? get media => _media;
 
-  void _applyIncludes(TweetsIncludes includes) {
+  void _applyIncludes(TweetsIncludes? includes) {
     _media = TwitterMedia.listFromKeys(includes?.media, keys: mediaKeys);
   }
 }
@@ -781,13 +779,13 @@ class TweetAttachments {
 // TweetPublicMetrics
 
 class TweetPublicMetrics {
-  final int retweetCount;
-  final int replyCount;
-  final int likeCount;
-  final int quoteCount;
+  final int? retweetCount;
+  final int? replyCount;
+  final int? likeCount;
+  final int? quoteCount;
   TweetPublicMetrics({this.retweetCount, this.replyCount, this.likeCount, this.quoteCount});
 
-  static TweetPublicMetrics fromJson(Map<String, dynamic> json) {
+  static TweetPublicMetrics? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetPublicMetrics(
       retweetCount: AppJson.intValue(json['retweet_count']),
       replyCount: AppJson.intValue(json['reply_count']),
@@ -823,13 +821,13 @@ class TweetPublicMetrics {
 // TweetContextAnotation
 
 class TweetContextAnotation {
-  final String id;
-  final String name;
-  final String description;
+  final String? id;
+  final String? name;
+  final String? description;
 
   TweetContextAnotation({this.id, this.name, this.description});
 
-  static TweetContextAnotation fromJson(Map<String, dynamic> json) {
+  static TweetContextAnotation? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetContextAnotation(
       id: AppJson.stringValue(json['id']),
       name: AppJson.stringValue(json['name']),
@@ -861,12 +859,12 @@ class TweetContextAnotation {
 // TweetContextAnotations
 
 class TweetContextAnotations {
-  final TweetContextAnotation domain;
-  final TweetContextAnotation entity;
+  final TweetContextAnotation? domain;
+  final TweetContextAnotation? entity;
 
   TweetContextAnotations({this.domain, this.entity});
 
-  static TweetContextAnotations fromJson(Map<String, dynamic> json) {
+  static TweetContextAnotations? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetContextAnotations(
       domain: TweetContextAnotation.fromJson(AppJson.mapValue(json['domain'])),
       entity: TweetContextAnotation.fromJson(AppJson.mapValue(json['entity'])),
@@ -894,13 +892,13 @@ class TweetContextAnotations {
 // TweetsIncludes
 
 class TweetsIncludes {
-  final List<TwitterMedia> media;
-  final List<TwitterUser> users;
-  final List<Tweet> tweets;
+  final List<TwitterMedia>? media;
+  final List<TwitterUser>? users;
+  final List<Tweet>? tweets;
 
   TweetsIncludes({this.media, this.users, this.tweets});
 
-  static TweetsIncludes fromJson(Map<String, dynamic> json) {
+  static TweetsIncludes? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetsIncludes(
       media: TwitterMedia.listFromJson(AppJson.listValue(json['media'])),
       users: TwitterUser.listFromJson(AppJson.listValue(json['users'])),
@@ -923,25 +921,25 @@ class TweetsIncludes {
       DeepCollectionEquality().equals(o.tweets, tweets);
 
   int get hashCode =>
-    (DeepCollectionEquality().hash(media) ?? 0) ^
-    (DeepCollectionEquality().hash(users) ?? 0) ^
-    (DeepCollectionEquality().hash(tweets) ?? 0);
+    (DeepCollectionEquality().hash(media)) ^
+    (DeepCollectionEquality().hash(users)) ^
+    (DeepCollectionEquality().hash(tweets));
 }
 
 ///////////////////////
 // TwitterMedia
 
 class TwitterMedia {
-  final String key;
-  final String type;
-  final String url;
-  final String altText;
-  final int width;
-  final int height;
+  final String? key;
+  final String? type;
+  final String? url;
+  final String? altText;
+  final int? width;
+  final int? height;
   
   TwitterMedia({this.key, this.type, this.url, this.altText, this.width, this.height});
 
-  static TwitterMedia fromJson(Map<String, dynamic> json) {
+  static TwitterMedia? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TwitterMedia(
       key: AppJson.stringValue(json['media_key']),
       type: AppJson.stringValue(json['type']),
@@ -980,19 +978,19 @@ class TwitterMedia {
     (width?.hashCode ?? 0) ^
     (height?.hashCode ?? 0);
 
-  static List<TwitterMedia> listFromJson(List<dynamic> jsonList) {
-    List<TwitterMedia> result;
+  static List<TwitterMedia>? listFromJson(List<dynamic>? jsonList) {
+    List<TwitterMedia>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TwitterMedia.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TwitterMedia.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TwitterMedia> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TwitterMedia>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -1002,9 +1000,9 @@ class TwitterMedia {
     return jsonList;
   }
 
-  static TwitterMedia entryInList(List<TwitterMedia> contentList, {String key}) {
+  static TwitterMedia? entryInList(List<TwitterMedia>? contentList, {String? key}) {
     if (contentList != null) {
-      for (TwitterMedia contentEntry in contentList) {
+      for (TwitterMedia? contentEntry in contentList) {
         if (contentEntry?.key == key) {
           return contentEntry;
         }
@@ -1013,12 +1011,12 @@ class TwitterMedia {
     return null;
   }
 
-  static List<TwitterMedia> listFromKeys(List<TwitterMedia> contentList, {List<String> keys}) {
-    List<TwitterMedia> result;
+  static List<TwitterMedia>? listFromKeys(List<TwitterMedia>? contentList, {List<String>? keys}) {
+    List<TwitterMedia>? result;
     if ((contentList != null) && (keys != null)) {
       result = <TwitterMedia>[];
       for (String key in keys) {
-        result.add(entryInList(contentList, key: key));
+        AppList.add(result, entryInList(contentList, key: key));
       }
     }
     return result;
@@ -1030,26 +1028,26 @@ class TwitterMedia {
 
 class TwitterUser {
 
-  final String id;
-  final DateTime createdAtUtc;
-  final String name;
-  final String userName;
-  final String description;
-  final String url;
-  final String profileImageUrl;
-  final String location;
-  final bool protected;
-  final bool verified;
+  final String? id;
+  final DateTime? createdAtUtc;
+  final String? name;
+  final String? userName;
+  final String? description;
+  final String? url;
+  final String? profileImageUrl;
+  final String? location;
+  final bool? protected;
+  final bool? verified;
 
-  final TweeterUserPublicMetrics publicMetrics;
-  final List<TweetEntityUrl> entetityUrls;
+  final TweeterUserPublicMetrics? publicMetrics;
+  final List<TweetEntityUrl>? entetityUrls;
 
   TwitterUser({this.id, this.createdAtUtc, this.name, this.userName, this.description, this.url, this.profileImageUrl, this.location, this.protected, this.verified, this.publicMetrics, this.entetityUrls});
 
-  static TwitterUser fromJson(Map<String, dynamic> json) {
+  static TwitterUser? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
-      Map<String, dynamic> entities = AppJson.mapValue(json['entities']);
-      Map<String, dynamic> entitiesUrl = (entities != null) ? AppJson.mapValue(entities['url']) : null;
+      Map<String, dynamic>? entities = AppJson.mapValue(json['entities']);
+      Map<String, dynamic>? entitiesUrl = (entities != null) ? AppJson.mapValue(entities['url']) : null;
       return TwitterUser(
         id: AppJson.stringValue(json['id']),
         createdAtUtc: AppDateTime().dateTimeFromString(AppJson.stringValue(json['created_at']), isUtc: true),
@@ -1122,19 +1120,19 @@ class TwitterUser {
     return "<a href='https://twitter.com/$userName'>@$userName</a>";
   }
   
-  static List<TwitterUser> listFromJson(List<dynamic> jsonList) {
-    List<TwitterUser> result;
+  static List<TwitterUser>? listFromJson(List<dynamic>? jsonList) {
+    List<TwitterUser>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? TwitterUser.fromJson(jsonEntry) : null);
+        AppList.add(result, (jsonEntry is Map) ? TwitterUser.fromJson(jsonEntry as Map<String, dynamic>) : null);
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<TwitterUser> contentList) {
-    List<dynamic> jsonList;
+  static List<dynamic>? listToJson(List<TwitterUser>? contentList) {
+    List<dynamic>? jsonList;
     if (contentList != null) {
       jsonList = [];
       for (dynamic contentEntry in contentList) {
@@ -1144,9 +1142,9 @@ class TwitterUser {
     return jsonList;
   }
 
-  static TwitterUser entryInList(List<TwitterUser> contentList, {String id}) {
+  static TwitterUser? entryInList(List<TwitterUser>? contentList, {String? id}) {
     if (contentList != null) {
-      for (TwitterUser contentEntry in contentList) {
+      for (TwitterUser? contentEntry in contentList) {
         if (contentEntry?.id == id) {
           return contentEntry;
         }
@@ -1160,13 +1158,13 @@ class TwitterUser {
 // TweeterUserPublicMetrics
 
 class TweeterUserPublicMetrics {
-  final int followersCount;
-  final int followingCount;
-  final int tweetCount;
-  final int listedCount;
+  final int? followersCount;
+  final int? followingCount;
+  final int? tweetCount;
+  final int? listedCount;
   TweeterUserPublicMetrics({this.followersCount, this.followingCount, this.tweetCount, this.listedCount});
 
-  static TweeterUserPublicMetrics fromJson(Map<String, dynamic> json) {
+  static TweeterUserPublicMetrics? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweeterUserPublicMetrics(
       followersCount: AppJson.intValue(json['followers_count']),
       followingCount: AppJson.intValue(json['following_count']),
@@ -1202,14 +1200,14 @@ class TweeterUserPublicMetrics {
 // TweetsMeta
 
 class TweetsMeta {
-  final String oldestId;
-  final String newestId;
-  final String nextToken;
-  final String previousToken;
-  final int resultCount;
+  final String? oldestId;
+  final String? newestId;
+  final String? nextToken;
+  final String? previousToken;
+  final int? resultCount;
   TweetsMeta({this.newestId, this.oldestId, this.nextToken, this.previousToken, this.resultCount});
 
-  static TweetsMeta fromJson(Map<String, dynamic> json) {
+  static TweetsMeta? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? TweetsMeta(
       oldestId: AppJson.stringValue(json['oldest_id']),
       newestId: AppJson.stringValue(json['newest_id']),

@@ -31,16 +31,16 @@ enum RecentItemType{
 }
 
 class RecentItem{
-  RecentItemType recentItemType;
-  String recentTitle;
-  String recentDescripton;
-  String recentTime;
+  RecentItemType? recentItemType;
+  String? recentTitle;
+  String? recentDescripton;
+  String? recentTime;
 
-  Map<String,dynamic> recentOriginalJson;
+  Map<String,dynamic>? recentOriginalJson;
 
   RecentItem({this.recentItemType, this.recentTitle, this.recentDescripton,this.recentTime, this.recentOriginalJson});
 
-  static RecentItem fromJson(Map<String, dynamic> json){
+  static RecentItem? fromJson(Map<String, dynamic> json){
     return (json != null) ? RecentItem(
       recentItemType: recentTypeFromString(json["recent_type"]),
       recentTitle: json["recent_title"],
@@ -50,12 +50,12 @@ class RecentItem{
     ) : null;
   }
 
-  static RecentItem fromOriginalType(dynamic item){
+  static RecentItem? fromOriginalType(dynamic item){
     if(item is Event) {
       Event event = item;
       if (event != null) {
         bool recurringEvent = event.isRecurring;
-        String recentTime = recurringEvent ? event.displayRecurringDates : event.displayDateTime;
+        String? recentTime = recurringEvent ? event.displayRecurringDates : event.displayDateTime;
         RecentItem eventItem = RecentItem(
             recentItemType: RecentItemType.event,
             recentTitle: event.exploreTitle,
@@ -117,7 +117,7 @@ class RecentItem{
     return null;
   }
 
-  static RecentItem fromGuideItem(Map<String, dynamic> guideItem) {
+  static RecentItem? fromGuideItem(Map<String, dynamic>? guideItem) {
     return (guideItem != null) ? RecentItem(
       recentItemType: RecentItemType.guide,
       recentTitle: Guide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',
@@ -136,7 +136,7 @@ class RecentItem{
         'recent_original_json': recentOriginalJson,
       };
 
-  Object fromOriginalJson(){
+  Object? fromOriginalJson(){
     switch(recentItemType){
       case RecentItemType.news: return News.fromJson(recentOriginalJson);
       case RecentItemType.game: return Game.fromJson(recentOriginalJson);
@@ -148,7 +148,7 @@ class RecentItem{
     }
   }
 
-  String getIconPath() {
+  String? getIconPath() {
     switch (recentItemType) {
       case RecentItemType.news:
         return 'images/icon-news.png';
@@ -191,7 +191,7 @@ class RecentItem{
       (recentItemType?.hashCode ?? 0) ^
       (recentTime?.hashCode ?? 0);
 
-  static RecentItemType recentTypeFromString(String value){
+  static RecentItemType? recentTypeFromString(String? value){
     if("news" == value){
       return RecentItemType.news;
     }
@@ -213,7 +213,7 @@ class RecentItem{
     return null;
   }
 
-  static String recentTypeToString(RecentItemType value){
+  static String? recentTypeToString(RecentItemType? value){
     switch(value){
       case RecentItemType.news: return "news";
       case RecentItemType.game: return "game";
@@ -229,7 +229,7 @@ class RecentItem{
     List<RecentItem> result = [];
     if(items!=null && items.isNotEmpty){
       items.forEach((dynamic each){
-        RecentItem item = RecentItem.fromOriginalType(each);
+        RecentItem? item = RecentItem.fromOriginalType(each);
         if(item!=null)
           result.add(item);
       });

@@ -23,10 +23,10 @@ import 'package:illinois/utils/Utils.dart';
 typedef void MapWidgetCreatedCallback(MapController controller);
 
 class MapWidget extends StatefulWidget {
-  final MapWidgetCreatedCallback onMapCreated;
+  final MapWidgetCreatedCallback? onMapCreated;
   final dynamic creationParams;
 
-  const MapWidget({Key key, this.onMapCreated, this.creationParams}) : super(key: key);
+  const MapWidget({Key? key, this.onMapCreated, this.creationParams}) : super(key: key);
 
   @override
   _MapWidgetState createState() => _MapWidgetState();
@@ -57,13 +57,13 @@ class _MapWidgetState extends State<MapWidget> {
     if (widget.onMapCreated == null) {
       return;
     }
-    widget.onMapCreated(MapController.init(id));
+    widget.onMapCreated!(MapController.init(id));
   }
 }
 
 class MapController {
-  MethodChannel _channel;
-  int _mapId;
+  late MethodChannel _channel;
+  int? _mapId;
 
 
   MapController.init(int id) {
@@ -71,15 +71,15 @@ class MapController {
     _channel = MethodChannel('mapview_$id');
   }
 
-  int get mapId { return _mapId; }
+  int? get mapId { return _mapId; }
 
-  Future<void> placePOIs(List<dynamic> explores) async {
+  Future<void> placePOIs(List<dynamic>? explores) async {
     var options = {
       "LocationThresoldDistance": Storage().debugMapThresholdDistance
     };
     List<dynamic> jsonData = [];
     if (AppCollection.isCollectionNotEmpty(explores)) {
-      for (dynamic explore in explores) {
+      for (dynamic explore in explores!) {
         jsonData.add(explore.toJson());
       }
     }

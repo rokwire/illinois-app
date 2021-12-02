@@ -27,8 +27,8 @@ class Connectivity with Service {
 
   static const String notifyStatusChanged  = "edu.illinois.rokwire.connectivity.status.changed";
 
-  ConnectivityStatus _connectivityStatus;
-  StreamSubscription _connectivitySubscription;
+  ConnectivityStatus? _connectivityStatus;
+  StreamSubscription? _connectivitySubscription;
 
   // Singleton Factory
 
@@ -70,7 +70,7 @@ class Connectivity with Service {
   @override
   void destroyService() {
     if (_connectivitySubscription != null) {
-      _connectivitySubscription.cancel();
+      _connectivitySubscription!.cancel();
       _connectivitySubscription = null;
     }
   }
@@ -79,7 +79,7 @@ class Connectivity with Service {
     _setConnectivityStatus(_statusFromResult(result));
   }
 
-  void _setConnectivityStatus(ConnectivityStatus status) {
+  void _setConnectivityStatus(ConnectivityStatus? status) {
     if (_connectivityStatus != status) {
       _connectivityStatus = status;
       Log.d("Connectivity: ${_connectivityStatus?.toString()}" );
@@ -87,7 +87,7 @@ class Connectivity with Service {
     }
   }
 
-  ConnectivityStatus _statusFromResult(ConnectivityPlugin.ConnectivityResult result) {
+  ConnectivityStatus? _statusFromResult(ConnectivityPlugin.ConnectivityResult result) {
     switch(result) {
       case ConnectivityPlugin.ConnectivityResult.wifi: return ConnectivityStatus.wifi;
       case ConnectivityPlugin.ConnectivityResult.mobile: return ConnectivityStatus.mobile;
@@ -98,7 +98,7 @@ class Connectivity with Service {
 
   // Connectivity
 
-  ConnectivityStatus get status {
+  ConnectivityStatus? get status {
     return _connectivityStatus;
   }  
 

@@ -35,7 +35,7 @@ class HomePreferredSportsWidget extends StatefulWidget {
 
   final bool menSports;
   final bool womenSports;
-  final StreamController<void> refreshController;
+  final StreamController<void>? refreshController;
 
   HomePreferredSportsWidget({this.menSports = false, this.womenSports = false, this.refreshController});
 
@@ -47,9 +47,9 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   bool _displayPreferredSports = true;
 
-  List<SportDefinition> _menSports;
-  List<SportDefinition> _womenSports;
-  Set<String>  _sportPreferences;
+  List<SportDefinition>? _menSports;
+  List<SportDefinition>? _womenSports;
+  Set<String?>?  _sportPreferences;
 
   @override
   void initState() {
@@ -59,13 +59,13 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     ]);
 
     if (widget.refreshController != null) {
-      widget.refreshController.stream.listen((_) {
+      widget.refreshController!.stream.listen((_) {
         _refreshSports();
       });
     }
 
-    _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
-    _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+    _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
+    _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
     _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
 
     _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
@@ -97,8 +97,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   void _refreshSports(){
     if (mounted) {
       setState(() {
-        _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
-        _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences.contains(sport.shortName))))?.toList() : null;
+        _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
+        _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
         _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
       });
     }
@@ -124,7 +124,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     List<Widget> content = <Widget>[];
     if (_hasMenSports) {
       content.add(Column(children: <Widget>[
-        Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))),
+        Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))),
           child: Semantics(
             label: Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS"),
             hint: Localization().getStringEx('widget.home_prefered_sports.label.mens_sports.hint', ""), header:true, excludeSemantics: true,
@@ -133,9 +133,9 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                     Expanded(
                       flex: 5,
                       child: Text(
-                        Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS"),
+                        Localization().getStringEx('widget.home_prefered_sports.label.mens_sports', "MEN'S SPORTS")!,
                         textAlign: TextAlign.left,
-                        style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
+                        style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
                       )
                     ),
                     Visibility(visible: (!_displayPreferredSports && Auth2().privacyMatch(_minPrivacyLevel)),
@@ -153,9 +153,9 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                           } ,
                           child: Row(children: <Widget>[
                             Expanded(child:
-                            Text(Localization().getStringEx(menSelectClearTextKey, ''),
+                            Text(Localization().getStringEx(menSelectClearTextKey, '')!,
                               textAlign: TextAlign.right,
-                              style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.medium),),
+                              style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),),
                             ),
                             Padding(padding: EdgeInsets.symmetric(horizontal: 8),
                               child: Image.asset(menSelectClearImageKey),
@@ -168,7 +168,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                 ),
               )),
         ),
-        Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+        Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
           child: Column(children: _createMenSportItems(),),
         ),
         Container(height: 20,),
@@ -178,7 +178,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     if (_hasWomenSports) {
       content.add(Column(children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))),
+            decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))),
             child: Semantics(
                 label: Localization().getStringEx('widget.home_prefered_sports.label.womens_sports', "WOMEN'S SPORTS"),
                 hint: Localization().getStringEx('widget.home_prefered_sports.label.womens_sports.hint', ""),header:true, excludeSemantics: true,
@@ -187,9 +187,9 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                       Expanded(
                         flex: 5,
                         child: Text(
-                          Localization().getStringEx('widget.home_prefered_sports.label.womes_sports', "WOMEN'S SPORTS"),
+                          Localization().getStringEx('widget.home_prefered_sports.label.womes_sports', "WOMEN'S SPORTS")!,
                           textAlign: TextAlign.left,
-                          style: TextStyle(fontFamily: Styles().fontFamilies.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
+                          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),
                         ),
                       ),
 
@@ -208,8 +208,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                             },
                             child: Row(children: <Widget>[
                               Expanded(child:
-                              Text(Localization().getStringEx(womenSelectClearTextKey, ''),
-                                style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies.medium),),
+                              Text(Localization().getStringEx(womenSelectClearTextKey, '')!,
+                                style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),),
                               ),
                               Padding(padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: Image.asset(womenSelectClearImageKey),
@@ -222,7 +222,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
                   ),
                 )),
           ),
-          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors.surfaceAccent, width: 1)),
+          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
             child: Column(children: _createWomenSportItems(),),
           ),
           Container(height: 20,),
@@ -231,7 +231,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
     return Stack(alignment: Alignment.topCenter, children: <Widget>[
       Column(children: <Widget>[
-        Container(color: Styles().colors.backgroundVariant, height: 100,),
+        Container(color: Styles().colors!.backgroundVariant, height: 100,),
         Container(height: 52, decoration: BoxDecoration(image: DecorationImage(image: AssetImage("images/slant-down-right-grey.png"), fit: BoxFit.fill)),)
       ],),
       Column(
@@ -257,20 +257,20 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
     return _createSportItemsForSection(_womenSports);
   }
 
-  List<Widget> _createSportItemsForSection(List<SportDefinition> sports) {
+  List<Widget> _createSportItemsForSection(List<SportDefinition>? sports) {
     List<Widget> list = [];
 
     if(sports != null) {
       for (SportDefinition sport in sports) {
         if (list.isNotEmpty) {
-          list.add(Divider(color: Styles().colors.surfaceAccent, height: 1,));
+          list.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
         }
 
         list.add(AthleticsSportItemWidget(
           sport: sport,
           label: sport.customName,
           showChevron: true,
-          selected: (_sportPreferences != null) && _sportPreferences.contains(sport.shortName),
+          selected: (_sportPreferences != null) && _sportPreferences!.contains(sport.shortName),
           onLabelTap: () => _onTapAthleticsSportLabel(sport),
           onCheckTap: () => _onTapAthleticsSportCheckmark(sport),
         ));
@@ -287,7 +287,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   }
 
   void _onTapAthleticsSportLabel(SportDefinition sport) {
-    Analytics.instance.logSelect(target: "HomePreferedSports TapSportLabel: "+ sport.name);
+    Analytics.instance.logSelect(target: "HomePreferedSports TapSportLabel: "+ sport.name!);
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
     }
@@ -297,7 +297,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   }
 
   void _onTapAthleticsSportCheckmark(SportDefinition sport) {
-    Analytics.instance.logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name);
+    Analytics.instance.logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name!);
     AppSemantics.announceCheckBoxStateChange(context, _sportPreferences?.contains(sport.shortName) ?? false, sport?.customName);
     Auth2().prefs?.toggleSportInterest(sport.shortName);
   }
@@ -305,13 +305,13 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 }
 
 class _HomePreferredSportFilterTab extends StatelessWidget {
-  final String text;
-  final String hint;
-  final bool left;
-  final bool selected;
-  final GestureTapCallback onTap;
+  final String? text;
+  final String? hint;
+  final bool? left;
+  final bool? selected;
+  final GestureTapCallback? onTap;
 
-  _HomePreferredSportFilterTab({Key key, this.text, this.hint = '', this.left, this.selected, this.onTap}) : super(key: key);
+  _HomePreferredSportFilterTab({Key? key, this.text, this.hint = '', this.left, this.selected, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -321,14 +321,14 @@ class _HomePreferredSportFilterTab extends StatelessWidget {
         child: Semantics(label: text, hint:hint, button:true, excludeSemantics: true, child:Container(
           height: 48,
           decoration: BoxDecoration(
-            color: selected ? Colors.white : Color(0xffededed),
+            color: selected! ? Colors.white : Color(0xffededed),
             border: Border.all(color: Color(0xffc1c1c1), width: 1, style: BorderStyle.solid),
-            borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
+            borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
           ),
-          child:Center(child: Text(text,style:TextStyle(
-              fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium,
+          child:Center(child: Text(text!,style:TextStyle(
+              fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
               fontSize: 16,
-              color: Styles().colors.fillColorPrimary),
+              color: Styles().colors!.fillColorPrimary),
               overflow: TextOverflow.ellipsis,
           )),
         ),

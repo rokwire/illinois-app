@@ -31,9 +31,9 @@ class WalletSheet extends StatelessWidget{
 
   static const String initialRouteName = "initial";
 
-  final String ensureVisibleCard;
+  final String? ensureVisibleCard;
 
-  WalletSheet({Key key, this.ensureVisibleCard}) : super(key: key);
+  WalletSheet({Key? key, this.ensureVisibleCard}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class WalletSheet extends StatelessWidget{
       child: ClipRRect(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24),),
         child: Container(
-          color: Styles().colors.surface,
+          color: Styles().colors!.surface,
           child: DraggableScrollableSheet(
               maxChildSize: 0.95,
               initialChildSize: 0.95,
@@ -55,7 +55,7 @@ class WalletSheet extends StatelessWidget{
                         width: 32,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(3.5)),
-                          color: Styles().colors.mediumGray,
+                          color: Styles().colors!.mediumGray,
                         )
                     ),
                     Expanded(
@@ -77,7 +77,7 @@ class _WalletTabBarWidget extends StatefulWidget{
 
   //static const double tabBarHeight = 60;
 
-  final TabController tabController;
+  final TabController? tabController;
 
   _WalletTabBarWidget({this.tabController});
 
@@ -86,7 +86,7 @@ class _WalletTabBarWidget extends StatefulWidget{
 
 class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements NotificationsListener {
 
-  List<dynamic> _contentListCodes;
+  List<dynamic>? _contentListCodes;
 
   @override
   void initState() {
@@ -117,7 +117,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
         height: TabBarWidget.tabBarHeight,
         decoration: BoxDecoration(
             color: (Config().configEnvironment == ConfigEnvironment.dev) ? Colors.yellow : Colors.white,
-            border: Border(top: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid))),
+            border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid))),
         child: Row(
           children: _buildTabs(),
         ),
@@ -127,9 +127,9 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
 
   List<Widget> _buildTabs() {
     List<Widget> tabs = [];
-    int tabsCount = (_contentListCodes != null) ? _contentListCodes.length : 0;
+    int tabsCount = (_contentListCodes != null) ? _contentListCodes!.length : 0;
     for (int tabIndex = 0; tabIndex < tabsCount; tabIndex++) {
-      String code = _contentListCodes[tabIndex];
+      String code = _contentListCodes![tabIndex];
       if ((code == 'home') || (code == 'athletics')) {
         tabs.add(Expanded(
           child: TabWidget(
@@ -137,7 +137,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
             hint: Localization().getStringEx('tabbar.home.hint', ''),
             iconResource: 'images/tab-home.png',
             iconResourceSelected: 'images/tab-home-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
+            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(context, tabIndex),
           ),
         ));
@@ -149,7 +149,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
             hint: Localization().getStringEx('tabbar.explore.hint', ''),
             iconResource: 'images/tab-explore.png',
             iconResourceSelected: 'images/tab-explore-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
+            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(context, tabIndex),
           )
         ));
@@ -177,7 +177,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
             hint: Localization().getStringEx('tabbar.browse.hint', ''),
             iconResource: 'images/tab-browse.png',
             iconResourceSelected: 'images/tab-browse-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController.index == tabIndex),
+            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(context, tabIndex),
           ),
         ));
@@ -190,12 +190,12 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
     Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
     var rootPanel = App.instance?.panelState?.rootPanel;
     if (rootPanel != null) {
-      RootTab tab = rootPanel.panelState?.getRootTabByIndex(tabIndex);
+      RootTab? tab = rootPanel.panelState?.getRootTabByIndex(tabIndex);
       rootPanel.selectTab(rootTab: tab);
     }
   }
 
-  List<String> _getContentListCodes() {
+  List<String>? _getContentListCodes() {
     try {
       dynamic tabsList = FlexUI()['tabbar'];
       return (tabsList is List) ? tabsList.cast<String>() : null;
@@ -207,7 +207,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
   }
 
   void _updateContentListCodes() {
-    List<String> contentListCodes = _getContentListCodes();
+    List<String>? contentListCodes = _getContentListCodes();
     if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;

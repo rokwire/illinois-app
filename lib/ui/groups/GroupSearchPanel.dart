@@ -34,9 +34,9 @@ class GroupsSearchPanel extends StatefulWidget {
 }
 
 class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
-  List<Group> _groups;
+  List<Group?>? _groups;
   TextEditingController _searchController = TextEditingController();
-  String _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
+  String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
   int _resultsCount = 0;
   bool _resultsCountLabelVisible = false;
   bool _loading = false;
@@ -52,7 +52,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search"),
+        titleWidget: Text(Localization().getStringEx("panel.groups_search.header.title", "Search")!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -61,7 +61,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
         ),
       ),
       body: _buildContent(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -91,12 +91,12 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
                         onChanged: (text) => _onTextChanged(text),
                         onSubmitted: (_) => _onTapSearch(),
                         autofocus: true,
-                        cursorColor: Styles().colors.fillColorSecondary,
+                        cursorColor: Styles().colors!.fillColorSecondary,
                         keyboardType: TextInputType.text,
                         style: TextStyle(
                             fontSize: 16,
-                            fontFamily: Styles().fontFamilies.regular,
-                            color: Styles().colors.textBackground),
+                            fontFamily: Styles().fontFamilies!.regular,
+                            color: Styles().colors!.textBackground),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
@@ -131,7 +131,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
                       onTap: _onTapSearch,
                       child: Image.asset(
                         'images/icon-search.png',
-                        color: Styles().colors.fillColorSecondary,
+                        color: Styles().colors!.fillColorSecondary,
                         width: 25,
                         height: 25,
                       ),
@@ -146,12 +146,12 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
               child: RichText(
                 text: TextSpan(
                   style: TextStyle(
-                      fontSize: 20, color: Styles().colors.fillColorPrimary),
+                      fontSize: 20, color: Styles().colors!.fillColorPrimary),
                   children: <TextSpan>[
                     TextSpan(
                         text: _searchLabel,
                         style: TextStyle(
-                          fontFamily: Styles().fontFamilies.semiBold,
+                          fontFamily: Styles().fontFamilies!.semiBold,
                         )),
                   ],
                 ),
@@ -160,11 +160,11 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
             visible: _resultsCountLabelVisible,
             child: Padding(
               padding: EdgeInsets.only(left: 16, right: 16, bottom: 24),
-              child: Text(_resultsInfoText,
+              child: Text(_resultsInfoText!,
                 style: TextStyle(
                     fontSize: 16,
-                    fontFamily: Styles().fontFamilies.regular,
-                    color: Styles().colors.textBackground),
+                    fontFamily: Styles().fontFamilies!.regular,
+                    color: Styles().colors!.textBackground),
               ),
             ),
           ),
@@ -183,8 +183,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
         ),
       );
     }
-    int groupsCount = AppCollection.isCollectionNotEmpty(_groups) ? _groups.length : 0;
-    Widget groupsContent;
+    int groupsCount = AppCollection.isCollectionNotEmpty(_groups) ? _groups!.length : 0;
+    Widget? groupsContent;
     if (groupsCount > 0) {
       groupsContent = ListView.separated(
         physics: NeverScrollableScrollPhysics(),
@@ -194,7 +194,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
         ),
         itemCount: groupsCount,
         itemBuilder: (context, index) {
-          Group group = _groups[index];
+          Group? group = _groups![index];
           GroupCard groupCard = GroupCard(group: group);
           return Padding(padding: EdgeInsets.only(top: 16), child: groupCard);
         }
@@ -203,13 +203,13 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
     return groupsContent ?? Container();
   }
 
-  String get _resultsInfoText {
+  String? get _resultsInfoText {
     if (_resultsCount == 0) {
       return Localization().getStringEx('panel.groups_search.label.not_found', 'No results found');
     } else if (_resultsCount == 1) {
       return Localization().getStringEx('panel.groups_search.label.found_single', '1 result found');
     } else if (_resultsCount > 1) {
-      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found'), [_resultsCount]);
+      return sprintf(Localization().getStringEx('panel.groups_search.label.found_multi', '%d results found')!, [_resultsCount]);
     } else {
       return "";
     }
@@ -233,7 +233,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
       _groups = groups;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
+      _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ')! + _searchController.text;
       _setLoading(false);
     });
   }

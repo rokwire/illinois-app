@@ -35,35 +35,35 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final GroupPost post;
-  final GroupPost focusedReply;
-  final List<GroupPost> replyThread;
-  final Group group;
+  final GroupPost? post;
+  final GroupPost? focusedReply;
+  final List<GroupPost?>? replyThread;
+  final Group? group;
   final bool hidePostOptions;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.focusedReply, this.hidePostOptions = false, this.replyThread});
+      {required this.group, this.post, this.focusedReply, this.hidePostOptions = false, this.replyThread});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
 
-  GroupPost _post;
-  GroupPost _focusedReply;
+  GroupPost? _post;
+  GroupPost? _focusedReply;
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
   TextEditingController _mainPostController = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  String _selectedReplyId;
-  GroupPost _editingPost;
+  String? _selectedReplyId;
+  GroupPost? _editingPost;
 
   bool _editMainPost = false;
 
@@ -72,7 +72,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
-  double _sliverHeaderHeight;
+  double? _sliverHeaderHeight;
 
   @override
   void initState() {
@@ -82,7 +82,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();
@@ -108,15 +108,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             leading: HeaderBackButton(),
             title: Text(
               Localization()
-                  .getStringEx('panel.group.detail.post.header.title', 'Post'),
+                  .getStringEx('panel.group.detail.post.header.title', 'Post')!,
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
-                  fontFamily: Styles().fontFamilies.extraBold,
+                  fontFamily: Styles().fontFamilies!.extraBold,
                   letterSpacing: 1),
             ),
             centerTitle: true),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         bottomNavigationBar: TabBarWidget(),
         body: Stack(children: [
           Stack(alignment: Alignment.topCenter, children: [
@@ -129,7 +129,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 visible: !_isCreatePost,
                 child: Container(
                     key: _sliverHeaderKey,
-                    color: Styles().colors.background,
+                    color: Styles().colors!.background,
                     padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,15 +145,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           container: true,
                                           child: Text(
                                             AppString.getDefaultEmptyString(
-                                                value: _post?.subject),
+                                                value: _post?.subject)!,
                                             maxLines: 5,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                                 fontFamily:
-                                                    Styles().fontFamilies.bold,
+                                                    Styles().fontFamilies!.bold,
                                                 fontSize: 24,
                                                 color: Styles()
-                                                    .colors
+                                                    .colors!
                                                     .fillColorPrimary)))),
                                     Visibility(
                                         visible: _isEditPostVisible && !widget.hidePostOptions,
@@ -262,7 +262,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostContent() {
-    List<GroupPost> replies;
+    List<GroupPost?>? replies;
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
@@ -295,13 +295,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
                               child: Text(
                                   AppString.getDefaultEmptyString(
-                                      value: _post?.member?.name ),
+                                      value: _post?.member?.name )!,
                                   style: TextStyle(
                                       fontFamily:
-                                      Styles().fontFamilies.medium,
+                                      Styles().fontFamilies!.medium,
                                       fontSize: 20,
                                       color: Styles()
-                                          .colors
+                                          .colors!
                                           .fillColorPrimary)))),
                       Semantics(
                           sortKey: OrdinalSortKey(3),
@@ -310,14 +310,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 3, right: _outerPadding),
                               child: Text(
                                   AppString.getDefaultEmptyString(
-                                      value: _post?.displayDateTime),
+                                      value: _post?.displayDateTime)!,
                                   semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
-                                      Styles().fontFamilies.medium,
+                                      Styles().fontFamilies!.medium,
                                       fontSize: 16,
                                       color: Styles()
-                                          .colors
+                                          .colors!
                                           .fillColorPrimary)))),
                       Visibility(visible: !_editMainPost,
                         child: Semantics(
@@ -326,8 +326,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                             data: AppString.getDefaultEmptyString(value: _post?.body),
                             style: {
                               "body": Style(
-                                  color: Styles().colors.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies.regular,
+                                  color: Styles().colors!.fillColorPrimary,
+                                  fontFamily: Styles().fontFamilies!.regular,
                                   fontSize: FontSize(20))
                             },
                             onLinkTap: (url, context, attributes, element) =>
@@ -348,21 +348,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             hintText: "Edit the post",
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
+                                                    color: Styles().colors!.mediumGray!,
                                                     width: 0.0))),
                                         style: TextStyle(
-                                            color: Styles().colors.textBackground,
+                                            color: Styles().colors!.textBackground,
                                             fontSize: 16,
-                                            fontFamily: Styles().fontFamilies.regular))),
+                                            fontFamily: Styles().fontFamilies!.regular))),
                                 Row(children: [
                                   Flexible(
                                       flex: 1,
                                       child: RoundedButton(
                                           label:
                                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
-                                          borderColor: Styles().colors.fillColorSecondary,
-                                          textColor: Styles().colors.fillColorPrimary,
-                                          backgroundColor: Styles().colors.white,
+                                          borderColor: Styles().colors!.fillColorSecondary,
+                                          textColor: Styles().colors!.fillColorPrimary,
+                                          backgroundColor: Styles().colors!.white,
                                           onTap: _onTapSave)),
                                   ])
 
@@ -377,10 +377,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             ])));
   }
   
-  List<GroupPost> _generateFocusedThreadList(){
-    List<GroupPost> result = [];
+  List<GroupPost?> _generateFocusedThreadList(){
+    List<GroupPost?> result = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
-      result.addAll(widget.replyThread);
+      result.addAll(widget.replyThread!);
     }
     if(_focusedReply!=null){
       result.add(_focusedReply);
@@ -407,11 +407,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         Text(
                             Localization().getStringEx(
                                 'panel.group.detail.post.create.subject.label',
-                                'Subject'),
+                                'Subject')!,
                             style: TextStyle(
                                 fontSize: 18,
-                                fontFamily: Styles().fontFamilies.bold,
-                                color: Styles().colors.fillColorPrimary)),
+                                fontFamily: Styles().fontFamilies!.bold,
+                                color: Styles().colors!.fillColorPrimary)),
                         Padding(
                             padding: EdgeInsets.only(top: 8),
                             child: TextField(
@@ -423,12 +423,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                         'Write a Subject'),
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Styles().colors.mediumGray,
+                                            color: Styles().colors!.mediumGray!,
                                             width: 0.0))),
                                 style: TextStyle(
-                                    color: Styles().colors.textBackground,
+                                    color: Styles().colors!.textBackground,
                                     fontSize: 16,
-                                    fontFamily: Styles().fontFamilies.regular)))
+                                    fontFamily: Styles().fontFamilies!.regular)))
                       ])),
               Padding(
                   padding: EdgeInsets.only(top: _isCreatePost ? 16 : 0),
@@ -460,12 +460,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 child: Text(
                                     Localization().getStringEx(
                                         'panel.group.detail.post.create.link.label',
-                                        'Link'),
+                                        'Link')!,
                                     style: TextStyle(
                                         fontSize: 20,
                                         color: Colors.black,
                                         fontFamily:
-                                            Styles().fontFamilies.medium)))))
+                                            Styles().fontFamilies!.medium)))))
                       ])),
               Padding(
                   padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
@@ -480,12 +480,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               "Write a Reply ...")),
                           border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Styles().colors.mediumGray,
+                                  color: Styles().colors!.mediumGray!,
                                   width: 0.0))),
                       style: TextStyle(
-                          color: Styles().colors.textBackground,
+                          color: Styles().colors!.textBackground,
                           fontSize: 16,
-                          fontFamily: Styles().fontFamilies.regular))),
+                          fontFamily: Styles().fontFamilies!.regular))),
               Row(children: [
                 Flexible(
                     flex: 1,
@@ -493,9 +493,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: (_editingPost != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         onTap: _onTapSend)),
                 Container(width: 20),
                 Flexible(
@@ -504,22 +504,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: Localization().getStringEx(
                             'panel.group.detail.post.create.button.cancel.title',
                             'Cancel'),
-                        borderColor: Styles().colors.textSurface,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.textSurface,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         onTap: _onTapCancel))
               ])
             ])));
   }
 
   Widget _buildRepliesWidget(
-      {List<GroupPost> replies,
+      {List<GroupPost?>? replies,
       double leftPaddingOffset = 0,
       bool nestedReply = false,
       bool showRepliesCount = true,
-      String focusedReplyId,
+      String? focusedReplyId,
       }) {
-    List<GroupPost> visibleReplies = _getVisibleReplies(replies);
+    List<GroupPost?>? visibleReplies = _getVisibleReplies(replies);
     if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
     }
@@ -529,13 +529,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       replyWidgetList.add(Container(height: 8,));
     }
 
-    for (int i = 0; i < visibleReplies.length; i++) {
+    for (int i = 0; i < visibleReplies!.length; i++) {
       if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
       }
-      GroupPost reply = visibleReplies[i];
-      String optionsIconPath;
-      Function optionsFunctionTap;
+      GroupPost? reply = visibleReplies[i];
+      String? optionsIconPath;
+      Function? optionsFunctionTap;
       if (_isReplyVisible) {
         optionsIconPath = 'images/icon-groups-options-orange.png';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
@@ -585,12 +585,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-                color: Styles().colors.fillColorPrimary,
+                color: Styles().colors!.fillColorPrimary,
                 child: Text("Replies",
                     style: TextStyle(
                         fontSize: 18,
-                        fontFamily: Styles().fontFamilies.medium,
-                        color: Styles().colors.white)
+                        fontFamily: Styles().fontFamilies!.medium,
+                        color: Styles().colors!.white)
                 ),
               )
         )
@@ -598,20 +598,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     ));
   }
 
-  void _sortReplies(List<GroupPost> replies){
+  void _sortReplies(List<GroupPost?>? replies){
     if(AppCollection.isCollectionNotEmpty(replies)) {
       try {
-        replies.sort((post1, post2) =>
-            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
+        replies!.sort((post1, post2) =>
+            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc!));
       } catch (e) {}
     }
   }
 
-  void _onTapReplyCard(GroupPost reply){
+  void _onTapReplyCard(GroupPost? reply){
     Analytics().logSelect(target: 'Reply Card');
-    List<GroupPost> thread = [];
+    List<GroupPost?> thread = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
-      thread.addAll(widget.replyThread);
+      thread.addAll(widget.replyThread!);
     }
     if(_focusedReply!=null) {
       thread.add(_focusedReply);
@@ -619,15 +619,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
 
-  List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
+  List<GroupPost?>? _getVisibleReplies(List<GroupPost?>? replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
-    List<GroupPost> visibleReplies = [];
+    List<GroupPost?> visibleReplies = [];
     bool currentUserIsMemberOrAdmin =
         widget.group?.currentUserIsMemberOrAdmin ?? false;
-    for (GroupPost reply in replies) {
-      bool replyVisible = (reply.private == false) ||
+    for (GroupPost? reply in replies!) {
+      bool replyVisible = (reply!.private == false) ||
           (reply.private == null) ||
           currentUserIsMemberOrAdmin;
       if (replyVisible) {
@@ -638,9 +638,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _evalSliverHeaderHeight() {
-    double sliverHeaderHeight;
+    double? sliverHeaderHeight;
     try {
-      final RenderObject renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
         sliverHeaderHeight = renderBox.size.height;
       }
@@ -659,17 +659,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.delete.confirm.msg',
-            'Are you sure that you want to delete this post?')),
+            'Are you sure that you want to delete this post?')!),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost();
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -690,11 +690,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  void _onTapReplyOptions(GroupPost reply) {
+  void _onTapReplyOptions(GroupPost? reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
         context: context,
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors!.white,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(
@@ -742,24 +742,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         });
   }
 
-  void _onTapDeleteReply(GroupPost reply) {
+  void _onTapDeleteReply(GroupPost? reply) {
     Analytics().logSelect(target: 'Delete Reply');
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.reply.delete.confirm.msg',
-            'Are you sure that you want to delete this reply?')),
+            'Are you sure that you want to delete this reply?')!),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
                 Navigator.of(context).pop();
@@ -767,7 +767,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]);
   }
 
-  void _deleteReply(GroupPost reply) {
+  void _deleteReply(GroupPost? reply) {
     _setLoading(true);
     _clearSelectedReplyId();
     Groups().deletePost(widget.group?.id, reply).then((succeeded) {
@@ -788,7 +788,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapPostReply({GroupPost reply}) {
+  void _onTapPostReply({GroupPost? reply}) {
     Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
     if (mounted) {
@@ -802,7 +802,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapEdit(){
     if(mounted){
-      _mainPostController.text = _post.body;
+      _mainPostController.text = _post!.body!;
       setState(() {
         _editMainPost = true;
       });
@@ -812,14 +812,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapSave(){
     String body = _mainPostController.text;
     if (AppString.isStringEmpty(body)) {
-      String validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
+      String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
     String htmlModifiedBody = _replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post!.id, subject: _post!.subject, body: htmlModifiedBody, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _editMainPost = false;
       _setLoading(false);
@@ -827,18 +827,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   }
 
-  void _onTapEditPost({GroupPost reply}) {
+  void _onTapEditPost({GroupPost? reply}) {
     Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
       setState(() {
         _editingPost = reply;
       });
-      _bodyController.text = (reply ?? _post)?.body;
+      _bodyController.text = (reply ?? _post)?.body!;
       _scrollToPostEdit();
     }
   }
 
-  void _onTapPostLink(String url) {
+  void _onTapPostLink(String? url) {
     Analytics.instance.logSelect(target: 'link');
     if (AppString.isStringNotEmpty(url)) {
       Navigator.push(context,
@@ -850,9 +850,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
-        _post = posts.firstWhere((post) => (post.id == _post?.id), orElse: (){ return null; });
+        _post = posts!.firstWhere((post) => (post!.id == _post?.id), orElse: (){ return null; });
         _sortReplies(_post?.replies);
-        GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
+        GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
           setState(() {
             _focusedReply = updatedReply;
@@ -866,18 +866,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  GroupPost deepFindPost(List<GroupPost> posts, String id){
+  GroupPost? deepFindPost(List<GroupPost?>? posts, String? id){
     if(AppCollection.isCollectionEmpty(posts) || AppString.isStringEmpty(id)){
       return null;
     }
 
-    GroupPost result;
-    for(GroupPost post in posts){
+    GroupPost? result;
+    for(GroupPost? post in posts!){
       if(post?.id == id){
         result = post;
         break;
       } else {
-        result = deepFindPost(post.replies, id);
+        result = deepFindPost(post!.replies, id);
         if(result!=null){
           break;
         }
@@ -912,7 +912,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
-    String subject;
+    String? subject;
     if (_isCreatePost) {
       subject = _subjectController.text;
       if (AppString.isStringEmpty(subject)) {
@@ -927,7 +927,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     String body = _bodyController.text;
     if (AppString.isStringEmpty(body)) {
-      String validationMsg = (_isCreatePost || (_editingPost != null))
+      String? validationMsg = (_isCreatePost || (_editingPost != null))
           ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
           : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -937,20 +937,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingPost != null) {
-      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, body: body, private: true);
+      GroupPost postToUpdate = GroupPost(id: _editingPost!.id, subject: _editingPost!.subject, body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
-      String parentId;
+      String? parentId;
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
       else if (_focusedReply != null) {
-        parentId = _focusedReply.id;
+        parentId = _focusedReply!.id;
       }
       else if (_post != null) {
-        parentId = _post.id;
+        parentId = _post!.id;
       }
       
       GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true);
@@ -1008,7 +1008,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     int linkStartPosition = _bodyController.selection.start;
     int linkEndPosition = _bodyController.selection.end;
     _linkTextController.text = AppString.getDefaultEmptyString(
-        value: _bodyController.selection?.textInside(_bodyController.text));
+        value: _bodyController.selection?.textInside(_bodyController.text))!;
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: _buildLinkDialog(),
@@ -1018,14 +1018,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 Analytics().logSelect(target: 'Set Link Url');
                 _onTapOkLink(linkStartPosition, linkEndPosition);
               },
-              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
+              child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!)),
           TextButton(
               onPressed: () {
                 Analytics().logSelect(target: 'Cancel');
                 Navigator.of(context).pop();
               },
               child: Text(
-                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
+                  Localization().getStringEx('dialog.cancel.title', 'Cancel')!))
         ]);
   }
 
@@ -1037,21 +1037,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           Text(
               Localization().getStringEx(
                   'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link'),
+                  'Edit Link')!,
               style: TextStyle(
                   fontSize: 20,
-                  color: Styles().colors.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies.medium)),
+                  color: Styles().colors!.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies!.medium)),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:'),
+                      'Link Text:')!,
                   style: TextStyle(
                       fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
+                      fontFamily: Styles().fontFamilies!.regular,
+                      color: Styles().colors!.fillColorPrimary))),
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
@@ -1060,21 +1060,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
+                              color: Styles().colors!.mediumGray!, width: 0.0))),
                   style: TextStyle(
-                      color: Styles().colors.textBackground,
+                      color: Styles().colors!.textBackground,
                       fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
+                      fontFamily: Styles().fontFamilies!.regular))),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:'),
+                      'Link URL:')!,
                   style: TextStyle(
                       fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
+                      fontFamily: Styles().fontFamilies!.regular,
+                      color: Styles().colors!.fillColorPrimary))),
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
@@ -1083,11 +1083,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
+                              color: Styles().colors!.mediumGray!, width: 0.0))),
                   style: TextStyle(
-                      color: Styles().colors.textBackground,
+                      color: Styles().colors!.textBackground,
                       fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular)))
+                      fontFamily: Styles().fontFamilies!.regular)))
         ]);
   }
 
@@ -1129,15 +1129,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _scrollToPostEdit() {
 
-    BuildContext postEditContext = _postEditKey?.currentContext;
+    BuildContext? postEditContext = _postEditKey?.currentContext;
     //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
-    RenderObject renderObject = postEditContext?.findRenderObject();
-    RenderAbstractViewport viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
-    double postEditTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
+    RenderObject renderObject = postEditContext?.findRenderObject()!;
+    RenderAbstractViewport? viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
+    double? postEditTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
 
-    BuildContext scrollContainerContext = _scrollContainerKey?.currentContext;
-    RenderObject scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
-    double scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size?.height : null;
+    BuildContext? scrollContainerContext = _scrollContainerKey?.currentContext;
+    RenderObject? scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
+    double? scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size?.height : null;
 
     if ((scrollContainerHeight != null) && (postEditTop != null)) {
       double offset = postEditTop - scrollContainerHeight + 120;
@@ -1165,11 +1165,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return value;
   }
 
-  bool _isEditVisible(GroupPost post) {
+  bool _isEditVisible(GroupPost? post) {
     return _isCurrentUserCreator(post);
   }
 
-  bool _isDeleteVisible(GroupPost item) {
+  bool _isDeleteVisible(GroupPost? item) {
     if (widget.group?.currentUserIsAdmin ?? false) {
       return true;
     } else if (widget.group?.currentUserIsMember ?? false) {
@@ -1179,13 +1179,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  bool _isDeleteReplyVisible(GroupPost reply) {
+  bool _isDeleteReplyVisible(GroupPost? reply) {
     return _isDeleteVisible(reply);
   }
 
-  bool _isCurrentUserCreator(GroupPost item) {
-    String currentMemberEmail = widget.group?.currentUserAsMember?.userId;
-    String itemMemberUserId = item?.member?.userId;
+  bool _isCurrentUserCreator(GroupPost? item) {
+    String? currentMemberEmail = widget.group?.currentUserAsMember?.userId;
+    String? itemMemberUserId = item?.member?.userId;
     return AppString.isStringNotEmpty(currentMemberEmail) &&
         AppString.isStringNotEmpty(itemMemberUserId) &&
         (currentMemberEmail == itemMemberUserId);
@@ -1220,13 +1220,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 class _FontIcon extends StatelessWidget {
   final Function onTap;
   final String iconPath;
-  final String buttonLabel;
-  _FontIcon({@required this.onTap, @required this.iconPath, this.buttonLabel});
+  final String? buttonLabel;
+  _FontIcon({required this.onTap, required this.iconPath, this.buttonLabel});
 
   @override
   Widget build(BuildContext context) {
     return Semantics(button: true, label: buttonLabel,
       child:GestureDetector(
-        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
+        onTap: onTap as void Function()?, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
   }
 }

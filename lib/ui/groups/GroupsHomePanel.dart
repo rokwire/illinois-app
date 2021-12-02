@@ -40,38 +40,38 @@ enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
+  final String? _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
   bool _myGroupsSelected = true;
 
-  List<Group> _allGroups;
-  List<Group> _myGroups;
-  List<Group> _myPendingGroups;
+  List<Group?>? _allGroups;
+  List<Group?>? _myGroups;
+  List<Group?>? _myPendingGroups;
 
-  String _selectedCategory;
-  List<String> _categories;
+  String? _selectedCategory;
+  List<String?>? _categories;
 
-  _TagFilter _selectedTagFilter = _TagFilter.all;
+  _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;
 
   //TBD: this filtering has to be done on the server side.
-  List<Group> _getFilteredAllGroupsContent() {
+  List<Group?>? _getFilteredAllGroupsContent() {
     if (AppCollection.isCollectionEmpty(_allGroups)) {
       return _allGroups;
     }
     // Filter By Category
-    String selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    List<Group> filteredGroups = _allGroups;
+    String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
+    List<Group?>? filteredGroups = _allGroups;
     if (AppString.isStringNotEmpty(selectedCategory)) {
-      filteredGroups = _allGroups.where((group) => (selectedCategory == group.category)).toList();
+      filteredGroups = _allGroups!.where((group) => (selectedCategory == group!.category)).toList();
     }
     // Filter by User Tags
     if (_selectedTagFilter == _TagFilter.my) {
-      Set<String> userTags = Auth2().prefs?.positiveTags;
+      Set<String>? userTags = Auth2().prefs?.positiveTags;
       if (AppCollection.isCollectionNotEmpty(userTags) && AppCollection.isCollectionNotEmpty(filteredGroups)) {
-        filteredGroups = filteredGroups.where((group) => group.tags?.any((tag) => userTags.contains(tag)) ?? false).toList();
+        filteredGroups = filteredGroups!.where((group) => group!.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
       }
     }
 
@@ -97,7 +97,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  List<dynamic> get _activeFilterList {
+  List<dynamic>? get _activeFilterList {
     switch (_activeFilterType) {
       case _FilterType.category:
         return _categories;
@@ -128,14 +128,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _isGroupsLoading = true;
     });
 
-    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group> groups) {
+    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group?>? groups) {
       if (mounted) {
         if (groups != null) {
           // Initial request succeded
-          List<Group> sortedGroups = _sortGroups(groups);
+          List<Group?> sortedGroups = _sortGroups(groups);
           if (_myGroupsSelected) {
-            List<Group> myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
-            List<Group> myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+            List<Group?> myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
+            List<Group?> myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
             if (myGroups.isNotEmpty || myPendingGroups.isNotEmpty) {
               // Non-Empty My Groups content => apply it
               setState(() {
@@ -146,11 +146,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             }
             else {
               // Empty My Groups content => Load All Groups content
-              Groups().loadGroups(myGroups: false).then((List<Group> groups2) {
+              Groups().loadGroups(myGroups: false).then((List<Group?>? groups2) {
                 if (mounted) {
                   if (groups2 != null) {
                     // Empty My Groups content; All Groups request succeded => apply everything collected + switch tab seletion
-                    List<Group> allGroups = _sortGroups(groups2);
+                    List<Group?> allGroups = _sortGroups(groups2);
                     setState(() {
                       _isGroupsLoading = false;
                       _myGroupsSelected = false;
@@ -211,10 +211,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isGroupsLoading = true;
     });
-    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group> groups) {
+    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group?>? groups) {
       if (mounted) {
         if (groups != null) {
-          List<Group> sortedGroups = _sortGroups(groups);
+          List<Group?> sortedGroups = _sortGroups(groups);
           if (_myGroupsSelected) {
             setState(() {
               _isGroupsLoading = false;
@@ -242,11 +242,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isFilterLoading = true;
     });
-    List<String> categories = [];
+    List<String?> categories = [];
     categories.add(_allCategoriesValue);
-    List<String> groupCategories = await Groups().loadCategories();
+    List<String?>? groupCategories = await Groups().loadCategories();
     if (AppCollection.isCollectionNotEmpty(groupCategories)) {
-      categories.addAll(groupCategories);
+      categories.addAll(groupCategories!);
     }
     _categories = categories;
     _selectedCategory = _allCategoriesValue;
@@ -256,22 +256,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  List<Group> _sortGroups(List<Group> groups) {
+  List<Group?> _sortGroups(List<Group?> groups) {
     if (AppCollection.isCollectionEmpty(groups)) {
       return groups;
     }
     groups.sort((group1, group2) {
-      int cmp = group1.category.compareTo(group2.category);
+      int cmp = group1!.category!.compareTo(group2!.category!);
       if (cmp != 0) {
         return cmp;
       } else {
-        return group1.title.compareTo(group2.title);
+        return group1.title!.compareTo(group2.title!);
       }
     });
     return groups;
   }
 
-  static String _tagFilterToDisplayString(_TagFilter tagFilter) {
+  static String? _tagFilterToDisplayString(_TagFilter? tagFilter) {
     switch (tagFilter) {
       case _TagFilter.all:
         return Localization().getStringEx('panel.groups_home.filter.tag.all.label', 'All Tags');
@@ -287,11 +287,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.groups_home.label.heading","Groups"),
+        titleWidget: Text(Localization().getStringEx("panel.groups_home.label.heading","Groups")!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
-              fontFamily: Styles().fontFamilies.extraBold,
+              fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1.0),
         ),
       ),
@@ -300,11 +300,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         _buildFilterButtons(),
         Expanded(
           child: _isLoading
-              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary), ),)
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
               : Stack(
             alignment: AlignmentDirectional.topCenter,
             children: <Widget>[
-              Container(color: Styles().colors.background, child:
+              Container(color: Styles().colors!.background, child:
                 RefreshIndicator(onRefresh: _onPullToRefresh, child: 
                   SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
                     Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
@@ -322,14 +322,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           ),
         ),
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
 
   Widget _buildTabs(){
     return Container(
-      color: Styles().colors.fillColorPrimary,
+      color: Styles().colors!.fillColorPrimary,
       padding: EdgeInsets.symmetric(horizontal: 10),
       child:
       Row(children: [
@@ -364,7 +364,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       ? Container()
       : Container(
         width: double.infinity,
-        color: Styles().colors.white,
+        color: Styles().colors!.white,
         child: Padding(
             padding: const EdgeInsets.only(left: 6, right: 16, bottom: 13),
             child: Row(
@@ -403,7 +403,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   IconButton(
                     icon: Image.asset(
                       'images/icon-search.png',
-                      color: Styles().colors.fillColorSecondary,
+                      color: Styles().colors!.fillColorSecondary,
                       excludeFromSemantics: true,
                       width: 25,
                       height: 25,
@@ -422,12 +422,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildFilterContent() {
     return _buildFilterContentEx(
-        itemCount: _activeFilterList.length,
+        itemCount: _activeFilterList!.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
             label: AppString.getDefaultEmptyString(value: _getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
-            onTap: ()=> _onTapFilterEntry(_activeFilterList[index]),
+            onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
             selectedIconRes: "images/checkbox-selected.png",
             unselectedIconRes: "images/oval-orange.png"
           );
@@ -436,40 +436,40 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool _isFilterItemSelected(int filterListIndex) {
-    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList.length) {
+    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
       return false;
     }
     switch (_activeFilterType) {
       case _FilterType.category:
-        return (_selectedCategory == _activeFilterList[filterListIndex]);
+        return (_selectedCategory == _activeFilterList![filterListIndex]);
       case _FilterType.tags:
-        return (_selectedTagFilter == _activeFilterList[filterListIndex]);
+        return (_selectedTagFilter == _activeFilterList![filterListIndex]);
       default:
         return false;
     }
   }
 
-  String _getFilterItemLabel(int filterListIndex) {
-    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList.length) {
+  String? _getFilterItemLabel(int filterListIndex) {
+    if (AppCollection.isCollectionEmpty(_activeFilterList) || filterListIndex >= _activeFilterList!.length) {
       return null;
     }
     switch (_activeFilterType) {
       case _FilterType.category:
-        return _activeFilterList[filterListIndex];
+        return _activeFilterList![filterListIndex];
       case _FilterType.tags:
-        return _tagFilterToDisplayString(_activeFilterList[filterListIndex]);
+        return _tagFilterToDisplayString(_activeFilterList![filterListIndex]);
       default:
         return null;
     }
   }
 
-  Widget _buildFilterContentEx({@required int itemCount, @required IndexedWidgetBuilder itemBuilder}){
+  Widget _buildFilterContentEx({required int itemCount, required IndexedWidgetBuilder itemBuilder}){
 
     return Semantics(child:Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40),
         child: Semantics(child:Container(
           decoration: BoxDecoration(
-            color: Styles().colors.fillColorSecondary,
+            color: Styles().colors!.fillColorSecondary,
             borderRadius: BorderRadius.circular(5.0),
           ),
           child: Padding(
@@ -480,7 +480,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 shrinkWrap: true,
                 separatorBuilder: (context, index) => Divider(
                   height: 1,
-                  color: Styles().colors.fillColorPrimaryTransparent03,
+                  color: Styles().colors!.fillColorPrimaryTransparent03,
                 ),
                 itemCount: itemCount,
                 itemBuilder: itemBuilder,
@@ -504,15 +504,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildMyGroupsContent(){
     if (AppCollection.isCollectionEmpty(_myGroups) && AppCollection.isCollectionEmpty(_myPendingGroups)) {
       String text = ((_myGroups != null) && (_myPendingGroups != null)) ?
-        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet") :
-        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
+        Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet")! :
+        Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups")!;
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: Text(text,
           style: TextStyle(
-              fontFamily: Styles().fontFamilies.regular,
+              fontFamily: Styles().fontFamilies!.regular,
               fontSize: 16,
-              color: Styles().colors.textBackground
+              color: Styles().colors!.textBackground
           ),
         ),
       );
@@ -529,7 +529,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     List<Widget> widgets = [];
     if(AppCollection.isCollectionNotEmpty(_myGroups)) {
       widgets.add(Container(height: 8,));
-      for (Group group in _myGroups) {
+      for (Group? group in _myGroups!) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup),
@@ -547,17 +547,17 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       widgets.add(
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"),
+          child: Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending")!,
             style: TextStyle(
-                fontFamily: Styles().fontFamilies.bold,
+                fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 20,
-                color: Styles().colors.fillColorPrimary
+                color: Styles().colors!.fillColorPrimary
             ),
           )
         )
       );
       widgets.add(Container(height: 8,));
-      for (Group group in _myPendingGroups) {
+      for (Group? group in _myPendingGroups!) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
@@ -567,14 +567,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         Stack(children: [
           Container(
             height: 112,
-            color: Styles().colors.backgroundVariant,
+            color: Styles().colors!.backgroundVariant,
             child:
             Column(children: [
               Container(height: 80,),
               Container(
                 height: 32,
                 child: CustomPaint(
-                  painter: TrianglePainter(painterColor: Styles().colors.background),
+                  painter: TrianglePainter(painterColor: Styles().colors!.background),
                   child: Container(),
                 )
               ),
@@ -589,11 +589,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group> filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
+    List<Group?>? filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
     if(AppCollection.isCollectionNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
-      for(Group group in filteredGroups){
+      for(Group? group in filteredGroups!){
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GroupCard(group: group),
@@ -602,11 +602,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Column(children: widgets,);
     }
     else{
-      String text;
+      String? text;
       if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
-      else if (_allGroups.isEmpty) {
+      else if (_allGroups!.isEmpty) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
       }
       else {
@@ -614,11 +614,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30),
-        child: Text(text,
+        child: Text(text!,
           style: TextStyle(
-            fontFamily: Styles().fontFamilies.regular,
+            fontFamily: Styles().fontFamilies!.regular,
             fontSize: 16,
-            color: Styles().colors.textBackground
+            color: Styles().colors!.textBackground
           ),
         ),
       );
@@ -633,7 +633,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   void _onTapFilterEntry(dynamic entry) {
-    String analyticsTarget;
+    String? analyticsTarget;
     switch (_activeFilterType) {
       case _FilterType.category:
         _selectedCategory = entry;
@@ -673,9 +673,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics.instance.logSelect(target: "Pull To Refresh");
-    List<Group> groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
+    List<Group?>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
     if (mounted && (groups != null)) {
-      List<Group> sortedGroups = _sortGroups(groups);
+      List<Group?> sortedGroups = _sortGroups(groups);
       setState(() {
         if (_myGroupsSelected) {
           _myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
@@ -710,13 +710,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 }
 
 class _GroupTabButton extends StatelessWidget{
-  final String title;
+  final String? title;
   final String hint;
-  final Image rightIcon;
+  final Image? rightIcon;
   final GestureDragCancelCallback onTap;
   final bool selected;
 
-  _GroupTabButton({@required this.title, @required this.hint, this.rightIcon, @required this.onTap, this.selected = false});
+  _GroupTabButton({required this.title, required this.hint, this.rightIcon, required this.onTap, this.selected = false});
 
   @override
   Widget build(BuildContext context) {
@@ -736,11 +736,11 @@ class _GroupTabButton extends StatelessWidget{
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      title,
+                      title!,
                       style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
+                        fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 16,
-                        color: Styles().colors.white,
+                        color: Styles().colors!.white,
                       ),
                     ),
                   ),
@@ -748,7 +748,7 @@ class _GroupTabButton extends StatelessWidget{
                     left: 0, right: 0, bottom: 0,
                     child: Visibility(
                       visible: selected,
-                      child: Container(height: 4, color: Styles().colors.fillColorSecondary,)
+                      child: Container(height: 4, color: Styles().colors!.fillColorSecondary,)
                     ),
                   )
                 ],

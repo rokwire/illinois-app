@@ -34,33 +34,33 @@ class LaundryService /* with Service */ {
 
   LaundryService._internal();
 
-  Future<List<LaundryRoom>> getRoomData() async {
-    Map<String, Location> locationMapping = _loadLaundryLocationMapping();
+  Future<List<LaundryRoom>?> getRoomData() async {
+    Map<String?, Location?>? locationMapping = _loadLaundryLocationMapping();
     bool mappingExists =
         ((locationMapping != null) && locationMapping.isNotEmpty);
-    List<LaundryRoom> rooms;
+    List<LaundryRoom>? rooms;
     final roomDataUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getRoomData" : null;
     final response = await Network().get(roomDataUrl);
-    String responseBody = response?.body;
+    String? responseBody = response?.body;
     if (response?.statusCode == 200) {
-      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
+      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
       if (laundryRoomsXml != null) {
         rooms = [];
         laundryRoomsXml.map((xml.XmlElement item) {
-          String location = _getValueFromXmlItem(item.findElements("location"));
-          String campusName =
+          String? location = _getValueFromXmlItem(item.findElements("location"));
+          String? campusName =
               _getValueFromXmlItem(item.findElements("campus_name"));
-          String name =
+          String? name =
               _getValueFromXmlItem(item.findElements("laundry_room_name"));
-          String statusValue = _getValueFromXmlItem(item.findElements("status"));
-          Location roomLocationDetails;
+          String? statusValue = _getValueFromXmlItem(item.findElements("status"));
+          Location? roomLocationDetails;
           if (mappingExists) {
             roomLocationDetails = locationMapping[location];
           }
-          LaundryRoomStatus roomStatus =
+          LaundryRoomStatus? roomStatus =
               LaundryRoom.roomStatusFromString(statusValue);
-          rooms.add(LaundryRoom(
+          rooms!.add(LaundryRoom(
               id: location,
               campusName: campusName,
               title: name,
@@ -75,24 +75,24 @@ class LaundryService /* with Service */ {
     return rooms;
   }
 
-  Future<LaundryRoomAvailability> getNumAvailable(String laundryLocation) async {
+  Future<LaundryRoomAvailability?> getNumAvailable(String? laundryLocation) async {
     if (AppString.isStringEmpty(laundryLocation)) {
       return null;
     }
     final availabilityUrl = (Config().laundryHostUrl != null) ? "${Config().laundryHostUrl}school?api_key=${Config().laundryApiKey}&method=getNumAvailable" : null;
     final response = await Network().get(availabilityUrl);
-    String responseBody = response?.body;
+    String? responseBody = response?.body;
     if (response?.statusCode == 200) {
       final String undefinedValue = 'undefined';
       final String zeroValue = '0';
-      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
+      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
       if (laundryRoomsXml != null) {
         for (xml.XmlElement item in laundryRoomsXml) {
-          String location = _getValueFromXmlItem(item.findElements("location"));
+          String? location = _getValueFromXmlItem(item.findElements("location"));
           if (laundryLocation == location) {
-            String availableWashers = _getValueFromXmlItem(item.findElements("available_washers"));
-            String availableDryers = _getValueFromXmlItem(item.findElements("available_dryers"));
+            String? availableWashers = _getValueFromXmlItem(item.findElements("available_washers"));
+            String? availableDryers = _getValueFromXmlItem(item.findElements("available_dryers"));
             if (undefinedValue == availableWashers) {
               availableWashers = zeroValue;
             }
@@ -112,35 +112,35 @@ class LaundryService /* with Service */ {
     return null;
   }
 
-  Future<List<LaundryRoomAppliance>> getAppliances(
-      String laundryRoomLocation) async {
+  Future<List<LaundryRoomAppliance>?> getAppliances(
+      String? laundryRoomLocation) async {
     if (AppString.isStringEmpty(laundryRoomLocation)) {
       return null;
     }
-    List<LaundryRoomAppliance> laundryRoomAppliances;
+    List<LaundryRoomAppliance>? laundryRoomAppliances;
     final appliancesUrl = (Config().laundryHostUrl != null) ?  "${Config().laundryHostUrl}room?api_key=${Config().laundryApiKey}&method=getAppliances&location=$laundryRoomLocation" : null;
     final response = await Network().get(appliancesUrl);
-    String responseBody = response?.body;
+    String? responseBody = response?.body;
     if (response?.statusCode == 200) {
-      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody);
+      xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
       var appliancesXml = roomsXmlResponse.findAllElements('appliance');
       if (appliancesXml != null) {
         laundryRoomAppliances = [];
         appliancesXml.map((xml.XmlElement item) {
-          String applianceDescKey =
+          String? applianceDescKey =
               _getValueFromXmlItem(item.findElements("appliance_desc_key"));
-          String lrmStatus = _getValueFromXmlItem(item.findElements("lrm_status"));
-          String applianceType =
+          String? lrmStatus = _getValueFromXmlItem(item.findElements("lrm_status"));
+          String? applianceType =
               _getValueFromXmlItem(item.findElements("appliance_type"));
-          String status = _getValueFromXmlItem(item.findElements("status"));
-          String outOfService =
+          String? status = _getValueFromXmlItem(item.findElements("status"));
+          String? outOfService =
               _getValueFromXmlItem(item.findElements("out_of_service"));
-          String label = _getValueFromXmlItem(item.findElements("label"));
-          String avgCycleTime =
+          String? label = _getValueFromXmlItem(item.findElements("label"));
+          String? avgCycleTime =
               _getValueFromXmlItem(item.findElements("avg_cycle_time"));
-          String timeRemaining =
+          String? timeRemaining =
               _getValueFromXmlItem(item.findElements("time_remaining"));
-          laundryRoomAppliances.add(LaundryRoomAppliance(
+          laundryRoomAppliances!.add(LaundryRoomAppliance(
               applianceDescKey: applianceDescKey,
               lrmStatus: lrmStatus,
               applianceType: applianceType,
@@ -158,22 +158,22 @@ class LaundryService /* with Service */ {
     return laundryRoomAppliances;
   }
 
-  Map<String, Location> _loadLaundryLocationMapping() {
-    List<dynamic> jsonData = Assets()['laundry.locations'];
+  Map<String?, Location?>? _loadLaundryLocationMapping() {
+    List<dynamic>? jsonData = Assets()['laundry.locations'];
     if (AppCollection.isCollectionEmpty(jsonData)) {
       return null;
     }
-    Map<String, Location> locationMapping = Map();
-    for (dynamic jsonEntry in jsonData) {
-      String locationIdentifier = jsonEntry['laundry_location'];
-      Location locationDetails =
+    Map<String?, Location?> locationMapping = Map();
+    for (dynamic jsonEntry in jsonData!) {
+      String? locationIdentifier = jsonEntry['laundry_location'];
+      Location? locationDetails =
           Location.fromJSON(jsonEntry['location_details']);
       locationMapping.putIfAbsent(locationIdentifier, () => locationDetails);
     }
     return locationMapping;
   }
 
-  String _getValueFromXmlItem(Iterable<xml.XmlElement> items) {
+  String? _getValueFromXmlItem(Iterable<xml.XmlElement> items) {
     if (AppCollection.isCollectionEmpty(items)) {
       return null;
     }

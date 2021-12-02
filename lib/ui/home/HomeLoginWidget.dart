@@ -30,7 +30,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
     List<Widget> contentList = [];
 
     List<dynamic> codes = FlexUI()['home.content.connect'] ?? [];
-    for (String code in codes) {
+    for (String code in codes as Iterable<String>) {
       if (code == 'netid') {
         contentList.add(HomeLoginNetIdWidget());
       } else if (code == 'phone_or_email') {
@@ -70,28 +70,28 @@ class HomeLoginNetIdWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Padding(padding: EdgeInsets.zero, child:
           RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
-          TextSpan(style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16), children: <TextSpan>[
+          TextSpan(style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16), children: <TextSpan>[
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID."))
           ],),
           )),
-          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+          Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
           Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
           Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
             label: Localization().getStringEx("panel.home.connect.not_logged_in.netid.title", "Connect your NetID"),
             hint: '',
-            borderColor: Styles().colors.fillColorSecondary,
-            backgroundColor: Styles().colors.surface,
-            textColor: Styles().colors.fillColorPrimary,
+            borderColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.surface,
+            textColor: Styles().colors!.fillColorPrimary,
             onTap: ()=> _onTapConnectNetIdClicked(context),
           )),
           ),
@@ -117,27 +117,27 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Padding(padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(padding: EdgeInsets.zero, child:
             RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
-            TextSpan(style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16), children: <TextSpan>[
+              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
               TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
             ],),
             )),
 
-            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors.fillColorPrimaryTransparent015,),
+            Container(margin: EdgeInsets.only(top: 14, bottom: 14), height: 1, color: Styles().colors!.fillColorPrimaryTransparent015,),
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
               label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
               hint: '',
-              borderColor: Styles().colors.fillColorSecondary,
-              backgroundColor: Styles().colors.surface,
-              textColor: Styles().colors.fillColorPrimary,
+              borderColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors!.surface,
+              textColor: Styles().colors!.fillColorPrimary,
               onTap: ()=> _onTapPhoneOrEmailClicked(context),
             )),
             ),

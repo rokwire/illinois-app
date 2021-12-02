@@ -34,13 +34,13 @@ class Content /* with Service */ {
 
   Content._internal();
 
-  Future<ImagesResult> useUrl({String storageDir, String url, int width}) async {
+  Future<ImagesResult> useUrl({String? storageDir, required String url, int? width}) async {
     // 1. first check if the url gives an image
     Response headersResponse = await head(Uri.parse(url));
     if ((headersResponse != null) && (headersResponse.statusCode == 200)) {
       //check content type
       Map<String, String> headers = headersResponse.headers;
-      String contentType = headers["content-type"];
+      String? contentType = headers["content-type"];
       bool isImage = _isValidImage(contentType);
       if (isImage) {
         // 2. download the image
@@ -57,8 +57,8 @@ class Content /* with Service */ {
     }
   }
 
-  Future<ImagesResult> selectImageFromDevice({String storagePath, int width}) async {
-    XFile image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<ImagesResult?> selectImageFromDevice({String? storagePath, int? width}) async {
+    XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) {
       // User has cancelled operation
       return ImagesResult.cancel();
@@ -67,18 +67,18 @@ class Content /* with Service */ {
       if ((image != null) && (0 < await image.length())) {
         List<int> imageBytes = await image.readAsBytes();
         String fileName = basename(image.path);
-        String contentType = mime(fileName);
+        String? contentType = mime(fileName);
         return _uploadImage(storagePath: storagePath, imageBytes: imageBytes, width: width, fileName: fileName, mediaType: contentType);
       }
     }
     catch(e) {
-      print(e?.toString());
+      print(e.toString());
     }
     return null;
   }
 
-  Future<ImagesResult> _uploadImage({List<int> imageBytes, String fileName, String storagePath, int width, String mediaType}) async {
-    String serviceUrl = Config().contentUrl;
+  Future<ImagesResult> _uploadImage({List<int>? imageBytes, String? fileName, String? storagePath, int? width, String? mediaType}) async {
+    String? serviceUrl = Config().contentUrl;
     if (AppString.isStringEmpty(serviceUrl)) {
       return ImagesResult.error('Missing images BB url.');
     }
@@ -98,18 +98,18 @@ class Content /* with Service */ {
       return ImagesResult.error('Missing media type.');
     }
     String url = "$serviceUrl/image";
-    Map<String, String> imageRequestFields = {
+    Map<String, String?> imageRequestFields = {
       'path': storagePath,
       'width': width.toString(),
       'quality': 100.toString() // Use maximum quality - 100
     };
-    StreamedResponse response = await Network().multipartPost(
+    StreamedResponse? response = await Network().multipartPost(
         url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
-    String responseString = await response?.stream?.bytesToString();
+    String responseString = (await response?.stream?.bytesToString())!;
     if (responseCode == 200) {
-      Map<String, dynamic> json = AppJson.decode(responseString);
-      String imageUrl = (json != null) ? json['url'] : null;
+      Map<String, dynamic>? json = AppJson.decode(responseString);
+      String? imageUrl = (json != null) ? json['url'] : null;
       return ImagesResult.succeed(imageUrl);
     } else {
       String error = "Failed to upload image. Reason: $responseString";
@@ -118,7 +118,7 @@ class Content /* with Service */ {
     }
   }
 
-  bool _isValidImage(String contentType) {
+  bool _isValidImage(String? contentType) {
     if (contentType == null) return false;
     return contentType.startsWith("image/");
   }
@@ -127,8 +127,8 @@ class Content /* with Service */ {
 enum ImagesResultType { ERROR_OCCURRED, CANCELLED, SUCCEEDED }
 
 class ImagesResult {
-  ImagesResultType resultType;
-  String errorMessage;
+  ImagesResultType? resultType;
+  late String errorMessage;
   dynamic data;
 
   ImagesResult.error(String errorMessage) {

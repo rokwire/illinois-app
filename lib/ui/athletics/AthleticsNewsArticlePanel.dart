@@ -35,7 +35,7 @@ import 'package:html/dom.dart' as dom;
 class AthleticsNewsArticlePanel extends StatelessWidget {
   final News article;
 
-  AthleticsNewsArticlePanel({@required this.article}){
+  AthleticsNewsArticlePanel({required this.article}){
     RecentItems().addRecentItem(RecentItem.fromOriginalType(article));
   }
 
@@ -43,7 +43,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
 }
@@ -55,14 +55,14 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
             SliverToutHeaderBar(
             context: context,
             imageUrl: article.imageUrl,
-            backColor: Styles().colors.white,
-            leftTriangleColor: Styles().colors.white,
-            rightTriangleColor: Styles().colors.fillColorSecondaryTransparent05,
+            backColor: Styles().colors!.white,
+            leftTriangleColor: Styles().colors!.white,
+            rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
           ),
           SliverList(
             delegate: SliverChildListDelegate([
               Container(
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,14 +87,14 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             children: <Widget>[
                                               Container(
                                                 constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
-                                                color: Styles().colors.fillColorPrimary,
+                                                color: Styles().colors!.fillColorPrimary,
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6, horizontal: 8),
                                                   child: Text(
                                                     article.category?.toUpperCase(),
                                                     style: TextStyle(
-                                                        fontFamily: Styles().fontFamilies.bold,
+                                                        fontFamily: Styles().fontFamilies!.bold,
                                                         fontSize: 14,
                                                         letterSpacing: 1.0,
                                                         color: Colors.white),
@@ -107,21 +107,21 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             padding:
                                             EdgeInsets.only(top: 12, bottom: 24),
                                             child: Text(
-                                              article.title,
+                                              article.title!,
                                               style: TextStyle(
                                                   fontSize: 24,
-                                                  color: Styles().colors.fillColorPrimary),
+                                                  color: Styles().colors!.fillColorPrimary),
                                             ),
                                           ),
                                           Row(
                                             children: <Widget>[
                                               Image.asset('images/icon-news.png'),
                                               Container(width: 5,),
-                                              Text(article.displayTime,
+                                              Text(article.displayTime!,
                                                   style: TextStyle(
                                                       fontSize: 16,
-                                                      color: Styles().colors.textBackground,
-                                                      fontFamily: Styles().fontFamilies.medium
+                                                      color: Styles().colors!.textBackground,
+                                                      fontFamily: Styles().fontFamilies!.medium
                                                   )),
                                             ],
                                           ),
@@ -143,9 +143,9 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                         left: 20, right: 20, bottom: 48),
                                     child: ScalableRoundedButton(
                                       label: 'Share this article',
-                                      backgroundColor: Styles().colors.background,
-                                      textColor: Styles().colors.fillColorPrimary,
-                                      borderColor: Styles().colors.fillColorSecondary,
+                                      backgroundColor: Styles().colors!.background,
+                                      textColor: Styles().colors!.fillColorPrimary,
+                                      borderColor: Styles().colors!.fillColorSecondary,
                                       fontSize: 16,
                                       onTap: () => {
                                         _shareArticle()
@@ -170,7 +170,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
 
   _shareArticle(){
     Analytics.instance.logSelect(target: "Share Article");
-    Share.share(article.link);
+    Share.share(article.link!);
   }
 
   List<Widget> _buildContentWidgets(BuildContext context) {
@@ -181,21 +181,21 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
         child: Html(
           data:article.description,
           style: {
-            "body": Style(color: Styles().colors.textBackground)
+            "body": Style(color: Styles().colors!.textBackground)
           },
         ),
       ));
     }
-    String fullText = article.fillText;
+    String? fullText = article.fillText;
     if (!AppString.isStringEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
         child: Html(
           data:fullText,
-          onLinkTap: (String url,
+          onLinkTap: (String? url,
               RenderContext context1,
               Map<String, String> attributes,
-              dom.Element element){
+              dom.Element? element){
             Navigator.push(context, CupertinoPageRoute(
                 builder: (context) => WebPanel(url: url,)
             ));

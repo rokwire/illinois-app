@@ -35,7 +35,7 @@ abstract class Log {
     _logger.w(message);
   }
 
-  static e(String message) {
+  static e(String? message) {
     _logger.e(message);
   }
 }

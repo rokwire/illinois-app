@@ -27,7 +27,7 @@ class AESCrypt {
 
   static const int kCCBlockSizeAES128 = 16;
 
-  static String encrypt(String plainText, {String key, String iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
+  static String? encrypt(String plainText, {String? key, String? iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
     if ((plainText != null) && (key != null)) {
       try {
         final encrypterKey = Encrypt.Key.fromBase64(key);
@@ -40,7 +40,7 @@ class AESCrypt {
     return null;
   }
 
-  static String decrypt(String cipherBase64, { String key, String iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
+  static String? decrypt(String cipherBase64, { String? key, String? iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
     if ((cipherBase64 != null) && (key != null)) {
       try {
         final encrypterKey = Encrypt.Key.fromBase64(key);
@@ -86,18 +86,18 @@ class AESCrypt {
 
 class RSACrypt {
 
-  static String encrypt(String plainText, PublicKey publicKey) {
+  static String? encrypt(String plainText, PublicKey publicKey) {
       try {
-        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey, privateKey: null));
+        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey as RSAPublicKey?, privateKey: null));
         return encrypter.encrypt(plainText).base64;
       }
       catch(e) { print(e.toString()); }
       return null;
   }
 
-  static String decrypt(String cipherBase64, PrivateKey privateKey) {
+  static String? decrypt(String cipherBase64, PrivateKey privateKey) {
       try {
-        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: null, privateKey: privateKey));
+        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: null, privateKey: privateKey as RSAPrivateKey?));
         return encrypter.decrypt(Encrypt.Encrypted.fromBase64(cipherBase64));
       }
       catch(e) { print(e.toString()); }
@@ -151,7 +151,7 @@ class RsaKeyHelper {
   ///   algorithm       OBJECT IDENTIFIER,
   ///   parameters      ANY DEFINED BY algorithm OPTIONAL
   /// }
-  static RSAPublicKey parsePublicKeyFromPem(pemString) {
+  static RSAPublicKey? parsePublicKeyFromPem(pemString) {
     return (pemString != null) ? parsePublicKeyFromPemData(_decodePEM(pemString)) : null;
   }
 
@@ -171,8 +171,8 @@ class RsaKeyHelper {
     } else {
       var publicKeyBitString = topLevelSeq.elements[1];
 
-      var publicKeyAsn = new ASN1Parser(publicKeyBitString.contentBytes());
-      ASN1Sequence publicKeySeq = publicKeyAsn.nextObject();
+      var publicKeyAsn = new ASN1Parser(publicKeyBitString.contentBytes()!);
+      ASN1Sequence publicKeySeq = publicKeyAsn.nextObject() as ASN1Sequence;
       modulus = publicKeySeq.elements[0] as ASN1Integer;
       exponent = publicKeySeq.elements[1] as ASN1Integer;
     }
@@ -203,7 +203,7 @@ class RsaKeyHelper {
   ///
   /// Given a base64 encoded PEM [String] with correct headers and footers, return a
   /// [RSAPrivateKey]
-  static RSAPrivateKey parsePrivateKeyFromPem(pemString) {
+  static RSAPrivateKey? parsePrivateKeyFromPem(pemString) {
     return (pemString != null) ? parsePrivateKeyFromPemData(_decodePEM(pemString)) : null;
   }
 
@@ -220,7 +220,7 @@ class RsaKeyHelper {
     if (topLevelSeq.elements.length == 3) {
       var privateKey = topLevelSeq.elements[2];
 
-      asn1Parser = new ASN1Parser(privateKey.contentBytes());
+      asn1Parser = new ASN1Parser(privateKey.contentBytes()!);
       var pkSeq = asn1Parser.nextObject() as ASN1Sequence;
 
       modulus = pkSeq.elements[1] as ASN1Integer;
@@ -312,16 +312,16 @@ class RsaKeyHelper {
     var topLevel = new ASN1Sequence();
 
     var version = ASN1Integer(BigInt.from(0));
-    var modulus = ASN1Integer(privateKey.n);
-    var publicExponent = ASN1Integer(privateKey.exponent);
-    var privateExponent = ASN1Integer(privateKey.privateExponent);
-    var p = ASN1Integer(privateKey.p);
-    var q = ASN1Integer(privateKey.q);
-    var dP = privateKey.privateExponent % (privateKey.p - BigInt.from(1));
+    var modulus = ASN1Integer(privateKey.n!);
+    var publicExponent = ASN1Integer(privateKey.exponent!);
+    var privateExponent = ASN1Integer(privateKey.privateExponent!);
+    var p = ASN1Integer(privateKey.p!);
+    var q = ASN1Integer(privateKey.q!);
+    var dP = privateKey.privateExponent! % (privateKey.p! - BigInt.from(1));
     var exp1 = ASN1Integer(dP);
-    var dQ = privateKey.privateExponent % (privateKey.q - BigInt.from(1));
+    var dQ = privateKey.privateExponent! % (privateKey.q! - BigInt.from(1));
     var exp2 = ASN1Integer(dQ);
-    var iQ = privateKey.q.modInverse(privateKey.p);
+    var iQ = privateKey.q!.modInverse(privateKey.p!);
     var co = ASN1Integer(iQ);
 
     topLevel.add(version);
@@ -357,8 +357,8 @@ class RsaKeyHelper {
     
     var topLevel = new ASN1Sequence();
 
-    topLevel.add(ASN1Integer(publicKey.modulus));
-    topLevel.add(ASN1Integer(publicKey.exponent));
+    topLevel.add(ASN1Integer(publicKey.modulus!));
+    topLevel.add(ASN1Integer(publicKey.exponent!));
 
     return topLevel.encodedBytes;
   }
@@ -379,19 +379,19 @@ class RsaKeyHelper {
   ///
   /// Returns a boolean based on the whether [AsymmetricKeyPair] is paired or not,
   static Future<bool> verifyRsaKeyPair(AsymmetricKeyPair<PublicKey, PrivateKey> rsaKeyPair) async {
-    return await compute(_verifyRSAKeyPair, rsaKeyPair);
+    return await compute(_verifyRSAKeyPair as FutureOr<bool> Function(_), rsaKeyPair);
   }
 }
 
-bool _verifyRSAKeyPair(AsymmetricKeyPair<PublicKey, PrivateKey> rsaKeyPair) {
+bool? _verifyRSAKeyPair(AsymmetricKeyPair<PublicKey, PrivateKey> rsaKeyPair) {
   PublicKey rsaPublicKey = rsaKeyPair?.publicKey;
   PrivateKey rsaPrivateKey = rsaKeyPair?.privateKey;
   if ((rsaPublicKey != null) && (rsaPrivateKey != null)) {
     String aesKey = AESCrypt.randomKey();
     if (aesKey != null) {
-      String encryptedAESKey = RSACrypt.encrypt(aesKey, rsaPublicKey);
+      String? encryptedAESKey = RSACrypt.encrypt(aesKey, rsaPublicKey);
       if (encryptedAESKey != null) {
-        String decryptedAESKey = RSACrypt.decrypt(encryptedAESKey, rsaPrivateKey);
+        String? decryptedAESKey = RSACrypt.decrypt(encryptedAESKey, rsaPrivateKey);
         return (decryptedAESKey == aesKey);
       }
     }

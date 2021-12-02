@@ -20,20 +20,20 @@ import 'package:illinois/service/Auth2.dart';
 
 
 class Poll {
-  String pollId;            // unique poll id (uuid)
-  String title;             // the question / "What’s the best breakfast spot in the dining halls?"
-  List<String> options;     // possible options (answers)
+  String? pollId;            // unique poll id (uuid)
+  String? title;             // the question / "What’s the best breakfast spot in the dining halls?"
+  List<String>? options;     // possible options (answers)
 
-  PollSettings settings;    // poll settings
+  PollSettings? settings;    // poll settings
   
-  String creatorUserUuid;   // creator uuid
-  String creatorUserName;   // creator name / "A student wants to know.."
-  String regionId;          // region id for geo fenced polls
-  int pinCode;              // poll pin
+  String? creatorUserUuid;   // creator uuid
+  String? creatorUserName;   // creator name / "A student wants to know.."
+  String? regionId;          // region id for geo fenced polls
+  int? pinCode;              // poll pin
   
-  PollStatus status;        // active / inactive
-  PollVote results;         // results for this poll
-  PollVote userVote;        // vote for particual user (as comes from mypolls / recentpolls).
+  PollStatus? status;        // active / inactive
+  PollVote? results;         // results for this poll
+  PollVote? userVote;        // vote for particual user (as comes from mypolls / recentpolls).
 
   Poll({
     this.pollId, this.title, this.options, this.settings,
@@ -41,7 +41,7 @@ class Poll {
     this.status, this.results, this.userVote
   });
 
-  static Poll fromJson(Map<String, dynamic> json) {
+  static Poll? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Poll(
       pollId: json['id'],
       title: json['question'],
@@ -99,11 +99,11 @@ class Poll {
   }
 
   bool get isFirebase {
-    return (regionId != null) && regionId.isNotEmpty;
+    return (regionId != null) && regionId!.isNotEmpty;
   }
 
   bool get isGeoFenced {
-    return (regionId != null) && regionId.isNotEmpty && (settings?.geoFence ?? false);
+    return (regionId != null) && regionId!.isNotEmpty && (settings?.geoFence ?? false);
   }
 
   static int get randomPin {
@@ -114,16 +114,16 @@ class Poll {
     if (results == null) {
       results = PollVote();
     }
-    results.apply(pollVote);
+    results!.apply(pollVote);
 
     if (userVote == null) {
       userVote = PollVote();
     }
-    userVote.apply(pollVote);
+    userVote!.apply(pollVote);
   }
 
-  static List<Poll> fromJsonList(List<dynamic> jsonList) {
-    List<Poll> polls = [];
+  static List<Poll?> fromJsonList(List<dynamic>? jsonList) {
+    List<Poll?> polls = [];
     if (jsonList != null) {
       for (dynamic jsonEntry in jsonList) {
         polls.add(Poll.fromJson(jsonEntry));
@@ -132,17 +132,17 @@ class Poll {
     return polls;
   }
 
-  static List<dynamic> toJsonList(List<Poll> polls) {
+  static List<dynamic> toJsonList(List<Poll>? polls) {
     List<dynamic> jsonList = [];
     if (polls != null) {
       for (Poll poll in polls) {
-        jsonList.add(poll?.toJson());
+        jsonList.add(poll.toJson());
       }
     }
     return jsonList;
   }
 
-  static PollStatus pollStatusFromString(String value) {
+  static PollStatus? pollStatusFromString(String? value) {
     if (value == 'created') {
       return PollStatus.created;
     }
@@ -157,7 +157,7 @@ class Poll {
     }
   }
 
-  static String pollStatusToString(PollStatus status) {
+  static String? pollStatusToString(PollStatus? status) {
     if (status == PollStatus.created) {
       return 'created';
     }
@@ -174,10 +174,10 @@ class Poll {
 }
 
 class PollSettings {
-  bool allowMultipleOptions;   // "Allow selecting more than one choice"
-  bool allowRepeatOptions;     // "Allow repeat votes"
-  bool hideResultsUntilClosed; // "Shows results before poll ends"
-  bool geoFence;               // Poll is geo fenced
+  bool? allowMultipleOptions;   // "Allow selecting more than one choice"
+  bool? allowRepeatOptions;     // "Allow repeat votes"
+  bool? hideResultsUntilClosed; // "Shows results before poll ends"
+  bool? geoFence;               // Poll is geo fenced
 
   PollSettings({this.allowMultipleOptions, this.allowRepeatOptions, this.hideResultsUntilClosed, this.geoFence});
 }
@@ -185,28 +185,25 @@ class PollSettings {
 enum PollStatus { created, opened, closed }
 
 class PollVote {
-  Map<int, int> _votes;
-  int _total;
+  Map<int, int>? _votes;
+  int? _total;
 
-  PollVote({Map<int, int> votes, int total}) {
+  PollVote({Map<int, int>? votes, int? total}) {
     _votes = votes;
     _total = total;
   }
 
-  static PollVote fromJson({List<dynamic> results, List<dynamic> votes, int total}) {
-    Map<int, int> votesMap;
+  static PollVote? fromJson({List<dynamic>? results, List<dynamic>? votes, int? total}) {
+    Map<int, int>? votesMap;
     if (results != null) {
       votesMap = {};
       for (int optionIndex = 0; optionIndex < results.length; optionIndex++) {
-        int optionValue = results[optionIndex];
-        if (optionValue != null) {
-          votesMap[optionIndex] = optionValue;
-        }
+        votesMap[optionIndex] = results[optionIndex];
       }
     }
     else if (votes != null) {
       votesMap = {};
-      for (int optionIndex in votes) {
+      for (int optionIndex in votes as Iterable<int>) {
         votesMap[optionIndex] = (votesMap[optionIndex] ?? 0) + 1;
       }
     }
@@ -214,13 +211,13 @@ class PollVote {
     return (votesMap != null) ? PollVote(votes:votesMap, total: total) : null;
   }
 
-  List<dynamic>toResultsJson({int length}) {
-    List<dynamic> results;
+  List<dynamic>?toResultsJson({int? length}) {
+    List<dynamic>? results;
     if (_votes != null) {
       results = [];
-      _votes.forEach((int optionIndex, int optionVotes) {
+      _votes!.forEach((int optionIndex, int optionVotes) {
         if ((length == null) || (optionIndex < length)) {
-          while (results.length < optionIndex) {
+          while (results!.length < optionIndex) {
             results.add(0);
           }
           if (results.length == optionIndex) {
@@ -235,47 +232,47 @@ class PollVote {
     return results;
   }
 
-  List<dynamic>toVotesJson() {
-    List<dynamic> votes;
+  List<dynamic>?toVotesJson() {
+    List<dynamic>? votes;
     if (_votes != null) {
       votes = [];
-      _votes.forEach((int optionIndex, int optionVotes) {
+      _votes!.forEach((int optionIndex, int optionVotes) {
         for (int optionVote = 0; optionVote < optionVotes; optionVote++) {
-          votes.add(optionIndex);
+          votes!.add(optionIndex);
         }
       });
     }
     return votes;
   }
 
-  Map<int, int> get votes {
+  Map<int, int>? get votes {
     return _votes;
   }
 
-  int get total {
+  int? get total {
     return _total;
   }
 
   int get totalVotes {
     int totalVotes = 0;
     if (_votes != null) {
-      _votes.forEach((int optionIndex, int optionVotes) {
+      _votes!.forEach((int optionIndex, int optionVotes) {
         totalVotes += optionVotes;
       });
     }
     return totalVotes;
   }
 
-  int operator [](int optionIndex) {
-    return (_votes != null) ? _votes[optionIndex] : null;
+  int? operator [](int? optionIndex) {
+    return (_votes != null) ? _votes![optionIndex] : null;
   }
 
-  void operator []=(int optionIndex, int optionValue) {
+  void operator []=(int? optionIndex, int? optionValue) {
     if (optionIndex != null) {
       if (optionValue != null) {
         if (_votes != null) {
-          _updateTotal(optionValue - (_votes[optionIndex] ?? 0));
-          _votes[optionIndex] = optionValue;
+          _updateTotal(optionValue - (_votes![optionIndex] ?? 0));
+          _votes![optionIndex] = optionValue;
         }
         else {
           _updateTotal(optionValue);
@@ -283,21 +280,21 @@ class PollVote {
         }
       }
       else if (_votes != null) {
-        _updateTotal(0 - (_votes[optionIndex] ?? 0));
-        _votes.remove(optionIndex);
+        _updateTotal(0 - (_votes![optionIndex] ?? 0));
+        _votes!.remove(optionIndex);
       }
     }
   }
 
-  bool isEqual(PollVote pollVote) {
-    Map<int, int> votes = pollVote?._votes;
+  bool isEqual(PollVote? pollVote) {
+    Map<int, int>? votes = pollVote?._votes;
     if ((_votes == null) && (votes == null)) {
       return true;
     }
     if ((_votes != null) && (votes != null)) {
-      if (votes.length == _votes.length) {
+      if (votes.length == _votes!.length) {
         for (int optionIndex in votes.keys) {
-          if (votes[optionIndex] != _votes[optionIndex]) {
+          if (votes[optionIndex] != _votes![optionIndex]) {
             return false;
           }
         }
@@ -307,10 +304,10 @@ class PollVote {
     return false;
   }
 
-  void _updateTotal(int delta) {
+  void _updateTotal(int? delta) {
     if (delta != null) {
       if (_total != null) {
-        _total += delta;
+        _total = _total! + delta;
       }
       else {
         _total = delta;
@@ -318,17 +315,15 @@ class PollVote {
     }
   }
 
-  void apply(PollVote vote) {
-    if ((vote?._votes != null) && vote._votes.isNotEmpty) {
+  void apply(PollVote? vote) {
+    if ((vote?._votes != null) && vote!._votes!.isNotEmpty) {
       if (_votes == null) {
         _votes = {};
       }
       int deltaTotal = 0;
-      vote._votes.forEach((int optionIndex, int optionVotes) {
-        if (optionVotes != null) {
-          _votes[optionIndex] = optionVotes + (_votes[optionIndex] ?? 0);
-          deltaTotal += optionVotes;
-        }
+      vote._votes!.forEach((int optionIndex, int optionVotes) {
+        _votes![optionIndex] = optionVotes + (_votes![optionIndex] ?? 0);
+        deltaTotal += optionVotes;
       });
       _updateTotal(deltaTotal);
     }

@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 
 class TrianglePainter extends CustomPainter {
-  final Color painterColor;
+  final Color? painterColor;
   final bool left;
 
   TrianglePainter({this.painterColor, this.left = true});
@@ -25,7 +25,7 @@ class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-    paint.color = painterColor;
+    paint.color = painterColor!;
     // create a path
     var path = Path();
     if (left) {
@@ -49,7 +49,7 @@ class TrianglePainter extends CustomPainter {
 
 /// TBD Redesign it
 class InvertedTrianglePainter extends CustomPainter {
-  final Color painterColor;
+  final Color? painterColor;
   final bool left;
 
   InvertedTrianglePainter({this.painterColor, this.left = true,});
@@ -57,7 +57,7 @@ class InvertedTrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-    paint.color = painterColor;
+    paint.color = painterColor!;
     // create a path
     var path = Path();
     if (left) {

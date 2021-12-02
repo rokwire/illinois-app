@@ -18,39 +18,39 @@ import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Localization.dart';
 
 class PrivacyData{
-  List<PrivacyLevel> levels;
-  List<PrivacyType> types;
-  List<PrivacyDescription> privacyDescription;
-  List<PrivacyCategory> categories;
-  List<PrivacyFeature2> features2;
+  List<PrivacyLevel?>? levels;
+  List<PrivacyType?>? types;
+  List<PrivacyDescription?>? privacyDescription;
+  List<PrivacyCategory>? categories;
+  List<PrivacyFeature2?>? features2;
 
-  Map<String,dynamic> jsonData;
+  Map<String,dynamic>? jsonData;
 
   PrivacyData({this.levels,this.types,this.categories,this.features2, this.privacyDescription, this.jsonData});
 
   static PrivacyData fromJson(Map<String, dynamic> json) {
-    List<dynamic> levelsJson = json['levels'];
-    List<PrivacyLevel> levels = (levelsJson != null) ? levelsJson.map((
+    List<dynamic>? levelsJson = json['levels'];
+    List<PrivacyLevel?>? levels = (levelsJson != null) ? levelsJson.map((
         value) => PrivacyLevel.fromJson(value))
         .toList() : null;
 
-    List<dynamic> typesJson = json['types'];
-    List<PrivacyType> types = (typesJson != null) ? typesJson.map((
+    List<dynamic>? typesJson = json['types'];
+    List<PrivacyType?>? types = (typesJson != null) ? typesJson.map((
         value) => PrivacyType.fromJson(value))
         .toList() : null;
 
-    List<dynamic> categoriesJson = json['categories'];
-    List<PrivacyCategory> categories = (categoriesJson != null) ? categoriesJson.map((
+    List<dynamic>? categoriesJson = json['categories'];
+    List<PrivacyCategory>? categories = (categoriesJson != null) ? categoriesJson.map((
         value) => PrivacyCategory.fromJson(value))
         .toList() : null;
 
-    List<dynamic> descriptionJson = json['description'];
-    List<PrivacyDescription> description = (descriptionJson != null) ? descriptionJson.map((
+    List<dynamic>? descriptionJson = json['description'];
+    List<PrivacyDescription?>? description = (descriptionJson != null) ? descriptionJson.map((
         value) => PrivacyDescription.fromJson(value))
         .toList() : null;
 
-    List<dynamic> features2Json = json['features2'];
-    List<PrivacyFeature2> features2 = (features2Json != null) ? features2Json.map((
+    List<dynamic>? features2Json = json['features2'];
+    List<PrivacyFeature2?>? features2 = (features2Json != null) ? features2Json.map((
         value) => PrivacyFeature2.fromJson(value))
         .toList() : null;
 
@@ -67,39 +67,39 @@ class PrivacyData{
 
   reload() {
     if (categories != null) {
-      List<dynamic> categoriesJson = jsonData['categories'];
+      List<dynamic>? categoriesJson = jsonData!['categories'];
       categories = (categoriesJson != null) ? categoriesJson.map((value) => PrivacyCategory.fromJson(value))
           .toList() : null;
     }
 
     if (types != null) {
-      List<dynamic> typesJson = jsonData['types'];
+      List<dynamic>? typesJson = jsonData!['types'];
       types = (typesJson != null) ? typesJson.map((value) => PrivacyType.fromJson(value)).toList() : null;
     }
   }
 
   //Util methods
-  String getLocalizedString(String text) {
-    return Localization().getStringFromMapping(text, (jsonData != null) ? jsonData['strings'] : Assets()['privacy.strings']);
+  String? getLocalizedString(String? text) {
+    return Localization().getStringFromMapping(text, (jsonData != null) ? jsonData!['strings'] : Assets()['privacy.strings']);
   }
 }
 
 class PrivacyCategory{
-  String title;
-  String titleKey;
-  Map<String, dynamic> description;
-  List<PrivacyEntry> entries;
-  List<PrivacyEntry2> entries2;
+  String? title;
+  String? titleKey;
+  Map<String, dynamic>? description;
+  List<PrivacyEntry?>? entries;
+  List<PrivacyEntry2?>? entries2;
 
   PrivacyCategory({this.title, this.titleKey, this.description,this.entries, this.entries2});
 
   static PrivacyCategory fromJson(Map<String, dynamic> json) {
-    List<dynamic> entriesJson = json['entries'];
-    List<PrivacyEntry> entries = (entriesJson != null) ? entriesJson.map((
+    List<dynamic>? entriesJson = json['entries'];
+    List<PrivacyEntry?>? entries = (entriesJson != null) ? entriesJson.map((
         value) => PrivacyEntry.fromJson(value))
         .toList() : null;
-    List<dynamic> entries2Json = json['entries2'];
-    List<PrivacyEntry2> entries2 = (entries2Json != null) ? entries2Json.map((
+    List<dynamic>? entries2Json = json['entries2'];
+    List<PrivacyEntry2?>? entries2 = (entries2Json != null) ? entries2Json.map((
         value) => PrivacyEntry2.fromJson(value))
         .toList() : null;
 
@@ -114,14 +114,14 @@ class PrivacyCategory{
 }
 
 class PrivacyEntry{
-  String key;
-  String text;
-  String type;
-  int minLevel;
+  String? key;
+  String? text;
+  String? type;
+  int? minLevel;
 
   PrivacyEntry({this.key,this.text,this.type,this.minLevel});
 
-  static PrivacyEntry fromJson(Map<String, dynamic> json) {
+  static PrivacyEntry? fromJson(Map<String, dynamic> json) {
     return (json != null) ? PrivacyEntry(
         key:json["key"],
         text: PrivacyData().getLocalizedString(json["text"]),
@@ -132,25 +132,25 @@ class PrivacyEntry{
 }
 
 class PrivacyEntry2{
-  String title;
-  String titleKey;
-  String description;
-  String descriptionKey;
-  String dataUsage;
-  String dataUsageKey;
-  String additionalDescription;
-  String additionalDescriptionKey;
-  String additionalDataUsage;
-  String additionalDataUsageKey;
-  int additionalDataMinLevel;
-  int minLevel;
-  String iconRes;
-  String offIconRes;
+  String? title;
+  String? titleKey;
+  String? description;
+  String? descriptionKey;
+  String? dataUsage;
+  String? dataUsageKey;
+  String? additionalDescription;
+  String? additionalDescriptionKey;
+  String? additionalDataUsage;
+  String? additionalDataUsageKey;
+  int? additionalDataMinLevel;
+  int? minLevel;
+  String? iconRes;
+  String? offIconRes;
 
   PrivacyEntry2({this.title, this.titleKey, this.description, this.descriptionKey, this.dataUsage, this.dataUsageKey,this.additionalDescription, this.additionalDescriptionKey, this.additionalDataUsage, this.additionalDataUsageKey,
     this.iconRes, this.offIconRes, this.minLevel, this.additionalDataMinLevel});
 
-  static PrivacyEntry2 fromJson(Map<String, dynamic> json) {
+  static PrivacyEntry2? fromJson(Map<String, dynamic> json) {
     return (json != null) ? PrivacyEntry2(
         title: json["title"],
         titleKey: json["title_key"],
@@ -171,13 +171,13 @@ class PrivacyEntry2{
 }
 
 class PrivacyDescription{
-  String key;
-  String text;
-  int level;
+  String? key;
+  String? text;
+  int? level;
 
   PrivacyDescription({this.key, this.text, this.level});
 
-  static PrivacyDescription fromJson(Map<String, dynamic> json) {
+  static PrivacyDescription? fromJson(Map<String, dynamic> json) {
     if(json!=null){
       return PrivacyDescription(
           key:json["key"],
@@ -190,12 +190,12 @@ class PrivacyDescription{
 }
 
 class PrivacyLevel{
-  int value;
-  String title;
+  int? value;
+  String? title;
 
   PrivacyLevel({this.value,this.title});
 
-  static PrivacyLevel fromJson(Map<String, dynamic> json) {
+  static PrivacyLevel? fromJson(Map<String, dynamic> json) {
     return (json != null) ? PrivacyLevel(
         value:json["value"],
         title:PrivacyData().getLocalizedString(json["title"])
@@ -204,12 +204,12 @@ class PrivacyLevel{
 }
 
 class PrivacyType{
-  String value;
-  String title;
+  String? value;
+  String? title;
 
   PrivacyType({this.value,this.title});
 
-  static PrivacyType fromJson(Map<String, dynamic> json) {
+  static PrivacyType? fromJson(Map<String, dynamic> json) {
     if(json!=null){
      return  PrivacyType(
         value:json["value"],
@@ -221,12 +221,12 @@ class PrivacyType{
 }
 
 class PrivacyCategoryDescription{
-  String type;
-  String text;
+  String? type;
+  String? text;
 
   PrivacyCategoryDescription({this.type,this.text});
 
-  static PrivacyCategoryDescription fromJson(Map<String, dynamic> json) {
+  static PrivacyCategoryDescription? fromJson(Map<String, dynamic> json) {
     if(json!=null){
       return PrivacyCategoryDescription(
           type:json["type"],
@@ -238,13 +238,13 @@ class PrivacyCategoryDescription{
 }
 
 class PrivacyFeature2{
-  String key;
-  String text;
-  int maxLevel;
+  String? key;
+  String? text;
+  int? maxLevel;
 
   PrivacyFeature2({this.key, this.text, this.maxLevel});
 
-  static PrivacyFeature2 fromJson(Map<String, dynamic> json) {
+  static PrivacyFeature2? fromJson(Map<String, dynamic> json) {
     if(json!=null){
       return PrivacyFeature2(
           key:json["key"],

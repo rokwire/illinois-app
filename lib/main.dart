@@ -54,7 +54,7 @@ void main() async {
   NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
 
   Services().create();
-  ServiceError serviceError = await Services().init();
+  ServiceError? serviceError = await Services().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -84,15 +84,15 @@ class AppExitListener implements NotificationsListener {
 }
 
 class _AppData {
-  _AppState _panelState;
-  BuildContext _homeContext;
+  _AppState? _panelState;
+  BuildContext? _homeContext;
 }
 
 class App extends StatefulWidget {
 
   final _AppData _data = _AppData();
-  final ServiceError initializeError;
-  static App _instance;
+  final ServiceError? initializeError;
+  static App? _instance;
 
   App({this.initializeError}) {
     _instance = this;
@@ -115,20 +115,20 @@ class App extends StatefulWidget {
     return _data._panelState = appState;
   }
 
-  get homeContext {
+  BuildContext? get homeContext {
     return _data._homeContext;
   }
 
-  set homeContext(BuildContext context) {
+  set homeContext(BuildContext? context) {
     if ((_data._homeContext == null) && (_data._panelState != null)) {
       _presentLaunchPopup(_data._panelState, context);
     }
     _data._homeContext = context;
   }
 
-  void _presentLaunchPopup(_AppState appState, BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      appState._presentLaunchPopup(context);
+  void _presentLaunchPopup(_AppState? appState, BuildContext? context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      appState!._presentLaunchPopup(context);
     });
   }
 }
@@ -136,14 +136,14 @@ class App extends StatefulWidget {
 class _AppState extends State<App> implements NotificationsListener {
 
   Key _key = UniqueKey();
-  String _lastRunVersion;
-  String _upgradeRequiredVersion;
-  String _upgradeAvailableVersion;
-  Widget _launchPopup;
-  ServiceError _initializeError;
-  Future<ServiceError> _retryInitialzeFuture;
-  DateTime _pausedDateTime;
-  RootPanel rootPanel;
+  String? _lastRunVersion;
+  String? _upgradeRequiredVersion;
+  String? _upgradeAvailableVersion;
+  Widget? _launchPopup;
+  ServiceError? _initializeError;
+  Future<ServiceError?>? _retryInitialzeFuture;
+  DateTime? _pausedDateTime;
+  RootPanel? rootPanel;
 
   @override
   void initState() {
@@ -175,7 +175,7 @@ class _AppState extends State<App> implements NotificationsListener {
       Storage().lastRunVersion = Config().appVersion;
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       NativeCommunicator().dismissLaunchScreen();
     });
 
@@ -201,7 +201,7 @@ class _AppState extends State<App> implements NotificationsListener {
       supportedLocales: Localization().supportedLocales(),
       navigatorObservers:[AppNavigation()],
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      title: Localization().getStringEx('app.title', 'Illinois'),
+      title: Localization().getStringEx('app.title', 'Illinois')!,
       theme: ThemeData(
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
           fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
@@ -209,7 +209,7 @@ class _AppState extends State<App> implements NotificationsListener {
     );
   }
 
-  Widget get _homePanel {
+  Widget? get _homePanel {
     if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
@@ -219,7 +219,7 @@ class _AppState extends State<App> implements NotificationsListener {
     else if (_upgradeAvailableVersion != null) {
       return OnboardingUpgradePanel(availableVersion:_upgradeAvailableVersion);
     }
-    else if (!Storage().onBoardingPassed) {
+    else if (!Storage().onBoardingPassed!) {
       return Onboarding2GetStartedPanel();
     }
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
@@ -242,13 +242,13 @@ class _AppState extends State<App> implements NotificationsListener {
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
-    Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel);
+    Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel!);
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
   }
 
   bool _checkForceOnboarding() {
     // Action: Force unboarding to concent vaccination (#651, #681)
-    String onboardingRequiredVersion = Config().onboardingRequiredVersion;
+    String? onboardingRequiredVersion = Config().onboardingRequiredVersion;
     if ((Storage().onBoardingPassed == true) &&
         (_lastRunVersion != null) &&
         (onboardingRequiredVersion != null) &&
@@ -260,13 +260,13 @@ class _AppState extends State<App> implements NotificationsListener {
     return false;
   }
 
-  Future<ServiceError> _retryInitialze() async {
+  Future<ServiceError?> _retryInitialze() async {
     if (_retryInitialzeFuture != null) {
       return await _retryInitialzeFuture;
     }
     else {
       _retryInitialzeFuture = Services().init();
-      ServiceError serviceError = await _retryInitialzeFuture;
+      ServiceError? serviceError = await _retryInitialzeFuture;
       _retryInitialzeFuture = null;
 
       if (_initializeError != serviceError) {
@@ -282,13 +282,13 @@ class _AppState extends State<App> implements NotificationsListener {
     
   }
 
-  void _presentLaunchPopup(BuildContext context) {
+  void _presentLaunchPopup(BuildContext? context) {
     if ((_launchPopup == null) && (context != null)) {
       dynamic launch = FlexUI()['launch'];
-      List<dynamic> launchList = (launch is List) ? launch : null;
+      List<dynamic>? launchList = (launch is List) ? launch : null;
       if (launchList != null) {
         for (dynamic launchEntry in launchList) {
-          Widget launchPopup = FlexContentWidget.fromAssets(launchEntry, onClose: (BuildContext context) {
+          Widget? launchPopup = FlexContentWidget.fromAssets(launchEntry, onClose: (BuildContext context) {
             _launchPopup = null;
             Navigator.of(context).pop();
           },);
@@ -350,7 +350,7 @@ class _AppState extends State<App> implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
@@ -359,7 +359,7 @@ class _AppState extends State<App> implements NotificationsListener {
         _retryInitialze();
       }
       else if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _presentLaunchPopup(App.instance.homeContext);
         }

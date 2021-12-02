@@ -28,7 +28,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
-  final Map<String, dynamic> onboardingContext;
+  final Map<String, dynamic>? onboardingContext;
   OnboardingRolesPanel({this.onboardingContext});
 
   @override
@@ -37,14 +37,14 @@ class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
 }
 
 class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
-  Set<UserRole> _selectedRoles;
+  Set<UserRole?>? _selectedRoles;
   bool _updating = false;
 
-  bool get _allowNext => _selectedRoles != null && _selectedRoles.isNotEmpty;
+  bool get _allowNext => _selectedRoles != null && _selectedRoles!.isNotEmpty;
 
   @override
   void initState() {
-    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs.roles) : Set<UserRole>();
+    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs!.roles!) : Set<UserRole>();
     super.initState();
   }
   
@@ -52,7 +52,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   Widget build(BuildContext context) {
     final double gridSpacing = 5;
     return Scaffold(
-      backgroundColor: Styles().colors.white,
+      backgroundColor: Styles().colors!.white,
       body: SafeArea(child: Column( children: <Widget>[
         Padding(padding: EdgeInsets.only(top: 10, bottom: 10),
           child: Row(children: <Widget>[
@@ -63,16 +63,16 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
               }),
             Expanded(child: Column(children: <Widget>[
               Semantics(
-                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?').toLowerCase(),
-                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1').toLowerCase(),
+                label: Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?')!.toLowerCase(),
+                hint: Localization().getStringEx('panel.onboarding.roles.label.title.hint', 'Header 1')!.toLowerCase(),
                 excludeSemantics: true,
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.title', 'Who are you?')!,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 8),
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground),
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply')!,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                 ),
               )
             ],),),
@@ -88,8 +88,8 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.student.hint', ''),
                     iconPath: 'images/icon-persona-student-normal.png',
                     selectedIconPath: 'images/icon-persona-student-selected.png',
-                    selectedBackgroundColor: Styles().colors.fillColorSecondary,
-                    selected: (_selectedRoles.contains(UserRole.student)),
+                    selectedBackgroundColor: Styles().colors!.fillColorSecondary,
+                    selected: (_selectedRoles!.contains(UserRole.student)),
                     data: UserRole.student,
                     sortOrder: 1,
                     onTap: _onRoleGridButton,
@@ -100,8 +100,8 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.fan.hint', ''),
                     iconPath: 'images/icon-persona-athletics-normal.png',
                     selectedIconPath: 'images/icon-persona-athletics-selected.png',
-                    selectedBackgroundColor: Styles().colors.accentColor2,
-                    selected: _selectedRoles.contains(UserRole.fan),
+                    selectedBackgroundColor: Styles().colors!.accentColor2,
+                    selected: _selectedRoles!.contains(UserRole.fan),
                     data: UserRole.fan,
                     sortOrder: 3,
                     onTap: _onRoleGridButton,
@@ -112,9 +112,9 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.alumni.hint', ''),
                     iconPath: 'images/icon-persona-alumni-normal.png',
                     selectedIconPath: 'images/icon-persona-alumni-selected.png',
-                    selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                    selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles.contains(UserRole.alumni)),
+                    selected:(_selectedRoles!.contains(UserRole.alumni)),
                     data: UserRole.alumni,
                     sortOrder: 5,
                     onTap: _onRoleGridButton,
@@ -125,9 +125,9 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
                     iconPath: 'images/icon-persona-resident-normal.png',
                     selectedIconPath: 'images/icon-persona-resident-selected.png',
-                    selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                    selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles.contains(UserRole.resident)),
+                    selected:(_selectedRoles!.contains(UserRole.resident)),
                     data: UserRole.resident,
                     sortOrder: 7,
                     onTap: _onRoleGridButton,
@@ -140,8 +140,8 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.visitor.hint', ''),
                     iconPath: 'images/icon-persona-visitor-normal.png',
                     selectedIconPath: 'images/icon-persona-visitor-selected.png',
-                    selectedBackgroundColor: Styles().colors.fillColorSecondary,
-                    selected: (_selectedRoles.contains(UserRole.visitor)),
+                    selectedBackgroundColor: Styles().colors!.fillColorSecondary,
+                    selected: (_selectedRoles!.contains(UserRole.visitor)),
                     data: UserRole.visitor,
                     sortOrder: 2,
                     onTap: _onRoleGridButton,
@@ -152,8 +152,8 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.employee.hint', ''),
                     iconPath: 'images/icon-persona-employee-normal.png',
                     selectedIconPath: 'images/icon-persona-employee-selected.png',
-                    selectedBackgroundColor: Styles().colors.accentColor3,
-                    selected: (_selectedRoles.contains(UserRole.employee)),
+                    selectedBackgroundColor: Styles().colors!.accentColor3,
+                    selected: (_selectedRoles!.contains(UserRole.employee)),
                     data: UserRole.employee,
                     sortOrder: 4,
                     onTap: _onRoleGridButton,
@@ -164,8 +164,8 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: Localization().getStringEx('panel.onboarding.roles.button.parent.hint', ''),
                     iconPath: 'images/icon-persona-parent-normal.png',
                     selectedIconPath: 'images/icon-persona-parent-selected.png',
-                    selectedBackgroundColor: Styles().colors.fillColorSecondary,
-                    selected: (_selectedRoles.contains(UserRole.parent)),
+                    selectedBackgroundColor: Styles().colors!.fillColorSecondary,
+                    selected: (_selectedRoles!.contains(UserRole.parent)),
                     data: UserRole.parent,
                     sortOrder: 6,
                     onTap: _onRoleGridButton,
@@ -176,9 +176,9 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     hint: '',
                     iconPath: 'images/icon-persona-alumni-normal.png',
                     selectedIconPath: 'images/icon-persona-alumni-selected.png',
-                    selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                    selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles.contains(UserRole.gies)),
+                    selected:(_selectedRoles!.contains(UserRole.gies)),
                     data: UserRole.gies,
                     sortOrder: 8,
                     onTap: _onRoleGridButton,
@@ -192,13 +192,13 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
               label: Localization().getStringEx('panel.onboarding.roles.button.continue.title', 'Explore Illinois'),
               hint: Localization().getStringEx('panel.onboarding.roles.button.continue.hint', ''),
               enabled: _allowNext,
-              backgroundColor: (Styles().colors.background),
+              backgroundColor: (Styles().colors!.background),
               borderColor: (_allowNext
-                  ? Styles().colors.fillColorSecondary
-                  : Styles().colors.fillColorPrimaryTransparent03),
+                  ? Styles().colors!.fillColorSecondary
+                  : Styles().colors!.fillColorPrimaryTransparent03),
               textColor: (_allowNext
-                  ? Styles().colors.fillColorPrimary
-                  : Styles().colors.fillColorPrimaryTransparent03),
+                  ? Styles().colors!.fillColorPrimary
+                  : Styles().colors!.fillColorPrimaryTransparent03),
               onTap: () => _onExploreClicked()),
             Visibility(
               visible: _updating,
@@ -211,7 +211,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     width: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary),),),),),),
+                      valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary),),),),),),
           ]),
         )
 
@@ -223,14 +223,14 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
     if (button != null) {
 
-      UserRole role = button.data as UserRole;
+      UserRole? role = button.data as UserRole?;
 
       Analytics.instance.logSelect(target: "Role: " + role.toString());
       
-        if (_selectedRoles.contains(role)) {
-          _selectedRoles.remove(role);
+        if (_selectedRoles!.contains(role)) {
+          _selectedRoles!.remove(role);
         } else {
-          _selectedRoles.add(role);
+          _selectedRoles!.add(role);
         }
 
       setState(() {});
@@ -240,7 +240,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
   void _onExploreClicked() {
     Analytics.instance.logSelect(target:"Explore Illinois");
-    if (_selectedRoles != null && _selectedRoles.isNotEmpty && !_updating) {
+    if (_selectedRoles != null && _selectedRoles!.isNotEmpty && !_updating) {
       Auth2().prefs?.roles = _selectedRoles;
       setState(() { _updating = true; });
       FlexUI().update().then((_){

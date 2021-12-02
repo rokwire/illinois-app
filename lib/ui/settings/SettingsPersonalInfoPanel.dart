@@ -34,12 +34,12 @@ class SettingsPersonalInfoPanel extends StatefulWidget {
 
 class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> implements NotificationsListener {
 
-  TextEditingController _nameController;
-  TextEditingController _emailController;
-  TextEditingController _phoneController;
-  String _initialName;
-  String _initialEmail;
-  String _initialPhone;
+  TextEditingController? _nameController;
+  TextEditingController? _emailController;
+  TextEditingController? _phoneController;
+  String? _initialName;
+  String? _initialEmail;
+  String? _initialPhone;
 
   //bool _isDeleting = false;
   bool _isSaving = false;
@@ -56,9 +56,9 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
+    _nameController!.dispose();
+    _emailController!.dispose();
+    _phoneController!.dispose();
     super.dispose();
   }
 
@@ -81,7 +81,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.profile_info.header.title", "PERSONAL INFO"),
+        titleWidget: Text(Localization().getStringEx("panel.profile_info.header.title", "PERSONAL INFO")!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -104,7 +104,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         _buildAccountManagementOptions(),
         Container(height: 16,)
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -155,7 +155,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name")!, textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
           )
         ),
         Semantics(
@@ -164,14 +164,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+              style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
             ),
           )
           ),
@@ -181,8 +181,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.email.hint", ""),
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
-                    style: TextStyle( color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address")!, textAlign: TextAlign.left,
+                    style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
               )
           ),
           Semantics(
@@ -191,14 +191,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                 ),
               )
           ),
@@ -217,7 +217,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name")!, textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
           )
         ),
         Semantics(
@@ -226,14 +226,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           textField: true, excludeSemantics: true,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+            decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
 //          height: 48,
             child: TextField(
               controller: _nameController,
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+              style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
             ),
           )
           ),
@@ -243,7 +243,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: TextStyle( color: Styles().colors.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies.bold, letterSpacing: 1),)
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number")!, textAlign: TextAlign.left, style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
               )
           ),
           Semantics(
@@ -252,14 +252,14 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             textField: true, excludeSemantics: true,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(color: Styles().colors.white, border: Border.all(color: Styles().colors.fillColorPrimary, width: 1)),
+                decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
 //                height: 48,
                 child: TextField(
                   controller: _emailController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: TextStyle(color: Styles().colors.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                  style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                 ),
               )
           ),
@@ -296,10 +296,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
         child: ScalableRoundedButton(
           label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
           hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-          backgroundColor: Styles().colors.background,
+          backgroundColor: Styles().colors!.background,
           fontSize: 16.0,
-          textColor: Styles().colors.fillColorPrimary,
-          borderColor: Styles().colors.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
           onTap: _onSignOutClicked,
         ),
       );
@@ -315,10 +315,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                 label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
                 hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
                 enabled: _canSave,
-                backgroundColor: _canSave ? Styles().colors.white : Styles().colors.background,
+                backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
                 fontSize: 16.0,
-                textColor: _canSave? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,
-                borderColor: _canSave? Styles().colors.fillColorSecondary : Styles().colors.surfaceAccent,
+                textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 onTap: _onSaveChangesClicked,
               ),
               Visibility(
@@ -327,7 +327,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                     child:Container(
                       padding: EdgeInsets.all(4),
                       child: Center(child:
-                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), strokeWidth: 2,),),),
+                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,),),),
                   ))
             ],),
           ),
@@ -338,10 +338,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
             ScalableRoundedButton(
               label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
               hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-              backgroundColor: Styles().colors.white,
+              backgroundColor: Styles().colors!.white,
               fontSize: 16.0,
-              textColor: Styles().colors.fillColorPrimary,
-              borderColor: Styles().colors.fillColorSecondary,
+              textColor: Styles().colors!.fillColorPrimary,
+              borderColor: Styles().colors!.fillColorSecondary,
               onTap: _onSignOutClicked,
             ),
           ),
@@ -358,15 +358,15 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.profile_info.logout.title", "Illinois"),
+              Localization().getStringEx("panel.profile_info.logout.title", "Illinois")!,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.profile_info.logout.message", "Are you sure you want to sign out?"),
+                Localization().getStringEx("panel.profile_info.logout.message", "Are you sure you want to sign out?")!,
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Colors.black),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
               ),
             ),
             Row(
@@ -378,13 +378,13 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
                       Navigator.pop(context);
                       Auth2().logout();
                     },
-                    child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes"))),
+                    child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes")!)),
                 TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "No");
                       Navigator.pop(context);
                     },
-                    child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")))
+                    child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")!))
               ],
             ),
           ],
@@ -419,7 +419,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
   _onSaveChangesClicked() async{
 
-    String email, phone, firstName, lastName, middleName;
+    String? email, phone, firstName, lastName, middleName;
     if (_isEmailChanged){
       email = _customEmail;
     }
@@ -458,10 +458,10 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
     setState(() { _isSaving = true; });
 
-    Auth2().loadUserProfile().then((Auth2UserProfile userProfile) {
+    Auth2().loadUserProfile().then((Auth2UserProfile? userProfile) {
       if (mounted) {
         if (userProfile != null) {
-          Auth2UserProfile updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
+          Auth2UserProfile? updatedUserProfile = Auth2UserProfile.fromOther(userProfile,
             email: email,
             phone: phone,
             firstName: firstName,
@@ -523,8 +523,8 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 }
 
 class _PersonalInfoEntry extends StatelessWidget {
-  final String title;
-  final String value;
+  final String? title;
+  final String? value;
   final bool visible;
 
   _PersonalInfoEntry({this.title, this.value, this.visible = true});
@@ -541,20 +541,20 @@ class _PersonalInfoEntry extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      title,
+                      title!,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.medium,
+                          fontFamily: Styles().fontFamilies!.medium,
                           fontSize: 14,
                           letterSpacing: 0.5,
-                          color: Styles().colors.textBackground),
+                          color: Styles().colors!.textBackground),
                     ),
                     Container(
                       height: 5,
                     ),
                     Text(
-                      value,
+                      value!,
                       style:
-                          TextStyle(fontSize: 20, color: Styles().colors.fillColorPrimary),
+                          TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary),
                     )
                   ],
                 )
