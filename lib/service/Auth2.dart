@@ -577,7 +577,7 @@ class Auth2 with Service implements NotificationsListener {
 
   Future<Auth2EmailAccountState> checkEmailAccountState(String email) async {
     if ((Config().coreUrl != null) && (Config().appPlatformId != null) && (Config().coreOrgId != null) && (email != null)) {
-      String url = "${Config().coreUrl}/services/auth/account-exists";
+      String url = "${Config().coreUrl}/services/auth/account/exists";
       Map<String, String> headers = {
         'Content-Type': 'application/json'
       };

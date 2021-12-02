@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Change Core BB account exists endpoint path [#1054](https://github.com/rokwire/illinois-app/issues/1054)
 - Allow users signed in with oidc to create groups. [#1059](https://github.com/rokwire/illinois-app/issues/1059).
 
 ## [3.0.58] - 2021-12-01
