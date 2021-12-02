@@ -838,9 +838,10 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
-  void _onTapDeleteData(){
+  void _onTapDeleteData() async{
     final String groupsSwitchTitle = "Please delete all my contributions.";
-    bool contributeInGroups = true; //TBD
+    int userPostCount = await Groups().getUserPostCount();
+    bool contributeInGroups = userPostCount > 0;
 
     SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
