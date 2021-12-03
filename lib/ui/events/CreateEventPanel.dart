@@ -1805,28 +1805,30 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       if (hasGroup) {
         List<Group> otherGroups = await _loadOtherAdminUserGroups();
-        List<Group> selectedOtherGroups =
-            await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
-        if (AppCollection.isCollectionNotEmpty(selectedOtherGroups)) {
-          for (Group group in selectedOtherGroups) {
-            Event groupEvent = Event.fromOther(mainEvent);
-            groupEvent.createdByGroupId = group.id;
-            String groupEventId = await ExploreService().postNewEvent(groupEvent);
-            if (AppString.isStringNotEmpty(groupEventId)) {
-              bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent.createdByGroupId, eventId: groupEventId);
-              if (eventLinkedToGroup) {
-                // Succeeded to link event to group
-                if (eventToDisplay == null) {
-                  eventToDisplay = groupEvent;
-                  groupToDisplay = group;
+        if (AppCollection.isCollectionNotEmpty(otherGroups)) {
+          List<Group> selectedOtherGroups =
+              await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
+          if (AppCollection.isCollectionNotEmpty(selectedOtherGroups)) {
+            for (Group group in selectedOtherGroups) {
+              Event groupEvent = Event.fromOther(mainEvent);
+              groupEvent.createdByGroupId = group.id;
+              String groupEventId = await ExploreService().postNewEvent(groupEvent);
+              if (AppString.isStringNotEmpty(groupEventId)) {
+                bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent.createdByGroupId, eventId: groupEventId);
+                if (eventLinkedToGroup) {
+                  // Succeeded to link event to group
+                  if (eventToDisplay == null) {
+                    eventToDisplay = groupEvent;
+                    groupToDisplay = group;
+                  }
+                } else {
+                  // Failed to link event to group
+                  createEventFailedForGroupNames.add(group.title);
                 }
               } else {
-                // Failed to link event to group
+                // Failed to create event for group
                 createEventFailedForGroupNames.add(group.title);
               }
-            } else {
-              // Failed to create event for group
-              createEventFailedForGroupNames.add(group.title);
             }
           }
         }
