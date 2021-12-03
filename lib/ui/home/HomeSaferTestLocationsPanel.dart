@@ -124,10 +124,9 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
   }
 
   Future<List<HealthServiceLocation>> _loadLocations() async {
-    String healthUrl = Config().healthUrl;
-    String countyId = Config().saferLocations['county_id'];
-    if ((healthUrl != null) && (countyId != null)) {
-      String url = "$healthUrl/covid19/locations?county-id=$countyId";
+    String contentUrl = Config().contentUrl;
+    if ((contentUrl != null)) {
+      String url = "$contentUrl/health_locations";
       Response response = await Network().get(url, auth: NetworkAuth.ApiKey);
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
     }
