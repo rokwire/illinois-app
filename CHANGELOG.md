@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Do not prompt user to select other group if he is an admin to just one group. [#1057](https://github.com/rokwire/illinois-app/issues/1057).
 - Favorites (star) Button don't work. [#1069](https://github.com/rokwire/illinois-app/issues/1069).
+### Changed
+- Load test locations from content service. [#1068](https://github.com/rokwire/illinois-app/issues/1068).
 
 ## [3.0.59] - 2021-12-02
 ### Changed
