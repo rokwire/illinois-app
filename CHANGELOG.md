@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Do not prompt user to select other group if he is an admin to just one group. [#1057](https://github.com/rokwire/illinois-app/issues/1057).
 
 ## [3.0.59] - 2021-12-02
 ### Changed
