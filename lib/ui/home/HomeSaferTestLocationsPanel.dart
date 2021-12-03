@@ -503,14 +503,11 @@ class HealthServiceLocation {
   final double latitude;
   final double longitude;
   final HealthLocationWaitTimeColor waitTimeColor;
-  final List<String> availableTests;
   final List<HealthLocationDayOfOperation> daysOfOperation;
   
-  HealthServiceLocation({this.id, this.name, this.availableTests, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
+  HealthServiceLocation({this.id, this.name, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
 
   factory HealthServiceLocation.fromJson(Map<String, dynamic> json) {
-    List jsoTests = json['available_tests'];
-    List jsonDaysOfOperation = json['days_of_operation'];
     return (json != null) ? HealthServiceLocation(
       id: json['id'],
       name: json['name'],
@@ -526,8 +523,7 @@ class HealthServiceLocation {
       latitude: AppJson.doubleValue(json["latitude"]),
       longitude: AppJson.doubleValue(json["longitude"]),
       waitTimeColor: HealthServiceLocation.waitTimeColorFromString(json['wait_time_color']),
-      availableTests: jsoTests!=null ? List.from(jsoTests) : null,
-      daysOfOperation: jsonDaysOfOperation!=null ? HealthLocationDayOfOperation.listFromJson(jsonDaysOfOperation) : null,
+      daysOfOperation: HealthLocationDayOfOperation.listFromJson(json['days_of_operation']),
     ) : null;
   }
 
@@ -547,7 +543,6 @@ class HealthServiceLocation {
       'latitude': latitude,
       'longitude': longitude,
       'wait_time_color': HealthServiceLocation.waitTimeColorToKeyString(waitTimeColor),
-      'available_tests': availableTests,
     };
   }
 
