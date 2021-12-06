@@ -237,7 +237,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String? formattedResult = AppString.getDefaultEmptyString(value: result.status);
+    String formattedResult = AppString.getDefaultEmptyString(value: result.status) ?? '';
     if (AppString.isStringNotEmpty(result.teamScore)) {
       formattedResult += ' ' + result.teamScore!;
       if (AppString.isStringNotEmpty(result.opponentScore)) {
