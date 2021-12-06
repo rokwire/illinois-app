@@ -1781,8 +1781,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       Event mainEvent = _constructEventFromData();
       Event? eventToDisplay;
       Group? groupToDisplay;
-      String? mainEventId = await ExploreService().postNewEvent(mainEvent);
       List<String?> createEventFailedForGroupNames = [];
+      List<Group>? otherGroupsToSave;
+
+      // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
+      if (hasGroup) {
+        List<Group> otherGroups = await _loadOtherAdminUserGroups();
+        if (AppCollection.isCollectionNotEmpty(otherGroups)) {
+          otherGroupsToSave = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
+        }
+      }
+
+      // Save the initial event and link it to group if it's part of such one.
+      String mainEventId = await ExploreService().postNewEvent(mainEvent);
       if (AppString.isStringNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
@@ -1803,33 +1814,27 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         createEventFailedForGroupNames.add(widget.group!.title);
       }
 
-      if (hasGroup) {
-        List<Group?>? otherGroups = await _loadOtherAdminUserGroups();
-        if (AppCollection.isCollectionNotEmpty(otherGroups)) {
-          List<Group> selectedOtherGroups =
-              await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
-          if (AppCollection.isCollectionNotEmpty(selectedOtherGroups)) {
-            for (Group group in selectedOtherGroups) {
-              Event? groupEvent = Event.fromOther(mainEvent);
-              groupEvent?.createdByGroupId = group.id;
-              String? groupEventId = await ExploreService().postNewEvent(groupEvent);
-              if (AppString.isStringNotEmpty(groupEventId)) {
-                bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent.createdByGroupId, eventId: groupEventId);
-                if (eventLinkedToGroup) {
-                  // Succeeded to link event to group
-                  if (eventToDisplay == null) {
-                    eventToDisplay = groupEvent;
-                    groupToDisplay = group;
-                  }
-                } else {
-                  // Failed to link event to group
-                  createEventFailedForGroupNames.add(group.title);
-                }
-              } else {
-                // Failed to create event for group
-                createEventFailedForGroupNames.add(group.title);
+      // Save the event to the other selected groups that the user is admin.
+      if (hasGroup && AppCollection.isCollectionNotEmpty(otherGroupsToSave)) {
+        for (Group group in otherGroupsToSave) {
+          Event? groupEvent = Event.fromOther(mainEvent);
+          groupEvent.createdByGroupId = group.id;
+          String? groupEventId = await ExploreService().postNewEvent(groupEvent);
+          if (AppString.isStringNotEmpty(groupEventId)) {
+            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent.createdByGroupId, eventId: groupEventId);
+            if (eventLinkedToGroup) {
+              // Succeeded to link event to group
+              if (eventToDisplay == null) {
+                eventToDisplay = groupEvent;
+                groupToDisplay = group;
               }
+            } else {
+              // Failed to link event to group
+              createEventFailedForGroupNames.add(group.title);
             }
+          } else {
+            // Failed to create event for group
+            createEventFailedForGroupNames.add(group.title);
           }
         }
       }
@@ -1848,11 +1853,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
 
       if (eventToDisplay != null) {
-        Navigator.push(
-                context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)))
-            .then((dynamic data) {
-          Navigator.pop(context);
-        });
+        Navigator.pushReplacement(
+            context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: eventToDisplay, group: groupToDisplay, previewMode: true)));
       }
     }
   }

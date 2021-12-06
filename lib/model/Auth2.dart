@@ -687,7 +687,7 @@ class Auth2UserPrefs {
   Auth2UserPrefs({int? privacyLevel, Set<UserRole>? roles, Map<String, Set<String>>? favorites, Map<String, Set<String>>? interests, Map<String, bool>? tags, Map<String, dynamic>? settings, Auth2VoterPrefs? voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
-    _favorites = favorites ?? Map<String, Set<String>>(); // Not null
+    _favorites = favorites;
     _interests = interests;
     _tags = tags;
     _settings = settings;
@@ -846,6 +846,10 @@ class Auth2UserPrefs {
   }
 
   void toggleFavorite(Favorite? favorite) {
+    if(_favorites == null){
+      _favorites = Map<String, Set<String>>();
+    }
+
     if ((favorite != null) && (_favorites != null)) {
       Set<String>? favoriteIdsForKey = _favorites![favorite.favoriteKey];
       bool shouldFavorite = (favoriteIdsForKey == null) || !favoriteIdsForKey.contains(favorite.favoriteId);
@@ -882,6 +886,10 @@ class Auth2UserPrefs {
   }
 
   void setListFavorite(List<Favorite>? favorites, bool shouldFavorite, {Favorite? sourceFavorite}) {
+    if(_favorites == null){
+      _favorites = Map<String, Set<String>>();
+    }
+
     if ((favorites != null) && (_favorites != null)) {
       for (Favorite favorite in favorites) {
         Set<String>? favoriteIdsForKey = _favorites![favorite.favoriteKey];
@@ -916,6 +924,10 @@ class Auth2UserPrefs {
   }
 
   void toggleInterestCategory(String? category) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (_interests != null)) {
       if (_interests!.containsKey(category)) {
         _interests!.remove(category);
@@ -930,6 +942,10 @@ class Auth2UserPrefs {
   }
 
   void applyInterestCategories(Set<String>? categories) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((categories != null) && (_interests != null)) {
 
       bool modified = false;
@@ -974,6 +990,10 @@ class Auth2UserPrefs {
   }
 
   void toggleInterest(String? category, String? interest) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (interest != null) && (_interests != null)) {
       Set<String>? categories = _interests![category];
       if (categories == null) {
@@ -992,6 +1012,10 @@ class Auth2UserPrefs {
   }
 
   void toggleInterests(String? category, Iterable<String>? interests) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (interests != null) && interests.isNotEmpty && (_interests != null)) {
       Set<String>? categories = _interests![category];
       if (categories == null) {
@@ -1012,6 +1036,10 @@ class Auth2UserPrefs {
   }
 
   void applyInterests(String? category, Iterable<String>? interests) {
+    if(_interests == null){
+      _interests = Map<String, Set<String>>();
+    }
+
     if ((category != null) && (_interests != null)) {
       bool modified = false;
       if ((interests != null) && !DeepCollectionEquality().equals(_interests![category], interests)) {
@@ -1087,6 +1115,10 @@ class Auth2UserPrefs {
   }
 
   void toggleTag(String? tag, { bool positive = true}) {
+    if(_tags == null){
+      _tags = Map<String, bool>();
+    }
+
     if ((_tags != null) && (tag != null)) {
       if (_tags!.containsKey(tag)) {
         _tags!.remove(tag);
@@ -1100,6 +1132,10 @@ class Auth2UserPrefs {
   }
 
   void addTag(String? tag, { bool? positive }) {
+    if(_tags == null){
+      _tags = Map<String, bool>();
+    }
+
     if ((_tags != null) && (tag != null) && (_tags![tag] != positive)) {
       _tags![tag] = positive ?? false;
       NotificationService().notify(notifyTagsChanged);
@@ -1116,6 +1152,10 @@ class Auth2UserPrefs {
   }
 
   void applyTags(Iterable<String>? tags, { bool positive = true }) {
+    if(_tags == null){
+      _tags = Map<String, bool>();
+    }
+
     if ((_tags != null) && (tags != null)) {
       bool modified = false;
       for (String tag in tags) {
