@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Open McKinley portal in external browser [#1074](https://github.com/rokwire/illinois-app/issues/1074).
+- Do not translate building access strings [#1077](https://github.com/rokwire/illinois-app/issues/1077).
 
 ## [2.8.2] - 2021-11-16
 ### Changed
