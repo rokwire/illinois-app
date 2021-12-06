@@ -36,7 +36,7 @@ class Guide with Service implements NotificationsListener {
   LinkedHashMap<String, Map<String, dynamic>?>? _contentMap;
   GuideContentSource? _contentSource;
 
-  late File          _cacheFile;
+  File?          _cacheFile;
   DateTime?      _pausedDateTime;
 
   List<Map<String, dynamic>>? _guideDetailsCache;
@@ -143,7 +143,7 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<String?> _loadContentStringFromCache() async {
-    return (await _cacheFile?.exists() == true) ? await _cacheFile.readAsString() : null;
+    return (await _cacheFile?.exists() == true) ? await _cacheFile?.readAsString() : null;
   }
 
   Future<void> _saveContentStringToCache(String? value) async {
@@ -352,7 +352,7 @@ class Guide with Service implements NotificationsListener {
 
   static bool _checkPromotionRoles(Map<String, dynamic> promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
-    return (roles != null) ? AppBoolExpr.eval(roles, (String argument) {
+    return (roles != null) ? AppBoolExpr.eval(roles, (String? argument) {
       UserRole? userRole = UserRole.fromString(argument);
       return (userRole != null) ? (Auth2().prefs?.roles?.contains(userRole) ?? false) : null;
     }) : true; 
@@ -362,12 +362,12 @@ class Guide with Service implements NotificationsListener {
     Map<String, dynamic>? card = (promotion != null) ? AppJson.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
-      if ((cardRole != null) && !AppBoolExpr.eval(cardRole, (String role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
+      if ((cardRole != null) && !AppBoolExpr.eval(cardRole, (String? role) { return Auth2().authCard?.role?.toLowerCase() == role?.toLowerCase(); })) {
         return false;
       }
 
       dynamic cardStudentLevel = card['student_level'];
-      if ((cardStudentLevel != null) && !AppBoolExpr.eval(cardStudentLevel, (String studentLevel) { return Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
+      if ((cardStudentLevel != null) && !AppBoolExpr.eval(cardStudentLevel, (String? studentLevel) { return Auth2().authCard?.studentLevel?.toLowerCase() == studentLevel?.toLowerCase(); })) {
         return false;
       }
     }
