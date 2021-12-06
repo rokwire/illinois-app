@@ -657,11 +657,11 @@ class Groups with Service implements NotificationsListener {
     }
   }
 
-  Future<Map<String, dynamic>> loadUserStats() async {
+  Future<Map<String, dynamic>?> loadUserStats() async {
     try {
-      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().groupsUrl}/user/stats", auth: NetworkAuth.Auth2) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().groupsUrl}/user/stats", auth: NetworkAuth.Auth2) : null;
       if(response?.statusCode == 200) {
-        return  AppJson.decodeMap(response.body);
+        return  AppJson.decodeMap(response?.body);
       }
     } catch (e) {
       Log.e('Failed to load user stats');
@@ -672,8 +672,8 @@ class Groups with Service implements NotificationsListener {
   }
 
   Future<int> getUserPostCount() async{
-    Map<String, dynamic> stats = await loadUserStats();
-    return AppJson.intValue(stats!=null? stats["posts_count"] : null) ?? -1;
+    Map<String, dynamic>? stats = await loadUserStats();
+    return stats != null ? (AppJson.intValue(stats["posts_count"]) ?? -1) : -1;
   }
 
   /////////////////////////
