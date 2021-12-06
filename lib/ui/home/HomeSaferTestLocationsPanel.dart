@@ -124,10 +124,9 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
   }
 
   Future<List<HealthServiceLocation>> _loadLocations() async {
-    String healthUrl = Config().healthUrl;
-    String countyId = Config().saferLocations['county_id'];
-    if ((healthUrl != null) && (countyId != null)) {
-      String url = "$healthUrl/covid19/locations?county-id=$countyId";
+    String contentUrl = Config().contentUrl;
+    if ((contentUrl != null)) {
+      String url = "$contentUrl/health_locations";
       Response response = await Network().get(url, auth: NetworkAuth.ApiKey);
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
     }
@@ -503,10 +502,9 @@ class HealthServiceLocation {
   final double latitude;
   final double longitude;
   final HealthLocationWaitTimeColor waitTimeColor;
-  final List<String> availableTests;
   final List<HealthLocationDayOfOperation> daysOfOperation;
   
-  HealthServiceLocation({this.id, this.name, this.availableTests, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
+  HealthServiceLocation({this.id, this.name, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
 
   static HealthServiceLocation fromJson(Map<String, dynamic> json) {
     return (json != null) ? HealthServiceLocation(
@@ -524,7 +522,6 @@ class HealthServiceLocation {
       latitude: AppJson.doubleValue(json["latitude"]),
       longitude: AppJson.doubleValue(json["longitude"]),
       waitTimeColor: HealthServiceLocation.waitTimeColorFromString(json['wait_time_color']),
-      availableTests: AppJson.listStringsValue(json['available_tests']),
       daysOfOperation: HealthLocationDayOfOperation.listFromJson(json['days_of_operation']),
     ) : null;
   }
@@ -545,7 +542,6 @@ class HealthServiceLocation {
       'latitude': latitude,
       'longitude': longitude,
       'wait_time_color': HealthServiceLocation.waitTimeColorToKeyString(waitTimeColor),
-      'available_tests': availableTests,
     };
   }
 
