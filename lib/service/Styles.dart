@@ -46,7 +46,7 @@ class Styles extends Service implements NotificationsListener{
   UiFontFamilies? _fontFamilies;
   UiFontFamilies? get fontFamilies => _fontFamilies;
   
-  late Map<String, TextStyle> _textStylesMap;
+  Map<String, TextStyle>? _textStylesMap;
   UiStyles? _uiStyles;
   UiStyles? get uiStyles => _uiStyles;
 
@@ -172,7 +172,7 @@ class Styles extends Service implements NotificationsListener{
 
 
   TextStyle? getTextStyle(String key){
-    dynamic style = _textStylesMap[key];
+    dynamic style = (_textStylesMap != null) ? _textStylesMap![key] : null;
     return (style is TextStyle) ? style : null;
   }
 
@@ -434,7 +434,7 @@ class UiColors {
     return null;
   }
 
-  static String? toHex(Color value, {bool leadingHashSign = true}) {
+  static String? toHex(Color? value, {bool leadingHashSign = true}) {
     if (value != null) {
       return "${leadingHashSign ? '#' : ''}" +
           "${value.alpha.toRadixString(16)}" +
