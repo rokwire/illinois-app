@@ -221,7 +221,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           HomeHeader(
             title: Localization().getStringEx(
                 'widget.home_upcoming_events.label.events_for_you',
-                'Events for you'),
+                'Events For You'),
             imageRes: 'images/icon-calendar.png',
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             onSettingsTap: (){

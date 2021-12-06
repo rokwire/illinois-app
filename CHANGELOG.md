@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed network authorization type in health_locations API call to Content BB.
+- Capitalization of Sections on Home Page [#1073](https://github.com/rokwire/illinois-app/issues/1073).
 ### Changed
 - Open McKinley portal in external browser [#1074](https://github.com/rokwire/illinois-app/issues/1074).
 - Do not translate building access strings [#1077](https://github.com/rokwire/illinois-app/issues/1077).
