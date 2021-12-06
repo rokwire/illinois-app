@@ -93,7 +93,7 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                         color: Styles().colors!.background,
                         child: Visibility(visible: AppString.isStringNotEmpty(widget.coach.htmlBio), child: Container(
                           child: Html(
-                            data: AppString.getDefaultEmptyString(value: widget.coach.htmlBio),
+                            data: AppString.getDefaultEmptyString(widget.coach.htmlBio),
                             onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
                             style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                           ),

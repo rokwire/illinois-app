@@ -110,7 +110,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                     ),
                     Visibility(visible: AppString.isStringNotEmpty(_validationErrorMsg), child:
                       Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-                        Text(AppString.getDefaultEmptyString(value: _validationErrorMsg ?? '')!, style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(AppString.getDefaultEmptyString(_validationErrorMsg ?? '')!, style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                   ],),

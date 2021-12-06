@@ -98,7 +98,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isGame = (widget.explore is Game);
     Event? event = isEvent ? widget.explore as Event? : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = AppString.getDefaultEmptyString(value: widget.explore!.exploreImageURL)!;
+    String imageUrl = AppString.getDefaultEmptyString(widget.explore!.exploreImageURL)!;
     String interestsLabelValue = _getInterestsLabelValue();
 
     return GestureDetector(
@@ -295,7 +295,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreName() {
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
-        child: Text(AppString.getDefaultEmptyString(value: widget.explore?.exploreTitle)!,
+        child: Text(AppString.getDefaultEmptyString(widget.explore?.exploreTitle)!,
             style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary)));
   }
 

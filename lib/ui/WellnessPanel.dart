@@ -120,7 +120,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, top: 24, right: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: introText)!,
+                  AppString.getDefaultEmptyString(introText),
                   style: TextStyle(fontSize: 20, color: Styles().colors!.textBackground),
                 ),
               ),
@@ -130,7 +130,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: mainText)!,
+                  AppString.getDefaultEmptyString(mainText)!,
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                 ),
               ),
@@ -141,7 +141,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: bullet)!,
+                  AppString.getDefaultEmptyString(bullet)!,
                   style: TextStyle(fontSize: 20, color: Styles().colors!.textBackground),
                 ),
               ),
@@ -151,7 +151,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 6),
                 child: Text(
-                  AppString.getDefaultEmptyString(value: secondaryText)!,
+                  AppString.getDefaultEmptyString(secondaryText)!,
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                 ),
               ),
@@ -214,7 +214,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                             excludeSemantics: true,
                             child:
                             Text(
-                              AppString.getDefaultEmptyString(value: sectionHeaderText)!,
+                              AppString.getDefaultEmptyString(sectionHeaderText)!,
                               style: TextStyle(color: Colors.white, fontSize: 20),
                             )
                         )
@@ -359,7 +359,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                         excludeSemantics: true,
                         child:
                         Text(
-                          AppString.getDefaultEmptyString(value: resourceHeaderTitle)!,
+                          AppString.getDefaultEmptyString(resourceHeaderTitle)!,
                           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
                         ),
                       )
@@ -477,10 +477,10 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
         String? titleKey = AppMapPathKey.entry(ribbonButtonSource, 'title');
         String? title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
         String? icon = AppMapPathKey.entry(ribbonButtonSource, 'icon');
-        String? iconValue = AppString.getDefaultEmptyString(value: icon, defaultValue: 'chevron-right.png');
+        String? iconValue = AppString.getDefaultEmptyString(icon, defaultValue: 'chevron-right.png');
         String? hint = AppMapPathKey.entry(ribbonButtonSource, 'hint');
         String? hintKey =
-            hint != null ? AppString.getDefaultEmptyString(value: hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
+            hint != null ? AppString.getDefaultEmptyString(hint, defaultValue: "panel.wellness.common.resources.poor_accessibility.hint") : null;
         String? hintValue = AppString.isStringNotEmpty(hintKey) ? Localization().getStringFromKeyMapping(hintKey, _stringsContent) : "";
         RibbonButton button = RibbonButton(
           height: null,

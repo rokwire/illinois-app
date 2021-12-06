@@ -112,13 +112,13 @@ class SectionTitlePrimary extends StatelessWidget{
             ),
             Visibility(visible: hasSubTitle,
                 child: Semantics(
-                  label: AppString.getDefaultEmptyString(value: subTitle),
+                  label: AppString.getDefaultEmptyString(subTitle),
                   header: true,
                   excludeSemantics: true,
                   child: Padding(
                     padding: EdgeInsets.only(left: 50, right: 16),
                     child: Row(children: <Widget>[
-                      Text(AppString.getDefaultEmptyString(value: subTitle)!,
+                      Text(AppString.getDefaultEmptyString(subTitle),
                         style: TextStyle(fontSize: 16,
                             color: Colors.white,
                             fontFamily: Styles().fontFamilies!.regular),),

@@ -144,7 +144,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
         ),),),
         Visibility(visible: AppString.isStringNotEmpty(text), child:
           Padding(padding: EdgeInsets.only(top: 10), child:
-            Text(AppString.getDefaultEmptyString(value: text)!, style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16, ), ),
+            Text(AppString.getDefaultEmptyString(text), style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16, ), ),
         ),),
         _buildButtons(buttonsJsonContent)
       ],
@@ -160,7 +160,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       String? title = buttonContent['title'];
       buttons.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         RoundedButton(
-          label: AppString.getDefaultEmptyString(value: title),
+          label: AppString.getDefaultEmptyString(title),
           padding: EdgeInsets.symmetric(horizontal: 14),
           textColor: Styles().colors!.fillColorPrimary,
           borderColor: Styles().colors!.fillColorSecondary,

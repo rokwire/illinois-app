@@ -904,7 +904,7 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [AppString.getDefaultEmptyString(value: group!.pendingCount?.toString())]);
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [AppString.getDefaultEmptyString(group!.pendingCount?.toString())]);
     return GestureDetector(
         onTap: () => _onTapCard(context),
         child: Padding(
@@ -962,7 +962,7 @@ class GroupCard extends StatelessWidget {
       );
     }
 
-    String? groupCategory = AppString.getDefaultEmptyString(value: group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    String? groupCategory = AppString.getDefaultEmptyString(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     if (AppString.isStringNotEmpty(groupCategory)) {
       if (leftContent.isNotEmpty) {
         leftContent.add(Container(height: 6,));
@@ -1074,7 +1074,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
-                          child: Text(AppString.getDefaultEmptyString(value: widget.post!.subject)!,
+                          child: Text(AppString.getDefaultEmptyString(widget.post!.subject)!,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary))),
@@ -1083,11 +1083,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(value: visibleRepliesCount.toString())!,
+                                child: Text(AppString.getDefaultEmptyString(visibleRepliesCount.toString())!,
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(value: repliesLabel)!,
+                                child: Text(AppString.getDefaultEmptyString(repliesLabel)!,
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
                           ])),
                     ]),
@@ -1111,7 +1111,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 3,
                             child:Container(
                               padding: EdgeInsets.only(right: 6),
-                              child:Text(AppString.getDefaultEmptyString(value: memberName)!,
+                              child:Text(AppString.getDefaultEmptyString(memberName)!,
                                 textAlign: TextAlign.left,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary)),
                           )),
@@ -1119,7 +1119,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 2,
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
-                              child: Text(AppString.getDefaultEmptyString(value: widget.post?.displayDateTime)!,
+                              child: Text(AppString.getDefaultEmptyString(widget.post?.displayDateTime)!,
                                 semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
@@ -1198,7 +1198,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
         : Localization().getStringEx('widget.group.card.reply.multiple.replies.label', 'Replies');
-    String? bodyText = AppString.getDefaultEmptyString(value: widget.reply?.body);
+    String? bodyText = AppString.getDefaultEmptyString(widget.reply?.body);
     if (widget.reply?.isUpdated ?? false) {
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
@@ -1214,7 +1214,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Semantics( child:
-                  Text(AppString.getDefaultEmptyString(value: widget.reply?.member?.name)!,
+                  Text(AppString.getDefaultEmptyString(widget.reply?.member?.name)!,
                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                 ),
                 Visibility(
@@ -1254,7 +1254,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                       Expanded(
                           child: Container(
-                            child: Semantics(child: Text(AppString.getDefaultEmptyString(value: widget.reply?.displayDateTime)!,
+                            child: Semantics(child: Text(AppString.getDefaultEmptyString(widget.reply?.displayDateTime)!,
                                 semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
                       Visibility(

@@ -190,7 +190,7 @@ class Game with Explore implements Favorite {
       return '$startDateFormatted - $endDateFormatted';
     } else if (useStringDateTimes) {
       String dateFormatted = AppDateTime().formatDateTime(date, format: dateFormat, ignoreTimeZone: true, showTzSuffix: false)!; //another workaround
-      dateFormatted += ' ${AppString.getDefaultEmptyString(value: timeToString)}';
+      dateFormatted += ' ${AppString.getDefaultEmptyString(timeToString)}';
       return dateFormatted;
     } else {
       return AppDateTime().getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);

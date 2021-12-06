@@ -177,7 +177,7 @@ class _OnboardingLoginPhoneVerifyPanelState
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
-                        AppString.getDefaultEmptyString(value: _validationErrorMsg)!,
+                        AppString.getDefaultEmptyString(_validationErrorMsg)!,
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 14,

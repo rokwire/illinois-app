@@ -64,11 +64,11 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     bool voterWidgetVisible = _isVoterWidgetVisible();
     String voterTitle = _getVoterTitle(voterWidgetVisible)!;
     String voterText = _getVoterText(voterWidgetVisible)!;
-    String? vbmKey = AppString.getDefaultEmptyString(value: _voterRule?.vbmText);
+    String? vbmKey = AppString.getDefaultEmptyString(_voterRule?.vbmText);
     String vbmText = Localization().getStringFromKeyMapping(vbmKey, _stringsContent)!;
     bool vbmVisible = Auth2().isVoterRegistered && (Auth2().isVoterByMail == null) && AppString.isStringNotEmpty(vbmKey);
     bool closeBtnVisible = !(_voterRule?.electionPeriod ?? false);
-    String? vbmButtonTitleKey = AppString.getDefaultEmptyString(value: _voterRule?.vbmButtonTitle);
+    String? vbmButtonTitleKey = AppString.getDefaultEmptyString(_voterRule?.vbmButtonTitle);
     String? vbmButtonTitle = Localization().getStringFromKeyMapping(vbmButtonTitleKey, _stringsContent);
     return Visibility(
       visible: voterWidgetVisible,
@@ -329,7 +329,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _onTapVbmButton(String? vbmButtonTitle) {
-    Analytics.instance.logSelect(target: "Vote By Mail: ${AppString.getDefaultEmptyString(value: vbmButtonTitle)}");
+    Analytics.instance.logSelect(target: "Vote By Mail: ${AppString.getDefaultEmptyString(vbmButtonTitle)}");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _voterRule?.vbmUrl)));
   }
 

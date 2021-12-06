@@ -103,7 +103,7 @@ class _AthleticsRosterDetailPanel extends State<AthleticsRosterDetailPanel>{
                         child: Column(
                             children: <Widget>[
                               Html(
-                                data: AppString.getDefaultEmptyString(value: widget.roster.htmlBio),
+                                data: AppString.getDefaultEmptyString(widget.roster.htmlBio),
                                 onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url, context: context),
                                 style: { "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
                               ),

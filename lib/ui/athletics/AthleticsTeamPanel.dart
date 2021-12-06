@@ -128,7 +128,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
       twitterUrl = '${Config().twitterHostUrl}$twitterName';
     }
 
-    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow")! + " " + (widget?.sport?.name ?? "");
+    String followLabel = Localization().getStringEx("panel.athletics_team.label.follow.title", "Follow")! + " ${widget.sport?.name}";
     String randomImageURL = Assets().randomStringFromListWithKey('images.random.sports.$sportShortName') ?? '';
     return SingleChildScrollView(
       child: Container(
@@ -206,8 +206,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     ),),
                     Expanded(
                       child: Text(
-                        AppString.getDefaultEmptyString(
-                            value: _record?.overallRecordUnformatted)!,
+                        AppString.getDefaultEmptyString(_record?.overallRecordUnformatted),
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
@@ -233,32 +232,27 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.conf.title", 'Conf'),
                       hint: Localization().getStringEx("panel.athletics_team.label.conf.hint", ''),
-                      result: AppString.getDefaultEmptyString(
-                          value: _record?.conferenceRecord),
+                      result: AppString.getDefaultEmptyString(_record?.conferenceRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.home.title", 'Home'),
                       hint: Localization().getStringEx("panel.athletics_team.label.home.hint", ''),
-                      result: AppString.getDefaultEmptyString(
-                          value: _record?.homeRecord),
+                      result: AppString.getDefaultEmptyString(_record?.homeRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.away.title", 'Away'),
                       hint: Localization().getStringEx("panel.athletics_team.label.away.hint", ''),
-                      result: AppString.getDefaultEmptyString(
-                          value: _record?.awayRecord),
+                      result: AppString.getDefaultEmptyString(_record?.awayRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.neutral.title", 'Neutral'),
                       hint: Localization().getStringEx("panel.athletics_team.label.neutral.hint", ''),
-                      result: AppString.getDefaultEmptyString(
-                          value: _record?.neutralRecord),
+                      result: AppString.getDefaultEmptyString(_record?.neutralRecord),
                     ),
                     _GameResult(
                       header: Localization().getStringEx("panel.athletics_team.label.streak.title", 'Streak'),
                       hint: Localization().getStringEx("panel.athletics_team.label.streak.hint", ''),
-                      result: AppString.getDefaultEmptyString(
-                          value: _record?.streak),
+                      result: AppString.getDefaultEmptyString(_record?.streak),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 6, right: 10),
@@ -917,7 +911,7 @@ class _RosterItem extends StatelessWidget {
                     fontSize: 16),
               ),
               Text(
-                AppString.getDefaultEmptyString(value: position)!,
+                AppString.getDefaultEmptyString(position),
                 softWrap: true,
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,

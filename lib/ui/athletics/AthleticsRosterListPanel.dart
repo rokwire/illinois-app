@@ -349,7 +349,7 @@ class _RosterItem extends StatelessWidget{
                                 ),
                               ),
                             ),
-                            Text(AppString.getDefaultEmptyString(value: roster.numberString)!,
+                            Text(AppString.getDefaultEmptyString(roster.numberString)!,
                               style: TextStyle(
                                   color: Styles().colors!.whiteTransparent06,
                                   fontFamily: Styles().fontFamilies!.medium,

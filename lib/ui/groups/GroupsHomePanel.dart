@@ -385,7 +385,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
                 FilterSelectorWidget(
-                  label: AppString.getDefaultEmptyString(value: _tagFilterToDisplayString(_selectedTagFilter)),
+                  label: AppString.getDefaultEmptyString(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
                   visible: true,
@@ -425,7 +425,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         itemCount: _activeFilterList!.length,
         itemBuilder: (context, index) {
           return FilterListItemWidget(
-            label: AppString.getDefaultEmptyString(value: _getFilterItemLabel(index)),
+            label: AppString.getDefaultEmptyString(_getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
             selectedIconRes: "images/checkbox-selected.png",

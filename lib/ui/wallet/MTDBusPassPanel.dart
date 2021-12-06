@@ -384,7 +384,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   String? get _busNumber {
-    return AppString.getDefaultEmptyString(value: _activeBusNumber, defaultValue: '');
+    return AppString.getDefaultEmptyString(_activeBusNumber, defaultValue: '');
   }
 }
 

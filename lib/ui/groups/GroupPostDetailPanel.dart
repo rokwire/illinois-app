@@ -323,7 +323,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         child: Semantics(
                           container: true,
                           child: Html(
-                            data: AppString.getDefaultEmptyString(value: _post?.body),
+                            data: AppString.getDefaultEmptyString(_post?.body),
                             style: {
                               "body": Style(
                                   color: Styles().colors!.fillColorPrimary,

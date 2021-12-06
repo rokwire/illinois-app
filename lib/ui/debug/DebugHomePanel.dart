@@ -572,7 +572,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(value: textContent)!, style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(textContent)!, style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
             )
           ),
         ])

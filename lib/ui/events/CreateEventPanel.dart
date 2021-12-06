@@ -2122,7 +2122,7 @@ class _EventDateDisplayView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              AppString.getDefaultEmptyString(value: label, defaultValue: '-')!,
+              AppString.getDefaultEmptyString(label, defaultValue: '-')!,
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,

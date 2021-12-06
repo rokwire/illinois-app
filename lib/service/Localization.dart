@@ -285,7 +285,7 @@ class Localization with Service implements NotificationsListener {
         text = Localization().getStringEx(key, defaults);
       }
     }
-    return AppString.getDefaultEmptyString(value: text, defaultValue: defaults);
+    return AppString.getDefaultEmptyString(text, defaultValue: defaults);
   }
 
   static String? _getStringFromLanguageMapping(String text, Map<String, dynamic>? languageMap) {

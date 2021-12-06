@@ -646,8 +646,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
     bool favorite = Auth2().isFavorite(item);
     Color? headerColor = _cardHeaderColor(item);
-    String title = AppString.getDefaultEmptyString(value: _cardTitle(item))!;
-    String? cardDetailLabel = AppString.getDefaultEmptyString(value: _cardDetailLabel(item));
+    String title = AppString.getDefaultEmptyString(_cardTitle(item))!;
+    String? cardDetailLabel = AppString.getDefaultEmptyString(_cardDetailLabel(item));
     String? cardDetailImgRes = _cardDetailImageResource(item);
     bool detailVisible = AppString.isStringNotEmpty(cardDetailLabel);
     return GestureDetector(onTap: () => _onTapItem(item), child: Semantics(

@@ -74,13 +74,13 @@ class HomeHeader extends StatelessWidget {
           Visibility(
               visible: hasSubTitle,
               child: Semantics(
-                label: AppString.getDefaultEmptyString(value: subTitle),
+                label: AppString.getDefaultEmptyString(subTitle),
                 header: true,
                 excludeSemantics: true,
                 child: Padding(
                   padding: EdgeInsets.only(left: 30),
                   child: Text(
-                    AppString.getDefaultEmptyString(value: subTitle)!,
+                    AppString.getDefaultEmptyString(subTitle)!,
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,

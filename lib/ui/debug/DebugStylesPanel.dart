@@ -80,7 +80,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
               Wrap(runSpacing: 8, spacing: 16, children: <Widget>[
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
-                    label: AppString.getDefaultEmptyString(value: 'Debug'),
+                    label: AppString.getDefaultEmptyString('Debug'),
                     padding: EdgeInsets.symmetric(horizontal: 14),
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.debug) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
@@ -90,7 +90,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
                 ],),
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
-                    label: AppString.getDefaultEmptyString(value: 'Auto'),
+                    label: AppString.getDefaultEmptyString('Auto'),
                     padding: EdgeInsets.symmetric(horizontal: 14),
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.auto) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,
@@ -100,7 +100,7 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
                 ],),
                 Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   RoundedButton(
-                    label: AppString.getDefaultEmptyString(value: 'Assets'),
+                    label: AppString.getDefaultEmptyString('Assets'),
                     padding: EdgeInsets.symmetric(horizontal: 14),
                     textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.assets) ? TextDecoration.underline : null),
                     borderColor: Styles().colors!.fillColorSecondary,

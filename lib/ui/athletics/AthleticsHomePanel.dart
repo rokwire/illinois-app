@@ -755,8 +755,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,
                                             fontFamily: Styles().fontFamilies!.bold),),
-                                      Text(AppString.getDefaultEmptyString(
-                                          value: interestsLabelValue)!,
+                                      Text(AppString.getDefaultEmptyString(interestsLabelValue),
                                         style: TextStyle(
                                             color: Styles().colors!.textBackground,
                                             fontSize: 12,

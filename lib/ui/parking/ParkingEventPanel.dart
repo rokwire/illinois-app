@@ -230,7 +230,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
                   ),
                 ),
                 Text(
-                  "${AppString.getDefaultEmptyString(value: widget.inventory!.lotAddress)}",
+                  "${AppString.getDefaultEmptyString(widget.inventory!.lotAddress)}",
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,

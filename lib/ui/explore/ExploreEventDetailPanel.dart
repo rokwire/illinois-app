@@ -366,7 +366,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = AppString.getDefaultEmptyString(value: widget.event?.location?.locationId)!;
+    String locationId = AppString.getDefaultEmptyString(widget.event?.location?.locationId)!;
     bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
     String value = isVirtual ? locationId : locationText;
     bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);

@@ -251,7 +251,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     Visibility(visible: AppString.isStringNotEmpty(_validationErrorText), child:
                       Padding(key:_validationErrorKey, padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                        Text(AppString.getDefaultEmptyString(value: _validationErrorText ?? '')!, style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(AppString.getDefaultEmptyString(_validationErrorText ?? '')!, style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                   ],),

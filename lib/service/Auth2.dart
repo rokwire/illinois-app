@@ -204,9 +204,9 @@ class Auth2 with Service implements NotificationsListener {
   String? get uin => _account?.authType?.uiucUser?.uin;
   String? get netId => _account?.authType?.uiucUser?.netId;
 
-  String? get fullName => AppString.getDefaultEmptyString(value: profile?.fullName, defaultValue: _account?.authType?.uiucUser?.fullName ?? '');
-  String? get email => AppString.getDefaultEmptyString(value: profile?.email, defaultValue: _account?.authType?.uiucUser?.email ?? '');
-  String? get phone => AppString.getDefaultEmptyString(value: profile?.phone, defaultValue: _account?.authType?.phone ?? '');
+  String? get fullName => AppString.getDefaultEmptyString(profile?.fullName, defaultValue: _account?.authType?.uiucUser?.fullName ?? '');
+  String? get email => AppString.getDefaultEmptyString(profile?.email, defaultValue: _account?.authType?.uiucUser?.email ?? '');
+  String? get phone => AppString.getDefaultEmptyString(profile?.phone, defaultValue: _account?.authType?.phone ?? '');
 
   bool get isEventEditor => hasRole("event approvers");
   bool get isStadiumPollManager => hasRole("stadium poll manager");

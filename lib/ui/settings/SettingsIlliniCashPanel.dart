@@ -285,7 +285,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
-                    AppString.getDefaultEmptyString(value: title)!,
+                    AppString.getDefaultEmptyString(title)!,
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 )
