@@ -54,7 +54,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     setState(() {
       _isLoading = true;
     });
-    DiningService().loadNutritionItemWithId(widget?.productItem?.itemID).then((item){
+    DiningService().loadNutritionItemWithId(widget.productItem.itemID).then((item){
       _nutritionItem = item;
       setState(() {
         _isLoading = false;
@@ -67,7 +67,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(AppString.isStringNotEmpty(widget.productItem?.name) ? widget.productItem?.name! : "",
+        titleWidget: Text(widget.productItem.name ?? "",
           style: TextStyle(
             fontFamily: Styles().fontFamilies!.extraBold,
             fontSize: 16
@@ -186,7 +186,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   Widget _buildIncludedIngedients(){
     List<Widget> list = [];
     List<String> ingredients = widget.productItem.ingredients;
-    if(ingredients != null && ingredients.isNotEmpty) {
+    if(ingredients.isNotEmpty) {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
@@ -223,7 +223,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       ));
       for (String entry in ingredients) {
         entry = entry.trim();
-        if(entry != null && entry.isNotEmpty) {
+        if(entry.isNotEmpty) {
           String? ingredientLabel = DiningService().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
@@ -238,7 +238,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
   Widget _buildDietaryPreference(){
     List<Widget> list = [];
     List<String> preferences = widget.productItem.dietaryPreferences;
-    if(preferences != null && preferences.isNotEmpty) {
+    if(preferences.isNotEmpty) {
       list.add(Container(height: 20,));
       list.add(Container(
         decoration: BoxDecoration(
@@ -273,7 +273,7 @@ class _FoodDetailPanelState extends State<FoodDetailPanel> {
       ));
       for (String entry in preferences) {
         entry = entry.trim();
-        if(entry != null && entry.isNotEmpty) {
+        if(entry.isNotEmpty) {
           String? ingredientLabel = DiningService().getLocalizedString(entry);
           list.add(_IngredientItem(label: ingredientLabel));
         }
