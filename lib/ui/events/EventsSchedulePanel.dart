@@ -345,7 +345,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     return index == 0 ? constructSearchField(selectedFilter!) :
                     FilterListItemWidget(
                       label: filterValues[filterIndex],
-                      selected: (selectedFilter!.selectedIndexes != null && selectedFilter.selectedIndexes.contains(filterIndex)),
+                      selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
                         Analytics.instance.logSelect(target: "FilterItem: "+filterValues[filterIndex]!);
                         _onFilterValueClick(selectedFilter!, filterIndex);
@@ -777,7 +777,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return mapExplore; // null;
   }
 
-  List<Explore> _exploresFromMapExplores(List<Explore> mapExplores) {
+  List<Explore> _exploresFromMapExplores(List<Explore>? mapExplores) {
     List<Explore> explores = [];
     if (mapExplores != null) {
       for (Explore mapExplore in mapExplores) {
@@ -884,10 +884,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _refreshVisibleSearchTags(){
     _visibleTags = _eventTags;
-    String searchPattern = _textEditingController?.text?.toString();
+    String searchPattern = _textEditingController.text;
     if( AppString.isStringNotEmpty(searchPattern)){
       _visibleTags = _eventTags!.where((String tag){
-          return tag?.startsWith(searchPattern);
+          return tag.startsWith(searchPattern);
       }).toList();
     }
   }
@@ -896,13 +896,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _EventFilter? categoriesFilter = selectedFilterList != null && selectedFilterList.length > 0 ? selectedFilterList[0] : null; //Index 0 are Categories
     if (categoriesFilter != null) {
       Set<int> selextedIndexes = categoriesFilter.selectedIndexes;
-      if (selextedIndexes == null || selextedIndexes.isEmpty ||
+      if (selextedIndexes.isEmpty ||
           selextedIndexes.contains(0)) {
         return null; //All Categories
       } else {
         return _eventCategories!.where((dynamic category){
           return selextedIndexes.contains(_eventCategories!.indexOf(category.toString()) + 1); //1 for the All categories button
-        })?.toSet();
+        }).toSet();
       }
     }
 
@@ -913,13 +913,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _EventFilter? categoriesFilter = selectedFilterList != null && selectedFilterList.length > 1 ? selectedFilterList[1] : null; //Index 1 are Tags
     if (categoriesFilter != null) {
       Set<int> selextedIndexes = categoriesFilter.selectedIndexes;
-      if (selextedIndexes == null || selextedIndexes.isEmpty ||
+      if (selextedIndexes.isEmpty ||
           selextedIndexes.contains(0)) {
         return null; //All Categories
       } else {
         return _eventTags!.where((dynamic tag){
           return selextedIndexes.contains(_eventTags!.indexOf(tag) + 1);//1 for the All tags button
-        })?.toSet();
+        }).toSet();
       }
     }
 
@@ -1025,7 +1025,7 @@ class _EventFilter {
   _EventFilter({required this.type, this.selectedIndexes = const {0}, this.active = false});
 
   int get firstSelectedIndex {
-    if (selectedIndexes == null || selectedIndexes.isEmpty) {
+    if (selectedIndexes.isEmpty) {
       return -1;
     }
     return selectedIndexes.first;

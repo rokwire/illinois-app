@@ -20,11 +20,11 @@ import 'package:illinois/service/Styles.dart';
 class RoundedTab extends StatelessWidget {
   final String? title;
   final String? hint;
-  final int? tabIndex;
+  final int tabIndex;
   final RoundedTabListener? listener;
   final bool? selected;
   static const Color _borderColor = Color(0xffdadde1);
-  RoundedTab({this.title, this.hint, this.tabIndex, this.listener, this.selected})
+  RoundedTab({this.title, this.hint, required this.tabIndex, this.listener, this.selected})
       : super();
 
   @override
@@ -72,10 +72,10 @@ class RoundedTab extends StatelessWidget {
   }
 
   void onPressed() {
-    listener!.onTabClicked(tabIndex, this);
+    listener?.onTabClicked(tabIndex, this);
   }
 }
 
 abstract class RoundedTabListener {
-  void onTabClicked(int? tabIndex, RoundedTab caller);
+  void onTabClicked(int tabIndex, RoundedTab caller);
 }

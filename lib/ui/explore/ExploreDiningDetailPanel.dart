@@ -424,7 +424,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget _exploreWorktimeDetail() {
-    bool hasAdditionalInformation = dining?.diningSchedules != null && (dining?.diningSchedules?.isNotEmpty ?? false) && (dining?.firstOpeningDateSchedules?.isNotEmpty?? false);
+    bool hasAdditionalInformation = dining?.diningSchedules != null && (dining?.diningSchedules?.isNotEmpty ?? false) && (dining?.firstOpeningDateSchedules.isNotEmpty?? false);
     String? displayTime = dining?.displayWorkTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
@@ -601,8 +601,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (AppString.isStringEmpty(deepLink)) {
       return;
     }
-    bool appLaunched = await (NativeCommunicator().launchApp({"deep_link": deepLink}) as FutureOr<bool>);
-    if (!appLaunched) {
+    bool? appLaunched = await NativeCommunicator().launchApp({"deep_link": deepLink});
+    if (appLaunched != true) {
       String storeUrl = orderOnlineDetails!['store_url'];
       url_launcher.launch(storeUrl);
     }
@@ -648,7 +648,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   List<DiningSpecial>? _specials;
 
   List<DiningSchedule>? __schedules;
-  int? _selectedScheduleIndex;
+  int _selectedScheduleIndex = -1;
 
   List<String?>? _displayDates;
   List<DateTime?>? _filterDates;
@@ -752,8 +752,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     }
   }
 
-  void onTabClicked(int? tabIndex, RoundedTab caller){
-    Analytics.instance.logSelect(target: "Tab: "+caller?.title!);
+  void onTabClicked(int tabIndex, RoundedTab caller){
+    Analytics.instance.logSelect(target: "Tab: ${caller.title}");
     _selectedScheduleIndex = tabIndex;
     if(mounted) {
       setState(() {});
@@ -978,10 +978,10 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   List<Widget> _buildStations(){
     List<Widget> list = [];
-    if(_productItems != null && _productItems!.isNotEmpty && _selectedScheduleIndex! > -1) {
+    if(_productItems != null && _productItems!.isNotEmpty && _selectedScheduleIndex > -1) {
       List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
           _productItems,
-          _schedules![_selectedScheduleIndex!].scheduleId,
+          _schedules![_selectedScheduleIndex].scheduleId,
           DiningService().getIncludedFoodTypesPrefs(),
           DiningService().getExcludedFoodIngredientsPrefs()
       );
@@ -1026,8 +1026,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   }
 
   Widget _buildScheduleWorkTime(){
-    String workTimeDisplayText = (_selectedScheduleIndex! > -1 && __schedules!.length >= _selectedScheduleIndex!)
-        ? (__schedules![_selectedScheduleIndex!]?.displayWorkTime ?? "")
+    String workTimeDisplayText = (_selectedScheduleIndex > -1 && __schedules != null && __schedules!.length >= _selectedScheduleIndex)
+        ? (__schedules![_selectedScheduleIndex].displayWorkTime)
         : "";
     return workTimeDisplayText.isNotEmpty ? Column(
       children: <Widget>[
@@ -1078,7 +1078,7 @@ class _StationItemState extends State<_StationItem>{
   _StationItemState({this.expanded});
 
   void onTap(){
-    Analytics.instance.logSelect(target: "Station Item: "+ widget?.title!);
+    Analytics.instance.logSelect(target: "Station Item: ${widget.title}");
     if(mounted) {
       setState(() {
         expanded = !expanded!;

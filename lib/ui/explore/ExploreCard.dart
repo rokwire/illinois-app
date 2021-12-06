@@ -75,11 +75,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   String get semanticLabel {
     String? category = _exploreCategory;
     String? sportName = _gameSportName;
-    if (AppString.isStringNotEmpty(sportName)) {
-      category += ' - $sportName';
+    if (AppString.isStringNotEmpty(category) && AppString.isStringNotEmpty(sportName)) {
+      category = '$category - $sportName';
     }
     dynamic explore = widget.explore;
-    String title = widget?.explore?.exploreTitle ?? "";
+    String title = widget.explore?.exploreTitle ?? "";
     String? time = _getExploreTimeDisplayString();
     String locationText = ExploreHelper.getShortDisplayLocation(widget.explore, widget.locationData) ?? "";
     String workTime = ((explore is Dining) ? explore.displayWorkTime : null) ?? "";
@@ -98,7 +98,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     bool isGame = (widget.explore is Game);
     Event? event = isEvent ? widget.explore as Event? : null;
     bool isCompositeEvent = event?.isComposite ?? false;
-    String imageUrl = AppString.getDefaultEmptyString(widget.explore!.exploreImageURL)!;
+    String imageUrl = AppString.getDefaultEmptyString(widget.explore!.exploreImageURL);
     String interestsLabelValue = _getInterestsLabelValue();
 
     return GestureDetector(
@@ -166,8 +166,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                                     color: Styles().colors!.textBackground,
                                                     fontSize: 12,
                                                     fontFamily: Styles().fontFamilies!.bold),),
-                                              Text(AppString.getDefaultEmptyString(
-                                                  value: interestsLabelValue)!, style: TextStyle(
+                                              Text(AppString.getDefaultEmptyString(interestsLabelValue),
+                                                style: TextStyle(
                                                   color: Styles().colors!.textBackground,
                                                   fontSize: 12,
                                                   fontFamily: Styles().fontFamilies!.medium),)
@@ -295,7 +295,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _exploreName() {
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
-        child: Text(AppString.getDefaultEmptyString(widget.explore?.exploreTitle)!,
+        child: Text(AppString.getDefaultEmptyString(widget.explore?.exploreTitle),
             style: TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary)));
   }
 
@@ -312,7 +312,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       details.add(location);
     }
 
-    Widget workTime = _exploreWorkTimeDetail();
+    Widget? workTime = _exploreWorkTimeDetail();
     if (workTime != null) {
       details.add(workTime);
     }
@@ -383,7 +383,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     }
   }
 
-  Widget _exploreWorkTimeDetail() {
+  Widget? _exploreWorkTimeDetail() {
     Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining?) : null;
     String? displayTime = dining?.displayWorkTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
