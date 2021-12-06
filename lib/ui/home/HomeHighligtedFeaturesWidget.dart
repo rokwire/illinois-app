@@ -54,7 +54,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),),
             Expanded(child:
-            Text("Highlighted features", style:
+            Text("Highlighted Features", style:
             TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
     ],),),));
   }
