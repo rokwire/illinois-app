@@ -70,7 +70,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     int? geoFenceRegionRadius = Storage().debugGeoFenceRegionRadius;
 
     _mapThresholdDistanceController.text = '${Storage().debugMapThresholdDistance}';
-    _geoFenceRegionRadiusController.text = (geoFenceRegionRadius != null) ? '$geoFenceRegionRadius' : null;
+    _geoFenceRegionRadiusController.text = (geoFenceRegionRadius != null) ? '$geoFenceRegionRadius' : '';
 
     _selectedEnv = Config().configEnvironment;
 
@@ -86,7 +86,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     _stopRangingRegions();
 
     // Map Threshold Distance
-    int? mapThresholdDistance = (_mapThresholdDistanceController.text != null) ? int.tryParse(_mapThresholdDistanceController.text) : null;
+    int? mapThresholdDistance = int.tryParse(_mapThresholdDistanceController.text);
     if (mapThresholdDistance != null) {
       Storage().debugMapThresholdDistance = mapThresholdDistance;
     }
@@ -94,7 +94,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
     // Geo Fence
     int? storageGeoFenceRegionRadius = Storage().debugGeoFenceRegionRadius;
-    int? geoFenceRegionRadius = (_geoFenceRegionRadiusController.text != null) ? int.tryParse(_geoFenceRegionRadiusController.text) : null;
+    int? geoFenceRegionRadius = int.tryParse(_geoFenceRegionRadiusController.text);
     if (((storageGeoFenceRegionRadius == null) && (geoFenceRegionRadius != null)) ||
         ((storageGeoFenceRegionRadius != null) && (geoFenceRegionRadius == null)) ||
         ((storageGeoFenceRegionRadius != null) && (geoFenceRegionRadius != null) && (storageGeoFenceRegionRadius != geoFenceRegionRadius)))
@@ -422,8 +422,8 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     TimeOfDay? time = await showTimePicker(context: context, initialTime: new TimeOfDay(hour: date.hour, minute: date.minute));
     if (time == null) return;
 
-    int endHour = time != null ? time.hour : date.hour;
-    int endMinute = time != null ? time.minute : date.minute;
+    int endHour = time.hour;
+    int endMinute = time.minute;
     offset = new DateTime(date.year, date.month, date.day, endHour, endMinute);
 
     setState(() {
@@ -572,7 +572,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(textContent)!, style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
             )
           ),
         ])

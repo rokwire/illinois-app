@@ -20,7 +20,7 @@ class InboxMessage with Favorite {
   final Map<String, dynamic>? data;
   
   final InboxSender?          sender;
-  final List<InboxRecepient?>? recepients;
+  final List<InboxRecepient>? recepients;
 
   InboxMessage({this.messageId, this.priority, this.topic, this.category,
     this.dateCreatedUtc, this.dateUpdatedUtc, this.dateSentUtc,
@@ -170,7 +170,7 @@ class InboxRecepient {
   
   InboxRecepient({this.userId});
 
-  static InboxRecepient? fromJson(Map<String, dynamic> json) {
+  static InboxRecepient? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxRecepient(
       userId: AppJson.stringValue(json['user_id'])
     ) : null;
@@ -182,12 +182,12 @@ class InboxRecepient {
     };
   }
 
-  static List<InboxRecepient?>? listFromJson(List<dynamic>? jsonList) {
-    List<InboxRecepient?>? result;
+  static List<InboxRecepient>? listFromJson(List<dynamic>? jsonList) {
+    List<InboxRecepient>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? InboxRecepient.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, InboxRecepient.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;

@@ -31,11 +31,11 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
 
     String recepients = "";
     if (lastMessage?.recepients != null) {
-      for (InboxRecepient? recepient in lastMessage?.recepients!) {
+      for (InboxRecepient recepient in lastMessage!.recepients!) {
         if (recepients.isNotEmpty) {
           recepients += "\n";
         }
-        recepients += recepient!.userId!;
+        recepients += recepient.userId!;
       }
     }
     if (recepients.isEmpty) {
@@ -198,14 +198,13 @@ class _DebugCreateInboxMessagePanelState extends State<DebugCreateInboxMessagePa
   }
 
   Widget _buildSend() {
-    bool sendEnabled = true;
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Stack(children: <Widget>[
           Row(children: <Widget>[
             Expanded(child: Container(),),
             RoundedButton(label: "Send Message",
-              textColor: sendEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColor,
-              borderColor: sendEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColor,
+              textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.disabledTextColor,
+              borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.disabledTextColor
               backgroundColor: Styles().colors!.white,
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
