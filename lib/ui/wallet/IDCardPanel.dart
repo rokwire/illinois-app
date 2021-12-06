@@ -218,11 +218,11 @@ class _IDCardPanelState extends State<IDCardPanel>
     }
     else if (_buildingAccess != null) {
       buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access",);
-      buildingAccessStatus = (_buildingAccess == true) ? Localization().getStringEx('widget.id_card.label.building_access.granted', 'GRANTED') : Localization().getStringEx('widget.id_card.label.building_access.denied', 'DENIED');
+      buildingAccessStatus = (_buildingAccess == true) ? Localization().getString('widget.id_card.label.building_access.granted', defaults: 'GRANTED', language: 'en') : Localization().getString('widget.id_card.label.building_access.denied', defaults: 'DENIED', language: 'en');
     }
     else {
       buildingAccessIcon = Container(height: (qrCodeImageSize / 2 - buildingAccessStatusHeight - 6));
-      buildingAccessStatus = Localization().getStringEx('widget.id_card.label.building_access.not_available', 'NOT\nAVAILABLE');
+      buildingAccessStatus = Localization().getString('widget.id_card.label.building_access.not_available', defaults: 'NOT\nAVAILABLE', language: 'en');
     }
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
@@ -302,7 +302,7 @@ class _IDCardPanelState extends State<IDCardPanel>
         Container(width: 20),
 
         Visibility(visible: (0 < (Auth().authCard.cardNumber?.length ?? 0)), child: Column(children: [
-          Text(Localization().getStringEx('widget.id_card.label.building_access', 'Building Access'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
           Container(height: 8),
           buildingAccessIcon ?? Container(),
           Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: buildingAccessStatusHeight),),
