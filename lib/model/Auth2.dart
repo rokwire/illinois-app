@@ -412,7 +412,7 @@ class Auth2StringEntry {
     if (jsonList != null) {
       result = <Auth2StringEntry>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? Auth2StringEntry.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, Auth2StringEntry.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -515,7 +515,7 @@ class Auth2Type {
     if (jsonList != null) {
       result = <Auth2Type>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? Auth2Type.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, Auth2Type.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -643,7 +643,7 @@ class Auth2UiucUser {
     if (jsonList != null) {
       result = <Auth2UiucUser>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? Auth2UiucUser.fromJson(jsonEntry as Map<String, dynamic>?) : null);
+        AppList.add(result, Auth2UiucUser.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -1415,7 +1415,7 @@ class UserRole {
     if (jsonList != null) {
       result = <UserRole>[];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is String) ? UserRole.fromString(jsonEntry) : null);
+        AppList.add(result, UserRole.fromString(AppJson.stringValue(jsonEntry)));
       }
     }
     return result;

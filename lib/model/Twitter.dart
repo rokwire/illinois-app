@@ -228,7 +228,7 @@ class Tweet {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? Tweet.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, Tweet.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -437,7 +437,7 @@ class TweetEntityUrl with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TweetEntityUrl.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TweetEntityUrl.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -507,7 +507,7 @@ class TweetEntityAnnotation with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TweetEntityAnnotation.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TweetEntityAnnotation.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -571,7 +571,7 @@ class TweetEntityHashtag with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TweetEntityHashtag.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TweetEntityHashtag.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -640,7 +640,7 @@ class TweetEntityMention with TweetEntity {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TweetEntityMention.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TweetEntityMention.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -722,7 +722,7 @@ class TweetRef {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TweetRef.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TweetRef.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -983,7 +983,7 @@ class TwitterMedia {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TwitterMedia.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TwitterMedia.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
@@ -1125,7 +1125,7 @@ class TwitterUser {
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        AppList.add(result, (jsonEntry is Map) ? TwitterUser.fromJson(jsonEntry as Map<String, dynamic>) : null);
+        AppList.add(result, TwitterUser.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
