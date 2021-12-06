@@ -73,6 +73,28 @@ class VoterRule {
         electionPeriod: json['election_period']
     ) : null;
   }
+
+  static List<VoterRule>? listFromJson(List<dynamic>? jsonList) {
+    List<VoterRule>? result;
+    if (jsonList != null) {
+      result = <VoterRule>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, VoterRule.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<VoterRule>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
 }
 
 class RuleOption {

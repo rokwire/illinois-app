@@ -80,13 +80,7 @@ class Voter with Service implements NotificationsListener {
   }
 
   void _loadVoterRules() {
-    List<dynamic>? rulesJson = Assets()['voter.rules'];
-    if (AppCollection.isCollectionNotEmpty(rulesJson)) {
-      _voterRules = [];
-      for (dynamic rule in rulesJson!) {
-        _voterRules!.add(VoterRule.fromJson(rule));
-      }
-    }
+    _voterRules = VoterRule.listFromJson(AppJson.listValue(Assets()['voter.rules']));
   }
 
   // NotificationsListener
