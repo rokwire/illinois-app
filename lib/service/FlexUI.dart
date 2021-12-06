@@ -137,9 +137,9 @@ class FlexUI with Service implements NotificationsListener {
 
   // Flex UI
 
-  Future<File> _getCacheFile() async {
-    Directory assetsDir = Config().assetsCacheDir!;
-    if ((assetsDir != null) && !await assetsDir.exists()) {
+  Future<File?> _getCacheFile() async {
+    Directory? assetsDir = Config().assetsCacheDir!;
+    if (!await assetsDir.exists()) {
       await assetsDir.create(recursive: true);
     }
     String cacheFilePath = join(assetsDir.path, _flexUIName);
@@ -316,7 +316,7 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   static bool _localeEvalRoleRule(dynamic roleRule) {
-    return AppBoolExpr.eval(roleRule, (String argument) {
+    return AppBoolExpr.eval(roleRule, (String? argument) {
       if (argument != null) {
         bool? not, all, any;
         if (not = argument.startsWith('~')) {
@@ -339,7 +339,7 @@ class FlexUI with Service implements NotificationsListener {
             return DeepCollectionEquality().equals(Auth2().prefs?.roles, userRoles);
           }
           else if (any == true) {
-            return Auth2().prefs?.roles?.intersection(userRoles)?.isNotEmpty ?? false;
+            return Auth2().prefs?.roles?.intersection(userRoles).isNotEmpty ?? false;
           }
           else {
             return Auth2().prefs?.roles?.containsAll(userRoles) ?? false;
@@ -350,7 +350,7 @@ class FlexUI with Service implements NotificationsListener {
     });
   }
 
-  static Set<UserRole>? _localeEvalRoleParam(String roleParam) {
+  static Set<UserRole>? _localeEvalRoleParam(String? roleParam) {
     if (roleParam != null) {
       if (RegExp("{.+}").hasMatch(roleParam)) {
         Set<UserRole> roles = Set<UserRole>();
