@@ -129,7 +129,7 @@ enum ImagesResultType { ERROR_OCCURRED, CANCELLED, SUCCEEDED }
 
 class ImagesResult {
   ImagesResultType? resultType;
-  late String errorMessage;
+  String? errorMessage;
   dynamic data;
 
   ImagesResult.error(String errorMessage) {
