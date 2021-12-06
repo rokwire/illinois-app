@@ -96,6 +96,28 @@ class ParkingEvent {
     };
   }
 
+  static List<ParkingEvent>? listFromJson(List<dynamic>? jsonList) {
+    List<ParkingEvent>? result;
+    if (jsonList != null) {
+      result = <ParkingEvent>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, ParkingEvent.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<ParkingEvent>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
   String get displayFromDate {
     return AppDateTime().getDisplayDateTime(fromDateUtc);
   }
@@ -175,5 +197,27 @@ class ParkingLot {
       "spots_sold": spotsSold,
       "spots_pre_sold": spotsPreSold,
     };
+  }
+
+  static List<ParkingLot>? listFromJson(List<dynamic>? jsonList) {
+    List<ParkingLot>? result;
+    if (jsonList != null) {
+      result = <ParkingLot>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, ParkingLot.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<ParkingLot>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
   }
 }

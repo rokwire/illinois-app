@@ -37,55 +37,14 @@ class TransportationService /* with Service */ {
   Future<List<ParkingEvent>?> loadParkingEvents() async {
     final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
     final response = await Network().get(url, auth: NetworkAuth.Auth2);
-    String? responseBody = response?.body;
-    if ((response != null) && (response.statusCode == 200)) {
-      if (AppString.isStringNotEmpty(responseBody)) {
-        List<ParkingEvent> events = [];
-        List<dynamic>? jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          for (Map<String, dynamic> eventEntry in jsonData as Iterable<Map<String, dynamic>>) {
-            events.add(ParkingEvent.fromJson(eventEntry));
-          }
-          return events;
-        }
-      }
-    } else {
-      Log.e('Failed to load parking events');
-      Log.e(responseBody);
-    }
-    return null;
+    return (response?.statusCode == 200) ? ParkingEvent.listFromJson(AppJson.decodeList(response?.body)) : null;
   }
 
   Future<List<ParkingLot>?> loadParkingEventInventory(String? eventId) async {
     if (AppString.isStringNotEmpty(eventId)) {
       final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
       final response = await Network().get(url, auth: NetworkAuth.Auth2);
-      if (response == null) {
-        Log.e('Failed to load inventory: Server response is null');
-        return null;
-      }
-      String responseBody = response.body;
-      int responseStatusCode = response.statusCode;
-      if (responseStatusCode == 200) {
-        if (AppString.isStringNotEmpty(responseBody)) {
-          Map<String, dynamic>? jsonData = AppJson.decode(responseBody);
-          if (jsonData != null) {
-            List<dynamic>? lotsData = jsonData['items'];
-            if (AppCollection.isCollectionNotEmpty(lotsData)) {
-              List<ParkingLot> lots = [];
-              for (dynamic lotEntry in lotsData!) {
-                ParkingLot lot = ParkingLot.fromJson(lotEntry);
-                lots.add(lot);
-              }
-              return lots;
-            }
-          }
-        }
-      } else {
-        Log.e('Failed to load inventory');
-        Log.e('Response status code [$responseStatusCode]');
-        Log.e('Response body:\n $responseBody');
-      }
+      return (response?.statusCode == 200) ? ParkingLot.listFromJson(AppJson.decodeList(response?.body)) : null;
     }
     return null;
   }
@@ -100,16 +59,15 @@ class TransportationService /* with Service */ {
 
     try {
       String body = json.encode(data);
-      final response = await (Network().get(url, auth: NetworkAuth.Auth2, body:body) as FutureOr<Response>);
+      final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
 
-      String responseBody = response.body;
       if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        String? colorHex = jsonData["color"];
+        Map<String, dynamic>? jsonData = AppJson.decodeMap(response.body);
+        String? colorHex = (jsonData != null) ? jsonData["color"] : null;
         return AppString.isStringNotEmpty(colorHex) ? UiColors.fromHex(colorHex) : null;
       } else {
         Log.e('Failed to load bus color');
-        Log.e(responseBody);
+        Log.e(response?.body);
       }
     } catch(e){}
     return null;
