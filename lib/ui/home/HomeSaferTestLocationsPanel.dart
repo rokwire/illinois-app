@@ -127,7 +127,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     String? contentUrl = Config().contentUrl;
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
-      Response? response = await Network().get(url, auth: NetworkAuth.ApiKey);
+      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
       return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
     }
     return null;
