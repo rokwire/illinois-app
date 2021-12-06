@@ -36,7 +36,8 @@ class Content /* with Service */ {
 
   Future<ImagesResult> useUrl({String? storageDir, required String url, int? width}) async {
     // 1. first check if the url gives an image
-    Response headersResponse = await head(Uri.parse(url));
+    Uri? uri = Uri.tryParse(url);
+    Response? headersResponse = (uri != null) ? await head(Uri.parse(url)) : null;
     if ((headersResponse != null) && (headersResponse.statusCode == 200)) {
       //check content type
       Map<String, String> headers = headersResponse.headers;
@@ -64,7 +65,7 @@ class Content /* with Service */ {
       return ImagesResult.cancel();
     }
     try {
-      if ((image != null) && (0 < await image.length())) {
+      if ((0 < await image.length())) {
         List<int> imageBytes = await image.readAsBytes();
         String fileName = basename(image.path);
         String? contentType = mime(fileName);
@@ -98,15 +99,15 @@ class Content /* with Service */ {
       return ImagesResult.error('Missing media type.');
     }
     String url = "$serviceUrl/image";
-    Map<String, String?> imageRequestFields = {
-      'path': storagePath,
+    Map<String, String> imageRequestFields = {
+      'path': storagePath!,
       'width': width.toString(),
       'quality': 100.toString() // Use maximum quality - 100
     };
     StreamedResponse? response = await Network().multipartPost(
         url: url, fileKey: 'fileName', fileName: fileName, fileBytes: imageBytes, contentType: mediaType, fields: imageRequestFields, auth: NetworkAuth.Auth2);
     int responseCode = response?.statusCode ?? -1;
-    String responseString = (await response?.stream?.bytesToString())!;
+    String responseString = (await response?.stream.bytesToString())!;
     if (responseCode == 200) {
       Map<String, dynamic>? json = AppJson.decode(responseString);
       String? imageUrl = (json != null) ? json['url'] : null;
