@@ -45,7 +45,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
     implements NotificationsListener {
   List<SportDefinition>? _menSports;
   List<SportDefinition>? _womenSports;
-  Set<String?>? _preferredSports;
+  Set<String>? _preferredSports;
 
   List<SportDefinition>? get menSports => _menSports;
   List<SportDefinition>? get womenSports => _womenSports;
@@ -270,7 +270,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
 
   void _onTapAthleticsSportCheck(BuildContext context, SportDefinition sport) {
     Analytics.instance.logSelect(target: "Sport Check Tap: "+sport.name!);
-    AppSemantics.announceCheckBoxStateChange(context, _preferredSports?.contains(sport.shortName) ?? false, sport?.customName);
+    AppSemantics.announceCheckBoxStateChange(context, _preferredSports?.contains(sport.shortName) ?? false, sport.customName);
     Auth2().prefs?.toggleSportInterest(sport.shortName);
   }
 

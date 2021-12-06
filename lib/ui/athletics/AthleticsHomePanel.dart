@@ -555,9 +555,7 @@ class _AthleticsCard extends StatefulWidget {
   final Game game;
   final GestureTapCallback? onTap;
 
-  _AthleticsCard({required this.game, this.onTap}) {
-    assert(game != null);
-  }
+  _AthleticsCard({required this.game, this.onTap});
 
   @override
   _AthleticsCardState createState() => _AthleticsCardState();
@@ -796,7 +794,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   void _onTapGetTickets() {
     Analytics.instance.logSelect(
-        target: "AthleticsCard:Item:" + widget?.game?.title + " -Get Tickets");
+        target: "AthleticsCard:Item:${widget.game.title} -Get Tickets");
     if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
@@ -835,7 +833,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   Widget? _athleticsTimeDetail() {
     String displayTime = widget.game.displayTime;
-    if ((displayTime != null) && displayTime.isNotEmpty) {
+    if (displayTime.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
@@ -917,12 +915,12 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   void _onTapSave() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.game.title}");
     Auth2().prefs?.toggleFavorite(widget.game);
   }
 
-  void _onTapSportCategory(SportDefinition sport) {
-    Analytics.instance.logSelect(target: "AthleticsCard:Item:" + widget?.game?.title + " -category: " + sport.name!);
+  void _onTapSportCategory(SportDefinition? sport) {
+    Analytics.instance.logSelect(target: "AthleticsCard:Item:${widget.game.title} -category: ${sport?.name}");
     if (sport != null) {
       if (Connectivity().isNotOffline) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamPanel(sport)));
@@ -934,7 +932,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   }
 
   String? _getInterestsLabelValue() {
-    String? sportName = widget?.game?.sport?.shortName;
+    String? sportName = widget.game.sport?.shortName;
     bool isSportFavorite = Auth2().prefs?.hasSportInterest(sportName) ?? false;
     return isSportFavorite ? Sports().getSportByShortName(sportName)?.customName : null;
   }

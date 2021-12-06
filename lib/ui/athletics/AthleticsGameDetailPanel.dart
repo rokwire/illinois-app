@@ -101,15 +101,15 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     if (game == null)
       return Center(child: CircularProgressIndicator(),);
 
-    String? sportKey = game!.sport?.shortName;
-    String sportName = game!.sport?.title!;
+    String? sportKey = game?.sport?.shortName;
+    String? sportName = game?.sport?.title;
     SportDefinition? sportDefinition = Sports().getSportByShortName(sportKey);
     return CustomScrollView(
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
         SliverToutHeaderBar(
           context: context,
-          imageUrl: game!.imageUrl,
+          imageUrl: game?.imageUrl,
           backColor: Styles().colors!.fillColorPrimary,
           leftTriangleColor: Styles().colors!.fillColorPrimary,
           rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
@@ -162,7 +162,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 ),
                                 Expanded(child:
                                   Text(
-                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More")! + " " + sportName,
+                                    Localization().getStringEx("panel.athletics_game_detail.label.more.title", "More")! + " " + "$sportName",
                                     style:
                                     TextStyle(color: Colors.white, fontSize: 20),
                                   )
@@ -272,7 +272,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   List<Widget> _buildNewsWidgets() {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(game!.newsImageUrl)) {
+    if (!AppString.isStringEmpty(game?.newsImageUrl)) {
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
@@ -283,7 +283,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game!.newsTitle)) {
+    if (!AppString.isStringEmpty(game?.newsTitle)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Text(
@@ -293,7 +293,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         ),
       ));
     }
-    if (!AppString.isStringEmpty(game!.newsContent)) {
+    if (!AppString.isStringEmpty(game?.newsContent)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 16),
         child: Column(

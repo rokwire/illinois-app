@@ -72,20 +72,20 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 
   @override
   Widget build(BuildContext context) {
-    String? sportKey = widget.game!.sport?.shortName;
-    String sportName = widget.game!.sport?.title!;
+    String? sportKey = widget.game?.sport?.shortName;
+    String? sportName = widget.game?.sport?.title!;
     SportDefinition? sportDefinition = Sports().getSportByShortName(sportKey);
     bool isTicketedSport = sportDefinition?.ticketed ?? false;
     bool isMenBasketball = ('mbball' == sportKey);
-    bool isHomeGame = widget.game!.isHomeGame;
-    bool isGameDay = widget.game!.isGameDay;
+    bool isHomeGame = widget.game?.isHomeGame ?? false;
+    bool isGameDay = widget.game?.isGameDay ?? false;
     bool showOrderFoodAndDrink = (isMenBasketball && isHomeGame) || isGameDay;
-    bool showGetTickets = isTicketedSport && (widget.game!.links?.tickets != null);
-    bool showParking = widget.game!.parkingUrl != null;
-    bool showGameDayGuide = widget.game!.isHomeGame;
+    bool showGetTickets = isTicketedSport && (widget.game?.links?.tickets != null);
+    bool showParking = widget.game?.parkingUrl != null;
+    bool showGameDayGuide = widget.game?.isHomeGame ?? false;
     bool hasScores = sportDefinition?.hasScores ?? false;
-    bool hasLiveGame = Storage().debugDisableLiveGameCheck! ? true : LiveStats().hasLiveGame(widget.game!.id);
-    bool showScore = hasScores && widget.game!.isGameDay && hasLiveGame;
+    bool hasLiveGame = Storage().debugDisableLiveGameCheck! ? true : LiveStats().hasLiveGame(widget.game?.id);
+    bool showScore = hasScores && (widget.game?.isGameDay ?? false) && hasLiveGame;
     bool isGameFavorite = Auth2().isFavorite(widget.game);
     String? liveStatsUrl = widget.game?.links?.liveStats;
     String? audioUrl = widget.game?.links?.audio;
@@ -131,7 +131,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     child:Padding(
                                     padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                                     child: Text(
-                                      sportName.toUpperCase(),
+                                      sportName?.toUpperCase() ?? '',
                                       style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
                                     ),
                                   )),
@@ -158,15 +158,15 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                           Padding(
                             padding: EdgeInsets.only(top: 12),
                             child: Text(
-                              widget.game!.title,
+                              widget.game?.title ?? '',
                               style: TextStyle(fontSize: 32, color: Colors.white),
                             ),
                           ),
-                          (!AppString.isStringEmpty(widget.game!.longDescription)
+                          (!AppString.isStringEmpty(widget.game?.longDescription)
                               ? Padding(
                                   padding: EdgeInsets.symmetric(vertical: 16),
                                   child: Text(
-                                    widget.game!.longDescription!,
+                                    widget.game?.longDescription ?? '',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.whiteTransparent06, fontSize: 16),
                                   ),
@@ -175,9 +175,9 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(top: 16),
                                 )),
                           Visibility(
-                              visible: AppString.isStringNotEmpty(widget.game!.displayTime),
+                              visible: AppString.isStringNotEmpty(widget.game?.displayTime),
                               child: Semantics(
-                                label: widget.game!.displayTime,
+                                label: widget.game?.displayTime,
                                 button: false,
                                 child: Padding(
                                   padding: EdgeInsets.only(bottom: 10),
@@ -187,7 +187,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
-                                          widget.game!.displayTime,
+                                          widget.game?.displayTime ?? '',
                                           style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
                                         ),
                                       )
@@ -196,11 +196,11 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 ),
                               )),
                           Visibility(
-                            visible: AppString.isStringNotEmpty(widget?.game?.location?.location),
+                            visible: AppString.isStringNotEmpty(widget.game?.location?.location),
                             child: Padding(
                               padding: EdgeInsets.only(bottom: 20),
                               child: Semantics(
-                                label: widget.game!.location?.location ?? "",
+                                label: widget.game?.location?.location ?? "",
                                 button: false,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +211,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                     ),
                                     Flexible(
                                         child: Text(
-                                      widget.game!.location?.location!,
+                                      widget.game?.location?.location ?? '',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
                                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, color: Styles().colors!.whiteTransparent06, fontSize: 16),
@@ -377,28 +377,24 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   Widget _createScoreBoard() {
-    String? sport = widget.game!.sport?.shortName;
+    String? sport = widget.game?.sport?.shortName;
     switch (sport) {
       case "football":
         {
           return _FootballScoreWidget(game: widget.game);
         }
-        break;
       case "mbball":
         {
           return _BasketballScoreWidget(game: widget.game);
         }
-        break;
       case "wbball":
         {
           return _BasketballScoreWidget(game: widget.game);
         }
-        break;
       case "wvball":
         {
           return _VolleyballScoreWidget(game: widget.game);
         }
-        break;
       default:
         {
           return _SportScoreWidget(game: widget.game);
@@ -409,7 +405,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   List<Widget> _buildHeaderWidgets() {
     List<Widget> widgets = [];
     if(widget.showImageTout) {
-      if (!AppString.isStringEmpty(widget.game!.imageUrl)) {
+      if (!AppString.isStringEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
             child: Semantics(
                 excludeSemantics: true,
@@ -450,18 +446,18 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   }
 
   void _showTicketsPanel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game!.links!.tickets)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.links!.tickets)));
   }
 
   void _onTapParking() {
     Analytics.instance.logSelect(target: "Parking");
 
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game!.parkingUrl)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: widget.game?.parkingUrl)));
   }
 
   void _onTapGameDayGuide() {
     Analytics.instance.logSelect(target: "Game Day");
-    String? sportKey = widget.game!.sport?.shortName;
+    String? sportKey = widget.game?.sport?.shortName;
     String? url = AppUrl.getGameDayGuideUrl(sportKey);
     if (url != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
@@ -856,8 +852,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     String period = _getPeriod();
     String homeScore = _getHomeScore();
     String visitingScore = _getVisitingScore();
-    Image homeImage = _getHomeImageFrom(width, height);
-    Image visitingImage = _getVisitingImage(width, height);
+    Image? homeImage = _getHomeImageFrom(width, height);
+    Image? visitingImage = _getVisitingImage(width, height);
     return _LiteContent(period: period, homeScore: homeScore, visitingScore: visitingScore, homeImage: homeImage, visitingImage: visitingImage);
   }
 
@@ -881,27 +877,25 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     return _currentLiveGame!.visitingScore.toString();
   }
 
-  Image _getHomeImageFrom(double width, double height) {
+  Image? _getHomeImageFrom(double width, double height) {
     if (widget._game!.isHomeGame) {
       //return illinois image
       return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      Opponent? opponent = widget._game!.opponent;
-      String opponentUrl = opponent != null ? opponent.logoImage! : null;
-      return Image.network(opponentUrl);
+      String? opponentUrl = widget._game!.opponent?.logoImage;
+      return AppString.isStringNotEmpty(opponentUrl) ? Image.network(opponentUrl!) : null;
     }
   }
 
-  Image _getVisitingImage(double width, double height) {
+  Image? _getVisitingImage(double width, double height) {
     if (!widget._game!.isHomeGame) {
       //return illinois image
       return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
-      Opponent? opponent = widget._game!.opponent;
-      String opponentUrl = opponent != null ? opponent.logoImage! : null;
-      return Image.network(opponentUrl);
+      String? opponentUrl = widget._game?.opponent?.logoImage;
+      return AppString.isStringNotEmpty(opponentUrl) ? Image.network(opponentUrl!) : null;
     }
   }
 
@@ -921,8 +915,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     String? hPoints = mapCustomData["HPoints"];
     String? vPoints = mapCustomData["VPoints"];
     String? serving = mapCustomData["Serving"];
-    Image homeImage = _getHomeImageFrom(width, height);
-    Image visitingImage = _getVisitingImage(width, height);
+    Image? homeImage = _getHomeImageFrom(width, height);
+    Image? visitingImage = _getVisitingImage(width, height);
     return _RichContent(
       phase: phase,
       phaseLabel: phaseLabel,
@@ -942,10 +936,10 @@ class _LiteContent extends StatelessWidget {
   final String _period;
   final String _homeScore;
   final String _visitingScore;
-  final Image _homeImage;
-  final Image _visitingImage;
+  final Image? _homeImage;
+  final Image? _visitingImage;
 
-  _LiteContent({required String period, required String homeScore, required String visitingScore, required Image homeImage, required Image visitingImage})
+  _LiteContent({required String period, required String homeScore, required String visitingScore, Image? homeImage, Image? visitingImage})
       : _period = period,
         _homeScore = homeScore,
         _visitingScore = visitingScore,
@@ -1017,7 +1011,7 @@ class _LiteContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10), child: _homeImage),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10), child: _homeImage ?? Container(width: 22, height: 32)),
               Expanded(
                 child: Container(
                   color: Colors.transparent,
@@ -1055,7 +1049,7 @@ class _LiteContent extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                child: _visitingImage,
+                child: _visitingImage ?? Container(width: 22, height: 32),
               ),
             ],
           ),
@@ -1074,8 +1068,8 @@ class _RichContent extends StatelessWidget {
   final String? _hPoints;
   final String? _vPoints;
   final String? _serving;
-  final Image _homeImage;
-  final Image _visitingImage;
+  final Image? _homeImage;
+  final Image? _visitingImage;
 
   _RichContent(
       {required String? phase,
@@ -1085,8 +1079,8 @@ class _RichContent extends StatelessWidget {
         required String? hPoints,
         required String? vPoints,
         required String? serving,
-        required Image homeImage,
-        required Image visitingImage})
+        Image? homeImage,
+        Image? visitingImage})
       : _phase = phase,
         _phaseLabel = phaseLabel,
         _hScore = hScore,
@@ -1164,7 +1158,7 @@ class _RichContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10), child: _homeImage),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10), child: _homeImage ?? Container(width: 22, height: 32)),
               Expanded(
                 child: Container(
                   color: Colors.transparent,
@@ -1231,7 +1225,7 @@ class _RichContent extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                child: _visitingImage,
+                child: _visitingImage ?? Container(width: 22, height: 32),
               ),
             ],
           ),

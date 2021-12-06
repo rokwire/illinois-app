@@ -370,7 +370,7 @@ class Sports with Service implements NotificationsListener {
       return null;
     }
 
-    Set<String?>? preferredSports = Auth2().prefs?.sportsInterests;
+    Set<String>? preferredSports = Auth2().prefs?.sportsInterests;
 
     // Step 1: Group games by sport
     Map<String?, List<Game>> gamesMap = Map<String?, List<Game>>();
@@ -393,14 +393,16 @@ class Sports with Service implements NotificationsListener {
     }
 
     // Step 3: In case of multiple preferences - show only the top upcoming game per sport
-    Set<String?> limitedSports = Set<String?>();
+    Set<String> limitedSports = Set<String>();
     if (preferredGames.isNotEmpty) {
       preferredGames.sort((game1, game2) => game1.dateTimeUtc!.compareTo(game2.dateTimeUtc!));
       List<Game> limitedGames = [];
       for (Game game in preferredGames) {
-        if (!limitedSports.contains(game.sport!.shortName)) {
+        if (!limitedSports.contains(game.sport?.shortName)) {
           limitedGames.add(game);
-          limitedSports.add(game.sport!.shortName);
+          if (game.sport?.shortName != null) {
+            limitedSports.add(game.sport!.shortName!);
+          }
         } else if (preferredSports!.length == 1 && limitedGames.length < 3) {
           // In case of single preference - show 3 games
           limitedGames.add(game);
@@ -414,9 +416,11 @@ class Sports with Service implements NotificationsListener {
           break;
         }
 
-        if (!limitedSports.contains(game.sport!.shortName)) {
+        if (!limitedSports.contains(game.sport?.shortName)) {
           preferredGames.add(game);
-          limitedSports.add(game.sport!.shortName);
+          if (game.sport?.shortName != null) {
+            limitedSports.add(game.sport!.shortName!);
+          }
         }
       }
     }
@@ -613,23 +617,25 @@ class Sports with Service implements NotificationsListener {
   ///
   /// addSports == 'true' - adds all sports to favorites, 'false' - removes them
   ///
-  static Set<String?> switchAllSports(List<SportDefinition>? allSports, Set<String?>? preferredSports, bool addSports) {
-    Set<String?> sportsToUpdate = Set<String?>();
+  static Set<String> switchAllSports(List<SportDefinition>? allSports, Set<String>? preferredSports, bool addSports) {
+    Set<String> sportsToUpdate = Set<String>();
     if (allSports != null && allSports.isNotEmpty) {
       for (SportDefinition sport in allSports) {
         String? sportShortName = sport.shortName;
-        bool preferredSport = (preferredSports?.contains(sportShortName) ?? false);
-        bool addFavoriteSport = !preferredSport && addSports;
-        bool removeFavoriteSport = preferredSport && !addSports;
-        if (addFavoriteSport || removeFavoriteSport) {
-          sportsToUpdate.add(sportShortName);
+        if (sportShortName != null) {
+          bool preferredSport = (preferredSports?.contains(sportShortName) ?? false);
+          bool addFavoriteSport = !preferredSport && addSports;
+          bool removeFavoriteSport = preferredSport && !addSports;
+          if (addFavoriteSport || removeFavoriteSport) {
+            sportsToUpdate.add(sportShortName);
+          }
         }
       }
     }
     return sportsToUpdate;
   }
 
-  static bool isAllSportsSelected(List<SportDefinition>? allSports, Set<String?>? preferredSports) {
+  static bool isAllSportsSelected(List<SportDefinition>? allSports, Set<String>? preferredSports) {
     if (allSports == null || allSports.isEmpty) {
       return false;
     }

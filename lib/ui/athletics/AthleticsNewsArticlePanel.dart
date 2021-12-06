@@ -92,7 +92,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6, horizontal: 8),
                                                   child: Text(
-                                                    article.category?.toUpperCase(),
+                                                    article.category?.toUpperCase() ?? '',
                                                     style: TextStyle(
                                                         fontFamily: Styles().fontFamilies!.bold,
                                                         fontSize: 14,
@@ -137,7 +137,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                           children: _buildContentWidgets(context),
                                         ),
                                       )),
-                                  AppString.isStringNotEmpty(article?.link)?
+                                  AppString.isStringNotEmpty(article.link)?
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),

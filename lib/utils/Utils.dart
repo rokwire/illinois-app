@@ -40,11 +40,11 @@ class AppString {
     return !isStringEmpty(stringToCheck);
   }
 
-  static String? getDefaultEmptyString({String? value, String? defaultValue = ''}) {
+  static String getDefaultEmptyString({String? value, String defaultValue = ''}) {
     if (isStringEmpty(value)) {
       return defaultValue;
     }
-    return value;
+    return value!;
   }
 
   static String wrapRange(String s, String firstValue, String secondValue, int startPosition, int endPosition) {

@@ -1085,7 +1085,7 @@ class Auth2UserPrefs {
   Set<String>? get sportsInterests => getInterestsFromCategory(sportsInterestsCategory);
   bool? hasSportInterest(String? sport) => hasInterest(sportsInterestsCategory, sport);
   void toggleSportInterest(String? sport) => toggleInterest(sportsInterestsCategory, sport);
-  void toggleSportInterests(Iterable<String> sports) => toggleInterests(sportsInterestsCategory, sports);
+  void toggleSportInterests(Iterable<String>? sports) => toggleInterests(sportsInterestsCategory, sports);
 
   // Tags
 
