@@ -301,7 +301,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
         Container(width: 20),
 
-        Visibility(visible: (0 < (Auth().authCard.cardNumber?.length ?? 0)), child: Column(children: [
+        Visibility(visible: (0 < (Auth().authCard.uin?.length ?? 0)), child: Column(children: [
           Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
           Container(height: 8),
           buildingAccessIcon ?? Container(),
