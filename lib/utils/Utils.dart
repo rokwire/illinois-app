@@ -808,7 +808,7 @@ class AppGeometry {
 
 class AppBoolExpr {
   
-  static bool eval(dynamic expr, bool? Function(String) evalArg) {
+  static bool eval(dynamic expr, bool? Function(String?) evalArg) {
     
     if (expr is String) {
 

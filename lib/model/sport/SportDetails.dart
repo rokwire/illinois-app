@@ -65,7 +65,7 @@ class SportSocialMedia {
 
   SportSocialMedia({this.shortName, this.twitterName, this.instagramName, this.facebookPage});
 
-  static SportSocialMedia? fromJson(Map<String, dynamic> json) {
+  static SportSocialMedia? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -75,6 +75,21 @@ class SportSocialMedia {
         instagramName: json['sport_instagram_name'],
         facebookPage: json['sport_facebook_page']);
   }
+
+  static List<SportSocialMedia>? listFromJson(List<dynamic>? jsonList) {
+    List<SportSocialMedia>? result;
+    if (jsonList != null) {
+      result = <SportSocialMedia>[];
+      for (dynamic jsonEntry in jsonList) {
+        SportSocialMedia? entry = (jsonEntry is Map<String, dynamic>) ? SportSocialMedia.fromJson(jsonEntry) : null;
+        if (entry != null) {
+          result.add(entry);
+        }
+      }
+    }
+    return result;
+  }
+
 }
 
 class SportDefinition {

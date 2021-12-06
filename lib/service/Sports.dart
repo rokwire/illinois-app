@@ -49,7 +49,7 @@ class Sports with Service implements NotificationsListener {
   List<SportDefinition>? _sports;
   List<SportDefinition>? _menSports;
   List<SportDefinition>? _womenSports;
-  List<SportSocialMedia?>? _socialMedias;
+  List<SportSocialMedia>? _socialMedias;
   List<Map<String, dynamic>>? _gameDetailsCache;
 
   // Singletone Factory
@@ -117,7 +117,10 @@ class Sports with Service implements NotificationsListener {
 
   SportSocialMedia? getSocialMediaForSport(String? shortName) {
     if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
-      return _socialMedias!.firstWhere((socialMedia) => shortName == socialMedia!.shortName);
+      try {
+        return _socialMedias!.firstWhere((socialMedia) => shortName == socialMedia.shortName);
+      }
+      catch(e){}
     }
     return null;
   }
@@ -161,18 +164,24 @@ class Sports with Service implements NotificationsListener {
 
   void _sortSports() {
     if (AppCollection.isCollectionNotEmpty(_menSports)) {
-      SportDefinition firstExplicitItem = _menSports!.firstWhere((SportDefinition sportType) {
-        return sportType.customName?.toLowerCase() == "football";
-      });
+      SportDefinition? firstExplicitItem;
+      try {
+        firstExplicitItem = _menSports!.firstWhere((SportDefinition sportType) {
+          return sportType.customName?.toLowerCase() == "football";
+        });
+      }
+      catch(e) {}
 
-      SportDefinition secondExplicitItem = _menSports!.firstWhere((SportDefinition sportType) {
-        return sportType.customName?.toLowerCase() == "basketball";
-      });
+      SportDefinition? secondExplicitItem;
+      try {
+        secondExplicitItem = _menSports!.firstWhere((SportDefinition sportType) {
+          return sportType.customName?.toLowerCase() == "basketball";
+        });
+      }
+      catch(e) {}
 
       //sort
-      _menSports!.sort((SportDefinition first, SportDefinition second) {
-        return first?.customName?.compareTo(second?.customName!);
-      });
+      _menSports!.sort(_compareDefinitions);
 
       //Explicitly ordered items
       if (firstExplicitItem != null) {
@@ -187,18 +196,24 @@ class Sports with Service implements NotificationsListener {
     }
 
     if (AppCollection.isCollectionNotEmpty(_womenSports)) {
-      SportDefinition firstExplicitItem = _womenSports!.firstWhere((SportDefinition sportType) {
-        return sportType.customName?.toLowerCase() == "volleyball";
-      });
+      SportDefinition? firstExplicitItem;
+      try {
+        firstExplicitItem = _womenSports!.firstWhere((SportDefinition sportType) {
+          return sportType.customName?.toLowerCase() == "volleyball";
+        });
+      }
+      catch(e) {}
 
-      SportDefinition secondExplicitItem = _womenSports!.firstWhere((SportDefinition sportType) {
-        return sportType.customName?.toLowerCase() == "basketball";
-      });
+      SportDefinition? secondExplicitItem;
+      try {
+        secondExplicitItem = _womenSports!.firstWhere((SportDefinition sportType) {
+          return sportType.customName?.toLowerCase() == "basketball";
+        });
+      }
+      catch(e) {}
 
       //sort
-      _womenSports!.sort((SportDefinition first, SportDefinition second) {
-        return first?.customName?.compareTo(second?.customName!);
-      });
+      _womenSports!.sort(_compareDefinitions);
 
       //Explicitly ordered items
       if (firstExplicitItem != null) {
@@ -213,9 +228,17 @@ class Sports with Service implements NotificationsListener {
     }
   }
 
+  int _compareDefinitions(SportDefinition first, SportDefinition second) {
+        if (first.customName != null) {
+          return (second.customName != null) ? first.customName!.compareTo(second.customName!) : 1;
+        }
+        else {
+          return  (second.customName != null) ? -1 : 0;
+        }
+  }
+
   Future<void> _loadSportSocialMedias() async {
-    List<dynamic>? jsonList = Storage().sportSocialMediaList;
-    _socialMedias = (jsonList != null) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
+    _socialMedias = SportSocialMedia.listFromJson(Storage().sportSocialMediaList);
 
     if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
       return;
@@ -225,8 +248,7 @@ class Sports with Service implements NotificationsListener {
     String? responseBody = response?.body;
     if (response?.statusCode == 200) {
       List<dynamic>? jsonList = AppJson.decodeList(responseBody);
-      List<SportSocialMedia?>? socialMedias =
-          AppCollection.isCollectionNotEmpty(jsonList) ? jsonList!.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
+      List<SportSocialMedia>? socialMedias = SportSocialMedia.listFromJson(jsonList);
       if ((socialMedias != null) && ((_socialMedias == null) || !DeepCollectionEquality().equals(socialMedias, _socialMedias))) {
         _socialMedias = socialMedias;
         Storage().sportSocialMediaList = jsonList;
@@ -261,7 +283,7 @@ class Sports with Service implements NotificationsListener {
         if (AppCollection.isCollectionNotEmpty(jsonData)) {
           List<Roster> rosters = [];
           for (Map<String, dynamic> jsonEntry in jsonData as Iterable<Map<String, dynamic>>) {
-            Roster roster = Roster.fromJson(jsonEntry);
+            Roster? roster = Roster.fromJson(jsonEntry);
             if (roster != null) {
               rosters.add(roster);
             }
@@ -287,7 +309,7 @@ class Sports with Service implements NotificationsListener {
         if (AppCollection.isCollectionNotEmpty(jsonList)) {
           List<Coach> coaches = [];
           for (Map<String, dynamic> jsonEntry in jsonList as Iterable<Map<String, dynamic>>) {
-            Coach coach = Coach.fromJson(jsonEntry);
+            Coach? coach = Coach.fromJson(jsonEntry);
             if (coach != null) {
               coaches.add(coach);
             }
@@ -484,7 +506,7 @@ class Sports with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<News>?> loadNews(String? sportKey, int count) async {
+  Future<List<News>?> loadNews(String? sportKey, int? count) async {
     if (Config().sportsServiceUrl != null) {
       String newsUrl = Config().sportsServiceUrl! + '/api/v2/news';
       bool hasSportParam = AppString.isStringNotEmpty(sportKey);
@@ -635,13 +657,13 @@ class Sports with Service implements NotificationsListener {
           (gameUri.authority == uri.authority) &&
           (gameUri.path == uri.path))
       {
-        try { _handleGameDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        try { _handleGameDetail(uri.queryParameters.cast<String, dynamic>()); }
         catch (e) { print(e.toString()); }
       }
     }
   }
 
-  void _handleGameDetail(Map<String, dynamic> params) {
+  void _handleGameDetail(Map<String, dynamic>? params) {
     if ((params != null) && params.isNotEmpty) {
       if (_gameDetailsCache != null) {
         _cacheGameDetail(params);
