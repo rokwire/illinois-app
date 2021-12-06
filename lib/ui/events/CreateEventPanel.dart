@@ -1475,8 +1475,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         _selectedCategory = {"category": event.category};
 
       _eventTitleController.text = event.title!;
-      if(event?.startDateGmt!=null) {
-        _startDate =  timezone.TZDateTime.from(event?.startDateGmt!, timezone.getLocation(_selectedTimeZone!));
+      if(event.startDateGmt!=null) {
+        _startDate =  timezone.TZDateTime.from(event.startDateGmt!, timezone.getLocation(_selectedTimeZone!));
         _startTime = TimeOfDay.fromDateTime(_startDate!);
 //      _endDate = AppDateTime().dateTimeFromString(event.endDateString, format: AppDateTime.eventsServerCreateDateTimeFormat);
       }
@@ -1496,13 +1496,13 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventPurchaseUrlController.text = event.registrationUrl!;
       _eventWebsiteController.text = event.titleUrl!;
       _eventPriceController.text = event.cost!;
-      _selectedPrivacy = (event?.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
+      _selectedPrivacy = (event.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
       if(event.location!=null){
         if (_isOnline) {
-          _eventCallUrlController?.text = _location!.description!;
+          _eventCallUrlController.text = _location!.description!;
         }
         else {
-          _eventLocationController?.text = _location!.description!;
+          _eventLocationController.text = _location!.description!;
         }
         _eventLatitudeController.text = event.location?.latitude?.toString()??"";
         _eventLongitudeController.text = event.location?.longitude?.toString()??"";
@@ -1511,7 +1511,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   void _populateDefaultValues(){
-    if(widget?.group?.privacy!=null){
+    if(widget.group?.privacy!=null){
       _selectedPrivacy = (widget.group!.privacy == GroupPrivacy.private) ? eventPrivacyPrivate : eventPrivacyPublic;
     }
   }
@@ -1658,19 +1658,19 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       if(AppString.isStringNotEmpty(_location!.description)){
         if (_isOnline) {
-          _eventCallUrlController?.text = _location!.description!;
+          _eventCallUrlController.text = _location!.description!;
         }
         else {
-          _eventLocationController?.text = _location!.description!;
+          _eventLocationController.text = _location!.description!;
         }
       }
 
       if(_location?.latitude!=null){
-        _eventLatitudeController?.text = _location?.latitude?.toString();
+        _eventLatitudeController.text = _location?.latitude?.toString() ?? '';
       }
 
       if(_location?.longitude!=null){
-        _eventLongitudeController?.text = _location?.longitude?.toString();
+        _eventLongitudeController.text = _location?.longitude?.toString() ?? '';
       }
     }
   }
@@ -1786,14 +1786,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
       if (hasGroup) {
-        List<Group> otherGroups = await _loadOtherAdminUserGroups();
+        List<Group>? otherGroups = await _loadOtherAdminUserGroups();
         if (AppCollection.isCollectionNotEmpty(otherGroups)) {
           otherGroupsToSave = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
         }
       }
 
       // Save the initial event and link it to group if it's part of such one.
-      String mainEventId = await ExploreService().postNewEvent(mainEvent);
+      String? mainEventId = await ExploreService().postNewEvent(mainEvent);
       if (AppString.isStringNotEmpty(mainEventId)) {
         // Succeeded to create the main event
         if (hasGroup) {
@@ -1816,12 +1816,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
 
       // Save the event to the other selected groups that the user is admin.
       if (hasGroup && AppCollection.isCollectionNotEmpty(otherGroupsToSave)) {
-        for (Group group in otherGroupsToSave) {
+        for (Group group in otherGroupsToSave!) {
           Event? groupEvent = Event.fromOther(mainEvent);
-          groupEvent.createdByGroupId = group.id;
+          groupEvent?.createdByGroupId = group.id;
           String? groupEventId = await ExploreService().postNewEvent(groupEvent);
           if (AppString.isStringNotEmpty(groupEventId)) {
-            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent.createdByGroupId, eventId: groupEventId);
+            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
               if (eventToDisplay == null) {
@@ -1839,12 +1839,15 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         }
       }
 
-      String? failedMsg;
+      String failedMsg;
       if (AppCollection.isCollectionNotEmpty(createEventFailedForGroupNames)) {
-        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ');
+        failedMsg = Localization().getStringEx('panel.create_event.groups.failed.msg', 'There was an error creating this event for the following groups: ') ?? '';
         failedMsg += createEventFailedForGroupNames.join(', ');
       } else if (AppString.isStringEmpty(mainEventId)) {
-        failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.');
+        failedMsg = Localization().getStringEx('panel.create_event.failed.msg', 'There was an error creating this event.') ?? '';
+      }
+      else {
+        failedMsg = '';
       }
 
       _setLoading(false);
@@ -1862,12 +1865,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   ///
   /// Returns the groups that current user is admin of without the current group
   ///
-  Future<List<Group?>?> _loadOtherAdminUserGroups() async {
-    List<Group?>? userGroups = await Groups().loadGroups(myGroups: true);
-    List<Group?>? userAdminGroups;
+  Future<List<Group>?> _loadOtherAdminUserGroups() async {
+    List<Group>? userGroups = await Groups().loadGroups(myGroups: true);
+    List<Group>? userAdminGroups;
     if (AppCollection.isCollectionNotEmpty(userGroups)) {
       userAdminGroups = [];
-      String? currentGroupId = widget?.group?.id;
+      String? currentGroupId = widget.group?.id;
       for (Group? group in userGroups!) {
         if (group!.currentUserIsAdmin && (group.id != currentGroupId)) {
           userAdminGroups.add(group);
@@ -1885,17 +1888,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     if(_location==null) {
       _location = new Location();
     }
-    _location!.description = _isOnline? (_eventCallUrlController?.text?.toString()?? "") : (_eventLocationController?.text?.toString()?? "");
-    String longitude = !_isOnline? (_eventLongitudeController?.text?.toString()) : null;
-    String latitude = !_isOnline? (_eventLatitudeController?.text?.toString()) : null;
-    try{
-      num lat = num.parse(latitude);
-      num long = num.parse(longitude);
-      _location!.latitude = lat;
-      _location!.longitude = long;
-    } catch(e){
-      print(e);
-    }
+    _location!.description = _isOnline? (_eventCallUrlController.text.toString()) : (_eventLocationController.text.toString());
+    String? longitude = !_isOnline? (_eventLongitudeController.text.toString()) : null;
+    String? latitude = !_isOnline? (_eventLatitudeController.text.toString()) : null;
+    _location!.latitude = (latitude != null) ? num.tryParse(latitude) : null;
+    _location!.longitude = (longitude != null) ? num.tryParse(longitude) : null;
 
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
@@ -1921,7 +1918,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
     event.recurringFlag = false;//decide do we need it
-    event.cost = _eventPriceController?.text?.toString();//decide do we need it
+    event.cost = _eventPriceController.text.toString();//decide do we need it
     event.isGroupPrivate = _isPrivateEvent;
     event.isEventFree = _isFree;
     if(widget.group!=null) {
@@ -2003,7 +2000,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     timezone.TZDateTime lastDate =
     timezone.TZDateTime.fromMillisecondsSinceEpoch(timezone.getLocation(_selectedTimeZone!),initialDate.millisecondsSinceEpoch)
             .add(Duration(days: 365));
-    DateTime resultDate = await (showDatePicker(
+    DateTime? resultDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: firstDate,
@@ -2014,9 +2011,9 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           child: child!,
         );
       },
-    ) as FutureOr<DateTime>);
+    );
 
-    return AppDateTime().changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone!));
+    return (resultDate != null) ? AppDateTime().changeTimeZoneToDate(resultDate, timezone.getLocation(_selectedTimeZone!)) : null;
   }
 
   Future<TimeOfDay?> _pickTime(TimeOfDay initialTime) async {
@@ -2026,7 +2023,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   timezone.TZDateTime? _populateDateTimeWithTimeOfDay(timezone.TZDateTime? date, TimeOfDay? time) {
-    if (date != null && time != null) {
+    if (date != null) {
       int endHour = time != null ? time.hour : date.hour;
       int endMinute = time != null ? time.minute : date.minute;
       date = new timezone.TZDateTime(date.location,date.year, date.month, date.day, endHour, endMinute);
@@ -2097,7 +2094,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }*/
 
   String? get _panelTitleText{
-    return widget?.editEvent!=null ? "Update Event" : Localization().getStringEx("panel.create_event.header.title", "Create An Event");
+    return widget.editEvent!=null ? "Update Event" : Localization().getStringEx("panel.create_event.header.title", "Create An Event");
   }
 }
 
@@ -2122,7 +2119,7 @@ class _EventDateDisplayView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              AppString.getDefaultEmptyString(label, defaultValue: '-')!,
+              AppString.getDefaultEmptyString(label, defaultValue: '-'),
               style: TextStyle(
                   color: Styles().colors!.fillColorPrimary,
                   fontSize: 16,
@@ -2292,12 +2289,14 @@ class _AddImageWidgetState extends State<AddImageWidget> {
           //do nothing
             break;
           case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage);
+            AppToast.show(logicResult.errorMessage ?? '');
             break;
           case ImagesResultType.SUCCEEDED:
           //ready
             AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
             Navigator.pop(context, logicResult.data);
+            break;
+          default:
             break;
         }
       });
@@ -2324,12 +2323,14 @@ class _AddImageWidgetState extends State<AddImageWidget> {
         //do nothing
           break;
         case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage);
+          AppToast.show(logicResult.errorMessage ?? '');
           break;
         case ImagesResultType.SUCCEEDED:
         //ready
           AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
           Navigator.pop(context, logicResult.data);
+          break;
+        default:
           break;
       }
     });
