@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed network authorization type in health_locations API call to Content BB.
+### Changed
+- Open McKinley portal in external browser [#1074](https://github.com/rokwire/illinois-app/issues/1074).
 
 ## [3.0.60] - 2021-12-03
 ### Fixed
