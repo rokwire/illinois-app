@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Poll labels [#1085](https://github.com/rokwire/illinois-app/issues/1085).
+- Update HomeUpcomingEventsWidget on event creation / update or awake from background [#1081](https://github.com/rokwire/illinois-app/issues/1081).
 
 ## [3.0.61] - 2021-12-06
 ### Fixed
