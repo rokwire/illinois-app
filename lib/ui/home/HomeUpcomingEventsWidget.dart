@@ -57,6 +57,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   Set<String>   _categoriesFilter;
   Set<String>   _tagsFilter;
   List<Explore> _events;
+  bool          _loadingEvents;
 
   @override
   void initState() {
@@ -130,7 +131,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   void _loadEvents() {
 
-    if (Connectivity().isNotOffline) {
+    if (Connectivity().isNotOffline && (_loadingEvents != true)) {
 
       Set<String> userCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
       if ((userCategories != null) && userCategories.isNotEmpty && (_availableCategories != null) && _availableCategories.isNotEmpty) {
@@ -141,6 +142,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Set<String> userTags = Auth2().prefs?.positiveTags;
       Set<String> tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
+      _loadingEvents = true;
       ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {
 
         bool haveEvents = (events != null) && events.isNotEmpty;
@@ -149,6 +151,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
         bool haveFilters = haveTagsFilters || haveCategoriesFilters;
 
         if (haveEvents || !haveFilters) {
+          _loadingEvents = false;
           if (mounted) {
             setState(() {
               _tagsFilter = tagsFilter;
@@ -156,19 +159,17 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
               _events = _randomSelection(events, 5);
             });
           }
-          else {
-            _tagsFilter = tagsFilter;
-            _categoriesFilter = categoriesFilter;
-            _events = _randomSelection(events, 5);
-          }
         }
         else {
           ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Explore> events) {
-            setState(() {
-              _tagsFilter = null;
-              _categoriesFilter = null;
-              _events = _randomSelection(events, 5);
-            });
+            _loadingEvents = false;
+            if (mounted) {
+              setState(() {
+                _tagsFilter = null;
+                _categoriesFilter = null;
+                _events = _randomSelection(events, 5);
+              });
+            }
           });
         }
       });
