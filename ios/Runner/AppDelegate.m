@@ -33,6 +33,7 @@
 #import "NSDictionary+UIUCConfig.h"
 #import "CGGeometry+InaUtils.h"
 #import "UIColor+InaParse.h"
+#import "UILabel+InaMeasure.h"
 #import "Bluetooth+InaUtils.h"
 #import "Security+UIUCUtils.h"
 
@@ -52,6 +53,7 @@ static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.no
 @end
 
 @interface LaunchScreenView : UIView
+@property (nonatomic) NSString *statusText;
 @end
 
 UIInterfaceOrientation _interfaceOrientationFromString(NSString *value);
@@ -69,7 +71,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @property (nonatomic) FlutterMethodChannel *flutterMethodChannel;
 
 // Launch View
-@property (nonatomic) UIView *launchScreenView;
+@property (nonatomic) LaunchScreenView *launchScreenView;
 
 // PassKit
 @property (nonatomic) PKAddPassesViewController *passViewController;
@@ -222,6 +224,12 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
+- (void)setLaunchScreenStatusText:(NSString*)statusText {
+	if (_launchScreenView != nil) {
+		_launchScreenView.statusText = statusText;
+	}
+}
+
 #pragma mark Flutter APIs
 
 - (void)handleFlutterAPIFromCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -246,6 +254,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else if ([call.method isEqualToString:@"dismissLaunchScreen"]) {
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"setLaunchScreenStatus"]) {
+		[self handleSetLaunchScreenStatusWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"firebaseInfo"]) {
 		[self handleFirebaseInfoWithParameters:parameters result:result];
@@ -369,6 +380,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	[self removeLaunchScreen];
+	result(nil);
+}
+
+- (void)handleSetLaunchScreenStatusWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSString *statusText = [parameters inaStringForKey:@"status"];
+	[self setLaunchScreenStatusText:statusText];
+	result(nil);
 }
 
 - (void)handleFirebaseInfoWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -1014,6 +1032,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @interface LaunchScreenView()
 @property (nonatomic) UIImageView *imageView;
 @property (nonatomic) UIActivityIndicatorView *activityView;
+@property (nonatomic) UILabel *statusView;
 @end
 
 @implementation LaunchScreenView
@@ -1026,6 +1045,14 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		
 		_activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 		[self addSubview:_activityView];
+		
+		_statusView = [[UILabel alloc] initWithFrame:CGRectZero];
+		_statusView.font = [UIFont systemFontOfSize:16];
+		_statusView.textAlignment = NSTextAlignmentCenter;
+		_statusView.textColor = UIColor.whiteColor;
+		_statusView.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+		_statusView.shadowOffset = CGSizeMake(1, 1);
+		[self addSubview:_statusView];
 
 		[_activityView startAnimating];
 	}
@@ -1043,7 +1070,19 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	CGSize activitySize = [_activityView sizeThatFits:contentSize];
 	_activityView.frame = CGRectMake((contentSize.width - activitySize.width) / 2, 7 * (contentSize.height - activitySize.height) / 8, activitySize.width, activitySize.height);
 	
-	
+	CGFloat statusPaddingX = 16;
+	CGSize statusSize = [_statusView inaTextSizeForBoundWidth:contentSize.width - 2 * statusPaddingX];
+	CGFloat statusY = contentSize.height - ((contentSize.height - activitySize.height) / 8 - statusSize.height) / 2 - statusSize.height;
+	_statusView.frame = CGRectMake(statusPaddingX, statusY, contentSize.width - 2 * statusPaddingX, statusSize.height);
+}
+
+- (NSString*)statusText {
+	return _statusView.text;
+}
+
+- (void)setStatusText:(NSString*)value {
+	_statusView.text = value;
+	[self setNeedsLayout];
 }
 
 @end
