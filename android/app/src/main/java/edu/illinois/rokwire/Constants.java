@@ -28,6 +28,7 @@ public class Constants {
     static final String SHOW_NOTIFICATION_KEY = "showNotification";
     static final String APP_DISMISS_SAFARI_VC_KEY = "dismissSafariVC";
     static final String APP_DISMISS_LAUNCH_SCREEN_KEY = "dismissLaunchScreen";
+    static final String APP_SET_LAUNCH_SCREEN_STATUS_KEY = "setLaunchScreenStatus";
     static final String APP_ADD_CARD_TO_WALLET_KEY = "addToWallet";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String APP_NOTIFICATIONS_AUTHORIZATION = "notifications_authorization";

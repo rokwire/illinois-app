@@ -599,6 +599,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     break;
                 case Constants.APP_DISMISS_SAFARI_VC_KEY:
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                 case Constants.APP_ADD_CARD_TO_WALLET_KEY:
                     result.success(false);
                     break;
