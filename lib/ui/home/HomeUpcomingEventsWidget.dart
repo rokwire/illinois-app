@@ -24,7 +24,9 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
@@ -58,6 +60,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   Set<String>   _tagsFilter;
   List<Explore> _events;
   bool          _loadingEvents;
+  DateTime      _pausedDateTime;
 
   @override
   void initState() {
@@ -66,6 +69,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Auth2UserPrefs.notifyTagsChanged,
       ExploreService.notifyEventCreated,
       ExploreService.notifyEventUpdated,
+      AppLivecycle.notifyStateChanged,
     ]);
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
@@ -97,6 +101,23 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     }
     else if (name == ExploreService.notifyEventUpdated) {
       _loadEvents();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadEvents();
+        }
+      }
     }
   }
 
