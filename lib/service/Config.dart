@@ -91,8 +91,7 @@ class Config with Service implements NotificationsListener {
   @override
   Future<void> initService() async {
 
-    _configEnvironment = configEnvFromString(Storage().configEnvironment) ??
-      (kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev);
+    _configEnvironment = configEnvFromString(Storage().configEnvironment) ?? defaultConfigEnvironment;
 
     _packageInfo = await PackageInfo.fromPlatform();
     _appDocumentsDir = await getApplicationDocumentsDirectory();
@@ -407,7 +406,6 @@ class Config with Service implements NotificationsListener {
   String? get laundryHostUrl         { return thirdPartyServices['launtry_host_url']; }          // "http://api.laundryview.com/"
   String? get ticketsUrl             { return thirdPartyServices['tickets_url']; }               // "https://ev11.evenue.net/cgi-bin/ncommerce3/SEGetGroupList?groupCode=EOS&linkID=illinois&shopperContext=&caller=&appCode=&utm_source=FI.com&utm_medium=TicketsPage&utm_content=MainImage&utm_campaign=AllTickets"
   String? get youtubeUrl             { return thirdPartyServices['youtube_url']; }               // "https://www.youtube.com/c/fightingilliniathletics"
-  String? get voterRegistrationUrl   { return thirdPartyServices['voter_registration_url']; }    // "https://ova.elections.il.gov/"
   String? get gameDayFootballUrl     { return thirdPartyServices['gameday_football_url']; }      // "https://fightingillini.com/sports/2015/7/31/football_gamedayguide.aspx"
   String? get gameDayBasketballUrl   { return thirdPartyServices['gameday_basketball_url']; }    // "https://fightingillini.com/sports/2015/11/30/sfc_fanguide.aspx"
   String? get gameDayTennisUrl       { return thirdPartyServices['gameday_tennis_url']; }        // "https://fightingillini.com/sports/2015/6/27/tennis_facilities.aspx#eventinfo"
@@ -553,6 +551,10 @@ class Config with Service implements NotificationsListener {
 
   ConfigEnvironment? get configEnvironment {
     return _configEnvironment;
+  }
+
+  static ConfigEnvironment get defaultConfigEnvironment {
+    return kReleaseMode ? ConfigEnvironment.production : ConfigEnvironment.dev;
   }
 
   // Assets cache path

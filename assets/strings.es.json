@@ -1228,7 +1228,7 @@
     "panel.profile_info.logout.no":"No",
 
     "panel.create_poll.header.title": "Crear una encuesta rápida",
-    "panel.create_poll.description": "Las personas que se encuentren a menos de 100 pies de usted con Bluetooth activado y con la aplicación en ejecución serán notificadas y podrán votar a través de la aplicación de Illinois.",
+    "panel.create_poll.description": "Las personas que se encuentren en un radio de 100 pies de usted con bluetooth encendido y con la aplicación en ejecución serán notificadas y podrán votar a través de la aplicación de Illinois o pueden solicitarle el número de encuesta de 4 dígitos.",
     "panel.create_poll.text.wants_to_know": "quiere saber…",
     "panel.create_poll.text.question": "PREGUNTA",
     "panel.create_poll.hint.question": "Pregúntale a la gente cerca de ti...",
@@ -1248,7 +1248,6 @@
     "panel.create_poll.message.error.default": "No se pudo crear la encuesta. Complete todos los campos e intente nuevamente.",
 
     "panel.create_stadium_poll.header.title": "Crear una encuesta de estadio",
-    "panel.create_stadium_poll.description": "Las personas que se encuentren a menos de 100 pies de usted con Bluetooth activado y con la aplicación en ejecución serán notificadas y podrán votar a través de la aplicación de Illinois.",
     "panel.create_stadium_poll.text.wants_to_know": "quiere saber…",
     "panel.create_stadium_poll.text.question": "PREGUNTA",
     "panel.create_stadium_poll.hint.question": "Pregúntale a la gente cerca de ti...",
@@ -1959,7 +1958,7 @@
     "widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
 
-    "widget.home_upcoming_events.label.events_for_you":"Eventos para ti",
+    "widget.home_upcoming_events.label.events_for_you":"Eventos Para Ti",
     "widget.home_upcoming_events.label.events_for_you.sub_title":"Curada por tus intereses",
     "widget.home_upcoming_events.button.more.title":"Ver todos los eventos",
     "widget.home_upcoming_events.button.more.hint":"Toca para ver todos los eventos",
@@ -1987,7 +1986,7 @@
     "widget.home_create_poll.heading.title":"Centro",
     "widget.home_create_poll.button.close.label":"Cerrar",
     "widget.home_create_poll.text.title":"Crea y comparte encuestas rápidamente.",
-    "widget.home_create_poll.text.description":"Las personas cercanas a usted serán notificadas para votar a través de la aplicación de Illinois.",
+    "widget.home_create_poll.text.description":"Las personas cercanas a usted serán notificadas para votar a través de la aplicación de Illinois o puede proporcionarles el número de encuesta de 4 dígitos.",
     "widget.home_create_poll.text.description.login":"Debe iniciar sesión para crear y compartir encuestas con personas cercanas a usted.",
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
@@ -2144,6 +2143,12 @@
     "widget.gies.notes.label.add": "Agregar a notas:",
     "widget.gies.notes.button.save": "Ahorrar",
     "widget.gies.notes.button.skip": "Saltar",
+
+    "widgets.home_highlighted_features.header.title": "Funciones Destacadas",
+    "widgets.home_highlighted_features.button.personalize.title": "Personaliza esta aplicación",
+    "widgets.home_highlighted_features.button.notifications.title": "Administrar las preferencias de notificación",
+    "widgets.home_highlighted_features.button.privacy.title": "Gestionar mi privacidad",
+    "widgets.home_highlighted_features.button.guide.title": "Guía del campus",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",

@@ -145,18 +145,22 @@ class Services {
 
   Future<ServiceError?> init() async {
     bool offlineChecked = false;
+    bool showStatus = Config.defaultConfigEnvironment != ConfigEnvironment.production;
     for (Service service in _services) {
 
       if (service.isInitialized != true) {
-        try { await service.initService(); }
-        on ServiceError catch (error) {
-          print(error?.toString());
-          if (error?.severity == ServiceErrorSeverity.fatal) {
-            return error;
-          }
+        if (showStatus) {
+          await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
         }
-        catch(e) {
-          print(e.toString());
+  
+        ServiceError? error = await _initService(service);
+  
+        if (showStatus) {
+          await NativeCommunicator().setLaunchScreenStatus(null);
+        }
+  
+        if (error?.severity == ServiceErrorSeverity.fatal) {
+          return error;
         }
       }
 
@@ -182,6 +186,20 @@ class Services {
       title: 'Text Initialization Error',
       description: 'This is a test initialization error.',
     );*/
+    return null;
+  }
+
+  Future<ServiceError?> _initService(Service service) async {
+    try {
+      await service.initService();
+    }
+    on ServiceError catch (error) {
+      print(error.toString());
+      return error;
+    }
+    catch(e) {
+      print(e.toString());
+    }
     return null;
   }
 

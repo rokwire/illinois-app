@@ -38,7 +38,9 @@ class ExploreService with Service implements NotificationsListener {
 
   static const String EVENT_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/event_detail';
 
-  static const String notifyEventDetail = "edu.illinois.rokwire.explore.event.detail";
+  static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
+  static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
+  static const String notifyEventUpdated = "edu.illinois.rokwire.explore.event.updated";
 
   List<Map<String, dynamic>>? _eventDetailsCache;
   
@@ -159,8 +161,12 @@ class ExploreService with Service implements NotificationsListener {
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
-        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
+        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
+        String? eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        if (eventId != null) {
+          NotificationService().notify(notifyEventCreated, eventId);
+        }
+        return eventId;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
@@ -178,8 +184,12 @@ class ExploreService with Service implements NotificationsListener {
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
             auth: NetworkAuth.Auth2) : null;
-        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
-        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
+        Map<String, dynamic>? jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
+        String? eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        if (eventId != null) {
+          NotificationService().notify(notifyEventUpdated, eventId);
+        }
+        return eventId;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());

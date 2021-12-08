@@ -1229,7 +1229,7 @@
     "panel.profile_info.logout.no":"No",
 
     "panel.create_poll.header.title": "Create a Quick Poll",
-    "panel.create_poll.description": "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app.",
+    "panel.create_poll.description": "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app or they can ask you for the 4 Digit Poll #.",
     "panel.create_poll.text.wants_to_know": "wants to know…",
     "panel.create_poll.text.question": "QUESTION",
     "panel.create_poll.hint.question": "Ask people near you…",
@@ -1249,7 +1249,6 @@
     "panel.create_poll.message.error.default": "Failed to create poll. Please fill all fields and try again.",
 
     "panel.create_stadium_poll.header.title": "Create a Stadium Poll",
-    "panel.create_stadium_poll.description": "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app.",
     "panel.create_stadium_poll.text.wants_to_know": "wants to know…",
     "panel.create_stadium_poll.text.question": "QUESTION",
     "panel.create_stadium_poll.hint.question": "Ask people near you…",
@@ -1963,7 +1962,7 @@
     "widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
 
-    "widget.home_upcoming_events.label.events_for_you":"Events for you",
+    "widget.home_upcoming_events.label.events_for_you":"Events For You",
     "widget.home_upcoming_events.label.events_for_you.sub_title":"Curated from your interests",
     "widget.home_upcoming_events.button.more.title":"View all events",
     "widget.home_upcoming_events.button.more.hint":"Tap to view all events",
@@ -1991,7 +1990,7 @@
     "widget.home_create_poll.heading.title":"Polls",
     "widget.home_create_poll.button.close.label":"Close",
     "widget.home_create_poll.text.title":"Quickly create and share polls",
-    "widget.home_create_poll.text.description":"People near you will be notified to vote through the Illinois app.",
+    "widget.home_create_poll.text.description":"People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #.",
     "widget.home_create_poll.text.description.login":"You need to be logged in to create and share polls with people near you.",
     "widget.home_create_poll.button.create_poll.label":"Create a poll",
     "widget.home_create_poll.button.login.label":"Login",
@@ -2148,6 +2147,12 @@
     "widget.gies.notes.label.add": "Add to Notes:",
     "widget.gies.notes.button.save": "Save",
     "widget.gies.notes.button.skip": "Skip",
+
+    "widgets.home_highlighted_features.header.title": "Highlighted Features",
+    "widgets.home_highlighted_features.button.personalize.title": "Personalize this app",
+    "widgets.home_highlighted_features.button.notifications.title": "Manage notification preferences",
+    "widgets.home_highlighted_features.button.privacy.title": "Manage my privacy",
+    "widgets.home_highlighted_features.button.guide.title": "Campus Guide",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",

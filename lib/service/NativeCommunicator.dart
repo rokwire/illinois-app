@@ -190,6 +190,16 @@ class NativeCommunicator with Service {
     }
   }
 
+  Future<void> setLaunchScreenStatus(String? status) async {
+    try {
+      await _platformChannel.invokeMethod('setLaunchScreenStatus', {
+        'status': status
+      });
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
+  }
+
   Future<void> addCardToWallet(List<int> cardData) async {
     try {
       String cardBase64Data = base64Encode(cardData);
