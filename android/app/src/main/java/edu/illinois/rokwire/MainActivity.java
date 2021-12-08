@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -87,6 +88,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private Set<Integer> supportedScreenOrientations;
 
     private RequestLocationCallback rlCallback;
+
+    private Toast statusToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -549,6 +552,19 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    private void handleSetLaunchScreenStatus(Object params) {
+        String statusText = Utils.Map.getValueFromPath(params, "status", null);
+
+        if (statusToast != null) {
+            statusToast.cancel();
+            statusToast = null;
+        }
+        if (statusText != null) {
+            statusToast = Toast.makeText(this, statusText, Toast.LENGTH_SHORT);
+            statusToast.show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE) {
@@ -600,6 +616,9 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.APP_DISMISS_SAFARI_VC_KEY:
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
+                    handleSetLaunchScreenStatus(methodCall.arguments);
+                    result.success(true);
+                    break;
                 case Constants.APP_ADD_CARD_TO_WALLET_KEY:
                     result.success(false);
                     break;
