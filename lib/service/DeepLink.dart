@@ -53,8 +53,8 @@ class DeepLink with Service {
   }
 
   static bool isRokwireUri(Uri uri) => (uri?.scheme == ROKWIRE_SCHEME);
-  static bool isRokwireUrl(String url) =>  isRokwireUri(Uri.tryParse(url));
-  static void launchUrl(String url) => launchUri(Uri.tryParse(url));
+  static bool isRokwireUrl(String url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
+  static void launchUrl(String url) => launchUri((url != null) ? Uri.tryParse(url) : null);
 
   static void launchUri(Uri uri) {
     if (uri != null) {
