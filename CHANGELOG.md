@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Show debug initialization status on startup (iOS only) [#1087](https://github.com/rokwire/illinois-app/issues/1087).
+- Show debug initialization status on startup (Android) [#1087](https://github.com/rokwire/illinois-app/issues/1087).
 ### Changed
 - UI changes in Home Highlighted Features widget [#1090](https://github.com/rokwire/illinois-app/issues/1090).
 - Use external browser in twitter widget [#1092](https://github.com/rokwire/illinois-app/issues/1092).
