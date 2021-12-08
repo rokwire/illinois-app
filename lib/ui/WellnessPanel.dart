@@ -19,11 +19,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -301,11 +300,8 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       if (panelContent != null) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessPanel(content: panelContent,)));
       }
-    } else if ('web' == actionName) {
-      String? url = AppMapPathKey.entry(action, 'source');
-      if (AppString.isStringNotEmpty(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
+    } else /*if ('web' == actionName)*/ {
+      _launchUrl(AppMapPathKey.entry(action, 'source'));
     }
   }
 
@@ -399,14 +395,15 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       Analytics().logSelect(target:title);
     }
 
-    String? url = AppMapPathKey.entry(ribbonButton, 'url');
-    String? guideId = AppMapPathKey.entry(ribbonButton, 'guide_id');
-    Map<String, dynamic>? guideEntry = (guideId != null) ? Guide().entryById(guideId) : null;
-    if (guideEntry != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideId,)));
-    }
-    else if (AppString.isStringNotEmpty(url)) {
-      if(AppUrl.launchInternal(url)){
+    _launchUrl(AppMapPathKey.entry(ribbonButton, 'url'));
+  }
+
+  void _launchUrl(String? url) {
+    if (AppString.isStringNotEmpty(url)) {
+      if (DeepLink.isRokwireUrl(url)) {
+        DeepLink.launchUrl(url);
+      }
+      else if (AppUrl.launchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else{
@@ -503,10 +500,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
       Analytics().logSelect(target:type);
     }
     
-    String? url = AppMapPathKey.entry(socialMedia, 'url');
-    if (url != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url,)));
-    }
+    _launchUrl(AppMapPathKey.entry(socialMedia, 'url'));
   }
 
   void _onTapBack() {
