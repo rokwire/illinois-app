@@ -1597,7 +1597,6 @@
 							{
 								"title":"panel.wellness.financial.resources.budgets",
 								"url":"http://mhcwellness.illinois.edu/budget-finances",
-								"guide_id":"wellness.financial.budget_and_finance",
 								"icon": "link-out.png",
 								"hint": ""
 							}
@@ -1664,7 +1663,6 @@
 							{
 								"title":"panel.wellness.common.resources.programs",
 								"url":"https://oiir.illinois.edu/programs",
-								"guide_id":"wellness.spiritual.programs",
 								"icon": "link-out.png",
 								"hint": ""
 							},
@@ -1919,7 +1917,6 @@
 							{
 								"title":"panel.wellness.common.resources.programs",
 								"url":"https://oiir.illinois.edu/programs",
-								"guide_id":"wellness.spiritual.programs",
 								"icon": "link-out.png",
 								"hint": ""
 							},
