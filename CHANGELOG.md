@@ -5,8 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- UI changes in Home Highlighted Features widget [#1090](https://github.com/rokwire/illinois-app/issues/1090).
+- Use external browser in twitter widget [#1092](https://github.com/rokwire/illinois-app/issues/1092).
+
+## [3.0.62] - 2021-12-07
+### Added
+- Show debug initialization status on startup (iOS only) [#1087](https://github.com/rokwire/illinois-app/issues/1087).
+### Changed
+- Poll labels [#1085](https://github.com/rokwire/illinois-app/issues/1085).
+- Update HomeUpcomingEventsWidget on event creation / update or awake from background [#1081](https://github.com/rokwire/illinois-app/issues/1081).
+
+## [3.0.61] - 2021-12-06
 ### Fixed
 - Fixed network authorization type in health_locations API call to Content BB.
+- Capitalization of Sections on Home Page [#1073](https://github.com/rokwire/illinois-app/issues/1073).
 ### Changed
 - Open McKinley portal in external browser [#1074](https://github.com/rokwire/illinois-app/issues/1074).
 - Do not translate building access strings [#1077](https://github.com/rokwire/illinois-app/issues/1077).

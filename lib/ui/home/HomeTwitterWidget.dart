@@ -11,7 +11,6 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/Twitter.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -283,11 +282,7 @@ class _TweetWidget extends StatelessWidget {
 
   void _launchUrl(String url, {BuildContext context}) {
     if (AppString.isStringNotEmpty(url)) {
-      if (AppUrl.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        launch(url);
-      }
+      launch(url);
     }
   }
 }

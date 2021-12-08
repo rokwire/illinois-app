@@ -24,7 +24,9 @@ import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
@@ -57,12 +59,17 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   Set<String>   _categoriesFilter;
   Set<String>   _tagsFilter;
   List<Explore> _events;
+  bool          _loadingEvents;
+  DateTime      _pausedDateTime;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyTagsChanged,
+      ExploreService.notifyEventCreated,
+      ExploreService.notifyEventUpdated,
+      AppLivecycle.notifyStateChanged,
     ]);
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
@@ -88,6 +95,29 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     }
     else if (name == Auth2UserPrefs.notifyTagsChanged) {
       _loadEvents();
+    }
+    else if (name == ExploreService.notifyEventCreated) {
+      _loadEvents();
+    }
+    else if (name == ExploreService.notifyEventUpdated) {
+      _loadEvents();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadEvents();
+        }
+      }
     }
   }
 
@@ -122,7 +152,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
   void _loadEvents() {
 
-    if (Connectivity().isNotOffline) {
+    if (Connectivity().isNotOffline && (_loadingEvents != true)) {
 
       Set<String> userCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
       if ((userCategories != null) && userCategories.isNotEmpty && (_availableCategories != null) && _availableCategories.isNotEmpty) {
@@ -133,6 +163,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       Set<String> userTags = Auth2().prefs?.positiveTags;
       Set<String> tagsFilter = ((userTags != null) && userTags.isNotEmpty) ? userTags : null;
 
+      _loadingEvents = true;
       ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming, categories: _categoriesFilter, tags: tagsFilter).then((List<Explore> events) {
 
         bool haveEvents = (events != null) && events.isNotEmpty;
@@ -141,6 +172,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
         bool haveFilters = haveTagsFilters || haveCategoriesFilters;
 
         if (haveEvents || !haveFilters) {
+          _loadingEvents = false;
           if (mounted) {
             setState(() {
               _tagsFilter = tagsFilter;
@@ -148,19 +180,17 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
               _events = _randomSelection(events, 5);
             });
           }
-          else {
-            _tagsFilter = tagsFilter;
-            _categoriesFilter = categoriesFilter;
-            _events = _randomSelection(events, 5);
-          }
         }
         else {
           ExploreService().loadEvents(limit: 20, eventFilter: EventTimeFilter.upcoming).then((List<Explore> events) {
-            setState(() {
-              _tagsFilter = null;
-              _categoriesFilter = null;
-              _events = _randomSelection(events, 5);
-            });
+            _loadingEvents = false;
+            if (mounted) {
+              setState(() {
+                _tagsFilter = null;
+                _categoriesFilter = null;
+                _events = _randomSelection(events, 5);
+              });
+            }
           });
         }
       });
@@ -221,7 +251,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
           HomeHeader(
             title: Localization().getStringEx(
                 'widget.home_upcoming_events.label.events_for_you',
-                'Events for you'),
+                'Events For You'),
             imageRes: 'images/icon-calendar.png',
             subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             onSettingsTap: (){
