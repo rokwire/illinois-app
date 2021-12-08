@@ -38,7 +38,7 @@ import 'package:illinois/service/Network.dart';
 
 class Sports with Service implements NotificationsListener {
 
-  static const String GAME_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/game_detail';
+  static const String GAME_URI = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/game_detail';
 
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
