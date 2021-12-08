@@ -387,12 +387,9 @@ class Config with Service implements NotificationsListener {
   // Getters: Platform Building Blocks
   String? get coreUrl                { return platformBuildingBlocks['core_url']; }                    // "https://api-dev.rokwire.illinois.edu/core"
   String? get loggingUrl             { return platformBuildingBlocks['logging_url']; }                 // "https://api-dev.rokwire.illinois.edu/logs"
-  String? get userProfileUrl         { return platformBuildingBlocks['user_profile_url']; }            // "https://api-dev.rokwire.illinois.edu/profiles"
   String? get rokwireAuthUrl         { return platformBuildingBlocks['rokwire_auth_url']; }            // "https://api-dev.rokwire.illinois.edu/authentication"
-  String? get imagesServiceUrl       { return platformBuildingBlocks['images_service_url']; }          // "https://api-dev.rokwire.illinois.edu/images-service";
   String? get sportsServiceUrl       { return platformBuildingBlocks['sports_service_url']; }          // "https://api-dev.rokwire.illinois.edu/sports-service";
   String? get eventsUrl              { return platformBuildingBlocks['events_url']; }                  // "https://api-dev.rokwire.illinois.edu/events"
-  String? get talentChooserUrl       { return platformBuildingBlocks['talent_chooser_url']; }          // "https://api-dev.rokwire.illinois.edu/talent-chooser/api/ui-content"
   String? get transportationUrl      { return platformBuildingBlocks["transportation_url"]; }          // "https://api-dev.rokwire.illinois.edu/transportation"
   String? get quickPollsUrl          { return platformBuildingBlocks["polls_url"]; }                   // "https://api-dev.rokwire.illinois.edu/poll/api";
   String? get locationsUrl           { return platformBuildingBlocks["locations_url"]; }               // "https://api-dev.rokwire.illinois.edu/location/api";
