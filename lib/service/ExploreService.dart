@@ -36,7 +36,7 @@ import 'package:illinois/service/Log.dart';
 
 class ExploreService with Service implements NotificationsListener {
 
-  static const String EVENT_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/event_detail';
+  static const String EVENT_URI = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/event_detail';
 
   static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
   static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";

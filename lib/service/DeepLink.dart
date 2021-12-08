@@ -19,6 +19,9 @@ import 'package:illinois/service/Service.dart';
 import 'package:uni_links/uni_links.dart';
 
 class DeepLink with Service {
+  
+  static const String ROKWIRE_SCHEME = 'edu.illinois.rokwire';
+  
   static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
 
   static final DeepLink _deepLink = DeepLink._internal();
