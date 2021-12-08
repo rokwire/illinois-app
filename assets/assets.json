@@ -1095,8 +1095,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk",
 								"image": "kognito.png",
 								"action": {
-									"name": "web",
-									"source": "https://counselingcenter.illinois.edu/kognito-at-risk"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito"
 								}
 							}
 						]
