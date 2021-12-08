@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - UI changes in Home Highlighted Features widget [#1090](https://github.com/rokwire/illinois-app/issues/1090).
 - Use external browser in twitter widget [#1092](https://github.com/rokwire/illinois-app/issues/1092).
+- Load guide detail panels for some Wellness items [#1094](https://github.com/rokwire/illinois-app/issues/1094).
 
 ## [3.0.62] - 2021-12-07
 ### Added
