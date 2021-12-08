@@ -20,6 +20,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
+import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
@@ -42,18 +44,34 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
               children: [
                 RibbonButton(
                   label: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.title',  'Personalize this app') ,
-                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.edit.hint', '') ,
+                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.personalize.hint', '') ,
                   height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   onTap: _onTapPersonalize,
                 ),
                 Container(height: 12,),
                 RibbonButton(
-                  label: Localization().getStringEx('widgets.home_highlighted_features.button.resources.title',  'Resources for you') ,
-                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.edit.hint', '') ,
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.title',  'Manage notification preferences') ,
+                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.notifications.hint', '') ,
                   height: null,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  onTap: _onTapResources,
+                  onTap: _onTapNotificationPreferences,
+                ),
+                Container(height: 12,),
+                RibbonButton(
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.title',  'Manage my privacy') ,
+                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.privacy.hint', '') ,
+                  height: null,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  onTap: _onTapManagePrivacy,
+                ),
+                Container(height: 12,),
+                RibbonButton(
+                  label: Localization().getStringEx('widgets.home_highlighted_features.button.guide.title',  'Campus Guide') ,
+                  hint: Localization().getStringEx('widgets.home_highlighted_features.button.guide.hint', '') ,
+                  height: null,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  onTap: _onTapCampusGuide,
                 ),
               ],
             ),
@@ -75,12 +93,22 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
     ],),),));
   }
 
-  void _onTapPersonalize(){
+  void _onTapPersonalize() {
     Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Personalize");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
   }
 
-  void _onTapResources(){
+  void _onTapNotificationPreferences() {
+    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Notification Preferences");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
+  }
+
+  void _onTapManagePrivacy() {
+    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Manage Privacy");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular)));
+  }
+
+  void _onTapCampusGuide() {
     Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
