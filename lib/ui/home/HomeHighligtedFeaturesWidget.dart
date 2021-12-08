@@ -20,7 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
-import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
+import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class HomeHighlightedFeatures extends StatefulWidget {
@@ -77,7 +77,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
 
   void _onTapPersonalize(){
     Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Personalize");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsManageInterestsPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInformationPanel()));
   }
 
   void _onTapResources(){
