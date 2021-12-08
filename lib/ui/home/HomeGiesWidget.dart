@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Storage.dart';
@@ -30,7 +31,7 @@ class HomeGiesWidget extends StatefulWidget {
 
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
-  static const String GIES_URI = 'edu.illinois.rokwire://rokwire.illinois.edu/gies';
+  static const String GIES_URI = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/gies';
 
   List<dynamic> _pages;
   List<String>  _navigationPages;
