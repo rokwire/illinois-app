@@ -88,7 +88,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),),
             Expanded(child:
-            Text("Highlighted Features", style:
+            Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'), style:
             TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
     ],),),));
   }
@@ -109,7 +109,7 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
   }
 
   void _onTapCampusGuide() {
-    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Resources");
+    Analytics.instance.logSelect(target: "HomeHighlightedFeatures: Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 }
