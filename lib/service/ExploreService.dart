@@ -209,7 +209,7 @@ class ExploreService with Service implements NotificationsListener {
     Map<String, dynamic> jsonData = AppJson.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
-    Log.e('Failed to load events');
+    Log.e('Failed to delete event $eventId');
     Log.e(e.toString());
     }
   }
