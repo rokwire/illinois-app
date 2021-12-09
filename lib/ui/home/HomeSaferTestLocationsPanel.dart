@@ -286,6 +286,7 @@ class _TestLocation extends StatelessWidget {
       );
   }
 
+  /* Hide wait times
   Widget _buildWaitTime(){
     if(!_isLocationOpen){
       return Container();
@@ -339,7 +340,7 @@ class _TestLocation extends StatelessWidget {
             )
           ],
         ));
-  }
+  }*/
 
   Widget _buildWorkTime(){
     List<HealthLocationDayOfOperation> items = [];
