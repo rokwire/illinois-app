@@ -266,7 +266,8 @@ class _TestLocation extends StatelessWidget {
                 ],
               ))
             )),*/
-              _buildWaitTime(),
+              // Hide wait times #1099
+              //_buildWaitTime(),
               Semantics(explicitChildNodes:true,button: false, child:
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -285,6 +286,7 @@ class _TestLocation extends StatelessWidget {
       );
   }
 
+  /* Hide wait times
   Widget _buildWaitTime(){
     if(!_isLocationOpen){
       return Container();
@@ -338,7 +340,7 @@ class _TestLocation extends StatelessWidget {
             )
           ],
         ));
-  }
+  }*/
 
   Widget _buildWorkTime(){
     List<HealthLocationDayOfOperation> items = [];
