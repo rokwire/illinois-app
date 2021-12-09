@@ -266,7 +266,8 @@ class _TestLocation extends StatelessWidget {
                 ],
               ))
             )),*/
-              _buildWaitTime(),
+              // Hide wait times #1099
+              //_buildWaitTime(),
               Semantics(explicitChildNodes:true,button: false, child:
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
