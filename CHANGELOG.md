@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.64] - 2021-12-09
 ### Changed
 - Hide wait times in test locations [#1099](https://github.com/rokwire/illinois-app/issues/1099).
 - Store food filters in user profile [#1101](https://github.com/rokwire/illinois-app/issues/1101).
