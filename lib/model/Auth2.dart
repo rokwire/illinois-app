@@ -668,28 +668,34 @@ class Auth2UiucUser {
 class Auth2UserPrefs {
 
   static const String notifyPrivacyLevelChanged  = "edu.illinois.rokwire.user.prefs.privacy.level.changed";
-  static const String notifyInterestsChanged  = "edu.illinois.rokwire.user.prefs.interests.changed";
-  static const String notifyFavoritesChanged  = "edu.illinois.rokwire.user.prefs.favorites.changed";
-  static const String notifyFavoriteChanged  = "edu.illinois.rokwire.user.prefs.favorite.changed";
-  static const String notifyRolesChanged  = "edu.illinois.rokwire.user.prefs.roles.changed";
-  static const String notifyVoterChanged  = "edu.illinois.rokwire.user.prefs.voter.changed";
-  static const String notifyTagsChanged  = "edu.illinois.rokwire.user.prefs.tags.changed";
-  static const String notifySettingsChanged  = "edu.illinois.rokwire.user.prefs.settings.changed";
-  static const String notifyChanged  = "edu.illinois.rokwire.user.prefs.changed";
+  static const String notifyRolesChanged         = "edu.illinois.rokwire.user.prefs.roles.changed";
+  static const String notifyFavoriteChanged      = "edu.illinois.rokwire.user.prefs.favorite.changed";
+  static const String notifyFavoritesChanged     = "edu.illinois.rokwire.user.prefs.favorites.changed";
+  static const String notifyInterestsChanged     = "edu.illinois.rokwire.user.prefs.interests.changed";
+  static const String notifyFoodChanged          = "edu.illinois.rokwire.user.prefs.food.changed";
+  static const String notifyTagsChanged          = "edu.illinois.rokwire.user.prefs.tags.changed";
+  static const String notifySettingsChanged      = "edu.illinois.rokwire.user.prefs.settings.changed";
+  static const String notifyVoterChanged         = "edu.illinois.rokwire.user.prefs.voter.changed";
+  static const String notifyChanged              = "edu.illinois.rokwire.user.prefs.changed";
 
+  static const String _foodIncludedTypes         = "included_types";
+  static const String _foodExcludedIngredients   = "excluded_ingredients";
+  
   int _privacyLevel;
   Set<UserRole> _roles;
   Map<String, Set<String>>  _favorites;
   Map<String, Set<String>>  _interests;
+  Map<String, Set<String>>  _foodFilters;
   Map<String, bool> _tags;
   Map<String, dynamic> _settings;
   Auth2VoterPrefs _voter;
 
-  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, bool> tags, Map<String, dynamic> settings, Auth2VoterPrefs voter}) {
+  Auth2UserPrefs({int privacyLevel, Set<UserRole> roles, Map<String, Set<String>> favorites, Map<String, Set<String>> interests, Map<String, Set<String>> foodFilters, Map<String, bool> tags, Map<String, dynamic> settings, Auth2VoterPrefs voter}) {
     _privacyLevel = privacyLevel;
     _roles = roles;
     _favorites = favorites;
     _interests = interests;
+    _foodFilters = foodFilters;
     _tags = tags;
     _settings = settings;
     _voter = Auth2VoterPrefs.fromOther(voter, onChanged: _onVoterChanged);
@@ -699,20 +705,25 @@ class Auth2UserPrefs {
     return (json != null) ? Auth2UserPrefs(
       privacyLevel: AppJson.intValue(json['privacy_level']),
       roles: UserRole.setFromJson(AppJson.listValue(json['roles'])),
-      favorites: mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
-      interests: mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
+      favorites: _mapOfStringSetsFromJson(AppJson.mapValue(json['favorites'])),
+      interests: _mapOfStringSetsFromJson(AppJson.mapValue(json['interests'])),
+      foodFilters: _mapOfStringSetsFromJson(AppJson.mapValue(json['food'])),
       tags: _tagsFromJson(AppJson.mapValue(json['tags'])),
-      settings: _settingsFromJson(AppJson.mapValue(json['settings'])),
+      settings: AppJson.mapValue(json['settings']),
       voter: Auth2VoterPrefs.fromJson(AppJson.mapValue(json['voter'])),
     ) : null;
   }
 
-  factory Auth2UserPrefs.empty() {
+  factory Auth2UserPrefs.empty({List<String> includedFoodTypes, List<String> excludedFoodIngredients}) {
     return Auth2UserPrefs(
       privacyLevel: null,
       roles: Set<UserRole>(),
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
+      foodFilters: {
+        _foodIncludedTypes : (includedFoodTypes != null) ? Set<String>.from(includedFoodTypes) : Set<String>(),
+        _foodExcludedIngredients : (excludedFoodIngredients != null) ? Set<String>.from(excludedFoodIngredients) : Set<String>(),
+      },
       tags: Map<String, bool>(),
       settings: Map<String, dynamic>(),
       voter: Auth2VoterPrefs(),
@@ -723,8 +734,9 @@ class Auth2UserPrefs {
     return {
       'privacy_level' : privacyLevel,
       'roles': UserRole.setToJson(roles),
-      'favorites': mapOfStringSetsToJson(_favorites),
-      'interests': mapOfStringSetsToJson(_interests),
+      'favorites': _mapOfStringSetsToJson(_favorites),
+      'interests': _mapOfStringSetsToJson(_interests),
+      'food': _mapOfStringSetsToJson(_foodFilters),
       'tags': _tags,
       'settings': _settings,
       'voter': _voter
@@ -737,6 +749,7 @@ class Auth2UserPrefs {
       DeepCollectionEquality().equals(o._roles, _roles) &&
       DeepCollectionEquality().equals(o._favorites, _favorites) &&
       DeepCollectionEquality().equals(o._interests, _interests) &&
+      DeepCollectionEquality().equals(o._foodFilters, _foodFilters) &&
       DeepCollectionEquality().equals(o._tags, _tags) &&
       DeepCollectionEquality().equals(o._settings, _settings) &&
       (o._voter == _voter);
@@ -746,6 +759,7 @@ class Auth2UserPrefs {
     (DeepCollectionEquality().hash(_roles) ?? 0) ^
     (DeepCollectionEquality().hash(_favorites) ?? 0) ^
     (DeepCollectionEquality().hash(_interests) ?? 0) ^
+    (DeepCollectionEquality().hash(_foodFilters) ?? 0) ^
     (DeepCollectionEquality().hash(_tags) ?? 0) ^
     (DeepCollectionEquality().hash(_settings) ?? 0) ^
     (_voter?.hashCode ?? 0);
@@ -754,6 +768,7 @@ class Auth2UserPrefs {
     bool modified = false;
 
     if (prefs != null) {
+      
       if ((prefs.privacyLevel != null) && (prefs.privacyLevel > 0) && (prefs.privacyLevel != _privacyLevel)) {
         _privacyLevel = prefs._privacyLevel;
         if (notify == true) {
@@ -761,6 +776,7 @@ class Auth2UserPrefs {
         }
         modified = true;
       }
+      
       if ((prefs.roles != null) && prefs.roles.isNotEmpty && !DeepCollectionEquality().equals(prefs.roles, _roles)) {
         _roles = prefs._roles;
         if (notify == true) {
@@ -768,6 +784,7 @@ class Auth2UserPrefs {
         }
         modified = true;
       }
+      
       if ((prefs._favorites != null) && prefs._favorites.isNotEmpty && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
         _favorites = prefs._favorites;
         if (notify == true) {
@@ -775,6 +792,7 @@ class Auth2UserPrefs {
         }
         modified = true;
       }
+      
       if ((prefs._interests != null) && prefs._interests.isNotEmpty && !DeepCollectionEquality().equals(prefs._interests, _interests)) {
         _interests = prefs._interests;
         if (notify == true) {
@@ -782,6 +800,15 @@ class Auth2UserPrefs {
         }
         modified = true;
       }
+      
+      if ((prefs._foodFilters != null) && prefs.hasFoodFilters && !DeepCollectionEquality().equals(prefs._foodFilters, _foodFilters)) {
+        _foodFilters = prefs._foodFilters;
+        if (notify == true) {
+          NotificationService().notify(notifyInterestsChanged);
+        }
+        modified = true;
+      }
+
       if ((prefs._tags != null) && prefs._tags.isNotEmpty && !DeepCollectionEquality().equals(prefs._tags, _tags)) {
         _tags = prefs._tags;
         if (notify == true) {
@@ -789,6 +816,7 @@ class Auth2UserPrefs {
         }
         modified = true;
       }
+      
       if ((prefs._settings != null) && prefs._settings.isNotEmpty && !DeepCollectionEquality().equals(prefs._settings, _settings)) {
         _settings = prefs._settings;
         if (notify == true) {
@@ -796,6 +824,7 @@ class Auth2UserPrefs {
         }
         modified = true;
       }
+      
       if ((prefs._voter != null) && prefs._voter.isNotEmpty && (prefs._voter != _voter)) {
         _voter = Auth2VoterPrefs.fromOther(prefs._voter, onChanged: _onVoterChanged);
         if (notify == true) {
@@ -1088,6 +1117,64 @@ class Auth2UserPrefs {
   void toggleSportInterest(String sport) => toggleInterest(sportsInterestsCategory, sport);
   void toggleSportInterests(Iterable<String> sports) => toggleInterests(sportsInterestsCategory, sports);
 
+  // Food
+
+  Set<String> get excludedFoodIngredients {
+    return (_foodFilters != null) ? _foodFilters[_foodExcludedIngredients] : null;
+  }
+
+  set excludedFoodIngredients(Set<String> value) {
+    if (!SetEquality().equals(excludedFoodIngredients, value)) {
+      if (value != null) {
+        if (_foodFilters != null) {
+          _foodFilters[_foodExcludedIngredients] = value;
+        }
+        else {
+          _foodFilters = { _foodExcludedIngredients : value };
+        }
+      }
+      else if (_foodFilters != null) {
+        _foodFilters.remove(_foodExcludedIngredients);
+      }
+      NotificationService().notify(notifyFoodChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  Set<String> get includedFoodTypes {
+    return (_foodFilters != null) ? _foodFilters[_foodIncludedTypes] : null;
+  }
+
+  set includedFoodTypes(Set<String> value) {
+    if (!SetEquality().equals(includedFoodTypes, value)) {
+      if (value != null) {
+        if (_foodFilters != null) {
+          _foodFilters[_foodIncludedTypes] = value;
+        }
+        else {
+          _foodFilters = { _foodIncludedTypes : value };
+        }
+      }
+      else if (_foodFilters != null) {
+        _foodFilters.remove(_foodIncludedTypes);
+      }
+      NotificationService().notify(notifyFoodChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
+  bool get hasFoodFilters {
+    return (includedFoodTypes?.isNotEmpty ?? false) || (excludedFoodIngredients?.isNotEmpty ?? false);
+  }
+
+  void clearFoodFilters() {
+    if (hasFoodFilters) {
+      _foodFilters = Map<String, Set<String>>();
+      NotificationService().notify(notifyFoodChanged);
+      NotificationService().notify(notifyChanged, this);
+    }
+  }
+
   // Tags
 
   Set<String> get positiveTags => getTags(positive: true);
@@ -1205,7 +1292,7 @@ class Auth2UserPrefs {
 
   // Helpers
 
-  static Map<String, Set<String>> mapOfStringSetsFromJson(Map<String, dynamic> jsonMap) {
+  static Map<String, Set<String>> _mapOfStringSetsFromJson(Map<String, dynamic> jsonMap) {
     Map<String, Set<String>> result;
     if (jsonMap != null) {
       result = Map<String, Set<String>>();
@@ -1216,7 +1303,7 @@ class Auth2UserPrefs {
     return result;
   }
 
-  static Map<String, dynamic> mapOfStringSetsToJson(Map<String, Set<String>> contentMap) {
+  static Map<String, dynamic> _mapOfStringSetsToJson(Map<String, Set<String>> contentMap) {
     Map<String, dynamic> jsonMap;
     if (contentMap != null) {
       jsonMap = Map<String, dynamic>();
@@ -1227,14 +1314,10 @@ class Auth2UserPrefs {
     return jsonMap;
   }
 
-  static _tagsFromJson(Map<String, dynamic> json) {
+  static Map<String, bool> _tagsFromJson(Map<String, dynamic> json) {
     try { return json?.cast<String, bool>(); }
     catch(e) { print(e?.toString()); }
-  }
-
-  static _settingsFromJson(Map<String, dynamic> json) {
-    try { return json?.cast<String, dynamic>(); }
-    catch(e) { print(e?.toString()); }
+    return null;
   }
 }
 

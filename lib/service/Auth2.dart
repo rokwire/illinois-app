@@ -107,7 +107,10 @@ class Auth2 with Service implements NotificationsListener {
     _deviceId = await NativeCommunicator().getDeviceId();
 
     if ((_account == null) && (_anonymousPrefs == null)) {
-      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty();
+      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty(
+        includedFoodTypes: Storage().includedFoodTypesPrefs,
+        excludedFoodIngredients: Storage().excludedFoodIngredientsPrefs,
+      );
     }
 
     if ((_account == null) && (_anonymousProfile == null)) {

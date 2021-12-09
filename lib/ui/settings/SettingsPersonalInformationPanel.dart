@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
@@ -186,8 +185,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   void _onDelete(List<String> selectedOptions, OnContinueProgressController progressController){
     progressController(loading: true);
     if(selectedOptions.contains(OptionFoodFilters)){
-      DiningService().setIncludedFoodTypesPrefs([]);
-      DiningService().setExcludedFoodIngredientsPrefs([]);
+      Auth2().prefs?.clearFoodFilters();
     }
     if(selectedOptions.contains(OptionYourInterests)){
       Auth2().prefs?.clearInterestsAndTags();
