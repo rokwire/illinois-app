@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Hide wait times in test locations [#1099](https://github.com/rokwire/illinois-app/issues/1099).
 - Store food filters in user profile [#1101](https://github.com/rokwire/illinois-app/issues/1101).
+- Import stored user profile and settings on first app launch [#1103](https://github.com/rokwire/illinois-app/issues/1103).
 
 ## [3.0.63] - 2021-12-08
 ### Added

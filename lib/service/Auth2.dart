@@ -9,6 +9,7 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
@@ -107,9 +108,11 @@ class Auth2 with Service implements NotificationsListener {
     _deviceId = await NativeCommunicator().getDeviceId();
 
     if ((_account == null) && (_anonymousPrefs == null)) {
-      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.empty(
+      Storage().auth2AnonymousPrefs = _anonymousPrefs = Auth2UserPrefs.fromStorage(
+        profile: Storage().userProfile,
         includedFoodTypes: Storage().includedFoodTypesPrefs,
         excludedFoodIngredients: Storage().excludedFoodIngredientsPrefs,
+        settings: FirebaseMessaging.storedSettings,
       );
     }
 

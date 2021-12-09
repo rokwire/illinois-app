@@ -714,19 +714,43 @@ class Auth2UserPrefs {
     ) : null;
   }
 
-  factory Auth2UserPrefs.empty({List<String> includedFoodTypes, List<String> excludedFoodIngredients}) {
+  factory Auth2UserPrefs.empty() {
     return Auth2UserPrefs(
       privacyLevel: null,
       roles: Set<UserRole>(),
       favorites: Map<String, Set<String>>(),
       interests: Map<String, Set<String>>(),
       foodFilters: {
-        _foodIncludedTypes : (includedFoodTypes != null) ? Set<String>.from(includedFoodTypes) : Set<String>(),
-        _foodExcludedIngredients : (excludedFoodIngredients != null) ? Set<String>.from(excludedFoodIngredients) : Set<String>(),
+        _foodIncludedTypes : Set<String>(),
+        _foodExcludedIngredients : Set<String>(),
       },
       tags: Map<String, bool>(),
       settings: Map<String, dynamic>(),
       voter: Auth2VoterPrefs(),
+    );
+  }
+
+  factory Auth2UserPrefs.fromStorage({Map<String, dynamic> profile, Set<String> includedFoodTypes, Set<String> excludedFoodIngredients, Map<String, dynamic> settings}) {
+    Map<String, dynamic> privacy = (profile != null) ? AppJson.mapValue(profile['privacySettings']) : null;
+    int privacyLevel = (privacy != null) ? AppJson.intValue(privacy['level']) : null;
+    Set<UserRole> roles = (profile != null) ? UserRole.setFromJson(AppJson.listValue(profile['roles'])) : null;
+    Map<String, Set<String>> favorites = (profile != null) ? _mapOfStringSetsFromJson(AppJson.mapValue(profile['favorites'])) : null;
+    Map<String, Set<String>> interests = (profile != null) ? _interestsFromProfileList(AppJson.listValue(profile['interests'])) : null;
+    Map<String, bool> tags = (profile != null) ? _tagsFromProfileLists(positive: AppJson.listValue(profile['positiveInterestTags']), negative: AppJson.listValue(profile['negativeInterestTags'])) : null;
+    Auth2VoterPrefs voter = (profile != null) ? Auth2VoterPrefs.fromJson(profile) : null;
+
+    return Auth2UserPrefs(
+      privacyLevel: privacyLevel,
+      roles: roles ?? Set<UserRole>(),
+      favorites: favorites ?? Map<String, Set<String>>(),
+      interests: interests ?? Map<String, Set<String>>(),
+      foodFilters: {
+        _foodIncludedTypes : includedFoodTypes ?? Set<String>(),
+        _foodExcludedIngredients : excludedFoodIngredients ?? Set<String>(),
+      },
+      tags: tags ?? Map<String, bool>(),
+      settings: settings ?? Map<String, dynamic>(),
+      voter: voter ?? Auth2VoterPrefs(),
     );
   }
 
@@ -785,7 +809,7 @@ class Auth2UserPrefs {
         modified = true;
       }
       
-      if ((prefs._favorites != null) && prefs._favorites.isNotEmpty && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
+      if ((prefs._favorites != null) && prefs.hasFavorites && !DeepCollectionEquality().equals(prefs._favorites, _favorites)) {
         _favorites = prefs._favorites;
         if (notify == true) {
           NotificationService().notify(notifyFavoritesChanged);
@@ -835,7 +859,7 @@ class Auth2UserPrefs {
     }
     return modified;
   }
-  
+
   // Privacy
 
   int get privacyLevel {
@@ -945,6 +969,15 @@ class Auth2UserPrefs {
       NotificationService().notify(notifyFavoritesChanged);
       NotificationService().notify(notifyChanged, this);
     }
+  }
+
+  bool get hasFavorites {
+    _favorites?.forEach((String key, Set<String> values) {
+      if (values.isNotEmpty) {
+        return true;
+      }
+    });
+    return false;
   }
 
   // Interests
@@ -1318,6 +1351,44 @@ class Auth2UserPrefs {
     try { return json?.cast<String, bool>(); }
     catch(e) { print(e?.toString()); }
     return null;
+  }
+
+  static Map<String, bool> _tagsFromProfileLists({List<dynamic> positive, List<dynamic> negative}) {
+    Map<String, bool> result = ((positive != null) || (negative != null)) ? Map<String, bool>() : null;
+
+    if (negative != null) {
+      for (dynamic negativeEntry in negative) {
+        if (negativeEntry is String) {
+          result[negativeEntry] = false;
+        }
+      }
+    }
+
+    if (positive != null) {
+      for (dynamic positiveEntry in positive) {
+        if (positiveEntry is String) {
+          result[positiveEntry] = true;
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  static Map<String, Set<String>> _interestsFromProfileList(List<dynamic> jsonList) {
+    Map<String, Set<String>> result;
+    if (jsonList != null) {
+      result = Map<String, Set<String>>();
+      for (dynamic jsonEntry in jsonList) {
+        if (jsonEntry is Map) {
+          String category = AppJson.stringValue(jsonEntry['category']);
+          if (category != null) {
+            result[category] = AppJson.setStringsValue(jsonEntry['subcategories']) ?? Set<String>();
+          }
+        }
+      }
+    }
+    return result;
   }
 }
 
