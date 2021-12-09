@@ -647,7 +647,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, DiningService.notifyFoodPrefsChanged);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFoodChanged);
 
     _displayDates = widget.dining.displayScheduleDates;
     _filterDates = widget.dining.filterScheduleDates;
@@ -797,7 +797,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    bool hasFoodFilterApplied = DiningService().hasFoodFilteringApplied();
+    bool hasFoodFilterApplied = Auth2().prefs?.hasFoodFilters ?? false;
     return hasMenuData ?
     Container(
         color: Styles().colors.background,
@@ -968,8 +968,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
           _productItems,
           _schedules[_selectedScheduleIndex].scheduleId,
-          DiningService().getIncludedFoodTypesPrefs(),
-          DiningService().getExcludedFoodIngredientsPrefs()
+          Auth2().prefs?.includedFoodTypes,
+          Auth2().prefs?.excludedFoodIngredients
       );
       Map<String, List<DiningProductItem>> productStationMapping = DiningUtils
           .getCategoryGroupedProducts(mealProducts);
@@ -1035,7 +1035,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DiningService.notifyFoodPrefsChanged) {
+    if (name == Auth2UserPrefs.notifyFoodChanged) {
       if (mounted) {
         setState(() {});
       }
