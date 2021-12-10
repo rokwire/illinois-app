@@ -304,7 +304,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _processDataMessage(Map<String, dynamic> data) {
-    String? type = _getMessageType(data);
+    String? type = getMessageType(data);
     if (type == "config_update") {
       _onConfigUpdate(data);
     }
@@ -343,7 +343,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  String? _getMessageType(Map<String, dynamic>? data) {
+  String? getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 

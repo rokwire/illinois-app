@@ -19,10 +19,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Localization.dart';
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -32,11 +34,41 @@ import 'package:illinois/service/Styles.dart';
 import 'package:share/share.dart';
 import 'package:html/dom.dart' as dom;
 
-class AthleticsNewsArticlePanel extends StatelessWidget {
+class AthleticsNewsArticlePanel extends StatefulWidget {
+  final String articleId;
   final News article;
 
-  AthleticsNewsArticlePanel({required this.article}){
-    RecentItems().addRecentItem(RecentItem.fromOriginalType(article));
+  AthleticsNewsArticlePanel({this.article, this.articleId});
+
+  @override
+  _AthleticsNewsArticlePanelState createState() => _AthleticsNewsArticlePanelState();
+}
+
+class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
+
+  News? _article;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    _article = widget.article;
+    if (_article != null) {
+      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+    }
+    else {
+      _loadNewsArticle();
+    }
+
+    super.initState();
+  }
+
+  void _loadNewsArticle() {
+    _setLoading(true);
+    Sports().loadNewsArticle(widget.articleId).then((article) {
+      _article = article;
+      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+      _setLoading(false);
+    });
   }
 
   @override
@@ -49,12 +81,20 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
 }
 
   Widget _buildContent(BuildContext context) {
+    if (_loading == true) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (_article == null) {
+      return Center(child: Text(Localization().getStringEx('panel.athletics_news_article.load.failed.msg', 'Failed to load news article. Please, try again.')!));
+    }
+
     return CustomScrollView(
         scrollDirection: Axis.vertical,
         slivers: <Widget>[
             SliverToutHeaderBar(
             context: context,
-            imageUrl: article.imageUrl,
+            imageUrl: _article?.imageUrl,
             backColor: Styles().colors!.white,
             leftTriangleColor: Styles().colors!.white,
             rightTriangleColor: Styles().colors!.fillColorSecondaryTransparent05,
@@ -92,7 +132,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6, horizontal: 8),
                                                   child: Text(
-                                                    article.category?.toUpperCase() ?? '',
+                                                    _article?.category?.toUpperCase() ?? '',
                                                     style: TextStyle(
                                                         fontFamily: Styles().fontFamilies!.bold,
                                                         fontSize: 14,
@@ -107,7 +147,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             padding:
                                             EdgeInsets.only(top: 12, bottom: 24),
                                             child: Text(
-                                              article.title!,
+                                              _article?.title ?? '',
                                               style: TextStyle(
                                                   fontSize: 24,
                                                   color: Styles().colors!.fillColorPrimary),
@@ -117,7 +157,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                             children: <Widget>[
                                               Image.asset('images/icon-news.png'),
                                               Container(width: 5,),
-                                              Text(article.displayTime!,
+                                              Text(_article?.displayTime ?? '',
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Styles().colors!.textBackground,
@@ -137,7 +177,7 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
                                           children: _buildContentWidgets(context),
                                         ),
                                       )),
-                                  AppString.isStringNotEmpty(article.link)?
+                                  AppString.isStringNotEmpty(_article?.link)?
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 20, right: 20, bottom: 48),
@@ -170,23 +210,25 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
 
   _shareArticle(){
     Analytics.instance.logSelect(target: "Share Article");
-    Share.share(article.link!);
+    if (AppString.isStringNotEmpty(_article?.link)) {
+      Share.share(_article!.link!);
+    }
   }
 
   List<Widget> _buildContentWidgets(BuildContext context) {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(article.description)) {
+    if (!AppString.isStringEmpty(_article.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
         child: Html(
-          data:article.description,
+          data:_article.description,
           style: {
             "body": Style(color: Styles().colors!.textBackground)
           },
         ),
       ));
     }
-    String? fullText = article.fillText;
+    String? fullText = _article?.fillText;
     if (!AppString.isStringEmpty(fullText)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 24),
@@ -204,5 +246,12 @@ class AthleticsNewsArticlePanel extends StatelessWidget {
       ));
     }
     return widgets;
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

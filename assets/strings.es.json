@@ -324,6 +324,9 @@
     "panel.athletics_game_detail.button.news.hint": "Ver noticias",
     "panel.athletics_game_detail.button.teams.title": "Equipos",
     "panel.athletics_game_detail.button.teams.hint": "Ver equipos",
+    "panel.athletics_game_detail.load.failed.msg": "No se pudo cargar el juego. Inténtalo de nuevo.",
+
+    "panel.athletics_news_article.load.failed.msg": "No se pudo cargar el artículo de noticias. Inténtalo de nuevo.",
 
     "panel.athletics_roster_list.header.title": "Lista",
     "panel.athletics_roster_list.button.by_name.title": "Por nombre",

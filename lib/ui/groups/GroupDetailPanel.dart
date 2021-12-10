@@ -53,8 +53,9 @@ enum _DetailTab { Events, Posts, About }
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   final Group? group;
+  final String? groupIdentifier;
 
-  GroupDetailPanel({this.group});
+  GroupDetailPanel({this.group, this.groupIdentifier});
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
@@ -65,7 +66,11 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
   }
 
   String? get groupId {
-    return group?.id;
+    if (group != null) {
+      return group?.id;
+    } else {
+      return groupIdentifier;
+    }
   }
 }
 
