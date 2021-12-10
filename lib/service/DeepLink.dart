@@ -21,6 +21,8 @@ import 'package:uni_links/uni_links.dart';
 class DeepLink with Service {
   
   static const String ROKWIRE_SCHEME = 'edu.illinois.rokwire';
+  static const String ROKWIRE_HOST = 'rokwire.illinois.edu';
+  static const String ROKWIRE_URL = '$ROKWIRE_SCHEME://$ROKWIRE_HOST';
   
   static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
 
@@ -52,7 +54,7 @@ class DeepLink with Service {
     await super.initService();
   }
 
-  static bool isRokwireUri(Uri? uri) => (uri?.scheme == ROKWIRE_SCHEME);
+  static bool isRokwireUri(Uri? uri) => (uri?.scheme == ROKWIRE_SCHEME) && (uri?.host == ROKWIRE_HOST);
   static bool isRokwireUrl(String? url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
   static void launchUrl(String? url) => launchUri((url != null) ? Uri.tryParse(url) : null);
 

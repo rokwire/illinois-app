@@ -23,7 +23,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Auth2 with Service implements NotificationsListener {
   
-  static const String REDIRECT_URI            = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/oidc-auth';
+  static const String REDIRECT_URI            = '${DeepLink.ROKWIRE_URL}/oidc-auth';
 
   static const String notifyLoginStarted      = "edu.illinois.rokwire.auth2.login.started";
   static const String notifyLoginSucceeded    = "edu.illinois.rokwire.auth2.login.succeeded";

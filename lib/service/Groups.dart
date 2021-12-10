@@ -34,7 +34,7 @@ import 'package:illinois/utils/Utils.dart';
 
 class Groups with Service implements NotificationsListener {
 
-  static const String GROUP_URI = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/group_detail';
+  static const String GROUP_URI = '${DeepLink.ROKWIRE_URL}/group_detail';
 
   static const String notifyUserMembershipUpdated   = "edu.illinois.rokwire.groups.membership.updated";
   static const String notifyGroupEventsUpdated      = "edu.illinois.rokwire.groups.events.updated";

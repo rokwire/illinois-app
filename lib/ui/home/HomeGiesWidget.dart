@@ -31,7 +31,7 @@ class HomeGiesWidget extends StatefulWidget {
 
 class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
-  static const String GIES_URI = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/gies';
+  static const String GIES_URI = '${DeepLink.ROKWIRE_URL}/gies';
 
   List<dynamic>? _pages;
   List<String>?  _navigationPages;
