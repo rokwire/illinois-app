@@ -972,12 +972,13 @@ class Auth2UserPrefs {
   }
 
   bool get hasFavorites {
+    bool result = false;
     _favorites?.forEach((String key, Set<String> values) {
       if (values.isNotEmpty) {
-        return true;
+        result = true;
       }
     });
-    return false;
+    return result;
   }
 
   // Interests
