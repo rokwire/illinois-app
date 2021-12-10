@@ -623,24 +623,18 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _presentGroupDetailPanel(String groupId) {
     if (AppString.isStringNotEmpty(groupId)) {
-      Groups().loadGroup(groupId).then((value) {
-        if (value != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: value)));
-        } else {
-          AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
-        }
-      });
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
     }
   }
 
   void _onFirebaseAthleticsNewsNotification(param) {
     if (param is Map<String, dynamic>) {
       String newsId = param["news_id"];
-      Sports().loadNewsArticle(newsId).then((article) {
-        if (article != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
-        }
-      });
+      if (AppString.isStringNotEmpty(newsId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
+      }
     }
   }
 
