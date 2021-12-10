@@ -8,11 +8,16 @@ import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
+import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -176,30 +181,62 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _onTapMessage(InboxMessage message) {
     if (_isEditMode == true) {
-      //Select
-      setState(() {
-        if (_selectedMessageIds.contains(message?.messageId)) {
-          _selectedMessageIds.remove(message?.messageId);
-          AppSemantics.announceMessage(context, "Deselected");
-        }
-        else {
-          _selectedMessageIds.add(message?.messageId);
-          AppSemantics.announceMessage(context, "Selected");
+      _handleSelectionTap(message);
+    } else {
+      _handleRedirectTap(message);
+    }
+  }
+
+  void _handleSelectionTap(InboxMessage message) {
+    setState(() {
+      if (_selectedMessageIds.contains(message?.messageId)) {
+        _selectedMessageIds.remove(message?.messageId);
+        AppSemantics.announceMessage(context, "Deselected");
+      } else {
+        _selectedMessageIds.add(message?.messageId);
+        AppSemantics.announceMessage(context, "Selected");
+      }
+    });
+  }
+
+  void _handleRedirectTap(InboxMessage message) {
+    Map<String, dynamic> msgData = message?.data;
+    String msgType = FirebaseMessaging().getMessageType(msgData);
+    if (AppString.isStringEmpty(msgType)) {
+      return;
+    }
+
+    if (msgType == 'event_detail') {
+      String eventId = AppJson.stringValue(msgData['event_id']);
+      if (AppString.isStringNotEmpty(eventId)) {
+        ExplorePanel.presentDetailPanel(context, eventId: eventId);
+      }
+    } else if (msgType == 'game_detail') {
+      String gameId = AppJson.stringValue(msgData['game_id']);
+      String sport = AppJson.stringValue(msgData['sport']);
+      if (AppString.isStringNotEmpty(gameId) && AppString.isStringNotEmpty(sport)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId)));
+      }
+    } else if (msgType == 'athletics_game_started') {
+      String sportShortName = msgData['Path'];
+      String gameId = msgData['GameId'];
+      if (AppString.isStringNotEmpty(sportShortName) && AppString.isStringNotEmpty(gameId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId)));
+      }
+    } else if (msgType == 'athletics_news_detail') {
+      String newsId = msgData['news_id'];
+      Sports().loadNewsArticle(newsId).then((article) {
+        if (article != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
         }
       });
-    } else {
-      //Tap
-      Map<String, dynamic> data = message?.data;
-      if(data!= null && data["type"] == "group") {
-        String groupId = data["entity_id"];
-        Groups().loadGroup(groupId).then(
-                (group) {
-              if (group != null) {
-                Navigator.push(context, CupertinoPageRoute(
-                    builder: (context) => GroupDetailPanel(group: group,)));
-              }
-            });
-      }
+    } else if (msgType == 'group') {
+      String groupId = msgData['entity_id'];
+      Groups().loadGroup(groupId).then((group) {
+        if (group != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
+        }
+      });
     }
   }
 
