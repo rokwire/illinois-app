@@ -116,10 +116,21 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey];
 
-
   static const String _groupUpdatesPostsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPostsNotificationKey';
   static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
   static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
+
+  // Payload types
+  static const String payloadTypeConfigUpdate = 'config_update';
+  static const String payloadTypePopupMessage = 'popup_message';
+  static const String payloadTypeOpenPoll = 'poll_open';
+  static const String payloadTypeEventDetail = 'event_detail';
+  static const String payloadTypeGameDetail = 'game_detail';
+  static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
+  static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
+  static const String payloadTypeGroup = 'group';
+  static const String payloadTypeHome = 'home';
+  static const String payloadTypeInbox = 'inbox';
 
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
@@ -212,7 +223,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void initServiceUI() {
     firebase_messaging.FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
-        _processDataMessage(message.data);
+        processDataMessage(message.data);
       }
     });
   }
@@ -290,11 +301,11 @@ class FirebaseMessaging with Service implements NotificationsListener {
           NotificationService().notify(notifyForegroundMessage, {
             "body": message?.notification?.body,
             "onComplete": (){
-              _processDataMessage(message!.data);
+              processDataMessage(message!.data);
             }
           });
         } else {
-          _processDataMessage(message!.data);
+          processDataMessage(message!.data);
         }
       }
       catch(e) {
@@ -303,47 +314,50 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  void _processDataMessage(Map<String, dynamic> data) {
-    String? type = getMessageType(data);
-    if (type == "config_update") {
-      _onConfigUpdate(data);
+  void processDataMessage(Map<String, dynamic>? data, {Set<String>? allowedTypes}) {
+    String? type = _getMessageType(data);
+    if (allowedTypes?.contains(type) ?? true) {
+      if (type == payloadTypeConfigUpdate) {
+        _onConfigUpdate(data);
+      }
+      else if (type == payloadTypePopupMessage) {
+        NotificationService().notify(notifyPopupMessage, data);
+      }
+      else if (type == payloadTypeOpenPoll) {
+        NotificationService().notify(notifyPollOpen, data);
+      }
+      else if (type == payloadTypeEventDetail) {
+        NotificationService().notify(notifyEventDetail, data);
+      }
+      else if (type == payloadTypeGameDetail) {
+        NotificationService().notify(notifyGameDetail, data);
+      }
+      else if (type == payloadTypeAthleticsGameStarted) {
+        NotificationService().notify(notifyAthleticsGameStarted, data);
+      }
+      else if (type == payloadTypeAthleticsNewDetail) {
+        NotificationService().notify(notifyAthleticsNewsUpdated, data);
+      }
+      else if (type == payloadTypeGroup) {
+        NotificationService().notify(notifyGroupsNotification, data);
+      }
+      else if (type == payloadTypeHome) {
+        NotificationService().notify(notifyHomeNotification, data);
+      }
+      else if (type == payloadTypeInbox) {
+        NotificationService().notify(notifyInboxNotification, data);
+      }
+      else if (_isScoreTypeMessage(type)) {
+        NotificationService().notify(notifyScoreMessage, data);
+      }
+      else {
+        Log.d("FCM: unknown message type: $type");
+      }
     }
-    else if (type == "popup_message") {
-      NotificationService().notify(notifyPopupMessage, data);
-    }
-    else if (type == "poll_open") {
-      NotificationService().notify(notifyPollOpen, data);
-    }
-    else if (type == "event_detail") {
-      NotificationService().notify(notifyEventDetail, data);
-    }
-    else if (type == "game_detail") {
-      NotificationService().notify(notifyGameDetail, data);
-    }
-    else if (type == "athletics_game_started") {
-      NotificationService().notify(notifyAthleticsGameStarted, data);
-    }
-    else if (type == "athletics_news_detail") {
-      NotificationService().notify(notifyAthleticsNewsUpdated, data);
-    }
-    else if (_isScoreTypeMessage(type)) {
-      NotificationService().notify(notifyScoreMessage, data);
-    }
-    else if (type == "group") {
-      NotificationService().notify(notifyGroupsNotification, data);
-    }
-    else if (type == "home") {
-      NotificationService().notify(notifyHomeNotification, data);
-    }
-    else if (type == "inbox") {
-      NotificationService().notify(notifyInboxNotification, data);
-    }
-    else {
-      Log.d("FCM: unknown message type: $type");
-    }
+    
   }
 
-  String? getMessageType(Map<String, dynamic>? data) {
+  String? _getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 
@@ -387,7 +401,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
         type == "wsoc";
   }
 
-  void _onConfigUpdate(Map<String, dynamic> data) {
+  void _onConfigUpdate(Map<String, dynamic>? data) {
     int interval = 5 * 60; // 5 minutes
     var rng = new Random();
     int delay = rng.nextInt(interval);
