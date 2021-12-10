@@ -323,6 +323,7 @@
     "panel.athletics_game_detail.button.news.hint": "View news",
     "panel.athletics_game_detail.button.teams.title": "Teams",
     "panel.athletics_game_detail.button.teams.hint": "View teams",
+    "panel.athletics_game_detail.load.failed.msg": "Failed to load game. Please, try again.",
 
     "panel.athletics_roster_list.header.title": "Roster",
     "panel.athletics_roster_list.button.by_name.title": "By Name",
