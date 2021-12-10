@@ -9,11 +9,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
-import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -230,13 +228,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       }
     } else if (msgType == 'group') {
       String groupId = msgData['entity_id'];
-      Groups().loadGroup(groupId).then((group) {
-        if (group != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: group)));
-        }
-      });
+      if (AppString.isStringNotEmpty(groupId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
+      }
     }
   }
+
 
   // Filters
 
