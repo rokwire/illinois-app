@@ -316,7 +316,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
 
   void processDataMessage(Map<String, dynamic>? data, {Set<String>? allowedTypes}) {
     String? type = _getMessageType(data);
-    if (allowedTypes?.contains(type) ?? true) {
+    if ((type != null) && (allowedTypes?.contains(type) ?? true)) {
       if (type == payloadTypeConfigUpdate) {
         _onConfigUpdate(data);
       }
@@ -354,7 +354,9 @@ class FirebaseMessaging with Service implements NotificationsListener {
         Log.d("FCM: unknown message type: $type");
       }
     }
-    
+    else {
+      Log.d("FCM: undefined message type: ${AppJson.encode(data)}");
+    }
   }
 
   String? _getMessageType(Map<String, dynamic>? data) {
