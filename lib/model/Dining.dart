@@ -261,7 +261,7 @@ class Dining with Explore implements Favorite {
     }
   }
 
-  List<String?> get displayScheduleDates{
+  List<String> get displayScheduleDates{
     Set<String?> displayScheduleDates = Set<String?>();
     if (diningSchedules != null) {
     for(DiningSchedule schedule in diningSchedules!){
@@ -551,7 +551,7 @@ class DiningProductItem {
 
   DiningProductItem({this.itemID, this.name, this.scheduleId, this.servingUnit, this.course, this.traits, this.category, this.courseSort, this.meal});
 
-  bool containsFoodType(List<String>? foodTypePrefs){
+  bool containsFoodType(Set<String>? foodTypePrefs){
     if ((foodTypePrefs == null) || foodTypePrefs.isEmpty) {
       return false;
     }
@@ -571,7 +571,7 @@ class DiningProductItem {
     return false;
   }
 
-  bool containsFoodIngredient(List<String>? foodIngredientPrefs){
+  bool containsFoodIngredient(Set<String>? foodIngredientPrefs){
     if ((foodIngredientPrefs == null) || foodIngredientPrefs.isEmpty) {
       return false;
     }

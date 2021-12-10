@@ -600,7 +600,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     }
   }
 
-  bool? _getStoredSetting(name){
+  bool? _getStoredSetting(String name){
     bool defaultValue = _defaultNotificationSettings[name] ?? true; //true by default
     if(name == _pauseNotificationKey){ // settings depending on userInfo
       if(Auth2().isLoggedIn && Inbox().userInfo != null){
@@ -613,13 +613,29 @@ class FirebaseMessaging with Service implements NotificationsListener {
     return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
-  void _storeSetting(name, value) {
+  void _storeSetting(String name, bool value) {
     //// Logged user choice stored in the UserPrefs
     if (Auth2().isLoggedIn) {
       Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
     } else {
       Storage().setNotifySetting(_notifySettingNames[name] ?? name, value);
     }
+  }
+
+  static Map<String, dynamic>? get storedSettings {
+    Map<String, dynamic>? result;
+    _notifySettingNames.forEach((String storageKey, String profileKey) {
+      bool value = Storage().getNotifySetting(storageKey) ?? Storage().getNotifySetting(profileKey);
+      if (value != null) {
+        if (result != null) {
+          result[profileKey] = value;
+        }
+        else {
+          result = { profileKey : value };
+        }
+      }
+    });
+    return result;
   }
 
   Set<String?>? get currentTopics{

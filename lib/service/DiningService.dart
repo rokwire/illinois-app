@@ -22,9 +22,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Network.dart';
-import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
 
@@ -34,8 +32,6 @@ import 'package:path_provider/path_provider.dart';
 
 
 class DiningService  with Service {
-
-  static const String notifyFoodPrefsChanged  = "edu.illinois.rokwire.dining.foodprefs.changed";
 
   static final String _olddiningsFileName = 'dinings_schedules.json';
 
@@ -233,40 +229,29 @@ class DiningService  with Service {
     return _enabled ? Localization().getStringFromMapping(text, Assets()['dining.strings']) : null;
   }
 
-  bool hasFoodFilteringApplied(){
-    if(_enabled) {
-      List<String>? includedFoodTypesPrefs = Storage().includedFoodTypesPrefs;
-      bool hasFoodTypesPrefs = (includedFoodTypesPrefs != null) && (0 < includedFoodTypesPrefs.length);
-
-      List<String>? includedFoodIngredientsPrefs = Storage().excludedFoodIngredientsPrefs;
-      bool hasIngredientsPrefs = (includedFoodIngredientsPrefs != null) && (0 < includedFoodIngredientsPrefs.length);
-
-      return hasFoodTypesPrefs || hasIngredientsPrefs;
-    }
-    return false;
+  /*
+  Set<String> getIncludedFoodTypesPrefs() {
+    return _enabled ? Auth2().prefs?.includedFoodTypes : null;
   }
 
-  List<String>? getIncludedFoodTypesPrefs() {
-    return _enabled ? Storage().includedFoodTypesPrefs : null;
-  }
-
-  void setIncludedFoodTypesPrefs(List<String> value) {
+  void setIncludedFoodTypesPrefs(Set<String> value) {
     if(_enabled) {
-      Storage().includedFoodTypesPrefs = value;
+      Auth2().prefs?.includedFoodTypes = value;
       _notifyFoodPrefsChanged();
     }
   }
 
-  List<String>? getExcludedFoodIngredientsPrefs() {
-    return _enabled ? Storage().excludedFoodIngredientsPrefs : null;
+  Set<String> getExcludedFoodIngredientsPrefs() {
+    return _enabled ? Auth2().prefs?.excludedFoodIngredients : null;
   }
 
-  void setExcludedFoodIngredientsPrefs(List<String> value) {
+  void setExcludedFoodIngredientsPrefs(Set<String> value) {
     if(_enabled) {
-      Storage().excludedFoodIngredientsPrefs = value;
+      Auth2().prefs?.excludedFoodIngredients = value;
       _notifyFoodPrefsChanged();
     }
   }
+  */
 
   // Helpers
   void _sortExploresByLocation(List<Explore?> explores, LocationData locationData) {
@@ -291,11 +276,6 @@ class DiningService  with Service {
     });
   }
 
-  // Events
-  void _notifyFoodPrefsChanged(){
-    NotificationService().notify(notifyFoodPrefsChanged, null);
-  }
-
   /////////////////////////
   // Enabled
 
@@ -313,19 +293,18 @@ class DiningUtils{
     }
   }
    
-  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem>? allProducts, String? scheduleId, List<String>? includedFoodTypePrefs, List<String>? excludedFoodIngredientsPrefs) {
+  static List<DiningProductItem> getProductsForScheduleId(List<DiningProductItem>? allProducts, String? scheduleId, Set<String>? includedFoodTypePrefs, Set<String>? excludedFoodIngredientsPrefs) {
     if(scheduleId != null && allProducts != null){
       return allProducts.where((DiningProductItem item){
-        return scheduleId == item.scheduleId && (
-              includedFoodTypePrefs!.isEmpty || item.containsFoodType(includedFoodTypePrefs))
-              && (excludedFoodIngredientsPrefs!.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs)
-            );
+        return scheduleId == item.scheduleId &&
+            ((includedFoodTypePrefs == null) || includedFoodTypePrefs.isEmpty || item.containsFoodType(includedFoodTypePrefs)) &&
+            ((excludedFoodIngredientsPrefs == null) || excludedFoodIngredientsPrefs.isEmpty || !item.containsFoodIngredient(excludedFoodIngredientsPrefs));
       }).toList();
     }
     return [];
   }
 
-  static Map<String?,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem> allProducts){
+  static Map<String?,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem>? allProducts){
     Map<String?, List<DiningProductItem>> mapping = Map<String?,
         List<DiningProductItem>>();
     if(allProducts != null) {
@@ -339,7 +318,7 @@ class DiningUtils{
     return mapping;
   }
 
-  static Map<String?,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem> allProducts){
+  static Map<String?,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem>? allProducts){
     Map<String?, List<DiningProductItem>> mapping = Map<String?,
         List<DiningProductItem>>();
     if(allProducts != null) {
@@ -353,7 +332,7 @@ class DiningUtils{
     return mapping;
   }
 
-  static Map<String?,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem> allProducts){
+  static Map<String?,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem>? allProducts){
     Map<String?, List<DiningProductItem>> mapping = Map<String?,
         List<DiningProductItem>>();
     if(allProducts != null) {
@@ -367,7 +346,7 @@ class DiningUtils{
     return mapping;
   }
 
-  static DiningNutritionItem? getNutritionItemById(String itemId, List<DiningNutritionItem> allItems){
+  static DiningNutritionItem? getNutritionItemById(String? itemId, List<DiningNutritionItem>? allItems){
     if(itemId != null && allItems != null && allItems.isNotEmpty){
       for(DiningNutritionItem item in allItems){
         if(item.itemID == itemId)

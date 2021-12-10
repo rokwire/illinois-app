@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -33,7 +34,7 @@ class FoodFiltersPanel extends StatefulWidget{
 class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   //Set<String> selectedPreferences;
-  late Set<String> _selectedTypesPrefs;
+  late Set<String>? _selectedTypesPrefs;
   Set<String>? _selectedIngredientsPrefs;
 
   @override
@@ -48,8 +49,8 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
   }
 
   void _loadFoodPreferences(){
-    _selectedTypesPrefs = Set.from(DiningService().getIncludedFoodTypesPrefs()!);
-    _selectedIngredientsPrefs = Set.from(DiningService().getExcludedFoodIngredientsPrefs()!);
+    _selectedTypesPrefs = (Auth2().prefs?.includedFoodTypes != null) ? Set.from(Auth2().prefs!.includedFoodTypes!) : null;
+    _selectedIngredientsPrefs = (Auth2().prefs?.excludedFoodIngredients != null) ? Set.from(Auth2().prefs!.excludedFoodIngredients!) : null;
   }
 
   @override
@@ -157,17 +158,20 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   Widget _buildFoodTypes(){
     List<Widget> list = [];
-    for(String foodType in DiningService().foodTypes!){
-      bool selected = _selectedTypesPrefs.contains(foodType);
-      String? foodLabel = DiningService().getLocalizedString(foodType);
-      list.add(
-          ToggleRibbonButton(
-            height: null,
-            label: foodLabel,
-            onTap: (){_onFoodTypePrefTapped(foodType);},
-            toggled: selected,
-            context: context,
-          ));
+    List<String>? foodTypes = DiningService().foodTypes;
+    if (foodTypes != null) {
+      for(String foodType in foodTypes){
+        bool selected = _selectedTypesPrefs?.contains(foodType) ?? false;
+        String? foodLabel = DiningService().getLocalizedString(foodType);
+        list.add(
+            ToggleRibbonButton(
+              height: null,
+              label: foodLabel,
+              onTap: (){_onFoodTypePrefTapped(foodType);},
+              toggled: selected,
+              context: context,
+            ));
+      }
     }
 
     return Column(
@@ -177,17 +181,20 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
 
   Widget _buildFoodIngredients(){
     List<Widget> list = [];
-    for(String foodIngredient in DiningService().foodIngredients!){
-      bool selected = (_selectedIngredientsPrefs == null) || _selectedIngredientsPrefs!.contains(foodIngredient);
-      String? ingredientLabel = DiningService().getLocalizedString(foodIngredient);
-      list.add(
-          ToggleRibbonButton(
-            height: null,
-            label: ingredientLabel,
-            onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
-            toggled: selected,
-            context: context,
-          ));
+    List<String>? foodIngredients = DiningService().foodIngredients;
+    if (foodIngredients != null) {
+      for(String foodIngredient in foodIngredients){
+        bool selected = _selectedIngredientsPrefs?.contains(foodIngredient) ?? false;
+        String? ingredientLabel = DiningService().getLocalizedString(foodIngredient);
+        list.add(
+            ToggleRibbonButton(
+              height: null,
+              label: ingredientLabel,
+              onTap: (){_onFoodIngredientPrefTapped(foodIngredient);},
+              toggled: selected,
+              context: context,
+            ));
+      }
     }
 
     return Column(
@@ -195,30 +202,39 @@ class _FoodFiltersPanelState extends State<FoodFiltersPanel> {
     );
   }
 
-  void _onFoodTypePrefTapped(String foodOption){
-    Analytics.instance.logSelect(target: "FoodType: "+foodOption);
-    if(_selectedTypesPrefs.contains(foodOption)){
-      _selectedTypesPrefs.remove(foodOption);
-    }
-    else{
-      _selectedTypesPrefs.add(foodOption);
-    }
-    DiningService().setIncludedFoodTypesPrefs(_selectedTypesPrefs.toList());
+  void _onFoodTypePrefTapped(String? foodOption){
+    Analytics.instance.logSelect(target: "FoodType: $foodOption");
+    if(foodOption != null) {
+      if(_selectedTypesPrefs == null) {
+        _selectedTypesPrefs = <String>{ foodOption };
+      }
+      else if(_selectedTypesPrefs!.contains(foodOption)){
+        _selectedTypesPrefs!.remove(foodOption);
+      }
+      else{
+        _selectedTypesPrefs!.add(foodOption);
+      }
+      Auth2().prefs?.includedFoodTypes = _selectedTypesPrefs;
 
-    setState((){});
+      setState((){});
+    }
   }
 
-  void _onFoodIngredientPrefTapped(String foodOption){
-    Analytics.instance.logSelect(target: "FoodIngredient: "+foodOption);
-    if(_selectedIngredientsPrefs!.contains(foodOption)){
-      _selectedIngredientsPrefs!.remove(foodOption);
+  void _onFoodIngredientPrefTapped(String? foodOption){
+    Analytics.instance.logSelect(target: "FoodIngredient: $foodOption");
+    if(foodOption != null) {
+      if(_selectedIngredientsPrefs == null){
+        _selectedIngredientsPrefs = <String>{ foodOption };
+      }
+      if(_selectedIngredientsPrefs!.contains(foodOption)){
+        _selectedIngredientsPrefs!.remove(foodOption);
+      }
+      else{
+        _selectedIngredientsPrefs!.add(foodOption);
+      }
+      Auth2().prefs?.excludedFoodIngredients = _selectedIngredientsPrefs;
+      setState((){});
     }
-    else{
-      _selectedIngredientsPrefs!.add(foodOption);
-    }
-    DiningService().setExcludedFoodIngredientsPrefs(_selectedIngredientsPrefs!.toList());
-
-    setState((){});
   }
 
   //SaveButton

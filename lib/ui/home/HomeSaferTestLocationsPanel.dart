@@ -474,6 +474,7 @@ class _TestLocation extends StatelessWidget {
   }
 
 
+  /* Hide wait times
   bool get _isLocationOpen{
     HealthLocationDayOfOperation? todayPeriod;
     if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
@@ -484,6 +485,7 @@ class _TestLocation extends StatelessWidget {
 
     return todayPeriod?.isOpen ?? false;
   }
+  */
 }
 
 ///////////////////////////////

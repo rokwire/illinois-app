@@ -72,12 +72,12 @@ class Storage with Service {
   String? get encryptionKey => _encryptionKey;
   String? get encryptionIV => _encryptionIV;
 
-  String? encrypt(String value) {
+  String? encrypt(String? value) {
     return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
       AESCrypt.encrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
   }
 
-  String? decrypt(String value) {
+  String? decrypt(String? value) {
     return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
       AESCrypt.decrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
   }
@@ -208,26 +208,28 @@ class Storage with Service {
     }
   }
 
-  // Dining
+  // User: readonly, backward compatability only.
+
+  static const String _userKey  = 'user';
+
+  Map<String, dynamic>? get userProfile {
+    return AppJson.decodeMap(_getStringWithName(_userKey));
+  }
+
+  // Dining: readonly, backward compatability only.
 
   static const String excludedFoodIngredientsPrefsKey  = 'excluded_food_ingredients_prefs';
 
-  List<String>? get excludedFoodIngredientsPrefs {
-    return _getStringListWithName(excludedFoodIngredientsPrefsKey, defaultValue: []);
-  }
-
-  set excludedFoodIngredientsPrefs(List<String>? value) {
-    _setStringListWithName(excludedFoodIngredientsPrefsKey, value);
+  Set<String>? get excludedFoodIngredientsPrefs {
+    List<String>? list = _getStringListWithName(excludedFoodIngredientsPrefsKey);
+    return (list != null) ? Set.from(list) : null;
   }
 
   static const String includedFoodTypesPrefsKey  = 'included_food_types_prefs';
 
-  List<String>? get includedFoodTypesPrefs {
-    return _getStringListWithName(includedFoodTypesPrefsKey, defaultValue: []);
-  }
-
-  set includedFoodTypesPrefs(List<String>? value) {
-    _setStringListWithName(includedFoodTypesPrefsKey, value);
+  Set<String>? get includedFoodTypesPrefs {
+    List<String>? list = _getStringListWithName(includedFoodTypesPrefsKey);
+    return (list != null) ? Set.from(list) : null;
   }
 
   // Notifications
