@@ -326,6 +326,8 @@
 	"panel.athletics_game_detail.button.teams.hint":"查看球队",
 	"panel.athletics_game_detail.load.failed.msg": "加載遊戲失敗. 請再試一次.",
 
+	"panel.athletics_news_article.load.failed.msg": "無法加載新聞文章. 請再試一次.",
+
 	"panel.athletics_roster_list.header.title":"名册",
 	"panel.athletics_roster_list.button.by_name.title":"按名称",
 	"panel.athletics_roster_list.button.by_position.title":"按位置",

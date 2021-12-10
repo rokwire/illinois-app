@@ -225,11 +225,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       }
     } else if (msgType == 'athletics_news_detail') {
       String newsId = msgData['news_id'];
-      Sports().loadNewsArticle(newsId).then((article) {
-        if (article != null) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: article)));
-        }
-      });
+      if (AppString.isStringNotEmpty(newsId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
+      }
     } else if (msgType == 'group') {
       String groupId = msgData['entity_id'];
       Groups().loadGroup(groupId).then((group) {
