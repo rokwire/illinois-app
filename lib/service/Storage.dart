@@ -208,26 +208,28 @@ class Storage with Service {
     }
   }
 
-  // Dining
+  // User: readonly, backward compatability only.
+
+  static const String _userKey  = 'user';
+
+  Map<String, dynamic> get userProfile {
+    return AppJson.decodeMap(_getStringWithName(_userKey));
+  }
+
+  // Dining: readonly, backward compatability only.
 
   static const String excludedFoodIngredientsPrefsKey  = 'excluded_food_ingredients_prefs';
 
-  List<String> get excludedFoodIngredientsPrefs {
-    return _getStringListWithName(excludedFoodIngredientsPrefsKey, defaultValue: []);
-  }
-
-  set excludedFoodIngredientsPrefs(List<String> value) {
-    _setStringListWithName(excludedFoodIngredientsPrefsKey, value);
+  Set<String> get excludedFoodIngredientsPrefs {
+    List<String> list = _getStringListWithName(excludedFoodIngredientsPrefsKey);
+    return (list != null) ? Set.from(list) : null;
   }
 
   static const String includedFoodTypesPrefsKey  = 'included_food_types_prefs';
 
-  List<String> get includedFoodTypesPrefs {
-    return _getStringListWithName(includedFoodTypesPrefsKey, defaultValue: []);
-  }
-
-  set includedFoodTypesPrefs(List<String> value) {
-    _setStringListWithName(includedFoodTypesPrefsKey, value);
+  Set<String> get includedFoodTypesPrefs {
+    List<String> list = _getStringListWithName(includedFoodTypesPrefsKey);
+    return (list != null) ? Set.from(list) : null;
   }
 
   // Notifications

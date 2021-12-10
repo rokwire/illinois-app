@@ -547,7 +547,7 @@ class DiningProductItem {
 
   DiningProductItem({this.itemID, this.name, this.scheduleId, this.servingUnit, this.course, this.traits, this.category, this.courseSort, this.meal});
 
-  bool containsFoodType(List<String> foodTypePrefs){
+  bool containsFoodType(Set<String> foodTypePrefs){
     if ((foodTypePrefs == null) || foodTypePrefs.isEmpty) {
       return false;
     }
@@ -567,7 +567,7 @@ class DiningProductItem {
     return false;
   }
 
-  bool containsFoodIngredient(List<String> foodIngredientPrefs){
+  bool containsFoodIngredient(Set<String> foodIngredientPrefs){
     if ((foodIngredientPrefs == null) || foodIngredientPrefs.isEmpty) {
       return false;
     }

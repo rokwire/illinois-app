@@ -1356,8 +1356,8 @@
 								"title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center",
 								"image": "kognito.png",
 								"action": {
-									"name": "web",
-									"source": "https://counselingcenter.illinois.edu/emergency/kognito-risk-suicide-prevention-training"
+									"name": "guide",
+									"source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito"
 								}
 							},
 							{
@@ -1401,7 +1401,7 @@
 						"ribbon_buttons": [
 							{
 								"title": "panel.wellness.mental.resources.counseling",
-								"url": "https://counselingcenter.illinois.edu/counseling",
+								"url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=Counseling.center",
 								"icon": "link-out.png",
 								"hint": ""
 							},
@@ -1413,7 +1413,7 @@
 							},
 							{
 								"title": "panel.wellness.common.resources.ace_it",
-								"url": "https://counselingcenter.illinois.edu/aceit",
+								"url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help",
 								"icon": "link-out.png",
 								"hint": ""
 							}
@@ -1939,7 +1939,7 @@
 						"ribbon_buttons": [
 							{
 								"title":"panel.wellness.common.interactive_activities.activity.kognito_at_risk_center",
-								"url":"https://counselingcenter.illinois.edu/emergency/kognito-risk-suicide-prevention-training",
+								"url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito",
 								"icon": "link-out.png",
 								"hint": ""
 							},
