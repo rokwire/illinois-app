@@ -13,10 +13,6 @@ import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
-import 'package:illinois/ui/explore/ExplorePanel.dart';
-import 'package:illinois/ui/groups/GroupDetailPanel.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -198,41 +194,15 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    Map<String, dynamic> msgData = message?.data;
-    String msgType = FirebaseMessaging().getMessageType(msgData);
-    if (AppString.isStringEmpty(msgType)) {
-      return;
-    }
-
-    if (msgType == 'event_detail') {
-      String eventId = AppJson.stringValue(msgData['event_id']);
-      if (AppString.isStringNotEmpty(eventId)) {
-        ExplorePanel.presentDetailPanel(context, eventId: eventId);
-      }
-    } else if (msgType == 'game_detail') {
-      String gameId = AppJson.stringValue(msgData['game_id']);
-      String sport = AppJson.stringValue(msgData['sport']);
-      if (AppString.isStringNotEmpty(gameId) && AppString.isStringNotEmpty(sport)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId)));
-      }
-    } else if (msgType == 'athletics_game_started') {
-      String sportShortName = msgData['Path'];
-      String gameId = msgData['GameId'];
-      if (AppString.isStringNotEmpty(sportShortName) && AppString.isStringNotEmpty(gameId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId)));
-      }
-    } else if (msgType == 'athletics_news_detail') {
-      String newsId = msgData['news_id'];
-      if (AppString.isStringNotEmpty(newsId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
-      }
-    } else if (msgType == 'group') {
-      String groupId = msgData['entity_id'];
-      if (AppString.isStringNotEmpty(groupId)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
-      }
-    }
+    FirebaseMessaging().processDataMessage(message?.data, allowedTypes: {
+      FirebaseMessaging.payloadTypeEventDetail,
+      FirebaseMessaging.payloadTypeGameDetail,
+      FirebaseMessaging.payloadTypeAthleticsGameStarted,
+      FirebaseMessaging.payloadTypeAthleticsNewDetail,
+      FirebaseMessaging.payloadTypeGroup,
+    });
   }
+
 
   // Filters
 
