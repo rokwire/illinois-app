@@ -231,30 +231,6 @@ class DiningService  with Service {
     return _enabled ? Localization().getStringFromMapping(text, Assets()['dining.strings']) : null;
   }
 
-  /*
-  Set<String> getIncludedFoodTypesPrefs() {
-    return _enabled ? Auth2().prefs?.includedFoodTypes : null;
-  }
-
-  void setIncludedFoodTypesPrefs(Set<String> value) {
-    if(_enabled) {
-      Auth2().prefs?.includedFoodTypes = value;
-      _notifyFoodPrefsChanged();
-    }
-  }
-
-  Set<String> getExcludedFoodIngredientsPrefs() {
-    return _enabled ? Auth2().prefs?.excludedFoodIngredients : null;
-  }
-
-  void setExcludedFoodIngredientsPrefs(Set<String> value) {
-    if(_enabled) {
-      Auth2().prefs?.excludedFoodIngredients = value;
-      _notifyFoodPrefsChanged();
-    }
-  }
-  */
-
   // Helpers
   void _sortExploresByLocation(List<Explore> explores, LocationData locationData) {
     explores.sort((Explore explore1, Explore explore2) {
