@@ -415,33 +415,44 @@ class Sports with Service implements NotificationsListener {
     if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
       return null;
     }
-    String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
-    if (startDate == null) {
+
+    String queryParams = '';
+
+    if (AppString.isStringNotEmpty(id)) {
+      queryParams += '?id=$id';
+    } else if (startDate == null) {
       startDate = AppDateTime().now;
     }
-    startDate = startDate.toUtc();
-    String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
-    gamesUrl += '?start=$startDateFormatted';
+
+    if (startDate != null) {
+      startDate = startDate.toUtc();
+      String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      queryParams += '&start=$startDateFormatted';
+    }
 
     if (endDate != null) {
       endDate = endDate.toUtc();
       String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
-      gamesUrl += '&end=$endDateFormatted';
-    }
-
-    if (AppString.isStringNotEmpty(id)) {
-      gamesUrl += '&id=$id';
+      queryParams += '&end=$endDateFormatted';
     }
 
     if (AppCollection.isCollectionNotEmpty(sports)) {
       for (String sport in sports) {
         if (AppString.isStringNotEmpty(sport)) {
-          gamesUrl += '&sport=$sport';
+          queryParams += '&sport=$sport';
         }
       }
     }
     if ((limit != null) && (limit > 0)) {
-      gamesUrl += '&limit=$limit';
+      queryParams += '&limit=$limit';
+    }
+    String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
+
+    if (AppString.isStringNotEmpty(queryParams)) {
+      if (queryParams.startsWith('&')) {
+        queryParams = queryParams.replaceFirst('&', '?');
+      }
+      gamesUrl += queryParams;
     }
 
     final response = await Network().get(gamesUrl, auth: NetworkAuth.Auth2);
