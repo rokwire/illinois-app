@@ -22,7 +22,7 @@ enum GuideContentSource { Net, Debug }
 
 class Guide with Service implements NotificationsListener {
   
-  static const String GUIDE_URI = '${DeepLink.ROKWIRE_SCHEME}://rokwire.illinois.edu/guide_detail';
+  static const String GUIDE_URI = '${DeepLink.ROKWIRE_URL}/guide_detail';
 
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
