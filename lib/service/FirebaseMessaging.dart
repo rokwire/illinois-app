@@ -120,6 +120,18 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
   static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
 
+  // Payload types
+  static const String payloadTypeConfigUpdate = 'config_update';
+  static const String payloadTypePopupMessage = 'popup_message';
+  static const String payloadTypeOpenPoll = 'poll_open';
+  static const String payloadTypeEventDetail = 'event_detail';
+  static const String payloadTypeGameDetail = 'game_detail';
+  static const String payloadTypeAthleticsGameStarted = 'athletics_game_started';
+  static const String payloadTypeAthleticsNewDetail = 'athletics_news_detail';
+  static const String payloadTypeGroup = 'group';
+  static const String payloadTypeHome = 'home';
+  static const String payloadTypeInbox = 'inbox';
+
   final AndroidNotificationChannel _channel = AndroidNotificationChannel(
     _channelId, // id
     "Illinois",
@@ -305,38 +317,38 @@ class FirebaseMessaging with Service implements NotificationsListener {
   void processDataMessage(Map<String, dynamic> data, {Set<String> allowedTypes}) {
     String type = _getMessageType(data);
     if (allowedTypes?.contains(type) ?? true) {
-      if (type == "config_update") {
+      if (type == payloadTypeConfigUpdate) {
         _onConfigUpdate(data);
       }
-      else if (type == "popup_message") {
+      else if (type == payloadTypePopupMessage) {
         NotificationService().notify(notifyPopupMessage, data);
       }
-      else if (type == "poll_open") {
+      else if (type == payloadTypeOpenPoll) {
         NotificationService().notify(notifyPollOpen, data);
       }
-      else if (type == "event_detail") {
+      else if (type == payloadTypeEventDetail) {
         NotificationService().notify(notifyEventDetail, data);
       }
-      else if (type == "game_detail") {
+      else if (type == payloadTypeGameDetail) {
         NotificationService().notify(notifyGameDetail, data);
       }
-      else if (type == "athletics_game_started") {
+      else if (type == payloadTypeAthleticsGameStarted) {
         NotificationService().notify(notifyAthleticsGameStarted, data);
       }
-      else if (type == "athletics_news_detail") {
+      else if (type == payloadTypeAthleticsNewDetail) {
         NotificationService().notify(notifyAthleticsNewsUpdated, data);
+      }
+      else if (type == payloadTypeGroup) {
+        NotificationService().notify(notifyGroupsNotification, data);
+      }
+      else if (type == payloadTypeHome) {
+        NotificationService().notify(notifyHomeNotification, data);
+      }
+      else if (type == payloadTypeInbox) {
+        NotificationService().notify(notifyInboxNotification, data);
       }
       else if (_isScoreTypeMessage(type)) {
         NotificationService().notify(notifyScoreMessage, data);
-      }
-      else if (type == "group") {
-        NotificationService().notify(notifyGroupsNotification, data);
-      }
-      else if (type == "home") {
-        NotificationService().notify(notifyHomeNotification, data);
-      }
-      else if (type == "inbox") {
-        NotificationService().notify(notifyInboxNotification, data);
       }
       else {
         Log.d("FCM: unknown message type: $type");

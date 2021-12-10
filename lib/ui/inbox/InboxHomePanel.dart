@@ -195,7 +195,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _handleRedirectTap(InboxMessage message) {
     FirebaseMessaging().processDataMessage(message?.data, allowedTypes: {
-      'event_detail', 'game_detail', 'athletics_game_started', 'athletics_news_detail', 'group'
+      FirebaseMessaging.payloadTypeEventDetail,
+      FirebaseMessaging.payloadTypeGameDetail,
+      FirebaseMessaging.payloadTypeAthleticsGameStarted,
+      FirebaseMessaging.payloadTypeAthleticsNewDetail,
+      FirebaseMessaging.payloadTypeGroup,
     });
   }
 
