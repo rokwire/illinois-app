@@ -15,6 +15,7 @@
  */
 
 
+import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
@@ -145,7 +146,7 @@ class Services {
 
   Future<ServiceError?> init() async {
     bool offlineChecked = false;
-    bool showStatus = Config.defaultConfigEnvironment != ConfigEnvironment.production;
+    bool showStatus = kDebugMode;
     for (Service service in _services) {
 
       if (service.isInitialized != true) {
