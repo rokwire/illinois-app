@@ -495,14 +495,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateMyIllini() {
     Analytics.instance.logSelect(target: "My Illini");
-    if (Connectivity().isNotOffline && (Config().myIlliniUrl != null)) {
-      String myIlliniPanelTitle = Localization().getStringEx(
-          'panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
-    }
-    else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+    }
+    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+      url_launcher.launch(Config().myIlliniUrl);
     }
   }
 
