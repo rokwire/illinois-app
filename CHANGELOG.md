@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hide "GIES Student" role button from onboarding and settings [#1121](https://github.com/rokwire/illinois-app/issues/1121).
 - Hide service initialization status in release builds [#1123](https://github.com/rokwire/illinois-app/issues/1123).
 - Improved semantics [#1013](https://github.com/rokwire/illinois-app/issues/1013).
+- Open My Illini in an external browser [#1100](https://github.com/rokwire/illinois-app/issues/1100).
 
 ## [3.0.65] - 2021-12-10
 ### Added
