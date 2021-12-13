@@ -247,7 +247,7 @@ class _TweetWidget extends StatelessWidget {
                 Column(children: [
                   AppString.isStringNotEmpty(tweet?.media?.url) ?
                     InkWell(onTap: () => _onTap(context), child:
-                      Image.network(tweet?.media?.url)) :
+                      Image.network(tweet?.media?.url, excludeFromSemantics: true)) :
                   Container(),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                     //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),

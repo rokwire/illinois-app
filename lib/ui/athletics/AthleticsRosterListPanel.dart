@@ -244,7 +244,7 @@ class _RosterListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(sport.iconPath, width: 16, height: 16,),
+                  Image.asset(sport.iconPath, width: 16, height: 16, excludeFromSemantics: true,),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport.name,
@@ -394,7 +394,7 @@ class _RosterItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (AppString.isStringNotEmpty(roster.thumbPhotoUrl) ?
-                      Image.network(roster.thumbPhotoUrl, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,) :
+                      Image.network(roster.thumbPhotoUrl, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,) :
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),

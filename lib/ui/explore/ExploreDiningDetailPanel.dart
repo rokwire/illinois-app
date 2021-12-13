@@ -223,7 +223,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png'))))
+                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png', excludeFromSemantics: true))))
             ),),
           ],
         ));
@@ -404,7 +404,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png'),
+                  child:Image.asset('images/icon-location.png', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(locationText,
                     style: TextStyle(
@@ -442,7 +442,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(right: 10),
-                        child:Image.asset('images/icon-time.png'),),
+                        child:Image.asset('images/icon-time.png', excludeFromSemantics: true),),
                       Expanded(child:
                         ScalableFilterSelectorWidget(
                           label: displayTime,
@@ -851,7 +851,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                               )),
                               Padding(
                                 padding: EdgeInsets.only(left: 4),
-                                child: Image.asset('images/chevron-right.png'),
+                                child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
                               )
                             ],
                           ),
@@ -881,7 +881,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Image.asset('images/chevron-left.png',),
+                      image: Image.asset('images/chevron-left.png', excludeFromSemantics: true),
                       onTap: decrementDateFilter,
                     ),
                   ),
@@ -891,7 +891,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Image.asset('images/chevron-right.png',),
+                      image: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
                       onTap: incrementDateFilter,
                     ),
                   ),
@@ -1111,7 +1111,7 @@ class _StationItemState extends State<_StationItem>{
                         ),
                       ),
                     ),
-                    expanded ? Image.asset('images/chevron-down.png') : Image.asset('images/chevron-up.png')
+                    expanded ? Image.asset('images/chevron-down.png', excludeFromSemantics: true) : Image.asset('images/chevron-up.png', excludeFromSemantics: true)
                   ],
                 ),
               ),
@@ -1182,7 +1182,7 @@ class _ProductItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Image.asset('images/chevron-right.png')
+                Image.asset('images/chevron-right.png', excludeFromSemantics: true)
               ],
             ),
           ),

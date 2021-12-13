@@ -144,7 +144,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                                     width: _smallImageSize,
                                     height: _smallImageSize,
                                     child: Image.network(
-                                      imageUrl, fit: BoxFit.fill,),),)),
+                                      imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),)),
                           ],),
                           _explorePaymentTypes(),
                           _buildConvergeButton(),
@@ -344,7 +344,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: _detailPadding,
       child: Row(
         children: <Widget>[
-          Image.asset('images/icon-calendar.png'),
+          Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
           Padding(
             padding: _iconPadding,
           ),
@@ -400,7 +400,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-time.png'),
+            Image.asset('images/icon-time.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),
@@ -624,15 +624,15 @@ class _EventSmallCard extends StatelessWidget {
                             button: true,
                             excludeSemantics: true,
                             child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Image.asset(
-                                isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                                isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
                             ))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
-                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png'),),)
+                      padding: EdgeInsets.only(left: 24, top: 4), child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),),)
                   ],),),
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),
-                    child: Image.asset('images/icon-time.png'),),
+                    child: Image.asset('images/icon-time.png', excludeFromSemantics: true),),
                   Expanded(child: Text(_subTitle, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(
                       fontSize: 16, color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.medium),),)
                 ],),)

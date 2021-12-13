@@ -69,7 +69,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         visible: hasConvergeUrl(),
         child:  Padding(
           padding: EdgeInsets.only(left: 3),
-          child: Image.asset('images/icon-more-info.png'),
+          child: Image.asset('images/icon-more-info.png', excludeFromSemantics: true),
         ),
       );
   }

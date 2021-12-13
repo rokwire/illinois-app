@@ -152,7 +152,7 @@ class ScalableFilterSelectorWidget extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png'),
+                          child: Image.asset(active ? 'images/icon-up.png' : 'images/icon-down.png', excludeFromSemantics: true),
                         )
                       ],
                     ),

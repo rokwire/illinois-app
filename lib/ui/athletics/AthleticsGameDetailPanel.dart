@@ -150,6 +150,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                             child: Image.asset('images/slant-down-right.png',
                               color: Styles().colors.fillColorPrimary,
                               fit: BoxFit.fill,
+                              excludeFromSemantics: true,
                             ),
                           )
                         ],
@@ -163,7 +164,9 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
                                   child: Image.asset(
-                                      'images/icon-athletics-orange.png'),
+                                    'images/icon-athletics-orange.png',
+                                    excludeFromSemantics: true,
+                                  ),
                                 ),
                                 Expanded(child:
                                   Text(
@@ -283,6 +286,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         child: SizedBox.expand(
           child: Image.network(
             game.newsImageUrl,
+            excludeFromSemantics: true,
             fit: BoxFit.fitWidth,
           ),
         ),
@@ -340,7 +344,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       padding: EdgeInsets.only(left: 8),
                       child: Image.asset((_newsExpanded
                           ? 'images/icon-up.png'
-                          : 'images/icon-down-orange.png')),
+                          : 'images/icon-down-orange.png'),
+                        excludeFromSemantics: true,),
                     )
                   ],
                 ),
