@@ -36,40 +36,40 @@ class HomeHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Semantics(
-            label: title,
-            header: true,
-            excludeSemantics: true,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 12),
-                  child: ((imageRes != null) && imageRes.isNotEmpty)
-                      ? Image.asset(
-                          imageRes,
-                          excludeFromSemantics: true,
-                        )
-                      : Container(),
-                ),
-                Expanded(child:
-                Text(
-                  title,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                ),
-                (onSettingsTap == null) ? Container() :
-                  GestureDetector(
-                      onTap: onSettingsTap,
-                      child: Container(
-                        padding: EdgeInsets.only(right: 20),
-                          alignment: Alignment.centerRight,
-                          child: Image.asset(
-                                'images/settings-white.png',
-                                excludeFromSemantics: true,
-                              )))
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: ((imageRes != null) && imageRes.isNotEmpty)
+                    ? Image.asset(
+                        imageRes,
+                        excludeFromSemantics: true,
+                      )
+                    : Container(),
+              ),
+              Expanded(child:
+                Semantics(
+                  label: title,
+                  header: true,
+                  excludeSemantics: true,
+                  child: Text(
+                    title,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  )),
+              ),
+              (onSettingsTap == null) ? Container() :
+                Semantics(label: "Settings", button: true,
+                  child: GestureDetector(
+                    onTap: onSettingsTap,
+                    child: Container(
+                      padding: EdgeInsets.only(right: 20),
+                        alignment: Alignment.centerRight,
+                        child: Image.asset(
+                              'images/settings-white.png',
+                              excludeFromSemantics: true,
+                            ))))
+            ],
           ),
           Visibility(
               visible: hasSubTitle,

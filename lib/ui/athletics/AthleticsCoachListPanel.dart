@@ -249,7 +249,7 @@ class _CoachItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
                     child: (AppString.isStringNotEmpty(coach.thumbPhotoUrl) ?
-                      Image.network(coach.thumbPhotoUrl,width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,):
+                      Image.network(coach.thumbPhotoUrl, excludeFromSemantics: true, width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,):
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),

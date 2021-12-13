@@ -148,7 +148,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   checked: isGameFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Image.asset(isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
+                                        child: Image.asset(isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),
@@ -183,7 +183,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: Row(
                                     children: <Widget>[
-                                      Image.asset('images/icon-calendar.png'),
+                                      Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
@@ -207,7 +207,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(right: 10),
-                                      child: Image.asset('images/icon-location.png'),
+                                      child: Image.asset('images/icon-location.png', excludeFromSemantics: true),
                                     ),
                                     Flexible(
                                         child: Text(
@@ -411,11 +411,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     if(widget.showImageTout) {
       if (!AppString.isStringEmpty(widget.game.imageUrl)) {
         widgets.add(Positioned(
-            child: Semantics(
-                excludeSemantics: true,
-                child: Image.network(
-                  widget.game.imageUrl,
-                ))));
+            child: Image.network(
+              widget.game.imageUrl,
+              excludeFromSemantics: true
+            )));
       }
       widgets.add(Semantics(
           excludeSemantics: true,
@@ -511,7 +510,7 @@ class _DetailRibbonButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Image.asset(iconResource),
+                  Image.asset(iconResource, excludeFromSemantics: true),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
@@ -722,13 +721,13 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getHomeImage() {
     if (widget._game.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true);
     } else {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
       if(AppString.isStringNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl);
+        return Image.network(opponentUrl, excludeFromSemantics: true);
       } else {
         return Container();
       }
@@ -774,13 +773,13 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getAwayImage() {
     if (!widget._game.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true);
     } else {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
       if(AppString.isStringNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl);
+        return Image.network(opponentUrl, excludeFromSemantics: true);
       } else {
         return Container();
       }
@@ -889,7 +888,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
-      return Image.network(opponentUrl);
+      return Image.network(opponentUrl, excludeFromSemantics: true);
     }
   }
 
@@ -901,7 +900,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
-      return Image.network(opponentUrl);
+      return Image.network(opponentUrl, excludeFromSemantics: true);
     }
   }
 

@@ -54,6 +54,7 @@ class ImageHolderListItem extends StatelessWidget {
                       height: imageHeight,
                       width: MediaQuery.of(context).size.width,
                       fit: BoxFit.cover,
+                      excludeFromSemantics: true,
                     ) : Container(height: 0),
                     Padding(
                         padding: EdgeInsets.only(top: 168),
@@ -76,6 +77,7 @@ class ImageHolderListItem extends StatelessWidget {
                                 placeHolderSlantResource,
                                 fit: BoxFit.fill,
                                 color: placeHolderDividerResource ?? Styles().colors.fillColorSecondary,
+                                excludeFromSemantics: true,
                             ),
                           ) : Container(height: 0),
                         ],

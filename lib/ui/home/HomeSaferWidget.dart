@@ -113,7 +113,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   Widget _buildCommandEntry({String title, String description, void Function() onTap}) {
-    return Semantics(container: true, child: 
+    return Semantics(container: true, button: true, child:
       InkWell(onTap: onTap, child:
         Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -123,7 +123,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
               Expanded(child:
                 Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
               ),
-              Image.asset('images/chevron-right.png'),
+              Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
             ],),
             AppString.isStringNotEmpty(description) ?
               Padding(padding: EdgeInsets.only(top: 5), child:
