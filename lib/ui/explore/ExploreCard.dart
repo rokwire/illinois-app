@@ -101,97 +101,101 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String imageUrl = AppString.getDefaultEmptyString(value: widget.explore.exploreImageURL);
     String interestsLabelValue = _getInterestsLabelValue();
 
-    return GestureDetector(
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.onTap,
-        child: Semantics(
-          label: semanticLabel,
-//          excludeSemantics: true,
-          child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                ExcludeSemantics(
-                  child:Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: widget.border,
-                        boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        _exploreTop(),
-                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Expanded(child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Visibility(
-                                visible: (isEvent || isGame),
-                                child: _exploreName(),
-                              ),
-                              _exploreDetails(),
-                            ],)),
-                          Visibility(visible: (widget.showSmallImage &&
-                              AppString.isStringNotEmpty(imageUrl)),
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
-                                child: SizedBox(
-                                  width: _smallImageSize,
-                                  height: _smallImageSize,
-                                  child: Image.network(
-                                    imageUrl, fit: BoxFit.fill,),),)),
-                        ],),
-                        _explorePaymentTypes(),
-                        _buildConvergeButton(),
-                        Visibility(visible: _showInterests(),
-                            child: Column(
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  border: widget.border,
+                  boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _exploreTop(),
+                  Container(
+                    child: Semantics(excludeSemantics: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                            Expanded(child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Container(
-                                  height: 1, color: Styles().colors.surfaceAccent,),
-                                Padding(padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Flexible(flex: 8,
-                                          child: Container(width: double.infinity, child:
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(Localization().getStringEx(
-                                                  'widget.card.label.interests',
-                                                  'Because of your interest in:'),
-                                                style: TextStyle(
+                                Visibility(
+                                  visible: (isEvent || isGame),
+                                  child: _exploreName(),
+                                ),
+                                _exploreDetails(),
+                              ],)),
+                            Visibility(visible: (widget.showSmallImage &&
+                                AppString.isStringNotEmpty(imageUrl)),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
+                                  child: SizedBox(
+                                    width: _smallImageSize,
+                                    height: _smallImageSize,
+                                    child: Image.network(
+                                      imageUrl, fit: BoxFit.fill,),),)),
+                          ],),
+                          _explorePaymentTypes(),
+                          _buildConvergeButton(),
+                          Visibility(visible: _showInterests(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    height: 1, color: Styles().colors.surfaceAccent,),
+                                  Padding(padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Flexible(flex: 8,
+                                            child: Container(width: double.infinity, child:
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(Localization().getStringEx(
+                                                    'widget.card.label.interests',
+                                                    'Because of your interest in:'),
+                                                  style: TextStyle(
+                                                      color: Styles().colors.textBackground,
+                                                      fontSize: 12,
+                                                      fontFamily: Styles().fontFamilies.bold),),
+                                                Text(AppString.getDefaultEmptyString(
+                                                    value: interestsLabelValue), style: TextStyle(
                                                     color: Styles().colors.textBackground,
                                                     fontSize: 12,
-                                                    fontFamily: Styles().fontFamilies.bold),),
-                                              Text(AppString.getDefaultEmptyString(
-                                                  value: interestsLabelValue), style: TextStyle(
-                                                  color: Styles().colors.textBackground,
-                                                  fontSize: 12,
-                                                  fontFamily: Styles().fontFamilies.medium),)
-                                            ],)),
-                                        ),
-                                        Flexible(flex: 2,
-                                          child: Container(width: double.infinity, alignment: Alignment.centerRight,
-                                              child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-
+                                                    fontFamily: Styles().fontFamilies.medium),)
+                                              ],)),
                                           ),
-                                        )
-                                      ],
-                                    ))
+                                          Flexible(flex: 2,
+                                            child: Container(width: double.infinity, alignment: Alignment.centerRight,
+                                                child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
+
+                                            ),
+                                          )
+                                        ],
+                                      ))
                               ],)),
-                        Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
-                      ],
-                    ),
-                  ),
-                ),
-                _topBorder(),
-              ]),),
-            _buildCompositeEventsContent(isCompositeEvent)
-          ],),
-        ));
+                  Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
+                  ])))
+                ],
+              ),
+            ),
+          _topBorder(),
+          ]),),
+        _buildCompositeEventsContent(isCompositeEvent)
+      ],),
+    ));
   }
 
   bool _showInterests() {
@@ -264,13 +268,14 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
               child: Text(
                 leftLabel,
                 style: leftLabelStyle,
+                semanticsLabel: "",
               )
             ),
           ),
-          Visibility(visible: starVisible, child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _onTapExploreCardStar,
-              child: Semantics(
+          Visibility(visible: starVisible, child:
+            Semantics(container: true, child:
+              Container( child:
+                Semantics(
                   label: isFavorite ? Localization().getStringEx(
                       'widget.card.button.favorite.off.title',
                       'Remove From Favorites') : Localization().getStringEx(
@@ -280,14 +285,17 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       'widget.card.button.favorite.off.hint', '') : Localization()
                       .getStringEx('widget.card.button.favorite.on.hint', ''),
                   button: true,
-                  excludeSemantics: true,
-                  child: Container(child: Padding(padding: EdgeInsets.only(
+                  child:  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _onTapExploreCardStar,
+                    child:Container(child: Padding(padding: EdgeInsets.only(
                       right: 16, top: 12, left: 24, bottom: 5),
                       child: Image.asset(isFavorite
                           ? 'images/icon-star-selected.png'
-                          : 'images/icon-star.png')
-                  ))
-              )),)
+                          : 'images/icon-star.png',
+                        excludeFromSemantics: true,)
+                      ))
+                  )),)))
         ],
     );
   }
