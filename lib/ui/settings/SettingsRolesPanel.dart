@@ -185,8 +185,8 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                     ),
                     Container(height: gridSpacing,),
                     RoleGridButton(
-                      title: 'GIES Student',
-                      hint: '',
+                      title: Localization().getStringEx('panel.onboarding.roles.button.gies.title', 'GIES Student'),
+                      hint: Localization().getStringEx('panel.onboarding.roles.button.gies.hint', ''),
                       iconPath: 'images/icon-persona-alumni-normal.png',
                       selectedIconPath: 'images/icon-persona-alumni-selected.png',
                       selectedBackgroundColor: Styles().colors.fillColorPrimary,
