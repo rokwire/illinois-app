@@ -221,7 +221,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
                 )))
         )),)
       ],
@@ -341,7 +341,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Image.asset('images/icon-calendar.png'),
+                  child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(displayTime,
                     style: TextStyle(
@@ -388,7 +388,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset(iconRes),
+                  child:Image.asset(iconRes, excludeFromSemantics: true),
                 ),
                 Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
                     style: TextStyle(
@@ -427,7 +427,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             padding: EdgeInsets.only(bottom: 16),
             child: Column(children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png')),
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png', excludeFromSemantics: true)),
                 Expanded(
                     child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)))
               ])
@@ -453,7 +453,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child:Image.asset('images/icon-cost.png'),
+                      child:Image.asset('images/icon-cost.png', excludeFromSemantics: true),
                     ),
                       Expanded(child:Text(priceText,
                         style: TextStyle(
@@ -495,7 +495,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/chevron-left.png'),),
+              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/chevron-left.png', excludeFromSemantics: true),),
               Expanded(child: Text(widget.superEventTitle, style: TextStyle(fontFamily: Styles().fontFamilies.medium,
                   fontSize: 16,
                   color: Styles().colors.fillColorPrimary,

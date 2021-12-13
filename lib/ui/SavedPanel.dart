@@ -453,7 +453,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
               )
               ),
               Padding(padding: EdgeInsets.only(right: 16),
-                child: InkWell(onTap: _onSkipTapped, child: Image.asset('images/close-white.png'))
+                child: InkWell(onTap: _onSkipTapped, child: Image.asset('images/close-white.png', excludeFromSemantics: true))
               )
 
             ],
@@ -695,7 +695,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                                     excludeSemantics: true,
                                     child: Container(
                                             padding: EdgeInsets.only(left: 24, bottom: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')))),
+                                            child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)))),
                           )
                         ],
                       )
@@ -706,7 +706,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                       Padding(padding: EdgeInsets.only(top: 12), child:
                         (cardDetailImgRes != null) ? 
                         Row(children: <Widget>[
-                          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes),),
+                          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes, excludeFromSemantics: true),),
                           Expanded(child:
                             Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
                           )

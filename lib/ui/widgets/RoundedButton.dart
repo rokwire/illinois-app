@@ -155,7 +155,7 @@ class SmallRoundedButton extends StatelessWidget {
                       visible: showChevron,
                       child: Padding(
                         padding: EdgeInsets.only(left: 5),
-                        child: Image.asset('images/chevron-right.png'),
+                        child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
                       ))
                 ],
               ),

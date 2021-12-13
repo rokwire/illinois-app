@@ -96,7 +96,7 @@ class ExpandableTextState extends State<ExpandableText> {
                           fontFamily: Styles().fontFamilies.bold,
                           color: Styles().colors.fillColorPrimary),),
                       Padding(
-                        padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color: widget.iconColor,),),
+                        padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down-orange.png', color: widget.iconColor, excludeFromSemantics: true),),
                     ],),
                   ),
                 ),

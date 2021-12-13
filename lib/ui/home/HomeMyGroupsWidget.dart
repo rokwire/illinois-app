@@ -80,7 +80,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   Widget _buildHeader() {
-    return Semantics(container: true ,
+    return Semantics(container: true , header: true,
     child: Container(color: Styles().colors.fillColorPrimary, child:
       Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
