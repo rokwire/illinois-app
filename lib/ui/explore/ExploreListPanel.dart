@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Event.dart';
@@ -26,12 +27,11 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:location/location.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
 class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final List<Explore> explores;
-  final LocationData initialLocationData;
+  final Position initialLocationData;
 
   ExploreListPanel({this.explores, this.initialLocationData});
 
