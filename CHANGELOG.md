@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.66] - 2021-12-13
 ### Changed
 - Hide "GIES Student" role button from onboarding and settings [#1121](https://github.com/rokwire/illinois-app/issues/1121).
 - Hide service initialization status in release builds [#1123](https://github.com/rokwire/illinois-app/issues/1123).
