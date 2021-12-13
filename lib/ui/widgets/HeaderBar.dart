@@ -44,7 +44,7 @@ class HeaderBar extends AppBar {
               button: true,
               excludeSemantics: true,
               child: IconButton(
-                icon: Image.asset('images/block-i-orange.png'),
+                icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true),
                 onPressed: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 })),
@@ -57,7 +57,7 @@ class HeaderBar extends AppBar {
                     hint: Localization().getStringEx('headerbar.search.hint', ''),
                     button: true,
                     child: IconButton(
-                      icon: Image.asset('images/icon-search.png'),
+                      icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -131,7 +131,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
       button: true,
       excludeSemantics: true,
       child: IconButton(
-        icon: Image.asset(backIconRes),
+        icon: Image.asset(backIconRes, excludeFromSemantics: true),
         onPressed: _onTapBack));
   }
 
@@ -151,7 +151,7 @@ class SimpleHeaderBarWithBack extends StatelessWidget implements PreferredSizeWi
       button: true,
       excludeSemantics: true,
       child: IconButton(
-        icon: Image.asset('images/icon-search.png', width: 20, height: 20, ),
+        icon: Image.asset('images/icon-search.png', width: 20, height: 20, excludeFromSemantics: true),
         onPressed: _onTapSearch,
       ));
   }
@@ -191,7 +191,7 @@ class SliverToutHeaderBar extends SliverAppBar {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
-                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover,)) : Container(),
+                AppString.isStringNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl!, fit: BoxFit.cover, excludeFromSemantics: true)) : Container(),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: rightTriangleColor ?? Styles().colors!.fillColorSecondaryTransparent05, left: false),
                   child: Container(
@@ -224,7 +224,7 @@ class SliverToutHeaderBar extends SliverAppBar {
                     height: 32,
                     width: 32,
                     color: Styles().colors!.fillColorPrimary,
-                    child: Image.asset('images/chevron-left-white.png')
+                    child: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true)
                 ),
               ),
             ),
@@ -256,7 +256,7 @@ class SliverHeaderBar extends SliverAppBar {
             button: true,
             excludeSemantics: true,
             child: IconButton(
-                icon: Image.asset(backIconRes),
+                icon: Image.asset(backIconRes, excludeFromSemantics: true),
                 onPressed: (){
                     Analytics.instance.logSelect(target: "Back");
                     if (onBackPressed != null) {

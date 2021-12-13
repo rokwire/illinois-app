@@ -157,7 +157,8 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                                     child: Image.asset(
                                                         isFavorite
                                                             ? 'images/icon-star-selected.png'
-                                                            : 'images/icon-star.png'))),
+                                                            : 'images/icon-star.png',
+                                                        excludeFromSemantics: true))),
                                           ))
                                     ],
                                   ),
@@ -295,7 +296,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
           child:Semantics(label:semanticText, excludeSemantics: true,child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Image.asset('images/icon-location.png'),
+                Image.asset('images/icon-location.png', excludeFromSemantics: true),
                 Padding(
                   padding: EdgeInsets.only(right: 5),
                 ),
@@ -418,7 +419,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Image.asset(imageAssetPath, semanticLabel: deviceName,),
+            Image.asset(imageAssetPath, semanticLabel: deviceName, excludeFromSemantics: true),
             Padding(
               padding: EdgeInsets.only(left: 12, right: 10),
               child: Text(

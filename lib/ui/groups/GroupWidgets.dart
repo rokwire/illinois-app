@@ -108,7 +108,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     splashColor: Styles().colors!.white,
                   ),
                   child: DropdownButton(
-                      icon: Image.asset('images/icon-down-orange.png'),
+                      icon: Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
                       isExpanded: true,
                       focusColor: Styles().colors!.white,
                       underline: Container(),
@@ -157,8 +157,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                         ),
                       )),
                   isSelected
-                      ? Image.asset("images/checkbox-selected.png")
-                      : Image.asset("images/oval-orange.png")
+                      ? Image.asset("images/checkbox-selected.png", excludeFromSemantics: true)
+                      : Image.asset("images/oval-orange.png", excludeFromSemantics: true)
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():
@@ -263,7 +263,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Image.asset('images/chevron-left-white.png'),
+          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: (){
             Analytics.instance.logSelect(target: "Back");
             Navigator.pop(context);
@@ -610,7 +610,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event!.exploreImageURL!, fit: BoxFit.fill,),),)),
+                      widget.event!.exploreImageURL!, excludeFromSemantics: true, fit: BoxFit.fill,),),)),
                 ])
                 )
     ],);

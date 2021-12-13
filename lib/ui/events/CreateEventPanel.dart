@@ -181,7 +181,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             alignment: Alignment.bottomCenter,
                             children: <Widget>[
                               AppString.isStringNotEmpty(_imageUrl)
-                                  ? Positioned.fill(child: Image.network(_imageUrl!, fit: BoxFit.cover))
+                                  ? Positioned.fill(child: Image.network(_imageUrl!, excludeFromSemantics: true, fit: BoxFit.cover))
                                   : Container(),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
                               CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white), child: Container(height: 30)),

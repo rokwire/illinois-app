@@ -124,6 +124,7 @@ class _SearchPanelState extends State<SearchPanel> {
                             'images/icon-x-orange.png',
                             width: 25,
                             height: 25,
+                            excludeFromSemantics: true
                           ),
                         ),
                       )
@@ -142,6 +143,7 @@ class _SearchPanelState extends State<SearchPanel> {
                             color: Styles().colors!.fillColorSecondary,
                             width: 25,
                             height: 25,
+                            excludeFromSemantics: true
                           ),
                         ),
                       ),

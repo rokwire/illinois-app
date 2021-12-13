@@ -665,7 +665,7 @@ class _ViewButton extends StatelessWidget{
               ),
             ),
             Container(width: 10,),
-            Image.asset('images/chevron-right.png'),
+            Image.asset('images/chevron-right.png', excludeFromSemantics: true),
           ],
         ),
       ),

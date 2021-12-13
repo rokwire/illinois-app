@@ -295,7 +295,7 @@ class _PendingMemberCard extends StatelessWidget {
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!) : Image.asset('images/missing-photo-placeholder.png')),
+            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member.photoURL, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
           ),
           Expanded(
             child: Padding(
@@ -357,7 +357,7 @@ class _GroupMemberCard extends StatelessWidget{
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!) : Image.asset('images/missing-photo-placeholder.png')),
+              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
             ),
             Expanded(
               child: Padding(

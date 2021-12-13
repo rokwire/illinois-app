@@ -128,7 +128,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
                     Semantics(label: Localization().getStringEx("widget.flex_content_widget.button.close.hint", "Close"), button: true, excludeSemantics: true, child:
                       InkWell(onTap: _onClose, child:
                         Container(width: 48, height: 48, alignment: Alignment.center, child:
-                          Image.asset('images/close-orange.png'))))),),
+                          Image.asset('images/close-orange.png', excludeFromSemantics: true))))),),
     ],),)],),),),);
   }
 

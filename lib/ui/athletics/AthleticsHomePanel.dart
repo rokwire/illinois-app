@@ -225,7 +225,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 fontSize: 16),
                                           ),
                                           Image.asset(
-                                              'images/icon-check-example.png'),
+                                              'images/icon-check-example.png', excludeFromSemantics: true),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams")!,
@@ -269,7 +269,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             width: double.infinity,
                                             child: Image.asset('images/slant-down-right-blue.png',
                                               fit:BoxFit.fill,
-                                              color: Styles().colors!.fillColorPrimaryVariant
+                                              color: Styles().colors!.fillColorPrimaryVariant,
+                                              excludeFromSemantics: true
                                             ),
                                           )
                                         ],
@@ -285,8 +286,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Image.asset(
-                                                      'images/explore.png'),
+                                                  child: Image.asset('images/explore.png', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
@@ -637,6 +637,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                   child: Image.asset('images/slant-down-right.png',
                     color: Styles().colors!.fillColorSecondary,
                     fit: BoxFit.fill,
+                    excludeFromSemantics: true
                   ),
                 )
                     : Container(height: 0),
@@ -715,7 +716,8 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                                 bottom: 8),
                                             child: Image.asset(isFavorite
                                                 ? 'images/icon-star-selected.png'
-                                                : 'images/icon-star.png')
+                                                : 'images/icon-star.png',
+                                                excludeFromSemantics: true)
                                         ))
                                     )),)
                             ],
@@ -837,7 +839,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
           children: <Widget>[
-            Image.asset('images/icon-time.png'),
+            Image.asset('images/icon-time.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),
@@ -862,7 +864,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
         child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-location.png'),
+            Image.asset('images/icon-location.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),

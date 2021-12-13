@@ -73,7 +73,7 @@ class RibbonButton extends StatelessWidget {
             padding: padding,
             child:  Row(
               children: <Widget>[
-                AppString.isStringNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon!)) : Container(),
+                AppString.isStringNotEmpty(leftIcon) ? Padding(padding: EdgeInsets.only(right: 7), child: Image.asset(leftIcon!, excludeFromSemantics: true)) : Container(),
                 Expanded(child:
                   Text(label!,
                     style: style ?? TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
@@ -89,7 +89,7 @@ class RibbonButton extends StatelessWidget {
   }
 
   Widget? getImage() {
-    return (icon != null) ? Image.asset(icon) : null;
+    return (icon != null) ? Image.asset(icon, excludeFromSemantics: true) : null;
   }
 
   void anaunceChange() {}
@@ -122,7 +122,7 @@ class ToggleRibbonButton extends RibbonButton {
 
   @override
   Widget getImage() {
-    return Image.asset(toggled! ? 'images/switch-on.png' : 'images/switch-off.png');
+    return Image.asset(toggled! ? 'images/switch-on.png' : 'images/switch-off.png', excludeFromSemantics: true);
   }
 
   @override

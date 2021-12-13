@@ -83,7 +83,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                                   width: 42,
                                   alignment: Alignment.topCenter,
                                   child: IconButton(
-                                    icon: Image.asset("images/chevron-left-white.png"),
+                                    icon: Image.asset("images/chevron-left-white.png", excludeFromSemantics: true),
                                     onPressed: _onTapBack))),
                             Expanded(child:Container()),
                             Container(height: 90,
@@ -289,7 +289,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                     Padding(
                       padding: EdgeInsets.only(bottom: 16),
                       child:
-                      Image.asset((iconPath)),
+                      Image.asset(iconPath, excludeFromSemantics: true),
                     ),
                     Container(height: 10,),
                     Container(

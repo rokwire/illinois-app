@@ -157,7 +157,7 @@ class LaundryRoomRibbonButton extends StatelessWidget {
                           fontFamily: labelFontFamily ?? Styles().fontFamilies!.medium),
                     ),
                   ),
-                  Image.asset('images/chevron-right.png')
+                  Image.asset('images/chevron-right.png', excludeFromSemantics: true)
                 ],
               ),
             ),

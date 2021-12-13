@@ -113,7 +113,7 @@ class _PrivacyTicketsDialogState extends State<PrivacyTicketsDialog> {
                                         onTap: () {
                                           _onTapClose();
                                         },
-                                        child: Container(child: Image.asset('images/close-white.png')))))
+                                        child: Container(child: Image.asset('images/close-white.png', excludeFromSemantics: true)))))
                           ])))),
               Container(
                   width: double.infinity,

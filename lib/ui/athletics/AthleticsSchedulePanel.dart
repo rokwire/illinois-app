@@ -64,7 +64,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
         Container(color:Styles().colors!.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
-            Image.asset(widget.sport!.iconPath!),
+            Image.asset(widget.sport!.iconPath!, excludeFromSemantics: true),
             Padding(padding: EdgeInsets.only(left: 8)),
             Text(widget.sport!.name!, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.whiteTransparent06,)),
           ],),
