@@ -17,11 +17,11 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:location/location.dart';
 
 enum LocationServicesStatus {
   ServiceDisabled,
@@ -36,8 +36,8 @@ class LocationServices with Service implements NotificationsListener {
   static const String notifyLocationChanged  = "edu.illinois.rokwire.locationservices.location.changed";
 
   LocationServicesStatus _lastStatus;
-  LocationData _lastLocation;
-  StreamSubscription<LocationData> _locationMonitor;
+  Position _lastLocation;
+  StreamSubscription<Position> _locationMonitor;
 
   // Singletone Instance
 
@@ -91,17 +91,9 @@ class LocationServices with Service implements NotificationsListener {
   }
 
   Future<LocationServicesStatus> requestService() async {
-    
-    if (!await Location().serviceEnabled()) {
-      if (!await Location().requestService()) {
-        _lastStatus = LocationServicesStatus.ServiceDisabled;
-      }
-      else {
-        _lastStatus = await this.status;
-        _notifyStatusChanged();
-      }
-    }
-    else {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      _lastStatus = LocationServicesStatus.ServiceDisabled;
+    } else {
       _lastStatus = await this.status;
     }
 
@@ -120,13 +112,13 @@ class LocationServices with Service implements NotificationsListener {
     return _lastStatus;
   }
 
-  Future<LocationData> get location async {
-    return (await this.status == LocationServicesStatus.PermissionAllowed) ? await Location().getLocation() : null;
+  Future<Position> get location async {
+    return (await this.status == LocationServicesStatus.PermissionAllowed) ? await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high) : null;
   }
 
   // Location Monitor
 
-  LocationData get lastLocation {
+  Position get lastLocation {
     return _lastLocation;
   }
 
@@ -142,8 +134,9 @@ class LocationServices with Service implements NotificationsListener {
 
   void _openLocationMonitor() {
     if (_locationMonitor == null) {
-      _locationMonitor = Location().onLocationChanged.listen((LocationData location) {
-        _lastLocation = location;
+      final LocationSettings locationSettings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 100);
+      _locationMonitor = Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
+        _lastLocation = position;
         _notifyLocationChanged();
       });
     }

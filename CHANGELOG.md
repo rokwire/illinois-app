@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hide service initialization status in release builds [#1123](https://github.com/rokwire/illinois-app/issues/1123).
 - Improved semantics [#1013](https://github.com/rokwire/illinois-app/issues/1013).
 - Open My Illini in an external browser [#1100](https://github.com/rokwire/illinois-app/issues/1100).
+### Fixed
+- Change "location" plugin with "geolocator" plugin. Fix Android builds [#1127](https://github.com/rokwire/illinois-app/issues/1127).
 
 ## [3.0.65] - 2021-12-10
 ### Added

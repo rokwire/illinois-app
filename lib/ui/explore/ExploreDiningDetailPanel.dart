@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -28,7 +29,6 @@ import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:location/location.dart' as Core;
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
@@ -47,7 +47,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Dining dining;
-  final Core.LocationData initialLocationData;
+  final Core.Position initialLocationData;
 
   ExploreDiningDetailPanel({this.dining, this.initialLocationData});
 
@@ -70,7 +70,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   bool _isDiningLoading = false;
 
   //Maps
-  Core.LocationData _locationData;
+  Core.Position _locationData;
 
   // Dining Worktime
   bool _diningWorktimeExpanded = false;

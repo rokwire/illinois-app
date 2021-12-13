@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as Http;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
@@ -34,7 +35,6 @@ import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:location/location.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -543,11 +543,11 @@ class Analytics with Service implements NotificationsListener {
   }
 
   Map<String, dynamic> get _location {
-    LocationData location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
+    Position location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': (location.time * 1000).toInt(),
+      'timestamp': location.timestamp?.millisecondsSinceEpoch,
     } : null;
   }
   

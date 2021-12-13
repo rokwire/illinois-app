@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -27,7 +28,6 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreConvergeDetailItem.dart';
-import 'package:location/location.dart' as Core;
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Dining.dart';
@@ -38,7 +38,7 @@ import 'package:illinois/service/Styles.dart';
 class ExploreCard extends StatefulWidget {
   final GestureTapCallback onTap;
   final Explore explore;
-  final Core.LocationData locationData;
+  final Core.Position locationData;
   final bool showTopBorder;
   final bool hideInterests;
   final bool showSmallImage;
