@@ -49,7 +49,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
 
     if (widget.refreshController != null) {
       widget.refreshController.stream.listen((_) {
-        if (!kReleaseMode /*|| (Config().configEnvironment == ConfigEnvironment.dev)*/) {
+        if (kDebugMode /*|| (Config().configEnvironment == ConfigEnvironment.dev)*/) {
           setState(() {
             _resetNavigationPages();
             _resetCompleted();
