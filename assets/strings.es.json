@@ -426,6 +426,8 @@
     "panel.onboarding.roles.button.employee.hint":"",
     "panel.onboarding.roles.button.parent.title":"Padre",
     "panel.onboarding.roles.button.parent.hint":"",
+    "panel.onboarding.roles.button.gies.title":"Estudiante de GIES",
+    "panel.onboarding.roles.button.gies.hint":"",
     "panel.onboarding.roles.button.continue.title":"Continuar",
     "panel.onboarding.roles.button.continue.hint":"",
 
@@ -520,6 +522,8 @@
     "panel.onboarding2.roles.button.employee.hint": "",
     "panel.onboarding2.roles.button.parent.title": "Parent",
     "panel.onboarding2.roles.button.parent.hint": "",
+    "panel.onboarding2.roles.button.gies.title": "GIES Student",
+    "panel.onboarding2.roles.button.gies.hint": "",
     "panel.onboarding2.roles.button.continue.title": "Continue",
     "panel.onboarding2.roles.button.continue.hint": "",
 
