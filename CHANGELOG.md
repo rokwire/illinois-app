@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show GIES role button again, updated GIES widget title [#1132](https://github.com/rokwire/illinois-app/issues/1132).
+- Add image to group posts [#1134](https://github.com/rokwire/illinois-app/issues/1134)
 
 ## [3.0.67] - 2021-12-14
 ### Changed

@@ -835,9 +835,10 @@ class GroupPost {
   final DateTime dateCreatedUtc;
   final DateTime dateUpdatedUtc;
   final bool private;
+  final String imageUrl;
   final List<GroupPost> replies;
 
-  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.replies});
+  GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.imageUrl, this.replies});
 
   factory GroupPost.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -852,6 +853,7 @@ class GroupPost {
         dateCreatedUtc: groupUtcDateTimeFromString(json['date_created']),
         dateUpdatedUtc: groupUtcDateTimeFromString(json['date_updated']),
         private: json['private'],
+        imageUrl: AppJson.stringValue(json["image_url"]),
         replies: GroupPost.fromJsonList(json['replies']));
   }
 
@@ -866,6 +868,9 @@ class GroupPost {
     }
     if (subject != null) {
       json['subject'] = subject;
+    }
+    if(imageUrl!=null){
+      json['image_url'] = imageUrl;
     }
     return json;
   }
