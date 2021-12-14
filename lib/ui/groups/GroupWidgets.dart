@@ -1034,6 +1034,8 @@ class GroupCard extends StatelessWidget {
 // GroupPostCard
 
 class GroupPostCard extends StatefulWidget {
+
+
   final GroupPost post;
   final Group group;
 
@@ -1045,6 +1047,7 @@ class GroupPostCard extends StatefulWidget {
 }
 
 class _GroupPostCardState extends State<GroupPostCard> {
+  static const double _smallImageSize = 64;
 
   @override
   void initState() {
@@ -1055,7 +1058,8 @@ class _GroupPostCardState extends State<GroupPostCard> {
   Widget build(BuildContext context) {
     String memberName = widget.post?.member?.name;
     String htmlBody = widget.post?.body;
-    int visibleRepliesCount = getVisibleRepliesCount();
+    String imageUrl = widget.post?.imageUrl;
+    int visibleRepliesCount =getVisibleRepliesCount();
     bool isRepliesLabelVisible = (visibleRepliesCount > 0);
     String repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1091,18 +1095,33 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                     style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 14)))
                           ])),
                     ]),
-                    Container(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: Html(data: htmlBody, style: {
-                          "body": Style(
-                              color: Styles().colors.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies.regular,
-                              fontSize: FontSize(16),
-                              maxLines: 3,
-                              textOverflow: TextOverflow.ellipsis,
-                              margin: EdgeInsets.zero,
-                          ),
-                        }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url))),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Html(data: htmlBody, style: {
+                              "body": Style(
+                                  color: Styles().colors.fillColorPrimary,
+                                  fontFamily: Styles().fontFamilies.regular,
+                                  fontSize: FontSize(16),
+                                  maxLines: 3,
+                                  textOverflow: TextOverflow.ellipsis,
+                                  margin: EdgeInsets.zero,
+                              ),
+                            }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+                        AppString.isStringEmpty(imageUrl)? Container() :
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                                padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                                child: SizedBox(
+                                  width: _smallImageSize,
+                                  height: _smallImageSize,
+                                  child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),)
+                          )
+                    ],),
                     Container(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
