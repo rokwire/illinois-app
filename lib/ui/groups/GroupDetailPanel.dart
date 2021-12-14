@@ -564,13 +564,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       String tags = "";
       if (_group?.tags?.isNotEmpty ?? false) {
         for (String tag in _group!.tags!) {
-          if (0 < (tag?.length ?? 0)) {
-            tags+=((tags.isNotEmpty? ", ": "") + tag ?? '');
+          if (0 < tag.length) {
+            tags+=((tags.isNotEmpty? ", ": "") + tag);
           }
         }
       }
 
-      if(tags?.isNotEmpty ?? false) {
+      if(tags.isNotEmpty) {
         commands.add(Container(height: 12,));
         commands.add(
           Padding(padding: EdgeInsets.symmetric(vertical: 4),
@@ -961,8 +961,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.white))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   RoundedButton(
-                      label: AppString.getDefaultEmptyString(
-                          value: negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")),
+                      label: AppString.getDefaultEmptyString(negativeButtonLabel, defaultValue: Localization().getStringEx("panel.group_detail.button.back.title", "Back")!),
                       fontFamily: "ProximaNovaRegular",
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.white,
@@ -1264,7 +1263,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _scrollToLastPost() {
-    BuildContext? currentContext = _lastPostKey?.currentContext;
+    BuildContext? currentContext = _lastPostKey.currentContext;
     if (currentContext != null) {
       Scrollable.ensureVisible(currentContext, duration: Duration(milliseconds: 10));
     }
@@ -1306,7 +1305,7 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128,
           decoration: BoxDecoration(
-            image: DecorationImage(image: (AppString.isStringNotEmpty(groupMember?.photoURL) ? NetworkImage(groupMember?.photoURL!) : AssetImage('images/missing-photo-placeholder.png')) as ImageProvider<Object>, fit: BoxFit.contain),
+            image: DecorationImage(image: (AppString.isStringNotEmpty(groupMember?.photoURL) ? NetworkImage(groupMember!.photoURL!) : AssetImage('images/missing-photo-placeholder.png')) as ImageProvider<Object>, fit: BoxFit.contain),
               borderRadius: BorderRadius.all(Radius.circular(4))),
           ),
         Padding(padding: EdgeInsets.only(top: 4),

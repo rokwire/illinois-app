@@ -144,8 +144,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           sortKey: OrdinalSortKey(1),
                                           container: true,
                                           child: Text(
-                                            AppString.getDefaultEmptyString(
-                                                value: _post?.subject)!,
+                                            AppString.getDefaultEmptyString(_post?.subject),
                                             maxLines: 5,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
@@ -294,8 +293,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           child: Padding(
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
                               child: Text(
-                                  AppString.getDefaultEmptyString(
-                                      value: _post?.member?.name )!,
+                                  AppString.getDefaultEmptyString(_post?.member?.name ),
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
@@ -309,8 +307,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           child: Padding(
                               padding: EdgeInsets.only(top: 3, right: _outerPadding),
                               child: Text(
-                                  AppString.getDefaultEmptyString(
-                                      value: _post?.displayDateTime)!,
+                                  AppString.getDefaultEmptyString(_post?.displayDateTime),
                                   semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
@@ -602,7 +599,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if(AppCollection.isCollectionNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc!));
+            post1!.dateCreatedUtc!.compareTo(post2!.dateCreatedUtc!));
       } catch (e) {}
     }
   }
@@ -640,7 +637,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _evalSliverHeaderHeight() {
     double? sliverHeaderHeight;
     try {
-      final RenderObject? renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _sliverHeaderKey.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
         sliverHeaderHeight = renderBox.size.height;
       }
@@ -833,7 +830,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       setState(() {
         _editingPost = reply;
       });
-      _bodyController.text = (reply ?? _post)?.body!;
+      _bodyController.text = (reply ?? _post)!.body!;
       _scrollToPostEdit();
     }
   }
@@ -850,7 +847,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
-        _post = posts!.firstWhere((post) => (post!.id == _post?.id), orElse: (){ return null; });
+        try { _post = posts!.firstWhere((post) => (post.id == _post!.id)); }
+        catch (e) {}
         _sortReplies(_post?.replies);
         GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
@@ -1008,7 +1006,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     int linkStartPosition = _bodyController.selection.start;
     int linkEndPosition = _bodyController.selection.end;
     _linkTextController.text = AppString.getDefaultEmptyString(
-        value: _bodyController.selection?.textInside(_bodyController.text))!;
+        _bodyController.selection.textInside(_bodyController.text));
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: _buildLinkDialog(),
@@ -1129,15 +1127,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _scrollToPostEdit() {
 
-    BuildContext? postEditContext = _postEditKey?.currentContext;
+    BuildContext? postEditContext = _postEditKey.currentContext;
     //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
-    RenderObject renderObject = postEditContext?.findRenderObject()!;
+    RenderObject? renderObject = postEditContext?.findRenderObject();
     RenderAbstractViewport? viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
-    double? postEditTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
+    double? postEditTop = (viewport != null) ? viewport.getOffsetToReveal(renderObject!, 0.0).offset : null;
 
-    BuildContext? scrollContainerContext = _scrollContainerKey?.currentContext;
+    BuildContext? scrollContainerContext = _scrollContainerKey.currentContext;
     RenderObject? scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
-    double? scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size?.height : null;
+    double? scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size.height : null;
 
     if ((scrollContainerHeight != null) && (postEditTop != null)) {
       double offset = postEditTop - scrollContainerHeight + 120;

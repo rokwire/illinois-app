@@ -27,7 +27,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {
-  final List<GroupMembershipQuestion?>? questions;
+  final List<GroupMembershipQuestion>? questions;
 
   GroupMembershipQuestionsPanel({this.questions});
 
@@ -235,7 +235,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     Analytics().logSelect(target: 'Update questions');
     for (int index = 0; index < _questions!.length; index++) {
       String question = _controllers![index].text;
-      if ((question != null) && (0 < question.length)) {
+      if ((0 < question.length)) {
         _questions![index]!.question = question;
       }
       else {

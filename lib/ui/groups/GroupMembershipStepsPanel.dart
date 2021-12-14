@@ -32,7 +32,7 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembershipStepsPanel extends StatefulWidget {
-  final List<GroupMembershipStep?>? steps;
+  final List<GroupMembershipStep>? steps;
 
   GroupMembershipStepsPanel({this.steps});
 
@@ -42,10 +42,10 @@ class GroupMembershipStepsPanel extends StatefulWidget {
 }
 
 class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
-  late List<GroupMembershipStep?> _steps;
+  late List<GroupMembershipStep> _steps;
   List<FocusNode>? _focusNodes;
   List<TextEditingController>? _controllers;
-  Map<String?, Event?> _events = Map<String?, Event?>();
+  Map<String, Event> _events = Map<String, Event>();
 
   @override
   void initState() {
@@ -69,18 +69,22 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       ExploreService().loadEventsByIds(eventIds).then((List<Event>? events) {
         if (events != null) {
           for (Event event in events) {
-            _events[event.id] = event;
+            if (event.id != null) {
+              _events[event.id!] = event;
+            }
           }
           if (mounted) {
             setState(() {});
           }
         }
       });
-      Groups().loadEvents(null).then((Map<int, List<GroupEvent?>>? eventsMap) {
-        List<GroupEvent?>? events = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
+      Groups().loadEvents(null).then((Map<int, List<GroupEvent>>? eventsMap) {
+        List<GroupEvent>? events = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;
         if (AppCollection.isCollectionNotEmpty(events)) {
-          for (Event? event in events!) {
-            _events[event!.id] = event;
+          for (Event event in events!) {
+            if (event.id != null) {
+              _events[event.id!] = event;
+            }
           }
           if (mounted) {
             setState(() {});
@@ -204,7 +208,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
       ],),
     ];
     
-    List<String?>? eventIds = _steps[index]!.eventIds;
+    List<String>? eventIds = _steps[index].eventIds;
     int eventsCount = eventIds?.length ?? 0;
     if (0 < eventsCount) {
       for (int eventIndex = 0; eventIndex < eventsCount; eventIndex++) {
@@ -276,18 +280,20 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
 
   void _addEvent({required int stepIndex}) {
     Analytics().logSelect(target: 'Connect event');
-    GroupMembershipStep step = _steps[stepIndex]!;
+    GroupMembershipStep step = _steps[stepIndex];
     if (step.eventIds == null) {
-      step.eventIds = <String?>[];
+      step.eventIds = <String>[];
     }
     GroupEventsContext groupContext = GroupEventsContext(events: <Event>[]);
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupFindEventPanel(groupContext: groupContext,))).then((_){
       for (Event newEvent in groupContext.events!) {
-        if (!step.eventIds!.contains(newEvent.id)) {
-          step.eventIds!.add(newEvent.id);
-        }
-        if (!_events.containsKey(newEvent.id)) {
-          _events[newEvent.id] = newEvent;
+        if (newEvent.id != null) {
+          if (!step.eventIds!.contains(newEvent.id)) {
+            step.eventIds!.add(newEvent.id!);
+          }
+          if (!_events.containsKey(newEvent.id)) {
+            _events[newEvent.id!] = newEvent;
+          }
         }
       }
       setState(() {});
@@ -297,7 +303,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   void _removeEvent({int? stepIndex, int? eventIndex}) {
     Analytics().logSelect(target: 'Remove event');
     setState(() {
-      GroupMembershipStep? step = _steps[stepIndex!];
+      GroupMembershipStep? step = (stepIndex != null) ? _steps[stepIndex] : null;
       step?.eventIds?.removeAt(eventIndex!);
     });
   }
@@ -305,11 +311,11 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   void _onSubmit() {
     Analytics().logSelect(target: 'Save Steps');
     for (int index = 0; index < _steps.length; index++) {
-      GroupMembershipStep? step = _steps[index];
+      GroupMembershipStep step = _steps[index];
 
       String text = _controllers![index].text;
-      if ((text != null) && (0 < text.length)) {
-        step!.description = text;
+      if ((0 < text.length)) {
+        step.description = text;
       }
       else {
         AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_request.button.add_steps.alert", 'Please input step #')!+(index+1).toString()).then((_){

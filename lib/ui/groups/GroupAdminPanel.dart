@@ -137,7 +137,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
             ],
           ),
           Container(height: 12,),
-          Text(widget.group?.title!,
+          Text(widget.group?.title ?? '',
             style: TextStyle(
               fontFamily: Styles().fontFamilies!.extraBold,
               fontSize: 32,
@@ -182,12 +182,10 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
         children: widget.groupEvents!.map((event){
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: _EventCard(groupEvent: event,groupId: widget?.group?.id, onDeleteTap: (GroupEvent event){
-              if(event!=null){
-                widget.groupEvents!.remove(event);
-//                Groups().updateGroupEvents(widget?.group?.id, widget.groupEvents);//TBD Consider how to notify service for the update
-                setState(() {});
-              }
+            child: _EventCard(groupEvent: event,groupId: widget.group?.id, onDeleteTap: (GroupEvent event){
+              widget.groupEvents!.remove(event);
+//            Groups().updateGroupEvents(widget?.group?.id, widget.groupEvents);//TBD Consider how to notify service for the update
+              setState(() {});
             },),
           );
         }).toList(),
@@ -306,30 +304,28 @@ class _EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool editable = true;//TBD
     
     List<Widget> content = [
       EventContent(event: groupEvent,
         topRightButton:
-        editable?
         GestureDetector(onTap:(){ _onSettingsTap(context,groupEvent);},
           child: Container(width: 48, height: 48, color: Colors.transparent,
             child: Align(alignment: Alignment.center,
               child: Image.asset("images/group-event-settings.png"),
             ),
           ),
-        ):
-        GestureDetector(onTap:(){ _onDeleteTap(context,groupEvent);},
+        )
+        /*GestureDetector(onTap:(){ _onDeleteTap(context,groupEvent);},
           child: Container(width: 48, height: 48, color: Colors.transparent,
             child: Align(alignment: Alignment.center,
               child: Text('X', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
             ),
           ),
-        ),
+        ),*/
       )
     ];
 
-    if (0 < groupEvent?.comments?.length ?? 0 as bool) {
+    if (0 < (groupEvent?.comments?.length ?? 0)) {
       content.add(Container(color: Styles().colors!.surfaceAccent, height: 1,));
 
       List<Widget> content2 = [];

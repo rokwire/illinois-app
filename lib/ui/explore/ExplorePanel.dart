@@ -1348,9 +1348,10 @@ class ExplorePanelState extends State<ExplorePanel>
     return mapExplore; // null;
   }
 
-  List<Explore> _exploresFromMapExplores(List<Explore> mapExplores) {
-    List<Explore> explores = [];
+  List<Explore>? _exploresFromMapExplores(List<Explore>? mapExplores) {
+    List<Explore>? explores;
     if (mapExplores != null) {
+      explores = <Explore>[];
       for (Explore mapExplore in mapExplores) {
         explores.add(_exploreFromMapExplore(mapExplore) ?? mapExplore);
       }
@@ -1416,7 +1417,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_nativeMapController!.mapId == mapID) {
       dynamic explore;
       if (exploreJson is Map) {
-        explore = _exploreFromMapExplore(Explore.fromJson(exploreJson as Map<String, dynamic>?));
+        explore = _exploreFromMapExplore(Explore.fromJson(AppJson.mapValue(exploreJson)));
       }
       else if (exploreJson is List) {
         explore = _exploresFromMapExplores(Explore.listFromJson(exploreJson));

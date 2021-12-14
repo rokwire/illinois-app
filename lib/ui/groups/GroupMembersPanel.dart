@@ -55,8 +55,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   bool _showAllRequestVisibility = true;
 
-  List<Member?>? _pendingMembers;
-  List<Member?>? _members;
+  List<Member>? _pendingMembers;
+  List<Member>? _members;
 
   String? _allMembersFilter;
   String? _selectedMembersFilter;
@@ -95,14 +95,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _loadMembers(){
     setState(() {
       _isMembersLoading = false;
-      _pendingMembers = _group!.getMembersByStatus(GroupMemberStatus.pending);
-      _pendingMembers!.sort((member1, member2) => member1!.name!.compareTo(member2!.name!));
+      _pendingMembers = _group?.getMembersByStatus(GroupMemberStatus.pending);
+      _pendingMembers?.sort((member1, member2) => member1.name!.compareTo(member2.name!));
 
       _members = AppCollection.isCollectionNotEmpty(_group?.members)
-          ? _group!.members!.where((member) => (member!.status != GroupMemberStatus.pending)).toList()
+          ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList()
           : [];
       _members!.sort((member1, member2){
-        if(member1!.status == member2!.status){
+        if(member1.status == member2.status){
           return member1.name!.compareTo(member2.name!);
         } else {
           if(member1.isAdmin && !member2.isAdmin) return -1;
@@ -295,7 +295,7 @@ class _PendingMemberCard extends StatelessWidget {
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member.photoURL, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
           ),
           Expanded(
             child: Padding(

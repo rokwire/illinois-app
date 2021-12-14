@@ -498,7 +498,7 @@ class Event with Explore implements Favorite {
   }
 
   bool get isRecurring {
-    return recurringFlag! && (recurringEvents?.isNotEmpty ?? false);
+    return (recurringFlag == true) && (recurringEvents?.isNotEmpty ?? false);
   }
 
   void addRecurrentEvent(Event event) {

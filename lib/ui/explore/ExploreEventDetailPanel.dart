@@ -440,7 +440,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     String priceText =isFree? "Free" : (widget.event?.cost ?? "Free");
     String? additionalDescription = isFree? widget.event?.cost : null;
     bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
-    if ((priceText != null) && priceText.isNotEmpty) {
+    if (priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
           value: priceText,
@@ -508,12 +508,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     ),);
   }
 
-  Widget _exploreTags(){
+  Widget? _exploreTags(){
     if(widget.event?.tags != null){
       List<String> capitalizedTags = widget.event!.tags!.map((entry)=>'${entry[0].toUpperCase()}${entry.substring(1)}').toList();
       return Padding(
         padding: const EdgeInsets.only(left: 30),
-        child: capitalizedTags != null && capitalizedTags.isNotEmpty ? Column(
+        child: capitalizedTags.isNotEmpty ? Column(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -832,7 +832,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     ExploreService().postNewEvent(widget.event).then((String? eventId){
         if(eventId!=null){
           AppToast.show("Event successfully created");
-          Navigator.pop(context,eventId!=null);
+          Navigator.pop(context,true);
         }else {
           AppToast.show("Unable to create Event");
         }
