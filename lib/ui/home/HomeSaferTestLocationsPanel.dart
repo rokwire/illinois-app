@@ -512,7 +512,7 @@ class HealthServiceLocation {
 
   static HealthServiceLocation fromJson(Map<String, dynamic> json) {
     return (json != null) ? HealthServiceLocation(
-      id: json['id'],
+      id: json['_id'],
       name: json['name'],
       contact: json["contact"],
       city: json["city"],
@@ -532,7 +532,7 @@ class HealthServiceLocation {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'name': name,
       'contact': contact,
       'city': city,
