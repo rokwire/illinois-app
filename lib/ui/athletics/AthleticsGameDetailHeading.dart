@@ -16,11 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -48,7 +49,7 @@ class AthleticsGameDetailHeading extends StatefulWidget {
 class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, [LiveStats.notifyLiveGamesLoaded, User.notifyFavoritesUpdated]);
+    NotificationService().subscribe(this, [LiveStats.notifyLiveGamesLoaded, Auth2UserPrefs.notifyFavoritesChanged]);
     super.initState();
   }
 
@@ -64,7 +65,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   void onNotification(String name, dynamic param) {
     if (name == LiveStats.notifyLiveGamesLoaded) {
       setState(() {});
-    } else if (name == User.notifyFavoritesUpdated) {
+    } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -74,7 +75,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     String sportKey = widget.game.sport?.shortName;
     String sportName = widget.game.sport?.title;
     SportDefinition sportDefinition = Sports().getSportByShortName(sportKey);
-    bool isTicketedSport = (sportDefinition != null) ? sportDefinition.ticketed : false;
+    bool isTicketedSport = sportDefinition?.ticketed ?? false;
     bool isMenBasketball = ('mbball' == sportKey);
     bool isHomeGame = widget.game.isHomeGame;
     bool isGameDay = widget.game.isGameDay;
@@ -82,10 +83,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     bool showGetTickets = isTicketedSport && (widget.game.links?.tickets != null);
     bool showParking = widget.game.parkingUrl != null;
     bool showGameDayGuide = widget.game.isHomeGame;
-    bool hasScores = sportDefinition.hasScores;
+    bool hasScores = sportDefinition?.hasScores ?? false;
     bool hasLiveGame = Storage().debugDisableLiveGameCheck ? true : LiveStats().hasLiveGame(widget.game.id);
     bool showScore = hasScores && widget.game.isGameDay && hasLiveGame;
-    bool isGameSaved = User().isFavorite(widget.game);
+    bool isGameFavorite = Auth2().isFavorite(widget.game);
     String liveStatsUrl = widget.game?.links?.liveStats;
     String audioUrl = widget.game?.links?.audio;
     String videoUrl = widget.game?.links?.video;
@@ -113,7 +114,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                   Container(
                     color: Styles().colors.fillColorPrimary,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      padding: EdgeInsets.only(left: 24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -139,17 +140,17 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 child: Container(),
                               ),
                               Visibility(
-                                visible: User().favoritesStarVisible,
+                                visible: Auth2().canFavorite,
                                 child: Semantics(
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
                                   hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", ""),
                                   button: true,
-                                  checked: isGameSaved,
+                                  checked: isGameFavorite,
                                   child: GestureDetector(
-                                      child: Image.asset(
-                                        isGameSaved ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',
-                                      ),
-                                      onTap: _onTapSaveGame),
+                                      child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
+                                        child: Image.asset(isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',excludeFromSemantics: true
+                                      )),
+                                      onTap: _onTapSwitchFavorite),
                                 ),
                               )
                             ],
@@ -182,7 +183,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: Row(
                                     children: <Widget>[
-                                      Image.asset('images/icon-calendar.png'),
+                                      Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
@@ -206,7 +207,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(right: 10),
-                                      child: Image.asset('images/icon-location.png'),
+                                      child: Image.asset('images/icon-location.png', excludeFromSemantics: true),
                                     ),
                                     Flexible(
                                         child: Text(
@@ -410,11 +411,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     if(widget.showImageTout) {
       if (!AppString.isStringEmpty(widget.game.imageUrl)) {
         widgets.add(Positioned(
-            child: Semantics(
-                excludeSemantics: true,
-                child: Image.network(
-                  widget.game.imageUrl,
-                ))));
+            child: Image.network(
+              widget.game.imageUrl,
+              excludeFromSemantics: true
+            )));
       }
       widgets.add(Semantics(
           excludeSemantics: true,
@@ -431,15 +431,15 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     return widgets;
   }
 
-  void _onTapSaveGame() {
+  void _onTapSwitchFavorite() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
-    User().switchFavorite(widget.game);
+    Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapGetTickets() {
     Analytics.instance.logSelect(target: "Get Tickets");
 
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
       });
@@ -510,7 +510,7 @@ class _DetailRibbonButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Image.asset(iconResource),
+                  Image.asset(iconResource, excludeFromSemantics: true),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
@@ -721,13 +721,13 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getHomeImage() {
     if (widget._game.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true);
     } else {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
       if(AppString.isStringNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl);
+        return Image.network(opponentUrl, excludeFromSemantics: true);
       } else {
         return Container();
       }
@@ -773,13 +773,13 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getAwayImage() {
     if (!widget._game.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true);
     } else {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
       if(AppString.isStringNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl);
+        return Image.network(opponentUrl, excludeFromSemantics: true);
       } else {
         return Container();
       }
@@ -888,7 +888,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
-      return Image.network(opponentUrl);
+      return Image.network(opponentUrl, excludeFromSemantics: true);
     }
   }
 
@@ -900,7 +900,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
       //return opponent image
       Opponent opponent = widget._game.opponent;
       String opponentUrl = opponent != null ? opponent.logoImage : null;
-      return Image.network(opponentUrl);
+      return Image.network(opponentUrl, excludeFromSemantics: true);
     }
   }
 

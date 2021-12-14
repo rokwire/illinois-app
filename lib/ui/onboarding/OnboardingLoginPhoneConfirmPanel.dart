@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -52,7 +52,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
 
   @override
   Widget build(BuildContext context) {
-    String phoneNumber = Auth().phoneToken?.phone;
+    String phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext["phone"] : widget.phoneNumber;
     String maskedPhoneNumber = AppString.getMaskedPhoneNumber(phoneNumber);
     String description = sprintf(
         Localization().getStringEx(
@@ -201,21 +201,18 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     if (AppString.isStringNotEmpty(_verificationErrorMsg)) {
       return;
     }
-    String phoneNumber = (widget.onboardingContext != null) ? widget.onboardingContext["phone"] : widget.phoneNumber;
+    String phoneNumber = ((widget.onboardingContext != null) ? widget.onboardingContext["phone"] : null) ?? widget.phoneNumber;
     setState(() {
       _isLoading = true;
     });
 
-    Auth()
-        .validatePhoneNumber(_codeController.text, phoneNumber)
-        .then((success) => {
-          _onPhoneVerified(success)
-        }).whenComplete((){
-          if(mounted) {
-            setState(() {
-              _isLoading = false;
-            });
-          }
+    Auth2().handlePhoneAuthentication(phoneNumber, _codeController.text).then((success) {
+      if(mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        _onPhoneVerified(success);
+      }
     });
   }
 

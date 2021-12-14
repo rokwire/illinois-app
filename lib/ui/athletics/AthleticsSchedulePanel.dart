@@ -64,7 +64,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
       body: _loading ? Center(child: CircularProgressIndicator()) : Column(children: <Widget>[
         Container(color:Styles().colors.fillColorPrimaryVariant, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(children: <Widget>[
           Row(children: <Widget>[
-            Image.asset(widget.sport.iconPath),
+            Image.asset(widget.sport.iconPath, excludeFromSemantics: true),
             Padding(padding: EdgeInsets.only(left: 8)),
             Text(widget.sport.name, style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.whiteTransparent06,)),
           ],),
@@ -97,10 +97,11 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
           itemCount: itemsCount,
           itemBuilder: (context, index) {
             return Padding(padding: EdgeInsets.only(right: 16, left: 16),
-                child: (index == (itemsCount - 1) ? Container(height: 48,) : _displayItemAtIndex(context, index)));
+                child: _displayItemAtIndex(context, index));
           },
           controller: _scrollController,
-        ),),)
+        ))),
+        Visibility(visible: (itemsCount > 1), child: Container(height: 48))
       ]),
       backgroundColor: Styles().colors.background,
       bottomNavigationBar: TabBarWidget(),
@@ -109,14 +110,13 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   void _loadSchedules() {
     _setLoading(true);
-    Sports()
-        .loadScheduleForCurrentSeason(widget.sport?.shortName).then((sportSeason) => _onSportSeasonLoaded(sportSeason));
+    Sports().loadScheduleForCurrentSeason(widget.sport?.shortName).then((schedule) => _onScheduleLoaded(schedule));
   }
 
-  void _onSportSeasonLoaded(Map<String, TeamSchedule> sportSeason) {
-    if (sportSeason != null) {
-      _scheduleYear = sportSeason.keys.elementAt(0);
-      _schedule = sportSeason.values.elementAt(0);
+  void _onScheduleLoaded(TeamSchedule schedule) {
+    if (schedule != null) {
+      _schedule = schedule;
+      _scheduleYear = schedule.label;
       _displayList = _buildDisplayList();
     }
     _setLoading(false);
@@ -124,7 +124,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
 
   List _buildDisplayList() {
     List displayList = [];
-    if (_schedule.games != null && _schedule.games.isNotEmpty) {
+    if (AppCollection.isCollectionNotEmpty(_schedule?.games)) {
       DateTime now = DateTime.now();
       for (Game game in _schedule.games) {
         DateTime gameDateTime = game.dateTimeUniLocal;

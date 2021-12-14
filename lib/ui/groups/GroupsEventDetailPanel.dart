@@ -7,15 +7,14 @@ import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -149,7 +148,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event?.exploreImageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
+          AppString.isStringNotEmpty(_event?.exploreImageURL) ?  Positioned.fill(child:Image.network(widget.event?.exploreImageURL, fit: BoxFit.cover, excludeFromSemantics: true)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -461,7 +460,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           behavior: HitTestBehavior.opaque,
           onTap: () {
             Analytics.instance.logSelect(target: "Favorite: ${_event?.title}");
-            User().switchFavorite(_event);
+            Auth2().prefs?.toggleFavorite(_event);
             setState(() {});
           },
           child: Semantics(
@@ -547,7 +546,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onTapRegistration(String registrationUrl) {
     Analytics.instance.logSelect(target: "Registration");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _onTapWebButton(registrationUrl);
       });
@@ -659,7 +658,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     );
   }
 
-  bool get isFavorite => User().isFavorite(_event);
+  bool get isFavorite => Auth2().isFavorite(_event);
 
   bool get _isPrivateGroupEvent => _event?.isGroupPrivate ?? false;
 

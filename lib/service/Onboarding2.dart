@@ -1,12 +1,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/User.dart';
+import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhonePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
 
 import 'Storage.dart';
 
@@ -26,44 +26,53 @@ class Onboarding2 with Service{
     return _instance;
   }
 
-  void finish(BuildContext context) {
+  void finalize(BuildContext context) {
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('notifications_auth')) {
+      OnboardingAuthNotificationsPanel authNotificationsPanel = OnboardingAuthNotificationsPanel(onboardingContext:{
+        'onContinueAction':  () {
+          _proceedToLogin(context);
+        }
+      });
+      authNotificationsPanel.onboardingCanDisplayAsync.then((bool result) {
+        if (result) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => authNotificationsPanel));
+        }
+        else {
+          _proceedToLogin(context);
+        }
+      });
+    }
+    else {
+      _proceedToLogin(context);
+    }
+  }
 
+  void _proceedToLogin(BuildContext context){
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('login_netid')) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
+        "onContinueAction": () {
+          finish(context);
+        }
+      })));
+    }
+    else if (codes.contains('login_phone')) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
+        "onContinueAction": () {
+          finish(context);
+        }
+      })));
+    }
+    else {
+      finish(context);
+    }
+  }
+
+  void finish(BuildContext context) {
     NotificationService().notify(notifyFinished, context);
   }
   
-  void proceedToLogin(BuildContext context){
-    final UserData storedUserData = User().data;
-    if(getPrivacyLevel>=3) {
-      if (User().rolesMatch([UserRole.employee, UserRole.student])) { //Roles that requires NetId Login
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            OnboardingLoginNetIdPanel(
-              onboardingContext: {"onContinueAction": () {
-                _proceedAfterLogin(storedUserData, context);
-              }},
-            )));
-      } else { //Phone Login
-        Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            OnboardingLoginPhonePanel(
-              onboardingContext: {"onContinueAction": () {
-                _proceedAfterLogin(storedUserData, context);
-              }
-              },)));
-      }
-    } else { //Proceed without login
-      _proceedAfterLogin(storedUserData, context);
-    }
-  }
-
-  _proceedAfterLogin(UserData storedUserData, context){
-    if(storedUserData?.privacyLevel!=null && storedUserData.privacyLevel>0) {
-      User().privacyLevel = storedUserData.privacyLevel;
-    }
-//      Navigator.push(context, CupertinoPageRoute(
-//          builder: (context) => Onboarding2PermissionsPanel()));
-
-    finish(context);
-  }
-
   void storeExploreCampusChoice(bool choice){
     Storage().onBoardingExploreCampus = choice;
   }

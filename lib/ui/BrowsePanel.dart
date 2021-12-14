@@ -17,7 +17,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
@@ -32,7 +32,8 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
-import 'package:illinois/ui/guide/StudentGuideCategoriesPanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -92,10 +93,10 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
     for (String code in codes) {
-      if (code == 'browse.all') {
+      if (code == 'all') {
         contentList.add(_buildBrowseAll());
       }
-      else if (code == 'browse.content') {
+      else if (code == 'content') {
         contentList.addAll(_buildBrowseContent());
       }
     }
@@ -286,20 +287,29 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
     else if (code == 'building_status') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Status'),
+        title: Localization().getStringEx('panel.browse.button.building_status.title', 'Building Entry'),
         hint: Localization().getStringEx('panel.browse.button.building_status.hint', ''),
         icon: 'images/icon-browse-building-status.png',
         color: Styles().colors.fillColorPrimary,
         onTap: () => _navigateToBuildingStatus(),
       );
     }
-    else if (code == 'student_guide') {
+    else if (code == 'campus_guide') {
       return _GridSquareButton(
-        title: Localization().getStringEx('panel.browse.button.student_guide.title', 'Campus Guide'),
-        hint: Localization().getStringEx('panel.browse.button.student_guide.hint', ''),
+        title: Localization().getStringEx('panel.browse.button.campus_guide.title', 'Campus Guide'),
+        hint: Localization().getStringEx('panel.browse.button.campus_guide.hint', ''),
         icon: 'images/icon-browse-student-guide.png',
         color: Styles().colors.accentColor3,
-        onTap: () => _navigateStudentGuide(),
+        onTap: () => _navigateCampusGuide(),
+      );
+    }
+    else if (code == 'inbox') {
+      return _GridSquareButton(
+        title: Localization().getStringEx('panel.browse.button.inbox.title', 'Inbox'),
+        hint: Localization().getStringEx('panel.browse.button.inbox.hint', ''),
+        icon: 'images/icon-browse-inbox.png',
+        color: Styles().colors.fillColorSecondary,
+        onTap: () => _navigateInbox(),
       );
     }
     else if (code == 'privacy_center') {
@@ -485,14 +495,11 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateMyIllini() {
     Analytics.instance.logSelect(target: "My Illini");
-    if (Connectivity().isNotOffline && (Config().myIlliniUrl != null)) {
-      String myIlliniPanelTitle = Localization().getStringEx(
-          'panel.browse.web_panel.header.schedule_grades_more.title', 'My Illini');
-      Navigator.push(
-          context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
-    }
-    else {
+    if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+    }
+    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+      url_launcher.launch(Config().myIlliniUrl);
     }
   }
 
@@ -566,7 +573,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
   void _navigateGroups() {
     Analytics.instance.logSelect(target: "Groups");
-    if(Auth().isShibbolethLoggedIn) {
+    if(Auth2().isOidcLoggedIn) {
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
     } else {
@@ -574,7 +581,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
         setState(() {
           _groupsLogin = true;
         });
-        Auth().authenticateWithShibboleth().then((success) {
+        Auth2().authenticateWithOidc().then((success) {
           setState(() {
             _groupsLogin = false;
           });
@@ -590,9 +597,14 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     }
   }
 
-  void _navigateStudentGuide() {
+  void _navigateCampusGuide() {
     Analytics.instance.logSelect(target: "Campus Guide");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentGuideCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+  }
+
+  void _navigateInbox() {
+    Analytics.instance.logSelect(target: "Inbox");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 
   void _navigatePrivacyCenter() {
@@ -604,9 +616,9 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth().userPiiData?.email;
-      String name =  Auth().userPiiData?.fullName;
-      String phone = Auth().userPiiData?.phone;
+      String email = Auth2().email;
+      String name =  Auth2().fullName;
+      String phone = Auth2().phone;
       String params = _constructFeedbackParams(email, phone, name);
       String feedbackUrl = Config().feedbackUrl + params;
 
@@ -661,7 +673,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
   }
 
   void _navigateToBuildingStatus() {
-    Analytics().logSelect(target: 'Building Status');
+    Analytics().logSelect(target: 'Building Entry');
     //Navigator.push(context, CupertinoPageRoute(
     //  builder: (context) => IDCardPanel()
     //));

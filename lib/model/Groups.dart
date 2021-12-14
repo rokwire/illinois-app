@@ -20,7 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -149,9 +149,9 @@ class Group {
   }
 
   Member get currentUserAsMember{
-    if(Auth().isShibbolethLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
+    if(Auth2().isOidcLoggedIn && AppCollection.isCollectionNotEmpty(members)) {
       for (Member member in members) {
-        if (member.email == Auth()?.authInfo?.email) {
+        if (member.userId == Auth2().accountId) {
           return member;
         }
       }
@@ -337,8 +337,8 @@ String groupPrivacyToString(GroupPrivacy value) {
 
 class Member {
 	String            id;
+  String            userId;
 	String            name;
-	String            email;
 	String            photoURL;
   GroupMemberStatus status;
   String            officerTitle;
@@ -360,8 +360,8 @@ class Member {
   void _initFromJson(Map<String, dynamic> json) {
     List<dynamic> _answers = json['member_answers'];
     try { id          = json['id'];      } catch(e) { print(e.toString()); }
+    try { userId      = json['user_id'];      } catch(e) { print(e.toString()); }
     try { name        = json['name'];     } catch(e) { print(e.toString()); }
-    try { email       = json['email'];    } catch(e) { print(e.toString()); }
     try { photoURL    = json['photo_url']; } catch(e) { print(e.toString()); }
     try { status       = groupMemberStatusFromString(json['status']); } catch(e) { print(e.toString()); }
     try { officerTitle = json['officerTitle']; } catch(e) { print(e.toString()); }
@@ -378,7 +378,6 @@ class Member {
   void _initFromOther(Member other) {
     id             = other?.id;
     name           = other?.name;
-    email          = other?.email;
     photoURL       = other?.photoURL;
     status         = other?.status;
     officerTitle   = other?.officerTitle;
@@ -398,8 +397,8 @@ class Member {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
     json['id']                  = id;
+    json['user_id']             = userId;
     json['name']                = name;
-    json['email']               = email;
     json['photo_url']           = photoURL;
     json['status']              = groupMemberStatusToString(status);
     json['officerTitle']        = officerTitle;
@@ -413,8 +412,8 @@ class Member {
   bool operator == (dynamic o) {
     return (o is Member) &&
            (o.id == id) &&
+           (o.userId == userId) &&
            (o.name == name) &&
-           (o.email == email) &&
            (o.photoURL == photoURL) &&
            (o.status == status) &&
            (o.officerTitle == officerTitle) &&
@@ -425,8 +424,8 @@ class Member {
 
   int get hashCode {
     return (id?.hashCode ?? 0) ^
+           (userId?.hashCode ?? 0) ^
            (name?.hashCode ?? 0) ^
-           (email?.hashCode ?? 0) ^
            (photoURL?.hashCode ?? 0) ^
            (status?.hashCode ?? 0) ^
            (officerTitle?.hashCode ?? 0) ^

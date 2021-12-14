@@ -94,7 +94,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(65),
-                child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(widget.member?.photoURL) ? Image.network(widget.member.photoURL) : Image.asset('images/missing-photo-placeholder.png')),
+                child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(widget.member?.photoURL) ? Image.network(widget.member.photoURL, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
               ),
             ),
             Container(width: 11,),
@@ -308,7 +308,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       _updating = true;
     });
 
-    Groups().acceptMembership(widget.group.id, widget.member.id, _approved, _reasonController.text).then((bool result) {
+    Groups().acceptMembership(widget.group, widget.member, _approved, _reasonController.text).then((bool result) {
       if (mounted) {
         setState(() {
           _updating = false;

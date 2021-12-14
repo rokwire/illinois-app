@@ -27,13 +27,13 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 
 class LocationsWithSpecialPanel extends StatefulWidget {
 
   final DiningSpecial special;
 
-  final LocationData locationData;
+  final Position locationData;
 
   final bool onlyOpened;
 

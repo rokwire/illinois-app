@@ -88,17 +88,37 @@ class AppString {
     return value?.replaceAll(RegExp(r'<[^>]*>'), '')?.replaceAll(RegExp(r'&[^;]+;'), ' ');
   }
 
+  static String fullName(List<String> names) {
+    String fullName;
+    if (names != null) {
+      for (String name in names) {
+        if ((name != null) && (0 < name.length)) {
+          if (fullName == null) {
+            fullName = '$name';
+          }
+          else {
+            fullName += ' $name';
+          }
+        }
+      }
+    }
+    return fullName;
+  }
+
   /// US Phone validation  https://github.com/rokwire/illinois-app/issues/47
 
-  static const String _phonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
-  static const String _phonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
-  static const String _phonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+  static const String _usPhonePattern1 = "^[2-9][0-9]{9}\$";          // Valid:   23456789120
+  static const String _usPhonePattern2 = "^[1][2-9][0-9]{9}\$";       // Valid:  123456789120
+  static const String _usPhonePattern3 = "^\\\+[1][2-9][0-9]{9}\$";   // Valid: +123456789120
+
+  static const String _phonePattern = "^((\\+?\\d{1,3})?[\\(\\- ]?\\d{3,5}[\\)\\- ]?)?(\\d[.\\- ]?\\d)+\$";   // Valid: +123456789120
+
 
   static bool isUsPhoneValid(String phone){
     if(isStringNotEmpty(phone)){
-      return (phone.length == 10 && RegExp(_phonePattern1).hasMatch(phone))
-              || (phone.length == 11 && RegExp(_phonePattern2).hasMatch(phone))
-              || (phone.length == 12 && RegExp(_phonePattern3).hasMatch(phone));
+      return (phone.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone))
+          || (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone))
+          || (phone.length == 12 && RegExp(_usPhonePattern3).hasMatch(phone));
     }
     return false;
   }
@@ -107,21 +127,33 @@ class AppString {
     return !isUsPhoneValid(phone);
   }
 
+  static bool isPhoneValid(String phone) {
+    return isStringNotEmpty(phone) && RegExp(_phonePattern).hasMatch(phone);
+  }
+
   /// US Phone construction
 
   static String constructUsPhone(String phone){
     if(isUsPhoneValid(phone)){
-      if(phone.length == 10 && RegExp(_phonePattern1).hasMatch(phone)){
+      if(phone.length == 10 && RegExp(_usPhonePattern1).hasMatch(phone)){
         return "+1$phone";
       }
-      else if (phone.length == 11 && RegExp(_phonePattern2).hasMatch(phone)){
+      else if (phone.length == 11 && RegExp(_usPhonePattern2).hasMatch(phone)){
         return "+$phone";
       }
-      else if (phone.length == 12 && RegExp(_phonePattern3).hasMatch(phone)){
+      else if (phone.length == 12 && RegExp(_usPhonePattern3).hasMatch(phone)){
         return phone;
       }
     }
     return null;
+  }
+
+  /// Email validation  https://github.com/rokwire/illinois-app/issues/47
+
+  static const String _emailPattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$" ;
+
+  static bool isEmailValid(String email){
+    return isStringNotEmpty(email) && RegExp(_emailPattern).hasMatch(email);
   }
 }
 
@@ -132,6 +164,38 @@ class AppCollection {
 
   static bool isCollectionEmpty(Iterable<Object> collection) {
     return !isCollectionNotEmpty(collection);
+  }
+}
+
+class AppColor {
+  static Color fromHex(String strValue) {
+    if (strValue != null) {
+      if (strValue.startsWith("#")) {
+        strValue = strValue.substring(1);
+      }
+      
+      int intValue = int.tryParse(strValue, radix: 16);
+      if (intValue != null) {
+        if (strValue.length <= 6) {
+          intValue += 0xFF000000;
+        }
+        
+        return Color(intValue);
+      }
+    }
+    return null;
+  }
+
+  static String toHex(Color value) {
+    if (value == null) {
+      return null;
+    }
+    else if (value.alpha < 0xFF) {
+      return "#${value.alpha.toRadixString(16)}${value.red.toRadixString(16)}${value.green.toRadixString(16)}${value.blue.toRadixString(16)}";
+    }
+    else {
+      return "#${value.red.toRadixString(16)}${value.green.toRadixString(16)}${value.blue.toRadixString(16)}";
+    }
   }
 }
 
@@ -247,6 +311,12 @@ class AppUrl {
     } else {
       return Config().gameDayAllUrl;
     }
+  }
+
+  static String getDeepLinkRedirectUrl(String deepLink) {
+    Uri assetsUri = AppString.isStringNotEmpty(Config().assetsUrl) ? Uri.tryParse(Config().assetsUrl) : null;
+    String redirectUrl = assetsUri != null ? "${assetsUri.scheme}://${assetsUri.host}/html/redirect.html" : null;
+    return AppString.isStringNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 }
 
@@ -397,6 +467,40 @@ class AppJson {
     catch(e) { print(e?.toString()); }
     return null;
   }
+
+  static List<String> stringListValue(dynamic value) {
+    List<String> result;
+    if (value is List) {
+      result = <String>[];
+      for (dynamic entry in value) {
+        result.add(entry?.toString());
+      }
+    }
+    return result;
+  }
+
+  static Set<String> stringSetValue(dynamic value) {
+    Set<String> result;
+    if (value is List) {
+      result = Set<String>();
+      for (dynamic entry in value) {
+        result.add(entry?.toString());
+      }
+    }
+    return result;
+  }
+  
+  static List<String> listStringsValue(dynamic value) {
+    try { return (value is List) ? value.cast<String>() : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
+  }
+
+  static Set<String> setStringsValue(dynamic value) {
+    try { return (value is List) ? Set.from(value.cast<String>()) : null; }
+    catch(e) { print(e?.toString()); }
+    return null;
+  }
 }
 
 class AppToast {
@@ -537,14 +641,11 @@ class AppMapPathKey {
 
 class AppSemantics {
     static void announceCheckBoxStateChange(BuildContext context, bool checked, String name){
-      if(context!=null) {
-        String message = (AppString.isStringNotEmpty(name)?name+", " :"")+
-            (checked ?
-              Localization().getStringEx("toggle_button.status.checked", "checked",) :
-              Localization().getStringEx("toggle_button.status.unchecked", "unchecked"));
-
-        context.findRenderObject().sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr)); // !toggled because we announce before it got changed
-      }
+      String message = (AppString.isStringNotEmpty(name)?name+", " :"")+
+          (checked ?
+            Localization().getStringEx("toggle_button.status.checked", "checked",) :
+            Localization().getStringEx("toggle_button.status.unchecked", "unchecked")); // !toggled because we announce before it got changed
+      announceMessage(context, message);
     }
 
     static Semantics buildCheckBoxSemantics({Widget child, String title, bool selected = false, double sortOrder}){
@@ -553,6 +654,12 @@ class AppSemantics {
       Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
       ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
       child: child );
+    }
+
+    static void announceMessage(BuildContext context, String message){
+        if(context != null){
+          context.findRenderObject().sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
+        }
     }
 }
 

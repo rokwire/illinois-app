@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -46,6 +47,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mapsindoors.mapssdk.MapsIndoors;
 
 import java.io.ByteArrayOutputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -86,6 +88,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private Set<Integer> supportedScreenOrientations;
 
     private RequestLocationCallback rlCallback;
+
+    private Toast statusToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -402,6 +406,29 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return deviceId;
     }
 
+    private Object handleEncryptionKey(Object params) {
+        String identifier = Utils.Map.getValueFromPath(params, "identifier", null);
+        if (Utils.Str.isEmpty(identifier)) {
+            return null;
+        }
+        int keySize = Utils.Map.getValueFromPath(params, "size", 0);
+        if (keySize <= 0) {
+            return null;
+        }
+        String base64KeyValue = Utils.AppSecureSharedPrefs.getString(this, identifier, null);
+        byte[] encryptionKey = Utils.Base64.decode(base64KeyValue);
+        if ((encryptionKey != null) && (encryptionKey.length == keySize)) {
+            return base64KeyValue;
+        } else {
+            byte[] keyBytes = new byte[keySize];
+            SecureRandom secRandom = new SecureRandom();
+            secRandom.nextBytes(keyBytes);
+            base64KeyValue = Utils.Base64.encode(keyBytes);
+            Utils.AppSecureSharedPrefs.saveString(this, identifier, base64KeyValue);
+            return base64KeyValue;
+        }
+    }
+
     private int getScreenOrientationFromString(String orientationString) {
         if (Utils.Str.isEmpty(orientationString)) {
             return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
@@ -525,6 +552,19 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    private void handleSetLaunchScreenStatus(Object params) {
+        String statusText = Utils.Map.getValueFromPath(params, "status", null);
+
+        if (statusToast != null) {
+            statusToast.cancel();
+            statusToast = null;
+        }
+        if (statusText != null) {
+            statusToast = Toast.makeText(this, statusText, Toast.LENGTH_SHORT);
+            statusToast.show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.SELECT_LOCATION_ACTIVITY_RESULT_CODE) {
@@ -575,6 +615,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     break;
                 case Constants.APP_DISMISS_SAFARI_VC_KEY:
                 case Constants.APP_DISMISS_LAUNCH_SCREEN_KEY:
+                case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
+                    handleSetLaunchScreenStatus(methodCall.arguments);
+                    result.success(true);
+                    break;
                 case Constants.APP_ADD_CARD_TO_WALLET_KEY:
                     result.success(false);
                     break;
@@ -584,7 +628,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     result.success(orientationsList);
                     break;
                 case Constants.APP_NOTIFICATIONS_AUTHORIZATION:
-                    result.success(true); // notifications are allowed in Android by default
+                    result.success("allowed"); // notifications are allowed in Android by default
                     break;
                 case Constants.APP_LOCATION_SERVICES_PERMISSION:
                     String locationServicesMethod = Utils.Map.getValueFromPath(methodCall.arguments, "method", null);
@@ -609,6 +653,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.DEVICE_ID_KEY:
                     String deviceId = getDeviceId();
                     result.success(deviceId);
+                    break;
+                case Constants.ENCRYPTION_KEY_KEY:
+                    Object encryptionKey = handleEncryptionKey(methodCall.arguments);
+                    result.success(encryptionKey);
                     break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);

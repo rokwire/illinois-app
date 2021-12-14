@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
@@ -34,10 +34,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [
-      Auth.notifyStarted,
-      Auth.notifyInfoChanged,
-    ]);
+    NotificationService().subscribe(this, []);
     super.initState();
   }
 
@@ -89,7 +86,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly create and share polls."), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, ),),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-        Text(_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app."):
+        Text(_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #."):
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you."),
           style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies.medium, fontSize: 16,),),),
         _buildButtons()
@@ -144,30 +141,21 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   bool get _canCreatePoll {
-    return Auth().isLoggedIn;
+    return Auth2().isLoggedIn;
   }
 
   void _onLogin(){
     if (!_authLoading) {
-      Auth().authenticateWithShibboleth();
-    }
-  }
-
-  void _showAuthProgress(bool loading) {
-    if (mounted) {
-      setState(() {
-        _authLoading = loading;
+      setState(() { _authLoading = true; });
+      Auth2().authenticateWithOidc().then((_) {
+        if (mounted) {
+          setState(() { _authLoading = false; });
+        }
       });
     }
   }
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth.notifyStarted) {
-      _showAuthProgress(true);
-    }
-    else if (name == Auth.notifyInfoChanged) {
-      _showAuthProgress(false);
-    }
   }
 }

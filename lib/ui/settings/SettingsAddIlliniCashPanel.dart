@@ -15,9 +15,10 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/service/Auth.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -50,16 +51,16 @@ class _SettingsAddIlliniCashPanelState
   bool _agreePrivacy = false;
   bool __isLoading = false;
 
-  final TextEditingController _uinController = TextEditingController(text: Auth()?.authInfo?.uin ?? "");
+  final TextEditingController _uinController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.uin ?? "");
   final FocusNode _uinFocusNode = FocusNode();
 
-  final TextEditingController _firstNameController = TextEditingController(text: Auth()?.authInfo?.firstName ?? "");
+  final TextEditingController _firstNameController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.firstName ?? "");
   final FocusNode _firstNameFocusNode = FocusNode();
 
-  final TextEditingController _lastNameController = TextEditingController(text: Auth()?.authInfo?.lastName ?? "");
+  final TextEditingController _lastNameController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.lastName ?? "");
   final FocusNode _lastNameFocusNode = FocusNode();
 
-  final TextEditingController _emailController = TextEditingController(text: Auth()?.authInfo?.email ?? "");
+  final TextEditingController _emailController = TextEditingController(text: Auth2().account?.authType?.uiucUser?.email ?? "");
   final FocusNode _emailFocusNode = FocusNode();
 
   final TextEditingController _ccController = TextEditingController();
@@ -755,7 +756,8 @@ class _SettingsAddIlliniCashPanelState
 
   bool get _isAmountValid{
     double ammount = _amountInDolars;
-    return (ammount != null) && (ammount >= 5.00);
+    double minAmount = (kReleaseMode && (Config().configEnvironment != ConfigEnvironment.dev)) ? 5.00 : 0.00;
+    return (ammount != null) && (ammount >= minAmount);
   }
 
   double get _amountInDolars{

@@ -28,6 +28,7 @@ public class Constants {
     static final String SHOW_NOTIFICATION_KEY = "showNotification";
     static final String APP_DISMISS_SAFARI_VC_KEY = "dismissSafariVC";
     static final String APP_DISMISS_LAUNCH_SCREEN_KEY = "dismissLaunchScreen";
+    static final String APP_SET_LAUNCH_SCREEN_STATUS_KEY = "setLaunchScreenStatus";
     static final String APP_ADD_CARD_TO_WALLET_KEY = "addToWallet";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
     static final String APP_NOTIFICATIONS_AUTHORIZATION = "notifications_authorization";
@@ -36,6 +37,7 @@ public class Constants {
     static final String FIREBASE_INFO = "firebaseInfo";
     static final String GEOFENCE_KEY = "geoFence";
     static final String DEVICE_ID_KEY = "deviceId";
+    static final String ENCRYPTION_KEY_KEY = "encryptionKey";
     static final String BARCODE_KEY = "barcode";
     static final String LAUNCH_APP = "launchApp";
 
@@ -54,5 +56,6 @@ public class Constants {
 
     // Shared Prefs
     static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
+    static final String SECURE_SHARED_PREFS_FILE_NAME = "secure_shared_prefs";
     static final String LOCATION_PERMISSIONS_REQUESTED_KEY = "location_permissions_requested";
 }

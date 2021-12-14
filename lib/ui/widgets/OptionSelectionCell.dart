@@ -72,7 +72,7 @@ class OptionSelectionCell extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 16),
                     child:
-                        Image.asset((selected ? selectedIconPath : iconPath)),
+                        Image.asset(selected ? selectedIconPath : iconPath, excludeFromSemantics: true),
                   ),
                   Text(
                     label,
@@ -95,7 +95,7 @@ class OptionSelectionCell extends StatelessWidget {
               visible: selected,
               child: Align(
                 alignment: Alignment.topRight,
-                child: Image.asset('images/icon-check.png'),
+                child: Image.asset('images/icon-check.png', excludeFromSemantics: true),
               )),
         )
       ],

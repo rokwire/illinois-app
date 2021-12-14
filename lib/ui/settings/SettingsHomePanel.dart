@@ -18,13 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -32,7 +32,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterPanel.dart';
@@ -66,8 +66,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth.notifyUserPiiDataChanged,
-      User.notifyUserUpdated,
+      Auth2.notifyLoginChanged,
+      Auth2.notifyPrefsChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged
@@ -87,9 +87,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyUserPiiDataChanged) {
+    if (name == Auth2.notifyLoginChanged) {
       _updateState();
-    } else if (name == User.notifyUserUpdated){
+    } else if (name == Auth2.notifyPrefsChanged){
       _updateState();
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
       _updateState();
@@ -104,6 +104,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   Widget build(BuildContext context) {
     
     List<Widget> contentList = [];
+    List<Widget> actionsList = [];
 
     List<dynamic> codes = FlexUI()['settings'] ?? [];
 
@@ -117,11 +118,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       else if (code == 'connect') {
         contentList.add(_buildConnect());
       }
-      else if (code == 'customizations') {
-        contentList.add(_buildCustomizations());
-      }
       else if (code == 'connected') {
         contentList.add(_buildConnected());
+      }
+      else if (code == 'customizations') {
+        contentList.add(_buildCustomizations());
       }
       else if (code == 'notifications') {
         contentList.add(_buildNotifications());
@@ -140,8 +141,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       }
     }
 
-    if (!kReleaseMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       contentList.add(_buildDebug());
+      actionsList.add(_buildHeaderBarDebug());
     }
 
     contentList.add(_buildVersionInfo());
@@ -151,24 +153,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: _DebugContainer(
-            child: Container(
-//          height: 40,
-          child: Padding(
-            //PS I know it is ugly..
-            padding: EdgeInsets.only(top: 10),
-            child: Text(
-              Localization().getStringEx("panel.settings.home.settings.header", "Settings"),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        )),
+        titleWidget: _buildHeaderBarTitle(),
+        actions: actionsList,
       ),
       body: Column(
         children: <Widget>[
@@ -189,6 +175,14 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
       bottomNavigationBar: TabBarWidget(),
     );
   }
+
+  //Header Bar
+  Widget _buildHeaderBarTitle() {
+    return _DebugContainer(child:
+      Text(Localization().getStringEx("panel.settings.home.settings.header", "Settings"), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0, ), textAlign: TextAlign.center,),
+    );
+  }
+
   //Privacy Center
   Widget _buildPrivacyCenterButton(){
     return GestureDetector(
@@ -230,7 +224,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   // User Info
 
   Widget _buildUserInfo() {
-    String fullName = Auth()?.userPiiData?.fullName ?? "";
+    String fullName = Auth2().fullName ?? "";
     bool hasFullName =  AppString.isStringNotEmpty(fullName);
     String welcomeMessage = AppString.isStringNotEmpty(fullName)
         ? AppDateTime().getDayGreeting() + ","
@@ -273,11 +267,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 children: <TextSpan>[
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "student"),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "faculty member"),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
@@ -292,7 +286,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.title", "Connect your NetID"),
             onTap: _onConnectNetIdClicked),);
       }
-      else if (code == 'phone') {
+      else if (code == 'phone_or_email') {
           contentList.add(Padding(
             padding: EdgeInsets.all(10),
             child: new RichText(
@@ -300,11 +294,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16),
                 children: <TextSpan>[
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.description.part_1", "Don't have a NetID"),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
                       style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
                   new TextSpan(
-                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.description.part_2",
-                          "? Verify your phone number to save your preferences and have the same experience on more than one device.")),
+                      text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
+                          "Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
                 ],
               ),
             )),);
@@ -312,8 +306,8 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             height: null,
             borderRadius: _allRounding,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone.title", "Verify Your Phone Number"),
-            onTap: _onPhoneVerClicked),);
+            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
+            onTap: _onPhoneOrEmailLoginClicked),);
       }
     }
 
@@ -327,19 +321,29 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onConnectNetIdClicked() {
     Analytics.instance.logSelect(target: "Connect netId");
-    Auth().authenticateWithShibboleth();
+    Auth2().authenticateWithOidc();
   }
 
-  void _onPhoneVerClicked() {
-    Analytics.instance.logSelect(target: "Phone Verification");
+  void _onPhoneOrEmailLoginClicked() {
+    Analytics.instance.logSelect(target: "Phone or Email Login");
+    Analytics.instance.logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: _didPhoneVer,)));
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(),
+        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+          onboardingContext: {
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },
+        ),
+      ),);
     } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_ver', 'Verify Your Phone Number is not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.settings.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
-  void _didPhoneVer(_) {
+  void _didLogin(_) {
     Navigator.of(context)?.popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
@@ -420,6 +424,11 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           title: Localization().getStringEx("panel.settings.home.phone_ver.title", "Phone Verification"),
           widgets: _buildConnectedPhoneLayout()));
       }
+      else if (code == 'email') {
+        contentList.add(_OptionsSection(
+          title: Localization().getStringEx("panel.settings.home.email_login.title", "Email Login"),
+          widgets: _buildConnectedEmailLayout()));
+      }
     }
     return Column(children: contentList,);
 
@@ -441,7 +450,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Text(Localization().getStringEx("panel.settings.home.net_id.message", "Connected as "),
                     style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
-                Text(Auth().userPiiData?.fullName ?? "",
+                Text(Auth2().fullName ?? "",
                     style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ]))));
       }
@@ -469,7 +478,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   List<Widget> _buildConnectedPhoneLayout() {
     List<Widget> contentList = [];
 
-    String fullName = Auth()?.userPiiData?.fullName ?? "";
+    String fullName = Auth2().fullName ?? "";
     bool hasFullName = AppString.isStringNotEmpty(fullName);
 
     List<dynamic> codes = FlexUI()['settings.connected.phone'] ?? [];
@@ -486,7 +495,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                 Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as "),
                     style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
                 Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
-                Text(Auth().phoneToken?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+                Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
               ]))));
       }
       else if (code == 'verify') {
@@ -495,7 +504,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
             borderRadius: borderRadius,
             border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
             label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
-            onTap: _onPhoneVerClicked));
+            onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
         contentList.add(RibbonButton(
@@ -509,11 +518,56 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     return contentList;
   }
 
+  List<Widget> _buildConnectedEmailLayout() {
+    List<Widget> contentList = [];
+
+    String fullName = Auth2().fullName ?? "";
+    bool hasFullName = AppString.isStringNotEmpty(fullName);
+
+    List<dynamic> codes = FlexUI()['settings.connected.email'] ?? [];
+    for (int index = 0; index < codes.length; index++) {
+      String code = codes[index];
+      BorderRadius borderRadius = _borderRadiusFromIndex(index, codes.length);
+      if (code == 'info') {
+        contentList.add(Container(
+          width: double.infinity,
+          decoration: BoxDecoration(borderRadius: borderRadius, border: Border.all(color: Styles().colors.surfaceAccent, width: 0.5)),
+          child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as "),
+                    style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+                Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),),
+                Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20)),
+              ]))));
+      }
+      else if (code == 'login') {
+        contentList.add(RibbonButton(
+            height: null,
+            borderRadius: borderRadius,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            label: Localization().getStringEx("panel.settings.home.email_login.button.connect", "Login With Email"),
+            onTap: _onPhoneOrEmailLoginClicked));
+      }
+      else if (code == 'disconnect') {
+        contentList.add(RibbonButton(
+            height: null,
+            borderRadius: borderRadius,
+            border: Border.all(color: Styles().colors.surfaceAccent, width: 0),
+            label: Localization().getStringEx("panel.settings.home.email_login.button.disconnect","Logout",),
+            onTap: _onDisconnectNetIdClicked));
+      }
+    }
+    return contentList;
+  }
+
   void _onDisconnectNetIdClicked() {
-    if(Auth().isShibbolethLoggedIn) {
+    if(Auth2().isOidcLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect netId");
-    } else {
+    } if(Auth2().isPhoneLoggedIn) {
       Analytics.instance.logSelect(target: "Disconnect phone");
+    } if(Auth2().isEmailLoggedIn) {
+      Analytics.instance.logSelect(target: "Disconnect email");
     }
     showDialog(context: context, builder: (context) => _buildLogoutDialog(context));
   }
@@ -544,7 +598,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
                     onPressed: () {
                       Analytics.instance.logAlert(text: "Sign out", selection: "Yes");
                       Navigator.pop(context);
-                      Auth().logout();
+                      Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
                 TextButton(
@@ -771,11 +825,6 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
           shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
           onTap: _onTapDeleteData,
         ),
-        Container(height: 16,),
-        ExcludeSemantics(
-        child: Text(Localization().getStringEx("panel.settings.privacy_center.label.delete.description", "This will delete all of your personal information that was shared and stored within the app."),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 12, color: Styles().colors.textSurface),)),
     ],),);
   }
 
@@ -789,17 +838,31 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsPanel()));
   }
 
-  void _onTapDeleteData(){
+  void _onTapDeleteData() async{
+    final String groupsSwitchTitle = "Please delete all my contributions.";
+    int userPostCount = await Groups().getUserPostCount();
+    bool contributeInGroups = userPostCount > 0;
+
     SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+          //TBD localization
+          TextSpan(text: contributeInGroups?
+            Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+            ""
+          ),
         ],
+        options:contributeInGroups ? [groupsSwitchTitle] : null,
+        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
             progressController(loading: true);
+            if(selectedValues?.contains(groupsSwitchTitle) ?? false){
+              Groups().deleteUserData();
+            }
             _deleteUserData().then((_){
               progressController(loading: false);
               Navigator.pop(context);
@@ -812,11 +875,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
-    bool piiDeleted = await Auth().deleteUserPiiData();
-    if(piiDeleted) {
-      await User().deleteUser();
-    }
-    Auth().logout();
+    await Auth2().deleteUser();
   }
 
   // Account
@@ -845,7 +904,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
   void _onPersonalInfoClicked() {
     Analytics.instance.logSelect(target: "Personal Info");
-    if (Auth().isLoggedIn) {
+    if (Auth2().isLoggedIn) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
     }
   }
@@ -906,9 +965,9 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     Analytics.instance.logSelect(target: "Provide Feedback");
 
     if (Connectivity().isNotOffline && (Config().feedbackUrl != null)) {
-      String email = Auth().userPiiData?.email;
-      String name =  Auth().userPiiData?.fullName;
-      String phone = Auth().phoneToken?.phone;
+      String email = Auth2().email;
+      String name =  Auth2().fullName;
+      String phone = Auth2().phone;
       String params = _constructFeedbackParams(email, phone, name);
       String feedbackUrl = Config().feedbackUrl + params;
 
@@ -933,16 +992,20 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         fontSize: 16.0,
         textColor: Styles().colors.fillColorPrimary,
         borderColor: Styles().colors.fillColorSecondary,
-        onTap: _onDebugClicked(),
+        onTap: _onDebugClicked,
       ),
     ); 
   }
 
-  Function _onDebugClicked() {
-    return () {
-      Analytics.instance.logSelect(target: "Debug");
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-    };
+  Widget _buildHeaderBarDebug() {
+    return Semantics(label: Localization().getStringEx('headerbar.debug.title', 'Debug'), hint: Localization().getStringEx('headerbar.debug.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/debug-white.png'), onPressed: _onDebugClicked),
+    );
+  }
+
+  void _onDebugClicked() {
+    Analytics.instance.logSelect(target: "Debug");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
   }
 
   //Version Info
@@ -1086,7 +1149,7 @@ class _DebugContainerState extends State<_DebugContainer> {
         _clickedCount++;
 
         if (_clickedCount == 7) {
-          if (Auth().isDebugManager) {
+          if (Auth2().isDebugManager) {
             Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;

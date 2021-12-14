@@ -22,7 +22,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
-import 'package:illinois/service/LocalNotifications.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 import 'dart:io' show Platform;
@@ -30,6 +29,11 @@ import 'dart:io' show Platform;
 class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPanel {
   final Map<String, dynamic> onboardingContext;
   OnboardingAuthNotificationsPanel({this.onboardingContext});
+
+  @override
+  Future<bool> get onboardingCanDisplayAsync async {
+    return (await NativeCommunicator().queryNotificationsAuthorization("query") == NotificationsAuthorizationStatus.NotDetermined);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,15 +100,17 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
                       ),]),
               )),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 24,vertical: 8),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       ScalableRoundedButton(
                         label: Localization().getStringEx('panel.onboarding.notifications.button.allow.title', 'Receive Notifications'),
                         hint: Localization().getStringEx('panel.onboarding.notifications.button.allow.hint', ''),
+                        fontSize: 16,
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         borderColor: Styles().colors.fillColorSecondary,
-                        backgroundColor: Styles().colors.background,
+                        backgroundColor: Styles().colors.white,
                         textColor: Styles().colors.fillColorPrimary,
                         onTap: () => _onReceiveNotifications(context),
                       ),
@@ -151,21 +157,26 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
   }
 
 void _requestAuthorization(BuildContext context) async {
-    bool notificationsAuthorized = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (notificationsAuthorized) {
-      showDialog(context: context, builder: (context) => _buildDialogWidget(context));
+    NotificationsAuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationStatus != NotificationsAuthorizationStatus.NotDetermined) {
+      showDialog(context: context, builder: (context) => _buildDialogWidget(context, authorizationStatus));
     } else {
-      bool granted = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (granted) {
-        LocalNotifications().initPlugin();
+      authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
+      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
-      print('Notifications granted: $granted');
       _goNext(context);
     }
   }
 
-Widget _buildDialogWidget(BuildContext context) {
+  Widget _buildDialogWidget(BuildContext context, NotificationsAuthorizationStatus authorizationStatus) {
+    String message;
+    if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+      message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
+    }
+    else if (authorizationStatus == NotificationsAuthorizationStatus.Denied) {
+      message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
+    }
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -179,7 +190,7 @@ Widget _buildDialogWidget(BuildContext context) {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'Your settings have been changed.'),
+                message ?? '',
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     fontFamily: Styles().fontFamilies.medium,
@@ -193,6 +204,7 @@ Widget _buildDialogWidget(BuildContext context) {
                 TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
+                      Navigator.of(context).pop();
                       _goNext(context, replace : true);
                     },
                     child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
@@ -205,7 +217,13 @@ Widget _buildDialogWidget(BuildContext context) {
   }
 
   void _goNext(BuildContext context, {bool replace = false}) {
-    Onboarding().next(context, this, replace: replace);
+    Function onContinue = (onboardingContext != null) ? onboardingContext["onContinueAction"] : null;
+    if (onContinue != null) {
+      onContinue();
+    }
+    else {
+      Onboarding().next(context, this, replace: replace);
+    }
   }
 
   void _goBack(BuildContext context) {

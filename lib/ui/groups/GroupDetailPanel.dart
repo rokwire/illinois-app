@@ -21,17 +21,17 @@ import 'package:flutter/rendering.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -53,8 +53,9 @@ enum _DetailTab { Events, Posts, About }
 class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   final Group group;
+  final String groupIdentifier;
 
-  GroupDetailPanel({this.group});
+  GroupDetailPanel({this.group, this.groupIdentifier});
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
@@ -65,7 +66,11 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
   }
 
   String get groupId {
-    return group?.id;
+    if (group != null) {
+      return group?.id;
+    } else {
+      return groupIdentifier;
+    }
   }
 }
 
@@ -102,6 +107,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _isMemberOrAdmin {
     return _isMember || _isAdmin;
+  }
+
+  bool get _isPending{
+    return _group?.currentUserAsMember?.isPendingMember ?? false;
   }
 
   bool get _isPublic {
@@ -281,7 +290,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _cancelMembershipRequest() {
     _setConfirmationLoading(true);
-    Groups().cancelRequestMembership(widget.groupId).whenComplete(() {
+    Groups().cancelRequestMembership(widget.group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup();
@@ -291,7 +300,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Future<void> _leaveGroup() {
     _setConfirmationLoading(true);
-    return Groups().leaveGroup(widget.groupId).whenComplete(() {
+    return Groups().leaveGroup(widget.group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup(loadEvents: true);
@@ -345,7 +354,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ]),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: TabBarWidget(),
-        body: content);
+        body: RefreshIndicator(
+          onRefresh: _onPullToRefresh,
+          child: content,
+        ),);
   }
 
   // NotificationsListener
@@ -467,7 +479,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders,)) : Container(),
+          AppString.isStringNotEmpty(_group?.imageURL) ?  Positioned.fill(child:Image.network(_group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover,)) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false),
             child: Container(
@@ -530,6 +542,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
+        commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
+        commands.add(RibbonButton(
+          height: null,
+          label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
+          hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
+          leftIcon: 'images/icon-qr-code.png',
+          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+          onTap: _onTapPromote,
+        ));
       }
       if (AppString.isStringNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors.surfaceAccent));
@@ -581,14 +602,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _isMemberOrAdmin ? Container():
+               _showMembershipBadge ? Container():
                 Padding(padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(children: <Widget>[
                     Expanded(child:
                       Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 12, color: Styles().colors.fillColorPrimary),),
                     ),
                   ],),),
-              (!_isMemberOrAdmin)? Container():
+              (!_showMembershipBadge)? Container():
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Row(
@@ -883,7 +904,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRequest() {
     return
-      Auth().isShibbolethLoggedIn && _group.currentUserCanJoin
+      Auth2().isOidcLoggedIn && _group.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
                   child: ScalableRoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
@@ -903,7 +924,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildCancelMembershipRequest() {
     return
-      Auth().isShibbolethLoggedIn && _group.currentUserIsPendingMember
+      Auth2().isOidcLoggedIn && _group.currentUserIsPendingMember
           ? Stack(
             alignment: Alignment.center,
             children: [
@@ -1160,6 +1181,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
+  void _onTapPromote() {
+    Analytics().logSelect(target: "Promote Group");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
+  }
+
   void _onMembershipRequest() {
     Analytics().logSelect(target: "Request to join", attributes: widget.group.analyticsAttributes);
     if (AppCollection.isCollectionNotEmpty(_group?.questions)) {
@@ -1217,6 +1243,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     });
   }
 
+  Future<void>_onPullToRefresh() async {
+    Group group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
+    if ((group != null)) {
+      if(mounted) {
+        setState(() {
+          _group = group;
+          _groupAdmins = _group.getMembersByStatus(GroupMemberStatus.admin);
+        });
+      }
+      _refreshEvents();
+      _refreshCurrentPosts();
+    }
+  }
+
   void _scheduleLastPostScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToLastPost();
@@ -1246,6 +1286,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _isLoading {
     return _progress > 0;
+  }
+
+  bool get _showMembershipBadge {
+    return _isMemberOrAdmin || _isPending;
   }
 }
 

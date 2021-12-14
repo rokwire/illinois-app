@@ -88,9 +88,16 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
                     Container(
                         padding: EdgeInsets.only(top:16,left: 8,right: 8,bottom: 12),
                         color: Styles().colors.background,
-                        child: Column(
-                          children: _createDetailList(),
-                        )
+                        child: Visibility(visible: AppString.isStringNotEmpty(widget.coach.htmlBio), child: Container(
+                          child: HtmlWidget(
+                            AppString.getDefaultEmptyString(value: widget.coach.htmlBio),
+                            webView: false,
+                            textStyle: TextStyle(
+                                fontFamily: Styles().fontFamilies.regular,
+                                fontSize: 16
+                            ),
+                          ),
+                        ))
                     )
                   ],
                 ),
@@ -114,22 +121,6 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
         setState(() {});
       }
     ) : Container();
-  }
-
-  List<Widget> _createDetailList(){
-    List<Widget> list = [];
-    list.add(Container(
-      child: HtmlWidget(
-        widget.coach.htmlBio,
-        webView: false,
-        textStyle: TextStyle(
-            fontFamily: Styles().fontFamilies.regular,
-            fontSize: 16
-        ),
-      ),
-    ));
-
-    return list;
   }
 }
 
@@ -217,8 +208,8 @@ class _CoachDetailHeading extends StatelessWidget{
                     child: Container(
                       margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                       decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary,width: 2, style: BorderStyle.solid)),
-                      child: (AppString.isStringNotEmpty(coach.photoUrl) ?
-                      Image.network(coach.photoUrl,width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
+                      child: (AppString.isStringNotEmpty(coach.thumbPhotoUrl) ?
+                      Image.network(coach.thumbPhotoUrl, excludeFromSemantics: true, width: _photoWidth,fit: BoxFit.cover, alignment: Alignment.topCenter):
                       Container(height: 112, width: _photoWidth, color: Colors.white,)
                       ),
                     ),

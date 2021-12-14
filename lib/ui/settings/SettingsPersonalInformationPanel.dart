@@ -17,11 +17,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
-import 'package:illinois/service/DiningService.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/dining/FoodFiltersPanel.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
@@ -29,6 +28,7 @@ import 'package:illinois/ui/settings/SettingsRolesPanel.dart';
 import 'package:illinois/ui/settings/SettingsVerifyIdentityPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 
@@ -71,7 +71,7 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
                   textColor: UiColors.fromHex("#f54400"),
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies.regular,
-                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal data"),
+                  label: Localization().getStringEx("panel.settings.personal_information.button.delete_data.title", "Delete my personal information"),
                   shadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
                   onTap: _onTapDeleteData,
                 ),
@@ -122,6 +122,25 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
             iconRes: "images/u-blue.png",
             onTap: _onTapFoodFilters,
           ),
+          Container(height: 8,),
+          ToggleRibbonButton(
+              label: 'Add saved events to calendar',
+              toggled: Storage().calendarEnabledToSave,
+              context: context,
+              onTap: (){ setState(() {Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave;});}),
+          Container(height: 8,),
+          ToggleRibbonButton(
+              label: 'Prompt when saving events to calendar',
+              style: TextStyle(fontSize: 16,fontFamily: Styles().fontFamilies.bold, color: Storage().calendarEnabledToSave ? Styles().colors.fillColorPrimary : Styles().colors.surfaceAccent,) ,
+              height: null,
+              toggled: Storage().calendarCanPrompt,
+              context: context,
+              onTap: (){
+                if(!Storage().calendarEnabledToSave) {
+                  return;
+                }
+                setState(() { Storage().calendarCanPrompt = !Storage().calendarCanPrompt;});
+              }),
           Container(height: 29,),
         ],));
   }
@@ -151,13 +170,13 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
 
   void _onTapDeleteData(){
     SettingsDialog.show(context,
-        title: Localization().getStringEx("panel.settings.personal_information.label.delete_message.title", "Delete your personal data?"),
+        title: Localization().getStringEx("panel.settings.personal_information.label.delete_message.title", "Delete your personal information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description1", "Select all that you would like to ")),
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.personal_information.label.delete_message.description3", "delete:")),
         ],
-        continueTitle: Localization().getStringEx("panel.settings.personal_information.button.forget_info.title","Delete My Data"),
+        continueTitle: Localization().getStringEx("panel.settings.personal_information.button.forget_info.title","Delete My Information"),
         options: [OptionYourInterests,OptionFoodFilters],
         onContinue: _onDelete
     );
@@ -166,18 +185,17 @@ class _SettingsPersonalInformationPanelState extends State<SettingsPersonalInfor
   void _onDelete(List<String> selectedOptions, OnContinueProgressController progressController){
     progressController(loading: true);
     if(selectedOptions.contains(OptionFoodFilters)){
-      DiningService().setIncludedFoodTypesPrefs([]);
-      DiningService().setExcludedFoodIngredientsPrefs([]);
+      Auth2().prefs?.clearFoodFilters();
     }
     if(selectedOptions.contains(OptionYourInterests)){
-      User().deleteInterests();
+      Auth2().prefs?.clearInterestsAndTags();
     }
     progressController(loading: false);
     Navigator.pop(context);
   }
 
   bool get isLoggedIn{
-    return Auth().isLoggedIn;
+    return Auth2().isLoggedIn;
   }
 
   //Option keys

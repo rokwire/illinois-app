@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -26,7 +25,6 @@ import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/WellnessPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -34,6 +32,7 @@ import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/widgets/LinkTileButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
+import 'package:illinois/utils/Utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeCampusToolsWidget extends StatefulWidget {
@@ -52,7 +51,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       FlexUI.notifyChanged,
     ]);
 
-    _contentListCodes = FlexUI()['campus_tools'] ?? [];
+    _contentListCodes = FlexUI()['home.content.campus_tools'] ?? [];
     super.initState();
   }
 
@@ -152,7 +151,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _updateContentListCodes() {
-    List<dynamic> contentListCodes = FlexUI()['campus_tools'];
+    List<dynamic> contentListCodes = FlexUI()['home.content.campus_tools'];
     if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
@@ -199,9 +198,14 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
   void _onTapMyIllini() {
     Analytics.instance.logSelect(target: "My Illini");
-    if (Connectivity().isNotOffline && (Config().myIlliniUrl != null)) {
-      String myIlliniPanelTitle = Localization().getStringEx(
-          'widget.home_campus_tools.header.my_illini.title', 'My Illini');
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
+    }
+    else if (AppString.isStringNotEmpty(Config().myIlliniUrl)) {
+
+      // Please make this use an external browser
+      // Ref: https://github.com/rokwire/illinois-app/issues/1110
+      launch(Config().myIlliniUrl);
 
       //
       // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
@@ -210,12 +214,14 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
       // Ref: https://github.com/rokwire/illinois-client/issues/284
       //      https://github.com/flutter/plugins/pull/2330
       //
-      if (Platform.isAndroid) {
-        launch(Config().myIlliniUrl);
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
-      }
+      // if (Platform.isAndroid) {
+      //   launch(Config().myIlliniUrl);
+      // }
+      // else {
+      //   String myIlliniPanelTitle = Localization().getStringEx(
+      //       'widget.home_campus_tools.header.my_illini.title', 'My Illini');
+      //   Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().myIlliniUrl, title: myIlliniPanelTitle,)));
+      // }
     }
   }
 

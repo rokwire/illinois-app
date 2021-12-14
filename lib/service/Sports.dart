@@ -18,19 +18,19 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/sport/Team.dart';
-import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 
 import 'package:illinois/model/Coach.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:illinois/model/Roster.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
@@ -38,8 +38,11 @@ import 'package:illinois/service/Network.dart';
 
 class Sports with Service implements NotificationsListener {
 
+  static const String GAME_URI = '${DeepLink.ROKWIRE_URL}/game_detail';
+
   static const String notifyChanged  = "edu.illinois.rokwire.sports.changed";
   static const String notifySocialMediasChanged  = "edu.illinois.rokwire.sports.social.medias.changed";
+  static const String notifyGameDetail = "edu.illinois.rokwire.sports.game.detail";
 
   static final Sports _logic = Sports._internal();
 
@@ -47,7 +50,9 @@ class Sports with Service implements NotificationsListener {
   List<SportDefinition> _menSports;
   List<SportDefinition> _womenSports;
   List<SportSocialMedia> _socialMedias;
+  List<Map<String, dynamic>> _gameDetailsCache;
 
+  // Singletone Factory
 
   factory Sports() {
     return _logic;
@@ -55,9 +60,14 @@ class Sports with Service implements NotificationsListener {
 
   Sports._internal();
 
+  // Service
+
   @override
   void createService() {
-    NotificationService().subscribe(this, Assets.notifyChanged);
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _gameDetailsCache = [];
   }
 
   @override
@@ -67,149 +77,170 @@ class Sports with Service implements NotificationsListener {
 
   @override
   Future<void> initService() async {
-    if(_enabled) {
-      _loadSportTypeConfig();
-      _loadSportSocialMedias();
-    }
+    await _loadSportDefinitions();
+    await _loadSportSocialMedias();
+    await super.initService();
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedGameDetails();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), Assets(),]);
+    return Set.from([Auth2(), Storage(), Config()]);
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if(_enabled) {
-      if (name == Assets.notifyChanged) {
-        _loadSportTypeConfig();
-      }
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
     }
   }
 
-  List<SportDefinition> getSports() {
-    return _enabled ? _sports : null;
+  // Accessories
+
+  List<SportDefinition> get sports {
+    return _sports;
   }
 
-  List<SportDefinition> getMenSports() {
-    return _enabled ? _menSports : null;
+  List<SportDefinition> get menSports {
+    return _menSports;
   }
 
-  List<SportDefinition> getWomenSports() {
-    return _enabled ? _womenSports : null;
+  List<SportDefinition> get womenSports {
+    return _womenSports;
   }
 
   SportSocialMedia getSocialMediaForSport(String shortName) {
-    if(_enabled) {
-      if (AppString.isStringEmpty(shortName) ||
-          (_socialMedias == null || _socialMedias.isEmpty)) {
-        return null;
-      }
+    if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
       return _socialMedias.firstWhere((socialMedia) => shortName == socialMedia.shortName);
     }
     return null;
   }
 
-  void _loadSportTypeConfig() {
-    List<dynamic> jsonData = Assets()['sports.types'];
-
-    if (jsonData != null) {
-
-      _sports = [];
-      _menSports = [];
-      _womenSports = [];
-
-      jsonData.forEach((value) {
-        SportDefinition sport = SportDefinition.fromJson(value);
-        if (sport != null) {
-          _sports.add(sport);
-          if ('men' == sport.gender) {
-            _menSports.add(sport);
-          } else if ('women' == sport.gender) {
-            _womenSports.add(sport);
-          }
-        }
-      });
-      _sortSports();
-      NotificationService().notify(notifyChanged, null);
+  Future<void> _loadSportDefinitions() async {
+    String serviceUrl = Config().sportsServiceUrl;
+    if (AppString.isStringEmpty(serviceUrl)) {
+      return;
     }
+    String sportsUrl = serviceUrl + '/api/v2/sports';
+    Response response = await Network().get(sportsUrl, auth: NetworkAuth.Auth2);
+    String responseBody = response?.body;
+    if (response?.statusCode == 200) {
+      List<dynamic> jsonData = AppJson.decode(responseBody);
+      if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        _sports = [];
+        _menSports = [];
+        _womenSports = [];
+        jsonData.forEach((value) {
+          SportDefinition sport = SportDefinition.fromJson(value);
+          if (sport != null) {
+            _sports.add(sport);
+            if ('men' == sport.gender) {
+              _menSports.add(sport);
+            } else if ('women' == sport.gender) {
+              _womenSports.add(sport);
+            }
+          }
+        });
+      }
+    } else {
+      _sports = null;
+      _menSports = null;
+      _womenSports = null;
+      Log.e('Failed to load sport definitions');
+      Log.e(responseBody);
+    }
+    _sortSports();
+    NotificationService().notify(notifyChanged, null);
   }
 
-  void _sortSports(){
-    if(AppCollection.isCollectionNotEmpty(_menSports)){
-      SportDefinition firstExplicitItem = _menSports.firstWhere((SportDefinition sportType){
+  void _sortSports() {
+    if (AppCollection.isCollectionNotEmpty(_menSports)) {
+      SportDefinition firstExplicitItem = _menSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "football";
       });
-      SportDefinition secondExplicitItem = _menSports.firstWhere((SportDefinition sportType){
+
+      SportDefinition secondExplicitItem = _menSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "basketball";
       });
+
       //sort
-      _menSports.sort((SportDefinition first, SportDefinition second){
+      _menSports.sort((SportDefinition first, SportDefinition second) {
         return first?.customName?.compareTo(second?.customName);
       });
+
       //Explicitly ordered items
-      if(firstExplicitItem!=null){
+      if (firstExplicitItem != null) {
         _menSports.remove(firstExplicitItem);
-        _menSports.insert(0,firstExplicitItem);
+        _menSports.insert(0, firstExplicitItem);
       }
-      if(secondExplicitItem!=null){
+
+      if (secondExplicitItem != null) {
         _menSports.remove(secondExplicitItem);
-        _menSports.insert(1,secondExplicitItem);
+        _menSports.insert(1, secondExplicitItem);
       }
     }
-    if(AppCollection.isCollectionNotEmpty(_womenSports)){
-      SportDefinition firstExplicitItem = _womenSports.firstWhere((SportDefinition sportType){
+
+    if (AppCollection.isCollectionNotEmpty(_womenSports)) {
+      SportDefinition firstExplicitItem = _womenSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "volleyball";
       });
-      SportDefinition secondExplicitItem = _womenSports.firstWhere((SportDefinition sportType){
+
+      SportDefinition secondExplicitItem = _womenSports.firstWhere((SportDefinition sportType) {
         return sportType.customName?.toLowerCase() == "basketball";
       });
+
       //sort
-      _womenSports.sort((SportDefinition first, SportDefinition second){
+      _womenSports.sort((SportDefinition first, SportDefinition second) {
         return first?.customName?.compareTo(second?.customName);
       });
+
       //Explicitly ordered items
-      if(firstExplicitItem!=null){
+      if (firstExplicitItem != null) {
         _womenSports.remove(firstExplicitItem);
-        _womenSports.insert(0,firstExplicitItem);
+        _womenSports.insert(0, firstExplicitItem);
       }
-      if(secondExplicitItem!=null){
+
+      if (secondExplicitItem != null) {
         _womenSports.remove(secondExplicitItem);
-        _womenSports.insert(1,secondExplicitItem);
+        _womenSports.insert(1, secondExplicitItem);
       }
     }
   }
 
-  void _loadSportSocialMedias() {
-
+  Future<void> _loadSportSocialMedias() async {
     List<dynamic> jsonList = Storage().sportSocialMediaList;
     _socialMedias = (jsonList != null) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
 
-    Network().get(Config().sportSocialMediaUrl).then((Response response) {
-      String responseBody = response?.body;
-      Map<String, dynamic> jsonData = ((response != null) && (response.statusCode == 200)) ? AppJson.decode(responseBody) : null;
-      List<dynamic> jsonList = (jsonData != null) ?  jsonData['sports'] : null;
-      List<SportSocialMedia> socialMedias = (jsonList != null) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
+    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
+      return;
+    }
+    String socialUrl = Config().sportsServiceUrl + '/api/v2/social';
+    Response response = await Network().get(socialUrl, auth: NetworkAuth.Auth2);
+    String responseBody = response?.body;
+    if (response?.statusCode == 200) {
+      List<dynamic> jsonList = AppJson.decodeList(responseBody);
+      List<SportSocialMedia> socialMedias =
+          AppCollection.isCollectionNotEmpty(jsonList) ? jsonList.map((value) => SportSocialMedia.fromJson(value)).toList() : null;
       if ((socialMedias != null) && ((_socialMedias == null) || !DeepCollectionEquality().equals(socialMedias, _socialMedias))) {
         _socialMedias = socialMedias;
         Storage().sportSocialMediaList = jsonList;
         NotificationService().notify(notifyChanged, null);
       }
-      else {
-        Log.e('Failed to load social media');
-        Log.e(responseBody);
-        return null;
-      }
-    });
+    } else {
+      Log.e('Failed to load social media');
+      Log.e(responseBody);
+      return null;
+    }
   }
 
   SportDefinition getSportByShortName(String sportShortName) {
-    if(_enabled) {
-      if (_sports == null || AppString.isStringEmpty(sportShortName)) {
-        return null;
-      }
+    if (AppCollection.isCollectionNotEmpty(_sports) && AppString.isStringNotEmpty(sportShortName)) {
       for (SportDefinition sport in _sports) {
         if (sportShortName == sport.shortName) {
           return sport;
@@ -219,322 +250,274 @@ class Sports with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<dynamic>> loadRosters(String sportKey) async {
-    List<Roster> rosters;
-    if(_enabled) {
-      final rostersUrl = (Config().sportRosterUrl != null) ? "${Config().sportRosterUrl}?path=$sportKey&format=json" : null;
-      final response = await Network().get(rostersUrl);
+  Future<List<Roster>> loadRosters(String sportKey) async {
+    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+      final rostersUrl = "${Config().sportsServiceUrl}/api/v2/players?sport=$sportKey";
+      final response = await Network().get(rostersUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        rosters = [];
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<dynamic> rosterList = jsonData["roster"];
-          for (Map<String, dynamic> jsonEntry in rosterList) {
+      int responseCode = response?.statusCode ?? -1;
+      if (responseCode == 200) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+          List<Roster> rosters = [];
+          for (Map<String, dynamic> jsonEntry in jsonData) {
             Roster roster = Roster.fromJson(jsonEntry);
             if (roster != null) {
               rosters.add(roster);
             }
           }
+          return rosters;
         }
       } else {
         Log.e('Failed to load rosters');
         Log.e(responseBody);
       }
     }
-    return rosters;
+    return null;
   }
 
-  Future<List<dynamic>> loadCoaches(String sportKey) async {
-    List<Coach> coaches;
-    if(_enabled) {
-      final rostersUrl = (Config().sportCoachesUrl != null) ? "${Config().sportCoachesUrl}?path=$sportKey&format=json" : null;
-      final response = await Network().get(rostersUrl);
+  Future<List<Coach>> loadCoaches(String sportKey) async {
+    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(sportKey)) {
+      final coachesUrl = "${Config().sportsServiceUrl}/api/v2/coaches?sport=$sportKey";
+      final response = await Network().get(coachesUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        coaches = [];
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<dynamic> rosterList = jsonData["roster"];
-          for (Map<String, dynamic> jsonEntry in rosterList) {
+      int responseCode = response?.statusCode;
+      if (responseCode == 200) {
+        List<dynamic> jsonList = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonList)) {
+          List<Coach> coaches = [];
+          for (Map<String, dynamic> jsonEntry in jsonList) {
             Coach coach = Coach.fromJson(jsonEntry);
             if (coach != null) {
               coaches.add(coach);
             }
           }
+          return coaches;
         }
       } else {
-        Log.e('Failed to load staff info');
+        Log.e('Failed to load coaches.');
         Log.e(responseBody);
-      }
-    }
-    return coaches;
-  }
-
-  ///returns Map<String, Schedule> where the key is the season name and the value is the Schedule itself
-  Future<Map<String, TeamSchedule>> loadScheduleForCurrentSeason(String sportKey) async {
-    if(_enabled) {
-      if (AppString.isStringEmpty(sportKey)) {
-        return null;
-      }
-      String baseScheduleUrl = await getCurrentSportSeasonScheduleUrl(sportKey);
-      if (AppString.isStringEmpty(baseScheduleUrl)) {
-        return null;
-      }
-      final String yearLabel = 'year=';
-      int startIndex = baseScheduleUrl.indexOf(yearLabel) + yearLabel.length;
-      String scheduleYear = baseScheduleUrl.substring(startIndex, baseScheduleUrl.length);
-      final scheduleUrl = "$baseScheduleUrl&format=json";
-      final response = await Network().get(scheduleUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        TeamSchedule schedule = TeamSchedule.fromJson(jsonData);
-        return {scheduleYear: schedule};
-      } else {
-        Log.e('Failed to load schedule for $sportKey');
-        Log.e(responseBody);
-        return null;
       }
     }
     return null;
+  }
+
+  Future<TeamSchedule> loadScheduleForCurrentSeason(String sportKey) async {
+    if (AppString.isStringEmpty(Config().sportsServiceUrl) || AppString.isStringEmpty(sportKey)) {
+      return null;
+    }
+    String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-schedule?sport=$sportKey';
+    final response = await Network().get(scheduleUrl, auth: NetworkAuth.Auth2);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic> jsonData = AppJson.decode(responseBody);
+      TeamSchedule schedule = TeamSchedule.fromJson(jsonData);
+      return schedule;
+    } else {
+      Log.e('Failed to load schedule for $sportKey. Reason: $responseBody');
+      return null;
+    }
+  }
+
+  Future<TeamRecord> loadRecordForCurrentSeason(String sportKey) async {
+    if (AppString.isStringEmpty(Config().sportsServiceUrl) && AppString.isStringEmpty(sportKey)) {
+      return null;
+    }
+    String scheduleUrl = '${Config().sportsServiceUrl}/api/v2/team-record?sport=$sportKey';
+    final response = await Network().get(scheduleUrl, auth: NetworkAuth.Auth2);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+    if (responseCode == 200) {
+      Map<String, dynamic> jsonData = AppJson.decode(responseBody);
+      TeamRecord record = TeamRecord.fromJson(jsonData);
+      return record;
+    } else {
+      Log.e('Failed to load record for $sportKey. Reason: $responseBody');
+      return null;
+    }
   }
 
   Future<List<Game>> loadTopScheduleGames() async {
-    if(_enabled) {
-      List<Game> gamesList = await loadAllScheduleGames();
-      return getTopScheduleGamesFromList(gamesList);
-    }
-    return null;
+    List<Game> gamesList = await loadGames();
+    return getTopScheduleGamesFromList(gamesList);
   }
 
-  List<Game> getTopScheduleGamesFromList(List<Game> gamesList){
-    if(_enabled) {
-      List<String> preferedSports = User().getSportsInterestSubCategories();
-
-      // Step 1: Group games by sport
-      Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
-      List<Game> preferedGames = [];
-      for (Game game in gamesList) {
-        if (!gamesMap.containsKey(game.sport.shortName)) {
-          gamesMap[game.sport.shortName] = [];
-        }
-        gamesMap[game.sport.shortName].add(game);
-      }
-
-      // Step 2: Add all prefered games
-      if (preferedSports != null && preferedSports.isNotEmpty) {
-        for (String preferedSport in preferedSports) {
-          List<Game> subList = gamesMap[preferedSport];
-          if (subList != null) {
-            preferedGames.addAll(subList);
-          }
-        }
-      }
-
-      // Step 3: In case of multiple preferences - show only the top upcoming game per sport
-      Set<String> limitedSports = Set<String>();
-      if (preferedGames.isNotEmpty) {
-        preferedGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-        List<Game> limitedGames = [];
-        for (Game game in preferedGames) {
-          if (!limitedSports.contains(game.sport.shortName)) {
-            limitedGames.add(game);
-            limitedSports.add(game.sport.shortName);
-          }
-          else if (preferedSports.length == 1 && limitedGames.length < 3) {
-            // In case of single preference - show 3 games
-            limitedGames.add(game);
-          }
-        }
-        preferedGames = limitedGames;
-      }
-      else {
-        // Step 3.1: Show first 3 games (top one per sport)
-        for (Game game in gamesList) {
-          if (preferedGames.length >= 3) {
-            break;
-          }
-
-          if (!limitedSports.contains(game.sport.shortName)) {
-            preferedGames.add(game);
-            limitedSports.add(game.sport.shortName);
-          }
-        }
-      }
-
-      return preferedGames;
+  List<Game> getTopScheduleGamesFromList(List<Game> gamesList) {
+    if (AppCollection.isCollectionEmpty(gamesList)) {
+      return null;
     }
-    return null;
+
+    Set<String> preferredSports = Auth2().prefs?.sportsInterests;
+
+    // Step 1: Group games by sport
+    Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
+    List<Game> preferredGames = [];
+    for (Game game in gamesList) {
+      if (!gamesMap.containsKey(game.sport.shortName)) {
+        gamesMap[game.sport.shortName] = [];
+      }
+      gamesMap[game.sport.shortName].add(game);
+    }
+
+    // Step 2: Add all preferred games
+    if (preferredSports != null && preferredSports.isNotEmpty) {
+      for (String preferredSport in preferredSports) {
+        List<Game> subList = gamesMap[preferredSport];
+        if (subList != null) {
+          preferredGames.addAll(subList);
+        }
+      }
+    }
+
+    // Step 3: In case of multiple preferences - show only the top upcoming game per sport
+    Set<String> limitedSports = Set<String>();
+    if (preferredGames.isNotEmpty) {
+      preferredGames.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
+      List<Game> limitedGames = [];
+      for (Game game in preferredGames) {
+        if (!limitedSports.contains(game.sport.shortName)) {
+          limitedGames.add(game);
+          limitedSports.add(game.sport.shortName);
+        } else if (preferredSports.length == 1 && limitedGames.length < 3) {
+          // In case of single preference - show 3 games
+          limitedGames.add(game);
+        }
+      }
+      preferredGames = limitedGames;
+    } else {
+      // Step 3.1: Show first 3 games (top one per sport)
+      for (Game game in gamesList) {
+        if (preferredGames.length >= 3) {
+          break;
+        }
+
+        if (!limitedSports.contains(game.sport.shortName)) {
+          preferredGames.add(game);
+          limitedSports.add(game.sport.shortName);
+        }
+      }
+    }
+
+    return preferredGames;
   }
 
   Future<Game> loadGame(String sportKey, String gameId) async {
-    Game game;
-    if(_enabled) {
-      final url = (Config().sportScheduleUrl != null) ? "${Config().sportScheduleUrl}?path=$sportKey&format=json&game_id=$gameId" : null;
-      final response = await Network().get(url);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
-          List<dynamic> scheduleList = jsonData["schedule"];
-          if (scheduleList != null && scheduleList.length > 0) {
-            game = Game.fromJson(scheduleList[0]);
+    if (AppString.isStringEmpty(gameId)) {
+      Log.d('Missing game id to load.');
+      return null;
+    }
+    List<Game> games = await loadGames(id: gameId, sports: [sportKey]);
+    return games?.first;
+  }
+
+  Future<List<Game>> loadGames({String id, List<String> sports, DateTime startDate, DateTime endDate, int limit}) async {
+    if (AppString.isStringEmpty(Config().sportsServiceUrl)) {
+      return null;
+    }
+
+    String queryParams = '';
+
+    if (AppString.isStringNotEmpty(id)) {
+      queryParams += '?id=$id';
+    } else if (startDate == null) {
+      startDate = AppDateTime().now;
+    }
+
+    if (startDate != null) {
+      startDate = startDate.toUtc();
+      String startDateFormatted = AppDateTime().formatDateTime(startDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      queryParams += '&start=$startDateFormatted';
+    }
+
+    if (endDate != null) {
+      endDate = endDate.toUtc();
+      String endDateFormatted = AppDateTime().formatDateTime(endDate, format: AppDateTime.scheduleServerQueryDateTimeFormat, ignoreTimeZone: true);
+      queryParams += '&end=$endDateFormatted';
+    }
+
+    if (AppCollection.isCollectionNotEmpty(sports)) {
+      for (String sport in sports) {
+        if (AppString.isStringNotEmpty(sport)) {
+          queryParams += '&sport=$sport';
+        }
+      }
+    }
+    if ((limit != null) && (limit > 0)) {
+      queryParams += '&limit=$limit';
+    }
+    String gamesUrl = '${Config().sportsServiceUrl}/api/v2/games';
+
+    if (AppString.isStringNotEmpty(queryParams)) {
+      if (queryParams.startsWith('&')) {
+        queryParams = queryParams.replaceFirst('&', '?');
+      }
+      gamesUrl += queryParams;
+    }
+
+    final response = await Network().get(gamesUrl, auth: NetworkAuth.Auth2);
+    int responseCode = response?.statusCode ?? -1;
+    String responseBody = response?.body;
+
+    if (responseCode == 200) {
+      List<dynamic> jsonData = AppJson.decode(responseBody);
+      if (AppCollection.isCollectionNotEmpty(jsonData)) {
+        List<Game> gamesList = [];
+        for (dynamic entry in jsonData) {
+          Game game = Game.fromJson(entry);
+          if (game != null) {
+            gamesList.add(game);
           }
         }
-      } else {
-        Log.e('Failed to load game with id:' + gameId);
-        Log.e(responseBody);
+        return gamesList;
       }
+    } else {
+      Log.e('Failed to load games. Reason: $responseBody');
     }
-    return game;
+    return null;
   }
 
-  Future<List<Game>> loadAllScheduleGames() async {
-    List<Game> gamesList = [];
-    if(_enabled) {
-      String scheduleUrl = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/schedule" : null;
-      DateTime now = AppDateTime().now;
-      if (now != null) {
-        String dateOffsetString = AppDateTime().formatDateTime(
-            now, format: AppDateTime.scheduleServerQueryDateTimeFormat,
-            ignoreTimeZone: true);
-        scheduleUrl = '$scheduleUrl?date=$dateOffsetString';
-      }
-
-      final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
-      if (response != null) {
-        String responseBody = response.body;
-        if (response.statusCode == 200) {
-          List<dynamic> jsonListData = AppJson.decode(responseBody);
-          if (AppCollection.isCollectionNotEmpty(jsonListData)) {
-            for (var jsonData in jsonListData) {
-              Game game = Game.fromJson(jsonData);
-              gamesList.add(game);
-            }
-            gamesList.sort((game1, game2) => game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-          }
-        } else {
-          Log.e('Failed to load upcoming upcoming games');
-          Log.e(responseBody);
+  Future<News> loadNewsArticle(String id) async {
+    if (AppString.isStringNotEmpty(Config().sportsServiceUrl) && AppString.isStringNotEmpty(id)) {
+      String newsUrl = Config().sportsServiceUrl + '/api/v2/news?id=$id';
+      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
+      String responseBody = response?.body;
+      if (response?.statusCode == 200) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
+          return News.fromJson(jsonData.first);
         }
       } else {
-        Log.e('Failed to load upcoming upcoming games responce == null');
-      }
-    }
-    return gamesList;
-  }
-
-  ///
-  /// DD: This is used for Saved panel because sport service returns limited game results until 02/16/2019 when we query with startDate=10/01/2019.
-  /// Workaround for not displaying Athletics games in Saved panel
-  ///
-  Future<List<Game>> loadAllScheduleGamesUnlimited() async {
-    List<Game> gamesList;
-    if(_enabled) {
-      String scheduleUrl = Config().sportScheduleUrl;
-      DateTime now = AppDateTime().now;
-      String dateOffsetString = AppDateTime().formatDateTime(
-          now, format: AppDateTime.scheduleServerQueryDateTimeFormat,
-          ignoreTimeZone: true);
-      scheduleUrl = '$scheduleUrl?format=json&starting=$dateOffsetString';
-      final response = await Network().get(scheduleUrl, auth: NetworkAuth.App);
-
-      if (response != null) {
-        String responseBody = response.body;
-        if (response.statusCode == 200) {
-          Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-          TeamSchedule schedule = TeamSchedule.fromJson(jsonData);
-          gamesList = schedule.games;
-          gamesList.sort((game1, game2) =>
-              game1.dateTimeUtc.compareTo(game2.dateTimeUtc));
-        } else {
-          Log.e('Failed to load unlimited upcoming games');
-          Log.e(responseBody);
-        }
-      } else {
-        Log.e(
-            'Failed to load unlimited upcoming games: response is null');
-      }
-    }
-    return gamesList;
-  }
-
-  Future<TeamSchedule> loadUpcomingScheduleItems(String sportKey, int limit) async {
-    TeamSchedule schedule;
-    if(_enabled) {
-      if (limit <= 0 || AppString.isStringEmpty(sportKey)) {
-        return null;
-      }
-      String baseScheduleUrl = await getCurrentSportSeasonScheduleUrl(sportKey);
-      if (AppString.isStringEmpty(baseScheduleUrl)) {
-        return null;
-      }
-
-      DateTime now = DateTime.now();
-      String nowFormatted = AppDateTime().formatDateTime(
-          now, format: AppDateTime.scheduleServerQueryDateTimeFormat,
-          ignoreTimeZone: true);
-      final scheduleUrl = "$baseScheduleUrl&format=json&starting=$nowFormatted&take=$limit";
-      final response = await Network().get(scheduleUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        schedule = TeamSchedule.fromJson(jsonData);
-      } else {
-        Log.e('Failed to load upcoming schedule for $sportKey');
+        Log.e('Failed to load news');
         Log.e(responseBody);
       }
-    }
-    return schedule;
-  }
-
-  Future<SportSeasons> loadSportSeason(String sportKey) async {
-    SportSeasons sportSeason;
-    if(_enabled) {
-      if (AppString.isStringEmpty(sportKey)) {
-        return null;
-      }
-      final sportSeasonsUrl = (Config().sportScheduleUrl != null) ? "${Config().sportScheduleUrl}?format=json&path=$sportKey&sportseasons=true" : null;
-      final response = await Network().get(sportSeasonsUrl);
-      String responseBody = response?.body;
-      if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        sportSeason = SportSeasons.fromJson(jsonData);
-      } else {
-        Log.e('Failed to load sport seasons for $sportKey');
-        Log.e(responseBody);
-      }
-    }
-    return sportSeason;
-  }
-
-  Future<String> getCurrentSportSeasonScheduleUrl(String sportKey) async {
-    if(_enabled) {
-      SportSeasons sportSeason = await loadSportSeason(sportKey);
-      List<SportSeasonSchedule> seasons = sportSeason?.seasons;
-      if (seasons == null || seasons.isEmpty) {
-        return null;
-      }
-      SportSeasonSchedule lastSeason = seasons[seasons.length - 1];
-      return lastSeason.schedule;
     }
     return null;
   }
 
   Future<List<News>> loadNews(String sportKey, int count) async {
-    if(_enabled) {
-      String sportQueryParam = AppString.isStringNotEmpty(sportKey) ? "&path=$sportKey" : "";
-      String countQueryParam = (count > 0) ? "&count=$count" : "";
-      String newsUrl = (Config().newsUrl != null) ? "${Config().newsUrl}?format=json$sportQueryParam$countQueryParam" : null;
-      final response = await Network().get(newsUrl);
+    if (Config().sportsServiceUrl != null) {
+      String newsUrl = Config().sportsServiceUrl + '/api/v2/news';
+      bool hasSportParam = AppString.isStringNotEmpty(sportKey);
+      if (hasSportParam) {
+        newsUrl += '?sport=$sportKey';
+      }
+      if ((count != null) && (count > 0)) {
+        if (hasSportParam) {
+          newsUrl += '&';
+        } else {
+          newsUrl += '?';
+        }
+        newsUrl += 'limit=$count';
+      }
+
+      final response = await Network().get(newsUrl, auth: NetworkAuth.Auth2);
       String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        Map<String, dynamic> jsonData = AppJson.decode(responseBody);
-        if (jsonData != null) {
+        List<dynamic> jsonData = AppJson.decode(responseBody);
+        if (AppCollection.isCollectionNotEmpty(jsonData)) {
           List<News> newsList = [];
-          List<dynamic> storiesList = jsonData["stories"];
-          for (Map<String, dynamic> jsonEntry in storiesList) {
+          for (Map<String, dynamic> jsonEntry in jsonData) {
             News news = News.fromJson(jsonEntry);
             if (news != null) {
               newsList.add(news);
@@ -553,33 +536,28 @@ class Sports with Service implements NotificationsListener {
   ///Game Helpers
 
   Game getFirstUpcomingGame(List<Game> games) {
-    if(_enabled) {
-      if (games == null || games.isEmpty) {
-        return null;
-      }
+    if (AppCollection.isCollectionNotEmpty(games)) {
       return games.first;
+    } else {
+      return null;
     }
-    return null;
   }
 
   List<Game> getTodayGames(List<Game> games) {
-    if(_enabled) {
-      if (AppCollection.isCollectionEmpty(games)) {
-        return null;
-      }
-      List<Game> todayGames = [];
-      for (Game game in games) {
-        if (game.isGameDay) {
-          todayGames.add(game);
-        }
-      }
-      if (AppCollection.isCollectionEmpty(todayGames)) {
-        return null;
-      }
-      _sortTodayGames(todayGames);
-      return todayGames;
+    if (AppCollection.isCollectionEmpty(games)) {
+      return null;
     }
-    return null;
+    List<Game> todayGames = [];
+    for (Game game in games) {
+      if (game.isGameDay) {
+        todayGames.add(game);
+      }
+    }
+    if (AppCollection.isCollectionEmpty(todayGames)) {
+      return null;
+    }
+    _sortTodayGames(todayGames);
+    return todayGames;
   }
 
   void _sortTodayGames(List<Game> todayGames) {
@@ -611,15 +589,12 @@ class Sports with Service implements NotificationsListener {
 
   ///Assert that games are sorted by start date
   bool hasTodayGame(List<Game> games) {
-    if(_enabled) {
-      Game upcomingGame = getFirstUpcomingGame(games);
-      return upcomingGame?.isGameDay ?? false;
-    }
-    return false;
+    Game upcomingGame = getFirstUpcomingGame(games);
+    return upcomingGame?.isGameDay ?? false;
   }
 
   bool showWelcome(List<Game> games) {
-    return _enabled ? !hasTodayGame(games) : false;
+    return !hasTodayGame(games);
   }
 
   //Preferred Sports helpers
@@ -627,54 +602,83 @@ class Sports with Service implements NotificationsListener {
   ///
   /// addSports == 'true' - adds all sports to favorites, 'false' - removes them
   ///
-  void switchAllSports(List<SportDefinition> allSports,
-      List<String> preferredSports, bool addSports) {
-    if(_enabled) {
-      if (allSports == null || allSports.isEmpty) {
-        return;
-      }
-      List<String> sportsToUpdate = [];
+  static Set<String> switchAllSports(List<SportDefinition> allSports, Set<String> preferredSports, bool addSports) {
+    Set<String> sportsToUpdate = Set<String>();
+    if (allSports != null && allSports.isNotEmpty) {
       for (SportDefinition sport in allSports) {
         String sportShortName = sport.shortName;
-        bool preferredSport = (preferredSports?.contains(sportShortName) ??
-            false);
+        bool preferredSport = (preferredSports?.contains(sportShortName) ?? false);
         bool addFavoriteSport = !preferredSport && addSports;
         bool removeFavoriteSport = preferredSport && !addSports;
         if (addFavoriteSport || removeFavoriteSport) {
           sportsToUpdate.add(sportShortName);
         }
       }
-      User().switchSportSubCategories(sportsToUpdate);
     }
+    return sportsToUpdate;
   }
 
-  bool isAllSportsSelected(List<SportDefinition> allSports,
-      List<String> preferredSports) {
-    if(_enabled) {
-      if (allSports == null || allSports.isEmpty) {
-        return false;
-      }
-      if (preferredSports == null || preferredSports.isEmpty) {
-        return false;
-      }
-      bool allSportsSelected = true;
-      for (SportDefinition sport in allSports) {
-        if (!preferredSports.contains(sport.shortName)) {
-          allSportsSelected = false;
-          break;
-        }
-      }
-      return allSportsSelected;
+  static bool isAllSportsSelected(List<SportDefinition> allSports, Set<String> preferredSports) {
+    if (allSports == null || allSports.isEmpty) {
+      return false;
     }
-    return false;
+    if (preferredSports == null || preferredSports.isEmpty) {
+      return false;
+    }
+    bool allSportsSelected = true;
+    for (SportDefinition sport in allSports) {
+      if (!preferredSports.contains(sport.shortName)) {
+        allSportsSelected = false;
+        break;
+      }
+    }
+    return allSportsSelected;
   }
 
   /////////////////////////
-  // Enabled
+  // DeepLinks
 
-  bool get _enabled => AppString.isStringNotEmpty(Config().sportsServiceUrl)
-      && AppString.isStringNotEmpty(Config().sportCoachesUrl)
-      && AppString.isStringNotEmpty(Config().sportRosterUrl)
-      && AppString.isStringNotEmpty(Config().sportSocialMediaUrl)
-      && AppString.isStringNotEmpty(Config().sportScheduleUrl);
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri gameUri = Uri.tryParse(GAME_URI);
+      if ((gameUri != null) &&
+          (gameUri.scheme == uri.scheme) &&
+          (gameUri.authority == uri.authority) &&
+          (gameUri.path == uri.path))
+      {
+        try { _handleGameDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  void _handleGameDetail(Map<String, dynamic> params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_gameDetailsCache != null) {
+        _cacheGameDetail(params);
+      }
+      else {
+        _processGameDetail(params);
+      }
+    }
+  }
+
+  void _processGameDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyGameDetail, params);
+  }
+
+  void _cacheGameDetail(Map<String, dynamic> params) {
+    _gameDetailsCache?.add(params);
+  }
+
+  void _processCachedGameDetails() {
+    if (_gameDetailsCache != null) {
+      List<Map<String, dynamic>> gameDetailsCache = _gameDetailsCache;
+      _gameDetailsCache = null;
+
+      for (Map<String, dynamic> gameDetail in gameDetailsCache) {
+        _processGameDetail(gameDetail);
+      }
+    }
+  }
 }

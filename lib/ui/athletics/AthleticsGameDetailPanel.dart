@@ -26,7 +26,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailHeading.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
@@ -60,6 +59,7 @@ class AthleticsGameDetailPanel extends StatefulWidget implements AnalyticsPageAt
 class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   Game game;
   bool _newsExpanded = false;
+  bool _loading = false;
 
   _AthleticsGameDetailPanelState(this.game);
 
@@ -77,12 +77,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     String sportName = widget.sportName ?? game?.sport?.shortName;
     String gameId = widget.gameId ?? game?.id;
 
-    Future<Game> result = Sports().loadGame(sportName, gameId);
-    result.then((loadedGame) {
-      setState(() {
-        game = loadedGame;
-        RecentItems().addRecentItem(RecentItem.fromOriginalType(game));
-      });
+    _setLoading(true);
+    Sports().loadGame(sportName, gameId).then((loadedGame) {
+      game = loadedGame;
+      RecentItems().addRecentItem(RecentItem.fromOriginalType(game));
+      _setLoading(false);
     });
   }
 
@@ -99,8 +98,13 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   }
 
   Widget _buildContent() {
-    if (game == null)
-      return Center(child: CircularProgressIndicator(),);
+    if (_loading == true) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (game == null) {
+      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')));
+    }
 
     String sportKey = game.sport?.shortName;
     String sportName = game.sport?.title;
@@ -146,6 +150,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                             child: Image.asset('images/slant-down-right.png',
                               color: Styles().colors.fillColorPrimary,
                               fit: BoxFit.fill,
+                              excludeFromSemantics: true,
                             ),
                           )
                         ],
@@ -159,7 +164,9 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
                                   child: Image.asset(
-                                      'images/icon-athletics-orange.png'),
+                                    'images/icon-athletics-orange.png',
+                                    excludeFromSemantics: true,
+                                  ),
                                 ),
                                 Expanded(child:
                                   Text(
@@ -279,6 +286,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
         child: SizedBox.expand(
           child: Image.network(
             game.newsImageUrl,
+            excludeFromSemantics: true,
             fit: BoxFit.fitWidth,
           ),
         ),
@@ -336,7 +344,8 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                       padding: EdgeInsets.only(left: 8),
                       child: Image.asset((_newsExpanded
                           ? 'images/icon-up.png'
-                          : 'images/icon-down-orange.png')),
+                          : 'images/icon-down-orange.png'),
+                        excludeFromSemantics: true,),
                     )
                   ],
                 ),
@@ -365,7 +374,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
 
   void _onTapTickets() {
     Analytics.instance.logSelect(target: "Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
       });
@@ -387,5 +396,12 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
   Future<void>_onPullToRefresh() async{
     _loadGame();
     LiveStats().refresh();
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

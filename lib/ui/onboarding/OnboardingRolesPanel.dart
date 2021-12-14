@@ -16,11 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Onboarding.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
@@ -44,7 +44,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
   @override
   void initState() {
-    _selectedRoles = (User().roles != null) ? Set.from(User().roles): Set<UserRole>();
+    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs.roles) : Set<UserRole>();
     super.initState();
   }
   
@@ -120,18 +120,18 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     onTap: _onRoleGridButton,
                   ),
                   Container(height: gridSpacing,),
-                  RoleGridButton(
-                    title: Localization().getStringEx('panel.onboarding.roles.button.resident.title', 'Resident'),
-                    hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
-                    iconPath: 'images/icon-persona-resident-normal.png',
-                    selectedIconPath: 'images/icon-persona-resident-selected.png',
+                  /*RoleGridButton(
+                    title: Localization().getStringEx('panel.onboarding.roles.button.gies.title', 'GIES Student'),
+                    hint: Localization().getStringEx('panel.onboarding.roles.button.gies.hint', ''),
+                    iconPath: 'images/icon-persona-alumni-normal.png',
+                    selectedIconPath: 'images/icon-persona-alumni-selected.png',
                     selectedBackgroundColor: Styles().colors.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles.contains(UserRole.resident)),
-                    data: UserRole.resident,
-                    sortOrder: 7,
+                    selected:(_selectedRoles.contains(UserRole.gies)),
+                    data: UserRole.gies,
+                    sortOrder: 8,
                     onTap: _onRoleGridButton,
-                  ),
+                  ),*/
                 ],)),
               Container(width: gridSpacing,),
               Expanded(child: Column(children: <Widget>[
@@ -170,7 +170,19 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     sortOrder: 6,
                     onTap: _onRoleGridButton,
                   ),
-
+                  Container(height: gridSpacing,),
+                  RoleGridButton(
+                    title: Localization().getStringEx('panel.onboarding.roles.button.resident.title', 'Resident'),
+                    hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
+                    iconPath: 'images/icon-persona-resident-normal.png',
+                    selectedIconPath: 'images/icon-persona-resident-selected.png',
+                    selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                    selectedTextColor: Colors.white,
+                    selected:(_selectedRoles.contains(UserRole.resident)),
+                    data: UserRole.resident,
+                    sortOrder: 7,
+                    onTap: _onRoleGridButton,
+                  ),
                 ],),),
               ],),),),),        
 
@@ -229,7 +241,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
   void _onExploreClicked() {
     Analytics.instance.logSelect(target:"Explore Illinois");
     if (_selectedRoles != null && _selectedRoles.isNotEmpty && !_updating) {
-      User().roles = _selectedRoles;
+      Auth2().prefs?.roles = _selectedRoles;
       setState(() { _updating = true; });
       FlexUI().update().then((_){
         if (mounted) {

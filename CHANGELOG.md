@@ -6,6 +6,458 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.67] - 2021-12-14
+### Changed
+- Updated "Wellness / Emotional / Counseling Center / ACE IT" button action to load guide content [#1129](https://github.com/rokwire/illinois-app/issues/1129).
+
+## [3.0.66] - 2021-12-13
+### Changed
+- Hide "GIES Student" role button from onboarding and settings [#1121](https://github.com/rokwire/illinois-app/issues/1121).
+- Hide service initialization status in release builds [#1123](https://github.com/rokwire/illinois-app/issues/1123).
+- Improved semantics [#1013](https://github.com/rokwire/illinois-app/issues/1013).
+- Open My Illini in an external browser [#1100](https://github.com/rokwire/illinois-app/issues/1100).
+### Fixed
+- Change "location" plugin with "geolocator" plugin. Fix Android builds [#1127](https://github.com/rokwire/illinois-app/issues/1127).
+
+## [3.0.65] - 2021-12-10
+### Added
+- Implement "tap" action on inbox items [#1113](https://github.com/rokwire/illinois-app/issues/1113).
+### Fixed
+- Android: load meridian lib from embedded aar file [#1118](https://github.com/rokwire/illinois-app/issues/1118).
+
+## [3.0.64] - 2021-12-09
+### Changed
+- Hide wait times in test locations [#1099](https://github.com/rokwire/illinois-app/issues/1099).
+- Store food filters in user profile [#1101](https://github.com/rokwire/illinois-app/issues/1101).
+- Import stored user profile and settings on first app launch [#1103](https://github.com/rokwire/illinois-app/issues/1103).
+- Make "Kognito At Risk (Counseling Center)" wellness buttons to launch "kognito" guide detail page [#1105](https://github.com/rokwire/illinois-app/issues/1105).
+- Load guide detail panels on "Counseling" and "ACE IT" buttons from Mental Wellness panel [#1107](https://github.com/rokwire/illinois-app/issues/1107).
+
+## [3.0.63] - 2021-12-08
+### Added
+- Show debug initialization status on startup (Android) [#1087](https://github.com/rokwire/illinois-app/issues/1087).
+### Changed
+- UI changes in Home Highlighted Features widget [#1090](https://github.com/rokwire/illinois-app/issues/1090).
+- Use external browser in twitter widget [#1092](https://github.com/rokwire/illinois-app/issues/1092).
+- Load guide detail panels for some Wellness items [#1094](https://github.com/rokwire/illinois-app/issues/1094).
+
+## [3.0.62] - 2021-12-07
+### Added
+- Show debug initialization status on startup (iOS only) [#1087](https://github.com/rokwire/illinois-app/issues/1087).
+### Changed
+- Poll labels [#1085](https://github.com/rokwire/illinois-app/issues/1085).
+- Update HomeUpcomingEventsWidget on event creation / update or awake from background [#1081](https://github.com/rokwire/illinois-app/issues/1081).
+
+## [3.0.61] - 2021-12-06
+### Fixed
+- Fixed network authorization type in health_locations API call to Content BB.
+- Capitalization of Sections on Home Page [#1073](https://github.com/rokwire/illinois-app/issues/1073).
+### Changed
+- Open McKinley portal in external browser [#1074](https://github.com/rokwire/illinois-app/issues/1074).
+- Do not translate building access strings [#1077](https://github.com/rokwire/illinois-app/issues/1077).
+
+## [3.0.60] - 2021-12-03
+### Fixed
+- Do not prompt user to select other group if he is an admin to just one group. [#1057](https://github.com/rokwire/illinois-app/issues/1057).
+- Favorites (star) Button don't work. [#1069](https://github.com/rokwire/illinois-app/issues/1069).
+- Do not present GroupDetailPanel on FCM notification when group event is created. [#1058](https://github.com/rokwire/illinois-app/issues/1058).
+### Changed
+- Load test locations from content service. [#1068](https://github.com/rokwire/illinois-app/issues/1068).
+
+## [3.0.59] - 2021-12-02
+### Changed
+- Change Core BB account exists endpoint path [#1054](https://github.com/rokwire/illinois-app/issues/1054)
+- Allow users signed in with oidc to create groups. [#1059](https://github.com/rokwire/illinois-app/issues/1059).
+- Increased touch area for favorites and fixed not working tap action [#1062](https://github.com/rokwire/illinois-app/issues/1062).
+- Hook Groups user stats API [#1052](https://github.com/rokwire/illinois-app/issues/1052).
+
+## [3.0.58] - 2021-12-01
+### Fixed
+- Handle FCM data notifications (iOS) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
+- Android: release builds [#1046](https://github.com/rokwire/illinois-app/issues/1046).
+### Added
+- Implement Inbox group message tap action [#1048](https://github.com/rokwire/illinois-app/issues/1048).
+- Hook Notifications Delete user API [#1050](https://github.com/rokwire/illinois-app/issues/1050).
+- Hook Groups delete user API [#1052](https://github.com/rokwire/illinois-app/issues/1052).
+
+## [3.0.57] - 2021-11-30
+### Fixed
+- Handle FCM data notifications when app is on background or killed (Android only) [#1042](https://github.com/rokwire/illinois-app/issues/1042).
+
+## [3.0.56] - 2021-11-29
+### Fixed
+- Fixed Group my Home Panel widget refresh issue [#1037](https://github.com/rokwire/illinois-app/issues/1037). 
+- Fixed token creation in refresh token [#1036](https://github.com/rokwire/illinois-app/issues/1036). 
+- Fixed adding existing event to a group does not work if you search for the event [#981](https://github.com/rokwire/illinois-app/issues/981).
+### Changed
+- "Are you student or faculty member" updated to "Are you university student or employee" [#1007](https://github.com/rokwire/illinois-app/issues/1007).
+
+## [3.0.55] - 2021-11-26
+### Added
+- Introduce groups BB login API [#1030](https://github.com/rokwire/illinois-app/issues/1030).
+### Changed
+- Personal Info pane enhancement [#1027](https://github.com/rokwire/illinois-app/issues/1027).
+- Settings enhancement [#1028](https://github.com/rokwire/illinois-app/issues/1028).
+
+## [3.0.54] - 2021-11-25
+### Fixed
+- My Groups widget not displaying on home page [#1021](https://github.com/rokwire/illinois-app/issues/1021).
+- Disable local data backup on Android [#1019](https://github.com/rokwire/illinois-app/issues/1019).
+- Use different values for storage encryption key and IV [#1016](https://github.com/rokwire/illinois-app/issues/1016).
+- Improve Accessibility [#1013](https://github.com/rokwire/illinois-app/issues/1013).
+### Added
+- Acknowledge FCM messages to redirect user to Home panel and Inbox [#1024](https://github.com/rokwire/illinois-app/issues/1024).
+
+## [3.0.53] - 2021-11-24
+### Changed
+- "Building Entry" button title in Browse panel changed to "Building Entry" [#1008](https://github.com/rokwire/illinois-app/issues/1008).
+- Encrypt sensitive data stored on local storage and settings [#1016](https://github.com/rokwire/illinois-app/issues/1016).
+### Fixed
+- Allow user to sign in via email or phone in Settings -> Personal Information [#1015](https://github.com/rokwire/illinois-app/issues/1015).
+
+## [3.0.52] - 2021-11-23
+### Changed
+- Do not use AES encryption with embedded key in the blob and zero based IV [#1009](https://github.com/rokwire/illinois-app/issues/1009).
+- Show pending member badge in Group detail panel [#1011](https://github.com/rokwire/illinois-app/issues/1011).
+
+## [3.0.51] - 2021-11-22
+### Changed
+- Update Inbox sender data information [#999](https://github.com/rokwire/illinois-app/issues/999).
+- Inbox: Ignore missing message subject for foreground alert title [#1001](https://github.com/rokwire/illinois-app/issues/1001).
+- Tuned and cleanup email login [#1003](https://github.com/rokwire/illinois-app/issues/1003).
+- Tuned and cleanup notifications authorization in onboarding [#1005](https://github.com/rokwire/illinois-app/issues/1005).
+
+## [3.0.50] - 2021-11-18
+### Changed
+- Display proper error message when group events failed to create [#992](https://github.com/rokwire/illinois-app/issues/992).
+- Allow Guide detail pages to be presented as Wellness details [#995](https://github.com/rokwire/illinois-app/issues/995).
+- Cleanup Inbox service [#986](https://github.com/rokwire/illinois-app/issues/986).
+
+## [3.0.49] - 2021-11-17
+### Added
+- Create events for all selected groups that the user is admin of [#980](https://github.com/rokwire/illinois-app/issues/980).
+- Add pause notifications switch to Notification settings panel [#986](https://github.com/rokwire/illinois-app/issues/986).
+### Changed
+- Handled initialization errors on app startup [#928](https://github.com/rokwire/illinois-app/issues/928).
+
+## [3.0.48] - 2021-11-16
+### Changed
+- WalletPanel listens for IlliniCash.notifyBallanceUpdated event and updates state when received [#971](https://github.com/rokwire/illinois-app/issues/971).
+- Save Reminders to Calendar when marked as favourite [#975](https://github.com/rokwire/illinois-app/issues/975).
+### Fixed
+- Home MyGroups widget not refreshing after user login [#977](https://github.com/rokwire/illinois-app/issues/977).
+### Added
+- Redirect user to news detail panel when FCM notification is tapped [#972](https://github.com/rokwire/illinois-app/issues/972).
+
+## [3.0.47] - 2021-11-15
+### Changed
+- Rework content loading and processing in GroupsHomePanel [#948](https://github.com/rokwire/illinois-app/issues/948).
+- Store Notification settings in the User Prefs [#961](https://github.com/rokwire/illinois-app/issues/961).
+- Change Onboarding string. [#965](https://github.com/rokwire/illinois-app/issues/965)
+- Validate transfer amount and other CC fields in AddIlliniCash panel [#957](https://github.com/rokwire/illinois-app/issues/957).
+- Do not list rejected groups in "My Groups" tab of GroupsHomePanel [#958](https://github.com/rokwire/illinois-app/issues/958).
+### Added
+- Add Privacy level slider in to the Onboarding2PrivaciPanel[#963](https://github.com/rokwire/illinois-app/issues/963)
+
+## [3.0.46] - 2021-11-12
+### Changed
+- "Safer Illinois" button replaced by "Building Status" button in Browse panel [#952](https://github.com/rokwire/illinois-app/issues/952).
+- Reuse existing html page for deep link redirect in groups [#955](https://github.com/rokwire/illinois-app/issues/955).
+
+## [3.0.45] - 2021-11-11
+### Added
+- Add Semantics label for Building Access image in IDCardPanel [#881](https://github.com/rokwire/illinois-app/issues/881).
+- Created building access widget [#932](https://github.com/rokwire/illinois-app/issues/932).
+### Changed
+- Open MyMcKinley web app in WebPanel instead of in external browser [#938](https://github.com/rokwire/illinois-app/issues/938).
+- Use device camera to read and execute group promotion QR code [#940](https://github.com/rokwire/illinois-app/issues/940).
+### Fixed
+- Show buss pass panel for residents [#936](https://github.com/rokwire/illinois-app/issues/936).
+
+## [3.0.44] - 2021-11-09
+### Fixed 
+- Fixed Firebase subscription for Groups Update Settings [#926](https://github.com/rokwire/illinois-app/issues/926).
+
+## [3.0.43] - 2021-11-08
+### Added
+- Created Analytics logs for group membership actions [#924](https://github.com/rokwire/illinois-app/issues/924).
+- Add Groups Notification settings buttons [#926](https://github.com/rokwire/illinois-app/issues/926).
+
+## [3.0.42] - 2021-11-05
+### Added
+- Include OnboardingAuthNotificationsPanel in Onboarding2 [#915](https://github.com/rokwire/illinois-app/issues/915).
+### Fixed 
+- Fix missing image in Group Event Detail Panel [#918](https://github.com/rokwire/illinois-app/issues/918).
+- Hide Dining Specials [#920](https://github.com/rokwire/illinois-app/issues/920).
+
+## [3.0.41] - 2021-11-04
+### Fixed
+- Fixed TextFields usage in GroupSettingsPanel and GroupCreatePanel [#906](https://github.com/rokwire/illinois-app/issues/906).
+- QRCode panel improvement [#908](https://github.com/rokwire/illinois-app/issues/908).
+- Large font in Athletics news article panel [#855](https://github.com/rokwire/illinois-app/issues/855).
+### Added
+- Athletics notifications preferences for Start, End and News [#907](https://github.com/rokwire/illinois-app/issues/907).
+
+## [3.0.40] - 2021-11-03
+### Fixed
+- Broken external browser after switching to Android SDK 30 [#900](https://github.com/rokwire/illinois-app/issues/900).
+- DINING/RECENTLY VIEWED doesn't show dining schedule accurately [#835](https://github.com/rokwire/illinois-app/issues/835).
+### Changed
+- Android: Update to API level 30 [#896](https://github.com/rokwire/illinois-app/issues/896).
+
+## [3.0.39] - 2021-11-02
+### Added
+- Group promotion functionality [#884](https://github.com/rokwire/illinois-app/issues/884).
+- GroupDetailPanel implement pull to refresh [#891](https://github.com/rokwire/illinois-app/issues/891).
+- Handled email login case in Home/Settings/Wallet content  [#832](https://github.com/rokwire/illinois-app/issues/832).
+### Removed
+- Commend out Calendar debug dualog messages [#893](https://github.com/rokwire/illinois-app/issues/893).
+### Fixed
+- Fixed email signup/login [#832](https://github.com/rokwire/illinois-app/issues/832).
+
+## [3.0.38] - 2021-11-01
+### Fixed
+- Improve semantics for Home widgets [#882](https://github.com/rokwire/illinois-app/issues/882).
+- Fix wrong update time displayed for group posts [#889](https://github.com/rokwire/illinois-app/issues/889).
+### Added
+- Add Inbox user info as a debug panel [#887](https://github.com/rokwire/illinois-app/issues/887).
+- Add ability to update Post in GroupPostDetailPanel [#885](https://github.com/rokwire/illinois-app/issues/885).
+
+## [3.0.37] - 2021-10-28
+### Added
+- Added email login support [#832](https://github.com/rokwire/illinois-app/issues/832).
+### Fixed
+- RootPanel: fix broken Tab content when recreating the TabBarController [#879](https://github.com/rokwire/illinois-app/issues/879).
+
+## [3.0.36] - 2021-10-27
+### Changed
+- Temporarly enable ROKWIRE-API-KEY authentication for logging service calls [#868](https://github.com/rokwire/illinois-app/issues/868).
+- Removed ROKWIRE-API-KEY authentication in image requests [#870](https://github.com/rokwire/illinois-app/issues/870).
+- Switch twitter user account for GIES users [#872](https://github.com/rokwire/illinois-app/issues/872).
+- Update GIES notes [#874](https://github.com/rokwire/illinois-app/issues/874).
+- Rename "Student Guide" to "Campus Guide" [#875](https://github.com/rokwire/illinois-app/issues/875).
+
+## [3.0.35] - 2021-10-26
+### Changed
+- Cleaned up network auth types, use old Shibboleth's access token in IlliniCash and iCard requests [#864](https://github.com/rokwire/illinois-app/issues/864).
+- GIES home widget updates [#866](https://github.com/rokwire/illinois-app/issues/866).
+
+## [3.0.34] - 2021-10-25
+### Changed
+- Open groups detail panel on FCM group notification is received [#839](https://github.com/rokwire/illinois-app/issues/839).
+- Make the edit controls in phone login in Personal Info panel with white background to indicate that they are editable [#842](https://github.com/rokwire/illinois-app/issues/842).
+- Updated Home panel display for GIES only student [#860](https://github.com/rokwire/illinois-app/issues/860).
+- Updated styling for Home panel widgets [#861](https://github.com/rokwire/illinois-app/issues/861).
+### Fixed
+- Display all games in Athletics schedule [#857](https://github.com/rokwire/illinois-app/issues/857).
+
+## [3.0.33] - 2021-10-22
+### Fixed
+- Broken FCM messaging in iOS [#839](https://github.com/rokwire/illinois-app/issues/839).
+
+## [3.0.32] - 2021-10-22
+### Added
+- Introduce HomeMyGroupsWidget [#852](https://github.com/rokwire/illinois-app/issues/852).
+- Display sport name for games in explore card [#844](https://github.com/rokwire/illinois-app/issues/844).
+- Introduce HomeHighlightedFeatures widget [#850](https://github.com/rokwire/illinois-app/issues/850).
+### Changed 
+- Change Home panel content order so twitter goes on top. [#848](https://github.com/rokwire/illinois-app/issues/848).
+
+## [3.0.31] - 2021-10-21
+### Fixed
+- GroupDetailPanel: Do not reverse group posts when filling the content   [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Changed
+- Groups: update strings [#836](https://github.com/rokwire/illinois-app/issues/836).
+- GroupDetailPanel: place "show older" button at the end of the posts list [#829](https://github.com/rokwire/illinois-app/issues/829).
+### Added
+- Add image to GroupEventCard [#840](https://github.com/rokwire/illinois-app/issues/840).
+
+## [3.0.28] - 2021-10-20
+### Fixed
+- Fixed spelling in Wallet  [#830](https://github.com/rokwire/illinois-app/issues/830).
+- Improve Accessibility for GIES widgets  [#833](https://github.com/rokwire/illinois-app/issues/833).
+
+## [3.0.27] - 2021-10-19
+### Changed
+- Updated GIES progress behavior to remember what is passes and what not [#826](https://github.com/rokwire/illinois-app/issues/826).
+
+## [3.0.26] - 2021-10-18
+### Deleted
+- Possibility for creating notification message [#817](https://github.com/rokwire/illinois-app/issues/817).
+### Changed
+- Updated again layout of ID Card panel [#819](https://github.com/rokwire/illinois-app/issues/819).
+- GIES Home widget updates [#822](https://github.com/rokwire/illinois-app/issues/822).
+
+## [3.0.25] - 2021-10-15
+### Changed
+- Updated layout of ID Card panel [#810](https://github.com/rokwire/illinois-app/issues/810).
+### Added
+- Added progress to GIES Home wizard [#815](https://github.com/rokwire/illinois-app/issues/815).
+- Added missing pages to GIES Home wizard [#815](https://github.com/rokwire/illinois-app/issues/815).
+
+## [3.0.24] - 2021-10-14
+### Added
+- Added athletics game detail handling as deep link and FCM notification [#803](https://github.com/rokwire/illinois-app/issues/803).
+- Added building access status in ID Card panel [#806](https://github.com/rokwire/illinois-app/issues/806).
+- Merged Athletics game entries in Events list [#804](https://github.com/rokwire/illinois-app/issues/804).
+- DeviceCalendar support Athletic events [#801](https://github.com/rokwire/illinois-app/issues/801).
+
+## [3.0.23] - 2021-10-13
+### Changed
+- Cleanup refresh token in Auth2, logout if number of retries fail [#798](https://github.com/rokwire/illinois-app/issues/798).
+- Switch groups to Core BB [#795](https://github.com/rokwire/illinois-app/issues/795).
+### Added
+- Added initial GIES support [#796](https://github.com/rokwire/illinois-app/issues/796).
+- DeviceCalendar support Athletic events [#801](https://github.com/rokwire/illinois-app/issues/801).
+
+## [3.0.22] - 2021-10-11
+### Changed
+- Merged integration/core2-bb branch in develop, Core BB integration is now official in main workbranch.
+
+## [3.0.21] - 2021-10-08
+### Changed
+- Update calendar dialog so support refresh in calendar chooser [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.20] - 2021-10-07
+### Changed
+- Update calendar dialog [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.19] - 2021-10-05
+### Added
+- Added calendar choser dialog [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.18] - 2021-10-04
+### Fixed
+- Fix loading Athletics games [#790](https://github.com/rokwire/illinois-app/issues/790).
+
+## [3.0.17] - 2021-10-01
+### Changed
+- Acknowledged new APIs from Sports BB [#750](https://github.com/rokwire/illinois-app/issues/750).
+- Updated debug messages for Device Calendar [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.16] - 2021-09-30
+### Added
+- SECURITY.md file [#785](https://github.com/rokwire/illinois-app/issues/785).
+### Changed 
+-  Update Calendar event deep link to use redirect url as workaround for broken Android links. [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.15] - 2021-09-28
+### Fixed
+- Deeplink url for calendar events [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.14] - 2021-09-27
+### Changed
+- Athletics: do not show "Free admission" when there is no value for "tickets" url [#777](https://github.com/rokwire/illinois-app/issues/777).
+## Added
+- Implemented event detail from DeepLink [#773](https://github.com/rokwire/illinois-app/issues/773).
+
+## [3.0.13] - 2021-09-24
+## Added
+- Save Calendar prompt [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.12] - 2021-09-23
+### Deleted
+- Removed UPACE activity button from Wellness content [#768](https://github.com/rokwire/illinois-app/issues/768).
+
+## [3.0.11] - 2021-09-21
+## Added
+- More debug logs for DeviceCalendar [#751](https://github.com/rokwire/illinois-app/issues/751).
+
+## [3.0.10] - 2021-09-17
+### Changed
+- Upload images using Content BB. [#763](https://github.com/rokwire/illinois-app/issues/763).
+
+## [3.0.9] - 2021-09-16
+### Changed
+- Implemented Twitter widget paging, removed caching from Twitter service [#759](https://github.com/rokwire/illinois-app/issues/759).
+
+## [3.0.8] - 2021-09-15
+### Fixed
+- Removed wrong "buss" spelling everywhere (display strings, internal names, resource names) [#752](https://github.com/rokwire/illinois-app/issues/752).
+### Added
+- Created Twitter widget and service [#749](https://github.com/rokwire/illinois-app/issues/749).
+
+## [3.0.7] - 2021-09-10
+### Added
+- Acknowledge new field "displayOnlyWithSuperEvent" in events [#744](https://github.com/rokwire/illinois-app/issues/744).
+- Implement Pull to refresh for InboxHomePanel [#746](https://github.com/rokwire/illinois-app/issues/746).
+
+## [3.0.6] - 2021-09-09
+### Changed
+- Improved Accessibility for Inbox panels [#742](https://github.com/rokwire/illinois-app/issues/742).
+- ExplorePanel: remove horizontal scrolling for tabs and filters. [#511](https://github.com/rokwire/illinois-app/issues/511).
+- Acknowledged FCM stuff from Notifications BB [#740](https://github.com/rokwire/illinois-app/issues/740).
+
+## [3.0.5] - 2021-09-01
+### Added
+- Contacts information in event detail panel [#713](https://github.com/rokwire/illinois-app/issues/713).
+- Debug create Inbox message functionality [#735](https://github.com/rokwire/illinois-app/issues/735).
+- Group attributes in "Request to join" select analytics event [#737](https://github.com/rokwire/illinois-app/issues/737).
+
+## [3.0.4] - 2021-08-31
+### Changed
+- Updated date headers style in Inbox panel [#728](https://github.com/rokwire/illinois-app/issues/728).
+- Acknowledge latest updates from Notification BB [#732](https://github.com/rokwire/illinois-app/issues/732).
+### Added
+- Implement Delete functionality in Inbox panel [#730](https://github.com/rokwire/illinois-app/issues/730).
+
+## [3.0.3] - 2021-08-30
+### Changed
+- Remove Converge url action [#292](https://github.com/rokwire/illinois-app/issues/292).
+- Hide the "Categories" drop down in Inbox panel [#721](https://github.com/rokwire/illinois-app/issues/721).
+- Replace "Today and Yesterday" with only "Yesterday" in time dropdown in Inbox panel [#723](https://github.com/rokwire/illinois-app/issues/723).
+- Group inbox messages by date [#725](https://github.com/rokwire/illinois-app/issues/725).
+
+## [3.0.2] - 2021-08-27
+### Fixed
+- AthleticsHomePanel update semantics label for image [#510](https://github.com/rokwire/illinois-app/issues/510).
+- BrowsePanel: improve Large Text support [#511](https://github.com/rokwire/illinois-app/issues/511).
+### Added
+- Created initial Inbox functionality and UI [#714](https://github.com/rokwire/illinois-app/issues/714).
+
+## [3.0.1] - 2021-08-25
+### Fixed
+- Dining Plan Balance Not Refreshing [#698](https://github.com/rokwire/illinois-app/issues/698).
+- Forgetting user information [#705](https://github.com/rokwire/illinois-app/issues/705).
+- Unwanted display of test emergency widget [#710](https://github.com/rokwire/illinois-app/issues/710).
+### Changed
+- Delay creating MapWidget in ExplorePanel until needed [#701](https://github.com/rokwire/illinois-app/issues/701).
+- Delay creating MapWidget  until needed in Laundry Home, Laundry Detail and Event Schedule panels [#706](https://github.com/rokwire/illinois-app/issues/706).
+### Added
+- Added sample wellness panels in embedded student guide content [#715](https://github.com/rokwire/illinois-app/issues/715).
+
+## [3.0.0] - 2021-08-19
+### Fixed
+- Do not allow editing events for non-group events [#658](https://github.com/rokwire/illinois-app/issues/658).
+- Allow only users with granted permissions to create a group [#663](https://github.com/rokwire/illinois-app/issues/663).
+- Additional fix which prevents UI blocking if the user cancels the login process[#357](https://github.com/rokwire/illinois-app/issues/357).
+- Display start time for events from Athletics category [#636](https://github.com/rokwire/illinois-app/issues/636).
+- Display options menu in GroupAllEventsPanel for group admins [#637](https://github.com/rokwire/illinois-app/issues/637).
+- Remove check if user is employee when creating group and change permissions error message [#663](https://github.com/rokwire/illinois-app/issues/663).
+- Display group website link for members and admins as well [#681](https://github.com/rokwire/illinois-app/issues/681).
+- Fixed action for StudentGuide library-card feature [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Check in FlexUI whether relevant StudentGuide feature are available before displaying it [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Defined separate section in Flex UI for Student Guide features [#684](https://github.com/rokwire/illinois-app/issues/684).
+- Parsing group membership questions to json [#417](https://github.com/rokwire/illinois-app/issues/417).
+- Fixed onboarding screens that used ScaleableScrollView [#679](https://github.com/rokwire/illinois-app/issues/679).
+- Handle new line symbols in the html widget [#692](https://github.com/rokwire/illinois-app/issues/692).
+### Added
+- Add three new buttons to mental wellness [#674](https://github.com/rokwire/illinois-app/issues/674).
+### Changed
+- Updated Dining Dollars icon [#669](https://github.com/rokwire/illinois-app/issues/669).
+- Updated Dining Dollars icon [#682](https://github.com/rokwire/illinois-app/issues/682).
+- Do not notify for null uri in DeepLink service.
+- Cache canonical app id in Config service.
+- Update MTD logo [#694](https://github.com/rokwire/illinois-app/issues/694).
+- FlexUI does not use talent chooser service any more, it loads content & rules from app assets [#696](https://github.com/rokwire/illinois-app/issues/696).
+
+### Added
+- Force onboarding from app config [#661](https://github.com/rokwire/illinois-app/issues/661).
+
+### Changed
+- Removed refreshToken parameter from Network calls (not really needed).
+- Repeat 401 failed request only if refreshToken succeeded.
+
 ## [2.8.1] - 2021-11-15
 ### Changed
 - Rework content loading and processing in GroupsHomePanel [#948](https://github.com/rokwire/illinois-app/issues/948).

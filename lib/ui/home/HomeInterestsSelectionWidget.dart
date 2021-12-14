@@ -19,12 +19,13 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/settings/SettingsManageInterestsPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -48,7 +49,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
   void initState() {
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
-      User.notifyTagsUpdated,
+      Auth2UserPrefs.notifyTagsChanged
     ]);
 
     if (widget.refreshController != null) {
@@ -145,7 +146,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
       Random random = Random(DateTime.now()?.millisecondsSinceEpoch);
       int randomIndex = (random.nextInt(max));
       String interest = _allInterests[randomIndex];
-      bool userContainsInterest = User()?.getTags()?.contains(interest) ?? false;
+      bool userContainsInterest = Auth2().prefs?.hasPositiveTag(interest);
       bool resultContainsInterest = result.contains(interest);
 
       if (userContainsInterest || resultContainsInterest) {
@@ -193,7 +194,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
 
   void _onInterestClicked(String interest) {
     Analytics.instance.logSelect(target: "HomeInterestsSelection interest: $interest");
-    User().switchTag(interest, fastRefresh: false);
+    Auth2().prefs?.togglePositiveTag(interest);
   }
 
   // NotificationsListener
@@ -202,7 +203,7 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
       _loadAllInterests();
-    } else if (name == User.notifyTagsUpdated) {
+    } else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       setState(() {
         _reloadRandomInterests(_interestsCount);
       });

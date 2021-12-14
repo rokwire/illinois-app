@@ -126,7 +126,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   _initFilter() async{
     _filters = [];
    _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News"));
-    List<SportDefinition> sportTypes = Sports().getSports();
+    List<SportDefinition> sportTypes = Sports().sports;
    sportTypes.forEach((SportDefinition type){
        _filters.add(type.name);
    });
@@ -168,7 +168,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
           News news = _displayNews[index];
 
           Widget newsView = ImageHolderListItem(
-              imageUrl: news.getImageUrl() ,
+              imageUrl: news.imageUrl,
               placeHolderDividerResource: Styles().colors.fillColorPrimaryTransparent03,
               placeHolderSlantResource:  'images/slant-down-right-blue.png',
           child:AthleticsNewsCard(
@@ -223,7 +223,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   SportDefinition getSPortTypeByIndex(int index){
     int typeIndex = index - 1; //predefined values which are not sportType
-    List<SportDefinition> sportTypes = Sports().getSports();
+    List<SportDefinition> sportTypes = Sports().sports;
     if(typeIndex>=0 && typeIndex<sportTypes.length) {
       return sportTypes[typeIndex];
     }

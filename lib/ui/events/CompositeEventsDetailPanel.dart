@@ -17,12 +17,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/events/EventsSchedulePanel.dart';
@@ -30,7 +32,6 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
@@ -49,7 +50,7 @@ import 'package:sprintf/sprintf.dart';
 class CompositeEventsDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
 
   final Event parentEvent;
-  final Core.LocationData initialLocationData;
+  final Core.Position initialLocationData;
   final String browseGroupId;
 
   CompositeEventsDetailPanel({this.parentEvent, this.initialLocationData, this.browseGroupId});
@@ -69,15 +70,15 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   static final double _horizontalPadding = 24;
 
-  Core.LocationData _locationData;
+  Core.Position     _locationData;
   bool              _addToGroupInProgress = false;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
-      User.notifyPrivacyLevelChanged,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
     _addRecentItem();
@@ -96,7 +97,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = User().privacyMatch(2) ? await LocationServices.instance.location : null;
+    _locationData = Auth2().privacyMatch(2) ? await LocationServices.instance.location : null;
   }
 
   void _updateCurrentLocation() {
@@ -178,8 +179,8 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget _exploreHeading() {
     String category = widget.parentEvent?.category;
-    bool isFavorite = User().isExploreFavorite(widget.parentEvent);
-    bool starVisible = User().favoritesStarVisible;
+    bool isFavorite = widget.parentEvent.isFavorite;
+    bool starVisible = Auth2().canFavorite;
     return Padding(padding: EdgeInsets.only(top: 16, bottom: 12), child: Row(
       children: <Widget>[
         Text(
@@ -530,7 +531,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onTapGetTickets(String ticketsUrl) {
     Analytics.instance.logSelect(target: "Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(
           context, onContinueTap: () {
         _onTapWebButton(ticketsUrl, 'Tickets');
@@ -561,18 +562,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   void _onTapHeaderStar() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.parentEvent?.title}");
-    Event event = widget.parentEvent;
-    if (event?.isRecurring ?? false) {
-      bool isFavorite = User().isExploreFavorite(event);
-      Analytics().logFavorite(event, !isFavorite);
-      if (isFavorite) {
-        User().removeAllFavorites(event.recurringEvents);
-      } else {
-        User().addAllFavorites(event.recurringEvents);
-      }
-    } else {
-      User().switchFavorite(event);
-    }
+    widget.parentEvent.toggleFavorite();
   }
 
   Widget _buildGroupButtons(){
@@ -625,10 +615,10 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     if (name == LocationServices.notifyStatusChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -725,8 +715,8 @@ class _EventEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isFavorite = User().isFavorite(event);
-    bool starVisible = User().favoritesStarVisible;
+    bool isFavorite = Auth2().isFavorite(event);
+    bool starVisible = Auth2().canFavorite;
     String title = parentEvent.isSuperEvent ? event.title : event.displayDate;
     String subTitle = parentEvent.isSuperEvent ? event.displaySuperTime : event.displayStartEndTime;
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(
@@ -751,7 +741,7 @@ class _EventEntry extends StatelessWidget {
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
                     Analytics.instance.logSelect(target: "Favorite: ${event?.title}");
-                    User().switchFavorite(event);
+                    Auth2().prefs?.toggleFavorite(event);
                   },
                   child: Semantics(
                       label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization()

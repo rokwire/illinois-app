@@ -19,23 +19,23 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/RecentItems.dart';
-import 'package:illinois/service/StudentGuide.dart';
-import 'package:illinois/service/User.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
-import 'package:illinois/ui/guide/StudentGuideDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -188,8 +188,8 @@ class _RecentItemsList extends StatelessWidget{
       }
       return ExploreDetailPanel(explore: originalObject,);
     }
-    else if ((item.recentItemType == RecentItemType.studentGuide) && (originalObject is Map)) {
-      return StudentGuideDetailPanel(guideEntryId: StudentGuide().entryId(originalObject));
+    else if ((item.recentItemType == RecentItemType.guide) && (originalObject is Map)) {
+      return GuideDetailPanel(guideEntryId: Guide().entryId(originalObject));
     }
 
     return Container();
@@ -216,7 +216,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
 //    _originalItem = widget.item.fromOriginalJson();
     super.initState();
   }
@@ -232,10 +232,10 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     bool isFavorite;
     Object originalItem = widget.item.fromOriginalJson();
     if (originalItem is Favorite) {
-      isFavorite = User().isFavorite(originalItem);
+      isFavorite = Auth2().isFavorite(originalItem);
     }
-    else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      isFavorite = User().isFavorite(StudentGuideFavorite(id: StudentGuide().entryId(originalItem)));
+    else if ((widget.item.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
+      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(originalItem)));
     }
     else {
       isFavorite = false;
@@ -269,7 +269,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
             )
           ),
           _topBorder(),
-          Visibility(visible: User().favoritesStarVisible, child:
+          Visibility(visible: Auth2().canFavorite, child:
             Align(alignment: Alignment.topRight, child:
               GestureDetector(onTap: _onTapFavorite, child:
                 Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
@@ -297,7 +297,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       }
       details.add(timeDetail);
     }
-    Widget descriptionDetail = ((widget.item.recentItemType == RecentItemType.studentGuide) && AppString.isStringNotEmpty(widget.item.recentDescripton)) ? _descriptionDetail() : null;
+    Widget descriptionDetail = ((widget.item.recentItemType == RecentItemType.guide) && AppString.isStringNotEmpty(widget.item.recentDescripton)) ? _descriptionDetail() : null;
     if (descriptionDetail != null) {
       if (details.isNotEmpty) {
         details.add(Container(height: 8,));
@@ -351,7 +351,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     if (originalItem is Explore) {
       borderColor = originalItem.uiColor;
     }
-    else if (widget.item.recentItemType == RecentItemType.studentGuide) {
+    else if (widget.item.recentItemType == RecentItemType.guide) {
       borderColor = Styles().colors.accentColor3;
     }
     else {
@@ -364,12 +364,12 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     Analytics.instance.logSelect(target: "Favorite: ${widget?.item?.recentTitle}");
     Object originalItem = widget.item.fromOriginalJson();
     if (originalItem is Favorite) {
-      User().switchFavorite(originalItem);
+      Auth2().prefs?.toggleFavorite(originalItem);
     }
-    else if ((widget.item.recentItemType == RecentItemType.studentGuide) && (originalItem is Map)) {
-      User().switchFavorite(StudentGuideFavorite(
-        id: StudentGuide().entryId(originalItem),
-        title: StudentGuide().entryTitle(originalItem)
+    else if ((widget.item.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
+      Auth2().prefs?.toggleFavorite(GuideFavorite(
+        id: Guide().entryId(originalItem),
+        title: Guide().entryTitle(originalItem)
       ));
     }
   }
@@ -378,7 +378,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       if (mounted){
         setState(() {});
       }

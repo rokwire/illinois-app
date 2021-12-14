@@ -16,11 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -43,7 +44,7 @@ class AthleticsScheduleCard extends StatefulWidget {
 class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -57,7 +58,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -112,8 +113,8 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardTitle() {
-    bool starVisible = widget._game.isUpcoming && User().favoritesStarVisible;
-    bool isGameSaved = User().isFavorite(widget._game);
+    bool starVisible = widget._game.isUpcoming && Auth2().canFavorite;
+    bool isGameSaved = Auth2().isFavorite(widget._game);
 
     return Padding(
       padding: EdgeInsets.only(left: 24),
@@ -131,10 +132,9 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
           ),
           Visibility(
             visible: starVisible,
-            child: Container(
-                child: Padding(
-                    padding: EdgeInsets.only(top: 20, right: 24),
-                    child: GestureDetector(child: Image.asset(isGameSaved ? 'images/icon-star-selected.png' : 'images/icon-star.png'), onTap: _onTapSaveGame))),
+            child: GestureDetector(child: Container(
+                  padding: EdgeInsets.only(top: 20, right: 24),
+                  child: Image.asset(isGameSaved ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)), onTap: _onTapSaveGame),
           )
         ],
       ),
@@ -165,7 +165,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         padding: EdgeInsets.only(top: 12, left: 24, right: 24),
         child: Row(
           children: <Widget>[
-            Image.asset('images/icon-calendar.png'),
+            Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
             Padding(
               padding: EdgeInsets.only(right: 5),
             ),
@@ -215,7 +215,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
-                            Visibility(visible: hasTickets, child: Image.asset('images/chevron-right.png'))
+                            Visibility(visible: hasTickets, child: Image.asset('images/chevron-right.png', excludeFromSemantics: true))
                           ]))),
                 ))
           ],
@@ -237,7 +237,13 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String formattedResult = result.status + ' ' + result.teamScore + '-' + result.opponentScore;
+    String formattedResult = AppString.getDefaultEmptyString(value: result.status);
+    if (AppString.isStringNotEmpty(result.teamScore)) {
+      formattedResult += ' ' + result.teamScore;
+      if (AppString.isStringNotEmpty(result.opponentScore)) {
+        formattedResult += '-' + result.opponentScore;
+      }
+    }
     return Padding(
       padding: EdgeInsets.only(top: 16),
       child: Column(
@@ -266,7 +272,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
 
   void _onTapSaveGame() {
     Analytics.instance.logSelect(target: "Favorite: ${widget._game?.title}");
-    User().switchFavorite(widget._game);
+    Auth2().prefs?.toggleFavorite(widget._game);
   }
 
   void _onTapSchedule() {
@@ -281,7 +287,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   void _onTapGetTickets() {
     Analytics.instance.logSelect(target: "SchedulteCard: " + widget._game.title + " -Tickets");
 
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _pushTicketsWebPanel();
       });

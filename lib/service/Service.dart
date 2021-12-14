@@ -15,14 +15,17 @@
  */
 
 
+import 'package:flutter/foundation.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DiningService.dart';
@@ -30,8 +33,10 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FirebaseService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/HttpProxy.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -41,14 +46,14 @@ import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/LocalNotifications.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Voter.dart';
 
 abstract class Service {
-  
+
+  bool _isInitialized;
+
   void createService() {
   }
 
@@ -56,10 +61,13 @@ abstract class Service {
   }
 
   Future<void> initService() async {
+    _isInitialized = true;
   }
 
   void initServiceUI() async {
   }
+
+  bool get isInitialized => _isInitialized ?? false;
 
   Set<Service> get serviceDependsOn {
     return null;
@@ -84,24 +92,23 @@ class Services {
 
     FirebaseService(),
     FirebaseCrashlytics(),
-    Storage(),
-    HttpProxy(),
-    Config(),
-
     AppLivecycle(),
     AppDateTime(),
     Connectivity(),
     LocationServices(),
     BluetoothServices(),
-    NativeCommunicator(),
-    LocalNotifications(),
     DeepLink(),
 
+    Storage(),
+    HttpProxy(),
+
+    Config(),
+    NativeCommunicator(),
+
+    Auth2(),
     Localization(),
     Assets(),
     Styles(),
-    Auth(),
-    User(),
     Analytics(),
     FirebaseMessaging(),
     Sports(),
@@ -114,12 +121,14 @@ class Services {
     Polls(),
     GeoFence(),
     Voter(),
-    StudentGuide(),
-    
+    Guide(),
+    Inbox(),
+    DeviceCalendar(),
+    ExploreService(),
+    Groups()
     // These do not rely on Service initialization API so they are not registered as services.
     // LaundryService(),
     // Content(),
-    // ExploreService(),
   ];
 
   void create() {
@@ -135,10 +144,64 @@ class Services {
     }
   }
 
-  Future<void> init() async {
+  Future<ServiceError> init() async {
+    bool offlineChecked = false;
+    bool showStatus = kDebugMode;
     for (Service service in _services) {
+
+      if (service.isInitialized != true) {
+        if (showStatus) {
+          await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
+        }
+  
+        ServiceError error = await _initService(service);
+  
+        if (showStatus) {
+          await NativeCommunicator().setLaunchScreenStatus(null);
+        }
+  
+        if (error?.severity == ServiceErrorSeverity.fatal) {
+          return error;
+        }
+      }
+
+      if ((offlineChecked != true) && Storage().isInitialized && Connectivity().isInitialized) {
+        if ((Storage().lastRunVersion == null) && Connectivity().isOffline) {
+          return ServiceError(
+            source: null,
+            severity: ServiceErrorSeverity.fatal,
+            title: 'Initialization Failed',
+            description: 'You must be online when you start this product for first time.',
+          );
+        }
+        else {
+          offlineChecked = true;
+        }
+      }
+    }
+
+    /*TMP:
+    return ServiceError(
+      source: null,
+      severity: ServiceErrorSeverity.fatal,
+      title: 'Text Initialization Error',
+      description: 'This is a test initialization error.',
+    );*/
+    return null;
+  }
+
+  Future<ServiceError> _initService(Service service) async {
+    try {
       await service.initService();
     }
+    on ServiceError catch (error) {
+      print(error?.toString());
+      return error;
+    }
+    catch(e) {
+      print(e?.toString());
+    }
+    return null;
   }
 
   void initUI() {
@@ -176,3 +239,33 @@ class Services {
 
 }
 
+class ServiceError {
+  final String title;
+  final String description;
+  final Service source;
+  final ServiceErrorSeverity severity;
+
+  ServiceError({this.title, this.description, this.source, this.severity});
+
+  String toString() {
+    return "ServiceError: ${source?.runtimeType?.toString()}: $title\n$description";
+  }
+
+  bool operator ==(o) =>
+    (o is ServiceError) &&
+      (o.title == title) &&
+      (o.description == description) &&
+      (o.source == source) &&
+      (o.severity == severity);
+
+  int get hashCode =>
+    (title?.hashCode ?? 0) ^
+    (description?.hashCode ?? 0) ^
+    (source?.hashCode ?? 0) ^
+    (severity?.hashCode ?? 0);
+}
+
+enum ServiceErrorSeverity {
+  fatal,
+  nonFatal
+}

@@ -15,13 +15,14 @@
  */
 
 import 'dart:convert';
-import 'package:illinois/model/Auth.dart';
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/Inbox.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Log.dart';
-import 'package:illinois/model/UserData.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/utils/Crypt.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,132 +39,197 @@ class Storage with Service {
   Storage._internal();
 
   SharedPreferences _sharedPreferences;
+  String _encryptionKey;
+  String _encryptionIV;
 
   @override
   Future<void> initService() async {
-    Log.d("Init Storage");
     _sharedPreferences = await SharedPreferences.getInstance();
+    _encryptionKey = await NativeCommunicator().encryptionKey(identifier: 'edu.illinois.rokwire.encryption.storage.key', size: AESCrypt.kCCBlockSizeAES128);
+    _encryptionIV = await NativeCommunicator().encryptionKey(identifier: 'edu.illinois.rokwire.encryption.storage.iv', size: AESCrypt.kCCBlockSizeAES128);
+    
+    if (_sharedPreferences == null) {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'Storage Initialization Failed',
+        description: 'Failed to initialize application preferences storage.',
+      );
+    }
+    else if ((_encryptionKey == null) || (_encryptionIV == null)) {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.fatal,
+        title: 'Storage Initialization Failed',
+        description: 'Failed to initialize encryption keys.',
+      );
+    }
+    else {
+      await super.initService();
+    }
+  }
+
+  String get encryptionKey => _encryptionKey;
+  String get encryptionIV => _encryptionIV;
+
+  String encrypt(String value) {
+    return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
+      AESCrypt.encrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
+  }
+
+  String decrypt(String value) {
+    return ((value != null) && (_encryptionKey != null) && (_encryptionIV != null)) ?
+      AESCrypt.decrypt(value, key: _encryptionKey, iv: _encryptionIV) : null;
   }
 
   void deleteEverything(){
-    for(String key in _sharedPreferences.getKeys()){
-      if(key != _configEnvKey){  // skip selected environment
-        _sharedPreferences.remove(key);
+    if (_sharedPreferences != null) {
+      for(String key in _sharedPreferences.getKeys()){
+        if(key != _configEnvKey){  // skip selected environment
+          _sharedPreferences.remove(key);
+        }
       }
     }
   }
 
   String _getStringWithName(String name, {String defaultValue}) {
-    return _sharedPreferences.getString(name) ?? defaultValue;
+    return _sharedPreferences?.getString(name) ?? defaultValue;
   }
 
   void _setStringWithName(String name, String value) {
-    if(value != null) {
-      _sharedPreferences.setString(name, value);
+    if (value != null) {
+      _sharedPreferences?.setString(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
+    }
+    NotificationService().notify(notifySettingChanged, name);
+  }
+
+  String _getEncryptedStringWithName(String name, {String defaultValue}) {
+    String value = _sharedPreferences?.getString(name);
+    if (value != null) {
+      if ((_encryptionKey != null) && (_encryptionIV != null)) {
+        value = decrypt(value);
+      }
+      else {
+        value = null;
+      }
+    }
+    return value ?? defaultValue;
+  }
+
+  void _setEncryptedStringWithName(String name, String value) {
+    if (value != null) {
+      if ((_encryptionKey != null) && (_encryptionIV != null)) {
+        value = encrypt(value);
+        _sharedPreferences?.setString(name, value);
+      }
+    } else {
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   List<String> _getStringListWithName(String name, {List<String> defaultValue}) {
-    return _sharedPreferences.getStringList(name) ?? defaultValue;
+    return _sharedPreferences?.getStringList(name) ?? defaultValue;
   }
 
   void _setStringListWithName(String name, List<String> value) {
-    if(value != null) {
-      _sharedPreferences.setStringList(name, value);
+    if (value != null) {
+      _sharedPreferences?.setStringList(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   bool _getBoolWithName(String name, {bool defaultValue = false}) {
-    return _sharedPreferences.getBool(name) ?? defaultValue;
+    return _sharedPreferences?.getBool(name) ?? defaultValue;
   }
 
   void _setBoolWithName(String name, bool value) {
     if(value != null) {
-      _sharedPreferences.setBool(name, value);
+      _sharedPreferences?.setBool(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
   int _getIntWithName(String name, {int defaultValue = 0}) {
-    return _sharedPreferences.getInt(name) ?? defaultValue;
+    return _sharedPreferences?.getInt(name) ?? defaultValue;
   }
 
   void _setIntWithName(String name, int value) {
-    if(value != null) {
-      _sharedPreferences.setInt(name, value);
+    if (value != null) {
+      _sharedPreferences?.setInt(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
   }
 
-  double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
-    return _sharedPreferences.getDouble(name) ?? defaultValue;
+  /*double _getDoubleWithName(String name, {double defaultValue = 0.0}) {
+    return _sharedPreferences?.getDouble(name) ?? defaultValue;
   }
 
   void _setDoubleWithName(String name, double value) {
-    if(value != null) {
-      _sharedPreferences.setDouble(name, value);
+    if (value != null) {
+      _sharedPreferences?.setDouble(name, value);
     } else {
-      _sharedPreferences.remove(name);
+      _sharedPreferences?.remove(name);
     }
     NotificationService().notify(notifySettingChanged, name);
-  }
+  }*/
 
 
   dynamic operator [](String name) {
-    return _sharedPreferences.get(name);
+    return _sharedPreferences?.get(name);
   }
 
   void operator []=(String key, dynamic value) {
     if (value is String) {
-      _sharedPreferences.setString(key, value);
+      _sharedPreferences?.setString(key, value);
     }
     else if (value is int) {
-      _sharedPreferences.setInt(key, value);
+      _sharedPreferences?.setInt(key, value);
     }
     else if (value is double) {
-      _sharedPreferences.setDouble(key, value);
+      _sharedPreferences?.setDouble(key, value);
     }
     else if (value is bool) {
-      _sharedPreferences.setBool(key, value);
+      _sharedPreferences?.setBool(key, value);
     }
     else if (value is List) {
-      _sharedPreferences.setStringList(key, value.cast<String>());
+      _sharedPreferences?.setStringList(key, value.cast<String>());
     }
     else if (value == null) {
-      _sharedPreferences.remove(key);
+      _sharedPreferences?.remove(key);
     }
   }
 
-  // Dining
+  // User: readonly, backward compatability only.
+
+  static const String _userKey  = 'user';
+
+  Map<String, dynamic> get userProfile {
+    return AppJson.decodeMap(_getStringWithName(_userKey));
+  }
+
+  // Dining: readonly, backward compatability only.
 
   static const String excludedFoodIngredientsPrefsKey  = 'excluded_food_ingredients_prefs';
 
-  List<String> get excludedFoodIngredientsPrefs {
-    return _getStringListWithName(excludedFoodIngredientsPrefsKey, defaultValue: []);
-  }
-
-  set excludedFoodIngredientsPrefs(List<String> value) {
-    _setStringListWithName(excludedFoodIngredientsPrefsKey, value);
+  Set<String> get excludedFoodIngredientsPrefs {
+    List<String> list = _getStringListWithName(excludedFoodIngredientsPrefsKey);
+    return (list != null) ? Set.from(list) : null;
   }
 
   static const String includedFoodTypesPrefsKey  = 'included_food_types_prefs';
 
-  List<String> get includedFoodTypesPrefs {
-    return _getStringListWithName(includedFoodTypesPrefsKey, defaultValue: []);
-  }
-
-  set includedFoodTypesPrefs(List<String> value) {
-    _setStringListWithName(includedFoodTypesPrefsKey, value);
+  Set<String> get includedFoodTypesPrefs {
+    List<String> list = _getStringListWithName(includedFoodTypesPrefsKey);
+    return (list != null) ? Set.from(list) : null;
   }
 
   // Notifications
@@ -174,75 +240,6 @@ class Storage with Service {
 
   void setNotifySetting(String name, bool value) {
     return _setBoolWithName(name, value);
-  }
-
-  /////////////
-  // User
-
-  static const String userKey  = 'user';
-
-  UserData get userData {
-    final String userToString = _getStringWithName(userKey);
-    final Map<String, dynamic> userToJson = AppJson.decode(userToString);
-    return (userToJson != null) ? UserData.fromJson(userToJson) : null;
-  }
-
-  set userData(UserData user) {
-    String userToString = (user != null) ? json.encode(user) : null;
-    _setStringWithName(userKey, userToString);
-  }
-
-  /////////////
-  // UserRoles
-
-  static const String userRolesKey  = 'user_roles';
-
-  List<dynamic> get userRolesJson {
-    final String userRolesToString = _getStringWithName("user_roles");
-    return AppJson.decode(userRolesToString);
-  }
-
-  Set<UserRole> get userRoles {
-    final List<dynamic> userRolesToJson = userRolesJson;
-    return (userRolesToJson != null) ? Set.from(userRolesToJson.map((value)=>UserRole.fromString(value))) : null;
-  }
-
-  set userRoles(Set<UserRole> userRoles) {
-    String userRolesToString = (userRoles != null) ? json.encode(userRoles.toList()) : null;
-    _setStringWithName(userRolesKey, userRolesToString);
-  }
-
-  static const String phoneNumberKey  = 'user_phone_number';
-
-  String get phoneNumber {
-    return _getStringWithName(phoneNumberKey);
-  }
-
-  set phoneNumber(String phoneNumber) {
-    _setStringWithName(phoneNumberKey, phoneNumber);
-  }
-
-  /////////////
-  // UserPII
-
-  static const String userPidKey  = 'user_pid';
-
-  String get userPid {
-    return _getStringWithName(userPidKey);
-  }
-
-  set userPid(String userPid) {
-    _setStringWithName(userPidKey, userPid);
-  }
-
-  static const String userPiiDataTimeKey  = '_user_pii_data_time';
-
-  int get userPiiDataTime {
-    return _getIntWithName(userPiiDataTimeKey);
-  }
-
-  set userPiiDataTime(int value) {
-    _setIntWithName(userPiiDataTimeKey, value);
   }
 
   /////////////
@@ -330,20 +327,6 @@ class Storage with Service {
   }
 
   ////////////////////////////
-  // User Relogin Version
-
-  static const String userRefreshPiiVersionKey  = 'user_refresh_pii_version';
-
-  String get userRefreshPiiVersion {
-    return _getStringWithName(userRefreshPiiVersionKey);
-  }
-
-  set userRefreshPiiVersion(String value) {
-    _setStringWithName(userRefreshPiiVersionKey, value);
-
-  }
-
-  ////////////////////////////
   // Upgrade Message Version
 
   static const String _userLoginVersionKey = 'user_login_version';
@@ -370,61 +353,16 @@ class Storage with Service {
   }
 
   ////////////////
-  // Auth
-
-  static const String authTokenKey  = '_auth_token';
-
-  AuthToken get authToken {
-    try {
-      String jsonString = _getStringWithName(authTokenKey);
-      dynamic jsonData = AppJson.decode(jsonString);
-      return (jsonData != null) ? AuthToken.fromJson(jsonData) : null;
-    } on Exception catch (e) { print(e.toString()); }
-    return null;
-  }
-
-  set authToken(AuthToken value) {
-    _setStringWithName(authTokenKey, value != null ? json.encode(value.toJson()) : null);
-  }
-
-  static const String authInfoKey  = '_auth_info';
-
-  AuthInfo get authInfo {
-    final String authInfoToString = _getStringWithName(authInfoKey);
-    AuthInfo authInfo = AuthInfo.fromJson(AppJson.decode(authInfoToString));
-    return authInfo;
-  }
-
-  set authInfo(AuthInfo value) {
-    _setStringWithName(authInfoKey, value != null ? json.encode(value.toJson()) : null);
-  }
-
-  static const String authCardTimeKey  = '_auth_card_time';
-
-  int get authCardTime {
-    return _getIntWithName(authCardTimeKey);
-  }
-
-  set authCardTime(int value) {
-    _setIntWithName(authCardTimeKey, value);
-  }
-
-  ////////////////
   // IlliniCash
 
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
 
   IlliniCashBallance get illiniCashBallance {
-    try {
-      String jsonString = _getStringWithName(illiniCashBallanceKey);
-      dynamic jsonData = AppJson.decode(jsonString);
-      return (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
-    } on Exception catch (e) { print(e.toString()); }
-    return null;
+    return IlliniCashBallance.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(illiniCashBallanceKey)));
   }
 
   set illiniCashBallance(IlliniCashBallance value) {
-    _setStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
+    _setEncryptedStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
   }
 
   /////////////////////
@@ -442,33 +380,6 @@ class Storage with Service {
         .dateTimeFromString(dateString) : null;
   }
 
-  ////////////////
-  // Privacy level
-
-  static const String privacyLevelKey  = 'illinois_privacy_level';
-
-  set privacyLevel(int value) {
-     _setDoubleWithName(privacyLevelKey, value?.toDouble());
-  }
-
-  int get privacyLevel {
-    return _getDoubleWithName(privacyLevelKey, defaultValue: 5)?.toInt();
-  }
-  
-
-  /////////////////
-  // Face id
-
-  static const String toggleFaceIdKey  = 'toggle_faceid';
-
-  bool get toggleFaceId {
-    return _getBoolWithName(toggleFaceIdKey);
-  }
-
-  set toggleFaceId(bool value) {
-    _setBoolWithName(toggleFaceIdKey, value);
-  }
-
   /////////////////
   // Language
 
@@ -484,18 +395,6 @@ class Storage with Service {
 
   //////////////////
   // Favorites
-
-  static const String favoritesKey  = 'user_favorites_list';
-
-  List<Object> get favorites{
-    List<String> storedValue = _sharedPreferences.getStringList(favoritesKey);
-    return storedValue?? [];
-  }
-
-  set favorites(List<Object> favorites){
-    List<String> storeValue = favorites.map((Object e){return e.toString();}).toList();
-    _sharedPreferences.setStringList(favoritesKey, storeValue);
-  }
 
   static const String favoritesDialogWasVisibleKey  = 'favorites_dialog_was_visible';
 
@@ -602,33 +501,81 @@ class Storage with Service {
     _setBoolWithName(debugMapHideLevelsKey, value);
   }
 
+  static const String debugLastInboxMessageKey  = 'debug_last_inbox_message';
+
+  String get debugLastInboxMessage {
+    return _getStringWithName(debugLastInboxMessageKey);
+  }
+
+  set debugLastInboxMessage(String value) {
+    _setStringWithName(debugLastInboxMessageKey, value);
+  }
+
   //////////////
-  // Permanent subscription
+  // Firebase
 
-  static const String firebaseSubscriptionTopisKey  = 'firebase_subscription_topis';
-
-  Set<String> get firebaseSubscriptionTopis {
-    List<String> topicsList = _getStringListWithName(firebaseSubscriptionTopisKey);
+// static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
+// Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
+// all subsciptions will be applied again through Notifications BB APIs
+  static const String firebaseMessagingSubscriptionTopicsKey  = 'firebase_messaging_subscription_topis';
+  
+  Set<String> get firebaseMessagingSubscriptionTopics {
+    List<String> topicsList = _getStringListWithName(firebaseMessagingSubscriptionTopicsKey);
     return (topicsList != null) ? Set.from(topicsList) : null;
   }
 
-  set firebaseSubscriptionTopis(Set<String> value) {
+  set firebaseMessagingSubscriptionTopics(Set<String> value) {
     List<String> topicsList = (value != null) ? List.from(value) : null;
-    _setStringListWithName(firebaseSubscriptionTopisKey, topicsList);
+    _setStringListWithName(firebaseMessagingSubscriptionTopicsKey, topicsList);
   }
 
-  void addFirebaseSubscriptionTopic(String value) {
-    Set<String> topis = firebaseSubscriptionTopis ?? Set();
-    topis.add(value);
-    firebaseSubscriptionTopis = topis;
+  void addFirebaseMessagingSubscriptionTopic(String value) {
+    Set<String> topics = firebaseMessagingSubscriptionTopics ?? Set();
+    topics.add(value);
+    firebaseMessagingSubscriptionTopics = topics;
   }
 
-  void removeFirebaseSubscriptionTopic(String value) {
-    Set<String> topis = firebaseSubscriptionTopis;
-    if (topis != null) {
-      topis.remove(value);
-      firebaseSubscriptionTopis = topis;
+  void removeFirebaseMessagingSubscriptionTopic(String value) {
+    Set<String> topics = firebaseMessagingSubscriptionTopics;
+    if (topics != null) {
+      topics.remove(value);
+      firebaseMessagingSubscriptionTopics = topics;
     }
+  }
+
+  static const String inboxFirebaseMessagingTokenKey  = 'inbox_firebase_messaging_token';
+
+  String get inboxFirebaseMessagingToken {
+    return _getStringWithName(inboxFirebaseMessagingTokenKey);
+  }
+
+  set inboxFirebaseMessagingToken(String value) {
+    _setStringWithName(inboxFirebaseMessagingTokenKey, value);
+  }
+
+  static const String inboxFirebaseMessagingUserIdKey  = 'inbox_firebase_messaging_user_id';
+
+  String get inboxFirebaseMessagingUserId {
+    return _getStringWithName(inboxFirebaseMessagingUserIdKey);
+  }
+
+  set inboxFirebaseMessagingUserId(String value) {
+    _setStringWithName(inboxFirebaseMessagingUserIdKey, value);
+  }
+
+  static const String inboxUserInfoKey  = 'inbox_user_info';
+
+  InboxUserInfo get inboxUserInfo {
+    try {
+      String jsonString = _getStringWithName(inboxUserInfoKey);
+      dynamic jsonData = AppJson.decode(jsonString);
+      return (jsonData != null) ? InboxUserInfo.fromJson(jsonData) : null;
+    } on Exception catch (e) { print(e.toString()); }
+    return null;
+  }
+
+  set inboxUserInfo(InboxUserInfo value) {
+    _setStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
   }
 
   //////////////
@@ -717,17 +664,170 @@ class Storage with Service {
   }
 
   //////////////////
-  // Student Guide
+  // Guide
 
-  static const String _studentGuideContentSourceKey = 'student_guide_content_source';
+  static const String _guideContentSourceKey = 'guide_content_source';
 
-  String get studentGuideContentSource {
-    return _getStringWithName(_studentGuideContentSourceKey);
+  String get guideContentSource {
+    return _getStringWithName(_guideContentSourceKey);
   }
 
-  set studentGuideContentSource(String value) {
-    _setStringWithName(_studentGuideContentSourceKey, value);
+  set guideContentSource(String value) {
+    _setStringWithName(_guideContentSourceKey, value);
   }
 
-  /////////////
+  //////////////////
+  // Auth2
+
+  static const String _auth2AnonymousIdKey = 'auth2AnonymousId';
+
+  String get auth2AnonymousId {
+    return _getStringWithName(_auth2AnonymousIdKey);
+  }
+
+  set auth2AnonymousId(String value) {
+    _setStringWithName(_auth2AnonymousIdKey, value);
+  }
+
+  static const String _auth2AnonymousTokenKey = 'auth2AnonymousToken';
+
+  Auth2Token get auth2AnonymousToken {
+    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousTokenKey)));
+  }
+
+  set auth2AnonymousToken(Auth2Token value) {
+    _setEncryptedStringWithName(_auth2AnonymousTokenKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2AnonymousPrefsKey = 'auth2AnonymousPrefs';
+
+  Auth2UserPrefs get auth2AnonymousPrefs {
+    return Auth2UserPrefs.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousPrefsKey)));
+  }
+
+  set auth2AnonymousPrefs(Auth2UserPrefs value) {
+    _setEncryptedStringWithName(_auth2AnonymousPrefsKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2AnonymousProfileKey = 'auth2AnonymousProfile';
+
+  Auth2UserProfile get auth2AnonymousProfile {
+    return Auth2UserProfile.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AnonymousProfileKey)));
+  }
+
+  set auth2AnonymousProfile(Auth2UserProfile value) {
+    _setEncryptedStringWithName(_auth2AnonymousProfileKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2TokenKey = 'auth2Token';
+
+  Auth2Token get auth2Token {
+    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2TokenKey)));
+  }
+
+  set auth2Token(Auth2Token value) {
+    _setEncryptedStringWithName(_auth2TokenKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2UiucTokenKey = 'auth2UiucToken';
+
+  Auth2Token get auth2UiucToken {
+    return Auth2Token.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2UiucTokenKey)));
+  }
+
+  set auth2UiucToken(Auth2Token value) {
+    _setEncryptedStringWithName(_auth2UiucTokenKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String _auth2AccountKey = 'auth2Account';
+
+  Auth2Account get auth2Account {
+    return Auth2Account.fromJson(AppJson.decodeMap(_getEncryptedStringWithName(_auth2AccountKey)));
+  }
+
+  set auth2Account(Auth2Account value) {
+    _setEncryptedStringWithName(_auth2AccountKey, AppJson.encode(value?.toJson()));
+  }
+
+  static const String auth2CardTimeKey  = 'auth2CardTime';
+
+  int get auth2CardTime {
+    return _getIntWithName(auth2CardTimeKey);
+  }
+
+  set auth2CardTime(int value) {
+    _setIntWithName(auth2CardTimeKey, value);
+  }
+
+  //////////////////
+  // Calendar
+
+  static const String _calendarEventsTableKey = 'calendar_events_table';
+
+  dynamic get calendarEventsTable {
+    String jsonString = _getStringWithName(_calendarEventsTableKey);
+    dynamic jsonData = AppJson.decode(jsonString);
+    return jsonData;
+  }
+
+  set calendarEventsTable(dynamic table) {
+    String tableToString = (table != null) ? json.encode(table) : null;
+    _setStringWithName(_calendarEventsTableKey, tableToString);
+  }
+
+  static const String _calendarEnableSaveKey = 'calendar_enabled_to_save';
+
+  bool get calendarEnabledToSave{
+    return _getBoolWithName(_calendarEnableSaveKey, defaultValue: true);
+  }
+
+  set calendarEnabledToSave(bool value){
+    _setBoolWithName(_calendarEnableSaveKey, value);
+  }
+
+  static const String _calendarEnablePromptKey = 'calendar_enabled_to_prompt';
+
+  bool get calendarCanPrompt{
+    return _getBoolWithName(_calendarEnablePromptKey);
+  }
+
+  set calendarCanPrompt(bool value){
+    _setBoolWithName(_calendarEnablePromptKey, value);
+  }
+
+  //////////////////
+  // GIES
+
+  static const String _giesNavPagesKey  = 'gies_nav_pages';
+
+  List<String> get giesNavPages {
+    return _getStringListWithName(_giesNavPagesKey);
+  }
+
+  set giesNavPages(List<String> value) {
+    _setStringListWithName(_giesNavPagesKey, value);
+  }
+
+  static const String _giesCompletedPagesKey  = 'gies_completed_pages';
+
+  
+  Set<String> get giesCompletedPages {
+    List<String> pagesList = _getStringListWithName(_giesCompletedPagesKey);
+    return (pagesList != null) ? Set.from(pagesList) : null;
+  }
+
+  set giesCompletedPages(Set<String> value) {
+    List<String> pagesList = (value != null) ? List.from(value) : null;
+    _setStringListWithName(_giesCompletedPagesKey, pagesList);
+  }
+
+  static const String _giesNotesKey = 'gies_notes';
+
+  String get giesNotes {
+    return _getStringWithName(_giesNotesKey);
+  }
+
+  set giesNotes(String value) {
+    _setStringWithName(_giesNotesKey, value);
+  }
 }

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
@@ -25,7 +26,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/utils/Utils.dart';
 
-import 'UserData.dart';
 
 
 //////////////////////////////
@@ -133,6 +133,7 @@ class Dining with Explore implements Favorite {
   @override String   get exploreSubTitle         { return subTitle; }
   @override String   get exploreShortDescription { return shortDescription; }
   @override String   get exploreLongDescription  { return longDescription; }
+  @override DateTime get exploreStartDateUtc     { return null; }
   @override String   get exploreImageURL         { return imageURL; }
   @override String   get explorePlaceId          { return null; }
   @override Location get exploreLocation         { return location; }
@@ -540,7 +541,7 @@ class DiningProductItem {
 
   DiningProductItem({this.itemID, this.name, this.scheduleId, this.servingUnit, this.course, this.traits, this.category, this.courseSort, this.meal});
 
-  bool containsFoodType(List<String> foodTypePrefs){
+  bool containsFoodType(Set<String> foodTypePrefs){
     if ((foodTypePrefs == null) || foodTypePrefs.isEmpty) {
       return false;
     }
@@ -560,7 +561,7 @@ class DiningProductItem {
     return false;
   }
 
-  bool containsFoodIngredient(List<String> foodIngredientPrefs){
+  bool containsFoodIngredient(Set<String> foodIngredientPrefs){
     if ((foodIngredientPrefs == null) || foodIngredientPrefs.isEmpty) {
       return false;
     }

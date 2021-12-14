@@ -16,7 +16,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Assets.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/LaundryService.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -24,7 +26,6 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/service/Styles.dart';
@@ -63,7 +64,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
       Assets.notifyChanged,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
     ]);
 
     LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
@@ -110,13 +111,13 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     else if (name == Assets.notifyChanged) {
       _refreshRooms();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateOnPrivacyLevelChanged();
     }
   }
 
   void _updateOnPrivacyLevelChanged() {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _enableMyLocationOnMap();
@@ -128,7 +129,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus status) {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       _locationServicesStatus = status;
       _enableMyLocationOnMap();
     }
@@ -191,7 +192,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
           hint: Localization().getStringEx('headerbar.back.hint', ''),
           button: true,
           child: IconButton(
-              icon: Image.asset('images/chevron-left-white.png'),
+              icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
               onPressed: () {
                 Navigator.pop(context);
               })),
@@ -484,7 +485,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   bool _userLocationEnabled() {
-    return User().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
   }
 
   void _placeLaundryRoomsOnMap(List<LaundryRoom> rooms) {

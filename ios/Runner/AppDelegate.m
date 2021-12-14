@@ -33,7 +33,9 @@
 #import "NSDictionary+UIUCConfig.h"
 #import "CGGeometry+InaUtils.h"
 #import "UIColor+InaParse.h"
+#import "UILabel+InaMeasure.h"
 #import "Bluetooth+InaUtils.h"
+#import "Security+UIUCUtils.h"
 
 #import <GoogleMaps/GoogleMaps.h>
 #import <MapsIndoors/MapsIndoors.h>
@@ -51,6 +53,7 @@ static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.no
 @end
 
 @interface LaunchScreenView : UIView
+@property (nonatomic) NSString *statusText;
 @end
 
 UIInterfaceOrientation _interfaceOrientationFromString(NSString *value);
@@ -68,7 +71,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @property (nonatomic) FlutterMethodChannel *flutterMethodChannel;
 
 // Launch View
-@property (nonatomic) UIView *launchScreenView;
+@property (nonatomic) LaunchScreenView *launchScreenView;
 
 // PassKit
 @property (nonatomic) PKAddPassesViewController *passViewController;
@@ -156,9 +159,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}];
 	
 	// Push Notifications
-    [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-    [self queryNotificationsAuthorizationStatusWithCompletionHandler:^(bool authorized){
-		if (authorized) {
+	[UNUserNotificationCenter currentNotificationCenter].delegate = self;
+	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
+		if ((settings.authorizationStatus != UNAuthorizationStatusNotDetermined) && (settings.authorizationStatus != UNAuthorizationStatusDenied)) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				[weakSelf registerForRemoteNotifications];
 			});
@@ -221,6 +224,12 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
+- (void)setLaunchScreenStatusText:(NSString*)statusText {
+	if (_launchScreenView != nil) {
+		_launchScreenView.statusText = statusText;
+	}
+}
+
 #pragma mark Flutter APIs
 
 - (void)handleFlutterAPIFromCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -246,6 +255,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"dismissLaunchScreen"]) {
 		[self handleDismissLaunchScreenWithParameters:parameters result:result];
 	}
+	else if ([call.method isEqualToString:@"setLaunchScreenStatus"]) {
+		[self handleSetLaunchScreenStatusWithParameters:parameters result:result];
+	}
 	else if ([call.method isEqualToString:@"firebaseInfo"]) {
 		[self handleFirebaseInfoWithParameters:parameters result:result];
 	}
@@ -266,6 +278,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else if ([call.method isEqualToString:@"deviceId"]) {
 		[self handleDeviceIdWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"encryptionKey"]) {
+		[self handleEncryptionKeyWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"enabledOrientations"]) {
 		[self handleEnabledOrientationsWithParameters:parameters result:result];
@@ -365,6 +380,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	[self removeLaunchScreen];
+	result(nil);
+}
+
+- (void)handleSetLaunchScreenStatusWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSString *statusText = [parameters inaStringForKey:@"status"];
+	[self setLaunchScreenStatusText:statusText];
+	result(nil);
 }
 
 - (void)handleFirebaseInfoWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -448,6 +470,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)handleDeviceIdWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	result(self.deviceUUID.UUIDString);
+}
+
+- (void)handleEncryptionKeyWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	result([self encryptionKeyWithParameters:parameters]);
 }
 
 - (void)handleTestWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -649,28 +675,32 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 #pragma mark Push Notifications
 
 - (void)queryNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
-    [self queryNotificationsAuthorizationStatusWithCompletionHandler:^(bool authorized){
-		result(authorized ? @(YES) : @(NO));
+	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
+		result([self.class notificationServicesPermisionFromAuthorizationStatus:settings.authorizationStatus]);
 	}];
 }
 
-- (void)queryNotificationsAuthorizationStatusWithCompletionHandler:(void(^)(bool authorized)) completionHandler {
-	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
-		completionHandler((settings.authorizationStatus != UNAuthorizationStatusNotDetermined) && (settings.authorizationStatus != UNAuthorizationStatusDenied));
-	}];
++ (NSString*)notificationServicesPermisionFromAuthorizationStatus:(UNAuthorizationStatus)authorizationStatus {
+	switch (authorizationStatus) {
+		case UNAuthorizationStatusNotDetermined:       return @"not_determined";
+		case UNAuthorizationStatusDenied:              return @"denied";
+		default:                                       return @"allowed";
+	}
+	return nil;
 }
+
 
 - (void)requestNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
 	__weak typeof(self) weakSelf = self;
 	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
 		if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
-			result(@(NO));
+			result([self.class notificationServicesPermisionFromAuthorizationStatus:UNAuthorizationStatusDenied]);
 		}
 		else {
 			UNAuthorizationOptions options = UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound;
 			[UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:options completionHandler:^(BOOL granted, NSError * _Nullable error){
 				dispatch_async(dispatch_get_main_queue(), ^{
-					result(granted ? @(YES) : @(NO));
+					result([self.class notificationServicesPermisionFromAuthorizationStatus:granted ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusDenied]);
 					if (granted) {
 						[weakSelf registerForRemoteNotifications];
 					}
@@ -692,10 +722,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
 	NSLog(@"UIApplication didFailToRegisterForRemoteNotificationsWithError: %@", error);
-}
-
-- (void)processPushNotification:(NSDictionary*)userInfo {
-	[[FIRMessaging messaging] appDidReceiveMessage:userInfo];
 }
 
 #pragma mark LocationServices
@@ -851,72 +877,54 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 #pragma mark Device UUID
 
 - (NSUUID*)deviceUUID {
-	static const NSString *deviceUUID = @"deviceUUID";
-
-	NSDictionary *spec = @{
-		(id)kSecClass:       (id)kSecClassGenericPassword,
-		(id)kSecAttrAccount: deviceUUID,
-		(id)kSecAttrGeneric: deviceUUID,
-		(id)kSecAttrService: NSBundle.mainBundle.bundleIdentifier,
-	};
-	
-	NSMutableDictionary *searchRequest = [NSMutableDictionary dictionaryWithDictionary:spec];
-	[searchRequest setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
-	[searchRequest setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
-  [searchRequest setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];
-
-	CFDictionaryRef response = NULL;
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)searchRequest, (CFTypeRef*)&response);
-	if (status == errSecInteractionNotAllowed) {
-		// Could not access data. Error: errSecInteractionNotAllowed
-		return nil;
-	}
-	else if (status == 0) {
-		NSDictionary *attribs = CFBridgingRelease(response);
-		NSData *data = [attribs objectForKey:(id)kSecValueData];
-		NSString *security = [attribs objectForKey:(id)kSecAttrAccessible];
-
-		// If not always accessible then update it to be so
-		if (![security isEqualToString:(id)kSecAttrAccessibleAlways]) {
-			NSDictionary *update = @{
-				(id)kSecAttrAccessible:(id)kSecAttrAccessibleAlways,
-				(id)kSecValueData:data ?: [[NSData alloc] init],
-			};
-
-			SecItemUpdate((CFDictionaryRef)spec, (CFDictionaryRef)update);
-		}
-
-		if (data.length == sizeof(uuid_t)) {
-			return [[NSUUID alloc] initWithUUIDBytes:data.bytes];
-		}
-		else {
-			// update entry bellow
-		}
-	}
-
-	uuid_t uuidData;
-	int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(uuidData), uuidData);
-	if (rndStatus == errSecSuccess) {
-		if (status == 0) {
-			// update existing entry
-			NSDictionary *update = @{
-				(id)kSecAttrAccessible:(id)kSecAttrAccessibleAlways,
-				(id)kSecValueData:[NSData dataWithBytes:uuidData length:sizeof(uuidData)]
-			};
-			status = SecItemUpdate((CFDictionaryRef)spec, (CFDictionaryRef)update);
-		}
-		else {
-			// create new entry
-			NSMutableDictionary *createRequest = [NSMutableDictionary dictionaryWithDictionary:spec];
-			[createRequest setObject:[NSData dataWithBytes:uuidData length:sizeof(uuidData)] forKey:(id)kSecValueData];
-			[createRequest setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
-			status = SecItemAdd((CFDictionaryRef)createRequest, NULL);
-		}
-		return (status == 0) ? [[NSUUID alloc] initWithUUIDBytes:uuidData] : nil;
+	static NSString* const deviceUUID = @"deviceUUID";
+	NSData *data = uiucSecStorageData(deviceUUID, deviceUUID, nil);
+	if ([data isKindOfClass:[NSData class]] && (data.length == sizeof(uuid_t))) {
+		return [[NSUUID alloc] initWithUUIDBytes:data.bytes];
 	}
 	else {
+		uuid_t uuidData;
+		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(uuidData), uuidData);
+		if (rndStatus == errSecSuccess) {
+			NSNumber *result = uiucSecStorageData(deviceUUID, deviceUUID, [NSData dataWithBytes:uuidData length:sizeof(uuidData)]);
+			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
+				return [[NSUUID alloc] initWithUUIDBytes:uuidData];
+			}
+		}
+	}
+	return nil;
+}
+
+#pragma mark Encryption Key
+
+- (id)encryptionKeyWithParameters:(NSDictionary*)parameters {
+	
+	NSString *identifier = [parameters inaStringForKey:@"identifier"];
+	if (identifier == nil) {
 		return nil;
 	}
+	
+	NSInteger keySize = [parameters inaIntegerForKey:@"size"];
+	if (keySize <= 0) {
+		return nil;
+	}
+
+	NSData *data = uiucSecStorageData(identifier, nil, nil);
+	if ([data isKindOfClass:[NSData class]] && (data.length == keySize)) {
+		return [data base64EncodedStringWithOptions:0];
+	}
+	else {
+		UInt8 key[keySize];
+		int rndStatus = SecRandomCopyBytes(kSecRandomDefault, sizeof(key), key);
+		if (rndStatus == errSecSuccess) {
+			data = [NSData dataWithBytes:key length:sizeof(key)];
+			NSNumber *result = uiucSecStorageData(identifier, nil, data);
+			if ([result isKindOfClass:[NSNumber class]] && [result boolValue]) {
+				return [data base64EncodedStringWithOptions:0];
+			}
+		}
+	}
+	return nil;
 }
 
 #pragma mark PKAddPassesViewControllerDelegate
@@ -977,23 +985,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	completionHandler(UNNotificationPresentationOptionAlert|UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound);
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
-	NSDictionary *userInfo = response.notification.request.content.userInfo;
-	NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:userInfo options:0 error:NULL];
-	NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-	NSLog(@"UIApplication: UNUserNotificationCenter didReceiveNotificationResponse (%@):\n%@", response.actionIdentifier, userInfoString);
-
-	if ([response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
-		// The user dismissed the notification without taking action.
-	}
-	else if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-		// The user launched the app.
-		[self processPushNotification:response.notification.request.content.userInfo];
-	}
-
-	completionHandler();
-}
-
 #pragma mark FIRMessagingDelegate
 
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
@@ -1041,6 +1032,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @interface LaunchScreenView()
 @property (nonatomic) UIImageView *imageView;
 @property (nonatomic) UIActivityIndicatorView *activityView;
+@property (nonatomic) UILabel *statusView;
 @end
 
 @implementation LaunchScreenView
@@ -1053,6 +1045,14 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		
 		_activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 		[self addSubview:_activityView];
+		
+		_statusView = [[UILabel alloc] initWithFrame:CGRectZero];
+		_statusView.font = [UIFont systemFontOfSize:16];
+		_statusView.textAlignment = NSTextAlignmentCenter;
+		_statusView.textColor = UIColor.whiteColor;
+		_statusView.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+		_statusView.shadowOffset = CGSizeMake(1, 1);
+		[self addSubview:_statusView];
 
 		[_activityView startAnimating];
 	}
@@ -1070,7 +1070,19 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	CGSize activitySize = [_activityView sizeThatFits:contentSize];
 	_activityView.frame = CGRectMake((contentSize.width - activitySize.width) / 2, 7 * (contentSize.height - activitySize.height) / 8, activitySize.width, activitySize.height);
 	
-	
+	CGFloat statusPaddingX = 16;
+	CGSize statusSize = [_statusView inaTextSizeForBoundWidth:contentSize.width - 2 * statusPaddingX];
+	CGFloat statusY = contentSize.height - ((contentSize.height - activitySize.height) / 8 - statusSize.height) / 2 - statusSize.height;
+	_statusView.frame = CGRectMake(statusPaddingX, statusY, contentSize.width - 2 * statusPaddingX, statusSize.height);
+}
+
+- (NSString*)statusText {
+	return _statusView.text;
+}
+
+- (void)setStatusText:(NSString*)value {
+	_statusView.text = value;
+	[self setNeedsLayout];
 }
 
 @end

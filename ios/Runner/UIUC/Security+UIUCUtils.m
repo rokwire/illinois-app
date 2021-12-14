@@ -20,13 +20,17 @@
 
 #import "Security+UIUCUtils.h"
 
-NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite) {
-	NSDictionary *spec = @{
+id uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite) {
+	NSMutableDictionary *spec = [NSMutableDictionary dictionaryWithDictionary:@{
 		(id)kSecClass:       (id)kSecClassGenericPassword,
 		(id)kSecAttrAccount: account,
-		(id)kSecAttrGeneric: generic,
+//	(id)kSecAttrGeneric: generic,
 		(id)kSecAttrService: NSBundle.mainBundle.bundleIdentifier,
-	};
+	}];
+	
+	if (generic != nil) {
+		[spec setObject:generic forKey:(id)kSecAttrGeneric];
+	}
 	
 	NSMutableDictionary *searchRequest = [NSMutableDictionary dictionaryWithDictionary:spec];
 	[searchRequest setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
@@ -41,7 +45,7 @@ NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite
 		// Could not access data. Error: errSecInteractionNotAllowed
 		return nil;
 	}
-	else if (status == 0) {
+	else if (status == errSecSuccess) {
 		NSDictionary *attribs = CFBridgingRelease(response);
 		NSData *data = [attribs objectForKey:(id)kSecValueData];
 		NSString *security = [attribs objectForKey:(id)kSecAttrAccessible];
@@ -64,7 +68,7 @@ NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite
 	}
 	else if ([valueToWrite isKindOfClass:[NSData class]]) { // setter
 		
-		if (status == 0) {
+		if (status == errSecSuccess) {
 			// update existing entry
 			NSDictionary *update = @{
 				(id)kSecAttrAccessible:(id)kSecAttrAccessibleAlways,
@@ -80,16 +84,16 @@ NSData* uiucSecStorageData(NSString *account, NSString *generic, id valueToWrite
 			status = SecItemAdd((CFDictionaryRef)createRequest, NULL);
 		}
 		
-		return (status == 0) ? valueToWrite : nil;
+		return (status == errSecSuccess) ? @(YES) : @(NO);
 	}
 	else { // delete existing entry
-		if (status == 0) {
+		if (status == errSecSuccess) {
 			status = SecItemDelete((CFDictionaryRef)spec);
-			return (status == 0) ? valueToWrite : nil;
+			return (status == errSecSuccess) ? @(YES) : @(NO);
 		}
 		else {
 			// nothing to do
-			return valueToWrite;
+			return nil;
 		}
 	}
 }

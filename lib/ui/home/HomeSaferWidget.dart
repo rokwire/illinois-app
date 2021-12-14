@@ -7,12 +7,12 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeSaferWidget extends StatefulWidget {
 
@@ -67,7 +67,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
 
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
-    List<dynamic> contentListCodes = FlexUI()['home.safer'];
+    List<dynamic> contentListCodes = FlexUI()['home.content.safer'];
     if (contentListCodes != null) {
       for (dynamic contentListCode in contentListCodes) {
         Widget contentEntry;
@@ -113,7 +113,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   Widget _buildCommandEntry({String title, String description, void Function() onTap}) {
-    return Semantics(container: true, child: 
+    return Semantics(container: true, button: true, child:
       InkWell(onTap: onTap, child:
         Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -123,7 +123,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
               Expanded(child:
                 Text(title, style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary),),
               ),
-              Image.asset('images/chevron-right.png'),
+              Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
             ],),
             AppString.isStringNotEmpty(description) ?
               Padding(padding: EdgeInsets.only(top: 5), child:
@@ -161,13 +161,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'MyMcKinley');
     if (AppString.isStringNotEmpty(Config().saferMcKinley['url'])) {
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => WebPanel(
-        url: Config().saferMcKinley['url'],
-        title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
-        analyticsName: 'MyMcKinley',
-        hideToolBar: true,)
-    ));
+      launch(Config().saferMcKinley['url']);
     }
   }
 

@@ -22,19 +22,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as Http;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/model/Poll.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:location/location.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -43,7 +43,6 @@ import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:illinois/main.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -202,6 +201,18 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAuthLogoutActionName            = "logout";
   static const String   LogAuthResult                      = "result";
 
+  // Group
+  static const String   LogGroupEventName                  = "group";
+  static const String   LogGroupAction                     = "action";
+  static const String   LogGroupMembershipRequested        = "membership_requested";
+  static const String   LogGroupMembershipRequestCanceled  = "membership_request_canceled";
+  static const String   LogGroupMembershipQuit             = "membership_quit";
+  static const String   LogGroupMembershipApproved         = "membership_approved";
+  static const String   LogGroupMembershipRejected         = "membership_rejected";
+  static const String   LogGroupMembershipSwitchToAdmin    = "membership_switch_admin";
+  static const String   LogGroupMembershipSwitchToMember   = "membership_switch_member";
+  static const String   LogGroupMembershipRemoved          = "membership_removed";
+
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeEventId                = "event_id";
@@ -218,10 +229,11 @@ class Analytics with Service implements NotificationsListener {
   static const String   LogAttributeLaundryName            = "laundry_name";
   static const String   LogAttributeGroupId                = "group_id";
   static const String   LogAttributeGroupName              = "group_name";
-  static const String   LogAttributeStudentGuideId         = "student_guide_id";
-  static const String   LogAttributeStudentGuideTitle      = "student_guide_title";
-  static const String   LogAttributeStudentGuideCategory   = "student_guide_category";
-  static const String   LogAttributeStudentGuideSection    = "student_guide_section";
+  static const String   LogAttributeGuide                  = "guide";
+  static const String   LogAttributeGuideId                = "guide_id";
+  static const String   LogAttributeGuideTitle             = "guide_title";
+  static const String   LogAttributeGuideCategory          = "guide_category";
+  static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
 
 
@@ -271,9 +283,9 @@ class Analytics with Service implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
       AppNavigation.notifyEvent,
       LocationServices.notifyStatusChanged,
-      User.notifyRolesUpdated,
-      User.notifyUserUpdated,
-      User.notifyUserDeleted,
+      Auth2UserPrefs.notifyRolesChanged,
+      Auth2.notifyPrefsChanged,
+      Auth2.notifyUserDeleted,
       NativeCommunicator.notifyMapRouteStart,
       NativeCommunicator.notifyMapRouteFinish,
       NativeCommunicator.notifyGeoFenceRegionsEnter,
@@ -314,6 +326,18 @@ class Analytics with Service implements NotificationsListener {
         _osVersion = _iosDeviceInfo.systemVersion;
       });
     }
+  
+    if (_database != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Analytics Initialization Failed',
+        description: 'Failed to create analytics database.',
+      );
+    }
   }
 
   @override
@@ -326,7 +350,7 @@ class Analytics with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), User(), LocationServices(), Connectivity() ]);
+    return Set.from([Config(), Auth2(), LocationServices(), Connectivity() ]);
   }
 
   // Database
@@ -383,13 +407,13 @@ class Analytics with Service implements NotificationsListener {
     else if (name == AppNavigation.notifyEvent) {
       _onAppNavigationEvent(param);
     }
-    else if (name == User.notifyRolesUpdated) {
+    else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updateUserRoles();
     }
-    else if (name == User.notifyUserUpdated) {
+    else if (name == Auth2.notifyPrefsChanged) {
       _updateUserRoles();
     }
-    else if (name == User.notifyUserDeleted) {
+    else if (name == Auth2.notifyUserDeleted) {
       _updateSessionUuid();
       _updateUserRoles();
     }
@@ -519,11 +543,11 @@ class Analytics with Service implements NotificationsListener {
   }
 
   Map<String, dynamic> get _location {
-    LocationData location = User().privacyMatch(3) ? LocationServices().lastLocation : null;
+    Position location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': (location.time * 1000).toInt(),
+      'timestamp': location.timestamp?.millisecondsSinceEpoch,
     } : null;
   }
   
@@ -539,8 +563,8 @@ class Analytics with Service implements NotificationsListener {
     if (Platform.isAndroid) {
       _notificationServices = 'enabled';
     } else if (Platform.isIOS) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((bool notificationsAuthorized) {
-        _notificationServices = notificationsAuthorized ? 'enabled' : "not_enabled";
+      NativeCommunicator().queryNotificationsAuthorization("query").then((NotificationsAuthorizationStatus authorizationStatus) {
+        _notificationServices = (authorizationStatus == NotificationsAuthorizationStatus.Allowed) ? 'enabled' : "not_enabled";
       });
     }
   }
@@ -564,8 +588,7 @@ class Analytics with Service implements NotificationsListener {
   // User Roles Service
 
   void _updateUserRoles() {
-    Set<UserRole> roles = User().roles;
-    _userRoles = (roles != null) ? List.from(roles) : null;
+    _userRoles = UserRole.setToJson(Auth2().prefs?.roles);
   }
 
   // Packets Processing
@@ -625,7 +648,9 @@ class Analytics with Service implements NotificationsListener {
   Future<bool>_sendPacket(String packet) async {
     if (packet != null) {
       try {
-        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.App, sendAnalytics: false);
+        //TMP: Temporarly use NetworkAuth.ApiKey auth until logging service gets updated to acknowledge the new Core BB token.
+        //TBD: Remove this when logging service gets updated.
+        final response = await Network().post(Config().loggingUrl, body: packet, headers: { "Accept": "application/json", "Content-type":"application/json" }, auth: NetworkAuth.ApiKey /* NetworkAuth.Auth2 */, sendAnalytics: false);
         return (response != null) && ((response.statusCode == 200) || (response.statusCode == 201));
       }
       catch (e) {
@@ -639,7 +664,7 @@ class Analytics with Service implements NotificationsListener {
   // Public Accessories
 
   void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes}) {
-    if ((event != null) && User().privacyMatch(2)) {
+    if ((event != null) && Auth2().privacyMatch(2)) {
       
       event[LogEventPageName] = _currentPageName;
 
@@ -685,10 +710,10 @@ class Analytics with Service implements NotificationsListener {
           analyticsEvent[LogStdSessionUuidName] = _sessionUuid;
         }
         else if (attributeName == LogStdUserUuidName) {
-          analyticsEvent[LogStdUserUuidName] = User().uuid;
+          analyticsEvent[LogStdUserUuidName] = Auth2().accountId;
         }
         else if (attributeName == LogStdUserPrivacyLevelName) {
-          analyticsEvent[LogStdUserPrivacyLevelName] = User().privacyLevel;
+          analyticsEvent[LogStdUserPrivacyLevelName] = Auth2().prefs?.privacyLevel;
         }
         else if (attributeName == LogStdUserRolesName) {
           analyticsEvent[LogStdUserRolesName] = _userRoles;
@@ -697,10 +722,10 @@ class Analytics with Service implements NotificationsListener {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
         else if(attributeName == LogStdAuthCardRoleName){
-          analyticsEvent[LogStdAuthCardRoleName] = Auth()?.authCard?.role;
+          analyticsEvent[LogStdAuthCardRoleName] = Auth2()?.authCard?.role;
         }
         else if(attributeName == LogStdAuthCardStudentLevel){
-          analyticsEvent[LogStdAuthCardStudentLevel] = Auth()?.authCard?.studentLevel;
+          analyticsEvent[LogStdAuthCardStudentLevel] = Auth2()?.authCard?.studentLevel;
         }
       }
 
@@ -874,6 +899,17 @@ class Analytics with Service implements NotificationsListener {
     if (result != null) {
       event[LogAuthResult] = result;
     }
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+    logEvent(event);
+  }
+
+  void logGroup({String action, Map<String, dynamic> attributes}) {
+    Map<String, dynamic> event = {
+      LogEventName           : LogGroupEventName,
+      LogGroupAction         : action,
+    };
     if (attributes != null) {
       event.addAll(attributes);
     }

@@ -19,6 +19,11 @@ import 'package:illinois/service/Service.dart';
 import 'package:uni_links/uni_links.dart';
 
 class DeepLink with Service {
+  
+  static const String ROKWIRE_SCHEME = 'edu.illinois.rokwire';
+  static const String ROKWIRE_HOST = 'rokwire.illinois.edu';
+  static const String ROKWIRE_URL = '$ROKWIRE_SCHEME://$ROKWIRE_HOST';
+  
   static const String notifyUri  = "edu.illinois.rokwire.deeplink.uri";
 
   static final DeepLink _deepLink = DeepLink._internal();
@@ -30,16 +35,32 @@ class DeepLink with Service {
   DeepLink._internal();
 
   @override
-  void createService() {
+  Future<void> initService() async {
 
     // 1. Initial Uri
     getInitialUri().then((uri) {
-      NotificationService().notify(notifyUri, uri);
+      if (uri != null) {
+        NotificationService().notify(notifyUri, uri);
+      }
     });
 
     // 2. Updated uri
-    uriLinkStream.listen((Uri uri) async {
-      NotificationService().notify(notifyUri, uri);
+    uriLinkStream.listen((Uri uri) {
+      if (uri != null) {
+        NotificationService().notify(notifyUri, uri);
+      }
     });
+
+    await super.initService();
+  }
+
+  static bool isRokwireUri(Uri uri) => (uri?.scheme == ROKWIRE_SCHEME) && (uri?.host == ROKWIRE_HOST);
+  static bool isRokwireUrl(String url) =>  isRokwireUri((url != null) ? Uri.tryParse(url) : null);
+  static void launchUrl(String url) => launchUri((url != null) ? Uri.tryParse(url) : null);
+
+  static void launchUri(Uri uri) {
+    if (uri != null) {
+      NotificationService().notify(notifyUri, uri);
+    }
   }
 }

@@ -21,7 +21,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
-import 'package:illinois/service/Network.dart';
 import 'package:illinois/ui/groups/GroupMembershipQuestionsPanel.dart';
 import 'package:illinois/ui/groups/GroupTagsPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -159,7 +158,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           AppString.isStringNotEmpty(_group?.imageURL)
-              ? Positioned.fill(child: Image.network(_group?.imageURL, fit: BoxFit.cover, headers: Network.appAuthHeaders))
+              ? Positioned.fill(child: Image.network(_group?.imageURL, excludeFromSemantics: true, fit: BoxFit.cover))
               : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
@@ -205,8 +204,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         children: <Widget>[
          _buildSectionTitle(title,null, true),
           Container(
-            height: 48,
-            padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child: Semantics(
                 label: fieldTitle,
@@ -216,7 +213,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 child: TextField(
                   controller: _groupTitleController,
                   onChanged: onNameChanged,
-                  decoration: InputDecoration(border: InputBorder.none,),
+                  maxLines: 1,
+                  decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                 )),
           ),
@@ -242,8 +240,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           _buildSectionTitle(title,description),
           Container(height: 5,),
           Container(
-            height: 114,
-            padding: EdgeInsets.only(left: 12,right: 12, top: 12, bottom: 16),
             decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1),color: Styles().colors.white),
             child:
             Row(children: [
@@ -259,8 +255,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           _group.description = text;
                       },
                       controller: _groupDescriptionController,
-                      maxLines: 100,
-                      decoration: InputDecoration(border: InputBorder.none,),
+                      maxLines: 5,
+                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                       style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
                     )),
             )],)

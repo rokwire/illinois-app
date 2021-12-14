@@ -20,158 +20,68 @@ import 'dart:typed_data';
 
 import "package:asn1lib/asn1lib.dart";
 import 'package:flutter/foundation.dart';
-import 'package:illinois/service/Log.dart';
 import "package:pointycastle/export.dart";
 import 'package:encrypt/encrypt.dart' as Encrypt;
-
-class HealthServiceTest {
-
-  static void test() {
-    AsymmetricKeyPair<PublicKey, PrivateKey> rsaKeyPair = RsaKeyHelper.getRsaKeyPair(RsaKeyHelper.getSecureRandom());
-    String rsaPublicKeyString = RsaKeyHelper.encodePublicKeyToPemPKCS1(rsaKeyPair.publicKey);
-    String rsaPrivateKeyString = RsaKeyHelper.encodePrivateKeyToPemPKCS1(rsaKeyPair.privateKey);
-
-    //Log.d('''Health Service Provider:
-    //- Input: RSA Public Key, Plain Blob;
-    //- Output: Ecrypted Blob, Ecrypted Key.
-    //''');
-
-    //Log.d("RSA Public Key: $rsaPublicKeyString");
-
-    String plainBlob = '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut id sagittis nibh. Ut porttitor interdum bibendum. Sed in interdum ante, ac efficitur felis. In diam justo, molestie sed fermentum rhoncus, euismod nec mauris. Donec interdum at sem vitae volutpat. Quisque fermentum lobortis neque, vitae feugiat est malesuada nec. Cras vehicula dapibus elementum. In at nisi in leo gravida dapibus. Nulla facilisi. Fusce varius tortor non nibh euismod varius. Aenean condimentum velit a felis ornare congue. Donec interdum, leo sit amet iaculis elementum, nunc orci fringilla nulla, non pulvinar lectus turpis vitae ligula. Nam ullamcorper feugiat enim in ullamcorper. Phasellus dignissim nulla et mattis imperdiet.''';
-    //Log.d("Plain Blob: $plainBlob");
-
-    String aesKey = AESCrypt.randomKey();
-    //Log.d("Random AES Key: $aesKey");
-
-    String encryptedBlob = AESCrypt.encrypt(plainBlob, aesKey);
-    //Log.d("Ecrypted Blob: $encryptedBlob");
-
-    PublicKey rsaPublicKey = RsaKeyHelper.parsePublicKeyFromPem(rsaPublicKeyString);
-    String encryptedKey = RSACrypt.encrypt(aesKey, rsaPublicKey);
-    //Log.d("Ecrypted Key: $encryptedKey");
-
-    //Log.d('''Client Processing:
-    //- Input: RSA Private Key, Ecrypted Blob, Ecrypted Key;
-    //- Output: Decrypted Blob.
-    //''');
-
-    //Log.d("RSA Private Key: $rsaPrivateKeyString");
-
-    PrivateKey rsaPrivateKey = RsaKeyHelper.parsePrivateKeyFromPem(rsaPrivateKeyString);
-    String decryptedKey = RSACrypt.decrypt(encryptedKey, rsaPrivateKey);
-    //Log.d("Decrypted Key: $decryptedKey");
-
-    String decryptedBlob = AESCrypt.decrypt(encryptedBlob, decryptedKey);
-    //Log.d("Decrypted Blob: $decryptedBlob");
-
-    String status = (plainBlob == decryptedBlob) ? "Test Succeeded" : "Test Failed";
-    //Log.d("$status");
-
-    Log.d('''
-    Health Service Provider:
-      - Input: Plain Blob, RSA Public Key;
-      - Output: Ecrypted Blob, Ecrypted Key.
-    
-    Plain Blob: $plainBlob
-
-    RSA Public Key: $rsaPublicKeyString
-
-    Random AES Key: $aesKey
-
-    Ecrypted Blob: $encryptedBlob
-
-    Ecrypted Key: $encryptedKey
-
-    Client Processing:
-      - Input: RSA Private Key, Ecrypted Blob, Ecrypted Key;
-      - Output: Decrypted Blob;
-    
-    RSA Private Key: $rsaPrivateKeyString
-    
-    Decrypted Key: $decryptedKey
-    
-    Decrypted Blob: $decryptedBlob
-    
-    $status
-    ''');
-  }
-}
 
 class AESCrypt {
 
   static const int kCCBlockSizeAES128 = 16;
 
-  static String encrypt(String plainText, String keyString, { Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
-    try {
-      final key = Encrypt.Key.fromUtf8(keyString);
-      final iv = Encrypt.IV.fromLength(keyString.length);
-      final encrypter = Encrypt.Encrypter(Encrypt.AES(key, mode: mode, padding: padding));
-      return encrypter.encrypt(plainText, iv: iv).base64;
-    }
-    catch(e) { print(e.toString()); }
-    return null;
-  }
-
-  static String decrypt(String cipherBase64, String keyString, { Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
-    try {
-      final key = Encrypt.Key.fromUtf8(keyString);
-      final iv = Encrypt.IV.fromLength(keyString.length);
-      final encrypter = Encrypt.Encrypter(Encrypt.AES(key, mode: mode, padding: padding));
-      return encrypter.decrypt(Encrypt.Encrypted.fromBase64(cipherBase64), iv: iv);
-    }
-    catch(e) { print(e.toString()); }
-    return null;
-  }
-
-  static String decode(String base64Data, { Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
-    var data;
-    try { data = (base64Data != null) ? base64Decode(base64Data) : null; }
-    catch (e) { print(e?.toString()); }
-    if ((data != null) && (data.length > kCCBlockSizeAES128)) {
+  static String encrypt(String plainText, {String key, String iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
+    if ((plainText != null) && (key != null)) {
       try {
-        var keyData = data.sublist(0, kCCBlockSizeAES128);
-        var encryptedData = data.sublist(kCCBlockSizeAES128);
-
-        final keyString = String.fromCharCodes(keyData);
-        final key = Encrypt.Key.fromUtf8(keyString);
-        final iv = Encrypt.IV.fromLength(kCCBlockSizeAES128);
-        final encrypter = Encrypt.Encrypter(Encrypt.AES(key, mode: mode, padding: padding));
-
-        return encrypter.decrypt(Encrypt.Encrypted(encryptedData), iv: iv);
+        final encrypterKey = Encrypt.Key.fromBase64(key);
+        final encrypterIV = (iv != null) ? Encrypt.IV.fromBase64(iv) : Encrypt.IV.fromLength(base64Decode(key).length);
+        final encrypter = Encrypt.Encrypter(Encrypt.AES(encrypterKey, mode: mode, padding: padding));
+        return encrypter.encrypt(plainText, iv: encrypterIV).base64;
       }
       catch(e) { print(e.toString()); }
     }
     return null;
   }
 
-  static String encode(String dataString, { String keyString, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
-    try {
-      final keyString2 = (keyString != null) ? keyString : randomKey();
-      final key = Encrypt.Key.fromUtf8(keyString2);
-      final iv = Encrypt.IV.fromLength(kCCBlockSizeAES128);
-      final encrypter = Encrypt.Encrypter(Encrypt.AES(key, mode: mode, padding: padding));
-
-      Uint8List encryptedJson = encrypter.encrypt(dataString, iv: iv).bytes;
-
-      List<int> list = [];
-      list.addAll(keyString2.codeUnits);
-      list.addAll(encryptedJson);
-      Uint8List data = Uint8List.fromList(list);
-
-      return base64Encode(data);
+  static String decrypt(String cipherBase64, { String key, String iv, Encrypt.AESMode mode = Encrypt.AESMode.cbc, String padding = 'PKCS7' }) {
+    if ((cipherBase64 != null) && (key != null)) {
+      try {
+        final encrypterKey = Encrypt.Key.fromBase64(key);
+        final encrypterIV = (iv != null) ? Encrypt.IV.fromBase64(iv) : Encrypt.IV.fromLength(base64Decode(key).length);
+        final encrypter = Encrypt.Encrypter(Encrypt.AES(encrypterKey, mode: mode, padding: padding));
+        return encrypter.decrypt(Encrypt.Encrypted.fromBase64(cipherBase64), iv: encrypterIV);
+      }
+      catch(e) { print(e.toString()); }
     }
-    catch(e) { print(e.toString()); }
     return null;
   }
 
   static String randomKey({ int keySize = kCCBlockSizeAES128 }) {
-    var rand = new Random();
-    var codeUnits = List.generate(keySize, (index) {
-      return rand.nextInt(33) + 89; // rand.nextInt(255);
-    });
-    return new String.fromCharCodes(codeUnits);
+    var random = new Random.secure();
+    return base64Encode(List.generate(keySize, (index) {
+      return random.nextInt(256);
+    }));
   }
+
+  /*static bool debugEncode() {
+    String base64Key = '...';
+    String base64IV = '...';
+
+    String configAsset = '...';
+    String configDev = '...';
+    String configProd = '...';
+    String configTest = '...';
+
+    String configAssetEnc = AESCrypt.encrypt(configAsset, key: base64Key, iv: base64IV);
+    String configDevEnc = AESCrypt.encrypt(configDev, key: base64Key, iv: base64IV);
+    String configProdEnc = AESCrypt.encrypt(configProd, key: base64Key, iv: base64IV);
+    String configTestEnc = AESCrypt.encrypt(configTest, key: base64Key, iv: base64IV);
+
+    String configAssetDec = AESCrypt.decrypt(configAssetEnc, key: base64Key, iv: base64IV);
+    String configDevDec = AESCrypt.decrypt(configDevEnc, key: base64Key, iv: base64IV);
+    String configProdDec = AESCrypt.decrypt(configProdEnc, key: base64Key, iv: base64IV);
+    String configTestDec = AESCrypt.decrypt(configTestEnc, key: base64Key, iv: base64IV);
+
+    return (configAsset == configAssetDec) && (configDev == configDevDec) && (configProd == configProdDec) && (configTest == configTestDec);
+  }*/
+
 }
 
 class RSACrypt {

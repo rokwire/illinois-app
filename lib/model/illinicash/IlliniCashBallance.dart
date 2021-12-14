@@ -57,13 +57,13 @@ class IlliniCashBallance {
 
 
   factory IlliniCashBallance.fromJson(Map<String, dynamic> json) {
-    return IlliniCashBallance(
+    return (json != null) ? IlliniCashBallance(
         mealPlanName: json['MealPlanName'],
         balance: json['IllinCashBalance'],
         cafeCreditBalance: json['CafeCreditBalance'],
         mealBalance: json['MPBalance'],
         status: json['Status'],
-        housingResidenceStatus: json['HousingResidentStatus']);
+        housingResidenceStatus: json['HousingResidentStatus']) : null;
   }
 
   Map<String, dynamic> toJson() {

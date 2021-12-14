@@ -19,15 +19,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppNavigation.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseCrashlytics.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Onboarding2.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 
 import 'package:illinois/service/Log.dart';
@@ -36,7 +38,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/ui/RootPanel.dart';
-import 'package:illinois/ui/onboarding/onboarding2/Onboarding2GetStartedPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/FlexContentWidget.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -49,7 +51,10 @@ void main() async {
   // https://stackoverflow.com/questions/57689492/flutter-unhandled-exception-servicesbinding-defaultbinarymessenger-was-accesse
   WidgetsFlutterBinding.ensureInitialized();
 
-  await _init();
+  NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
+
+  Services().create();
+  ServiceError serviceError = await Services().init();
 
   // do not show the red error widget when release mode
   if (kReleaseMode) {
@@ -60,22 +65,8 @@ void main() async {
   Analytics().logLivecycle(name: Analytics.LogLivecycleEventCreate);
 
   runZonedGuarded(() async {
-    runApp(App());
+    runApp(App(initializeError: serviceError));
   }, FirebaseCrashlytics().handleZoneError);
-}
-
-Future<void> _init() async {
-  NotificationService().subscribe(appExitListener, AppLivecycle.notifyStateChanged);
-
-  Services().create();
-  await Services().init();
-}
-
-Future<void> _destroy() async {
-
-  NotificationService().unsubscribe(appExitListener);
-
-  Services().destroy();
 }
 
 class AppExitListener implements NotificationsListener {
@@ -85,7 +76,8 @@ class AppExitListener implements NotificationsListener {
   void onNotification(String name, param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.detached)) {
       Future.delayed(Duration(), () {
-        _destroy();
+        NotificationService().unsubscribe(appExitListener);
+        Services().destroy();
       });
     }
   }
@@ -99,9 +91,10 @@ class _AppData {
 class App extends StatefulWidget {
 
   final _AppData _data = _AppData();
+  final ServiceError initializeError;
   static App _instance;
 
-  App() {
+  App({this.initializeError}) {
     _instance = this;
   }
 
@@ -113,6 +106,7 @@ class App extends StatefulWidget {
     return _data._panelState;
   }
 
+  @override
   _AppState createState() {
     _AppState appState = _AppState();
     if ((_data._homeContext != null) && (_data._panelState == null)) {
@@ -142,36 +136,42 @@ class App extends StatefulWidget {
 class _AppState extends State<App> implements NotificationsListener {
 
   Key _key = UniqueKey();
-  RootPanel rootPanel;
+  String _lastRunVersion;
   String _upgradeRequiredVersion;
   String _upgradeAvailableVersion;
   Widget _launchPopup;
+  ServiceError _initializeError;
+  Future<ServiceError> _retryInitialzeFuture;
   DateTime _pausedDateTime;
+  RootPanel rootPanel;
 
   @override
   void initState() {
-    Log.d("App init");
+    Log.d("App UI initialized");
 
     NotificationService().subscribe(this, [
       Onboarding2.notifyFinished,
       Config.notifyUpgradeAvailable,
       Config.notifyUpgradeRequired,
+      Config.notifyOnboardingRequired,
       Storage.notifySettingChanged,
-      User.notifyUserDeleted,
-      User.notifyPrivacyLevelChanged,
-      User.notifyPrivacyLevelEmpty,
+      Auth2.notifyUserDeleted,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       AppLivecycle.notifyStateChanged,
     ]);
 
     AppLivecycle.instance.ensureBinding();
 
     rootPanel = RootPanel();
+    _initializeError = widget.initializeError;
+
+    _lastRunVersion = Storage().lastRunVersion;
     _upgradeRequiredVersion = Config().upgradeRequiredVersion;
     _upgradeAvailableVersion = Config().upgradeAvailableVersion;
-    
-    // This is just a placeholder to take some action on app upgrade.
-    String lastRunVersion = Storage().lastRunVersion;
-    if ((lastRunVersion == null) || (lastRunVersion != Config().appVersion)) {
+
+    _checkForceOnboarding();
+
+    if ((_lastRunVersion == null) || (_lastRunVersion != Config().appVersion)) {
       Storage().lastRunVersion = Config().appVersion;
     }
 
@@ -203,13 +203,16 @@ class _AppState extends State<App> implements NotificationsListener {
       //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       title: Localization().getStringEx('app.title', 'Illinois'),
       theme: ThemeData(
-          primaryColor: Styles().colors.fillColorPrimaryVariant,
-          fontFamily: Styles().fontFamilies.extraBold),
+          primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
+          fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
       home: _homePanel,
     );
   }
 
   Widget get _homePanel {
+    if (_initializeError != null) {
+      return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
+    }
     if (_upgradeRequiredVersion != null) {
       return OnboardingUpgradePanel(requiredVersion:_upgradeRequiredVersion);
     }
@@ -222,7 +225,7 @@ class _AppState extends State<App> implements NotificationsListener {
     else if ((Storage().privacyUpdateVersion == null) || (AppVersion.compareVersions(Storage().privacyUpdateVersion, Config().appPrivacyVersion) < 0)) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,);
     }
-    else if (User().privacyLevel == null) {
+    else if (Auth2().prefs?.privacyLevel == null) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else {
@@ -241,6 +244,42 @@ class _AppState extends State<App> implements NotificationsListener {
     Storage().onBoardingPassed = true;
     Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel);
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
+  }
+
+  bool _checkForceOnboarding() {
+    // Action: Force unboarding to concent vaccination (#651, #681)
+    String onboardingRequiredVersion = Config().onboardingRequiredVersion;
+    if ((Storage().onBoardingPassed == true) &&
+        (_lastRunVersion != null) &&
+        (onboardingRequiredVersion != null) &&
+        (AppVersion.compareVersions(_lastRunVersion, onboardingRequiredVersion) < 0) &&
+        (AppVersion.compareVersions(onboardingRequiredVersion, Config().appVersion) <= 0)) {
+      Storage().onBoardingPassed = false;
+      return true;
+    }
+    return false;
+  }
+
+  Future<ServiceError> _retryInitialze() async {
+    if (_retryInitialzeFuture != null) {
+      return await _retryInitialzeFuture;
+    }
+    else {
+      _retryInitialzeFuture = Services().init();
+      ServiceError serviceError = await _retryInitialzeFuture;
+      _retryInitialzeFuture = null;
+
+      if (_initializeError != serviceError) {
+        Future.delayed(Duration(milliseconds: 300)).then((_) {
+          setState(() {
+            _initializeError = serviceError;
+          });
+        });
+      }
+
+      return serviceError;
+    }
+    
   }
 
   void _presentLaunchPopup(BuildContext context) {
@@ -290,7 +329,12 @@ class _AppState extends State<App> implements NotificationsListener {
         _upgradeAvailableVersion = param;
       });
     }
-    else if (name == User.notifyUserDeleted) {
+    else if (name == Config.notifyOnboardingRequired) {
+      if (_checkForceOnboarding()) {
+        _resetUI();
+      }
+    }
+    else if (name == Auth2.notifyUserDeleted) {
       _resetUI();
     }
     else if (name == Storage.notifySettingChanged) {
@@ -298,10 +342,7 @@ class _AppState extends State<App> implements NotificationsListener {
         setState(() {});
       }
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
-      setState(() { });
-    }
-    else if (name == User.notifyPrivacyLevelEmpty) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       setState(() { });
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -314,7 +355,10 @@ class _AppState extends State<App> implements NotificationsListener {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
+      if (_initializeError != null) {
+        _retryInitialze();
+      }
+      else if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _presentLaunchPopup(App.instance.homeContext);

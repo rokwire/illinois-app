@@ -60,6 +60,7 @@ class LiveStats with Service implements NotificationsListener {
   Future<void> initService() async {
     if(_enabled) {
       _loadLiveGames();
+      await super.initService();
     }
   }
 
@@ -162,12 +163,11 @@ class LiveStats with Service implements NotificationsListener {
   }
 
   void _loadLiveGames() {
-    String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/livestats" : null;
-    var response = Network().get(url, auth: NetworkAuth.App);
+    String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/v2/live-games" : null;
+    var response = Network().get(url, auth: NetworkAuth.Auth2);
     response.then((response) {
+    String responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        Log.d("Succesfully loaded live games");
-        String responseBody = response.body;
         List<dynamic> gamesList = AppJson.decode(responseBody);
         List<LiveGame> result = [];
         if (gamesList != null) {
@@ -179,7 +179,7 @@ class LiveStats with Service implements NotificationsListener {
         _liveGames = result;
         NotificationService().notify(notifyLiveGamesLoaded, null);
       } else {
-        Log.e("Error occured on loading live games");
+        Log.e("Failed to load live games. Reason: $responseBody");
       }
     });
   }

@@ -15,8 +15,12 @@
  */
 
 import 'dart:ui';
+import 'package:geolocator/geolocator.dart' as Core;
+
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
@@ -34,6 +38,7 @@ abstract class Explore {
   String   get exploreSubTitle;
   String   get exploreShortDescription;
   String   get exploreLongDescription;
+  DateTime get exploreStartDateUtc;
   String   get exploreImageURL;
   String   get explorePlaceId;
   Location get exploreLocation;
@@ -43,6 +48,16 @@ abstract class Explore {
 
   Map<String, dynamic> get analyticsSharedExploreAttributes {
     return exploreLocation?.analyticsAttributes;
+  }
+
+  bool get isFavorite {
+    return (this is Favorite) && Auth2().isFavorite(this as Favorite);
+  }
+
+  void toggleFavorite() {
+    if (this is Favorite) {
+      Auth2().prefs?.toggleFavorite(this as Favorite);
+    }
   }
 
   static bool canJson(Map<String, dynamic> json) {
@@ -118,7 +133,7 @@ class ExploreCategory {
 
 class ExploreHelper {
 
-  static String getShortDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String getShortDisplayLocation(Explore explore, Core.Position locationData) {
     if (explore != null) {
       Location location = explore.exploreLocation;
       if (location != null) {
@@ -149,7 +164,7 @@ class ExploreHelper {
     return null;
   }
 
-  static String getLongDisplayLocation(Explore explore, Core.LocationData locationData) {
+  static String getLongDisplayLocation(Explore explore, Core.Position locationData) {
     if (explore != null) {
       String displayText = "";
       Location location = explore.exploreLocation;
@@ -210,12 +225,17 @@ class ExploreHelper {
     }
   }
 
-  static String getExploreEventTypeText(Explore explore){
-    if(explore!=null && explore is Event) {
-      bool isVirtual = explore.isVirtual ?? false;
-      return isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+  static String getExploreTypeText(Explore explore) {
+    if (explore != null) {
+      if (explore is Event) {
+        bool isVirtual = explore.isVirtual ?? false;
+        return isVirtual
+            ? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")
+            : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      } else if (explore is Game) {
+        return Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      }
     }
-
     return null;
   }
 }

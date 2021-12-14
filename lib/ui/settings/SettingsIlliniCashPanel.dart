@@ -20,7 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/illinicash/Transaction.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -61,7 +61,6 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth.notifyInfoChanged,
       IlliniCash.notifyPaymentSuccess,
       IlliniCash.notifyBallanceUpdated,
     ]);
@@ -94,7 +93,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   void _loadThisMonthHistory() {
-    if(Auth().isShibbolethLoggedIn) {
+    if(Auth2().isOidcLoggedIn) {
       Analytics.instance.logSelect(target: "This Month");
       DateTime now = DateTime.now();
       DateTime lastMonth = now.subtract(Duration(
@@ -148,7 +147,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 children: <Widget>[
                   _buildBalanceSection(),
                   _buildAddIlliniCashSection(),
-                  Auth().isShibbolethLoggedIn ? _buildHistorySection() : Container(),
+                  Auth2().isOidcLoggedIn ? _buildHistorySection() : Container(),
                 ],
               ),
             ),
@@ -185,7 +184,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                       ) : Container(),
                     ],
                   ),
-                   !Auth().isShibbolethLoggedIn ? Expanded(
+                   !Auth2().isOidcLoggedIn ? Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
                       child: RoundedButton(
@@ -299,7 +298,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildBalancePeriodViewPicker() {
-    if (!Auth().isShibbolethLoggedIn) {
+    if (!Auth2().isOidcLoggedIn) {
       return Container();
     }
     return Padding(
@@ -596,8 +595,15 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   void _onTapLogIn() {
     Analytics.instance.logSelect(target: "Log in");
-    _showAuthProgress(true);
-    Auth().authenticateWithShibboleth();
+    setState(() { _authLoading = true; });
+    Auth2().authenticateWithOidc().then((bool result) {
+      if (mounted) {
+        setState(() { _authLoading = false; });
+        if (result == false) {
+          showDialog(context: context, builder: (context) => _buildDialogWidget(context));
+        }
+      }
+    });
   }
 
   void _onStartDateTap() {
@@ -667,35 +673,16 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         date, format: AppDateTime.scheduleServerQueryDateTimeFormat);
   }
 
-  void _showAuthProgress(bool loading) {
-    if (mounted) {
-      setState(() {
-        _authLoading = loading;
-      });
-    }
-  }
-
   // NotificationsListener
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyInfoChanged) {
-      _onAuthInfoChanged();
-    }
-    else if (name == IlliniCash.notifyPaymentSuccess) {
+    if (name == IlliniCash.notifyPaymentSuccess) {
       _loadThisMonthHistory();
     }
     else if (name == IlliniCash.notifyBallanceUpdated) {
       setState(() {});
       _loadThisMonthHistory();
-    }
-  }
-
-  void _onAuthInfoChanged() {
-    _showAuthProgress(false);
-    if (!Auth().isShibbolethLoggedIn) {
-      showDialog(
-          context: context, builder: (context) => _buildDialogWidget(context));
     }
   }
 }

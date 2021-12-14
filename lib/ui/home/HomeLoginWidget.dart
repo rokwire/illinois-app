@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -29,15 +29,12 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
   Widget _buildConnectPrimarySection() {
     List<Widget> contentList = [];
 
-    List<dynamic> codes = FlexUI()['home.connect'] ?? [];
-    if(!codes.contains("netid")){
-      codes.add("netid");
-    }
+    List<dynamic> codes = FlexUI()['home.content.connect'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
         contentList.add(HomeLoginNetIdWidget());
-      } else if (code == 'phone') {
-        contentList.add(HomeLoginPhoneWidget());
+      } else if (code == 'phone_or_email') {
+        contentList.add(HomeLoginPhoneOrEmailWidget());
       }
     }
 
@@ -71,10 +68,6 @@ class HomeLoginNetIdWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return _buildConnectNetIdSection(context);
-  }
-
-  Widget _buildConnectNetIdSection(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
@@ -85,9 +78,9 @@ class HomeLoginNetIdWidget extends StatelessWidget{
           RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
           TextSpan(style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16), children: <TextSpan>[
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "student"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_2", "university student"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_3", " or ")),
-            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "faculty member"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+            TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_4", "employee"), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
             TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.netid.description.part_5", "? Sign in with your NetID."))
           ],),
           )),
@@ -112,20 +105,16 @@ class HomeLoginNetIdWidget extends StatelessWidget{
   void _onTapConnectNetIdClicked(BuildContext context) {
     Analytics.instance.logSelect(target: "Connect netId");
     if (Connectivity().isNotOffline) {
-      Auth().authenticateWithShibboleth();
+      Auth2().authenticateWithOidc();
     } else {
       AppAlert.showOfflineMessage(context,"");
     }
   }
 }
 
-class HomeLoginPhoneWidget extends StatelessWidget{
+class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    return _buildConnectPhoneSection(context);
-  }
-
-  Widget _buildConnectPhoneSection(BuildContext context) {
     return Semantics(container: true, child: Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(color: Styles().colors.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
@@ -135,8 +124,8 @@ class HomeLoginPhoneWidget extends StatelessWidget{
             Padding(padding: EdgeInsets.zero, child:
             RichText(textScaleFactor: MediaQuery.textScaleFactorOf(context), text:
             TextSpan(style: TextStyle(color: Styles().colors.textBackground, fontFamily: Styles().fontFamilies.regular, fontSize: 16), children: <TextSpan>[
-              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
-              TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone.description.part_2", "Verify your phone number.")),
+              TextSpan(text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold)),
+              TextSpan( text: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.description.part_2", "Verify your phone number or sign up/in by email.")),
             ],),
             )),
 
@@ -144,12 +133,12 @@ class HomeLoginPhoneWidget extends StatelessWidget{
 
             Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
             Semantics(explicitChildNodes: true, child: ScalableRoundedButton(
-              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone.title", "Verify your phone number"),
+              label: Localization().getStringEx("panel.home.connect.not_logged_in.phone_or_email.title", "Proceed"),
               hint: '',
               borderColor: Styles().colors.fillColorSecondary,
               backgroundColor: Styles().colors.surface,
               textColor: Styles().colors.fillColorPrimary,
-              onTap: ()=> _onTapConnectPhoneClicked(context),
+              onTap: ()=> _onTapPhoneOrEmailClicked(context),
             )),
             ),
 
@@ -159,16 +148,26 @@ class HomeLoginPhoneWidget extends StatelessWidget{
     ));
   }
 
-  void _onTapConnectPhoneClicked(BuildContext context) {
-    Analytics.instance.logSelect(target: "Phone Verification");
+  void _onTapPhoneOrEmailClicked(BuildContext context) {
+    Analytics.instance.logSelect(target: "Phone or Email Login");
     if (Connectivity().isNotOffline) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: 'Phone Verification'), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: (_){_didConnectPhone(context);},)));
+      Navigator.push(context, CupertinoPageRoute(
+        settings: RouteSettings(),
+        builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+          onboardingContext: {
+            "onContinueAction": () {
+              _didLogin(context);
+            }
+          },
+        ),
+      ),);
     } else {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.label.offline.phone_ver', 'Verify Your Phone Number is not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.label.offline.phone_or_email', 'Feature not available when offline.'));
     }
   }
 
-  void _didConnectPhone(BuildContext context) {
+  void _didLogin(BuildContext context) {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }
+

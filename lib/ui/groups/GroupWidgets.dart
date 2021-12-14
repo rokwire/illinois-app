@@ -17,16 +17,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupDetailPanel.dart';
@@ -37,7 +38,6 @@ import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:illinois/service/Network.dart';
 
 /////////////////////////////////////
 // GroupDropDownButton
@@ -108,7 +108,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     splashColor: Styles().colors.white,
                   ),
                   child: DropdownButton(
-                      icon: Image.asset('images/icon-down-orange.png'),
+                      icon: Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
                       isExpanded: true,
                       focusColor: Styles().colors.white,
                       underline: Container(),
@@ -157,8 +157,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                         ),
                       )),
                   isSelected
-                      ? Image.asset("images/checkbox-selected.png")
-                      : Image.asset("images/oval-orange.png")
+                      ? Image.asset("images/checkbox-selected.png", excludeFromSemantics: true)
+                      : Image.asset("images/oval-orange.png", excludeFromSemantics: true)
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():
@@ -263,7 +263,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Image.asset('images/chevron-left-white.png'),
+          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: (){
             Analytics.instance.logSelect(target: "Back");
             Navigator.pop(context);
@@ -525,7 +525,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -539,7 +539,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -547,7 +547,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   @override
   Widget build(BuildContext context) {
 
-    bool isFavorite = User().isExploreFavorite(widget.event);
+    bool isFavorite = widget.event.isFavorite;
 
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
@@ -610,7 +610,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      widget.event.exploreImageURL, fit: BoxFit.fill, headers: Network.appAuthHeaders,),),)),
+                      widget.event.exploreImageURL, excludeFromSemantics: true, fit: BoxFit.fill,),),)),
                 ])
                 )
     ],);
@@ -618,7 +618,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   void _onFavoriteTap() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
-    User().switchFavorite(widget.event);
+    Auth2().prefs?.toggleFavorite(widget.event);
   }
 
   void _onOptionsTap(){
@@ -894,7 +894,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
 // GroupCard
 
 
-enum GroupCardDisplayType { myGroup, allGroups }
+enum GroupCardDisplayType { myGroup, allGroups, homeGroups }
 
 class GroupCard extends StatelessWidget {
   final Group group;
@@ -923,20 +923,26 @@ class GroupCard extends StatelessWidget {
                         child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 0),
                             child: Text(group?.title ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                                 style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))))
                   ]),
+                  (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
                   Visibility(
                     visible: (group?.currentUserIsAdmin ?? false) && (group.pendingCount > 0),
                     child: Text(pendingCountText ?? "",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies.regular,
                           fontSize: 16,
-                          color: Styles().colors.textBackgroundVariant
+                          color: Styles().colors.textBackgroundVariant,
+
                       ),
                     ),
                   ),
                   Container(height: 4),
-                  displayType == GroupCardDisplayType.allGroups ? Container() : _buildUpdateTime()
+                  (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups ) ? _buildUpdateTime() : Container()
                 ]))));
   }
 
@@ -962,7 +968,9 @@ class GroupCard extends StatelessWidget {
         leftContent.add(Container(height: 6,));
       }
       leftContent.add(
-        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary),
+          overflow: TextOverflow.ellipsis,
+          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
       );
     }
 
@@ -1005,8 +1013,10 @@ class GroupCard extends StatelessWidget {
   Widget _buildUpdateTime() {
     return Container(
         child: Text(
-      _timeUpdatedText,
-      style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface),
+          _timeUpdatedText,
+          maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface,),
     ));
   }
 

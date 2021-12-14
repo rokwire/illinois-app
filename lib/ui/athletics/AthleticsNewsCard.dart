@@ -15,11 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Styles.dart';
 
 class AthleticsNewsCard extends StatefulWidget {
@@ -39,7 +40,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -53,7 +54,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -87,7 +88,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   Widget _newsCategory() {
-    bool isFavorite = User().isFavorite(widget.news);
+    bool isFavorite = Auth2().isFavorite(widget.news);
     String category = widget.news.category;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
@@ -112,7 +113,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                  ),
               ),
             ),
-          Visibility(visible: User().favoritesStarVisible,
+          Visibility(visible: Auth2().canFavorite,
             child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: _onTapSave,
@@ -177,7 +178,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
 
   Widget _newsTimeDetail() {
     News news = widget.news;
-    String displayTime = news?.getDisplayTime();
+    String displayTime = news?.displayTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
         padding: _detailPadding,
@@ -207,12 +208,12 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   bool _showTopBorder(){
-    return widget.news?.getImageUrl()==null ?? true;
+    return widget.news?.imageUrl == null ?? true;
   }
 
   void _onTapSave() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.news?.title}");
-    User().switchFavorite(widget.news);
+    Auth2().prefs?.toggleFavorite(widget.news);
   }
 
 }

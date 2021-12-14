@@ -16,15 +16,15 @@
 
 import 'dart:ui';
 
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Location.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -72,6 +72,7 @@ class Event with Explore implements Favorite {
   List<Event> recurringEvents;
 
   bool isSuperEvent;
+  bool displayOnlyWithSuperEvent;
   bool isVirtual;
   List<Map<String, dynamic>> subEventsMap;
   String track;
@@ -150,6 +151,7 @@ class Event with Explore implements Favorite {
     convergeScore = json['converge_score'];
     convergeUrl = json['converge_url'];
     isSuperEvent = json['isSuperEvent'] ?? false;
+    displayOnlyWithSuperEvent = json['displayOnlyWithSuperEvent'] ?? false;
     this.subEventsMap = subEventsMap;
     track = json['track'];
     isVirtual = json['isVirtual'] ?? false;
@@ -194,6 +196,7 @@ class Event with Explore implements Favorite {
     convergeScore = other?.convergeScore;
     convergeUrl = other?.convergeUrl;
     isSuperEvent = other?.isSuperEvent;
+    displayOnlyWithSuperEvent = other?.displayOnlyWithSuperEvent;
     subEventsMap = other?.subEventsMap;
     track = other?.track;
     isVirtual = other?.isVirtual;
@@ -253,6 +256,7 @@ class Event with Explore implements Favorite {
       "converge_score": convergeScore,
       "converge_url": convergeUrl,
       "isSuperEvent": isSuperEvent,
+      "displayOnlyWithSuperEvent": displayOnlyWithSuperEvent,
       "subEvents": subEventsMap,
       "track": track,
       'isVirtual': isVirtual,
@@ -411,6 +415,9 @@ class Event with Explore implements Favorite {
     if(isSuperEvent!=null) {
       result["isSuperEvent"] = isSuperEvent;
     }
+    if(displayOnlyWithSuperEvent!=null) {
+      result["displayOnlyWithSuperEvent"] = displayOnlyWithSuperEvent;
+    }
     if(subEventsMap!=null) {
       result["subEvents"] = subEventsMap;
     }
@@ -547,6 +554,7 @@ class Event with Explore implements Favorite {
   @override String   get exploreSubTitle         { return subTitle; }
   @override String   get exploreShortDescription { return shortDescription; }
   @override String   get exploreLongDescription  { return longDescription; }
+  @override DateTime get exploreStartDateUtc     { return startDateGmt; }
   @override String   get explorePlaceId          { return placeID; }
   @override Location get exploreLocation         { return location; }
   @override Color    get uiColor                 { return Styles().colors.eventColor; }
@@ -571,6 +579,22 @@ class Event with Explore implements Favorite {
     };
     attributes.addAll(analyticsSharedExploreAttributes ?? {});
     return attributes;
+  }
+
+  @override
+  bool get isFavorite {
+    return isRecurring ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>()) : Auth2().isFavorite(this);
+  }
+
+  @override
+  void toggleFavorite() {
+    if (isRecurring) {
+      List<Favorite> favorites = recurringEvents?.cast<Favorite>();
+      Auth2().prefs?.setListFavorite(favorites, !Auth2().isListFavorite(favorites));
+    }
+    else {
+      Auth2().prefs?.toggleFavorite(this);
+    }
   }
 
   DateTime get startDateLocal     { return AppDateTime().getUniLocalTimeFromUtcTime(startDateGmt); }
@@ -683,7 +707,7 @@ class Event with Explore implements Favorite {
     String interests = "";
     if(AppCollection.isCollectionNotEmpty(tags)) {
       tags.forEach((String tag){
-          if(User().isTagged(tag, true)) {
+          if(Auth2().prefs?.hasPositiveTag(tag) ?? false) {
             if (interests.isNotEmpty) {
               interests += ", ";
             }

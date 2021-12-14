@@ -59,6 +59,7 @@ class NativeCommunicator with Service {
   @override
   Future<void> initService() async {
     await _nativeInit();
+    await super.initService();
   }
 
   @override
@@ -189,6 +190,16 @@ class NativeCommunicator with Service {
     }
   }
 
+  Future<void> setLaunchScreenStatus(String status) async {
+    try {
+      await _platformChannel.invokeMethod('setLaunchScreenStatus', {
+        'status': status
+      });
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
+  }
+
   Future<void> addCardToWallet(List<int> cardData) async {
     try {
       String cardBase64Data = base64Encode(cardData);
@@ -236,10 +247,10 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<bool> queryNotificationsAuthorization(String method) async {
-    bool result = false;
+  Future<NotificationsAuthorizationStatus> queryNotificationsAuthorization(String method) async {
+    NotificationsAuthorizationStatus result;
     try {
-      result = await _platformChannel.invokeMethod('notifications_authorization', {"method": method });
+      result = _notificationsAuthorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -274,6 +285,18 @@ class NativeCommunicator with Service {
       print(e.message);
     }
     return result;
+  }
+
+  Future<String> encryptionKey({String identifier, int size}) async {
+    try {
+      return await _platformChannel.invokeMethod('encryptionKey', {
+        'identifier': identifier,
+        'size': size,
+      });
+    } catch (e) {
+      print(e?.toString());
+    }
+    return null;
   }
 
   Future<Uint8List> getBarcodeImageData(Map<String, dynamic> params) async {
@@ -393,4 +416,21 @@ class NativeCommunicator with Service {
   void _notifyGeoFenceBeaconsChanged(dynamic arguments) {
     NotificationService().notify(notifyGeoFenceBeaconsChanged, arguments);
   }
+}
+
+enum NotificationsAuthorizationStatus {
+  NotDetermined,
+  Denied,
+  Allowed
+}
+
+NotificationsAuthorizationStatus _notificationsAuthorizationStatusFromString(String value){
+  if("not_determined" == value)
+    return NotificationsAuthorizationStatus.NotDetermined;
+  else if("denied" == value)
+    return NotificationsAuthorizationStatus.Denied;
+  else if("allowed" == value)
+    return NotificationsAuthorizationStatus.Allowed;
+  else
+    return null;
 }

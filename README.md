@@ -26,6 +26,15 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
 #### • /secrets.tar.enc
 [No description available]
 
+#### • /assets/config.keys.json (for versions after 3.0 inclusive)
+JSON data with the following format:
+{
+	"key":"",
+	"iv":""
+}
+
+"key" and "iv" fields contain base64 strings of randomly generated 16-bytes AES128 key and IV. These keys are used for decryption of "/assets/configs.json.enc" from application assets as well as for the decryption of "secretKeys" string in application config.
+
 #### • /assets/configs.json.enc
 1. JSON data with the following format:
 ```
@@ -44,12 +53,17 @@ The official mobile app of the University of Illinois. Powered by the [Rokwire P
   }
 }
 ```
-2. Generate random 16-bytes AES128 key.
-3. AES encrypt the JSON string, CBC mode, PKCS7 padding, using the AES.
-4. Create a data blob contains the AES key at the beginning followed by the encrypted data.
-5. Get a base64 encoded string of the data blob and save it as /assets/configs.json.enc.
+2. For versions prior to 3.0:
+2.1. Generate random 16-bytes AES128 key.
+2.2. AES encrypt the JSON string, CBC mode, PKCS7 padding, using the AES.
+2.3. Create a data blob contains the AES key at the beginning followed by the encrypted data.
+2.4. Get a base64 encoded string of the data blob and save it as "/assets/configs.json.enc".
 
 Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generate content of /assets/configs.json.enc.
+
+3. For versions after 3.0 inclusive:
+3.1. AES encrypt the JSON string, CBC mode, PKCS7 padding, using the key and IV from "/assets/config.keys.json".
+2.4. Get a base64 encoded string of the encryption result and save it as "/assets/configs.json.enc".
 
 #### • /ios/Runner/GoogleService-Info-Debug.plist
 #### • /ios/Runner/GoogleService-Info-Release.plist

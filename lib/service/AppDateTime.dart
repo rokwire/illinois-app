@@ -49,45 +49,54 @@ class AppDateTime with Service {
   timezone.Location _universityLocation;
   String _localTimeZone;
 
+  @override
+  Future<void> initService() async {
+
+    var byteData = await rootBundle.load('assets/timezone2019a.tzf');
+    var rawData = byteData?.buffer?.asUint8List();
+    if (rawData != null) {
+      timezone.initializeDatabase(rawData);
+    }
+    else {
+      print('AppDateTime: Failed to initialze Timezone database.');
+    }
+
+    _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    if (_localTimeZone != null) {
+      timezone.Location deviceLocation = timezone.getLocation(_localTimeZone);
+      if (deviceLocation != null) {
+        timezone.setLocalLocation(deviceLocation);
+      }
+      else {
+        print('AppDateTime: Failed to initialze Timezone device location.');
+      }
+    }
+    else {
+      print('AppDateTime: Failed to retrieve local timezone.');
+    }
+
+    _universityLocation = timezone.getLocation('America/Chicago');
+    if (_universityLocation == null) {
+      print('AppDateTime: Failed to retrieve university location.');
+    }
+
+    await super.initService();
+  }
+
   DateTime get now {
     DateTime now = Storage().offsetDate;
     return now != null ? now : DateTime.now();
-  }
-
-
-  @override
-  Future<void> initService() async {
-    _init();
-  }
-
-  _init() async {
-    _loadDefaultData().then((rawData) {
-      timezone.initializeDatabase(rawData);
-      timezone.Location deviceLocation = timezone.getLocation(_localTimeZone);
-      timezone.setLocalLocation(deviceLocation);
-      _universityLocation = timezone.getLocation('America/Chicago');
-    });
-  }
-
-  Future<List<int>> _loadDefaultData() async {
-    _localTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-    var byteData = await rootBundle.load('assets/timezone2019a.tzf');
-    return byteData.buffer.asUint8List();
   }
 
   DateTime dateTimeFromString(String dateTimeString, {String format, bool isUtc = false}) {
     if (AppString.isStringEmpty(dateTimeString)) {
       return null;
     }
-    DateFormat dateFormat;
     DateTime dateTime;
-    if (AppString.isStringNotEmpty(format)) {
-      dateFormat = DateFormat(format);
-    }
     try {
-      dateTime =
-      (dateFormat != null) ? dateFormat.parse(dateTimeString, isUtc) : DateTime.parse(
-          dateTimeString);
+      dateTime = AppString.isStringNotEmpty(format) ?
+        DateFormat(format).parse(dateTimeString, isUtc) :
+        DateTime.tryParse(dateTimeString);
     }
     on Exception catch (e) {
       Log.e(e.toString());
@@ -267,9 +276,28 @@ class AppDateTime with Service {
     }
   }
 
+  static DateTime midnight(DateTime date) {
+    return (date != null) ? DateTime(date.year, date.month, date.day) : null;
+  }
+
   timezone.TZDateTime changeTimeZoneToDate(DateTime time, timezone.Location location){
     try{
      return timezone.TZDateTime(location,time.year,time.month,time.day, time.hour, time.minute);
+    } catch(e){
+      print(e);
+    }
+    return null;
+  }
+
+  DateTime copyDateTime(DateTime date){
+    return DateTime(date.year, date.month, date.day, date.hour, date.minute, date.second);
+  }
+
+  DateTime localEndOfDay(DateTime date){
+    if(date == null)
+      return null;
+    try{
+      return timezone.TZDateTime(_universityLocation ,date.year,date.month,date.day,24);
     } catch(e){
       print(e);
     }
@@ -287,5 +315,9 @@ class AppDateTime with Service {
       }
     }
     return null;
+  }
+
+  static String utcDateTimeToString(DateTime dateTime, { String format  = 'yyyy-MM-ddTHH:mm:ss.SSS'  }) {
+    return (dateTime != null) ? (DateFormat(format).format(dateTime.isUtc ? dateTime : dateTime.toUtc()) + 'Z') : null;
   }
 }

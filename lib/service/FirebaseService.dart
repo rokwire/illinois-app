@@ -25,11 +25,28 @@ class FirebaseService extends Service{
     return _service;
   }
 
+  FirebaseApp _firebaseApp;
+
   @override
   Future<void> initService() async{
-    await super.initService();
-
-    await Firebase.initializeApp();
+    await initFirebase();
+    
+    if (_firebaseApp != null) {
+      await super.initService();
+    }
+    else {
+      throw ServiceError(
+        source: this,
+        severity: ServiceErrorSeverity.nonFatal,
+        title: 'Firebase Initialization Failed',
+        description: 'Failed to initialize Firebase application.',
+      );
+    }
   }
 
+  Future<void> initFirebase() async{
+    if(_firebaseApp == null) {
+      _firebaseApp = await Firebase.initializeApp();
+    }
+  }
 }

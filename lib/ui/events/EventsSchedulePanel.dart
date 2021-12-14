@@ -16,10 +16,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/LocationServices.dart';
@@ -37,8 +40,6 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/MapWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
-import 'package:location/location.dart';
 import 'package:sprintf/sprintf.dart';
 
 enum _EventTab { All, Saved }
@@ -72,7 +73,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   List<Event> _displayEvents;
 
-  LocationData _locationData;
+  Position _locationData;
   LocationServicesStatus _locationServicesStatus;
 
   List<_EventFilter> _tabFilters;
@@ -95,13 +96,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyFavoritesChanged,
       Connectivity.notifyStatusChanged,
       LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
     ]);
     _initFilters();
     _initLocationService();
@@ -787,7 +788,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return User().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
   }
 
   //EventsLoading
@@ -835,7 +836,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _isEventMatchFilters(Event event){
       if(_showSavedContent){
-        return User().isFavorite(event);
+        return Auth2().isFavorite(event);
       }
 
       //Categories
@@ -927,7 +928,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //LocationServices
   _initLocationService(){
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -952,7 +953,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   void onNotification(String name, param) {
     if (name == LocationServices.notifyStatusChanged) {
       _onLocationServicesStatusChanged(param);
-    } else if(name == User.notifyFavoritesUpdated) {
+    } else if(name == Auth2UserPrefs.notifyFavoritesChanged) {
       _refreshEvents();
     }
     else if (name == Connectivity.notifyStatusChanged) {
@@ -969,13 +970,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     else if (name == NativeCommunicator.notifyMapClearExplore) {
       _onNativeMapClearExplore(param['mapId']);
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
     }
   }
 
   _onPrivacyLevelChanged(){
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
@@ -987,7 +988,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus status) {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       _locationServicesStatus = status;
       _refresh((){});
     }
@@ -1046,7 +1047,7 @@ class EventScheduleCard extends StatefulWidget {
 class _EventScheduleCardState extends State<EventScheduleCard> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -1060,7 +1061,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -1070,7 +1071,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
     if (widget.event == null) {
       return Container();
     }
-    bool favorite = User().isFavorite(widget.event);
+    bool favorite = Auth2().isFavorite(widget.event);
     double headerHeight = 7;
 
     return GestureDetector(onTap: _onTapSubEvent, child: Semantics(
@@ -1110,12 +1111,12 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                             ),
                           ),
                           Visibility(
-                            visible: User().favoritesStarVisible,
+                            visible: Auth2().canFavorite,
                             child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
                                   Analytics.instance.logSelect(target: "Favorite: ${widget.event?.title}");
-                                  User().switchFavorite(widget.event);
+                                  Auth2().prefs?.toggleFavorite(widget.event);
                                 },
                                 child: Semantics(
                                     label: favorite

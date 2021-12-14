@@ -16,11 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -68,7 +69,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     NotificationService().subscribe(this, [
       Storage.offsetDateKey,
       Connectivity.notifyStatusChanged,
-      User.notifyInterestsUpdated
+      Auth2UserPrefs.notifyInterestsChanged
     ]);
 
     _loadGames();
@@ -224,7 +225,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 fontSize: 16),
                                           ),
                                           Image.asset(
-                                              'images/icon-check-example.png'),
+                                              'images/icon-check-example.png', excludeFromSemantics: true),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
@@ -268,7 +269,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             width: double.infinity,
                                             child: Image.asset('images/slant-down-right-blue.png',
                                               fit:BoxFit.fill,
-                                              color: Styles().colors.fillColorPrimaryVariant
+                                              color: Styles().colors.fillColorPrimaryVariant,
+                                              excludeFromSemantics: true
                                             ),
                                           )
                                         ],
@@ -284,8 +286,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Image.asset(
-                                                      'images/explore.png'),
+                                                  child: Image.asset('images/explore.png', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
@@ -527,9 +528,11 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 
   void _setLoading(bool loading) {
-    setState(() {
-      _loading = loading;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = loading;
+      });
+    }
   }
 
   // NotificationsListener
@@ -542,7 +545,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     if(name == Storage.offsetDateKey){
       _loadGames();
     }
-    else if (name == User.notifyInterestsUpdated) {
+    else if (name == Auth2UserPrefs.notifyInterestsChanged) {
       _reloadGames();
     }
   }
@@ -567,7 +570,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyFavoritesUpdated);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     super.initState();
   }
 
@@ -581,7 +584,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == User.notifyFavoritesUpdated) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -595,7 +598,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     bool isGetTicketsVisible = isTicketedSport && (widget.game.links?.tickets != null);
     bool showImage =
         (isTicketedSport && !AppString.isStringEmpty(widget.game.imageUrl));
-    bool isFavorite = User().isFavorite(widget.game);
+    bool isFavorite = Auth2().isFavorite(widget.game);
     String interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = AppString.isStringNotEmpty(interestsLabelValue);
 
@@ -636,6 +639,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                   child: Image.asset('images/slant-down-right.png',
                     color: Styles().colors.fillColorSecondary,
                     fit: BoxFit.fill,
+                    excludeFromSemantics: true
                   ),
                 )
                     : Container(height: 0),
@@ -687,7 +691,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                               Expanded(
                                 child: Container(),
                               ),
-                              Visibility(visible: User().favoritesStarVisible,
+                              Visibility(visible: Auth2().canFavorite,
                                 child: GestureDetector(
                                     behavior: HitTestBehavior.opaque,
                                     onTap: _onTapSave,
@@ -714,7 +718,8 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
                                                 bottom: 8),
                                             child: Image.asset(isFavorite
                                                 ? 'images/icon-star-selected.png'
-                                                : 'images/icon-star.png')
+                                                : 'images/icon-star.png',
+                                                excludeFromSemantics: true)
                                         ))
                                     )),)
                             ],
@@ -794,7 +799,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   void _onTapGetTickets() {
     Analytics.instance.logSelect(
         target: "AthleticsCard:Item:" + widget?.game?.title + " -Get Tickets");
-    if (User().showTicketsConfirmationModal) {
+    if (PrivacyTicketsDialog.shouldConfirm) {
       PrivacyTicketsDialog.show(context, onContinueTap: () {
         _showTicketsPanel();
       });
@@ -837,7 +842,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
           children: <Widget>[
-            Image.asset('images/icon-time.png'),
+            Image.asset('images/icon-time.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),
@@ -862,7 +867,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
         child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-location.png'),
+            Image.asset('images/icon-location.png', excludeFromSemantics: true),
             Padding(
               padding: _iconPadding,
             ),
@@ -915,7 +920,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   void _onTapSave() {
     Analytics.instance.logSelect(target: "Favorite: ${widget.game?.title}");
-    User().switchFavorite(widget.game);
+    Auth2().prefs?.toggleFavorite(widget.game);
   }
 
   void _onTapSportCategory(SportDefinition sport) {
@@ -932,7 +937,7 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
 
   String _getInterestsLabelValue() {
     String sportName = widget?.game?.sport?.shortName;
-    bool isSportFavorite = AppString.isStringNotEmpty(sportName)? User().getSportsInterestSubCategories()?.contains(sportName)?? false : false;
+    bool isSportFavorite = Auth2().prefs?.hasSportInterest(sportName) ?? false;
     return isSportFavorite ? Sports().getSportByShortName(sportName)?.customName : null;
   }
 }

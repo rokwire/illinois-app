@@ -17,12 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsNewPrivacyPanel.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInformationPanel.dart';
@@ -46,7 +46,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Auth.notifyLoginSucceeded, Auth.notifyLoginFailed, Auth.notifyStarted]);
+    NotificationService().subscribe(this, [ Auth2.notifyLoginChanged ]);
     _loadVersionInfo();
     super.initState();
   }
@@ -83,7 +83,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                                   width: 42,
                                   alignment: Alignment.topCenter,
                                   child: IconButton(
-                                    icon: Image.asset("images/chevron-left-white.png"),
+                                    icon: Image.asset("images/chevron-left-white.png", excludeFromSemantics: true),
                                     onPressed: _onTapBack))),
                             Expanded(child:Container()),
                             Container(height: 90,
@@ -289,7 +289,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
                     Padding(
                       padding: EdgeInsets.only(bottom: 16),
                       child:
-                      Image.asset((iconPath)),
+                      Image.asset(iconPath, excludeFromSemantics: true),
                     ),
                     Container(height: 10,),
                     Container(
@@ -414,17 +414,29 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNewPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
-  void _onTapDeleteData(){
+  void _onTapDeleteData() async{
+    final String groupsSwitchTitle = "Please delete all my contributions.";
+    int userPostCount = await Groups().getUserPostCount();
+    bool contributeInGroups = userPostCount > 0;
+
     SettingsDialog.show(context,
         title: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.title", "Forget all of your information?"),
         message: [
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description1", "This will ")),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
+          TextSpan(text: contributeInGroups?
+          Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+          "")
         ],
+        options:contributeInGroups ? [groupsSwitchTitle] : null,
+        initialOptionsSelection:contributeInGroups ?  [groupsSwitchTitle] : [],
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
             progressController(loading: true);
+            if(selectedValues?.contains(groupsSwitchTitle) ?? false){
+              Groups().deleteUserData();
+            }
             _deleteUserData().then((_){
               progressController(loading: false);
               Navigator.pop(context);
@@ -437,15 +449,11 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   Future<void> _deleteUserData() async{
     Analytics.instance.logAlert(text: "Remove My Information", selection: "Yes");
-    bool piiDeleted = await Auth().deleteUserPiiData();
-    if(piiDeleted) {
-      await User().deleteUser();
-    }
-    Auth().logout();
+    await Auth2().deleteUser();
   }
 
   bool get _showFinishSetupWidget{
-    return !(Auth().isLoggedIn);
+    return !(Auth2().isLoggedIn);
   }
 
   void _onTapBack() {
@@ -455,7 +463,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth.notifyLoginChanged) {
+    if (name == Auth2.notifyLoginChanged) {
       setState(() {});
     }
   }

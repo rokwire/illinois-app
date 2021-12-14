@@ -18,14 +18,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RoleGridButton.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/service/User.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
@@ -33,25 +32,24 @@ class SettingsRolesPanel extends StatefulWidget {
   _SettingsRolesPanelState createState() => _SettingsRolesPanelState();
 }
 
-class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements NotificationsListener {
-  //User _user;
-  Set<UserRole> _selectedRoles = Set<UserRole>();
+class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
+  Set<UserRole> _selectedRoles;
 
   Timer _saveRolesTimer;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyRolesUpdated);
-    _selectedRoles = (User().roles != null) ? Set.from(User().roles): Set<UserRole>();
+    _selectedRoles = (Auth2().prefs?.roles != null) ? Set.from(Auth2().prefs.roles) : Set<UserRole>();
     super.initState();
   }
 
   @override
   void dispose() {
-    NotificationService().unsubscribe(this);
     if (_saveRolesTimer != null) {
       _stopSaveRolesTimer();
-      _saveSelectedRoles();
+      Timer(Duration(microseconds: 300), () {
+        _saveSelectedRoles();
+      });
     }
     super.dispose();
   }
@@ -65,6 +63,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
           Localization().getStringEx('panel.onboarding.roles.label.title', 'WHO YOU ARE'),
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
         ),
+        onBackPressed: _onBack,
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors.background,
@@ -133,6 +132,18 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
                       onTap: _onRoleGridButton,
                     ),
                     Container(height: gridSpacing,),
+                    /*RoleGridButton(
+                      title: Localization().getStringEx('panel.onboarding.roles.button.gies.title', 'GIES Student'),
+                      hint: Localization().getStringEx('panel.onboarding.roles.button.gies.hint', ''),
+                      iconPath: 'images/icon-persona-alumni-normal.png',
+                      selectedIconPath: 'images/icon-persona-alumni-selected.png',
+                      selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                      selectedTextColor: Colors.white,
+                      selected:(_selectedRoles.contains(UserRole.gies)),
+                      data: UserRole.gies,
+                      sortOrder: 8,
+                      onTap: _onRoleGridButton,
+                    ),*/
                   ],)),
                   Container(width: gridSpacing,),
                   Expanded(child: Column(children: <Widget>[
@@ -171,24 +182,22 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
                       sortOrder: 6,
                       onTap: _onRoleGridButton,
                     ),
+                    Container(height: gridSpacing,),
+                    RoleGridButton(
+                      title: Localization().getStringEx('panel.onboarding.roles.button.resident.title', 'Illinois Resident'),
+                      hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
+                      iconPath: 'images/icon-persona-resident-normal.png',
+                      selectedIconPath: 'images/icon-persona-resident-selected.png',
+                      selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                      selectedTextColor: Colors.white,
+                      selected:(_selectedRoles.contains(UserRole.resident)),
+                      data: UserRole.resident,
+                      sortOrder: 7,
+                      onTap: _onRoleGridButton,
+                    ),
                   ],),),
                 ],)
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Row(children: <Widget>[Expanded(child: RoleGridButton(
-                  title: Localization().getStringEx('panel.onboarding.roles.button.resident.title', 'Illinois Resident'),
-                  hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
-                  iconPath: 'images/icon-persona-resident-normal.png',
-                  selectedIconPath: 'images/icon-persona-resident-selected.png',
-                  selectedBackgroundColor: Styles().colors.fillColorPrimary,
-                  selectedTextColor: Colors.white,
-                  selected:(_selectedRoles.contains(UserRole.resident)),
-                  data: UserRole.resident,
-                  sortOrder: 7,
-                  onTap: _onRoleGridButton,
-                ),)],),
-              )
 
             ],
           ),
@@ -239,10 +248,19 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
     }
   }
 
+  void _onBack() {
+    if (_saveRolesTimer != null) {
+      _saveSelectedRoles();
+    }
+    Navigator.pop(context);
+  }
+
   //TBD clear up when sure that timer saving approach won't be needed
   void _startSaveRolesTimer() {
     _stopSaveRolesTimer();
-    _saveRolesTimer = Timer(Duration(seconds: 3), _saveSelectedRoles);
+    _saveRolesTimer = Timer(Duration(seconds: 3), () {
+      _saveSelectedRoles();
+    });
   }
 
   void _stopSaveRolesTimer() {
@@ -253,7 +271,8 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
   }
 
   void _saveSelectedRoles() {
-    User().roles = _selectedRoles;
+    _stopSaveRolesTimer();
+    Auth2().prefs?.roles = _selectedRoles;
   }
 
   /*_onSaveChangesClicked(){
@@ -264,16 +283,5 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> implements Noti
   bool get _canSave{
     return _selectedRoles != User().roles ;
   }*/
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == User.notifyRolesUpdated) {
-      setState(() {
-        _selectedRoles = User().roles ?? Set<UserRole>();
-      });
-    }
-  }
 }
 

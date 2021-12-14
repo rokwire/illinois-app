@@ -19,18 +19,19 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:location/location.dart' as Core;
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/model/Dining.dart';
@@ -46,7 +47,7 @@ import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Dining dining;
-  final Core.LocationData initialLocationData;
+  final Core.Position initialLocationData;
 
   ExploreDiningDetailPanel({this.dining, this.initialLocationData});
 
@@ -69,7 +70,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   bool _isDiningLoading = false;
 
   //Maps
-  Core.LocationData _locationData;
+  Core.Position _locationData;
 
   // Dining Worktime
   bool _diningWorktimeExpanded = false;
@@ -81,8 +82,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   void initState() {
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
-      User.notifyPrivacyLevelChanged,
-      User.notifyFavoritesUpdated,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
 
     _reloadDiningIfNeed();
@@ -121,7 +122,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = User().privacyMatch(2) ? await LocationServices.instance.location : null;
+    _locationData = Auth2().privacyMatch(2) ? await LocationServices.instance.location : null;
   }
 
   void _updateCurrentLocation() {
@@ -196,8 +197,8 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Widget _exploreTitle() {
-    bool starVisible = User().favoritesStarVisible;
-    bool isFavorite = User().isFavorite(dining);
+    bool starVisible = Auth2().canFavorite;
+    bool isFavorite = Auth2().isFavorite(dining);
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -217,12 +218,12 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                 behavior: HitTestBehavior.opaque,
                 onTap: (){
                   Analytics.instance.logSelect(target: "Favorite: ${dining?.title}");
-                  User().switchFavorite(dining);},
-                child: Semantics(
+                  Auth2().prefs?.toggleFavorite(dining);},
+                child: Container( child: Semantics(
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 10, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png')))
+                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Image.asset(isFavorite?'images/icon-star-selected.png':'images/icon-star.png', excludeFromSemantics: true))))
             ),),
           ],
         ));
@@ -403,7 +404,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-location.png'),
+                  child:Image.asset('images/icon-location.png', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(locationText,
                     style: TextStyle(
@@ -441,7 +442,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(right: 10),
-                        child:Image.asset('images/icon-time.png'),),
+                        child:Image.asset('images/icon-time.png', excludeFromSemantics: true),),
                       Expanded(child:
                         ScalableFilterSelectorWidget(
                           label: displayTime,
@@ -610,10 +611,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if (name == LocationServices.notifyStatusChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateCurrentLocation();
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setState(() {});
     }
   }
@@ -646,7 +647,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, DiningService.notifyFoodPrefsChanged);
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFoodChanged);
 
     _displayDates = widget.dining.displayScheduleDates;
     _filterDates = widget.dining.filterScheduleDates;
@@ -796,7 +797,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    bool hasFoodFilterApplied = DiningService().hasFoodFilteringApplied();
+    bool hasFoodFilterApplied = Auth2().prefs?.hasFoodFilters ?? false;
     return hasMenuData ?
     Container(
         color: Styles().colors.background,
@@ -850,7 +851,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                               )),
                               Padding(
                                 padding: EdgeInsets.only(left: 4),
-                                child: Image.asset('images/chevron-right.png'),
+                                child: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
                               )
                             ],
                           ),
@@ -880,7 +881,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.prev_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Image.asset('images/chevron-left.png',),
+                      image: Image.asset('images/chevron-left.png', excludeFromSemantics: true),
                       onTap: decrementDateFilter,
                     ),
                   ),
@@ -890,7 +891,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                     hint: Localization().getStringEx("widget.food_detail.button.next_menu.hint", ""),
                     excludeSemantics: true,
                     child: _CircularButton(
-                      image: Image.asset('images/chevron-right.png',),
+                      image: Image.asset('images/chevron-right.png', excludeFromSemantics: true),
                       onTap: incrementDateFilter,
                     ),
                   ),
@@ -967,8 +968,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       List<DiningProductItem> mealProducts = DiningUtils.getProductsForScheduleId(
           _productItems,
           _schedules[_selectedScheduleIndex].scheduleId,
-          DiningService().getIncludedFoodTypesPrefs(),
-          DiningService().getExcludedFoodIngredientsPrefs()
+          Auth2().prefs?.includedFoodTypes,
+          Auth2().prefs?.excludedFoodIngredients
       );
       Map<String, List<DiningProductItem>> productStationMapping = DiningUtils
           .getCategoryGroupedProducts(mealProducts);
@@ -1034,7 +1035,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   
   @override
   void onNotification(String name, dynamic param) {
-    if (name == DiningService.notifyFoodPrefsChanged) {
+    if (name == Auth2UserPrefs.notifyFoodChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -1110,7 +1111,7 @@ class _StationItemState extends State<_StationItem>{
                         ),
                       ),
                     ),
-                    expanded ? Image.asset('images/chevron-down.png') : Image.asset('images/chevron-up.png')
+                    expanded ? Image.asset('images/chevron-down.png', excludeFromSemantics: true) : Image.asset('images/chevron-up.png', excludeFromSemantics: true)
                   ],
                 ),
               ),
@@ -1181,7 +1182,7 @@ class _ProductItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Image.asset('images/chevron-right.png')
+                Image.asset('images/chevron-right.png', excludeFromSemantics: true)
               ],
             ),
           ),

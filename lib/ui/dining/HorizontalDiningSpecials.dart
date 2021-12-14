@@ -149,6 +149,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
                 _hasImage
                     ? Image.network(
                       widget.special.imageUrl,
+                      excludeFromSemantics: true,
                       width: imageWidth,
                       height: _imageHeight,
                       fit: BoxFit.cover,

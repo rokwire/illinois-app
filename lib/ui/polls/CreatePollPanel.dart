@@ -17,11 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/Poll.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/Polls.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -111,13 +110,13 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
               Localization().getStringEx("panel.create_poll.description",
-                  "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app."),
+                  "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app or they can ask you for the 4 Digit Poll #."),
               style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.regular),
             )));
   }
 
   Widget _buildNameLabel() {
-    String name = Auth()?.userPiiData?.fullName ?? "Someone";
+    String name = Auth2().fullName ?? "Someone";
     String wantToKnowText = Localization().getStringEx("panel.create_poll.text.wants_to_know", "wants to know…");
     return
       Semantics(label: name +","+wantToKnowText , excludeSemantics: true,child:
@@ -452,8 +451,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         title: _questionController?.text?.toString(),
         options: options,
         settings: PollSettings(allowMultipleOptions: _selectedMultichoice, hideResultsUntilClosed: _selectedHideResult, allowRepeatOptions: _selectedRepeatVotes),
-        creatorUserUuid: User().uuid,
-        creatorUserName: Auth().userPiiData?.fullName ?? 'Someone',
+        creatorUserUuid: Auth2().accountId,
+        creatorUserName: Auth2().fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,
       );

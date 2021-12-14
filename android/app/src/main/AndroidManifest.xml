@@ -34,7 +34,9 @@
     <!-- Use zxing 3.3.0 because we have minSdk < 24 -->
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
     <!-- save_in_gallery flutter plugin -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <queries>
         <package android:name="com.touchnet.orderahead" />
@@ -58,8 +60,8 @@
     </queries>
 
     <application
-        android:name=".App"
-        android:allowBackup="true"
+        android:name="App"
+        android:allowBackup="false"
         android:restoreAnyVersion="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

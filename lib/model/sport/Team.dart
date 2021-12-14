@@ -17,37 +17,22 @@
 import 'package:illinois/model/sport/Game.dart';
 
 class TeamRecord {
-  String overallPercentage;
-  String overallRecordUnformatted;
-  String conferenceRecord;
-  String conferencePercentage;
-  String conferencePoints;
-  String streak;
-  String homeRecord;
-  String awayRecord;
-  String neutralRecord;
+  final String overallRecordUnformatted;
+  final String conferenceRecord;
+  final String streak;
+  final String homeRecord;
+  final String awayRecord;
+  final String neutralRecord;
 
-  TeamRecord(
-      {this.overallPercentage,
-      this.overallRecordUnformatted,
-      this.conferenceRecord,
-      this.conferencePercentage,
-      this.conferencePoints,
-      this.streak,
-      this.homeRecord,
-      this.awayRecord,
-      this.neutralRecord});
+  TeamRecord({this.overallRecordUnformatted, this.conferenceRecord, this.streak, this.homeRecord, this.awayRecord, this.neutralRecord});
 
   factory TeamRecord.fromJson(Map<String, dynamic> json) {
     if (json == null || json.isEmpty) {
       return null;
     }
     return TeamRecord(
-      overallPercentage: json['overall_percentage'],
       overallRecordUnformatted: json['overall_record_unformatted'],
       conferenceRecord: json['conference_record'],
-      conferencePercentage: json['conference_percentage'],
-      conferencePoints: json['conference_points'],
       streak: json['streak'],
       homeRecord: json['home_record'],
       awayRecord: json['away_record'],
@@ -57,17 +42,17 @@ class TeamRecord {
 }
 
 class TeamSchedule {
-  List<Game> games;
-  TeamRecord record;
+  final List<Game> games;
+  final String label;
 
-  TeamSchedule({this.games, this.record});
+  TeamSchedule({this.games, this.label});
 
   factory TeamSchedule.fromJson(Map<String, dynamic> json) {
-    if (json == null || json.isEmpty) {
+    if (json == null) {
       return null;
     }
-    List<dynamic> scheduleJson = json['schedule'];
-    List<Game> games = (scheduleJson != null) ? scheduleJson.map((value) => Game.fromJson(value)).toList() : null;
-    return TeamSchedule(games: games, record: TeamRecord.fromJson(json['record']));
+    List<dynamic> gamesJson = json['games'];
+    List<Game> games = (gamesJson != null) ? gamesJson.map((value) => Game.fromJson(value)).toList() : null;
+    return TeamSchedule(games: games, label: json['label']);
   }
 }

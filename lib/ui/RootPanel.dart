@@ -19,25 +19,36 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:illinois/main.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Poll.dart';
+import 'package:illinois/service/DeviceCalendar.dart';
+import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/service/Service.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/groups/GroupDetailPanel.dart';
+import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
+import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/PopupDialog.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -92,16 +103,27 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
+      FirebaseMessaging.notifyForegroundMessage,
       FirebaseMessaging.notifyPopupMessage,
       FirebaseMessaging.notifyEventDetail,
       FirebaseMessaging.notifyAthleticsGameStarted,
+      FirebaseMessaging.notifyAthleticsNewsUpdated,
+      FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifyHomeNotification,
+      FirebaseMessaging.notifyInboxNotification,
+      ExploreService.notifyEventDetail,
+      Sports.notifyGameDetail,
+      Groups.notifyGroupDetail,
+      Guide.notifyGuideDetail,
       Localization.notifyStringsUpdated,
-      User.notifyFavoritesUpdated,
-      User.notifyPrivacyLevelEmpty,
+      Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Polls.notifyPresentVote,
       Polls.notifyPresentResult,
+      DeviceCalendar.notifyPromptPopup,
+      DeviceCalendar.notifyCalendarSelectionPopup,
+      DeviceCalendar.notifyShowConsoleMessage,
     ]);
 
     _tabs = _getTabs();
@@ -136,35 +158,75 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == FirebaseMessaging.notifyPopupMessage) {
+    if (name == DeviceCalendar.notifyPromptPopup) {
+      _onCalendarPromptMessage(param);
+    }
+    else if (name == DeviceCalendar.notifyCalendarSelectionPopup) {
+      _promptCalendarSelection(param);
+    }
+    else if (name == DeviceCalendar.notifyShowConsoleMessage) {
+      _showConsoleMessage(param);
+    }
+    else if (name == FirebaseMessaging.notifyForegroundMessage){
+      _onFirebaseForegroundMessage(param);
+    }
+    else if (name == FirebaseMessaging.notifyPopupMessage) {
       _onFirebasePopupMessage(param);
     }
     else if (name == FirebaseMessaging.notifyEventDetail) {
       _onFirebaseEventDetail(param);
     }
+    else if (name == FirebaseMessaging.notifyGameDetail) {
+      _onFirebaseGameDetail(param);
+    }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
     }
+    else if (name == ExploreService.notifyEventDetail) {
+      _onFirebaseEventDetail(param);
+    }
+    else if (name == Sports.notifyGameDetail) {
+      _onFirebaseGameDetail(param);
+    }
+    else if (name == Groups.notifyGroupDetail) {
+      _onGroupDetail(param);
+    }
+    else if (name == Guide.notifyGuideDetail) {
+      _onGuideDetail(param);
+    }
     else if (name == Localization.notifyStringsUpdated) {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
-    else if (name == User.notifyFavoritesUpdated) {
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       _FavoritesSavedDialog.show(context);
-    }
-    else if (name == User.notifyPrivacyLevelEmpty) {
-      Navigator.of(context)?.popUntil((route) => route.isFirst);
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContent();
     }
     else if (name == Styles.notifyChanged) {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
     else if (name == Polls.notifyPresentVote) {
       _presentPollVote(param);
     }
     else if (name == Polls.notifyPresentResult) {
       _presentPollResult(param);
+    }
+    else if (name == FirebaseMessaging.notifyGroupsNotification) {
+      _onFirebaseGroupsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
+      _onFirebaseAthleticsNewsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyHomeNotification) {
+      _onFirebaseHomeNotification();
+    }
+    else if (name == FirebaseMessaging.notifyInboxNotification) {
+      _onFirebaseInboxNotification();
     }
   }
 
@@ -216,9 +278,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         Analytics.instance.logPage(name:tabPanel?.runtimeType?.toString());
       }
 
-      setState(() {
+      if (mounted) {
+        setState(() {
+          _currentTabIndex = index;
+        });
+      }
+      else {
         _currentTabIndex = index;
-      });
+      }
     }
   }
 
@@ -327,6 +394,52 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     );
   }
 
+  void _promptCalendarSelection(dynamic data){
+      CalendarSelectionDialog.show(context: context,
+          onContinue:( selectedCalendar) {
+            Navigator.of(context).pop();
+//            data["calendar"] = selectedCalendar;
+            //Store the selection even if the event is not stored
+            if(selectedCalendar!=null){
+              DeviceCalendar().calendar = selectedCalendar;
+            }
+            NotificationService().notify(
+                DeviceCalendar.notifyPromptPopup, data);
+          }
+      );
+  }
+
+  void _onCalendarPromptMessage(dynamic data) {
+        AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization().getStringEx(
+            'prompt.device_calendar.msg.add_event',
+            'Do you want to save this event to your calendar?')),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                  NotificationService().notify(
+                      DeviceCalendar.notifyPlaceEvent, data);
+              }),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              onPressed: () => Navigator.of(context).pop())
+        ]);
+  }
+
+  void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
+    String body = content["body"];
+    Function completion = content["onComplete"];
+    AppAlert.showDialogResult(context, body).then((value){
+      if(completion != null){
+        completion();
+      }
+    });
+  }
+
   void _onFirebasePopupMessage(Map<String, dynamic> content) {
     String displayText = content["display_text"];
     String positiveButtonText = content["positive_button_text"];
@@ -340,9 +453,51 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   Future<void> _onFirebaseEventDetail(Map<String, dynamic> content) async {
-    ExplorePanel.presentDetailPanel(context, eventId:content['event_id']);
+    String eventId = (content != null) ? AppJson.stringValue(content['event_id']) : null;
+    if (AppString.isStringNotEmpty(eventId)) {
+      ExplorePanel.presentDetailPanel(context, eventId: eventId);
+    }
   }
 
+  
+  Future<void> _onFirebaseGameDetail(Map<String, dynamic> content) async {
+    String gameId = (content != null) ? AppJson.stringValue(content['game_id']) : null;
+    String sport = (content != null) ? AppJson.stringValue(content['sport']) : null;
+    if (AppString.isStringNotEmpty(gameId) && AppString.isStringNotEmpty(sport)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId,)));
+    }
+  }
+
+  Future<void> _onGroupDetail(Map<String, dynamic> content) async {
+    String groupId = (content != null) ? AppJson.stringValue(content['group_id']) : null;
+    _presentGroupDetailPanel(groupId);
+  }
+
+  Future<void> _onGuideDetail(Map<String, dynamic> content) async {
+    String guideId = (content != null) ? AppJson.stringValue(content['guide_id']) : null;
+    if(AppString.isStringNotEmpty(guideId)){
+      WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+        Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+          GuideDetailPanel(guideEntryId: guideId,)));
+      });
+      if (mounted) {
+        setState(() {}); // Force the postFrameCallback invokation.
+      }
+    }
+  }
+
+  void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
+    if (athleticsGameDetails == null) {
+      return;
+    }
+    String sportShortName = athleticsGameDetails["Path"];
+    String gameId = athleticsGameDetails["GameId"];
+    if (AppString.isStringEmpty(sportShortName) || AppString.isStringEmpty(gameId)) {
+      return;
+    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
+  }
+  
   void _showPresentPoll() {
     Poll presentPoll = Polls().presentPoll;
     if (presentPoll != null) {
@@ -365,16 +520,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => PollBubbleResultPanel(pollId: pollId)));
   }
 
-  void _showAthleticsGameDetail(Map<String, dynamic> athleticsGameDetails) {
-    if (athleticsGameDetails == null) {
-      return;
-    }
-    String sportShortName = athleticsGameDetails["Path"];
-    String gameId = athleticsGameDetails["GameId"];
-    if (AppString.isStringEmpty(sportShortName) || AppString.isStringEmpty(gameId)) {
-      return;
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sportShortName, gameId: gameId,)));
+  void _showConsoleMessage(message){
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(message??""),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text("Ok"),
+              onPressed: () => Navigator.of(context).pop()),
+          TextButton(
+              child: Text("Copy"),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: message)).then((_){
+                  AppToast.show("Text data has been copied to the clipboard!");
+                });
+              } )
+        ]);
   }
 
   static List<String> _getTabbarCodes() {
@@ -448,6 +610,43 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onFirebaseGroupsNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String operation = param['operation'];
+      // Do not present GroupDetail panel when the admin creates event. This breakes the navigation stack when the creator receives FCM notification.
+      if (operation != 'event_created') {
+        String groupId = param["entity_id"];
+        _presentGroupDetailPanel(groupId);
+      }
+    }
+  }
+
+  void _presentGroupDetailPanel(String groupId) {
+    if (AppString.isStringNotEmpty(groupId)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
+    } else {
+      AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
+    }
+  }
+
+  void _onFirebaseAthleticsNewsNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String newsId = param["news_id"];
+      if (AppString.isStringNotEmpty(newsId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(articleId: newsId)));
+      }
+    }
+  }
+
+  void _onFirebaseHomeNotification() {
+    // Pop to Home Panel and select the first tab
+    Navigator.of(context)?.popUntil((route) => route.isFirst);
+    selectTab(rootTab: RootTab.Home);
+  }
+
+  void _onFirebaseInboxNotification() {
+    Navigator.of(context)?.push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+  }
 }
 
 RootTab rootTabFromString(String value) {
@@ -516,7 +715,8 @@ class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
                       Expanded(
                           flex: 5,
                           child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list'),
+                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
+                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title"," and also your calendar.") :""),
                             style: TextStyle(
                               color: Styles().colors.white,
                               fontSize: 16,

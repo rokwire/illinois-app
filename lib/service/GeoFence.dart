@@ -23,6 +23,7 @@ import 'package:http/http.dart' as Http;
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
@@ -86,14 +87,16 @@ class GeoFence with Service implements NotificationsListener {
       _regions = _regionsFromJsonString(jsonString);
       if (_regions != null) {
         _saveRegionsStringToCache(jsonString);
-      }
+      }      
     }
+    
     _monitorRegions();
+    await super.initService();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), NativeCommunicator(), Assets()]);
+    return Set.from([Config(), NativeCommunicator(), Auth2(), Assets()]);
   }
 
   // NotificationsListener
@@ -192,7 +195,7 @@ class GeoFence with Service implements NotificationsListener {
     }
     else {
       try {
-        Http.Response response = await Network().get("${Config().locationsUrl}/regions", auth: NetworkAuth.App);
+        Http.Response response = await Network().get("${Config().locationsUrl}/regions", auth: NetworkAuth.Auth2);
         return ((response != null) && (response.statusCode == 200)) ? response.body : null;
         } catch (e) {
           print(e.toString());

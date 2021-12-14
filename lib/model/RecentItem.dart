@@ -19,7 +19,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/sport/Game.dart';
-import 'package:illinois/service/StudentGuide.dart';
+import 'package:illinois/service/Guide.dart';
 
 enum RecentItemType{
   news,
@@ -27,7 +27,7 @@ enum RecentItemType{
   event,
   dining,
   explore, // for backward compatability only, we now use event / dining RecentItemType
-  studentGuide,
+  guide,
 }
 
 class RecentItem{
@@ -96,8 +96,8 @@ class RecentItem{
             recentItemType: RecentItemType.news,
             recentTitle: news.title,
             recentDescripton: news.description,
-            recentTime: news.getDisplayTime(),
-            recentOriginalJson: news.jsonData
+            recentTime: news.displayTime,
+            recentOriginalJson: news.json
         );
         return gameItem;
       }
@@ -117,11 +117,11 @@ class RecentItem{
     return null;
   }
 
-  factory RecentItem.fromStudentGuideItem(Map<String, dynamic> guideItem) {
+  factory RecentItem.fromGuideItem(Map<String, dynamic> guideItem) {
     return (guideItem != null) ? RecentItem(
-      recentItemType: RecentItemType.studentGuide,
-      recentTitle: StudentGuide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',
-      recentDescripton: StudentGuide().entryListDescription(guideItem, stripHtmlTags: true) ?? '',
+      recentItemType: RecentItemType.guide,
+      recentTitle: Guide().entryListTitle(guideItem, stripHtmlTags: true) ?? '',
+      recentDescripton: Guide().entryListDescription(guideItem, stripHtmlTags: true) ?? '',
       recentOriginalJson: guideItem
     ) : null;
 
@@ -143,7 +143,7 @@ class RecentItem{
       case RecentItemType.event: return Event.fromJson(recentOriginalJson);
       case RecentItemType.dining: return Dining.fromJson(recentOriginalJson);
       case RecentItemType.explore: return Explore.fromJson(recentOriginalJson);
-      case RecentItemType.studentGuide: return recentOriginalJson;
+      case RecentItemType.guide: return recentOriginalJson;
       default: return null;
     }
   }
@@ -158,7 +158,7 @@ class RecentItem{
         return 'images/icon-calendar.png';
       case RecentItemType.dining:
         return 'images/icon-dining-yellow.png';
-      case RecentItemType.studentGuide:
+      case RecentItemType.guide:
         return 'images/icon-news.png';
       case RecentItemType.explore:
         {
@@ -208,7 +208,7 @@ class RecentItem{
       return RecentItemType.explore;
     }
     if("student_guide" == value){
-      return RecentItemType.studentGuide;
+      return RecentItemType.guide;
     }
     return null;
   }
@@ -220,7 +220,7 @@ class RecentItem{
       case RecentItemType.event: return "event";
       case RecentItemType.dining: return "dining";
       case RecentItemType.explore: return "explore";
-      case RecentItemType.studentGuide: return "student_guide";
+      case RecentItemType.guide: return "student_guide";
       default: return null;
     }
   }

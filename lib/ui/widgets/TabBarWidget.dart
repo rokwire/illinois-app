@@ -203,9 +203,11 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
   void _updateContentListCodes() {
     List<String> contentListCodes = _getContentListCodes();
     if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
-      setState(() {
-        _contentListCodes = contentListCodes;
-      });
+      if (mounted) {
+        setState(() {
+          _contentListCodes = contentListCodes;
+        });
+      }
     }
   }
 }

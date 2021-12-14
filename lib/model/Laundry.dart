@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/Location.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/Utils.dart';
 
-import 'UserData.dart';
 
 enum LaundryRoomStatus { online, offline }
 
-class LaundryRoom implements Favorite{
+class LaundryRoom implements Favorite {
   String id;
   String title;
   String campusName;

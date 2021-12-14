@@ -15,12 +15,16 @@
  */
 
 import 'package:flutter/semantics.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/DiningService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
@@ -28,7 +32,6 @@ import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
-import 'package:location/location.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +136,7 @@ class ExplorePanelState extends State<ExplorePanel>
   List<String>  _filterPaymentTypeValues;
   List<String>  _filterEventTimeValues;
   
-  LocationData _locationData;
+  Position _locationData;
   LocationServicesStatus _locationServicesStatus;
 
   ExploreFilter _initialSelectedFilter;
@@ -173,7 +176,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
-      User.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyPrivacyLevelChanged,
       Styles.notifyChanged,
     ]);
 
@@ -243,6 +246,7 @@ class ExplorePanelState extends State<ExplorePanel>
         ExploreDisplayTypeHeader(
           displayType: _displayType,
           searchVisible: (_selectedTab != ExploreTab.Dining),
+          additionalData: {"group_id": widget.browseGroupId},
           onTapList: () => _selectDisplayType(ListMapDisplayType.List),
           onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
           Padding(padding: EdgeInsets.all(12), child:
@@ -272,7 +276,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _initTabs() {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -321,7 +325,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   bool _userLocationEnabled() {
-    return User().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
+    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.PermissionAllowed);
   }
 
   void _initFilters() {
@@ -506,22 +510,49 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>> _loadAll(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
+    List<Explore> explores = [];
+    List<Explore> events = await ExploreService().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
+    if (AppCollection.isCollectionNotEmpty(events)) {
+      explores.addAll(events);
+    }
+    if (_shouldLoadGames(categories)) {
+      List<DateTime> gamesTimeFrame = _getGamesTimeFrame(EventTimeFilter.upcoming);
+      List<Explore> games = await Sports().loadGames(startDate: gamesTimeFrame?.first, endDate: gamesTimeFrame?.last);
+      if (AppCollection.isCollectionNotEmpty(games)) {
+        explores.addAll(games);
+      }
+    }
+    _sortExplores(explores);
+    return explores;
   }
 
   Future<List<Explore>> _loadNearMe(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    List<String> tags = _getSelectedEventTags(selectedFilterList);
+    Set<String> tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     _locationData = _userLocationEnabled() ? await LocationServices.instance.location : null;
-    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags?.toSet(), eventFilter: eventFilter) : null;
+    // Do not load games here, because they do not have proper location data (lat, long)
+    return (_locationData != null) ? ExploreService().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter> selectedFilterList) async {
     Set<String> categories = _getSelectedCategories(selectedFilterList);
-    List<String> tags = _getSelectedEventTags(selectedFilterList);
+    Set<String> tags = _getSelectedEventTags(selectedFilterList);
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    return ExploreService().loadEvents(categories: categories, tags: tags?.toSet(), eventFilter: eventFilter);
+    List<Explore> explores = [];
+    List<Explore> events = await ExploreService().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
+    if (AppCollection.isCollectionNotEmpty(events)) {
+      explores.addAll(events);
+    }
+    if (_shouldLoadGames(categories)) {
+      List<DateTime> gamesTimeFrame = _getGamesTimeFrame(eventFilter);
+      List<Explore> games = await Sports().loadGames(startDate: gamesTimeFrame?.first, endDate: gamesTimeFrame?.last);
+      if (AppCollection.isCollectionNotEmpty(games)) {
+        explores.addAll(games);
+      }
+    }
+    _sortExplores(explores);
+    return explores;
   }
 
   Future<List<Explore>> _loadDining(List<ExploreFilter> selectedFilterList) async {
@@ -533,6 +564,59 @@ class ExplorePanelState extends State<ExplorePanel>
     _diningSpecials = await DiningService().loadDiningSpecials();
 
     return DiningService().loadBackendDinings(onlyOpened, paymentType, _locationData);
+  }
+
+  ///
+  /// Load athletics games if "All Categories" or "Athletics" categories are selected
+  ///
+  bool _shouldLoadGames(Set<String> selectedCategories) {
+    return AppCollection.isCollectionEmpty(selectedCategories) || selectedCategories.contains('Athletics');
+  }
+
+  ///
+  /// calculates games start and end date for loading games based on EventTimeFilter
+  ///
+  /// returns list with 2 items. The first one is start date, the second is the end date
+  ///
+  List<DateTime> _getGamesTimeFrame(EventTimeFilter eventFilter) {
+    DateTime startDate;
+    DateTime endDate;
+    DateTime now = AppDateTime().now;
+    switch (eventFilter) {
+      case EventTimeFilter.today:
+        startDate = endDate = now;
+        break;
+      case EventTimeFilter.thisWeekend:
+        int currentWeekDay = now.weekday;
+        DateTime weekendStartDateTime = DateTime(now.year, now.month, now.day, 0, 0, 0).add(Duration(days: (6 - currentWeekDay)));
+        startDate = now.isBefore(weekendStartDateTime) ? weekendStartDateTime : now;
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59).add(Duration(days: (7 - currentWeekDay)));
+        break;
+      case EventTimeFilter.next7Day:
+        startDate = now;
+        endDate = now.add(Duration(days: 6));
+        break;
+      case EventTimeFilter.next30Days:
+        DateTime next = now.add(Duration(days: 30));
+        endDate = DateTime(next.year, next.month, next.day, 23, 59, 59);
+        break;
+      default:
+        break;
+    }
+    return [startDate, endDate];
+  }
+
+  void _sortExplores(List<Explore> explores) {
+    if (AppCollection.isCollectionEmpty(explores)) {
+      return;
+    }
+    explores.sort((Explore first, Explore second) {
+      if (first.exploreStartDateUtc == null || second.exploreStartDateUtc == null) {
+        return 0;
+      } else {
+        return (first.exploreStartDateUtc.isBefore(second.exploreStartDateUtc)) ? -1 : 1;
+      }
+    });
   }
 
   Set<int> _getSelectedFilterIndexes(List<ExploreFilter> selectedFilterList, ExploreFilterType filterType) {
@@ -561,9 +645,9 @@ class ExplorePanelState extends State<ExplorePanel>
         } else {
           selectedCategories = Set();
           if (selectedIndexes.contains(1)) { //My categories
-            List<String> userCategories = User().getInterestsCategories();
+            Iterable<String> userCategories = Auth2().prefs?.interestCategories;
             if (userCategories != null && userCategories.isNotEmpty) {
-              selectedCategories.addAll(userCategories.toSet());
+              selectedCategories.addAll(userCategories);
             }
           }
           List<String> filterCategoriesValues = _getFilterCategoriesValues();
@@ -618,7 +702,7 @@ class ExplorePanelState extends State<ExplorePanel>
     };*/
   }
 
-  List<String> _getSelectedEventTags(List<ExploreFilter> selectedFilterList) {
+  Set<String> _getSelectedEventTags(List<ExploreFilter> selectedFilterList) {
     if (selectedFilterList == null || selectedFilterList.isEmpty) {
       return null;
     }
@@ -628,7 +712,7 @@ class ExplorePanelState extends State<ExplorePanel>
         if (index == 0) {
           return null; //All Tags
         } else { //My tags
-          return User().getTags();
+          return Auth2().prefs?.positiveTags;
         }
       }
     }
@@ -747,7 +831,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Explore explore = _displayExplores[realIndex];
 
     List<ExploreFilter> selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap[_selectedTab] : null;
-    List<String> tags  = _getSelectedEventTags(selectedFilterList);
+    Set<String> tags  = _getSelectedEventTags(selectedFilterList);
 
     ExploreCard exploreView = ExploreCard(
         explore: explore,
@@ -892,6 +976,10 @@ class ExplorePanelState extends State<ExplorePanel>
         if (event?.isGameEvent ?? false) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
+        }
+        else if(explore is Game) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+              AthleticsGameDetailPanel(game: explore)));
         }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1090,6 +1178,9 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (event?.isGameEvent ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
           AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
+    }
+    else if (explore is Game) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(game: explore)));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) =>
@@ -1294,7 +1385,7 @@ class ExplorePanelState extends State<ExplorePanel>
     else if(name == Storage.useDeviceLocalTimeZoneKey){
       _loadExplores();
     }
-    else if (name == User.notifyPrivacyLevelChanged) {
+    else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
     }
     else if(name == Styles.notifyChanged){
@@ -1303,7 +1394,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onPrivacyLevelChanged() {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _updateTabs();
@@ -1315,7 +1406,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus status) {
-    if (User().privacyMatch(2)) {
+    if (Auth2().privacyMatch(2)) {
       _locationServicesStatus = status;
       _updateTabs();
     }

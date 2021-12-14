@@ -35,8 +35,8 @@ class TransportationService /* with Service */ {
   TransportationService._internal();
 
   Future<List<ParkingEvent>> loadParkingEvents() async {
-    final url = (Config().parkingUrl != null) ? "${Config().parkingUrl}/events" : null;
-    final response = await Network().get(url, auth: NetworkAuth.App);
+    final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/events" : null;
+    final response = await Network().get(url, auth: NetworkAuth.Auth2);
     String responseBody = response?.body;
     if ((response != null) && (response.statusCode == 200)) {
       if (AppString.isStringNotEmpty(responseBody)) {
@@ -58,8 +58,8 @@ class TransportationService /* with Service */ {
 
   Future<List<ParkingLot>> loadParkingEventInventory(String eventId) async {
     if (AppString.isStringNotEmpty(eventId)) {
-      final url = (Config().parkingUrl != null) ? "${Config().parkingUrl}/v2/inventory?event-id=$eventId" : null;
-      final response = await Network().get(url, auth: NetworkAuth.App);
+      final url = (Config().transportationUrl != null) ? "${Config().transportationUrl}/parking/v2/inventory?event-id=$eventId" : null;
+      final response = await Network().get(url, auth: NetworkAuth.Auth2);
       if (response == null) {
         Log.e('Failed to load inventory: Server response is null');
         return null;
@@ -100,7 +100,7 @@ class TransportationService /* with Service */ {
 
     try {
       String body = json.encode(data);
-      final response = await Network().get(url, auth: NetworkAuth.App, body:body);
+      final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
 
       String responseBody = response.body;
       if ((response != null) && (response.statusCode == 200)) {
@@ -124,7 +124,7 @@ class TransportationService /* with Service */ {
         'ibeacon_data': iBeaconData,
       };
       String body = json.encode(data);
-      final response = await Network().get(url, auth: NetworkAuth.App, body:body);
+      final response = await Network().get(url, auth: NetworkAuth.Auth2, body:body);
       if (response != null) {
         if (response.statusCode == 200) {
           String responseBody = response.body;

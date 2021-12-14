@@ -20,19 +20,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/debug/DebugStudentGuidePanel.dart';
+import 'package:illinois/ui/debug/DebugCreateInboxMessagePanel.dart';
+import 'package:illinois/ui/debug/DebugInboxUserInfoPanel.dart';
+import 'package:illinois/ui/debug/DebugGuidePanel.dart';
 import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/debug/DebugStylesPanel.dart';
 import 'package:illinois/ui/debug/DebugHttpProxyPanel.dart';
-import 'package:illinois/ui/debug/DebugFirebaseMessagingPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
@@ -107,17 +107,14 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   String get _userDebugData{
-    String userDataText = AppJson.encode(User()?.data?.toJson(), prettify: true);
-    String authInfoText = AppJson.encode(Auth()?.authInfo?.toJson(), prettify: true);
-    String userData =  "UserData: " + (userDataText ?? "unknown") + "\n\n" +
-        "AuthInfo: " + (authInfoText ?? "unknown");
+    String userData = AppJson.encode(Auth2().account?.toJson(), prettify: true);
     return userData;
   }
 
   @override
   Widget build(BuildContext context) {
-    String userUuid = User().uuid;
-    String pid = Storage().userPid;
+    String userUuid = Auth2().accountId;
+    String pid = Auth2().profile?.id;
     String firebaseProjectId = FirebaseMessaging().projectID;
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
@@ -237,15 +234,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             _changeDate();
                           },
                         )),
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                        child: RoundedButton(
-                            label: "Messaging",
-                            backgroundColor: Styles().colors.background,
-                            fontSize: 16.0,
-                            textColor: Styles().colors.fillColorPrimary,
-                            borderColor: Styles().colors.fillColorPrimary,
-                            onTap: _onMessagingClicked())),
                     Visibility(
                       visible: true,
                       child: Padding(
@@ -256,7 +244,31 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onCreateEventClicked())),
+                              onTap: _onCreateEventClicked),),
+                    ),
+                    Visibility(
+                      visible: true,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: "Inbox User Info",
+                            backgroundColor: Styles().colors.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors.fillColorPrimary,
+                            borderColor: Styles().colors.fillColorPrimary,
+                            onTap: _onInboxUserInfoClicked),),
+                    ),
+                    Visibility(
+                      visible: true,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
+                              label: "Create Message",
+                              backgroundColor: Styles().colors.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors.fillColorPrimary,
+                              borderColor: Styles().colors.fillColorPrimary,
+                              onTap: _onCreateInboxMessageClicked),),
                     ),
                     Visibility(
                       visible: true,
@@ -268,7 +280,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: () { _onUserProfileInfoClicked(); }
+                              onTap: _onUserProfileInfoClicked
                               )),
                     ),
                     Visibility(
@@ -303,7 +315,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                               fontSize: 16.0,
                               textColor: Styles().colors.fillColorPrimary,
                               borderColor: Styles().colors.fillColorPrimary,
-                              onTap: _onTapStudentGuide))
+                              onTap: _onTapGuide))
                     ),
                     Visibility(
                       visible: Config().configEnvironment == ConfigEnvironment.dev,
@@ -508,24 +520,25 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     });
   }
 
-  Function _onMessagingClicked() {
-    return () {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugFirebaseMessagingPanel()));
-    };
+  void _onCreateEventClicked() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
   }
 
-  Function _onCreateEventClicked() {
-    return () {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateEventPanel()));
-    };
+  void _onInboxUserInfoClicked(){
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugInboxUserInfoPanel()));
   }
+
+  void _onCreateInboxMessageClicked() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugCreateInboxMessagePanel()));
+  }
+  
   
   void _onUserProfileInfoClicked() {
     showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(_userDebugData) );
   }
 
   void _onUserCardInfoClicked() {
-    String cardInfo = AppJson.encode(Auth().authCard?.toShortJson(), prettify: true);
+    String cardInfo = AppJson.encode(Auth2().authCard?.toShortJson(), prettify: true);
     if (AppString.isStringNotEmpty(cardInfo)) {
       showDialog(context: context, builder: (_) => _buildTextContentInfoDialog(cardInfo) );
     }
@@ -559,7 +572,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           ),
           Expanded(child:
             SingleChildScrollView(child:
-              Padding(padding: EdgeInsets.all(8), child: Text(textContent, style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies.bold, fontSize: 14)))
+              Padding(padding: EdgeInsets.all(8), child: Text(AppString.getDefaultEmptyString(value: textContent), style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies.bold, fontSize: 14)))
             )
           ),
         ])
@@ -575,15 +588,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onTapClearVoting() {
     Storage().voterHiddenForPeriod = false;
-    User().updateVoted(voted: null);
-    User().updateVoterByMail(voterByMail: null);
-    User().updateVotePlace(votePlace: null);
-    User().updateVoterRegistration(registeredVoter: null);
+    Auth2().prefs?.voter?.clear();
     AppAlert.showDialogResult(context, 'Successfully cleared user voting.');
   }
 
-  void _onTapStudentGuide() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentGuidePanel()));
+  void _onTapGuide() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
   }
 
   void _onConfigChanged(dynamic env) {

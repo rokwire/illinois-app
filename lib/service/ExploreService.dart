@@ -17,23 +17,34 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart' as http;
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:location/location.dart' as Core;
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/service/NotificationService.dart';
+import 'package:illinois/service/Service.dart';
 
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
 import 'package:illinois/model/Explore.dart';
-import 'package:illinois/model/UserData.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Log.dart';
 
 
-/// ExploreService does rely on Service initialization API so it does not override service interfaces and is not registered in Services.
-class ExploreService /* with Service */ {
+class ExploreService with Service implements NotificationsListener {
+
+  static const String EVENT_URI = '${DeepLink.ROKWIRE_URL}/event_detail';
+
+  static const String notifyEventDetail  = "edu.illinois.rokwire.explore.event.detail";
+  static const String notifyEventCreated = "edu.illinois.rokwire.explore.event.created";
+  static const String notifyEventUpdated = "edu.illinois.rokwire.explore.event.updated";
+
+  List<Map<String, dynamic>> _eventDetailsCache;
+  
+  // Singletone Factory
   static final ExploreService _instance = ExploreService._internal();
 
   factory ExploreService() {
@@ -42,7 +53,44 @@ class ExploreService /* with Service */ {
 
   ExploreService._internal();
 
-  Future<List<Explore>> loadEvents({String searchText, Core.LocationData locationData, Set<String> categories, EventTimeFilter eventFilter = EventTimeFilter.upcoming, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
+  // Service
+
+  @override
+  void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
+    _eventDetailsCache = [];
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
+  void initServiceUI() {
+    _processCachedEventDetails();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([DeepLink()]);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
+  }
+
+
+  // Implementation
+
+  Future<List<Explore>> loadEvents({String searchText, Core.Position locationData, Set<String> categories, EventTimeFilter eventFilter = EventTimeFilter.upcoming, Set<String> tags, bool excludeRecurring = true, int recurrenceId, int limit = 0}) async {
     if(_enabled) {
       http.Response response;
       String queryParameters = _buildEventsQueryParameters(
@@ -112,9 +160,13 @@ class ExploreService /* with Service */ {
         dynamic body = json.encode(event.toNotNullJson());
         response = (Config().eventsUrl != null) ? await Network().post(Config().eventsUrl, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.User) : null;
-        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
+            auth: NetworkAuth.Auth2) : null;
+        Map<String, dynamic> jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
+        String eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        if (eventId != null) {
+          NotificationService().notify(notifyEventCreated, eventId);
+        }
+        return eventId;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
@@ -131,9 +183,13 @@ class ExploreService /* with Service */ {
         String url = Config().eventsUrl + "/" + event.id;
         response = (Config().eventsUrl != null) ? await Network().put(url, body: body,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.User) : null;
-        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-        return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201))? jsonData["id"] : null;
+            auth: NetworkAuth.Auth2) : null;
+        Map<String, dynamic> jsonData = ((response?.statusCode == 200) || (response?.statusCode == 201)) ? AppJson.decode(response?.body) : null;
+        String eventId = (jsonData != null) ? AppJson.stringValue(jsonData["id"]) : null;
+        if (eventId != null) {
+          NotificationService().notify(notifyEventUpdated, eventId);
+        }
+        return eventId;
       } catch (e) {
         Log.e('Failed to load events');
         Log.e(e.toString());
@@ -149,11 +205,11 @@ class ExploreService /* with Service */ {
         String url = Config().eventsUrl + "/" + eventId;
         response = (Config().eventsUrl != null) ? await Network().delete(url,
             headers: _applyStdEventsHeaders({"Accept": "application/json", "content-type": "application/json"}),
-            auth: NetworkAuth.User) : null;
+            auth: NetworkAuth.Auth2) : null;
     Map<String, dynamic> jsonData = AppJson.decode(response?.body);
     return ((response != null && jsonData!=null) && (response.statusCode == 200 || response.statusCode == 201|| response.statusCode == 202));
     } catch (e) {
-    Log.e('Failed to load events');
+    Log.e('Failed to delete event $eventId');
     Log.e(e.toString());
     }
   }
@@ -173,12 +229,10 @@ class ExploreService /* with Service */ {
       String idsQueryParam = idsBuffer.toString().substring(0, (idsBuffer.length - 1)); //Remove & at last position
       EventTimeFilter upcomingFilter = EventTimeFilter.upcoming;
       String timeQueryParams = _constructEventTimeFilterParams(upcomingFilter);
-      String dateTimeQueryParam = '&$timeQueryParams';
+      String url = '${Config().eventsUrl}?$idsQueryParam&$timeQueryParams';
       http.Response response;
-      String queryParameters = '?$idsQueryParam$dateTimeQueryParam';
       try {
-        response = (Config().eventsUrl != null) ? await Network().get(
-            '${Config().eventsUrl}$queryParameters', auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get(url, auth: _userOrAppAuth, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load events by ids.');
         Log.e(e?.toString());
@@ -201,7 +255,7 @@ class ExploreService /* with Service */ {
     http.Response response;
     if(_enabled) {
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -226,7 +280,7 @@ class ExploreService /* with Service */ {
     if(_enabled) {
       http.Response response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/categories', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e('Failed to load event categories');
         Log.e(e.toString());
@@ -249,7 +303,7 @@ class ExploreService /* with Service */ {
     if(_enabled) {
       http.Response response;
       try {
-        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.App, headers: _stdEventsHeaders) : null;
+        response = (Config().eventsUrl != null) ? await Network().get('${Config().eventsUrl}/tags', auth: NetworkAuth.Auth2, headers: _stdEventsHeaders) : null;
       } catch (e) {
         Log.e(e.toString());
         return null;
@@ -293,7 +347,7 @@ class ExploreService /* with Service */ {
     }
   }
 
-  String _buildEventsQueryParameters(String searchText, Core.LocationData locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
+  String _buildEventsQueryParameters(String searchText, Core.Position locationData, EventTimeFilter eventTimeFilter, Set<String> categories, Set<String> tags, int recurrenceId, int limit) {
 
     String queryParameters = "";
 
@@ -318,7 +372,7 @@ class ExploreService /* with Service */ {
 
     ///User Roles
     String rolesParameters = '';
-    Set<String> targetAudiences = UserRole.targetAudienceFromUserRoles(User().roles);
+    Set<String> targetAudiences = _targetAudienceFromUserRoles(Auth2().prefs?.roles);
     if (targetAudiences != null) {
       for (String targetAudience in targetAudiences) {
         rolesParameters += 'targetAudience=$targetAudience&';
@@ -423,6 +477,7 @@ class ExploreService /* with Service */ {
       Event event = Event.fromJson(jsonEntry);
       if (event != null) {
         bool addEventToList = true;
+        bool displayOnlyWithSuperEvent = event.displayOnlyWithSuperEvent ?? false;
         int recurrenceId = event.recurrenceId;
         int eventIndex = events.length;
         if (excludeRecurringEvents && event.recurringFlag && (recurrenceId != null)) {
@@ -445,7 +500,7 @@ class ExploreService /* with Service */ {
         } else if(event.isSuperEvent) {
           await _buildEventsForSuperEvent(event, eventFilter);
         }
-        if (addEventToList) {
+        if (addEventToList && !displayOnlyWithSuperEvent) {
           events.add(event);
         }
       }
@@ -458,6 +513,33 @@ class ExploreService /* with Service */ {
       });
     }
     return events;
+  }
+
+  static Set<String> _targetAudienceFromUserRoles(Set<UserRole> roles) {
+    if (roles == null || roles.isEmpty) {
+      return null;
+    }
+    Set<String> targetAudiences = Set();
+    for (UserRole role in roles) {
+      if (role == UserRole.student) {
+        targetAudiences.add('students');
+      } else if (role == UserRole.alumni) {
+        targetAudiences.add('alumni');
+      } else if (role == UserRole.employee) {
+        targetAudiences.addAll(['faculty', 'staff']);
+      } else if (role == UserRole.fan) {
+        targetAudiences.add('public');
+      } else if (role == UserRole.parent) {
+        targetAudiences.add('parents');
+      } else if (role == UserRole.visitor) {
+        targetAudiences.add('public');
+      } else if (role == UserRole.resident) {
+        targetAudiences.add('public');
+      } else if (role == UserRole.gies) {
+
+      }
+    }
+    return targetAudiences;
   }
 
   Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter eventFilter) async {
@@ -517,8 +599,8 @@ class ExploreService /* with Service */ {
     if (headers == null) {
       headers = Map<String, String>();
     }
-    headers[Network.RokwireUserUuid] = User().uuid ?? "null";
-    headers[Network.RokwireUserPrivacyLevel] = User().privacyLevel?.toString() ?? "null";
+    headers[Network.RokwireUserUuid] = Auth2().accountId ?? "null";
+    headers[Network.RokwireUserPrivacyLevel] = Auth2().prefs?.privacyLevel?.toString() ?? "null";
     return headers;
   }
 
@@ -529,6 +611,54 @@ class ExploreService /* with Service */ {
       && AppString.isStringNotEmpty(Config().eventsUrl);
 
   NetworkAuth get _userOrAppAuth{
-    return Auth().isLoggedIn? NetworkAuth.User : NetworkAuth.App;
+    return NetworkAuth.Auth2;
   }
+
+  /////////////////////////
+  // DeepLinks
+
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri eventUri = Uri.tryParse(EVENT_URI);
+      if ((eventUri != null) &&
+          (eventUri.scheme == uri.scheme) &&
+          (eventUri.authority == uri.authority) &&
+          (eventUri.path == uri.path))
+      {
+        try { _handleEventDetail(uri.queryParameters?.cast<String, dynamic>()); }
+        catch (e) { print(e?.toString()); }
+      }
+    }
+  }
+
+  void _handleEventDetail(Map<String, dynamic> params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_eventDetailsCache != null) {
+        _cacheEventDetail(params);
+      }
+      else {
+        _processEventDetail(params);
+      }
+    }
+  }
+
+  void _processEventDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyEventDetail, params);
+  }
+
+  void _cacheEventDetail(Map<String, dynamic> params) {
+    _eventDetailsCache?.add(params);
+  }
+
+  void _processCachedEventDetails() {
+    if (_eventDetailsCache != null) {
+      List<Map<String, dynamic>> eventDetailsCache = _eventDetailsCache;
+      _eventDetailsCache = null;
+
+      for (Map<String, dynamic> eventDetail in eventDetailsCache) {
+        _processEventDetail(eventDetail);
+      }
+    }
+  }
+
 }

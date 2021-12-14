@@ -15,11 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/ExploreService.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
@@ -44,7 +45,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Categories
   List<dynamic> _categories;
-  List<String> _preferredCategories;
+  Set<String> _preferredCategories;
 
   //tags
   List<String> _tags;
@@ -57,10 +58,12 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   //Search
   TextEditingController _textEditingController = TextEditingController();
 
-  bool _progress = false;
   @override
   void initState() {
-    NotificationService().subscribe(this, User.notifyTagsUpdated);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyInterestsChanged,
+      Auth2UserPrefs.notifyTagsChanged,
+    ]);
     _initTabs();
     _initCategories();
     _initTags();
@@ -74,6 +77,25 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     NotificationService().unsubscribe(this);
     super.dispose();
   }
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      if (mounted) {
+        setState(() {
+          _preferredCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
+        });
+      }
+    }
+    else if (name == Auth2UserPrefs.notifyTagsChanged) {
+      if (mounted) {
+        setState(() {
+          _followingTags = _buildFollowingTags(_tags);
+        });
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -143,12 +165,6 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
           )),
 //          _buildSaveButton()
           ]),
-          _progress
-              ? Container(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(),
-                )
-              : Container()
         ]));
   }
 
@@ -171,25 +187,14 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   //Categories
   void _initCategories() {
-    _loadCategories();
-    _loadPreferences();
-  }
-
-  void _loadCategories() {
     ExploreService().loadEventCategories().then((List<dynamic> categories) {
-      setState(() {
-        _categories = categories != null ? categories : [];
-      });
+      if (mounted) {
+        setState(() {
+          _categories = categories != null ? categories : [];
+          _preferredCategories = Set.from(Auth2().prefs?.interestCategories ?? []);
+        });
+      }
     });
-  }
-
-  void _loadPreferences() {
-//    _preferredCategories = [];
-//    if(User().getInterestsCategories()?.isNotEmpty??false){
-//      _preferredCategories.addAll(User().getInterestsCategories());
-//    }
-    _preferredCategories = User().getInterestsCategories() ??  [];
-    setState(() {});
   }
 
   Widget _buildCategoriesContent() {
@@ -230,45 +235,25 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
             selected: _preferredCategories.contains(categoryName),
             onTap: () {
               Analytics.instance.logSelect(target: "Category: $categoryName");
-              _startProgress();
-              User().switchInterestCategory(categoryName).then((_) {
-                setState(() {
-                  _preferredCategories = User().getInterestsCategories();
-
-                  _stopProgress();
-                  AppSemantics.announceCheckBoxStateChange(context, _preferredCategories.contains(categoryName), categoryName);
-                });
-              });
-//            switchCategory(categoryName);
-//            setState(() {});
+              AppSemantics.announceCheckBoxStateChange(context, _preferredCategories.contains(categoryName), categoryName);
+              Auth2().prefs?.toggleInterestCategory(categoryName);
             }));
       }
     }
     return categoryWidgets;
   }
 
-  switchCategory(String categoryName){
-    if(categoryName!=null){
-      if(_preferredCategories.contains(categoryName)){
-        _preferredCategories.remove(categoryName);
-      } else {
-        _preferredCategories.add(categoryName); //Empty list of subcategories represent that the whole category is selected
-      }
-    }
-  }
   /////
 
   //Tags
   void _initTags() {
-//    _followingTags = [];
-//    if(User()?.getTags()?.isNotEmpty?? false) {
-//      _followingTags.addAll(User()?.getTags());
-//    }
-    _followingTags = User().getTags();
     ExploreService().loadEventTags().then((List<String> tagList) {
-      setState(() {
-        _tags = tagList;
-      });
+      if (mounted) {
+        setState(() {
+          _tags = tagList ?? [];
+          _followingTags = _buildFollowingTags(tagList);
+        });
+      }
     });
   }
 
@@ -429,26 +414,28 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     return tagsWidgets;
   }
 
+  static List<String> _buildFollowingTags(List<String> tags) {
+    List<String> followingTags = <String>[];
+    if (tags != null) {
+      for (String tag in tags) {
+        if (Auth2().prefs?.hasTag(tag) ?? false) {
+          followingTags.add(tag);
+        }
+      }
+    }
+    return followingTags;
+  }
+
   bool _isTagSelected(String tag) {
 //    return _followingTags.contains(tag);
-    return User().isTagged(tag, true);
+    return Auth2().prefs?.hasTag(tag);
   }
 
   void _onTagTaped(String tag) {
     Analytics.instance.logSelect(target: "Tag: $tag");
-    User().switchTag(tag);
-//    switchTag(tag);
     AppSemantics.announceCheckBoxStateChange(context, _isTagSelected(tag), tag);
-  }
-
-  void switchTag(String tag){
-    if(_followingTags.contains(tag)){
-      _followingTags.remove(tag);
-    } else {
-      _followingTags.add(tag);
-    }
-
-    setState(() {});
+    Auth2().prefs?.toggleTag(tag);
+//    switchTag(tag);
   }
 
   //Athletics
@@ -472,15 +459,6 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }*/
 
   // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == User.notifyTagsUpdated) {
-      setState(() {
-        _followingTags = User()?.getTags()?? [];
-      });
-    }
-  }
 
   /////
 
@@ -574,23 +552,6 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     }
     return !IterableEquality().equals(_preferredSports, User().getSportsInterestSubCategories());
   }*/
-
-
-
-  ////
-  //Progress
-void _startProgress() {
-    setState(() {
-      _progress = true;
-    });
-  }
-
-  void _stopProgress() {
-    setState(() {
-      _progress = false;
-    });
-  }
-//////
 
   static String _interestTabName(_InterestTab tab) {
     switch (tab) {

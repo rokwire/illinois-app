@@ -17,12 +17,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsSportItemWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
@@ -32,11 +33,9 @@ import 'package:illinois/service/Styles.dart';
 typedef void SportsTapListener (String  sport);
 class AthleticsTeamsWidget extends StatefulWidget {
 
-  final bool _handleLabelClick;
-  final List<String> preferredSports;
-  final SportsTapListener onSportTaped;
+  final bool handleLabelClick;
 
-  AthleticsTeamsWidget({bool handleLabelClick = false, this.preferredSports, this.onSportTaped}) : _handleLabelClick = handleLabelClick;
+  AthleticsTeamsWidget({this.handleLabelClick = false});
 
   @override
   AthleticsTeamsWidgetState createState() => AthleticsTeamsWidgetState();
@@ -44,15 +43,19 @@ class AthleticsTeamsWidget extends StatefulWidget {
 
 class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
     implements NotificationsListener {
-  List<SportDefinition> menSports;
-  List<SportDefinition> womenSports;
-  List<String> _preferredSports;
+  List<SportDefinition> _menSports;
+  List<SportDefinition> _womenSports;
+  Set<String> _preferredSports;
+
+  List<SportDefinition> get menSports => _menSports;
+  List<SportDefinition> get womenSports => _womenSports;
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [User.notifyUserUpdated, User.notifyInterestsUpdated]);
-    _loadSportCategories();
-    _loadPreferredSports();
+    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
+    _menSports = Sports().menSports;
+    _womenSports = Sports().womenSports;
+    _preferredSports = Auth2().prefs?.sportsInterests  ?? Set<String>();
     super.initState();
   }
 
@@ -62,18 +65,17 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
     super.dispose();
   }
 
-  void _loadSportCategories() {
-    menSports = Sports().getMenSports();
-    womenSports = Sports().getWomenSports();
-  }
-
-  void _loadPreferredSports() {
-    if(widget.preferredSports!=null){
-      _preferredSports = widget.preferredSports; //so we can see the result in the parent
-    } else {
-      _preferredSports = User().getSportsInterestSubCategories();
+  // NotificationsListener
+  
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyInterestsChanged) {
+      if (mounted) {
+        setState(() {
+          _preferredSports = Auth2().prefs?.sportsInterests ?? Set<String>();
+        });
+      }
     }
-    setState(() {});
   }
 
   @override
@@ -90,7 +92,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                   border:
                   Border.all(color: Styles().colors.surfaceAccent, width: 1)),
               child: Column(
-                children: buildSportList(menSports),
+                children: buildSportList(_menSports),
               ),
             ),
             Container(
@@ -102,7 +104,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     border: Border.all(
                         color: Styles().colors.surfaceAccent, width: 1)),
                 child: Column(
-                  children: buildSportList(womenSports),
+                  children: buildSportList(_womenSports),
                 )),
           ],
         ),
@@ -122,13 +124,12 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
         }
         widgetList.add(AthleticsSportItemWidget(
             sport: sport,
-            showChevron: widget._handleLabelClick,
+            showChevron: widget.handleLabelClick,
             label: sport.customName,
-            checkMarkVisibility: User().privacyMatch(3),
-            selected: _preferredSports != null &&
-                _preferredSports.contains(sport.shortName),
+            checkMarkVisibility: Auth2().privacyMatch(3),
+            selected: _preferredSports != null && _preferredSports.contains(sport.shortName),
             onLabelTap: () =>
-            (widget._handleLabelClick
+            (widget.handleLabelClick
                 ? _onTapAthleticsSportLabel(context, sport)
                 : _onTapAthleticsSportCheck(context, sport)),
             onCheckTap: () => _onTapAthleticsSportCheck(context, sport)));
@@ -138,7 +139,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   Widget buildMenSectionHeader(){
-    bool allMenSelected = Sports().isAllSportsSelected(menSports, _preferredSports);
+    bool allMenSelected = Sports.isAllSportsSelected(_menSports, _preferredSports);
     String menSelectClearTextKey = allMenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
     String menSelectClearImageKey = allMenSelected ? "images/icon-x-orange-small.png" : "images/icon-check-simple.png";
     return Container(
@@ -171,7 +172,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                       fontSize: 14,
                       letterSpacing: 1.0),
                 ))),
-            Visibility(visible: User().privacyMatch(3),
+            Visibility(visible: Auth2().privacyMatch(3),
               child: Semantics(excludeSemantics: true,
                 label: Localization().getStringEx(
                     'widget.athletics_teams.men_sports.title.checkmark',
@@ -181,9 +182,10 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
                 child: GestureDetector(
                   onTap: () {
-                    Sports().switchAllSports(menSports, _preferredSports, !allMenSelected);
+                    Analytics.instance.logSelect(target: "Sport Label Tap: MEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allMenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"));// with ! because we announce before the actual state change
+                    Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_menSports, _preferredSports, !allMenSelected));
                   },
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx(menSelectClearTextKey, ''),
@@ -196,7 +198,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
   }
 
   Widget buildWomenSectionHeader(){
-    bool allWomenSelected = Sports().isAllSportsSelected(womenSports, _preferredSports);
+    bool allWomenSelected = Sports.isAllSportsSelected(_womenSports, _preferredSports);
     String womenSelectClearTextKey = allWomenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
     String womenSelectClearImageKey = allWomenSelected ? "images/icon-x-orange-small.png" : "images/icon-check-simple.png";
     return Container(
@@ -229,7 +231,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                       fontSize: 14,
                       letterSpacing: 1.0),
                 ))),
-            Visibility(visible: User().privacyMatch(3),
+            Visibility(visible: Auth2().privacyMatch(3),
               child: Semantics(excludeSemantics: true,
                 label: Localization().getStringEx(
                     'widget.athletics_teams.women_sports.title.checkmark',
@@ -239,9 +241,10 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
                     ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
                 child: GestureDetector(
                   onTap: () {
-                    Sports().switchAllSports(womenSports, _preferredSports, !allWomenSelected);
+                    Analytics.instance.logSelect(target: "Sport Label Tap: WOMEN'S SPORTS");
                     AppSemantics.announceCheckBoxStateChange(context, !allWomenSelected,
                         Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"));// with ! because we announce before the actual state change
+                    Auth2().prefs?.toggleSportInterests(Sports.switchAllSports(_womenSports, _preferredSports, !allWomenSelected));
                   },
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx(womenSelectClearTextKey, ''),
@@ -267,26 +270,8 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
 
   void _onTapAthleticsSportCheck(BuildContext context, SportDefinition sport) {
     Analytics.instance.logSelect(target: "Sport Check Tap: "+sport.name);
-
-    if(widget.onSportTaped==null) {
-      User().switchSportSubCategory(sport.shortName);
-    } else {
-      widget.onSportTaped(sport.shortName);
-    }
-
-    bool selected = _preferredSports != null &&
-        _preferredSports.contains(sport.shortName);
-    AppSemantics.announceCheckBoxStateChange(context, selected, sport?.customName);
-
-    setState(() {});
+    AppSemantics.announceCheckBoxStateChange(context, _preferredSports?.contains(sport.shortName) ?? false, sport?.customName);
+    Auth2().prefs?.toggleSportInterest(sport.shortName);
   }
 
-  // NotificationsListener
-  
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == User.notifyInterestsUpdated || name == User.notifyUserUpdated) {
-      _loadPreferredSports();
-    }
-  }
 }

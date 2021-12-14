@@ -23,14 +23,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/GeoFence.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/TransportationService.dart';
-import 'package:illinois/service/User.dart';
 import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
@@ -57,7 +56,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     super.initState();
 
     NotificationService().subscribe(this, [
-      Auth.notifyCardChanged,
+      Auth2.notifyCardChanged,
       GeoFence.notifyCurrentRegionsUpdated,
       GeoFence.notifyCurrentBeaconsUpdated,
       FlexUI.notifyChanged,
@@ -66,7 +65,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     _updateRangingRegions();
     _loadBusPass();
     _loadPhotoImage();
-    // Auth().updateAuthCard();
+    // Auth2().updateAuthCard();
   }
 
   @override
@@ -84,7 +83,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Future<MemoryImage> _loadAsyncPhotoImage() async{
-    Uint8List photoBytes = await  Auth().authCard?.photoBytes;
+    Uint8List photoBytes = await  Auth2().authCard?.photoBytes;
     return AppCollection.isCollectionNotEmpty(photoBytes) ? MemoryImage(photoBytes) : null;
   }
 
@@ -92,7 +91,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth.notifyCardChanged) {
+    if (name == Auth2.notifyCardChanged) {
       if (mounted) {
         _loadPhotoImage();
       }
@@ -180,7 +179,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         children: <Widget>[
           _buildAvatar(),
           Text(
-            Auth().authCard?.role ?? '',
+            Auth2().authCard?.role ?? '',
             style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 36, color: Styles().colors.white),
           ),
           BusClockWidget(),
@@ -297,7 +296,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       'major': _currentBeacon.major.toString(),
       'minor': _currentBeacon.minor.toString(),
     } : null;
-    TransportationService().loadBusPass(deviceId: deviceId, userId: User().uuid, iBeaconData: beaconData).then((dynamic result){
+    TransportationService().loadBusPass(deviceId: deviceId, userId: Auth2().accountId, iBeaconData: beaconData).then((dynamic result){
 
       if (result is Map) {
         setState(() {

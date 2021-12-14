@@ -21,14 +21,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppNavigation.dart';
-import 'package:illinois/service/Auth.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/onboarding/OnboardingLoginPhoneVerifyPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
@@ -62,11 +61,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Auth.notifyStarted,
-      Auth.notifyAuthTokenChanged,
-      Auth.notifyCardChanged,
+      Auth2.notifyCardChanged,
       FlexUI.notifyChanged,
-      Storage.notifySettingChanged,
+      IlliniCash.notifyBallanceUpdated,
     ]);
     _loadLibraryBarcode();
 
@@ -149,13 +146,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     List<dynamic> codes = FlexUI()['wallet'] ?? [];
     for (String code in codes) {
       dynamic widget;
-      if (code == 'wallet.connect') {
+      if (code == 'connect') {
         widget = _buildConnect();
       }
-      else if (code == 'wallet.content') {
+      else if (code == 'content') {
         widget = _buildContent();
       }
-      else if (code == 'wallet.cards') {
+      else if (code == 'cards') {
         widget = _buildCards();
       }
 
@@ -182,8 +179,8 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       if (code == 'netid') {
         widget = _buildLoginNetIdButton();
       }
-      else if (code == 'phone') {
-        widget = _buildLoginPhoneButton();
+      else if (code == 'phone_or_email') {
+        widget = _buildLoginPhoneOrEmailButton();
       }
       if (widget != null) {
         if (0 < contentList.length) {
@@ -208,15 +205,20 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
       borderColor: Styles().colors.fillColorSecondary,
       onTap: () {
         Analytics.instance.logSelect(target: "Log in");
-        Auth().authenticateWithShibboleth();
+        setState(() { _authLoading = true; });
+        Auth2().authenticateWithOidc().then((bool result) {
+          if (mounted) {
+            setState(() { _authLoading = false; });
+          }
+        });
       },
     );
   }
 
-  Widget _buildLoginPhoneButton() {
+  Widget _buildLoginPhoneOrEmailButton() {
     return RoundedButton(
-        label: Localization().getStringEx('panel.wallet.button.connect.phone.title', 'Verify Phone Number'),
-        hint: Localization().getStringEx('panel.wallet.button.connect.phone.hint', ''),
+        label: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.title', 'Login By Email or Phone'),
+        hint: Localization().getStringEx('panel.wallet.button.connect.phone_or_email.hint', ''),
         backgroundColor: Styles().colors.surface,
         fontSize: 16.0,
         textColor: Styles().colors.fillColorPrimary,
@@ -224,12 +226,21 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
         borderColor: Styles().colors.fillColorSecondary,
         onTap: () {
           Analytics.instance.logSelect(target: "Log in");
-          Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => OnboardingLoginPhoneVerifyPanel(onFinish: _didPhoneVer)));
+          Navigator.push(context, CupertinoPageRoute(
+            settings: RouteSettings(),
+            builder: (context) => Onboarding2LoginPhoneOrEmailPanel(
+              onboardingContext: {
+                "onContinueAction": () {
+                  _didLogin(context);
+                }
+              },
+            ),
+          ),);
         },
       );
   }
 
-  void _didPhoneVer(_) {
+  void _didLogin(_) {
     Navigator.of(context)?.popUntil((Route route){
       Widget _widget = AppNavigation.routeRootWidget(route, context: context);
       return _widget == null || _widget?.runtimeType == widget.runtimeType;
@@ -347,13 +358,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     contentList.add(Container(width: 8,));
     for (String code in codes) {
       Widget widget;
-      if (code == 'mtd') {
+      if (code == 'bus_pass') {
         widget = _buildMTDBusCard();
       }
-      else if (code == 'id') {
+      else if (code == 'illini_id') {
         widget = _buildIlliniIdCard();
       }
-      else if (code == 'library') {
+      else if (code == 'library_card') {
         widget = _buildLibraryCard();
       }
 
@@ -392,7 +403,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   Widget _buildMTDBusCard(){
-    String expires = Auth()?.authCard?.expirationDate ?? "";
+    String expires = Auth2()?.authCard?.expirationDate ?? "";
     return _Card(
       key: _mtdCardKey,
       title: Localization().getStringEx("panel.wallet.label.mtd.title", "MTD",),
@@ -403,7 +414,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Auth()?.authCard?.role ?? "",
+              Auth2()?.authCard?.role ?? "",
               style: TextStyle(
                 color: Styles().colors.fillColorPrimary,
                 fontFamily: Styles().fontFamilies.extraBold,
@@ -459,7 +470,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Auth()?.authCard?.uin ?? "",
+              Auth2()?.authCard?.uin ?? "",
               style: TextStyle(
                 color: Styles().colors.fillColorPrimary,
                 fontFamily: Styles().fontFamilies.extraBold,
@@ -508,7 +519,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             
             Container(height: 5,),
             Text(
-              Auth()?.authCard?.libraryNumber ?? "",
+              Auth2()?.authCard?.libraryNumber ?? "",
               style: TextStyle(
                   fontFamily: Styles().fontFamilies.light,
                   fontSize: 12,
@@ -524,10 +535,10 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _loadLibraryBarcode() {
-    String libraryCode = Auth().authCard?.libraryNumber;
+    String libraryCode = Auth2().authCard?.libraryNumber;
     if (0 < (libraryCode?.length ?? 0)) {
       NativeCommunicator().getBarcodeImageData({
-        'content': Auth().authCard?.libraryNumber,
+        'content': Auth2().authCard?.libraryNumber,
         'format': 'codabar',
         'width': 161 * 3,
         'height': 50
@@ -545,7 +556,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _updateLibraryBarcode() {
-    String libraryCode = Auth().authCard?.libraryNumber;
+    String libraryCode = Auth2().authCard?.libraryNumber;
     if (((_libraryCode == null) && (libraryCode != null)) ||
         ((_libraryCode != null) && (_libraryCode != libraryCode)))
     {
@@ -556,16 +567,13 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   // NotificationsListener
 
   void onNotification(String name, dynamic param){
-    if( name == Auth.notifyStarted){
-      setState(() {_authLoading = true;});
-    }
-    else if( name == Auth.notifyAuthTokenChanged){
-      setState(() {_authLoading = false;});
-    }
-    else if (name == Auth.notifyCardChanged) {
+    if (name == Auth2.notifyCardChanged) {
       _updateLibraryBarcode();
     }
     else if(name == FlexUI.notifyChanged){
+      setState(() {});
+    }
+    else if(name == IlliniCash.notifyBallanceUpdated){
       setState(() {});
     }
   }
@@ -657,7 +665,7 @@ class _ViewButton extends StatelessWidget{
               ),
             ),
             Container(width: 10,),
-            Image.asset('images/chevron-right.png'),
+            Image.asset('images/chevron-right.png', excludeFromSemantics: true),
           ],
         ),
       ),
