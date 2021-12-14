@@ -629,7 +629,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
     return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }
 
-  void _storeSetting(String name, bool value) {
+  void _storeSetting(String name, bool? value) {
     //// Logged user choice stored in the UserPrefs
     if (Auth2().isLoggedIn) {
       Auth2().prefs?.applySetting(_notifySettingNames[name] ?? name, value);
@@ -641,10 +641,10 @@ class FirebaseMessaging with Service implements NotificationsListener {
   static Map<String, dynamic>? get storedSettings {
     Map<String, dynamic>? result;
     _notifySettingNames.forEach((String storageKey, String profileKey) {
-      bool value = Storage().getNotifySetting(storageKey) ?? Storage().getNotifySetting(profileKey);
+      bool? value = Storage().getNotifySetting(storageKey) ?? Storage().getNotifySetting(profileKey);
       if (value != null) {
         if (result != null) {
-          result[profileKey] = value;
+          result![profileKey] = value;
         }
         else {
           result = { profileKey : value };

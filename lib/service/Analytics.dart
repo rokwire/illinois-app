@@ -550,7 +550,7 @@ class Analytics with Service implements NotificationsListener {
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': (location.time! * 1000).toInt(),
+      'timestamp': location.timestamp?.millisecondsSinceEpoch,
     } : null;
   }
   

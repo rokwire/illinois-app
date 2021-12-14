@@ -43,7 +43,7 @@ class Dining with Explore implements Favorite {
   String? placeID;
 
   Location? location;
-  List<PaymentType?>? paymentTypes;
+  List<PaymentType>? paymentTypes;
   List<DiningSchedule>? diningSchedules;
 
   Dining(
@@ -262,11 +262,14 @@ class Dining with Explore implements Favorite {
   }
 
   List<String> get displayScheduleDates{
-    Set<String?> displayScheduleDates = Set<String?>();
+    Set<String> displayScheduleDates = Set<String>();
     if (diningSchedules != null) {
-    for(DiningSchedule schedule in diningSchedules!){
-      displayScheduleDates.add(_dateToLongDisplayDate(schedule.eventDateUtc));
-    }
+      for(DiningSchedule schedule in diningSchedules!){
+        String? displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
+        if (displayDate != null) {
+          displayScheduleDates.add(displayDate);
+        }
+      }
     }
     return displayScheduleDates.toList();
   }
@@ -303,7 +306,7 @@ class Dining with Explore implements Favorite {
     List<DiningSchedule> firstOpeningDateSchedules = [];
     List<String?> displayDates = displayScheduleDates;
 
-    if(displayDates != null && displayDates.isNotEmpty){
+    if(displayDates.isNotEmpty){
       for(String? displayDate in displayDates){
 
         if(firstOpeningDateSchedules.isNotEmpty){
@@ -348,7 +351,7 @@ class PaymentTypeHelper {
     }
   }
 
-  static PaymentType? paymentTypeFromString(String paymentTypeString) {
+  static PaymentType? paymentTypeFromString(String? paymentTypeString) {
     if (paymentTypeString != null) {
       if (paymentTypeString == 'ClassicMeal') {
         return PaymentType.ClassicMeal;
@@ -398,7 +401,7 @@ class PaymentTypeHelper {
     return '';
   }
 
-  static String? paymentTypeToImageAsset(PaymentType paymentType) {
+  static String? paymentTypeToImageAsset(PaymentType? paymentType) {
     if (paymentType == null) {
       return null;
     }
@@ -426,27 +429,33 @@ class PaymentTypeHelper {
     return (paymentType != null) ? Image.asset(paymentTypeToImageAsset(paymentType)!, semanticLabel: paymentTypeToDisplayString(paymentType)) : null;
   }
 
-  static List<PaymentType?>? paymentTypesFromList(List<dynamic>? paymentTypesList) {
+  static List<PaymentType>? paymentTypesFromList(List<dynamic>? paymentTypesList) {
     if (paymentTypesList == null) {
       return null;
     }
     else {
-      List<PaymentType?> paymentTypes = [];
-      for (String paymentType in paymentTypesList as Iterable<String>) {
-        paymentTypes.add(PaymentTypeHelper.paymentTypeFromString(paymentType));
+      List<PaymentType> paymentTypes = [];
+      for (String paymentTypeString in paymentTypesList as Iterable<String>) {
+        PaymentType? paymentType = PaymentTypeHelper.paymentTypeFromString(paymentTypeString);
+        if (paymentType != null) {
+          paymentTypes.add(paymentType);
+        }
       }
       return paymentTypes;
     }
   }
 
-  static List<dynamic>? paymentTypesToList(List<PaymentType?>? paymentTypes) {
+  static List<dynamic>? paymentTypesToList(List<PaymentType>? paymentTypes) {
     if (paymentTypes == null) {
       return null;
     }
     else {
-      List<String?> paymentTypesList = [];
-      for (PaymentType? paymentType in paymentTypes) {
-        paymentTypesList.add(PaymentTypeHelper.paymentTypeToString(paymentType));
+      List<String> paymentTypesList = [];
+      for (PaymentType paymentType in paymentTypes) {
+        String? paymentTypeString = PaymentTypeHelper.paymentTypeToString(paymentType);
+        if (paymentTypeString != null) {
+          paymentTypesList.add(paymentTypeString);
+        }
       }
       return paymentTypesList;
     }
@@ -497,7 +506,7 @@ class NutritionNameValuePair{
 
   NutritionNameValuePair({this.name, this.value});
 
-  static NutritionNameValuePair? fromJson(Map<String,dynamic>json){
+  static NutritionNameValuePair? fromJson(Map<String,dynamic>? json){
     if (json == null) {
       return null;
     }
@@ -531,7 +540,7 @@ class DiningProductItem {
     List<String> traitList = [];
     for (String entry in (traits ?? "").split(',')) {
       entry = entry.trim();
-      if(entry != null && entry.isNotEmpty) {
+      if(entry.isNotEmpty) {
         traitList.add(entry);
       }
     }
@@ -587,7 +596,7 @@ class DiningProductItem {
     return false;
   }
 
-  static DiningProductItem? fromJson(Map<String, dynamic> json) {
+  static DiningProductItem? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? DiningProductItem(
       itemID: json['ItemID'].toString(),
       scheduleId: json['ScheduleID'].toString(),
@@ -615,7 +624,7 @@ class DiningSchedule {
 
   DiningSchedule({this.scheduleId, this.diningLocationId, this.eventDateUtc, this.startTimeUtc, this.endTimeUtc, this.meal,});
 
-  static DiningSchedule? fromJson(Map<String, dynamic> json) {
+  static DiningSchedule? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -728,15 +737,12 @@ class DiningSchedule {
     return diningSchedules;
   }
 
-  static List<dynamic>? listToJson(List<DiningSchedule> diningSchedules) {
+  static List<dynamic>? listToJson(List<DiningSchedule>? diningSchedules) {
     List<dynamic>? jsonList;
     if (diningSchedules != null) {
       jsonList = [];
       for (DiningSchedule diningSchedule in diningSchedules) {
-        Map<String, dynamic> jsonEntry = diningSchedule.toJson();
-        if (jsonEntry != null) {
-          jsonList.add(jsonEntry);
-        }
+        jsonList.add(diningSchedule.toJson());
       }
     }
     return jsonList;
