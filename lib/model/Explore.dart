@@ -74,9 +74,10 @@ abstract class Explore {
     return null;
   }
 
-  static List<Explore> listFromJson(List<dynamic> jsonList) {
-    List<Explore> explores = [];
+  static List<Explore>? listFromJson(List<dynamic>? jsonList) {
+    List<Explore>? explores;
     if (jsonList is List) {
+      explores = [];
       for (dynamic jsonEntry in jsonList) {
         Explore? explore = Explore.fromJson(jsonEntry);
         if (explore != null) {
@@ -87,7 +88,7 @@ abstract class Explore {
     return explores;
   }
 
-  static List<dynamic>? listToJson(List<Explore> explores) {
+  static List<dynamic>? listToJson(List<Explore>? explores) {
     List<dynamic>? result;
     if (explores != null) {
       result = [];
@@ -110,7 +111,7 @@ class ExploreCategory {
 
   ExploreCategory({this.name, this.subCategories});
 
-  static ExploreCategory? fromJson(Map<String, dynamic> json) {
+  static ExploreCategory? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? ExploreCategory(
       name: json['category'],
       subCategories: AppJson.listStringsValue(json['subcategories'])
@@ -136,7 +137,7 @@ class ExploreHelper {
       Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude!, locationData.longitude!);
+          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude, locationData.longitude);
           return distance.toStringAsFixed(1) + " mi away";
         }
         if ((location.description != null) && location.description!.isNotEmpty) {
@@ -149,12 +150,12 @@ class ExploreHelper {
         }
         else {
           String displayName = location.getDisplayName();
-          if ((displayName != null) && displayName.isNotEmpty) {
+          if (displayName.isNotEmpty) {
             return displayName;
           }
         }
         String displayAddress = location.getDisplayAddress();
-        if ((displayAddress != null) && displayAddress.isNotEmpty) {
+        if (displayAddress.isNotEmpty) {
           return displayAddress;
         }
       }
@@ -168,7 +169,7 @@ class ExploreHelper {
       Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude!, locationData.longitude!);
+          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude, locationData.longitude);
           displayText = distance.toStringAsFixed(1) + " mi away";
         }
         if ((location.description != null) && location.description!.isNotEmpty) {
@@ -181,12 +182,12 @@ class ExploreHelper {
         }
         else {
           String displayName = location.getDisplayName();
-          if ((displayName != null) && displayName.isNotEmpty) {
+          if (displayName.isNotEmpty) {
             return displayText += (displayText.isNotEmpty ? ", " : "")  + displayName;
           }
         }
         String displayAddress = location.getDisplayAddress();
-        if ((displayAddress != null) && displayAddress.isNotEmpty) {
+        if ( displayAddress.isNotEmpty) {
           return displayText += (displayText.isNotEmpty ? ", " : "")  + displayAddress;
         }
       }

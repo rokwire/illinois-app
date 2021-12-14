@@ -44,7 +44,7 @@ class ImageUtils {
     await capturedFile.writeAsBytes(imageBytes);
     bool? saveResult = false;
     try {
-      saveResult = await (GallerySaver.saveImage(capturedFile.path) as FutureOr<bool>);
+      saveResult = await GallerySaver.saveImage(capturedFile.path);
     } catch (e) {
       Log.e('Failed to save image to fs. \nException: ${e.toString()}');
     }
@@ -89,7 +89,7 @@ class ImageUtils {
 
         final picture = recorder.endRecording();
         final img = await picture.toImage(width.toInt(), newHeight.toInt());
-        ByteData pngBytes = await (img.toByteData(format: ui.ImageByteFormat.png) as FutureOr<ByteData>);
+        ByteData pngBytes = await img.toByteData(format: ui.ImageByteFormat.png) ?? ByteData(0);
         Uint8List newQrBytes = Uint8List(pngBytes.lengthInBytes);
         for (int i = 0; i < pngBytes.lengthInBytes; i++) {
           newQrBytes[i] = pngBytes.getUint8(i);

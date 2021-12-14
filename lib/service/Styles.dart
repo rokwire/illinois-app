@@ -251,14 +251,18 @@ class Styles extends Service implements NotificationsListener{
   void _buildColorsData(){
     if(_stylesData != null) {
       dynamic colorsData = _stylesData!["color"];
-      Map<String, Color?> colors = Map<String, Color?>();
+      Map<String, Color> colors = Map<String, Color>();
       if(colorsData is Map){
         colorsData.forEach((dynamic key, dynamic value){
           if(key is String && value is String){
+            Color? color;
             if(value.startsWith("#")){
-              colors[key] = UiColors.fromHex(value);
+              color = UiColors.fromHex(value);
             } else if(value.contains(".")){
-              colors[key] = UiColors.fromHex(AppMapPathKey.entry(_stylesData, value));
+              color = UiColors.fromHex(AppMapPathKey.entry(_stylesData, value));
+            }
+            if (color != null) {
+              colors[key] = color;
             }
           }
         });
@@ -355,7 +359,7 @@ StylesContentMode? stylesContentModeFromString(String? value) {
 
 class UiColors {
 
-  final Map<String,Color?> _colorMap;
+  final Map<String,Color> _colorMap;
 
   UiColors(this._colorMap);
 

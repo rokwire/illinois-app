@@ -274,12 +274,14 @@ class Dining with Explore implements Favorite {
     return displayScheduleDates.toList();
   }
 
-  List<DateTime?> get filterScheduleDates{
-    Set<DateTime?> filterScheduleDates = Set<DateTime?>();
+  List<DateTime> get filterScheduleDates{
+    Set<DateTime> filterScheduleDates = Set<DateTime>();
     if (diningSchedules != null) {
-    for(DiningSchedule schedule in diningSchedules!){
-      filterScheduleDates.add(schedule.eventDateUtc);
-    }
+      for(DiningSchedule schedule in diningSchedules!){
+        if (schedule.eventDateUtc != null) {
+          filterScheduleDates.add(schedule.eventDateUtc!);
+        }
+      }
     }
 
     return filterScheduleDates.toList();
@@ -304,7 +306,7 @@ class Dining with Explore implements Favorite {
 
   List<DiningSchedule> get firstOpeningDateSchedules{
     List<DiningSchedule> firstOpeningDateSchedules = [];
-    List<String?> displayDates = displayScheduleDates;
+    List<String> displayDates = displayScheduleDates;
 
     if(displayDates.isNotEmpty){
       for(String? displayDate in displayDates){

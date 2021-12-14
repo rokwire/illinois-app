@@ -67,18 +67,18 @@ class InboxMessage with Favorite {
     };
   }
 
-  static List<InboxMessage?>? listFromJson(List<dynamic>? jsonList) {
-    List<InboxMessage?>? result;
+  static List<InboxMessage>? listFromJson(List<dynamic>? jsonList) {
+    List<InboxMessage>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? InboxMessage.fromJson(jsonEntry as Map<String, dynamic>?) : null);
+        AppList.add(result, InboxMessage.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic>? listToJson(List<InboxMessage> messagesList) {
+  static List<dynamic>? listToJson(List<InboxMessage>? messagesList) {
     List<dynamic>? result;
     if (messagesList != null) {
       result = [];
@@ -262,11 +262,15 @@ InboxSenderType? inboxSenderTypeFromString(String? value) {
 }
 
 String? inboxSenderTypeToString(InboxSenderType? value) {
-  switch(value) {
-    case InboxSenderType.System: return 'system';
-    case InboxSenderType.User: return 'user';
+  if(value == InboxSenderType.System) {
+    return 'system';
   }
-  return null;
+  else if (value == InboxSenderType.User) {
+    return 'user';
+  }
+  else {
+    return null;
+  }
 }
 
 class InboxUserInfo{
@@ -311,5 +315,5 @@ class InboxUserInfo{
     (dateCreated?.hashCode ?? 0) ^
     (dateUpdated?.hashCode ?? 0) ^
     (notificationsDisabled?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(topics) ?? 0);
+    (DeepCollectionEquality().hash(topics));
 }

@@ -48,9 +48,6 @@ class AppString {
   }
 
   static String wrapRange(String s, String firstValue, String secondValue, int startPosition, int endPosition) {
-    if ((s == null) || (firstValue == null) || (secondValue == null) || (startPosition < 0) || (endPosition < 0)) {
-      return s;
-    }
     String word = s.substring(startPosition, endPosition);
     String wrappedWord = firstValue + word + secondValue;
     String updatedString = s.replaceRange(startPosition, endPosition, wrappedWord);
@@ -70,10 +67,7 @@ class AppString {
   }
 
   static String capitalize(String value) {
-    if (value == null) {
-      return null;
-    }
-    else if (value.length == 0) {
+    if (value.length == 0) {
       return '';
     }
     else if (value.length == 1) {
@@ -85,20 +79,18 @@ class AppString {
   }
 
   static String stripHtmlTags(String value) {
-    return value?.replaceAll(RegExp(r'<[^>]*>'), '')?.replaceAll(RegExp(r'&[^;]+;'), ' ');
+    return value.replaceAll(RegExp(r'<[^>]*>'), '').replaceAll(RegExp(r'&[^;]+;'), ' ');
   }
 
-  static String? fullName(List<String?> names) {
+  static String? fullName(List<String> names) {
     String? fullName;
-    if (names != null) {
-      for (String? name in names) {
-        if ((name != null) && (0 < name.length)) {
-          if (fullName == null) {
-            fullName = '$name';
-          }
-          else {
-            fullName += ' $name';
-          }
+    for (String name in names) {
+      if (0 < name.length) {
+        if (fullName == null) {
+          fullName = '$name';
+        }
+        else {
+          fullName += ' $name';
         }
       }
     }
@@ -211,10 +203,7 @@ class AppColor {
   }
 
   static String toHex(Color value) {
-    if (value == null) {
-      return null;
-    }
-    else if (value.alpha < 0xFF) {
+    if (value.alpha < 0xFF) {
       return "#${value.alpha.toRadixString(16)}${value.red.toRadixString(16)}${value.green.toRadixString(16)}${value.blue.toRadixString(16)}";
     }
     else {
@@ -375,23 +364,9 @@ class AppJson {
 
   static List<dynamic> encodeList(List items) {
     List<dynamic> result =  [];
-    if (items != null && items.isNotEmpty) {
+    if (items.isNotEmpty) {
       items.forEach((item) {
         result.add(item.toJson());
-      });
-    }
-
-    return result;
-  }
-
-  static List<String> castToStringList(List<dynamic> items) {
-    if (items == null)
-      return null;
-
-    List<String> result =  [];
-    if (items != null && items.isNotEmpty) {
-      items.forEach((item) {
-        result.add(item is String ? item : item.toString());
       });
     }
 
@@ -497,7 +472,7 @@ class AppJson {
     if (value is List) {
       result = <String>[];
       for (dynamic entry in value) {
-        result.add(entry?.toString());
+        result.add(entry.toString());
       }
     }
     return result;
@@ -508,7 +483,7 @@ class AppJson {
     if (value is List) {
       result = Set<String>();
       for (dynamic entry in value) {
-        result.add(entry?.toString());
+        result.add(entry.toString());
       }
     }
     return result;
@@ -542,28 +517,25 @@ class AppToast {
 
 class AppAlert {
   static Future<bool?> showDialogResult(
-      BuildContext builderContext, String? message) async {
-    if(builderContext != null) {
-      bool? alertDismissed = await showDialog(
-        context: builderContext,
-        builder: (context) {
-          return AlertDialog(
-            content: Text(message!),
-            actions: <Widget>[
-              TextButton(
-                  child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
-                  onPressed: () {
-                    Analytics.instance.logAlert(text: message, selection: "Ok");
-                    Navigator.pop(context, true);
-                  }
-              ) //return dismissed 'true'
-            ],
-          );
-        },
-      );
-      return alertDismissed;
-    }
-    return true; // dismissed
+    BuildContext builderContext, String? message) async {
+    bool? alertDismissed = await showDialog(
+      context: builderContext,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(message!),
+          actions: <Widget>[
+            TextButton(
+                child: Text(Localization().getStringEx("dialog.ok.title", "OK")!),
+                onPressed: () {
+                  Analytics.instance.logAlert(text: message, selection: "Ok");
+                  Navigator.pop(context, true);
+                }
+            ) //return dismissed 'true'
+          ],
+        );
+      },
+    );
+    return alertDismissed;
   }
 
   static Future<bool?> showCustomDialog(

@@ -61,7 +61,7 @@ class Event with Explore implements Favorite {
   String? registrationLabel;
   String? registrationUrl;
   String? cost;
-  List<Contact?>? contacts;
+  List<Contact>? contacts;
   List<String>? tags;
   DateTime? modifiedDate;
   String? submissionResult;
@@ -69,12 +69,12 @@ class Event with Explore implements Favorite {
   bool? allDay;
   bool? recurringFlag;
   int? recurrenceId;
-  List<Event?>? recurringEvents;
+  List<Event>? recurringEvents;
 
   bool? isSuperEvent;
   bool? displayOnlyWithSuperEvent;
   bool? isVirtual;
-  List<Map<String, dynamic>?>? subEventsMap;
+  List<Map<String, dynamic>>? subEventsMap;
   String? track;
   List<Event>? _subEvents;
   List<Event>? _featuredEvents;
@@ -102,14 +102,12 @@ class Event with Explore implements Favorite {
     dynamic tagsJson = json['tags'];
     List<String>? tags = tagsJson != null ? List.from(tagsJson) : null;
     
-    List<dynamic>? contactsJson = json['contacts'];
-    List<Contact?>? contacts = (contactsJson != null) ? contactsJson.map((value) => Contact.fromJson(value)).toList() : null;
+    List<Contact>? contacts = Contact.listFromJson(json['contacts']);
     
-    List<dynamic>? recurringEventsJson = json['recurringEvents'];
-    List<Event?>? recurringEvents = (recurringEventsJson != null) ? recurringEventsJson.map((value) => Event.fromJson(value)).toList() : null;
+    List<Event>? recurringEvents = Event.listFromJson(json['recurringEvents']);
 
     List<dynamic>? subEventsJson = json['subEvents'];
-    List<Map<String, dynamic>?>? subEventsMap = _constructSubEventsMap(subEventsJson);
+    List<Map<String, dynamic>>? subEventsMap = _constructSubEventsMap(subEventsJson);
 
     id = json["id"];
     title = json['title'];
@@ -209,7 +207,7 @@ class Event with Explore implements Favorite {
     return (json != null) ? Event(json: json) : null;
   }
 
-  static Event? fromOther(Event other) {
+  static Event? fromOther(Event? other) {
     return (other != null) ? Event(other: other) : null;
   }
 
@@ -444,6 +442,28 @@ class Event with Explore implements Favorite {
     return (json != null) && (json['eventId'] != null);
   }
 
+  static List<Event>? listFromJson(List<dynamic>? jsonList) {
+    List<Event>? result;
+    if (jsonList != null) {
+      result = <Event>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, Event.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<Event>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
+  }
+
   List<dynamic> _encodeContacts(){
     List<dynamic> result = [];
     if(contacts!=null && contacts!.isNotEmpty) {
@@ -467,7 +487,7 @@ class Event with Explore implements Favorite {
   }
 
   String toString() {
-    return toJson().toString();;
+    return toJson().toString();
   }
 
   bool get isGameEvent {
@@ -511,7 +531,7 @@ class Event with Explore implements Favorite {
   }
 
   void addSubEvent(Event event) {
-    if (!isSuperEvent! || (event == null)) {
+    if (!isSuperEvent!) {
       return;
     }
     if (_subEvents == null) {
@@ -525,7 +545,7 @@ class Event with Explore implements Favorite {
   }
 
   void addFeaturedEvent(Event event) {
-    if (!isSuperEvent! || (event == null)) {
+    if (!isSuperEvent!) {
       return;
     }
     if (_featuredEvents == null) {
@@ -534,11 +554,11 @@ class Event with Explore implements Favorite {
     _featuredEvents!.add(event);
   }
 
-  static List<Map<String, dynamic>?>? _constructSubEventsMap(List<dynamic>? subEventsJson) {
+  static List<Map<String, dynamic>>? _constructSubEventsMap(List<dynamic>? subEventsJson) {
     if (subEventsJson == null || subEventsJson.isEmpty) {
       return null;
     }
-    List<Map<String, dynamic>?> subEvents = [];
+    List<Map<String, dynamic>> subEvents = [];
     for (dynamic eventDynamic in subEventsJson) {
       if (eventDynamic is Map<String, dynamic>) {
         subEvents.add(eventDynamic);
@@ -618,7 +638,7 @@ class Event with Explore implements Favorite {
   ///
   String get displayDateTime {
     final String dateFormat = 'MMM dd';
-    int eventDays = (endDateGmt?.difference(startDateGmt!)?.inDays ?? 0).abs();
+    int eventDays = (endDateGmt?.difference(startDateGmt!).inDays ?? 0).abs();
     bool eventIsMoreThanOneDay = (eventDays >= 1);
     if (eventIsMoreThanOneDay) {
       String? startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat);
@@ -650,7 +670,7 @@ class Event with Explore implements Favorite {
     if (!isRecurring) {
       return '';
     }
-    Event first = recurringEvents!.first!;
+    Event? first = recurringEvents!.first;
     Event? last = recurringEvents!.last;
     return _buildDisplayDates(first, last);
   }
@@ -763,6 +783,28 @@ class Contact {
       "phone": phone,
       "organization": organization
     };
+  }
+
+  static List<Contact>? listFromJson(List<dynamic>? jsonList) {
+    List<Contact>? result;
+    if (jsonList != null) {
+      result = <Contact>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, Contact.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<Contact>? contentList) {
+    List<dynamic>? jsonList;
+    if (contentList != null) {
+      jsonList = <dynamic>[];
+      for (dynamic contentEntry in contentList) {
+        jsonList.add(contentEntry?.toJson());
+      }
+    }
+    return jsonList;
   }
 }
 
