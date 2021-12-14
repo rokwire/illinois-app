@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -29,7 +30,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/model/Explore.dart';
@@ -48,7 +48,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ExploreEventDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Event event;
   final bool previewMode;
-  final Core.LocationData initialLocationData;
+  final Core.Position initialLocationData;
   final String superEventTitle;
   final String browseGroupId;
 
@@ -70,7 +70,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   static final double _horizontalPadding = 24;
 
   //Maps
-  Core.LocationData _locationData;
+  Core.Position _locationData;
   bool _addToGroupInProgress = false;
 
   @override

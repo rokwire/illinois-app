@@ -26,7 +26,7 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:intl/intl.dart';
 
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -54,7 +54,7 @@ class DiningService  with Service {
 
   DiningService._internal();
 
-  Future<List<Dining>> loadBackendDinings(bool onlyOpened, PaymentType paymentType, LocationData locationData) async {
+  Future<List<Dining>> loadBackendDinings(bool onlyOpened, PaymentType paymentType, Position locationData) async {
     if(_enabled) {
       List<Dining> dinings = [];
 
@@ -232,7 +232,7 @@ class DiningService  with Service {
   }
 
   // Helpers
-  void _sortExploresByLocation(List<Explore> explores, LocationData locationData) {
+  void _sortExploresByLocation(List<Explore> explores, Position locationData) {
     explores.sort((Explore explore1, Explore explore2) {
       double distance1 = AppLocation.distance(explore1.exploreLocation.latitude, explore1.exploreLocation.longitude, locationData.latitude, locationData.longitude);
       double distance2 = AppLocation.distance(explore2.exploreLocation.latitude, explore2.exploreLocation.longitude, locationData.latitude, locationData.longitude);

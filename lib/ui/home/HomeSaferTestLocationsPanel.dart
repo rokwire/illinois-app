@@ -2,6 +2,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -13,7 +14,6 @@ import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/Utils.dart';
-import 'package:location/location.dart' as Core;
 
 /////////////////////////////////////////////
 // HomeSaferTestLocationsPanel
@@ -28,7 +28,7 @@ class HomeSaferTestLocationsPanel extends StatefulWidget {
 class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPanel>{
   
   List<HealthServiceLocation> _locations;
-  Core.LocationData _currentLocation;
+  Core.Position _currentLocation;
   bool _loadingLocations;
   String _statusString;
 

@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as Http;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/GeoFence.dart';
@@ -34,20 +35,20 @@ import 'package:illinois/service/GeoFence.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:location/location.dart' as Location;
-import 'package:notification_permissions/notification_permissions.dart' as Notifications;
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:package_info/package_info.dart';
 import 'package:device_info/device_info.dart';
 import 'package:uuid/uuid.dart';
+import 'package:notification_permissions/notification_permissions.dart' as Notifications;
 
 import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/ui/RootPanel.dart';
+
 
 class Analytics with Service implements NotificationsListener {
 
@@ -544,11 +545,11 @@ class Analytics with Service implements NotificationsListener {
   }
 
   Map<String, dynamic> get _location {
-    Location.LocationData location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
+    Position location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
-      'timestamp': (location.time * 1000).toInt(),
+      'timestamp': location.timestamp?.millisecondsSinceEpoch,
     } : null;
   }
   

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/semantics.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/ui/widgets/FilterWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/ui/dining/HorizontalDiningSpecials.dart';
-import 'package:location/location.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +136,7 @@ class ExplorePanelState extends State<ExplorePanel>
   List<String>  _filterPaymentTypeValues;
   List<String>  _filterEventTimeValues;
   
-  LocationData _locationData;
+  Position _locationData;
   LocationServicesStatus _locationServicesStatus;
 
   ExploreFilter _initialSelectedFilter;
