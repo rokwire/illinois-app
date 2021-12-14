@@ -305,7 +305,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
 
 
-    Widget tags = _exploreTags();
+    Widget? tags = _exploreTags();
     if(tags != null){
       details.add(tags);
     }
@@ -539,7 +539,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         ) : Container(),
       );
     }
-    return Container();
+    return null;
   }
 
   Widget _exploreSubTitle() {
