@@ -17,6 +17,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart' as Core;
 import 'package:http/http.dart' as http;
 import 'package:illinois/model/Auth2.dart';
 import 'package:illinois/service/AppDateTime.dart';
@@ -25,7 +26,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:location/location.dart' as Core;
 
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/model/Event.dart';
@@ -90,7 +90,7 @@ class ExploreService with Service implements NotificationsListener {
 
   // Implementation
 
-  Future<List<Explore>?> loadEvents({String? searchText, Core.LocationData? locationData, Set<String?>? categories, EventTimeFilter? eventFilter = EventTimeFilter.upcoming, Set<String>? tags, bool excludeRecurring = true, int? recurrenceId, int limit = 0}) async {
+  Future<List<Explore>?> loadEvents({String? searchText, Core.Position? locationData, Set<String?>? categories, EventTimeFilter? eventFilter = EventTimeFilter.upcoming, Set<String>? tags, bool excludeRecurring = true, int? recurrenceId, int limit = 0}) async {
     if(_enabled) {
       http.Response? response;
       String queryParameters = _buildEventsQueryParameters(
@@ -347,7 +347,7 @@ class ExploreService with Service implements NotificationsListener {
     }
   }
 
-  String _buildEventsQueryParameters(String? searchText, Core.LocationData? locationData, EventTimeFilter? eventTimeFilter, Set<String?>? categories, Set<String>? tags, int? recurrenceId, int limit) {
+  String _buildEventsQueryParameters(String? searchText, Core.Position? locationData, EventTimeFilter? eventTimeFilter, Set<String?>? categories, Set<String>? tags, int? recurrenceId, int limit) {
 
     String queryParameters = "";
 

@@ -1945,7 +1945,7 @@
 							},
 							{
 								"title":"panel.wellness.common.resources.ace_it",
-								"url":"https://counselingcenter.illinois.edu/aceit",
+								"url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help",
 								"icon": "link-out.png",
 								"hint": ""
 							}
