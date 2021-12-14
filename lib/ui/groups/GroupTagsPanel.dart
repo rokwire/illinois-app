@@ -72,7 +72,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
               ])),
               Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
               Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.search.label', "SEARCH")!))),
-              Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController?.text))),
+              Visibility(visible: _searchView, child: _buildTagsWidget(_filterTags(_searchController.text))),
               Visibility(visible: hasGroupTags, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.selected.label', "SELECTED")!))),
               Visibility(visible: hasGroupTags, child: _buildTagsWidget(_groupTags)),
               Visibility(visible: !_searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.tags.list.all.label', "ALL TAGS")!))),

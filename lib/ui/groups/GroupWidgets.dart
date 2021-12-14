@@ -384,7 +384,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
           break;
         }
       }
-      if(!_showAllComments && (1 < (event?.comments?.length ?? 0))){
+      if(!_showAllComments && (1 < (event.comments?.length ?? 0))){
         content2.add(
             Container(color: Styles().colors!.fillColorSecondary,height: 1,margin: EdgeInsets.only(top:12, bottom: 10),)
         );
@@ -451,7 +451,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Container(height: 32, width: 32,
-                      decoration: AppString.isStringNotEmpty(comment?.member?.photoURL)
+                      decoration: AppString.isStringNotEmpty(comment.member?.photoURL)
                           ? BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(image:NetworkImage(comment.member!.photoURL!), fit: BoxFit.cover))
@@ -603,7 +603,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
               )
             ],),
             Visibility(visible:
-                AppString.isStringNotEmpty(widget?.event?.exploreImageURL),
+                AppString.isStringNotEmpty(widget.event?.exploreImageURL),
                 child: Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
@@ -846,12 +846,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
           //do nothing
             break;
           case ImagesResultType.ERROR_OCCURRED:
-            AppToast.show(logicResult.errorMessage);
+            AppToast.show(logicResult.errorMessage!);
             break;
           case ImagesResultType.SUCCEEDED:
           //ready
             AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
             Navigator.pop(context, logicResult.data);
+            break;
+          default:
             break;
         }
       });
@@ -878,12 +880,14 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
         //do nothing
           break;
         case ImagesResultType.ERROR_OCCURRED:
-          AppToast.show(logicResult.errorMessage);
+          AppToast.show(logicResult.errorMessage!);
           break;
         case ImagesResultType.SUCCEEDED:
         //ready
           AppToast.show(Localization().getStringEx("widget.add_image.validation.success.label","Successfully added an image")!);
           Navigator.pop(context, logicResult.data);
+          break;
+        default:
           break;
       }
     });
@@ -904,7 +908,7 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [AppString.getDefaultEmptyString(group!.pendingCount?.toString())]);
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s")!, [AppString.getDefaultEmptyString(group!.pendingCount.toString())]);
     return GestureDetector(
         onTap: () => _onTapCard(context),
         child: Padding(
@@ -930,7 +934,7 @@ class GroupCard extends StatelessWidget {
                   (displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) :Container(),
                   Visibility(
                     visible: (group?.currentUserIsAdmin ?? false) && (group!.pendingCount > 0),
-                    child: Text(pendingCountText ?? "",
+                    child: Text(pendingCountText,
                       overflow: TextOverflow.ellipsis,
                       maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,
                       style: TextStyle(
@@ -962,13 +966,13 @@ class GroupCard extends StatelessWidget {
       );
     }
 
-    String? groupCategory = AppString.getDefaultEmptyString(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    String? groupCategory = AppString.getDefaultEmptyString(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category")!);
     if (AppString.isStringNotEmpty(groupCategory)) {
       if (leftContent.isNotEmpty) {
         leftContent.add(Container(height: 6,));
       }
       leftContent.add(
-        Text(groupCategory!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+        Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
           overflow: TextOverflow.ellipsis,
           maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
       );
@@ -1074,7 +1078,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
                       Expanded(
-                          child: Text(AppString.getDefaultEmptyString(widget.post!.subject)!,
+                          child: Text(AppString.getDefaultEmptyString(widget.post!.subject),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary))),
@@ -1083,11 +1087,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(visibleRepliesCount.toString())!,
+                                child: Text(AppString.getDefaultEmptyString(visibleRepliesCount.toString()),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
-                                child: Text(AppString.getDefaultEmptyString(repliesLabel)!,
+                                child: Text(AppString.getDefaultEmptyString(repliesLabel),
                                     style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
                           ])),
                     ]),
@@ -1111,7 +1115,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 3,
                             child:Container(
                               padding: EdgeInsets.only(right: 6),
-                              child:Text(AppString.getDefaultEmptyString(memberName)!,
+                              child:Text(AppString.getDefaultEmptyString(memberName),
                                 textAlign: TextAlign.left,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary)),
                           )),
@@ -1119,7 +1123,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             flex: 2,
                             child: Semantics(child: Container(
                               padding: EdgeInsets.only(left: 6),
-                              child: Text(AppString.getDefaultEmptyString(widget.post?.displayDateTime)!,
+                              child: Text(AppString.getDefaultEmptyString(widget.post?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
@@ -1193,7 +1197,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
-    int visibleRepliesCount = widget?.reply?.replies?.length ?? 0;
+    int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
     bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
     String? repliesLabel = (visibleRepliesCount == 1)
         ? Localization().getStringEx('widget.group.card.reply.single.reply.label', 'Reply')
@@ -1214,7 +1218,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Semantics( child:
-                  Text(AppString.getDefaultEmptyString(widget.reply?.member?.name)!,
+                  Text(AppString.getDefaultEmptyString(widget.reply?.member?.name),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                 ),
                 Visibility(
@@ -1254,7 +1258,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Row(children: [
                       Expanded(
                           child: Container(
-                            child: Semantics(child: Text(AppString.getDefaultEmptyString(widget.reply?.displayDateTime)!,
+                            child: Semantics(child: Text(AppString.getDefaultEmptyString(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.getDisplayDateTime() ?? ""} ago",
                                 style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
                       Visibility(

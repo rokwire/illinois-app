@@ -48,7 +48,7 @@ class GroupEventDetailPanel extends StatefulWidget implements AnalyticsPageAttri
 }
 
 class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with NotificationsListener{
-  List<Group?> _adminGroups = [];
+  List<Group> _adminGroups = [];
   Event? _event;
   Group? _currentlySelectedGroup;
 
@@ -57,7 +57,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     _event = widget.event;
     Groups().loadGroups(myGroups: true).then((groups) {
       if(groups?.isNotEmpty ?? false){
-        _adminGroups = groups!.where((group) => group?.currentUserIsAdmin)?.toList() ?? [];
+        _adminGroups = groups!.where((group) => group.currentUserIsAdmin).toList();
       }
       setState(() {});
     });
@@ -240,7 +240,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = AppString.getDefaultEmptyString(_event?.location?.locationId)!;
+    String locationId = AppString.getDefaultEmptyString(_event?.location?.locationId);
     bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
     String? value = isVirtual ? locationId : locationText;
     bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
@@ -295,7 +295,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     String priceText =isFree? "Free" : (_event?.cost ?? "Free");
     String? additionalDescription = isFree? _event?.cost : null;
     bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
-    if ((priceText != null) && priceText.isNotEmpty) {
+    if (priceText.isNotEmpty) {
       return Semantics(
           label: Localization().getStringEx("panel.explore_detail.label.price.title","Price"),
           value: priceText,
@@ -535,7 +535,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   void _deleteEvent(){
-    Groups().deleteEventFromGroup(event: _event!, groupId: widget?.groupId).then((value){
+    Groups().deleteEventFromGroup(event: _event!, groupId: widget.groupId).then((value){
       Navigator.of(context).pop();
     });
   }
@@ -649,7 +649,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       if(_currentlySelectedGroup!=null) {
                         Log.d("Selected group: $_currentlySelectedGroup");
                         AppToast.show(
-                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")!+ _currentlySelectedGroup?.title!??"");
+                            Localization().getStringEx('panel.groups_event_detail.label.link_result',  "Event has been linked to")! + (_currentlySelectedGroup?.title ?? ""));
                         Groups().linkEventToGroup(groupId:_currentlySelectedGroup!.id,eventId: _event?.id);
                       }
                     });

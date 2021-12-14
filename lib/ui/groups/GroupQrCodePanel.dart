@@ -75,7 +75,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
       bool result = (updatedImageBytes != null);
       if (result) {
         final String fileName = 'Group - $groupName';
-        result = await (ImageUtils.saveToFs(updatedImageBytes, fileName) as FutureOr<bool>);
+        result = await ImageUtils.saveToFs(updatedImageBytes, fileName) ?? false;
       }
       String? platformTargetText = (defaultTargetPlatform == TargetPlatform.android)
           ? Localization().getStringEx("panel.group_qr_code.alert.save.success.pictures", "Pictures")

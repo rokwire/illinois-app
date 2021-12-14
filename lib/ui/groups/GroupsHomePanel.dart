@@ -46,9 +46,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   bool _isGroupsLoading = false;
   bool _myGroupsSelected = true;
 
-  List<Group?>? _allGroups;
-  List<Group?>? _myGroups;
-  List<Group?>? _myPendingGroups;
+  List<Group>? _allGroups;
+  List<Group>? _myGroups;
+  List<Group>? _myPendingGroups;
 
   String? _selectedCategory;
   List<String?>? _categories;
@@ -57,21 +57,21 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   _FilterType __activeFilterType = _FilterType.none;
 
   //TBD: this filtering has to be done on the server side.
-  List<Group?>? _getFilteredAllGroupsContent() {
+  List<Group>? _getFilteredAllGroupsContent() {
     if (AppCollection.isCollectionEmpty(_allGroups)) {
       return _allGroups;
     }
     // Filter By Category
     String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    List<Group?>? filteredGroups = _allGroups;
+    List<Group>? filteredGroups = _allGroups;
     if (AppString.isStringNotEmpty(selectedCategory)) {
-      filteredGroups = _allGroups!.where((group) => (selectedCategory == group!.category)).toList();
+      filteredGroups = _allGroups!.where((group) => (selectedCategory == group.category)).toList();
     }
     // Filter by User Tags
     if (_selectedTagFilter == _TagFilter.my) {
       Set<String>? userTags = Auth2().prefs?.positiveTags;
       if (AppCollection.isCollectionNotEmpty(userTags) && AppCollection.isCollectionNotEmpty(filteredGroups)) {
-        filteredGroups = filteredGroups!.where((group) => group!.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
+        filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
       }
     }
 
@@ -128,15 +128,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       _isGroupsLoading = true;
     });
 
-    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group?>? groups) {
+    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group>? groups) {
       if (mounted) {
         if (groups != null) {
           // Initial request succeded
-          List<Group?> sortedGroups = _sortGroups(groups);
+          List<Group>? sortedGroups = _sortGroups(groups);
           if (_myGroupsSelected) {
-            List<Group?> myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
-            List<Group?> myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
-            if (myGroups.isNotEmpty || myPendingGroups.isNotEmpty) {
+            List<Group>? myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
+            List<Group>? myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
+            if ((myGroups?.isNotEmpty ?? false) || (myPendingGroups?.isNotEmpty ?? false)) {
               // Non-Empty My Groups content => apply it
               setState(() {
                 _isGroupsLoading = false;
@@ -146,11 +146,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             }
             else {
               // Empty My Groups content => Load All Groups content
-              Groups().loadGroups(myGroups: false).then((List<Group?>? groups2) {
+              Groups().loadGroups(myGroups: false).then((List<Group>? groups2) {
                 if (mounted) {
                   if (groups2 != null) {
                     // Empty My Groups content; All Groups request succeded => apply everything collected + switch tab seletion
-                    List<Group?> allGroups = _sortGroups(groups2);
+                    List<Group>? allGroups = _sortGroups(groups2);
                     setState(() {
                       _isGroupsLoading = false;
                       _myGroupsSelected = false;
@@ -211,15 +211,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isGroupsLoading = true;
     });
-    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group?>? groups) {
+    Groups().loadGroups(myGroups: _myGroupsSelected).then((List<Group>? groups) {
       if (mounted) {
         if (groups != null) {
-          List<Group?> sortedGroups = _sortGroups(groups);
+          List<Group>? sortedGroups = _sortGroups(groups);
           if (_myGroupsSelected) {
             setState(() {
               _isGroupsLoading = false;
-              _myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
-              _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+              _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
+              _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
             });
           }
           else {
@@ -256,12 +256,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  List<Group?> _sortGroups(List<Group?> groups) {
+  List<Group>? _sortGroups(List<Group>? groups) {
     if (AppCollection.isCollectionEmpty(groups)) {
       return groups;
     }
-    groups.sort((group1, group2) {
-      int cmp = group1!.category!.compareTo(group2!.category!);
+    groups!.sort((group1, group2) {
+      int cmp = group1.category!.compareTo(group2.category!);
       if (cmp != 0) {
         return cmp;
       } else {
@@ -589,7 +589,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group?>? filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
+    List<Group>? filteredGroups = AppCollection.isCollectionNotEmpty(_allGroups) ? _getFilteredAllGroupsContent() : null;
     if(AppCollection.isCollectionNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
@@ -673,13 +673,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics.instance.logSelect(target: "Pull To Refresh");
-    List<Group?>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
+    List<Group>? groups = await Groups().loadGroups(myGroups: _myGroupsSelected);
     if (mounted && (groups != null)) {
-      List<Group?> sortedGroups = _sortGroups(groups);
+      List<Group>? sortedGroups = _sortGroups(groups);
       setState(() {
         if (_myGroupsSelected) {
-          _myGroups = sortedGroups?.where((group) => group?.currentUserIsMemberOrAdmin)?.toList();
-          _myPendingGroups = sortedGroups?.where((group) => group?.currentUserIsPendingMember)?.toList();
+          _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
+          _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
         }
         else {
           _allGroups = sortedGroups;
