@@ -57,7 +57,7 @@ class _AthleticsGameDayWidgetState extends State<AthleticsGameDayWidget> {
               child: Row(
                 children: <Widget>[
                   AppString.isStringNotEmpty(widget.sportDefinition?.iconPath)
-                      ? Image.asset(widget.sportDefinition!.iconPath, excludeFromSemantics: true)
+                      ? Image.asset(widget.sportDefinition!.iconPath!, excludeFromSemantics: true)
                       : Container(),
                   Container(
                     width: 10,

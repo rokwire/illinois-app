@@ -244,7 +244,8 @@ class _RosterListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(sport.iconPath!, width: 16, height: 16, excludeFromSemantics: true,),
+                  AppString.isStringNotEmpty(sport?.iconPath) ?
+                    Image.asset(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) : Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,
@@ -349,7 +350,7 @@ class _RosterItem extends StatelessWidget{
                                 ),
                               ),
                             ),
-                            Text(AppString.getDefaultEmptyString(roster.numberString)!,
+                            Text(AppString.getDefaultEmptyString(roster.numberString),
                               style: TextStyle(
                                   color: Styles().colors!.whiteTransparent06,
                                   fontFamily: Styles().fontFamilies!.medium,

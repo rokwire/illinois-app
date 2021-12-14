@@ -103,7 +103,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
     }
 
     if (game == null) {
-      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')));
+      return Center(child: Text(Localization().getStringEx('panel.athletics_game_detail.load.failed.msg', 'Failed to load game. Please, try again.')!));
     }
 
     String? sportKey = game?.sport?.shortName;

@@ -35,8 +35,8 @@ import 'package:share/share.dart';
 import 'package:html/dom.dart' as dom;
 
 class AthleticsNewsArticlePanel extends StatefulWidget {
-  final String articleId;
-  final News article;
+  final String? articleId;
+  final News? article;
 
   AthleticsNewsArticlePanel({this.article, this.articleId});
 
@@ -217,11 +217,11 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
 
   List<Widget> _buildContentWidgets(BuildContext context) {
     List<Widget> widgets = [];
-    if (!AppString.isStringEmpty(_article.description)) {
+    if (!AppString.isStringEmpty(_article?.description)) {
       widgets.add(Padding(
         padding: EdgeInsets.only(bottom: 10),
         child: Html(
-          data:_article.description,
+          data:_article!.description!,
           style: {
             "body": Style(color: Styles().colors!.textBackground)
           },

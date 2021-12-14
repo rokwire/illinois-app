@@ -408,7 +408,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
       if (!AppString.isStringEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
             child: Image.network(
-              widget.game.imageUrl,
+              widget.game!.imageUrl!,
               excludeFromSemantics: true
             )));
       }

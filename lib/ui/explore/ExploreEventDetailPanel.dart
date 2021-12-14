@@ -190,7 +190,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreHeading() {
-    String? category = widget?.event?.category;
+    String? category = widget.event?.category;
     bool isFavorite = Auth2().isFavorite(widget.event);
     bool starVisible = Auth2().canFavorite;
     return Container(
@@ -249,7 +249,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _eventSponsor() {
-    String eventSponsorText = widget?.event?.sponsor ?? '';
+    String eventSponsorText = widget.event?.sponsor ?? '';
     bool sponsorVisible = AppString.isStringNotEmpty(eventSponsorText);
     return Visibility(visible: sponsorVisible, child: Padding(
         padding: EdgeInsets.only(bottom: 16),
@@ -279,7 +279,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       details.add(time);
     }
 
-    Widget location = _exploreLocationDetail();
+    Widget? location = _exploreLocationDetail();
     if (location != null) {
       details.add(location);
     }
@@ -289,12 +289,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       details.add(price);
     }
 
-    Widget privacy = _eventPrivacyDetail();
+    Widget? privacy = _eventPrivacyDetail();
     if (privacy != null) {
       details.add(privacy);
     }
 
-    Widget converge = _buildConvergeContent();
+    Widget? converge = _buildConvergeContent();
     if (converge != null) {
       details.add(converge);
     }
@@ -331,7 +331,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _exploreTimeDetail() {
-    String? displayTime = widget?.event?.displayDateTime;
+    String? displayTime = widget.event?.displayDateTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(
         label: displayTime,
@@ -358,15 +358,15 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
   }
 
-  Widget _exploreLocationDetail() {
+  Widget? _exploreLocationDetail() {
     String locationText = ExploreHelper.getLongDisplayLocation(widget.event, _locationData)??"";
-    bool isVirtual = widget?.event?.isVirtual ?? false;
+    bool isVirtual = widget.event?.isVirtual ?? false;
     String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online event")! : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event")!;
     bool hasEventUrl = AppString.isStringNotEmpty(widget.event?.location?.description);
     bool isOnlineUnderlined = isVirtual && hasEventUrl;
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = AppString.getDefaultEmptyString(widget.event?.location?.locationId)!;
+    String locationId = AppString.getDefaultEmptyString(widget.event?.location?.locationId);
     bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
     String value = isVirtual ? locationId : locationText;
     bool isValueVisible = AppString.isStringNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
@@ -416,7 +416,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       );
   }
 
-  Widget _eventPrivacyDetail() {
+  Widget? _eventPrivacyDetail() {
     String privacyText = (widget.event?.isGroupPrivate ?? false)
         ? Localization().getStringEx('panel.explore_detail.label.privacy.private.title', 'Private Event')!
         : Localization().getStringEx('panel.explore_detail.label.privacy.public.title', 'Public Event')!;
@@ -436,9 +436,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
   
   Widget? _eventPriceDetail() {
-    bool isFree = widget?.event?.isEventFree ?? false;
-    String priceText =isFree? "Free" : (widget?.event?.cost ?? "Free");
-    String? additionalDescription = isFree? widget?.event?.cost : null;
+    bool isFree = widget.event?.isEventFree ?? false;
+    String priceText =isFree? "Free" : (widget.event?.cost ?? "Free");
+    String? additionalDescription = isFree? widget.event?.cost : null;
     bool hasAdditionalDescription = AppString.isStringNotEmpty(additionalDescription);
     if ((priceText != null) && priceText.isNotEmpty) {
       return Semantics(
@@ -497,7 +497,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/chevron-left.png', excludeFromSemantics: true),),
-              Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.medium,
+              Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium,
                   fontSize: 16,
                   color: Styles().colors!.fillColorPrimary,
                   decoration: TextDecoration.underline,
@@ -509,7 +509,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreTags(){
-    if(widget?.event?.tags != null){
+    if(widget.event?.tags != null){
       List<String> capitalizedTags = widget.event!.tags!.map((entry)=>'${entry[0].toUpperCase()}${entry.substring(1)}').toList();
       return Padding(
         padding: const EdgeInsets.only(left: 30),
@@ -543,7 +543,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _exploreSubTitle() {
-    String? subTitle = widget?.event?.exploreSubTitle;
+    String? subTitle = widget.event?.exploreSubTitle;
     if (AppString.isStringEmpty(subTitle)) {
       return Container();
     }
@@ -643,10 +643,10 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   Widget _buildUrlButtons() {
     List<Widget> buttons = <Widget>[];
     
-    String? titleUrl = widget?.event?.titleUrl;
+    String? titleUrl = widget.event?.titleUrl;
     bool hasTitleUrl = AppString.isStringNotEmpty(titleUrl);
 
-    String? registrationUrl = widget?.event?.registrationUrl;
+    String? registrationUrl = widget.event?.registrationUrl;
     bool hasRegistrationUrl = AppString.isStringNotEmpty(registrationUrl);
 
     if (hasTitleUrl) {
@@ -690,14 +690,14 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     return (0 < buttons.length) ? Column(children: buttons) : Container(width: 0, height: 0);
   }
 
-  Widget _buildConvergeContent() {
-    int? eventConvergeScore = (widget?.event != null) ? widget?.event?.convergeScore : null;
-    String? eventConvergeUrl = (widget?.event != null) ? widget?.event?.convergeUrl : null;
+  Widget? _buildConvergeContent() {
+    int? eventConvergeScore = (widget.event != null) ? widget.event?.convergeScore : null;
+    String? eventConvergeUrl = (widget.event != null) ? widget.event?.convergeUrl : null;
     bool hasConvergeScore = (eventConvergeScore != null) && eventConvergeScore>0;
     bool hasConvergeUrl = !AppString.isStringEmpty(eventConvergeUrl);
     bool hasConvergeContent = hasConvergeScore || hasConvergeUrl;
 
-    return !hasConvergeContent? Container():
+    return hasConvergeContent?
       Column(
       children:<Widget>[
       _divider(),
@@ -705,7 +705,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
         ExploreConvergeDetailButton(eventConvergeScore: eventConvergeScore, eventConvergeUrl: eventConvergeUrl,)
       )
       ]
-    );
+    ) : null;
   }
 
   Widget _buildPreviewButtons(){
@@ -739,7 +739,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget _buildGroupButtons(){
-    return (AppString.isStringEmpty(widget.browseGroupId) || (widget?.event?.isGroupPrivate ?? false))? Container():
+    return (AppString.isStringEmpty(widget.browseGroupId) || (widget.event?.isGroupPrivate ?? false))? Container():
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           child:
@@ -798,12 +798,12 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onLocationDetailTapped() {
-    if((widget?.event?.isVirtual?? false) == true){
-      String? url = widget?.event?.location?.description;
+    if((widget.event?.isVirtual?? false) == true){
+      String? url = widget.event?.location?.description;
       if(AppString.isStringNotEmpty(url)) {
         _onTapWebButton(url, "Event Link ");
       }
-    } else if(widget?.event?.location?.latitude != null && widget?.event?.location?.longitude != null) {
+    } else if(widget.event?.location?.latitude != null && widget.event?.location?.longitude != null) {
       Analytics.instance.logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.event);
     }
@@ -819,7 +819,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     setState(() {
       _addToGroupInProgress = true;
     });
-    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget?.event?.id).then((value){
+    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.event?.id).then((value){
       setState(() {
         _addToGroupInProgress = true;
       });
@@ -829,7 +829,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _onTapPublish() async{
     Analytics.instance.logSelect(target: "Publish");
-    ExploreService().postNewEvent(widget?.event).then((String? eventId){
+    ExploreService().postNewEvent(widget.event).then((String? eventId){
         if(eventId!=null){
           AppToast.show("Event successfully created");
           Navigator.pop(context,eventId!=null);

@@ -82,10 +82,10 @@ class AppString {
     return value.replaceAll(RegExp(r'<[^>]*>'), '').replaceAll(RegExp(r'&[^;]+;'), ' ');
   }
 
-  static String? fullName(List<String> names) {
+  static String? fullName(List<String?> names) {
     String? fullName;
-    for (String name in names) {
-      if (0 < name.length) {
+    for (String? name in names) {
+      if ((name != null) && (0 < name.length)) {
         if (fullName == null) {
           fullName = '$name';
         }
@@ -714,7 +714,6 @@ class AppDeviceOrientation {
         case DeviceOrientation.landscapeLeft: return "landscapeLeft";
         case DeviceOrientation.landscapeRight: return "landscapeRight";
       }
-      return null;
   }
 
   static List<DeviceOrientation>? fromStrList(List<dynamic>? stringsList) {
