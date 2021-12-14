@@ -93,7 +93,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
         Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Expanded(child: 
-              Text(Localization().getStringEx('widget.gies.title', 'iMBA New student checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+              Text(Localization().getStringEx('widget.gies.title', 'iDegrees New Student Checklist'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
           ],),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
             Expanded(child: Container()),
