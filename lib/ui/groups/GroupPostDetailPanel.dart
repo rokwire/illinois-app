@@ -59,18 +59,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   GroupPost _post;
   GroupPost _focusedReply;
+  GroupPost _editingPost;
+  GroupPost _preparedReplyData;
+  String _selectedReplyId;
+  bool _editMainPost = false;
+  bool _loading = false;
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
   TextEditingController _mainPostController = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  String _selectedReplyId;
-  GroupPost _editingPost;
-  String _imageUrl;
-  bool _editMainPost = false;
-
-  bool _loading = false;
 
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
@@ -81,9 +80,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    _preparedReplyData = GroupPost();
     _post = widget.post;
     _focusedReply = widget.focusedReply;
-    _imageUrl = _post?.imageUrl;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -127,8 +126,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
               Column(children: [
                 Container(height: _sliverHeaderHeight ?? 0,),
-                _editMainPost || AppString.isStringNotEmpty(_imageUrl)?
-                    _buildImageSection(): Container(),
+                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
+                    _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
                 _buildPostContent(),
                 _buildPostEdit(),
             ],)),
@@ -437,62 +436,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                     fontSize: 16,
                                     fontFamily: Styles().fontFamilies.regular)))
                       ])),
-              Padding(
-                  padding: EdgeInsets.only(top: _isCreatePost ? 16 : 0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        _FontIcon(
-                            onTap: _onTapBold,
-                            buttonLabel: "Bold",
-                            iconPath: 'images/icon-bold.png'),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: _FontIcon(
-                                onTap: _onTapItalic,
-                                buttonLabel: "Italic",
-                                iconPath: 'images/icon-italic.png')),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: _FontIcon(
-                                onTap: _onTapUnderline,
-                                buttonLabel: "Underline",
-                                iconPath: 'images/icon-underline.png')),
-                        Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: Semantics(button: true, child:
-                              GestureDetector(
-                                onTap: _onTapEditLink,
-                                child: Text(
-                                    Localization().getStringEx(
-                                        'panel.group.detail.post.create.link.label',
-                                        'Link'),
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontFamily:
-                                            Styles().fontFamilies.medium)))))
-                      ])),
-              Padding(
-                  padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-                  child: TextField(
-                      controller: _bodyController,
-                      maxLines: 15,
-                      decoration: InputDecoration(
-                          hintText: (_isCreatePost ? Localization().getStringEx(
-                              "panel.group.detail.post.create.body.field.hint",
-                              "Write a Post ...") : Localization().getStringEx(
-                              "panel.group.detail.post.reply.create.body.field.hint",
-                              "Write a Reply ...")),
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Styles().colors.mediumGray,
-                                  width: 0.0))),
-                      style: TextStyle(
-                          color: Styles().colors.textBackground,
-                          fontSize: 16,
-                          fontFamily: Styles().fontFamilies.regular))),
+              _buildReplyTextField(),
+              _buildReplyImageSection(),
               Row(children: [
                 Flexible(
                     flex: 1,
@@ -517,6 +462,84 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         onTap: _onTapCancel))
               ])
             ])));
+  }
+
+  Widget _buildReplyImageSection(){
+    return Container(
+        child: Column(
+          children: [
+            _isCreatePost? Container():
+             Container(
+               padding: EdgeInsets.only(bottom: 12),
+               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false)) //TBD think for better way to prepare reply
+          ],
+        )
+    );
+  }
+
+  Widget _buildReplyTextField(){
+    return Container(
+      child: Column(
+        children: [
+          Padding(
+              padding: EdgeInsets.only(top: _isCreatePost ? 16 : 0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _FontIcon(
+                        onTap: _onTapBold,
+                        buttonLabel: "Bold",
+                        iconPath: 'images/icon-bold.png'),
+                    Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: _FontIcon(
+                            onTap: _onTapItalic,
+                            buttonLabel: "Italic",
+                            iconPath: 'images/icon-italic.png')),
+                    Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: _FontIcon(
+                            onTap: _onTapUnderline,
+                            buttonLabel: "Underline",
+                            iconPath: 'images/icon-underline.png')),
+                    Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: Semantics(button: true, child:
+                        GestureDetector(
+                            onTap: _onTapEditLink,
+                            child: Text(
+                                Localization().getStringEx(
+                                    'panel.group.detail.post.create.link.label',
+                                    'Link'),
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontFamily:
+                                    Styles().fontFamilies.medium)))))
+                  ])),
+          Padding(
+              padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
+              child: TextField(
+                  controller: _bodyController,
+                  maxLines: 15,
+                  decoration: InputDecoration(
+                      hintText: (_isCreatePost ? Localization().getStringEx(
+                          "panel.group.detail.post.create.body.field.hint",
+                          "Write a Post ...") : Localization().getStringEx(
+                          "panel.group.detail.post.reply.create.body.field.hint",
+                          "Write a Reply ...")),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Styles().colors.mediumGray,
+                              width: 0.0))),
+                  style: TextStyle(
+                      color: Styles().colors.textBackground,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular))),
+        ],
+      )
+    );
   }
 
   Widget _buildRepliesWidget(
@@ -826,7 +849,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = _replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: _imageUrl, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: _post.imageUrl, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _editMainPost = false;
       _setLoading(false);
@@ -839,6 +862,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (mounted) {
       setState(() {
         _editingPost = reply;
+        _preparedReplyData.imageUrl = reply?.imageUrl;
       });
       _bodyController.text = (reply ?? _post)?.body;
       _scrollToPostEdit();
@@ -907,6 +931,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_editingPost != null) {
       setState(() {
         _editingPost = null;
+        _preparedReplyData.imageUrl = null;
         _bodyController.text = '';
       });
     }
@@ -944,7 +969,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingPost != null) {
-      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, body: body, private: true);
+      String imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost.imageUrl;
+      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
@@ -960,7 +986,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         parentId = _post.id;
       }
       
-      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: _imageUrl); // TBD REMOVE TEST IMAGE
+      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: _preparedReplyData?.imageUrl);
       Groups().createPost(widget.group?.id, post).then((succeeded) {
         _onCreateFinished(succeeded);
       });
@@ -1099,43 +1125,47 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Image
-  Widget _buildImageSection() { //TBD localization
+  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton, showSlant = true}) { //TBD localization
     final double _imageHeight = 200;
-
+    String postImageUrl = post?.imageUrl;
     return Container(
         height: _imageHeight,
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(_imageUrl)
-              ? Positioned.fill(child: Image.network(_imageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
+          AppString.isStringNotEmpty(postImageUrl)
+              ? Positioned.fill(child: Image.network(postImageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
               : Container(),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
-          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
-          AppString.isStringNotEmpty(_imageUrl) && !_editMainPost
-            ? Container() :
-              Container(
-                  height: _imageHeight,
-                  child: Center(
-                      child: Semantics(
-                          label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
-                          hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
-                          button: true,
-                          excludeSemantics: true,
-                          child: ScalableSmallRoundedButton(
-                            maxLines: 2,
-                            label: Localization().getStringEx("panel.group.detail.post.add_image", "Add image"),
-                            textColor: Styles().colors.fillColorPrimary,
-                            onTap: _onTapAddImage,))))
+          Visibility( visible: showSlant,
+            child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
+          Visibility( visible: showSlant,
+            child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
+          AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
+            ? Container(
+                height: _imageHeight,
+                child: Center(
+                    child: Semantics(
+                        label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
+                        hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
+                        button: true,
+                        excludeSemantics: true,
+                        child: ScalableSmallRoundedButton(
+                          maxLines: 2,
+                          label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Change Image"), // TBD localize
+                          textColor: Styles().colors.fillColorPrimary,
+                          onTap: (){ _onTapAddImage(post);},
+                        )))):
+              Container()
         ]));
   }
 
-  void _onTapAddImage() async {
+  void _onTapAddImage(GroupPost post) async {
     Analytics.instance.logSelect(target: "Add Image");
     String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
     if (AppString.isStringNotEmpty(imageUrl)) {
+      post.imageUrl = imageUrl;
       if (mounted) {
+        //TBD notify
         setState(() {
-          _imageUrl = imageUrl;
         });
       }
     }
