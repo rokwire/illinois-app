@@ -825,8 +825,8 @@ class GroupPost {
   final DateTime? dateCreatedUtc;
   final DateTime? dateUpdatedUtc;
   final bool? private;
-  final String? imageUrl;
   final List<GroupPost>? replies;
+  String? imageUrl;
 
   GroupPost({this.id, this.parentId, this.member, this.subject, this.body, this.dateCreatedUtc, this.dateUpdatedUtc, this.private, this.imageUrl, this.replies});
 
