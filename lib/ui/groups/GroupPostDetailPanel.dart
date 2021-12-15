@@ -25,13 +25,16 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
+import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -64,7 +67,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   ScrollController _scrollController = ScrollController();
   String _selectedReplyId;
   GroupPost _editingPost;
-
+  String _imageUrl;
   bool _editMainPost = false;
 
   bool _loading = false;
@@ -80,6 +83,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _post = widget.post;
     _focusedReply = widget.focusedReply;
+    _imageUrl = _post?.imageUrl;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -122,6 +126,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           Stack(alignment: Alignment.topCenter, children: [
             SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
               Column(children: [
+                Container(height: _sliverHeaderHeight ?? 0,),
+                _editMainPost || AppString.isStringNotEmpty(_imageUrl)?
+                    _buildImageSection(): Container(),
                 _buildPostContent(),
                 _buildPostEdit(),
             ],)),
@@ -283,7 +290,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Padding(
                   padding: EdgeInsets.only(
                       left: _outerPadding,
-                      top: _sliverHeaderHeight ?? 0,
+                      top: 0,
                       right: _outerPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,7 +826,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = _replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: _imageUrl, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _editMainPost = false;
       _setLoading(false);
@@ -953,7 +960,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         parentId = _post.id;
       }
       
-      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true);
+      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: _imageUrl); // TBD REMOVE TEST IMAGE
       Groups().createPost(widget.group?.id, post).then((succeeded) {
         _onCreateFinished(succeeded);
       });
@@ -1089,6 +1096,50 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies.regular)))
         ]);
+  }
+
+  //Image
+  Widget _buildImageSection() { //TBD localization
+    final double _imageHeight = 200;
+
+    return Container(
+        height: _imageHeight,
+        color: Styles().colors.background,
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          AppString.isStringNotEmpty(_imageUrl)
+              ? Positioned.fill(child: Image.network(_imageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
+              : Container(),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53)),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30)),
+          AppString.isStringNotEmpty(_imageUrl) && !_editMainPost
+            ? Container() :
+              Container(
+                  height: _imageHeight,
+                  child: Center(
+                      child: Semantics(
+                          label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
+                          hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
+                          button: true,
+                          excludeSemantics: true,
+                          child: ScalableSmallRoundedButton(
+                            maxLines: 2,
+                            label: Localization().getStringEx("panel.group.detail.post.add_image", "Add image"),
+                            textColor: Styles().colors.fillColorPrimary,
+                            onTap: _onTapAddImage,))))
+        ]));
+  }
+
+  void _onTapAddImage() async {
+    Analytics.instance.logSelect(target: "Add Image");
+    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    if (AppString.isStringNotEmpty(imageUrl)) {
+      if (mounted) {
+        setState(() {
+          _imageUrl = imageUrl;
+        });
+      }
+    }
+    Log.d("Image Url: $imageUrl");
   }
 
   void _onTapOkLink(int startPosition, int endPosition) {
