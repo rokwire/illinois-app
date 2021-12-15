@@ -1197,6 +1197,7 @@ class GroupReplyCard extends StatefulWidget {
 }
 
 class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListener{
+  static const double _smallImageSize = 64;
 
   @override
   void initState() {
@@ -1246,25 +1247,44 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                             padding: EdgeInsets.only(left: 10, top: 3),
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath, excludeFromSemantics: true,) : Container())))))))
               ]),
-              Semantics( child:
-              Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Html(data: bodyText, style: {
-                    "body": Style(
-                        color: Styles().colors.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies.regular,
-                        fontSize: FontSize(16),
-                        maxLines: 3000,
-                        textOverflow: TextOverflow.ellipsis,
-                        margin: EdgeInsets.zero
-                    ),
-                    "span": Style(
-                        color: Styles().colors.blackTransparent018,
-                        fontFamily: Styles().fontFamilies.regular,
-                        fontSize: FontSize(16),
-                        maxLines: 1,
-                        textOverflow: TextOverflow.ellipsis)
-                  }, onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))),
+              Row(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: Container(
+                          child: Semantics( child:
+                          Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Html(
+                                data: bodyText,
+                                style: {
+                                "body": Style(
+                                    color: Styles().colors.fillColorPrimary,
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: FontSize(16),
+                                    maxLines: 3000,
+                                    textOverflow: TextOverflow.ellipsis,
+                                    margin: EdgeInsets.zero
+                                ),
+                                "span": Style(
+                                    color: Styles().colors.blackTransparent018,
+                                    fontFamily: Styles().fontFamilies.regular,
+                                    fontSize: FontSize(16),
+                                    maxLines: 1,
+                                    textOverflow: TextOverflow.ellipsis)
+                                },
+                                onLinkTap: (url, context, attributes, element) => _onLinkTap(url)))))),
+                  AppString.isStringEmpty(widget.reply?.imageUrl)? Container() :
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                        child: SizedBox(
+                          width: _smallImageSize,
+                          height: _smallImageSize,
+                          child: Image.network(widget.reply?.imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),)
+                  )
+                ],),
               Semantics( button: true, child:
                 GestureDetector(
                   onTap: widget.onCardTap ?? _onTapCard,
