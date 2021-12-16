@@ -756,7 +756,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 			if (_clLocationManager == nil) {
 				_clLocationManager = [[CLLocationManager alloc] init];
 				_clLocationManager.delegate = self;
-				[_clLocationManager requestAlwaysAuthorization];
+				[_clLocationManager requestWhenInUseAuthorization];
 			}
 		}
 		else {
