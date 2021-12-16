@@ -460,8 +460,9 @@ typedef NS_ENUM(NSInteger, InsideRegionSource) {
 
 - (bool)canMonitor {
 	return
-//		[CLLocationManager locationServicesEnabled] &&
-//		([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) &&
+		[CLLocationManager locationServicesEnabled] &&
+		/*(([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) ||
+		   ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse)) &&*/
 		[CLLocationManager isMonitoringAvailableForClass:self.clRegion.class];
 
 }

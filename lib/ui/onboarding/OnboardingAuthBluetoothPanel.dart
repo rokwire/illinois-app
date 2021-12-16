@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -30,6 +32,11 @@ class OnboardingAuthBluetoothPanel extends StatefulWidget with OnboardingPanel {
   OnboardingAuthBluetoothPanel({this.onboardingContext});
 
   _OnboardingAuthBluetoothPanelState createState() => _OnboardingAuthBluetoothPanelState();
+
+  @override
+  Future<bool> get onboardingCanDisplayAsync async {
+    return (await BluetoothServices().statusAsync == BluetoothStatus.PermissionNotDetermined);
+  }
 }
 
 class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPanel> {
@@ -118,14 +125,14 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
                     ScalableRoundedButton(
                       label: Localization().getStringEx(
                           'panel.onboarding.bluetooth.button.allow.title',
-                          'Share my location'),
+                          'Enable Bluetooth'),
                       hint: Localization().getStringEx(
                           'panel.onboarding.bluetooth.button.allow.hint',
                           ''),
                       borderColor: Styles().colors.fillColorSecondary,
                       backgroundColor: Styles().colors.background,
                       textColor: Styles().colors.fillColorPrimary,
-                      onTap: () => _requestBluetooth(context),
+                      onTap: () => _onEnableBluetooth(),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -161,24 +168,34 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
           ));
   }
 
-  void _requestBluetooth(BuildContext context) {
-
+  void _onEnableBluetooth() {
     Analytics.instance.logSelect(target: 'Enable Bluetooth') ;
 
-    BluetoothStatus authStatus = BluetoothServices().status;
-    if (authStatus == BluetoothStatus.PermissionNotDetermined) {
-      BluetoothServices().requestStatus().then((_){
-        _goNext();
-      });
+    //Android does not need for permission for user notifications
+    if (Platform.isAndroid) {
+      _goNext();
+    } else if (Platform.isIOS) {
+      _requestAuthorization();
     }
-    else if (authStatus == BluetoothStatus.PermissionDenied) {
-      String message = Localization().getStringEx('panel.onboarding.bluetooth.label.access_denied', 'You have already denied access to this app.');
-      showDialog(context: context, builder: (context) => _buildDialogWidget(context, message: message, pushNext: false));
-    }
-    else if (authStatus == BluetoothStatus.PermissionAllowed) {
-      String message = Localization().getStringEx('panel.onboarding.bluetooth.label.access_granted', 'You have already granted access to this app.');
-      showDialog(context: context, builder: (context) => _buildDialogWidget(context, message: message, pushNext: true));
-    }
+  }
+
+  void _requestAuthorization() {
+
+    BluetoothServices().statusAsync.then((BluetoothStatus authStatus) {
+      if (authStatus == BluetoothStatus.PermissionNotDetermined) {
+        BluetoothServices().requestStatus().then((_){
+          _goNext();
+        });
+      }
+      else if (authStatus == BluetoothStatus.PermissionDenied) {
+        String message = Localization().getStringEx('panel.onboarding.bluetooth.label.access_denied', 'You have already denied access to this app.');
+        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message: message, pushNext: false));
+      }
+      else if (authStatus == BluetoothStatus.PermissionAllowed) {
+        String message = Localization().getStringEx('panel.onboarding.bluetooth.label.access_granted', 'You have already granted access to this app.');
+        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message: message, pushNext: true));
+      }
+    });
   }
 
   Widget _buildDialogWidget(BuildContext context, {String message, bool pushNext}) {
@@ -210,13 +227,11 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
                 TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: message, selection:okTitle);
+                      Navigator.pop(context, true);
                       if (pushNext) {
-                        _goNext(replace : true);
+                        _goNext();
                       }
-                      else {
-                        _closeDialog(context);
-                      }
-                     },
+                    },
                     child: Text(okTitle))
               ],
             )
@@ -226,12 +241,14 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
     );
   }
 
-  void _closeDialog(BuildContext context) {
-    Navigator.pop(context, true);
-  }
-
-  void _goNext({bool replace = false}) {
-    Onboarding().next(context, widget, replace: replace);
+  void _goNext() {
+    Function onContinue = (widget.onboardingContext != null) ? widget.onboardingContext["onContinueAction"] : null;
+    if (onContinue != null) {
+      onContinue();
+    }
+    else {
+      Onboarding().next(context, widget);
+    }
   }
 
   void _goBack() {
