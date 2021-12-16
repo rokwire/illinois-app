@@ -56,21 +56,23 @@ class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttrib
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
-
-  GroupPost _post;
-  GroupPost _focusedReply;
-  GroupPost _editingPost;
-  GroupPost _preparedReplyData;
-  String _selectedReplyId;
-  bool _editMainPost = false;
+  //Default behaviour is create new Post
+  GroupPost _post; //Focused on Main post {Data Presentation}
+  GroupPost _focusedReply; //Focused on Reply {Data Presentation}
+  GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
+  GroupPost _preparedReplyData; //Data for New/Edit Reply {Data Edit/Create}
+  String _selectedReplyId; // Thread Id target for New Reply {Data Create}
+  bool _editMainPost = false; //Editing Mode for Main Post
   bool _loading = false;
+
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _bodyController = TextEditingController();
   TextEditingController _linkTextController = TextEditingController();
   TextEditingController _linkUrlController = TextEditingController();
-  TextEditingController _mainPostController = TextEditingController();
-  ScrollController _scrollController = ScrollController();
+  TextEditingController _mainPostController = TextEditingController(); //Editing Mode for Main Post
 
+  //Scroll and focus utils
+  ScrollController _scrollController = ScrollController();
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
@@ -628,25 +630,101 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     ));
   }
 
-  void _sortReplies(List<GroupPost> replies){
-    if(AppCollection.isCollectionNotEmpty(replies)) {
-      try {
-        replies.sort((post1, post2) =>
-            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
-      } catch (e) {}
-    }
+  //Image
+  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton, showSlant = true}) { //TBD localization
+    final double _imageHeight = 200;
+    String postImageUrl = post?.imageUrl;
+    return Container(
+        height: _imageHeight,
+        color: Styles().colors.background,
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          AppString.isStringNotEmpty(postImageUrl)
+              ? Positioned.fill(child: Image.network(postImageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
+              : Container(),
+          Visibility( visible: showSlant,
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
+          Visibility( visible: showSlant,
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
+          AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
+              ? Container(
+              height: _imageHeight,
+              child: Center(
+                  child: Semantics(
+                      label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
+                      hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
+                      button: true,
+                      excludeSemantics: true,
+                      child: ScalableSmallRoundedButton(
+                        maxLines: 2,
+                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Change Image"), // TBD localize
+                        textColor: Styles().colors.fillColorPrimary,
+                        onTap: (){ _onTapAddImage(post);},
+                      )))):
+          Container()
+        ]));
   }
 
-  void _onTapReplyCard(GroupPost reply){
-    Analytics().logSelect(target: 'Reply Card');
-    List<GroupPost> thread = [];
-    if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
-      thread.addAll(widget.replyThread);
-    }
-    if(_focusedReply!=null) {
-      thread.add(_focusedReply);
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
+  //Dialog
+  Widget _buildLinkDialog() {
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              Localization().getStringEx(
+                  'panel.group.detail.post.create.dialog.link.edit.header',
+                  'Edit Link'),
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Styles().colors.fillColorPrimary,
+                  fontFamily: Styles().fontFamilies.medium)),
+          Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(
+                  Localization().getStringEx(
+                      'panel.group.detail.post.create.dialog.link.text.label',
+                      'Link Text:'),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary))),
+          Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: TextField(
+                  controller: _linkTextController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(
+                      color: Styles().colors.textBackground,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular))),
+          Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text(
+                  Localization().getStringEx(
+                      'panel.group.detail.post.create.dialog.link.url.label',
+                      'Link URL:'),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular,
+                      color: Styles().colors.fillColorPrimary))),
+          Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: TextField(
+                  controller: _linkUrlController,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Styles().colors.mediumGray, width: 0.0))),
+                  style: TextStyle(
+                      color: Styles().colors.textBackground,
+                      fontSize: 16,
+                      fontFamily: Styles().fontFamilies.regular)))
+        ]);
   }
 
   List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
@@ -667,20 +745,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return visibleReplies;
   }
 
-  void _evalSliverHeaderHeight() {
-    double sliverHeaderHeight;
-    try {
-      final RenderObject renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
-        sliverHeaderHeight = renderBox.size.height;
-      }
-    } on Exception catch (e) {
-      print(e.toString());
+  //Tap Actions
+  void _onTapReplyCard(GroupPost reply){
+    Analytics().logSelect(target: 'Reply Card');
+    List<GroupPost> thread = [];
+    if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
+      thread.addAll(widget.replyThread);
     }
-
-    setState(() {
-      _sliverHeaderHeight = sliverHeaderHeight;
-    });
+    if(_focusedReply!=null) {
+      thread.add(_focusedReply);
+    }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
 
   void _onTapDeletePost() {
@@ -897,27 +972,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  GroupPost deepFindPost(List<GroupPost> posts, String id){
-    if(AppCollection.isCollectionEmpty(posts) || AppString.isStringEmpty(id)){
-      return null;
-    }
-
-    GroupPost result;
-    for(GroupPost post in posts){
-      if(post?.id == id){
-        result = post;
-        break;
-      } else {
-        result = deepFindPost(post.replies, id);
-        if(result!=null){
-          break;
-        }
-      }
-    }
-
-    return result;
-  }
-
   void _setLoading(bool loading) {
     if (mounted) {
       setState(() {
@@ -1021,6 +1075,29 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
+  void _clearSelectedReplyId() {
+    _selectedReplyId = null;
+  }
+
+  void _clearBodyControllerContent() {
+    _bodyController.text = '';
+  }
+
+  void _onTapAddImage(GroupPost post) async {
+    Analytics.instance.logSelect(target: "Add Image");
+    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    if (AppString.isStringNotEmpty(imageUrl)) {
+      post.imageUrl = imageUrl;
+      if (mounted) {
+        //TBD notify
+        setState(() {
+        });
+      }
+    }
+    Log.d("Image Url: $imageUrl");
+  }
+
+  //HTML Body input Actions
   void _onTapBold() {
     Analytics().logSelect(target: 'Bold');
     _wrapBodySelection('<b>', '</b>');
@@ -1062,116 +1139,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]);
   }
 
-  Widget _buildLinkDialog() {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              Localization().getStringEx(
-                  'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link'),
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Styles().colors.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies.medium)),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkTextController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkUrlController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular)))
-        ]);
-  }
-
-  //Image
-  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton, showSlant = true}) { //TBD localization
-    final double _imageHeight = 200;
-    String postImageUrl = post?.imageUrl;
-    return Container(
-        height: _imageHeight,
-        color: Styles().colors.background,
-        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(postImageUrl)
-              ? Positioned.fill(child: Image.network(postImageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
-              : Container(),
-          Visibility( visible: showSlant,
-            child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
-          Visibility( visible: showSlant,
-            child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
-          AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
-            ? Container(
-                height: _imageHeight,
-                child: Center(
-                    child: Semantics(
-                        label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
-                        hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
-                        button: true,
-                        excludeSemantics: true,
-                        child: ScalableSmallRoundedButton(
-                          maxLines: 2,
-                          label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Change Image"), // TBD localize
-                          textColor: Styles().colors.fillColorPrimary,
-                          onTap: (){ _onTapAddImage(post);},
-                        )))):
-              Container()
-        ]));
-  }
-
-  void _onTapAddImage(GroupPost post) async {
-    Analytics.instance.logSelect(target: "Add Image");
-    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
-    if (AppString.isStringNotEmpty(imageUrl)) {
-      post.imageUrl = imageUrl;
-      if (mounted) {
-        //TBD notify
-        setState(() {
-        });
-      }
-    }
-    Log.d("Image Url: $imageUrl");
-  }
-
   void _onTapOkLink(int startPosition, int endPosition) {
     Navigator.of(context).pop();
     if ((startPosition < 0) || (endPosition < 0)) {
@@ -1208,6 +1175,23 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         TextPosition(offset: (endPosition + firstValue.length)));
   }
 
+  //Scroll
+  void _evalSliverHeaderHeight() {
+    double sliverHeaderHeight;
+    try {
+      final RenderObject renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        sliverHeaderHeight = renderBox.size.height;
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+
+    setState(() {
+      _sliverHeaderHeight = sliverHeaderHeight;
+    });
+  }
+
   void _scrollToPostEdit() {
 
     BuildContext postEditContext = _postEditKey?.currentContext;
@@ -1229,12 +1213,35 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   }
 
-  void _clearSelectedReplyId() {
-    _selectedReplyId = null;
+  //Utils
+  GroupPost deepFindPost(List<GroupPost> posts, String id){
+    if(AppCollection.isCollectionEmpty(posts) || AppString.isStringEmpty(id)){
+      return null;
+    }
+
+    GroupPost result;
+    for(GroupPost post in posts){
+      if(post?.id == id){
+        result = post;
+        break;
+      } else {
+        result = deepFindPost(post.replies, id);
+        if(result!=null){
+          break;
+        }
+      }
+    }
+
+    return result;
   }
 
-  void _clearBodyControllerContent() {
-    _bodyController.text = '';
+  void _sortReplies(List<GroupPost> replies){
+    if(AppCollection.isCollectionNotEmpty(replies)) {
+      try {
+        replies.sort((post1, post2) =>
+            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
+      } catch (e) {}
+    }
   }
 
   String _replaceNewLineSymbols(String value) {
@@ -1246,6 +1253,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return value;
   }
 
+  //Getters
   bool _isEditVisible(GroupPost post) {
     return _isCurrentUserCreator(post);
   }
