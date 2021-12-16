@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [3.0.69] - 2021-12-16
 ### Changed
 - Request location services authorization in Onboarding2ExploreCampusPanel [#1141](https://github.com/rokwire/illinois-app/issues/1141).
 ### Added
