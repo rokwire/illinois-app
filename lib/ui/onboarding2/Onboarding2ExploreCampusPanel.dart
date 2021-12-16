@@ -19,6 +19,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/LocationServices.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
@@ -207,7 +208,24 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   void _goNext(BuildContext context) {
     Onboarding2().storeExploreCampusChoice(_toggled);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PersonalizePanel()));
+    _requestLocationPermissionsIfNeeded().then((_) {
+      if (mounted) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PersonalizePanel()));
+      }
+    });
+  }
+
+  Future<void> _requestLocationPermissionsIfNeeded() async {
+    if (_toggled) {
+      LocationServicesStatus status = await LocationServices.instance.status;
+      /* This seems nonsence:
+      if (status == LocationServicesStatus.ServiceDisabled) {
+        status = await LocationServices.instance.requestService();
+      }*/
+      if (status == LocationServicesStatus.PermissionNotDetermined) {
+        await LocationServices.instance.requestPermission();
+      }
+    }
   }
 
   void _goBack(BuildContext context) {

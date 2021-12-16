@@ -94,6 +94,10 @@ class BluetoothServices with Service implements NotificationsListener {
     return _status;
   }
 
+  Future<BluetoothStatus?> get statusAsync async {
+    return await _checkStatus();
+  }
+
   Future<BluetoothStatus?> _getStatus() async {
     if (Platform.isIOS) {
       return _bluetoothStatusFromString(await NativeCommunicator().queryBluetoothAuthorization('query'));
@@ -103,19 +107,19 @@ class BluetoothServices with Service implements NotificationsListener {
     }
   }
 
-  void _checkStatus() {
-    _getStatus().then((BluetoothStatus? status){
-      if (_status != status) {
-        _status = status;
-        NotificationService().notify(notifyStatusChanged, null);
-      }
-    });
+  Future<BluetoothStatus?> _checkStatus() async {
+    BluetoothStatus? status = await _getStatus();
+    if ((status != null) && (_status != status)) {
+      _status = status;
+      NotificationService().notify(notifyStatusChanged, null);
+    }
+    return status;
   }
 
   Future<BluetoothStatus?> requestStatus() async {
-    if (Platform.isIOS && (_status == BluetoothStatus.PermissionNotDetermined)) {
+    if (Platform.isIOS && (await _getStatus() == BluetoothStatus.PermissionNotDetermined)) {
       BluetoothStatus? status = _bluetoothStatusFromString(await NativeCommunicator().queryBluetoothAuthorization('request'));
-      if (_status != status) {
+      if ((status != null) && (_status != status)) {
         _status = status;
         NotificationService().notify(notifyStatusChanged, null);
       }

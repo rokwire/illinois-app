@@ -92,13 +92,12 @@ class LocationServices with Service implements NotificationsListener {
 
   Future<LocationServicesStatus?> requestService() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
-      _lastStatus = LocationServicesStatus.ServiceDisabled;
-    } else {
-      _lastStatus = await this.status;
+      await Geolocator.openLocationSettings();
     }
 
+    _lastStatus = await this.status;
     _updateLocationMonitor();
-    return status;
+    return _lastStatus;
   }
 
   Future<LocationServicesStatus?> requestPermission() async {

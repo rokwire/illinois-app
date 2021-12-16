@@ -206,7 +206,9 @@ void _requestAuthorization(BuildContext context) async {
                     onPressed: () {
                       Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
                       Navigator.of(context).pop();
-                      _goNext(context, replace : true);
+                      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+                        _goNext(context);
+                      }
                     },
                     child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
               ],
@@ -217,13 +219,13 @@ void _requestAuthorization(BuildContext context) async {
     );
   }
 
-  void _goNext(BuildContext context, {bool replace = false}) {
+  void _goNext(BuildContext context) {
     Function? onContinue = (onboardingContext != null) ? onboardingContext!["onContinueAction"] : null;
     if (onContinue != null) {
       onContinue();
     }
     else {
-      Onboarding().next(context, this, replace: replace);
+      Onboarding().next(context, this);
     }
   }
 
