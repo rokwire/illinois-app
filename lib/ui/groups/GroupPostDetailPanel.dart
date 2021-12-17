@@ -130,9 +130,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
               Column(children: [
                 Container(height: _sliverHeaderHeight ?? 0,),
-                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-                    _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
                 _buildPostContent(),
+                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
+                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
+                _buildRepliesSection(),
                 _buildPostEdit(),
             ],)),
             Visibility(
@@ -273,17 +274,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostContent() {
-    List<GroupPost> replies;
-    if (_focusedReply != null) {
-      replies = _generateFocusedThreadList();
-    }
-    else if (_editingPost != null) {
-      replies = [_editingPost];
-    }
-    else {
-      replies = _post?.replies;
-    }
-
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -381,11 +371,26 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               ])),
                     ],
                   )),
-              Padding(
-                  padding: EdgeInsets.only(
-                      bottom: _outerPadding),
-                  child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null))
+
             ])));
+  }
+
+  _buildRepliesSection(){
+    List<GroupPost> replies;
+    if (_focusedReply != null) {
+      replies = _generateFocusedThreadList();
+    }
+    else if (_editingPost != null) {
+      replies = [_editingPost];
+    }
+    else {
+      replies = _post?.replies;
+    }
+
+    return Padding(
+        padding: EdgeInsets.only(
+            bottom: _outerPadding),
+        child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null));
   }
   
   List<GroupPost> _generateFocusedThreadList(){
