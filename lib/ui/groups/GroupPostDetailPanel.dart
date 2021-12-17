@@ -30,6 +30,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -62,6 +63,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
   GroupPost _preparedReplyData; //Data for New/Edit Reply {Data Edit/Create}
   String _selectedReplyId; // Thread Id target for New Reply {Data Create}
+  String _modalImageUrl; // Image presentation
   bool _editMainPost = false; //Editing Mode for Main Post
   bool _loading = false;
 
@@ -265,7 +267,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           ]),
           Visibility(
               visible: _loading,
-              child: Center(child: CircularProgressIndicator()))
+              child: Center(child: CircularProgressIndicator())),
+          _createModalPhotoDialog()
         ]));
   }
 
@@ -585,6 +588,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
                 onIconTap: optionsFunctionTap,
+                onImageTap: (){_showModalImage(reply?.imageUrl);},
                 onCardTap: (){_onTapReplyCard(reply);},
             ))));
       if(reply?.id == focusedReplyId) {
@@ -725,6 +729,27 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies.regular)))
         ]);
+  }
+
+
+  Widget _createModalPhotoDialog(){
+    return _modalImageUrl!=null ? ModalImageDialog(
+        imageUrl: _modalImageUrl,
+        fit: BoxFit.scaleDown,
+        onClose: () {
+          Analytics.instance.logSelect(target: "Close");
+          _modalImageUrl = null;
+          setState(() {});
+        }
+    ) : Container();
+  }
+
+  void _showModalImage(String url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
   }
 
   List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
