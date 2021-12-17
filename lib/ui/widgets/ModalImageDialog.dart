@@ -21,8 +21,9 @@ import 'package:illinois/service/Styles.dart';
 class ModalImageDialog extends StatelessWidget{
   final String imageUrl;
   final GestureTapCallback onClose;
+  final BoxFit fit;
 
-  ModalImageDialog({this.imageUrl, this.onClose});
+  ModalImageDialog({this.imageUrl, this.onClose, this.fit = BoxFit.cover});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class ModalImageDialog extends StatelessWidget{
                     Expanded(
                       child: Container(
                         //margin: EdgeInsets.only(right: horizontalMargin + photoMargin, top: photoMargin),
-                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.cover,): Container(),
+                        child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: fit,): Container(),
                       ),
                     )
                   ],

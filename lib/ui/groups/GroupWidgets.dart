@@ -1038,8 +1038,9 @@ class GroupPostCard extends StatefulWidget {
 
   final GroupPost post;
   final Group group;
+  final Function onImageTap;
 
-  GroupPostCard({Key key, @required this.post, @required this.group}) :
+  GroupPostCard({Key key, @required this.post, @required this.group, this.onImageTap, }) :
     super(key: key);
 
   @override
@@ -1114,12 +1115,18 @@ class _GroupPostCardState extends State<GroupPostCard> {
                         AppString.isStringEmpty(imageUrl)? Container() :
                         Expanded(
                           flex: 1,
-                          child: Container(
-                                padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
-                                child: SizedBox(
-                                  width: _smallImageSize,
-                                  height: _smallImageSize,
-                                  child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),)
+                          child: GestureDetector(
+                            onTap: (){
+                              if(widget.onImageTap!=null){
+                                widget.onImageTap();
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                              child: SizedBox(
+                                width: _smallImageSize,
+                                height: _smallImageSize,
+                                child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),))
                           )
                     ],),
                     Container(
@@ -1189,8 +1196,9 @@ class GroupReplyCard extends StatefulWidget {
   final Function onIconTap;
   final Function onCardTap;
   final bool showRepliesCount;
+  final Function onImageTap;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1277,12 +1285,19 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   AppString.isStringEmpty(widget.reply?.imageUrl)? Container() :
                   Expanded(
                       flex: 1,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
-                        child: SizedBox(
+                      child:
+                      GestureDetector(
+                        onTap: (){
+                          if(widget.onImageTap!=null){
+                            widget.onImageTap();
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
+                          child: SizedBox(
                           width: _smallImageSize,
                           height: _smallImageSize,
-                          child: Image.network(widget.reply?.imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),)
+                           child: Image.network(widget.reply?.imageUrl, excludeFromSemantics: true, fit: BoxFit.fill,),),))
                   )
                 ],),
               Semantics( button: true, child:
