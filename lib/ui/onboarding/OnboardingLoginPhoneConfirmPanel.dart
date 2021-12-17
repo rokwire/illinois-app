@@ -148,7 +148,7 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                     child: Text(
                       AppString.getDefaultEmptyString(
-                          value: _verificationErrorMsg)!,
+                          _verificationErrorMsg),
                       style: TextStyle(
                           color: Colors.red,
                           fontSize: 14,

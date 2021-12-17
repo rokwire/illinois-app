@@ -143,10 +143,10 @@ class _HomeInterestsSelectionWidgetState extends State<HomeInterestsSelectionWid
     }
     int max = _allInterests!.length - 1;
     while (result.length < count) {
-      Random random = Random(DateTime.now()?.millisecondsSinceEpoch);
+      Random random = Random(DateTime.now().millisecondsSinceEpoch);
       int randomIndex = (random.nextInt(max));
       String interest = _allInterests![randomIndex];
-      bool userContainsInterest = Auth2().prefs?.hasPositiveTag(interest);
+      bool userContainsInterest = Auth2().prefs?.hasPositiveTag(interest) ?? false;
       bool resultContainsInterest = result.contains(interest);
 
       if (userContainsInterest || resultContainsInterest) {

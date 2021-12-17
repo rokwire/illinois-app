@@ -527,7 +527,7 @@ class FirebaseMessaging with Service implements NotificationsListener {
   }
 
   void _processRolesSubscriptions({Set<String?>? subscribedTopics}) {
-    Set<UserRole?>? roles = Auth2().prefs?.roles;
+    Set<UserRole>? roles = Auth2().prefs?.roles;
     for (UserRole role in UserRole.values) {
       String roleTopic = role.toString();
       bool roleSubscribed = (subscribedTopics != null) && subscribedTopics.contains(roleTopic);

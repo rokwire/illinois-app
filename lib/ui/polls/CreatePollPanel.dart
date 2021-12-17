@@ -442,13 +442,13 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       List<String> options = [];
       if(_optionsControllers?.isNotEmpty??false){
         for(TextEditingController optionController in _optionsControllers!){
-          options.add(optionController?.text?.toString());
+          options.add(optionController.text);
         }
       }
 
       //Poll
       Poll poll = Poll(
-        title: _questionController?.text?.toString(),
+        title: _questionController.text,
         options: options,
         settings: PollSettings(allowMultipleOptions: _selectedMultichoice, hideResultsUntilClosed: _selectedHideResult, allowRepeatOptions: _selectedRepeatVotes),
         creatorUserUuid: Auth2().accountId,
@@ -475,7 +475,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   bool _isValid(){
-    return AppString.isStringNotEmpty(_questionController?.text);//Question validation: Not empty Question
+    return AppString.isStringNotEmpty(_questionController.text);//Question validation: Not empty Question
 //           && (_optionsControllers?.where((controller)=>AppUtils.isStringNotEmpty(controller?.text))?.toList()?.isNotEmpty??false); //Options validation: At least one option
   }
 }
@@ -555,6 +555,6 @@ class _PollOptionViewState extends State<PollOptionView> {
   }
 
   _getCounterText() {
-    return sprintf(counterFormat, [widget.textController?.text?.length, widget.maxLength]);
+    return sprintf(counterFormat, [widget.textController?.text.length, widget.maxLength]);
   }
 }

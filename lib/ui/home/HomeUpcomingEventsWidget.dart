@@ -113,7 +113,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     }
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _loadEvents();
         }
@@ -154,7 +154,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
 
     if (Connectivity().isNotOffline && (_loadingEvents != true)) {
 
-      Set<String> userCategories = Set.from((Auth2().prefs?.interestCategories ?? []) as Iterable<dynamic>);
+      Set<String>? userCategories = (Auth2().prefs?.interestCategories != null) ? Set.from(Auth2().prefs!.interestCategories!) : null;
       if ((userCategories != null) && userCategories.isNotEmpty && (_availableCategories != null) && _availableCategories!.isNotEmpty) {
         userCategories = userCategories.intersection(_availableCategories!);
       }

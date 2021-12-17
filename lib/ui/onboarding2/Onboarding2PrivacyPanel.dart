@@ -407,7 +407,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
   Widget _buildPrivacyBadge(){
     return
       Semantics(
-        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ")! + _privacyLevel?.toString(),
+        label: Localization().getStringEx('panel.onboarding2.privacy.badge.privacy_level.title', "Privacy Level: ")! + _privacyLevel.toString(),
         excludeSemantics: true,
         child:Container(
           height: 60,
@@ -434,7 +434,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                           height: 50,
                           child:
                         Text(
-                          _privacyLevel?.toString()??"",
+                          _privacyLevel.toString(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 26,
@@ -492,7 +492,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                 Container(height: 6,),
                 PrivacyLevelSlider(
                   color: Styles().colors!.background,
-                  initialValue: _privacyLevel?.toDouble() ?? 1,
+                  initialValue: _privacyLevel.toDouble(),
                   onValueChanged: (){}),
               ],)
           ));
@@ -504,7 +504,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   String? get _privacyDescription{
     String? description = Localization().getStringEx('panel.onboarding2.privacy.description_short.unknown.title', "Unknown privacy level");
-    int privacyLevel = _privacyLevel ?? -1;
+    int privacyLevel = _privacyLevel;
     switch(privacyLevel){
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.1.title', "Browse privately");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_short.2.title', "Explore privately ");
@@ -517,7 +517,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
   String? get _privacyLongDescription{
     String? description = Localization().getStringEx('panel.onboarding2.privacy.description_long.unknown.title', "Unknown privacy level");
-    int privacyLevel = _privacyLevel ?? -1;
+    int privacyLevel = _privacyLevel;
     switch(privacyLevel){
       case 1 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.1.title', "Based on your answers, no personal information will be stored or shared. You can only browse information in the app.");
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.2.title', "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.");
@@ -528,14 +528,12 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
     return description;
   }
 
-  String? get _continueButtonLabel{
+  String get _continueButtonLabel{
     switch(_privacyLevel){
-      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing");
-          break;
-      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring");
-          break;
+      case 1 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_browsing.title', "Start browsing")!;
+      case 2 : return Localization().getStringEx('panel.onboarding2.privacy.button.start_exploring.title', "Start exploring")!;
     }
-    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level");
+    return Localization().getStringEx('panel.onboarding2.privacy.button.save_privacy.title', "Save privacy level")!;
   }
 
   void _goNext(BuildContext context) {

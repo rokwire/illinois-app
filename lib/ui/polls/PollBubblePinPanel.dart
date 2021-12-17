@@ -83,7 +83,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
     return int.tryParse(_pinString);
   }
 
-  bool _isDigit(String text) {
+  bool _isDigit(String? text) {
     RegExpMatch? match = (text != null) ? _digitRegExp.firstMatch(text) : null;
     return (match != null) && (match.start == 0) && (match.end == 1);
   }
@@ -221,7 +221,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
 
   Widget _buildPinField(TextEditingController controller, FocusNode focusNode, FocusNode? prevFocusNode, FocusNode? nextFocusNode){
     Function nextCallBack = (){
-      if(_isDigit(controller?.value?.text)){
+      if(_isDigit(controller.value.text)){
         if(nextFocusNode != null) {
           nextFocusNode.requestFocus();
         }
@@ -317,7 +317,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           Navigator.of(context).pop(poll);
         }
       }).catchError((e){
-        AppAlert.showDialogResult(context, e.toString() ?? Localization().getStringEx('panel.poll_pin_bouble.unknown_error_description', 'Unknown error occured'));
+        AppAlert.showDialogResult(context, e.toString());
       }).whenComplete((){
         setState(() {
           _loading = false;

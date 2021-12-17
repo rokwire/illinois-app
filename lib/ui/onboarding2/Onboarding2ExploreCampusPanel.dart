@@ -36,7 +36,7 @@ class Onboarding2ExploreCampusPanel extends StatefulWidget{
 }
 
 class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampusPanel> {
-  bool? _toggled = false;
+  bool _toggled = false;
 
   @override
   void initState() {
@@ -202,7 +202,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   void _onToggleTap(){
     setState(() {
-      _toggled = !_toggled!;
+      _toggled = !_toggled;
     });
   }
 
@@ -217,7 +217,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   Future<void> _requestLocationPermissionsIfNeeded() async {
     if (_toggled) {
-      LocationServicesStatus status = await LocationServices.instance.status;
+      LocationServicesStatus? status = await LocationServices.instance.status;
       /* This seems nonsence:
       if (status == LocationServicesStatus.ServiceDisabled) {
         status = await LocationServices.instance.requestService();

@@ -713,45 +713,45 @@ class _SettingsAddIlliniCashPanelState
   }
 
   bool get _isUinValid{
-    return (_uinController?.text ?? "").isNotEmpty;
+    return (_uinController.text).isNotEmpty;
   }
 
   bool get _isFirstNameValid{
-    return (_firstNameController?.text ?? "").isNotEmpty;
+    return (_firstNameController.text).isNotEmpty;
   }
 
   bool get _isLastNameValid{
-    return (_lastNameController?.text ?? "").isNotEmpty;
+    return (_lastNameController.text).isNotEmpty;
   }
 
   bool get _isEmailValid{
-    String email = _emailController?.text ?? "";
+    String email = _emailController.text;
     return (email).isNotEmpty && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(email);
   }
 
   bool get _isCCValid{
-    return isCardValidNumber(_ccNumber ?? "", checkLength: true);
+    return isCardValidNumber(_ccNumber, checkLength: true);
   }
 
   String get _ccNumber{
-    return _ccController?.text?.replaceAll(' ', '');
+    return _ccController.text.replaceAll(' ', '');
   }
 
   bool get _isExpiryValid{
-    return _expiryDate?.length == 4;
+    return _expiryDate.length == 4;
   }
 
   String get _expiryDate{
-    return _expiryController?.text?.replaceAll('/', '');
+    return _expiryController.text.replaceAll('/', '');
   }
 
   bool get _isCvvValid{
-    int cvvLenght = _cvvNumber?.length ?? 0;
+    int cvvLenght = _cvvNumber.length;
     return (3 <= cvvLenght) && (cvvLenght <= 4);
   }
 
   String get _cvvNumber{
-    return _cvvController?.text;
+    return _cvvController.text;
   }
 
   bool get _isAmountValid{
@@ -761,7 +761,7 @@ class _SettingsAddIlliniCashPanelState
   }
 
   double? get _amountInDolars{
-    return double.tryParse(_amountController?.text?.replaceAll('\$', '')?.replaceAll(',', '') ?? '');
+    return double.tryParse(_amountController.text.replaceAll('\$', '').replaceAll(',', ''));
   }
 
   void _validate(){

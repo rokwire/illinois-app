@@ -206,7 +206,7 @@ void _requestAuthorization(BuildContext context) async {
                     onPressed: () {
                       Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
                       Navigator.of(context).pop();
-                      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+                      if (permissionStatus == PermissionStatus.granted) {
                         _goNext(context);
                       }
                     },

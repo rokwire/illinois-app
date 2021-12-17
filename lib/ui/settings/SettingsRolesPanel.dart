@@ -33,7 +33,7 @@ class SettingsRolesPanel extends StatefulWidget {
 }
 
 class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
-  Set<UserRole?>? _selectedRoles;
+  Set<UserRole>? _selectedRoles;
 
   Timer? _saveRolesTimer;
 

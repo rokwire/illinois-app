@@ -154,19 +154,15 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   List<DropdownMenuItem<dynamic>>? _buildDropDownItems() {
-    int categoriesCount = _geoFenceRegions?.length ?? 0;
-    if (categoriesCount == 0) {
-      return null;
-    }
-    return _geoFenceRegions!.map((GeoFenceRegion geofence) {
+    return _geoFenceRegions?.map((GeoFenceRegion geofence) {
       return DropdownMenuItem<dynamic>(
         value: geofence,
         child: BlockSemantics(blocking: true, child:
-        Semantics(label:geofence?.name,
+        Semantics(label:geofence.name,
           hint: Localization().getStringEx("panel.create_stadium_poll.geofence_choser_option.hint","Double tap to select region"),
           excludeSemantics: true, button:false,child:
           Text(
-            geofence?.name!,
+            geofence.name ?? '',
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular)
         ),
       )));
@@ -482,13 +478,13 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
       List<String> options = [];
       if(_optionsControllers?.isNotEmpty??false){
         for(TextEditingController optionController in _optionsControllers!){
-          options.add(optionController?.text?.toString());
+          options.add(optionController.text);
         }
       }
 
       //Poll
       Poll poll = Poll(
-        title: _questionController?.text?.toString(),
+        title: _questionController.text,
         options: options,
         settings: PollSettings(
           allowMultipleOptions: _selectedMultichoice,
@@ -510,7 +506,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
         Navigator.pop(context);
       }).catchError((e) {
         Log.e('Failed to create poll:');
-        Log.e(e.toString() ?? 'Unknown error occured');
+        Log.e(e.toString());
         AppAlert.showDialogResult(context, Localization().getStringEx('panel.create_stadium_poll.error.create_poll_failed.text', 'Failed to create stadium poll.'));
       }).whenComplete(() {
         setState(() {
@@ -525,12 +521,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     if (_selectedGeofence == null) {
       return Localization().getStringEx('panel.create_stadium_poll.not_valid.geofence.msg', "Please, select value for Geofence!");
     }
-    if (AppString.isStringEmpty(_questionController?.text)) {
+    if (AppString.isStringEmpty(_questionController.text)) {
       return Localization().getStringEx('panel.create_stadium_poll.not_valid.question.msg', "Please, fill value for 'Question'!");
     }
     if (AppCollection.isCollectionNotEmpty(_optionsControllers)) {
       for (TextEditingController optionController in _optionsControllers!) {
-        if (AppString.isStringEmpty(optionController.text?.toString())) {
+        if (AppString.isStringEmpty(optionController.text)) {
           return Localization().getStringEx('panel.create_stadium_poll.not_valid.option.msg', "Please, provide value for each option!");
         }
       }

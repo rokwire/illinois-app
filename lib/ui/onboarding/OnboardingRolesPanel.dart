@@ -37,7 +37,7 @@ class OnboardingRolesPanel extends StatefulWidget with OnboardingPanel {
 }
 
 class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
-  Set<UserRole?>? _selectedRoles;
+  Set<UserRole>? _selectedRoles;
   bool _updating = false;
 
   bool get _allowNext => _selectedRoles != null && _selectedRoles!.isNotEmpty;
@@ -89,7 +89,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     iconPath: 'images/icon-persona-student-normal.png',
                     selectedIconPath: 'images/icon-persona-student-selected.png',
                     selectedBackgroundColor: Styles().colors!.fillColorSecondary,
-                    selected: (_selectedRoles!.contains(UserRole.student)),
+                    selected: _selectedRoles?.contains(UserRole.student) ?? false,
                     data: UserRole.student,
                     sortOrder: 1,
                     onTap: _onRoleGridButton,
@@ -101,7 +101,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     iconPath: 'images/icon-persona-athletics-normal.png',
                     selectedIconPath: 'images/icon-persona-athletics-selected.png',
                     selectedBackgroundColor: Styles().colors!.accentColor2,
-                    selected: _selectedRoles!.contains(UserRole.fan),
+                    selected: _selectedRoles?.contains(UserRole.fan) ?? false,
                     data: UserRole.fan,
                     sortOrder: 3,
                     onTap: _onRoleGridButton,
@@ -114,7 +114,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     selectedIconPath: 'images/icon-persona-alumni-selected.png',
                     selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles!.contains(UserRole.alumni)),
+                    selected:_selectedRoles?.contains(UserRole.alumni) ?? false,
                     data: UserRole.alumni,
                     sortOrder: 5,
                     onTap: _onRoleGridButton,
@@ -127,7 +127,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     selectedIconPath: 'images/icon-persona-resident-selected.png',
                     selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles!.contains(UserRole.resident)),
+                    selected:_selectedRoles?.contains(UserRole.resident) ?? false,
                     data: UserRole.resident,
                     sortOrder: 7,
                     onTap: _onRoleGridButton,
@@ -141,7 +141,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     iconPath: 'images/icon-persona-visitor-normal.png',
                     selectedIconPath: 'images/icon-persona-visitor-selected.png',
                     selectedBackgroundColor: Styles().colors!.fillColorSecondary,
-                    selected: (_selectedRoles!.contains(UserRole.visitor)),
+                    selected: _selectedRoles?.contains(UserRole.visitor) ?? false,
                     data: UserRole.visitor,
                     sortOrder: 2,
                     onTap: _onRoleGridButton,
@@ -153,7 +153,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     iconPath: 'images/icon-persona-employee-normal.png',
                     selectedIconPath: 'images/icon-persona-employee-selected.png',
                     selectedBackgroundColor: Styles().colors!.accentColor3,
-                    selected: (_selectedRoles!.contains(UserRole.employee)),
+                    selected: _selectedRoles?.contains(UserRole.employee) ?? false,
                     data: UserRole.employee,
                     sortOrder: 4,
                     onTap: _onRoleGridButton,
@@ -165,7 +165,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     iconPath: 'images/icon-persona-parent-normal.png',
                     selectedIconPath: 'images/icon-persona-parent-selected.png',
                     selectedBackgroundColor: Styles().colors!.fillColorSecondary,
-                    selected: (_selectedRoles!.contains(UserRole.parent)),
+                    selected: _selectedRoles?.contains(UserRole.parent) ?? false,
                     data: UserRole.parent,
                     sortOrder: 6,
                     onTap: _onRoleGridButton,
@@ -178,7 +178,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                     selectedIconPath: 'images/icon-persona-alumni-selected.png',
                     selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                     selectedTextColor: Colors.white,
-                    selected:(_selectedRoles!.contains(UserRole.gies)),
+                    selected:_selectedRoles?.contains(UserRole.gies) ?? false,
                     data: UserRole.gies,
                     sortOrder: 8,
                     onTap: _onRoleGridButton,
@@ -221,11 +221,11 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
 
   void _onRoleGridButton(RoleGridButton button) {
 
-    if (button != null) {
+    if ((button.data is UserRole) && (_selectedRoles != null)) {
 
-      UserRole? role = button.data as UserRole?;
+      UserRole role = button.data;
 
-      Analytics.instance.logSelect(target: "Role: " + role.toString());
+      Analytics.instance.logSelect(target: "Role: $role" + role.toString());
       
         if (_selectedRoles!.contains(role)) {
           _selectedRoles!.remove(role);

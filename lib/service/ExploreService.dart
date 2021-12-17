@@ -516,7 +516,7 @@ class ExploreService with Service implements NotificationsListener {
     return events;
   }
 
-  static Set<String>? _targetAudienceFromUserRoles(Set<UserRole?>? roles) {
+  static Set<String>? _targetAudienceFromUserRoles(Set<UserRole>? roles) {
     if (roles == null || roles.isEmpty) {
       return null;
     }

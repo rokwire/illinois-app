@@ -112,7 +112,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
    return contentList;
   }
 
-  Widget _buildCommandEntry({required String title, String? description, void Function() onTap}) {
+  Widget _buildCommandEntry({required String title, String? description, void Function()? onTap}) {
     return Semantics(container: true, button: true, child:
       InkWell(onTap: onTap, child:
         Container(

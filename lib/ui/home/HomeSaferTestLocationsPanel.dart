@@ -27,7 +27,7 @@ class HomeSaferTestLocationsPanel extends StatefulWidget {
 
 class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPanel>{
   
-  List<HealthServiceLocation?>? _locations;
+  List<HealthServiceLocation>? _locations;
   Core.Position? _currentLocation;
   bool? _loadingLocations;
   String? _statusString;
@@ -35,7 +35,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
   @override
   void initState() {
     _loadingLocations = true;
-    _loadLocations().then((List<HealthServiceLocation?>? locations) {
+    _loadLocations().then((List<HealthServiceLocation>? locations) {
       if (mounted) {
         if (locations == null) {
           setState(() {
@@ -123,17 +123,17 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       ],),);
   }
 
-  Future<List<HealthServiceLocation?>?> _loadLocations() async {
+  Future<List<HealthServiceLocation>?> _loadLocations() async {
     String? contentUrl = Config().contentUrl;
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
       Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
+      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response!.body)) : null;
     }
     return null;
   }
 
-  Future<void> _sortLocations(List<HealthServiceLocation?> locations) async {
+  Future<void> _sortLocations(List<HealthServiceLocation>? locations) async {
     
     if ((locations != null) && (1 < locations.length)) {
       
@@ -151,10 +151,10 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       // Sort by current location, if available
       if (_currentLocation != null) {
         locations.sort((fistLocation, secondLocation) {
-          if ((fistLocation!.latitude != null) && (fistLocation.longitude != null)) {
-            if ((secondLocation!.latitude != null) && (secondLocation.longitude != null)) {
-              double firstDistance = AppLocation.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude!, _currentLocation!.longitude!);
-              double secondDistance = AppLocation.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude!, _currentLocation!.longitude!);
+          if ((fistLocation.latitude != null) && (fistLocation.longitude != null)) {
+            if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
+              double firstDistance = AppLocation.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double secondDistance = AppLocation.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
               return firstDistance.compareTo(secondDistance);
             }
             else {
@@ -162,7 +162,7 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
             }
           }
           else {
-            if ((secondLocation!.latitude != null) && (secondLocation.longitude != null)) {
+            if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
               return -1; // (fistLocation < secondLocation)
             }
             else {
@@ -345,11 +345,11 @@ class _TestLocation extends StatelessWidget {
   Widget _buildWorkTime(){
     List<HealthLocationDayOfOperation> items = [];
     HealthLocationDayOfOperation? period;
-    LinkedHashMap<int?,HealthLocationDayOfOperation> workingPeriods;
-    List<HealthLocationDayOfOperation?>? workTimes = testLocation?.daysOfOperation;
+    LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods;
+    List<HealthLocationDayOfOperation>? workTimes = testLocation?.daysOfOperation;
     if(workTimes?.isNotEmpty ?? false){
-      workingPeriods = Map<int?,HealthLocationDayOfOperation>.fromIterable(workTimes!, key: (period) => period?.weekDay) as LinkedHashMap<int?, HealthLocationDayOfOperation>;
-      items = workingPeriods?.values?.toList()?? [];
+      workingPeriods = Map<int?,HealthLocationDayOfOperation>.fromIterable(workTimes!, key: (period) => period?.weekDay) as LinkedHashMap<int, HealthLocationDayOfOperation>;
+      items = workingPeriods.values.toList();
       period = _determineTodayPeriod(workingPeriods);
       if ((period == null) || !period.isOpen) {
         period = _findNextPeriod(workingPeriods);  
@@ -403,11 +403,11 @@ class _TestLocation extends StatelessWidget {
     );
   }
 
-  String _getPeriodText(HealthLocationDayOfOperation period, LinkedHashMap<int?,HealthLocationDayOfOperation> workingPeriods){
+  String _getPeriodText(HealthLocationDayOfOperation? period, LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods){
     String? openText = Localization().getStringEx("panel.home.safer.test_locations.work_time.open_until","Open until");
     String? closedText = Localization().getStringEx("panel.home.safer.test_locations.work_time.closed_until","Closed until");
     if((period != null) && period.isOpen){ //This is the active Period
-      String? end = period?.closeTime;
+      String? end = period.closeTime;
       return "$openText $end";
     } else {
       //Closed until the next open period
@@ -417,13 +417,13 @@ class _TestLocation extends StatelessWidget {
     }
   }
 
-  HealthLocationDayOfOperation? _determineTodayPeriod(LinkedHashMap<int?,HealthLocationDayOfOperation> workingPeriods){
+  HealthLocationDayOfOperation? _determineTodayPeriod(LinkedHashMap<int,HealthLocationDayOfOperation>? workingPeriods){
     int currentWeekDay = DateTime.now().weekday;
     return workingPeriods!=null? workingPeriods[currentWeekDay] : null;
   }
 
   HealthLocationDayOfOperation? _findNextPeriod(
-      LinkedHashMap<int?, HealthLocationDayOfOperation> workingPeriods) {
+      LinkedHashMap<int, HealthLocationDayOfOperation>? workingPeriods) {
     if (workingPeriods != null && workingPeriods.isNotEmpty) {
       // First, check if the current day period will open today
       int currentWeekDay = DateTime.now().weekday;
@@ -444,7 +444,7 @@ class _TestLocation extends StatelessWidget {
       }
 
       //If there is no nex period - return the fist element
-      return workingPeriods?.values?.toList()[0];
+      return workingPeriods.values.toList()[0];
     }
     return null;
   }
@@ -480,7 +480,7 @@ class _TestLocation extends StatelessWidget {
     if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
       todayPeriod = _determineTodayPeriod(
           Map<int?, HealthLocationDayOfOperation>.fromIterable(
-              testLocation!.daysOfOperation!, key: (period) => period?.weekDay) as LinkedHashMap<int?, HealthLocationDayOfOperation>);
+              testLocation!.daysOfOperation!, key: (period) => period?.weekDay) as LinkedHashMap<int, HealthLocationDayOfOperation>);
     }
 
     return todayPeriod?.isOpen ?? false;
@@ -506,11 +506,11 @@ class HealthServiceLocation {
   final double? latitude;
   final double? longitude;
   final HealthLocationWaitTimeColor? waitTimeColor;
-  final List<HealthLocationDayOfOperation?>? daysOfOperation;
+  final List<HealthLocationDayOfOperation>? daysOfOperation;
   
   HealthServiceLocation({this.id, this.name, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
 
-  static HealthServiceLocation? fromJson(Map<String, dynamic> json) {
+  static HealthServiceLocation? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? HealthServiceLocation(
       id: json['_id'],
       name: json['name'],
@@ -567,26 +567,23 @@ class HealthServiceLocation {
     return address;
   }
 
-  static List<HealthServiceLocation?>? listFromJson(List<dynamic>? json) {
-    List<HealthServiceLocation?>? values;
+  static List<HealthServiceLocation>? listFromJson(List<dynamic>? json) {
+    List<HealthServiceLocation>? values;
     if (json != null) {
-      values = <HealthServiceLocation?>[];
+      values = <HealthServiceLocation>[];
       for (dynamic entry in json) {
-        HealthServiceLocation? value;
-        try { value = HealthServiceLocation.fromJson((entry as Map)?.cast<String, dynamic>()); }
-        catch(e) { print(e.toString()); }
-        values.add(value);
+        AppList.add(values, HealthServiceLocation.fromJson(AppJson.mapValue(entry)));
       }
     }
     return values;
   }
 
-  static List<dynamic>? listToJson(List<HealthServiceLocation> values) {
+  static List<dynamic>? listToJson(List<HealthServiceLocation>? values) {
     List<dynamic>? json;
     if (values != null) {
       json = <dynamic>[];
       for (HealthServiceLocation value in values) {
-        json.add(value?.toJson());
+        json.add(value.toJson());
       }
     }
     return json;
@@ -652,7 +649,7 @@ class HealthLocationDayOfOperation {
     openMinutes = _timeMinutes(openTime),
     closeMinutes = _timeMinutes(closeTime);
 
-  static HealthLocationDayOfOperation? fromJson(Map<String,dynamic> json){
+  static HealthLocationDayOfOperation? fromJson(Map<String,dynamic>? json){
     return (json != null) ? HealthLocationDayOfOperation(
       name: json["name"],
       openTime: json["open_time"],
@@ -683,15 +680,12 @@ class HealthLocationDayOfOperation {
     return false;
   }
 
-  static List<HealthLocationDayOfOperation?>? listFromJson(List<dynamic>? json) {
-    List<HealthLocationDayOfOperation?>? values;
+  static List<HealthLocationDayOfOperation>? listFromJson(List<dynamic>? json) {
+    List<HealthLocationDayOfOperation>? values;
     if (json != null) {
-      values = <HealthLocationDayOfOperation?>[];
+      values = <HealthLocationDayOfOperation>[];
       for (dynamic entry in json) {
-        HealthLocationDayOfOperation? value;
-        try { value = HealthLocationDayOfOperation.fromJson((entry as Map)?.cast<String, dynamic>()); }
-        catch(e) { print(e.toString()); }
-        values.add(value);
+        AppList.add(values, HealthLocationDayOfOperation.fromJson(AppJson.mapValue(entry)));
       }
     }
     return values;

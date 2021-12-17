@@ -344,7 +344,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   }
 
   void _didLogin(_) {
-    Navigator.of(context)?.popUntil((Route route){
+    Navigator.of(context).popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
   }
@@ -494,7 +494,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Verified as ")!,
                     style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
+                Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
                 Text(Auth2().account?.authType?.phone ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
               ]))));
       }
@@ -537,7 +537,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Text(Localization().getStringEx("panel.settings.home.email_login.message", "Logged in as ")!,
                     style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
-                Visibility(visible: hasFullName, child: Text(fullName ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
+                Visibility(visible: hasFullName, child: Text(fullName, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),),
                 Text(Auth2().account?.authType?.email ?? "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
               ]))));
       }
@@ -860,7 +860,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
             progressController(loading: true);
-            if(selectedValues?.contains(groupsSwitchTitle) ?? false){
+            if(selectedValues.contains(groupsSwitchTitle)){
               Groups().deleteUserData();
             }
             _deleteUserData().then((_){
@@ -1021,7 +1021,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
   void _loadVersionInfo() async {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
-        _versionName = packageInfo?.version;
+        _versionName = packageInfo.version;
       });
     });
   }

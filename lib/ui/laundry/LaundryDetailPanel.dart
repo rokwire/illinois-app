@@ -39,8 +39,8 @@ class LaundryDetailPanel extends StatefulWidget implements AnalyticsPageAttribut
   _LaundryDetailPanelState createState() => _LaundryDetailPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes {
-    return room?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes {
+    return room.analyticsAttributes;
   }
 }
 
@@ -132,7 +132,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                       Visibility(visible: Auth2().canFavorite,
                                           child: GestureDetector(
                                             onTap: () {
-                                              Analytics.instance.logSelect(target: "Favorite: ${widget.room?.title}");
+                                              Analytics.instance.logSelect(target: "Favorite: ${widget.room.title}");
                                               Auth2().prefs?.toggleFavorite(widget.room);
                                             },
                                             child: Semantics(
@@ -166,7 +166,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
                                     padding:
                                         EdgeInsets.only(top: 2, bottom: 14),
                                     child: Text(
-                                      widget.room?.title!,
+                                      widget.room.title ?? '',
                                       style: TextStyle(
                                           color: Styles().colors!.fillColorPrimary,
                                           fontSize: 24,
@@ -273,7 +273,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   Widget _buildLocationWidget() {
-    Location? laundryLocationDetails = widget.room?.location;
+    Location? laundryLocationDetails = widget.room.location;
     if (laundryLocationDetails == null) {
       return Container();
     }
@@ -361,8 +361,8 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   }
 
   void _load() {
-    LaundryService().getNumAvailable(widget.room?.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
-    LaundryService().getAppliances(widget.room?.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
+    LaundryService().getNumAvailable(widget.room.id).then((roomAvailability) => _onAvailabilityLoaded(roomAvailability));
+    LaundryService().getAppliances(widget.room.id).then((roomAppliances) => _onAppliancesLoaded(roomAppliances));
   }
 
   void _onAvailabilityLoaded(LaundryRoomAvailability? availability) {
@@ -409,8 +409,8 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imageAssetPath = _getImageAssetPath(appliance?.applianceType);
-    String? deviceName = _getDeviceName(appliance?.applianceType);
+    String imageAssetPath = _getImageAssetPath(appliance.applianceType);
+    String? deviceName = _getDeviceName(appliance.applianceType);
     return Container(
 //      height: 46,
       color: Colors.white,
@@ -423,7 +423,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(left: 12, right: 10),
               child: Text(
-                appliance?.label!,
+                appliance.label ?? '',
                 style: TextStyle(
                     color: Styles().colors!.textBackground,
                     fontSize: 16,
@@ -432,7 +432,7 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
             ),
             Expanded(child:
             Text(
-              appliance?.status!,
+              appliance.status ?? '',
               style: TextStyle(
                   color: Styles().colors!.textBackground,
                   fontSize: 16,

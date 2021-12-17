@@ -196,17 +196,17 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     );
   }
 
-  void _onTapLink(String url) {
+  void _onTapLink(String? url) {
     if (AppString.isStringNotEmpty(url)) {
 
-      Uri? uri = Uri.tryParse(url);
+      Uri? uri = Uri.tryParse(url!);
       Uri? giesUri = Uri.tryParse(GIES_URI);
       if ((giesUri != null) &&
           (giesUri.scheme == uri!.scheme) &&
           (giesUri.authority == uri.authority) &&
           (giesUri.path == uri.path))
       {
-        String? pageId = (uri.queryParameters != null) ? AppJson.stringValue(uri.queryParameters['page_id']) : null;
+        String? pageId = AppJson.stringValue(uri.queryParameters['page_id']);
         _pushPage(_getPage(id: pageId));
       }
       else if (AppUrl.launchInternal(url)) {
@@ -352,7 +352,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     if ((_pages != null) && _pages!.isNotEmpty) {
       for (dynamic page in _pages!) {
         if (page is Map) {
-          String? pageId = (page != null) ? AppJson.stringValue(page['id']) : null;
+          String? pageId = AppJson.stringValue(page['id']);
           if (pageId != null) {
             return pageId;
           }
@@ -406,7 +406,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     Storage().giesCompletedPages = null;
   }
 
-  static bool _pageCanComplete(Map page) {
+  static bool _pageCanComplete(Map? page) {
     List<dynamic>? buttons = (page != null) ? AppJson.listValue(page['buttons']) : null;
     if (buttons != null) {
       for (dynamic button in buttons) {
@@ -444,7 +444,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
     return (progressPages == null) || _completedPages!.containsAll(progressPages);
   }
 
-  String? _currentNotes(List<dynamic> notes) {
+  String? _currentNotes(List<dynamic>? notes) {
 
     Map<String, dynamic>? currentPage = _currentPage;
     String? currentPageId = (currentPage != null) ? AppJson.stringValue(currentPage['id']) : null;

@@ -242,7 +242,7 @@ class _OnboardingAuthBluetoothPanelState extends State<OnboardingAuthBluetoothPa
   }
 
   void _goNext() {
-    Function onContinue = (widget.onboardingContext != null) ? widget.onboardingContext["onContinueAction"] : null;
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
     if (onContinue != null) {
       onContinue();
     }

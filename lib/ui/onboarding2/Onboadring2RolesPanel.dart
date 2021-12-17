@@ -39,7 +39,7 @@ class Onboarding2RolesPanel extends StatefulWidget{
 }
 
 class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
-  Set<UserRole?>? _selectedRoles;
+  Set<UserRole>? _selectedRoles;
   bool _updating = false;
 
   bool get _allowNext => _selectedRoles != null && _selectedRoles!.isNotEmpty;
@@ -235,11 +235,11 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
 
   void _onRoleGridButton(RoleGridButton button) {
 
-    if (button != null) {
+    if ((button.data is UserRole) && (_selectedRoles != null)) {
 
-      UserRole? role = button.data as UserRole?;
+      UserRole role = button.data;
 
-      Analytics.instance.logSelect(target: "Role: " + role.toString());
+      Analytics.instance.logSelect(target: "Role: $role");
 
       if (_selectedRoles!.contains(role)) {
         _selectedRoles!.remove(role);

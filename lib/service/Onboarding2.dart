@@ -120,16 +120,16 @@ class Onboarding2 with Service{
     Storage().onBoardingImproveChoice = choice;
   }
 
-  bool? get getExploreCampusChoice{
-    return Storage().onBoardingExploreCampus;
+  bool get getExploreCampusChoice{
+    return Storage().onBoardingExploreCampus ?? false;
   }
 
-  bool? get getPersonalizeChoice{
-    return Storage().onBoardingPersonalizeChoice;
+  bool get getPersonalizeChoice{
+    return Storage().onBoardingPersonalizeChoice ?? false;
   }
 
-  bool? get getImproveChoice{
-    return Storage().onBoardingImproveChoice;
+  bool get getImproveChoice{
+    return Storage().onBoardingImproveChoice ?? false;
   }
 
   int get getPrivacyLevel{

@@ -49,7 +49,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   List<SportDefinition>? _menSports;
   List<SportDefinition>? _womenSports;
-  Set<String?>?  _sportPreferences;
+  Set<String>?  _sportPreferences;
 
   @override
   void initState() {
@@ -64,8 +64,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
       });
     }
 
-    _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
-    _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
+    _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName)))).toList() : null;
+    _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName)))).toList() : null;
     _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
 
     _setDisplayPreferredSports(Auth2().privacyMatch(_minPrivacyLevel));
@@ -97,8 +97,8 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
   void _refreshSports(){
     if (mounted) {
       setState(() {
-        _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
-        _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName))))?.toList() : null;
+        _menSports = widget.menSports ? Sports().menSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName)))).toList() : null;
+        _womenSports = widget.womenSports ? Sports().womenSports?.where((sport)=>(!_displayPreferredSports || (_sportPreferences != null && _sportPreferences!.contains(sport.shortName)))).toList() : null;
         _sportPreferences = Auth2().prefs?.sportsInterests ?? Set<String>();
       });
     }
@@ -298,7 +298,7 @@ class _HomePreferredSportsWidgetState extends State<HomePreferredSportsWidget> i
 
   void _onTapAthleticsSportCheckmark(SportDefinition sport) {
     Analytics.instance.logSelect(target: "HomePreferedSports TapSportCheckmark: "+ sport.name!);
-    AppSemantics.announceCheckBoxStateChange(context, _sportPreferences?.contains(sport.shortName) ?? false, sport?.customName);
+    AppSemantics.announceCheckBoxStateChange(context, _sportPreferences?.contains(sport.shortName) ?? false, sport.customName);
     Auth2().prefs?.toggleSportInterest(sport.shortName);
   }
 
