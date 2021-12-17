@@ -660,7 +660,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       excludeSemantics: true,
                       child: ScalableSmallRoundedButton(
                         maxLines: 2,
-                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Change Image"), // TBD localize
+                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                         textColor: Styles().colors.fillColorPrimary,
                         onTap: (){ _onTapAddImage(post);},
                       )))):
