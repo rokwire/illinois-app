@@ -83,7 +83,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
     if (name == Auth2UserPrefs.notifyInterestsChanged) {
       if (mounted) {
         setState(() {
-          _preferredCategories = Set.from((Auth2().prefs?.interestCategories ?? []) as Iterable<dynamic>);
+          _preferredCategories = (Auth2().prefs?.interestCategories != null) ? Set.from((Auth2().prefs!.interestCategories!)) : null;
         });
       }
     }
@@ -170,7 +170,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
 
   Widget _buildTabContent() {
     if (_selectedTab != null) {
-      switch (_selectedTab) {
+      switch (_selectedTab!) {
         case _InterestTab.Categories:
           return _buildCategoriesContent();
         case _InterestTab.Tags:
@@ -191,7 +191,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
       if (mounted) {
         setState(() {
           _categories = categories != null ? categories : [];
-          _preferredCategories = Set.from((Auth2().prefs?.interestCategories ?? []) as Iterable<dynamic>);
+          _preferredCategories = (Auth2().prefs?.interestCategories != null) ? Set.from((Auth2().prefs!.interestCategories!)) : null;
         });
       }
     });
@@ -268,7 +268,7 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
         _tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.all_tags', "ALL TAGS")!),
         _tagSearchMode ? Container() : _buildTagsList(_tags),
         !_tagSearchMode ? Container() : Text(Localization().getStringEx('panel.settings.manage_interests.list.search', "SEARCH")!),
-        !_tagSearchMode ? Container() : _buildTagsList(_filterTags(_textEditingController?.text)),
+        !_tagSearchMode ? Container() : _buildTagsList(_filterTags(_textEditingController.text)),
       ],
     );
   }
@@ -477,8 +477,6 @@ class _SettingsManageInterestsState extends State<SettingsManageInterestsPanel> 
   }
 
   void _selectTab(_InterestTab tab) {
-    if (tab == null) return;
-
     setState(() {
       _selectedTab = tab;
     });

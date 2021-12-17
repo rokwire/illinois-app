@@ -31,13 +31,13 @@ class RibbonButton extends StatelessWidget {
   final TextStyle? style;
   final double? height;
   final String? leftIcon;
-  final String icon;
+  final String? icon;
   final BuildContext? context;
   final String? hint;
   final Color backgroundColor;
 
   RibbonButton({
-    required this.label,
+    this.label,
     this.onTap,
     this.borderRadius = BorderRadius.zero,
     this.border,
@@ -89,7 +89,7 @@ class RibbonButton extends StatelessWidget {
   }
 
   Widget? getImage() {
-    return (icon != null) ? Image.asset(icon, excludeFromSemantics: true) : null;
+    return (icon != null) ? Image.asset(icon!, excludeFromSemantics: true) : null;
   }
 
   void anaunceChange() {}
@@ -108,7 +108,7 @@ class ToggleRibbonButton extends RibbonButton {
   final Color backgroundColor;
 
   ToggleRibbonButton ({
-    required this.label,
+    this.label,
     this.onTap,
     this.toggled = false,
     this.borderRadius = BorderRadius.zero,

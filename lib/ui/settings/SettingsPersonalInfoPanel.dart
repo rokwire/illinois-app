@@ -433,15 +433,16 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
       //split names
       List<String> splitNames = fullName.split(" ");
-      int namesLength = (splitNames?.length ?? 0);
+      int namesLength = (splitNames.length ?? 0);
       if(namesLength > 3){
         //Not sure if possible but handle the case
         //Everything after first and middle name will be last name containing spaces
         firstName = splitNames[0];
         middleName = splitNames[1];
+        lastName = "";
         splitNames.forEach((element) {
           if(splitNames.indexOf(element)>1){
-            lastName += "$element ";
+            lastName = lastName! + "$element ";
           }
         });
       } else if (namesLength == 3) {

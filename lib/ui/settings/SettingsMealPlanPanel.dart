@@ -203,12 +203,12 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             child: Row(
               children: <Widget>[
                 Image.asset(AppString.getDefaultEmptyString(
-                    value: iconSrc, defaultValue: 'images/icon-settings.png')!),
+                    iconSrc, defaultValue: 'images/icon-settings.png')),
                 Expanded(child:
                   Padding(
                     padding: EdgeInsets.only(left: 12),
                     child: Text(
-                      AppString.getDefaultEmptyString(title)!,
+                      AppString.getDefaultEmptyString(title),
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   )
@@ -309,7 +309,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             _DateLabel(label: Localization().getStringEx('panel.settings.meal_plan.label.start_date', 'Start Date'),),
             Container(width: 8,),
             Expanded(child: _DateValue(title: AppString.getDefaultEmptyString(
-                value: _getFormattedDate(_startDate)),
+                _getFormattedDate(_startDate)),
               label: Localization().getStringEx('panel.settings.meal_plan.button.start_date.title', 'Start Date'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.start_date.hint', ''),
               onTap: _onStartDateTap,))
@@ -320,7 +320,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             Container(width: 8,),
             Expanded(child: _DateValue(
               title: AppString.getDefaultEmptyString(
-                  value: _getFormattedDate(_endDate)),
+                  _getFormattedDate(_endDate)),
               label: Localization().getStringEx('panel.settings.meal_plan.button.end_date.title', 'End Date'),
               hint: Localization().getStringEx('panel.settings.meal_plan.button.end_date.hint', ''),
               onTap: _onEndDateTap,))
