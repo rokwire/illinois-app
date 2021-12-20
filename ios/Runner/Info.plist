@@ -58,9 +58,9 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Allow Illinois to access Media Library.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Allow Illinois to access Bluetooth.</string>
+	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Allow Illinois to access Bluetooth.</string>
+	<string>Your bluetooth will be used for the maps to scan for nearby beacons.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Save favorite events</string>
 	<key>NSCameraUsageDescription</key>
