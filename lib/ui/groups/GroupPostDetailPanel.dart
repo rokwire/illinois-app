@@ -130,9 +130,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
               Column(children: [
                 Container(height: _sliverHeaderHeight ?? 0,),
-                _buildPostContent(),
                 _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
                   _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
+                _buildPostContent(),
                 _buildRepliesSection(),
                 _buildPostEdit(),
             ],)),
@@ -289,50 +289,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Semantics(
-                          sortKey: OrdinalSortKey(2),
-                          container: true,
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
-                              child: Text(
-                                  AppString.getDefaultEmptyString(
-                                      value: _post?.member?.name ),
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies.medium,
-                                      fontSize: 20,
-                                      color: Styles()
-                                          .colors
-                                          .fillColorPrimary)))),
-                      Semantics(
-                          sortKey: OrdinalSortKey(3),
-                          container: true,
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
-                              child: Text(
-                                  AppString.getDefaultEmptyString(
-                                      value: _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies.medium,
-                                      fontSize: 16,
-                                      color: Styles()
-                                          .colors
-                                          .fillColorPrimary)))),
                       Visibility(visible: !_editMainPost,
-                        child: Semantics(
-                          container: true,
-                          child: Html(
-                            data: AppString.getDefaultEmptyString(value: _post?.body),
-                            style: {
-                              "body": Style(
-                                  color: Styles().colors.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies.regular,
-                                  fontSize: FontSize(20))
-                            },
-                            onLinkTap: (url, context, attributes, element) =>
-                              _onTapPostLink(url)))),
+                          child: Semantics(
+                              container: true,
+                              child: Html(
+                                  data: AppString.getDefaultEmptyString(value: _post?.body),
+                                  style: {
+                                    "body": Style(
+                                        color: Styles().colors.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies.regular,
+                                        fontSize: FontSize(20))
+                                  },
+                                  onLinkTap: (url, context, attributes, element) =>
+                                      _onTapPostLink(url)))),
                       Visibility(
                           visible: _editMainPost,
                           child: Column(
@@ -365,10 +334,42 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           textColor: Styles().colors.fillColorPrimary,
                                           backgroundColor: Styles().colors.white,
                                           onTap: _onTapSave)),
-                                  ])
+                                ])
 
 
                               ])),
+                      Semantics(
+                          sortKey: OrdinalSortKey(2),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      value: _post?.member?.name ),
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies.medium,
+                                      fontSize: 20,
+                                      color: Styles()
+                                          .colors
+                                          .fillColorPrimary)))),
+                      Semantics(
+                          sortKey: OrdinalSortKey(3),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      value: _post?.displayDateTime),
+                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies.medium,
+                                      fontSize: 16,
+                                      color: Styles()
+                                          .colors
+                                          .fillColorPrimary)))),
+
                     ],
                   )),
 
@@ -666,7 +667,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         maxLines: 2,
                         label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                         textColor: Styles().colors.fillColorPrimary,
-                        onTap: (){ _onTapAddImage(post);} 
+                        onTap: (){ _onTapAddImage(post);}
                       )))):
           Container()
         ]));
