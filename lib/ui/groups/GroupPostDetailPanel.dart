@@ -533,6 +533,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               child: TextField(
                   controller: _bodyController,
                   maxLines: 15,
+                  minLines: 1,
                   decoration: InputDecoration(
                       hintText: (_isCreatePost ? Localization().getStringEx(
                           "panel.group.detail.post.create.body.field.hint",
