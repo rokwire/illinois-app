@@ -82,13 +82,13 @@ class _DebugInboxUserInfoPanelState extends State<DebugInboxUserInfoPanel>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("User ID"),
-          Text(_info!.userId ?? ""),
+          Text(_info?.userId ?? ""),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Date Created"),
-          Text(_info!.dateCreated!.toIso8601String() ?? ""),
+          Text(_info?.dateCreated?.toIso8601String() ?? ""),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Date Updated"),
-          Text(_info!.dateUpdated!.toIso8601String() ?? ""),
+          Text(_info?.dateUpdated?.toIso8601String() ?? ""),
           Container(height: 1, margin: EdgeInsets.symmetric(vertical: 4), color: Styles().colors!.lightGray,),
           Text("Topics"),
           Wrap(
@@ -135,7 +135,7 @@ class InboxUserInfo{
 
   InboxUserInfo({this.userId, this.firebaseTokens, this.topics, this.dateCreated, this.dateUpdated});
 
-  static InboxUserInfo? fromJson(Map<String, dynamic> json) {
+  static InboxUserInfo? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxUserInfo(
       userId: json['user_id'],
       firebaseTokens: json['firebase_tokens']?.map((e) => FirebaseToken.fromJson(e))?.toList(),
@@ -153,7 +153,7 @@ class FirebaseToken{
   final DateTime? dateCreated;
   FirebaseToken({this.token, this.appPlatform, this.appVersion, this.dateCreated});
 
-  static FirebaseToken? fromJson(Map<String, dynamic> json) {
+  static FirebaseToken? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? FirebaseToken(
       token: json['token'] ?? "",
       appPlatform: json['app_platform'] ?? "",

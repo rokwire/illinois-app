@@ -35,7 +35,7 @@ class HorizontalDiningSpecials extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> offerWidgets = _createOffers();
-    bool hasOffers = offerWidgets != null && offerWidgets.isNotEmpty;
+    bool hasOffers = offerWidgets.isNotEmpty;
 
     return hasOffers
         ? Padding(
@@ -175,7 +175,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
 
   void _evalImageHeight() {
     try {
-      final RenderObject? renderBoxHtml = _keyHtml?.currentContext?.findRenderObject();
+      final RenderObject? renderBoxHtml = _keyHtml.currentContext?.findRenderObject();
       if (renderBoxHtml is RenderBox) {
         setState(() {
           _imageHeight = renderBoxHtml.size.height + _textPadding.top + _textPadding.bottom;

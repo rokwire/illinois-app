@@ -332,7 +332,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget? _exploreLocationDetail() {
     String? locationText = ExploreHelper.getLongDisplayLocation(widget.parentEvent, _locationData);
-    if (!(widget?.parentEvent?.isVirtual ?? false) && widget?.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
+    if (!(widget.parentEvent?.isVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
