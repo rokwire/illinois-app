@@ -131,7 +131,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Column(children: [
                 Container(height: _sliverHeaderHeight ?? 0,),
                 _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
+                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost || _isCreatePost): Container(),
                 _buildPostContent(),
                 _buildRepliesSection(),
                 _buildPostEdit(),
@@ -482,7 +482,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             _isCreatePost? Container():
              Container(
                padding: EdgeInsets.only(bottom: 12),
-               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false))],
+               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false, wrapContent: true))],
         )
     );
   }
@@ -640,11 +640,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Image
-  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton, showSlant = true}) { //TBD localization
+  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton = false, showSlant = true, wrapContent = false}) { //TBD localization
     final double _imageHeight = 200;
     String postImageUrl = post?.imageUrl;
     return Container(
-        height: _imageHeight,
+        constraints: BoxConstraints(
+          maxHeight: (postImageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
+        ),
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           AppString.isStringNotEmpty(postImageUrl)
@@ -656,7 +658,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
           AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
               ? Container(
-              height: _imageHeight,
               child: Center(
                   child: Semantics(
                       label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
