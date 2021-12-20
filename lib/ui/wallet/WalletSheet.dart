@@ -208,7 +208,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
 
   void _updateContentListCodes() {
     List<String> contentListCodes = _getContentListCodes();
-    if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
       });
