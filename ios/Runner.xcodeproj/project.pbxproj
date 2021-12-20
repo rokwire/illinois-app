@@ -59,7 +59,6 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
-		B6DED67F23A3AD40007D90E7 /* PollPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DED67E23A3AD40007D90E7 /* PollPlugin.m */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
 		BB7BF12F5D3356D25889D23A /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7B5BCF89DF9B7AC1FD247B /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
@@ -175,8 +174,6 @@
 		B6BDCD38242CCF5F002F7364 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B6BDCD3F242CDC89002F7364 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B6BDCD40242CDCA6002F7364 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/Localizable.strings; sourceTree = "<group>"; };
-		B6DED67D23A3AD40007D90E7 /* PollPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PollPlugin.h; sourceTree = "<group>"; };
-		B6DED67E23A3AD40007D90E7 /* PollPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PollPlugin.m; sourceTree = "<group>"; };
 		B6EA372223A7EF76001D78A5 /* Bluetooth+InaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bluetooth+InaUtils.h"; sourceTree = "<group>"; };
 		B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Bluetooth+InaUtils.m"; sourceTree = "<group>"; };
 		CE7B5BCF89DF9B7AC1FD247B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -331,8 +328,6 @@
 				2696995A22C38B4000B3290E /* AppDelegate.m */,
 				2696995B22C38B4000B3290E /* AppKeys.h */,
 				2696995922C38B4000B3290E /* AppKeys.m */,
-				B6DED67D23A3AD40007D90E7 /* PollPlugin.h */,
-				B6DED67E23A3AD40007D90E7 /* PollPlugin.m */,
 				268A628123A0E195004D7EE5 /* RegionMonitor.h */,
 				268A628023A0E195004D7EE5 /* RegionMonitor.m */,
 				266FA50123E0388B00F800F5 /* MapController.h */,
@@ -700,7 +695,6 @@
 				266FA50323E0388B00F800F5 /* MapController.m in Sources */,
 				2696996022C38C1D00B3290E /* main.m in Sources */,
 				2696995E22C38B4000B3290E /* AppDelegate.m in Sources */,
-				B6DED67F23A3AD40007D90E7 /* PollPlugin.m in Sources */,
 				26B3403A2331195C0031CF70 /* UILabel+InaMeasure.m in Sources */,
 				26FAB1CC22EB35C7008E987C /* NSDate+InaUtils.m in Sources */,
 				2696998022C3A14A00B3290E /* MapView.m in Sources */,

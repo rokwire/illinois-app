@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthBluetoothPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingGetStartedPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthLocationPanel.dart';
@@ -165,9 +164,6 @@ class Onboarding with Service implements NotificationsListener {
       else if (code == 'location_auth') {
         return OnboardingAuthLocationPanel(onboardingContext: context);
       }
-      else if (code == 'bluetooth_auth') {
-        return OnboardingAuthBluetoothPanel(onboardingContext: context);
-      }
       else if (code == 'roles') {
         return OnboardingRolesPanel(onboardingContext: context);
       }
@@ -205,9 +201,6 @@ class Onboarding with Service implements NotificationsListener {
     }
     else if (panel is OnboardingAuthLocationPanel) {
       return 'location_auth';
-    }
-    else if (panel is OnboardingAuthBluetoothPanel) {
-      return 'bluetooth_auth';
     }
     else if (panel is OnboardingRolesPanel) {
       return 'roles';

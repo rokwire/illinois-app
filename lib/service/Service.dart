@@ -21,7 +21,6 @@ import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Assets.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -96,7 +95,6 @@ class Services {
     AppDateTime(),
     Connectivity(),
     LocationServices(),
-    BluetoothServices(),
     DeepLink(),
 
     Storage(),

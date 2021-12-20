@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.70] - 2021-12-20
+### Changed
+- Removed Bluetooth support for Polls [#1146](https://github.com/rokwire/illinois-app/issues/1146).
+### Fixed
+- Fix bad concurrent Groups login API synchronisation [#1150](https://github.com/rokwire/illinois-app/issues/1150).
+- Acknowledged integer latitude/longitude when evaluating explore location distance.
+
 ## [3.0.69] - 2021-12-16
 ### Changed
 - Request location services authorization in Onboarding2ExploreCampusPanel [#1141](https://github.com/rokwire/illinois-app/issues/1141).
