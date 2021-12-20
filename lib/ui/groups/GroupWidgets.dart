@@ -225,7 +225,7 @@ class GroupMembershipAddButton extends StatelessWidget {
   final double             height;
   final EdgeInsetsGeometry padding;
   final bool               enabled;
-  
+
   GroupMembershipAddButton({
     this.title,
     this.onTap,
@@ -948,7 +948,7 @@ class GroupCard extends StatelessWidget {
 
   Widget _buildHeading() {
     List<Widget> leftContent = <Widget>[];
-    
+
     if (group?.currentUserAsMember?.status != null) {
       leftContent.add(
         Semantics(
@@ -998,7 +998,7 @@ class GroupCard extends StatelessWidget {
     if (leftContent.isNotEmpty) {
       content.add(Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: leftContent,)));
     }
-    
+
     if (rightContent.isNotEmpty) {
       if (leftContent.isEmpty) {
         content.add(Expanded(child: Container()));
@@ -1340,5 +1340,66 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (name == Groups.notifyGroupPostsUpdated) {
       setState(() {});
     }
+  }
+}
+
+class ModalImageDialog extends StatelessWidget{
+  final String imageUrl;
+  final GestureTapCallback onClose;
+  final BoxFit fit;
+
+  ModalImageDialog({this.imageUrl, this.onClose, this.fit = BoxFit.cover});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      GestureDetector(
+        onTap: onClose, //dismiss
+        child: Container(
+          color: Styles().colors.blackTransparent06,
+          child:Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+              // color: Styles().colors.blackTransparent06,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: GestureDetector(
+                    onTap: (){}, //Do not dismiss when tap the dialog
+                    child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            color: Styles().colors.fillColorPrimary,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: onClose,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(right: 10, top: 10),
+                                    child: Text('\u00D7',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: Styles().fontFamilies.medium,
+                                        fontSize: 50
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                            child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: fit,): Container(),
+                          )
+                      ],
+                    ))
+                  )
+                )
+            ),
+          ],
+      )));
   }
 }
