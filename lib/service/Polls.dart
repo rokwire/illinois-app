@@ -24,7 +24,6 @@ import 'package:illinois/model/Poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/BluetoothServices.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -34,7 +33,6 @@ import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Network.dart';
 import 'package:illinois/service/NotificationService.dart';
-import 'package:illinois/service/PollsPlugin.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
@@ -50,8 +48,6 @@ class Polls with Service implements NotificationsListener {
   static const String notifyStatusChanged  = "edu.illinois.rokwire.poll.statuschnaged"; // poll closed, results could be presented
 
   Map<String?, _PollChunk> _pollChunks = {};
-  bool _pluginEnabled = false;
-  bool _pluginStarted = false;
 
   static final Polls _service = Polls._internal();
   Polls._internal();
@@ -67,26 +63,17 @@ class Polls with Service implements NotificationsListener {
     NotificationService().subscribe(this, [
       FirebaseMessaging.notifyPollOpen,
       GeoFence.notifyCurrentRegionsUpdated,
-      AppLivecycle.notifyStateChanged,
-      BluetoothServices.notifyStatusChanged,
     ]);
   }
 
   @override
   void destroyService() {
-    PollsPlugin().stopScan(); // check this
     NotificationService().unsubscribe(this);
   }
 
   @override
   Future<void> initService() async {
     if(_enabled) {
-      PollsPlugin().pollStarted.stream.listen((pollId) {
-        _onPollStarted(pollId);
-      });
-      enablePlugin();
-      startPlugin();
-
       await _loadPollChunks();
       await super.initService();
     }
@@ -94,7 +81,7 @@ class Polls with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Storage(), Config(), BluetoothServices(), Auth2()]);
+    return Set.from([Storage(), Config(), Auth2()]);
   }
 
   // NotificationsListener
@@ -110,51 +97,6 @@ class Polls with Service implements NotificationsListener {
       }
       else if (name == GeoFence.notifyCurrentRegionsUpdated) {
         _presentWaiting();
-      }
-      else if (name == AppLivecycle.notifyStateChanged) {
-        _processAppLifeCycle();
-      }
-      else if (name == BluetoothServices.notifyStatusChanged) {
-        enablePlugin();
-        startPlugin();
-      }
-    }
-  }
-
-  // Polls Plugin
-
-  void enablePlugin() {
-    if(_enabled) {
-      if ((BluetoothServices().status == BluetoothStatus.PermissionAllowed) && !_pluginEnabled) {
-        PollsPlugin().enable();
-        _pluginEnabled = true;
-      }
-    }
-  }
-
-  void disablePlugin() {
-    if(_enabled) {
-      if (_pluginEnabled) {
-        PollsPlugin().disable();
-        _pluginEnabled = false;
-      }
-    }
-  }
-
-  void startPlugin() {
-    if(_enabled) {
-      if (_pluginEnabled && !_pluginStarted) {
-        PollsPlugin().startScan();
-        _pluginStarted = true;
-      }
-    }
-  }
-
-  void stopPlugin() {
-    if(_enabled) {
-      if (_pluginStarted) {
-        PollsPlugin().stopScan();
-        _pluginStarted = false;
       }
     }
   }
@@ -224,12 +166,13 @@ class Polls with Service implements NotificationsListener {
               _addPollToChunks(poll);
 
               if (poll.status == PollStatus.opened) {
-                if (poll.isBluetooth) {
+                Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
+                /*if (poll.isFirebase) {
+                  FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
+                }
+                else {
                   PollsPlugin().openPoll(poll.pollId);
-                }
-                else if (poll.isFirebase) {
-                  // FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
-                }
+                }*/
               }
 
               Timer(Duration(milliseconds: 500), () {
@@ -266,12 +209,12 @@ class Polls with Service implements NotificationsListener {
             _onPollStarted(pollId).then((Poll? poll) {
               if (poll != null) {
                 Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
-                if (poll.isBluetooth) {
+                /*if (poll.isFirebase) {
+                  FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
+                }
+                else {
                   PollsPlugin().openPoll(pollId);
-                }
-                else if (poll.isFirebase) {
-                  // FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
-                }
+                }*/
               }
             });
           }
@@ -727,15 +670,6 @@ class Polls with Service implements NotificationsListener {
   void _presentWaiting() {
     if (_presentPoll == null) {
       _presentPoll = _waitingPoll;
-    }
-  }
-
-  void _processAppLifeCycle(){
-    if(AppLivecycle().state == AppLifecycleState.paused){
-      PollsPlugin().stopScan();
-    }
-    else if(AppLivecycle().state == AppLifecycleState.resumed){
-      PollsPlugin().startScan();
     }
   }
 

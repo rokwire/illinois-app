@@ -17,7 +17,6 @@
 package edu.illinois.rokwire;
 
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -83,13 +82,6 @@ public class Utils {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    public static void enabledBluetooth() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter != null) {
-            bluetoothAdapter.enable();
-        }
     }
 
     public static class DateTime {

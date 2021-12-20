@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
-import 'package:illinois/ui/onboarding/OnboardingAuthBluetoothPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingLoginNetIdPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPanel.dart';
@@ -54,32 +53,6 @@ class Onboarding2 with Service{
   }
 
   void _didProceedNotificationsAuth(BuildContext context) {
-    _proceedToBluetoothAuthIfNeeded(context);
-  }
-
-  void _proceedToBluetoothAuthIfNeeded(BuildContext context) {
-    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('bluetooth_auth')) {
-      OnboardingAuthBluetoothPanel authBluetoothPanel = OnboardingAuthBluetoothPanel(onboardingContext:{
-        'onContinueAction':  () {
-          _didProceedBluetoothAuth(context);
-        }
-      });
-      authBluetoothPanel.onboardingCanDisplayAsync.then((bool result) {
-        if (result) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => authBluetoothPanel));
-        }
-        else {
-          _didProceedBluetoothAuth(context);
-        }
-      });
-    }
-    else {
-      _didProceedBluetoothAuth(context);
-    }
-  }
-
-  void _didProceedBluetoothAuth(BuildContext context) {
     _proceedToLogin(context);
   }
 

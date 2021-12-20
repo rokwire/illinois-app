@@ -267,16 +267,6 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<String?> queryBluetoothAuthorization(String method) async {
-    String? result;
-    try {
-      result = await _platformChannel.invokeMethod('bluetooth_authorization', {"method": method });
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-    return result;
-  }
-
   Future<String?> getDeviceId() async {
     String? result;
     try {

@@ -86,7 +86,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                         child: Text(
                           Localization().getStringEx(
                               'panel.onboarding.location.label.description',
-                              "Share your location to know what's nearest to you while on campus. Bluetooth-enabled features such as Quick Polls require permission to access your location in the background.")!,
+                              "Share your location to know what's nearest to you while on campus.")!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontFamily: Styles().fontFamilies!.regular,

@@ -137,7 +137,7 @@ class ExploreHelper {
       Location? location = explore.exploreLocation;
       if (location != null) {
         if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-          double distance = AppLocation.distance(location.latitude as double, location.longitude as double, locationData.latitude, locationData.longitude);
+          double distance = AppLocation.distance(location.latitude.toDouble(), location.longitude.toDouble(), locationData.latitude, locationData.longitude);
           return distance.toStringAsFixed(1) + " mi away";
         }
         if ((location.description != null) && location.description!.isNotEmpty) {

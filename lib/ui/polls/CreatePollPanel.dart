@@ -110,7 +110,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
               Localization().getStringEx("panel.create_poll.description",
-                  "People within 100 ft of you with bluetooth on and with the app running will be notified and can vote through the Illinois app or they can ask you for the 4 Digit Poll #.")!,
+                  "People can vote through the Illinois app by asking you for the 4 Digit Poll #.")!,
               style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
             )));
   }

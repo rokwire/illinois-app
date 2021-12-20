@@ -125,13 +125,5 @@
 
         <receiver android:name=".geofence.GeofenceBroadcastReceiver"/>
 
-        <service android:name=".poll.PollBleServer"/>
-        <service android:name=".poll.PollBleClient"/>
-
-        <receiver android:name=".poll.scan.PollBleReceiver">
-            <intent-filter>
-                <action android:name="edu.illinois.rokwire.poll.ACTION_FOUND" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

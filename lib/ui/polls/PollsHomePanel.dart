@@ -139,7 +139,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildDescriptionLayout(){
-    String description = Localization().getStringEx("panel.polls_home.text.ble_enabled_description", "If you are close to the poll creator, the poll should automatically appear, otherwise ask the creator for its 4 Digit #.")!;
+    String description = Localization().getStringEx("panel.polls_home.text.pin_description", "Ask the creator of the poll for its 4 Digit Poll #.")!;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
