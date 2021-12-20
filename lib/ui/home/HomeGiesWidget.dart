@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -59,7 +58,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
       });
     }
 
-    rootBundle.loadString('assets/gies.json').then((String assetsContentString) {
+    AppBundle.loadString('assets/gies.json').then((String? assetsContentString) {
       setState(() {
         _pages = AppJson.decodeList(assetsContentString);
         _buildProgressSteps();

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -192,7 +191,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
       });
       _contentTextController!.text = '';
       
-      rootBundle.loadString('assets/guide.json').then((String assetsContentString) {
+      AppBundle.loadString('assets/guide.json').then((String? assetsContentString) {
         if (assetsContentString != null) {
           Guide().setDebugContentString(assetsContentString).then((String? contentString) {
             if (contentString != null) {

@@ -164,7 +164,9 @@ class FlexUI with Service implements NotificationsListener {
   }
 
   Future<Map<String, dynamic>?> _loadContentSourceFromAssets() async {
-    return AppJson.decodeMap(await rootBundle.loadString('assets/$_flexUIName'));
+    try { return AppJson.decodeMap(await rootBundle.loadString('assets/$_flexUIName')); }
+    catch(e) {print(e.toString());}
+    return null;
   }
 
   Future<Map<String, dynamic>?> _loadContentSource() async {

@@ -18,7 +18,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:math';
-import 'package:illinois/service/Styles.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart' as Path;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +29,7 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Log.dart';
+import 'package:illinois/service/Styles.dart';
 
 class AppString {
 
@@ -829,5 +830,13 @@ class AppBoolExpr {
     }
     
     return true; // allow everything that is not defined or we do not understand
+  }
+}
+
+class AppBundle {
+  static Future<String?> loadString(String key, {bool cache = true}) async {
+    try { return rootBundle.loadString(key, cache: cache); }
+    catch(e) { print(e.toString()); }
+    return null;
   }
 }

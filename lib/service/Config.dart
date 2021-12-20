@@ -158,7 +158,7 @@ class Config with Service implements NotificationsListener {
   Future<Map<String, dynamic>?> _loadFromAssets() async {
     try {
       String configsStrEnc = await rootBundle.loadString('assets/$_configsAsset');
-      String? configsStr = (configsStrEnc != null) ? AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV) : null;
+      String? configsStr = AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV);
       Map<String, dynamic>? configs = AppJson.decode(configsStr);
       String? configTarget = configEnvToString(_configEnvironment);
       return (configs != null) ? configs[configTarget!] : null;

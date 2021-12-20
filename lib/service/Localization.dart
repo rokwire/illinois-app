@@ -148,10 +148,7 @@ class Localization with Service implements NotificationsListener {
 
   Future<Map<String,dynamic>?> _loadAssetsStrings(String language) async {
     dynamic jsonData;
-    try {
-      String jsonString = await rootBundle.loadString('assets/strings.$language.json');
-      jsonData = AppJson.decode(jsonString);
-    }
+    try {jsonData = AppJson.decode(await rootBundle.loadString('assets/strings.$language.json')); }
     catch (e) { print(e.toString()); }
     return ((jsonData != null) && (jsonData is Map<String,dynamic>)) ? jsonData : null;
   }
