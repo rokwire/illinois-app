@@ -145,7 +145,7 @@ class Config with Service implements NotificationsListener {
     return File(configFilePath);
   }
 
-  Future<Map<String, dynamic>?> _loadFromFile(File configFile) async {
+  Future<Map<String, dynamic>?> _loadFromFile(File? configFile) async {
     try {
       String? configContent = (configFile != null) ? await configFile.readAsString() : null;
       return _configFromJsonString(configContent);
@@ -567,7 +567,7 @@ class Config with Service implements NotificationsListener {
     if ((assetsCacheDir != null) && (assetsUrl != null)) {
       try {
         Uri assetsUri = Uri.parse(assetsUrl);
-        if (assetsUri?.pathSegments != null) {
+        if (assetsUri.pathSegments != null) {
           for (String pathSegment in assetsUri.pathSegments) {
             assetsCacheDir = join(assetsCacheDir!, pathSegment);
           }

@@ -137,9 +137,9 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
                       hint: Localization().getStringEx('panel.onboarding.roles.button.resident.hint', ''),
                       iconPath: 'images/icon-persona-resident-normal.png',
                       selectedIconPath: 'images/icon-persona-resident-selected.png',
-                      selectedBackgroundColor: Styles().colors.fillColorPrimary,
+                      selectedBackgroundColor: Styles().colors!.fillColorPrimary,
                       selectedTextColor: Colors.white,
-                      selected:(_selectedRoles.contains(UserRole.resident)),
+                      selected:(_selectedRoles?.contains(UserRole.resident)) ?? false,
                       data: UserRole.resident,
                       sortOrder: 7,
                       onTap: _onRoleGridButton,
@@ -226,7 +226,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
          );
   }*/
 
-  void _onRoleGridButton(RoleGridButton button) {
+  void _onRoleGridButton(RoleGridButton? button) {
 
     if (button != null) {
 
@@ -234,11 +234,13 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
 
       Analytics.instance.logSelect(target: "Role: " + role.toString());
 
+      if (role != null) {
         if (_selectedRoles!.contains(role)) {
           _selectedRoles!.remove(role);
         } else {
           _selectedRoles!.add(role);
         }
+      }
 
       AppSemantics.announceCheckBoxStateChange(context, _selectedRoles!.contains(role), button.title);
 

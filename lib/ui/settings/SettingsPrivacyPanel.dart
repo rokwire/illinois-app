@@ -315,7 +315,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               width: 30,
               child: Center(
                 child: Text(
-                  _sliderValue?.round()?.toString() ?? "",
+                  _sliderValue?.round().toString() ?? "",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -593,7 +593,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
 
   List<Widget> _buildCategoryEntries(PrivacyCategory category) {
     List<Widget> widgets =  [];
-    List<PrivacyEntry?>? entries = category?.entries;
+    List<PrivacyEntry>? entries = category.entries;
     widgets.add(_buildCategoryDescriptionWidget(category));
     if (AppCollection.isCollectionNotEmpty(entries)) {
       entries!.forEach((PrivacyEntry? entry) {
@@ -626,7 +626,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
   }
 
   Widget _buildCategoryDescriptionWidget(PrivacyCategory category) {
-    String? categoryStateDescription = PrivacyData().getLocalizedString(category?.description != null ? category?.description![widget.selectedPrivacyState!] : null);
+    String? categoryStateDescription = PrivacyData().getLocalizedString(category.description != null ? category.description![widget.selectedPrivacyState!] : null);
     bool hasDescription = AppString.isStringNotEmpty(categoryStateDescription);
     return !hasDescription
         ? Container()
@@ -699,7 +699,7 @@ class _PrivacyLevelSliderState extends State<_PrivacyLevelSlider> {
 
   @override
   Widget build(BuildContext context) {
-    int _roundedValue = _discreteValue?.round();
+    int _roundedValue = _discreteValue?.round() ?? 0;
     final ThemeData theme = Theme.of(context);
     return Container(
         color: Styles().colors!.fillColorPrimary,

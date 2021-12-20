@@ -28,11 +28,11 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
 
   @override
   Widget build(BuildContext context) {
-    int _roundedValue = _discreteValue?.round();
+    int roundedValue = _discreteValue?.round() ?? 0;
     final ThemeData theme = Theme.of(context);
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 17),
-        color: widget?.color ?? Styles().colors!.white,
+        color: widget.color ?? Styles().colors!.white,
         child: Column(
             children: <Widget>[
               Stack(
@@ -68,9 +68,9 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                 label: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
                                 enabled: true,
                                 increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to")! +
-                                    (_roundedValue + 1).toString(),
+                                    (roundedValue + 1).toString(),
                                 decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to")! +
-                                    (_roundedValue - 1).toString(),
+                                    (roundedValue - 1).toString(),
                                 child:
                                 Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), //Fix cut off circle
@@ -81,7 +81,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                       max: 5.0,
                                       divisions: 5,
                                       semanticFormatterCallback: (double value) => value.round().toString(),
-                                      label: "$_roundedValue",
+                                      label: "$roundedValue",
                                       onChanged: (double value) {
                                         setState(() {
                                           _discreteValue = value;

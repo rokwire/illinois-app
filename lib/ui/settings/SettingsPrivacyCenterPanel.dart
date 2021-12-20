@@ -381,7 +381,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
   void _loadVersionInfo() async {
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
-        _versionName = packageInfo?.version;
+        _versionName = packageInfo.version;
       });
     });
   }
@@ -434,7 +434,7 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
         continueTitle: Localization().getStringEx("panel.settings.privacy_center.button.forget_info.title","Forget My Information"),
         onContinue: (List<String> selectedValues, OnContinueProgressController progressController ){
             progressController(loading: true);
-            if(selectedValues?.contains(groupsSwitchTitle) ?? false){
+            if(selectedValues.contains(groupsSwitchTitle)){
               Groups().deleteUserData();
             }
             _deleteUserData().then((_){

@@ -174,7 +174,7 @@ class Game with Explore implements Favorite {
   /// Requirement 2: 'If an event is longer than 1 day, then please show the Date as (for example) Sep 26 - Sep 29.'
   ///
   String get displayTime {
-    int gameEventDays = (endDateTimeUtc?.difference(dateTimeUtc!)?.inDays ?? 0).abs();
+    int gameEventDays = (endDateTimeUtc?.difference(dateTimeUtc!).inDays ?? 0).abs();
     bool eventIsMoreThanOneDay = (gameEventDays >= 1);
     int hourUtc = dateTimeUtc!.hour;
     int minuteUtc = dateTimeUtc!.minute;
@@ -298,7 +298,7 @@ class Game with Explore implements Favorite {
     return attributes;
   }
 
-  static bool canJson(Map<String, dynamic> json) {
+  static bool canJson(Map<String, dynamic>? json) {
     return (json != null) && (json['id'] != null);
   }
 
@@ -402,7 +402,7 @@ class GameStory {
     return {"id": id, "url": url, "story_image_url": storyImageUrl, "text": text};
   }
 
-  static GameStory? fromJson(Map<String, dynamic> json) {
+  static GameStory? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -439,7 +439,7 @@ class GameResult {
     return {"status": status, "team_score": teamScore, "opponent_score": opponentScore};
   }
 
-  static GameResult? fromJson(Map<String, dynamic> json) {
+  static GameResult? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }

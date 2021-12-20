@@ -202,7 +202,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
     String? roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");
 
-    Widget buildingAccessIcon;
+    Widget? buildingAccessIcon;
     String? buildingAccessStatus;
     String? buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
     double buildingAccessStatusHeight = 24;
@@ -303,9 +303,9 @@ class _IDCardPanelState extends State<IDCardPanel>
         Container(width: 20),
 
         Visibility(visible: (0 < (Auth2().authCard?.uin?.length ?? 0)), child: Column(children: [
-          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en'), style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: 16)),
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
           Container(height: 8),
-          buildingAccessIcon ?? Container(),
+          buildingAccessIcon,
           Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: buildingAccessStatusHeight),),
         ],),),
 

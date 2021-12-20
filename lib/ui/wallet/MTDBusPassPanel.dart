@@ -434,7 +434,7 @@ class _RotatingBorderState extends State<RotatingBorder>
   Widget build(BuildContext context) {
     double angle = animation.value;
     return Container( width: _photoSize, height: _photoSize,
-        child:Stack(children: <Widget?>[
+        child:Stack(children: <Widget>[
       Transform.rotate(
           angle: angle,
           child:Container(
@@ -448,7 +448,7 @@ class _RotatingBorderState extends State<RotatingBorder>
                 )
             ),
           )),
-      widget.child,
+      widget.child ?? Container(),
     ], ));
   }
 
