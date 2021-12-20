@@ -37,6 +37,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/utils/Utils.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
 
 /////////////////////////////////////
@@ -1352,54 +1353,57 @@ class ModalImageDialog extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return
-      GestureDetector(
+    return Column(children: [
+      Expanded(child: PinchZoom(
+        child: GestureDetector(
         onTap: onClose, //dismiss
         child: Container(
-          color: Styles().colors.blackTransparent06,
-          child:Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-              // color: Styles().colors.blackTransparent06,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: GestureDetector(
-                    onTap: (){}, //Do not dismiss when tap the dialog
+            color: Styles().colors.blackTransparent06,
+            child:Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  // color: Styles().colors.blackTransparent06,
                     child: Container(
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Styles().colors.fillColorPrimary,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: onClose,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(right: 10, top: 10),
-                                    child: Text('\u00D7',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: Styles().fontFamilies.medium,
-                                        fontSize: 50
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: GestureDetector(
+                            onTap: (){}, //Do not dismiss when tap the dialog
+                            child: Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      color: Styles().colors.fillColorPrimary,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          GestureDetector(
+                                            onTap: onClose,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(right: 10, top: 10),
+                                              child: Text('\u00D7',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: Styles().fontFamilies.medium,
+                                                    fontSize: 50
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                            child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: fit,): Container(),
-                          )
-                      ],
-                    ))
-                  )
-                )
-            ),
-          ],
-      )));
+                                    Container(
+                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: fit,): Container(),
+                                    )
+                                  ],
+                                ))
+                        )
+                    )
+                ),
+              ],
+            )))
+    ))
+    ],);
   }
 }
