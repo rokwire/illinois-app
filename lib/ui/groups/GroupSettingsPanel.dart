@@ -452,7 +452,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   Widget _constructTagButtonsContent(){
     List<Widget> buttons = _buildTagsButtons();
-    if(buttons?.isEmpty??true)
+    if(buttons.isEmpty)
       return Container();
 
     List<Widget> rows = [];
@@ -552,6 +552,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     switch(_group?.privacy) {
       case GroupPrivacy.private: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.private", "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group."); break;
       case GroupPrivacy.public: longDescription = Localization().getStringEx("panel.groups.common.privacy.description.long.public", "Anyone who uses the app will see this group. Only admins can see who is in the group."); break;
+      default: break;
     }
 
     return Container(
@@ -771,7 +772,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            iconRes==null? Container() :
               Container(
                 padding: EdgeInsets.only(right: 10),
                 child: Image.asset(iconRes, excludeFromSemantics: true,)
@@ -801,7 +801,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     //TBD name validation hook
     List<String> takenNames = ["test","test1"];
     setState(() {
-      _nameIsValid = !(takenNames?.contains(name)??false);
+      _nameIsValid = !takenNames.contains(name);
     });
   }
 }

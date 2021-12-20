@@ -101,10 +101,10 @@ class ExplorePanel extends StatefulWidget {
     //Explore explore = (eventId != null) ? await ExploreService().getEventById(eventId) : null;
     //Event event = (explore is Event) ? explore : null;
     if (event != null) {
-      if (event.isComposite ?? false) {
+      if (event.isComposite) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event)));
       }
-      else if (event.isGameEvent ?? false) {
+      else if (event.isGameEvent) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
       }
@@ -482,6 +482,9 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Dining:
           task = _loadDining(selectedFilterList);
           break;
+
+        default:
+          break;
       }
     }
 
@@ -517,7 +520,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     if (_shouldLoadGames(categories)) {
       List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(EventTimeFilter.upcoming);
-      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame?.first, endDate: gamesTimeFrame?.last);
+      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
       if (AppCollection.isCollectionNotEmpty(games)) {
         explores.addAll(games!);
       }
@@ -546,7 +549,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     if (_shouldLoadGames(categories)) {
       List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(eventFilter);
-      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame?.first, endDate: gamesTimeFrame?.last);
+      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
       if (AppCollection.isCollectionNotEmpty(games)) {
         explores.addAll(games!);
       }
@@ -639,8 +642,7 @@ class ExplorePanelState extends State<ExplorePanel>
       //Apply custom logic for categories
       if (selectedFilter.type == ExploreFilterType.categories) {
         Set<int> selectedIndexes = selectedFilter.selectedIndexes;
-        if (selectedIndexes == null || selectedIndexes.isEmpty ||
-            selectedIndexes.contains(0)) {
+        if (selectedIndexes.isEmpty || selectedIndexes.contains(0)) {
           break; //All Categories
         } else {
           selectedCategories = Set();
@@ -651,8 +653,7 @@ class ExplorePanelState extends State<ExplorePanel>
             }
           }
           List<String?> filterCategoriesValues = _getFilterCategoriesValues();
-          if (filterCategoriesValues != null &&
-              filterCategoriesValues.isNotEmpty) {
+          if (filterCategoriesValues.isNotEmpty) {
             for (int selectedCategoryIndex in selectedIndexes) {
               if ((selectedCategoryIndex < filterCategoriesValues.length) &&
                   selectedCategoryIndex != 1) {
@@ -1104,7 +1105,7 @@ class ExplorePanelState extends State<ExplorePanel>
                     return FilterListItemWidget(
                       label: filterValues[index],
                       subLabel: hasSubLabels ? filterSubLabels![index] : null,
-                      selected: (selectedFilter!.selectedIndexes != null && selectedFilter.selectedIndexes.contains(index)),
+                      selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
                         Analytics.instance.logSelect(target: "FilterItem: "+filterValues[index]!);
                         _onFilterValueClick(selectedFilter!, index);
@@ -1446,7 +1447,7 @@ class ExploreFilter {
       {required this.type, this.selectedIndexes = const {0}, this.active = false});
 
   int get firstSelectedIndex {
-    if (selectedIndexes == null || selectedIndexes.isEmpty) {
+    if (selectedIndexes.isEmpty) {
       return -1;
     }
     return selectedIndexes.first;

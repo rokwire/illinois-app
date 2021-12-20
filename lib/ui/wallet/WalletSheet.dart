@@ -137,7 +137,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
             hint: Localization().getStringEx('tabbar.home.hint', ''),
             iconResource: 'images/tab-home.png',
             iconResourceSelected: 'images/tab-home-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(context, tabIndex),
           ),
         ));
@@ -149,7 +149,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
             hint: Localization().getStringEx('tabbar.explore.hint', ''),
             iconResource: 'images/tab-explore.png',
             iconResourceSelected: 'images/tab-explore-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(context, tabIndex),
           )
         ));
@@ -177,7 +177,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
             hint: Localization().getStringEx('tabbar.browse.hint', ''),
             iconResource: 'images/tab-browse.png',
             iconResourceSelected: 'images/tab-browse-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(context, tabIndex),
           ),
         ));
@@ -208,7 +208,7 @@ class _WalletTabBarWidgetState extends State<_WalletTabBarWidget> implements Not
 
   void _updateContentListCodes() {
     List<String>? contentListCodes = _getContentListCodes();
-    if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
       });

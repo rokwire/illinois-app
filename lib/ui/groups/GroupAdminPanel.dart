@@ -184,7 +184,7 @@ class _GroupAdminPanelState extends State<GroupAdminPanel>{
             padding: const EdgeInsets.only(bottom: 10),
             child: _EventCard(groupEvent: event,groupId: widget.group?.id, onDeleteTap: (GroupEvent event){
               widget.groupEvents!.remove(event);
-//            Groups().updateGroupEvents(widget?.group?.id, widget.groupEvents);//TBD Consider how to notify service for the update
+//            Groups().updateGroupEvents(widget.group?.id, widget.groupEvents);//TBD Consider how to notify service for the update
               setState(() {});
             },),
           );

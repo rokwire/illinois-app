@@ -239,12 +239,12 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       details.add(location);
     }
 
-    Widget workTime = _exploreWorktimeDetail();
+    Widget? workTime = _exploreWorktimeDetail();
     if (workTime != null) {
       details.add(workTime);
     }
 
-    Widget paymentTypes = _explorePaymentTypes();
+    Widget? paymentTypes = _explorePaymentTypes();
     if (paymentTypes != null) {
       details.add(paymentTypes);
     }
@@ -264,7 +264,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
         : Container();
   }
 
-  Widget _explorePaymentTypes() {
+  Widget? _explorePaymentTypes() {
     List<Widget>? details;
     List<PaymentType?>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
@@ -423,7 +423,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     }
   }
 
-  Widget _exploreWorktimeDetail() {
+  Widget? _exploreWorktimeDetail() {
     bool hasAdditionalInformation = dining?.diningSchedules != null && (dining?.diningSchedules?.isNotEmpty ?? false) && (dining?.firstOpeningDateSchedules.isNotEmpty?? false);
     String? displayTime = dining?.displayWorkTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
@@ -475,7 +475,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
       List<Widget> widgets = [];
       List<DiningSchedule> schedules = dining!.firstOpeningDateSchedules;
-      if(schedules != null && schedules.isNotEmpty){
+      if(schedules.isNotEmpty){
 
         for(DiningSchedule schedule in schedules){
           String? meal = schedule.meal;
@@ -1138,7 +1138,7 @@ class _StationItemState extends State<_StationItem>{
   }
 
   Widget _buildExpandedWidget(){
-    return ((widget.productItems?.isNotEmpty ?? false) && expanded!) ?  Container(
+    return (widget.productItems.isNotEmpty && expanded!) ?  Container(
         decoration: BoxDecoration(
             border: Border(
                 left: BorderSide(color: Styles().colors!.surfaceAccent!),

@@ -50,7 +50,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   @override
   void dispose() {
-    _reasonController?.dispose();
+    _reasonController.dispose();
     super.dispose();
   }
 
@@ -109,7 +109,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
                         color: Styles().colors!.fillColorPrimary
                     ),
                   ),
-                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")!+(AppDateTime().formatDateTime(widget?.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
+                  Text( Localization().getStringEx("panel.pending_member_detail.label.requested", "Requested on ")!+(AppDateTime().formatDateTime(widget.member?.dateCreatedUtc?.toLocal(), format: "MMM dd, yyyy")??""),
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.regular,
                         fontSize: 14,
@@ -138,7 +138,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
 
   Widget _buildQuestions(){
     List<Widget> list = [];
-    if(AppCollection.isCollectionNotEmpty(widget?.member?.answers)) {
+    if(AppCollection.isCollectionNotEmpty(widget.member?.answers)) {
       for (int index = 0; index < widget.member!.answers!.length; index++) {
         GroupMembershipAnswer answer = widget.member!.answers![index];
         list.add(_MembershipAnswer(member: widget.member, answer: answer));
@@ -324,7 +324,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   }
 
   bool get _canContinue{
-    return _approved || (_denied && (_reasonController?.text?.isNotEmpty ?? false));
+    return _approved || (_denied && _reasonController.text.isNotEmpty);
   }
 
   String? get _continueButtonText{
@@ -333,7 +333,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       }
 
       if(_denied){
-        if(_reasonController?.text?.isNotEmpty ?? false) {
+        if(_reasonController.text.isNotEmpty) {
           return Localization().getStringEx("panel.pending_member_detail.button.deny_member.title", "Deny member");
         } else {
           return Localization().getStringEx("panel.pending_member_detail.button.deny_reason.title", "Provide deny reason");
@@ -353,7 +353,7 @@ class _MembershipAnswer extends StatelessWidget{
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(answer?.question ?? '',
+        Text(answer.question ?? '',
           style: TextStyle(
               fontFamily: Styles().fontFamilies!.bold,
               fontSize: 14,
@@ -372,7 +372,7 @@ class _MembershipAnswer extends StatelessWidget{
             children: <Widget>[
               Row(children: [
                 Expanded(child:
-                  Text(answer?.answer ?? "",
+                  Text(answer.answer ?? "",
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.regular,
                         fontSize: 16,

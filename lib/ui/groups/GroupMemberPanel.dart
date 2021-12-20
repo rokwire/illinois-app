@@ -217,7 +217,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
                         height: null,
                         borderRadius: BorderRadius.circular(4),
                         label: Localization().getStringEx("panel.member_detail.label.admin", "Admin"),
-                        toggled: _isAdmin ?? false,
+                        toggled: _isAdmin,
                         context: context,
                         onTap: _updateMemberStatus
                     ),

@@ -500,7 +500,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     }
   }
 
-  void _onSelectedEvent(Event event){
+  void _onSelectedEvent(Event? event){
     if(event != null) {
       _selectedEvents.add(event);
       _selectedEventIds.add(event.id);
@@ -508,10 +508,10 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
     }
   }
 
-  void _onDeselectedEvent(Event event){
+  void _onDeselectedEvent(Event? event){
     if(event != null) {
-      _selectedEvents.removeWhere((entry)=>entry?.id == event?.id);
-      _selectedEventIds.remove(event?.id);
+      _selectedEvents.removeWhere((entry)=>entry.id == event.id);
+      _selectedEventIds.remove(event.id);
       setState(() {});
     }
   }

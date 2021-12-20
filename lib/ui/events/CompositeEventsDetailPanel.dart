@@ -270,13 +270,13 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       details.add(price);
     }
 
-    Widget converge =  _buildConvergeContent();
+    Widget? converge =  _buildConvergeContent();
     if(converge!=null){
       details.add(converge);
     }
 
 
-    Widget tags = _exploreTags();
+    Widget? tags = _exploreTags();
     if(tags != null){
       details.add(tags);
     }
@@ -392,12 +392,12 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     }
   }
 
-  Widget _exploreTags(){
+  Widget? _exploreTags(){
     if(widget.parentEvent?.tags != null){
       List<String> capitalizedTags = widget.parentEvent!.tags!.map((entry)=>'${entry[0].toUpperCase()}${entry.substring(1)}').toList();
       return Padding(
         padding: const EdgeInsets.only(left: 30),
-        child: capitalizedTags != null && capitalizedTags.isNotEmpty ? Column(
+        child: capitalizedTags.isNotEmpty ? Column(
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -509,7 +509,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     _onTapWebButton(url, 'Website');
   }
 
-  Widget _buildConvergeContent() {
+  Widget? _buildConvergeContent() {
     int? eventConvergeScore = (widget.parentEvent != null) ? widget.parentEvent?.convergeScore : null;
     String? eventConvergeUrl = (widget.parentEvent != null) ? widget.parentEvent?.convergeUrl : null;
     bool hasConvergeScore = (eventConvergeScore != null) && eventConvergeScore>0;
@@ -556,7 +556,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _onLocationDetailTapped(){
-    if(widget?.parentEvent?.location?.latitude != null && widget?.parentEvent?.location?.longitude != null) {
+    if(widget.parentEvent?.location?.latitude != null && widget.parentEvent?.location?.longitude != null) {
       Analytics.instance.logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.parentEvent);
     }
@@ -602,7 +602,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     setState(() {
       _addToGroupInProgress = true;
     });
-    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget?.parentEvent?.id).then((value){
+    Groups().linkEventToGroup(groupId: widget.browseGroupId, eventId: widget.parentEvent?.id).then((value){
       setState(() {
         _addToGroupInProgress = true;
       });

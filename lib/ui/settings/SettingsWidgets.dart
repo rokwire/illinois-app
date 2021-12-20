@@ -71,7 +71,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
 
   @override
   void initState() {
-    selectedOptions = widget?.initialOptionsSelection ?? [];
+    selectedOptions = widget.initialOptionsSelection ?? [];
     super.initState();
   }
 
@@ -222,7 +222,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
       Semantics( button: true, enabled: _getIsContinueEnabled,
         child: Stack(children: <Widget>[
           GestureDetector(
-              onTap: (){ widget?.onContinue!(selectedOptions, ({bool? loading})=>setState((){_loading = loading;}));},
+              onTap: (){ widget.onContinue!(selectedOptions, ({bool? loading})=>setState((){_loading = loading;}));},
               child: Container(
                 alignment: Alignment.center,
 //                height: widget.longButtonTitle? 56: 42,

@@ -2090,7 +2090,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   }
 
   /*bool get _isEditMode{
-    return widget?.editEvent != null;
+    return widget.editEvent != null;
   }*/
 
   String? get _panelTitleText{

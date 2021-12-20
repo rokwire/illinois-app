@@ -629,7 +629,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
 
   @override
   void initState() {
-    if(widget?.data?.categories?.isNotEmpty ?? false){
+    if(widget.data?.categories?.isNotEmpty ?? false){
       widget.data!.categories!.forEach((PrivacyCategory category) {
         //prepare for expand/colapse
         expansionState[category.title] = false;

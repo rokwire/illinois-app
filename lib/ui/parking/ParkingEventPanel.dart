@@ -160,7 +160,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            widget?.event?.name ?? "",
+            widget.event?.name ?? "",
             style: TextStyle(
               fontSize: 20,
               color: Styles().colors!.fillColorPrimary,

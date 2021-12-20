@@ -50,7 +50,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
     NotificationService().subscribe(this, FlexUI.notifyChanged);
 
-    if(widget?.tabController != null) {
+    if(widget.tabController != null) {
       widget.tabController!.addListener(_onTabControllerChanged);
     }
 
@@ -63,7 +63,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
     NotificationService().unsubscribe(this);
 
-    if(widget?.tabController != null) {
+    if(widget.tabController != null) {
       widget.tabController!.removeListener(_onTabControllerChanged);
     }
   }
@@ -118,7 +118,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.home.hint', ''),
             iconResource: 'images/tab-home.png',
             iconResourceSelected: 'images/tab-home-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Home'),
           ),
         ));
@@ -130,7 +130,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.explore.hint', ''),
             iconResource: 'images/tab-explore.png',
             iconResourceSelected: 'images/tab-explore-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Explore'),
           )
         ));
@@ -153,7 +153,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
             hint: Localization().getStringEx('tabbar.browse.hint', ''),
             iconResource: 'images/tab-browse.png',
             iconResourceSelected: 'images/tab-browse-selected.png',
-            selected: (widget?.tabController != null) && (widget.tabController!.index == tabIndex),
+            selected: (widget.tabController != null) && (widget.tabController!.index == tabIndex),
             onTap: ()=>_onSwitchTab(tabIndex, 'Browse'),
           ),
         ));
@@ -202,7 +202,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
   void _updateContentListCodes() {
     List<String>? contentListCodes = _getContentListCodes();
-    if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       if (mounted) {
         setState(() {
           _contentListCodes = contentListCodes;

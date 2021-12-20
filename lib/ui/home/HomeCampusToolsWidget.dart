@@ -152,7 +152,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
   void _updateContentListCodes() {
     List<dynamic>? contentListCodes = FlexUI()['home.content.campus_tools'];
-    if ((contentListCodes != null) ?? !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
+    if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
       });
