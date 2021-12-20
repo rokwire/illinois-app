@@ -138,19 +138,27 @@ class Groups with Service implements NotificationsListener {
   // Groups APIs
 
   Future<void> _waitForLogin() async{
-    if(!_loggedIn) {
-      if (_loginCompleters.isEmpty) {
-        return _login().whenComplete((){
-          _loggedIn = true;
-          _loginCompleters.forEach((completer) {
-            completer.complete();
+    if(!_loggedIn && Auth2().isLoggedIn) {
+      try {
+        if (_loginCompleters.isEmpty) {
+          Completer<void> completer = Completer<void>();
+          _loginCompleters.add(completer);
+          _login().whenComplete(() {
+            _loggedIn = true;
+            _loginCompleters.forEach((completer) {
+              completer.complete();
+            });
+            _loginCompleters.clear();
           });
-          _loginCompleters.clear();
-        });
-      } else {
-        Completer<void> completer = Completer<void>();
-        _loginCompleters.add(completer);
-        return completer.future;
+          return completer.future;
+        } else {
+          Completer<void> completer = Completer<void>();
+          _loginCompleters.add(completer);
+          return completer.future;
+        }
+      } catch(err){
+        Log.e("Failed to invoke groups login API");
+        print(err);
       }
     }
   }
