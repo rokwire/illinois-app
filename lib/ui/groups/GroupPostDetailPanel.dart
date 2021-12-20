@@ -30,7 +30,6 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
-import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -85,7 +84,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _preparedReplyData = GroupPost();
-    _post = widget.post;
+    _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
@@ -130,9 +129,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
               Column(children: [
                 Container(height: _sliverHeaderHeight ?? 0,),
-                _buildPostContent(),
                 _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
+                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost || _isCreatePost): Container(),
+                _buildPostContent(),
                 _buildRepliesSection(),
                 _buildPostEdit(),
             ],)),
@@ -288,48 +287,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Semantics(
-                          sortKey: OrdinalSortKey(2),
-                          container: true,
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
-                              child: Text(
-                                  AppString.getDefaultEmptyString(_post?.member?.name ),
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium,
-                                      fontSize: 20,
-                                      color: Styles()
-                                          .colors!
-                                          .fillColorPrimary)))),
-                      Semantics(
-                          sortKey: OrdinalSortKey(3),
-                          container: true,
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
-                              child: Text(
-                                  AppString.getDefaultEmptyString(_post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
-                                  style: TextStyle(
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium,
-                                      fontSize: 16,
-                                      color: Styles()
-                                          .colors!
-                                          .fillColorPrimary)))),
                       Visibility(visible: !_editMainPost,
-                        child: Semantics(
-                          container: true,
-                          child: Html(
-                            data: AppString.getDefaultEmptyString(_post?.body),
-                            style: {
-                              "body": Style(
-                                  color: Styles().colors!.fillColorPrimary,
-                                  fontFamily: Styles().fontFamilies!.regular,
-                                  fontSize: FontSize(20))
-                            },
-                            onLinkTap: (url, context, attributes, element) =>
-                              _onTapPostLink(url)))),
+                          child: Semantics(
+                              container: true,
+                              child: Html(
+                                  data: AppString.getDefaultEmptyString(_post?.body),
+                                  style: {
+                                    "body": Style(
+                                        color: Styles().colors!.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies!.regular,
+                                        fontSize: FontSize(20))
+                                  },
+                                  onLinkTap: (url, context, attributes, element) =>
+                                      _onTapPostLink(url)))),
                       Visibility(
                           visible: _editMainPost,
                           child: Column(
@@ -362,10 +332,42 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           textColor: Styles().colors!.fillColorPrimary,
                                           backgroundColor: Styles().colors!.white,
                                           onTap: _onTapSave)),
-                                  ])
+                                ])
 
 
                               ])),
+                      Semantics(
+                          sortKey: OrdinalSortKey(2),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 4, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      _post?.member?.name ),
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies!.medium,
+                                      fontSize: 20,
+                                      color: Styles()
+                                          .colors!
+                                          .fillColorPrimary)))),
+                      Semantics(
+                          sortKey: OrdinalSortKey(3),
+                          container: true,
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 3, right: _outerPadding),
+                              child: Text(
+                                  AppString.getDefaultEmptyString(
+                                      _post?.displayDateTime),
+                                  semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
+                                  style: TextStyle(
+                                      fontFamily:
+                                      Styles().fontFamilies!.medium,
+                                      fontSize: 16,
+                                      color: Styles()
+                                          .colors!
+                                          .fillColorPrimary)))),
+
                     ],
                   )),
 
@@ -478,8 +480,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             _isCreatePost? Container():
              Container(
                padding: EdgeInsets.only(bottom: 12),
-               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false)) //TBD think for better way to prepare reply
-          ],
+               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false, wrapContent: true))],
         )
     );
   }
@@ -530,6 +531,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               child: TextField(
                   controller: _bodyController,
                   maxLines: 15,
+                  minLines: 1,
                   decoration: InputDecoration(
                       hintText: (_isCreatePost ? Localization().getStringEx(
                           "panel.group.detail.post.create.body.field.hint",
@@ -637,11 +639,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Image
-  Widget _buildImageSection(GroupPost? post, {required bool explicitlyShowAddButton, showSlant = true}) { //TBD localization
+  Widget _buildImageSection(GroupPost? post, {bool explicitlyShowAddButton = false, bool showSlant = true, bool wrapContent = false}) { //TBD localization
     final double _imageHeight = 200;
     String? postImageUrl = post?.imageUrl;
     return Container(
-        height: _imageHeight,
+        constraints: BoxConstraints(
+          maxHeight: (postImageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
+        ),
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           AppString.isStringNotEmpty(postImageUrl)
@@ -653,7 +657,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background), child: Container(height: 30))),
           AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
               ? Container(
-              height: _imageHeight,
               child: Center(
                   child: Semantics(
                       label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
@@ -664,7 +667,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         maxLines: 2,
                         label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                         textColor: Styles().colors!.fillColorPrimary,
-                        onTap: (){ _onTapAddImage(post);},
+                        onTap: (){ _onTapAddImage(post);}
                       )))):
           Container()
         ]));
@@ -736,7 +739,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   Widget _createModalPhotoDialog(){
     return _modalImageUrl!=null ? ModalImageDialog(
-        imageUrl: _modalImageUrl,
+        imageUrl: _modalImageUrl!,
         fit: BoxFit.scaleDown,
         onClose: () {
           Analytics.instance.logSelect(target: "Close");
@@ -1027,7 +1030,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     FocusScope.of(context).unfocus();
     
     String? subject;
+    String body = _bodyController.text;
+    String? imageUrl;
+
     if (_isCreatePost) {
+      imageUrl = _post?.imageUrl;
       subject = _subjectController.text;
       if (AppString.isStringEmpty(subject)) {
         AppAlert.showDialogResult(
@@ -1038,8 +1045,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         return;
       }
     }
-    
-    String body = _bodyController.text;
+
     if (AppString.isStringEmpty(body)) {
       String? validationMsg = (_isCreatePost || (_editingPost != null))
           ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
@@ -1051,13 +1057,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingPost != null) {
-      String? imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost?.imageUrl;
+      imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost?.imageUrl;
       GroupPost postToUpdate = GroupPost(id: _editingPost?.id, subject: _editingPost?.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
       String? parentId;
+
+      imageUrl =  _preparedReplyData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
@@ -1068,7 +1076,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         parentId = _post!.id;
       }
       
-      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: _preparedReplyData?.imageUrl);
+      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
       Groups().createPost(widget.group?.id, post).then((succeeded) {
         _onCreateFinished(succeeded);
       });
@@ -1323,7 +1331,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isCreatePost {
-    return (_post == null);
+    return (_post == null || _post?.id == null) ;
   }
 
   // Notifications Listener
