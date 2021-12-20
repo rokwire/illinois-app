@@ -248,7 +248,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
         ),
         Container(height: 10,),
         Text(
-          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass, and Quick Polls. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."),
+          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."),
           style: Onboarding2InfoDialog.contentStyle,),
         ]
       )

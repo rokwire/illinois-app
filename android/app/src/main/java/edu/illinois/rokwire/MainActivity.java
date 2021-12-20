@@ -62,7 +62,6 @@ import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;
-import edu.illinois.rokwire.poll.PollPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodCall;
@@ -77,8 +76,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private static MethodChannel METHOD_CHANNEL;
     private static final String NATIVE_CHANNEL = "edu.illinois.rokwire/native_call";
     private static MainActivity instance = null;
-
-    private PollPlugin pollPlugin;
 
     private static MethodChannel.Result pickLocationResult;
 
@@ -155,8 +152,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 .getPlatformViewsController()
                 .getRegistry()
                 .registerViewFactory("mapview", new MapViewFactory(this, flutterEngine.getDartExecutor().getBinaryMessenger()));
-
-        flutterEngine.getPlugins().add(new PollPlugin(this));
     }
 
     private void initScreenOrientation() {
@@ -266,9 +261,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     if (granted) {
                         result.success("allowed");
 
-                        if (pollPlugin != null) {
-                            pollPlugin.onLocationPermissionGranted();
-                        }
                         GeofenceMonitor.getInstance().onLocationPermissionGranted();
                     } else {
                         result.success("denied");
@@ -638,9 +630,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     } else if ("request".equals(locationServicesMethod)) {
                         requestLocationPermission(result);
                     }
-                    break;
-                case Constants.APP_BLUETOOTH_AUTHORIZATION:
-                    result.success("allowed"); // bluetooth is always enabled in Android by default
                     break;
                 case Constants.FIREBASE_INFO:
                     String projectId = FirebaseApp.getInstance().getOptions().getProjectId();
