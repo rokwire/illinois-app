@@ -94,13 +94,9 @@ class Poll {
     return (creatorUserUuid != null) && (creatorUserUuid == Auth2().accountId);
   }
 
-  bool get isBluetooth {
-    return !isFirebase;
-  }
-
-  bool get isFirebase {
+  /*bool get isFirebase {
     return (regionId != null) && regionId.isNotEmpty;
-  }
+  }*/
 
   bool get isGeoFenced {
     return (regionId != null) && regionId.isNotEmpty && (settings?.geoFence ?? false);
