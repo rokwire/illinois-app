@@ -143,8 +143,8 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
       footerWidget = (_allowMultipleOptions || _allowRepeatOptions) ? _buildVoteDoneButton(_onVoteDone) : Container();
     }
     String pollTitle = _poll?.title ?? '';
-    String semanticsQuestionText = wantsToKnow + "\n" + pollTitle;
-    String semanticsStatusText = pollStatus!+","+votesNum!;
+    String semanticsQuestionText =  "$wantsToKnow\n+$pollTitle";
+    String semanticsStatusText = "$pollStatus,$votesNum";
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
@@ -159,7 +159,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
 
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
         Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-          Text(votesNum, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
+          Text(votesNum ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
           Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w900),),
           Text(pollStatus ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),),
       ],),)),
@@ -344,7 +344,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     if (_progressKeys != null) {
       double progressWidth = -1.0;
       for (GlobalKey progressKey in _progressKeys!) {
-        final RenderObject? progressRender = progressKey?.currentContext?.findRenderObject();
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
         if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
           if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
             progressWidth = progressRender.size.width;
@@ -432,7 +432,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
         });
       }
     }).catchError((e){
-      AppAlert.showDialogResult(context, e.toString() ?? "Unknown error occured");
+      AppAlert.showDialogResult(context, e.toString());
     }).whenComplete((){
       setState(() {
         int? value = _votingOptions[optionIndex];

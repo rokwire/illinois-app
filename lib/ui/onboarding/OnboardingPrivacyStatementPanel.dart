@@ -44,9 +44,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
 
   void _evalHeadingSize() {
     try {
-      final RenderObject? renderBox = _headingKey?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _headingKey.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
-        setState(() { _headingHeight = renderBox.size?.height; });
+        setState(() { _headingHeight = renderBox.size.height; });
       }
     } on Exception catch (e) {
       print(e.toString());

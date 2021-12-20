@@ -231,7 +231,7 @@ class Polls with Service implements NotificationsListener {
     return null;
   }
 
-  Future<void> vote(String? pollId, PollVote vote) async {
+  Future<void> vote(String? pollId, PollVote? vote) async {
     if(_enabled) {
       if ((pollId != null) && (vote != null)) {
         try {
@@ -297,12 +297,12 @@ class Polls with Service implements NotificationsListener {
           String? responseString = response?.body;
           Map<String, dynamic>? responseJson = AppJson.decode(responseString);
           List<dynamic>? responseList = (responseJson != null) ? responseJson['data'] : null;
-          List<Poll?>? polls = (responseList != null) ? Poll.fromJsonList(responseList) : null;
+          List<Poll>? polls = (responseList != null) ? Poll.fromJsonList(responseList) : null;
           if (polls == null) {
             throw responseString ?? Localization().getStringEx('logic.polls.unable_to_load_poll', 'Unable to load poll')!;
           }
 
-          List<Poll?> results = [];
+          List<Poll> results = [];
           for (Poll? poll in polls) {
             if (!poll!.isGeoFenced || GeoFence().currentRegionIds.contains(poll.regionId)) {
               results.add(poll);
@@ -315,8 +315,8 @@ class Polls with Service implements NotificationsListener {
             throw Localization().getStringEx('logic.polls.multiple_polls_with_pin', 'There are multiple opened polls with this pin')!;
           }
 
-          Poll poll = polls.first!;
-          if (_pollChunks[poll.pollId] == null) {
+          Poll? poll = polls.isNotEmpty ? polls.first : null;
+          if ((poll != null) && (_pollChunks[poll.pollId] == null)) {
             _addPollToChunks(poll);
             NotificationService().notify(notifyCreated, poll.pollId);
             //_presentWaiting();
@@ -376,7 +376,7 @@ class Polls with Service implements NotificationsListener {
     return _enabled ? _presentPoll?.poll : null;
   }
 
-  List<Poll?>? localRecentPolls() {
+  List<Poll>? localRecentPolls() {
     if(_enabled) {
       List<_PollChunk> pollChunks = [];
       _pollChunks.forEach((String? pollId, _PollChunk pollChunk) {
@@ -389,9 +389,11 @@ class Polls with Service implements NotificationsListener {
         return pollChunk2.poll!.pollId!.compareTo(pollChunk1.poll!.pollId!);
       });
 
-      List<Poll?> polls = [];
+      List<Poll> polls = [];
       for (_PollChunk pollChunk in pollChunks) {
-        polls.add(pollChunk.poll);
+        if (pollChunk.poll != null) {
+          polls.add(pollChunk.poll!);
+        }
       }
       return polls;
     }
@@ -414,7 +416,7 @@ class Polls with Service implements NotificationsListener {
     }
   }
 
-  void _updatePollResults(String? pollId, PollVote pollResults) {
+  void _updatePollResults(String? pollId, PollVote? pollResults) {
     if (pollId != null) {
       _PollChunk? pollChunk = _pollChunks[pollId];
       if (pollChunk != null) {
@@ -426,7 +428,7 @@ class Polls with Service implements NotificationsListener {
     }
   }
 
-  void _updatePollVote(String pollId, PollVote pollVote) {
+  void _updatePollVote(String? pollId, PollVote pollVote) {
     if (pollId != null) {
       _PollChunk? pollChunk = _pollChunks[pollId];
       if (pollChunk != null) {
@@ -460,7 +462,7 @@ class Polls with Service implements NotificationsListener {
           print(e.toString());
         }
       }
-      else if ((pollChunk != null) && (pollChunk.poll!.status != PollStatus.opened)) {
+      else if ((pollChunk.poll?.status != PollStatus.opened)) {
         pollChunk.poll!.status = PollStatus.opened;
         NotificationService().notify(notifyStatusChanged, pollId);
         _presentWaiting();
@@ -749,6 +751,11 @@ class _PollChunk {
 
   _PollChunk({this.poll, this.status });
 
+  @override
+  void dispose() {
+    eventListener?.cancel();
+  }
+
   bool get canPresent {
     if ((status == _PollUIStatus.waitingVote) &&
         (poll!.status == PollStatus.opened) &&
@@ -788,7 +795,7 @@ class _PollChunk {
 enum _PollUIStatus { waitingVote, presentVote, waitingClose, presentResult }
 
 class PollsChunk {
-  List<Poll?>? polls;
+  List<Poll>? polls;
   String? cursor;
   PollsChunk({this.polls, this.cursor});
 }

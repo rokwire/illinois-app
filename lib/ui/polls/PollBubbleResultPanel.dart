@@ -94,11 +94,11 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   }
 
   List<Widget> _buildResultsContent(Poll poll) {
-    String? creator = poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    String? creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     String wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
 
     String? votesNum;
-    int totalVotes = poll?.results?.totalVotes ?? 0;
+    int totalVotes = poll.results?.totalVotes ?? 0;
     if (1 < totalVotes) {
       votesNum = sprintf(Localization().getStringEx('panel.poll_prompt.text.many_votes', '%s votes')!, ['$totalVotes']);
     }
@@ -110,16 +110,16 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     }
     
     String? pollStatus;
-    if (poll?.status == PollStatus.opened) {
+    if (poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_open', 'Polls open');
     }
-    else if (poll?.status == PollStatus.closed) {
+    else if (poll.status == PollStatus.closed) {
       pollStatus = Localization().getStringEx('panel.poll_prompt.text.poll_closed', 'Polls closed');
     }
 
-    String pollTitle = poll?.title ?? '';
-    String semanticsQuestionText = wantsToKnow + "\n" + pollTitle;
-    String semanticsStatusText = pollStatus!+","+votesNum!;
+    String pollTitle = poll.title ?? '';
+    String semanticsQuestionText = "$wantsToKnow\n$pollTitle";
+    String semanticsStatusText = "$pollStatus,$votesNum";
 
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
@@ -127,12 +127,12 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
         Text(wantsToKnow, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12),)),
       Semantics(excludeSemantics: true,child:
         Padding(padding: EdgeInsets.symmetric(vertical: 20),child:
-          Text(poll?.title ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),),)),
+          Text(poll.title ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),),)),
 
       Column(children: _buildResultOptions(poll),),
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
         Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-          Text(votesNum, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),),
+          Text(votesNum ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),),
           Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, ),),
           Text(pollStatus ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 12, ),),
       ],),)),
@@ -144,9 +144,9 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   List<Widget> _buildResultOptions(Poll poll) {
     List<Widget> result = [];
     _progressKeys = [];
-    int totalVotes = poll?.results?.totalVotes ?? 0;
+    int totalVotes = poll.results?.totalVotes ?? 0;
     for (int optionIndex = 0; optionIndex < poll.options!.length; optionIndex++) {
-      String checkboxImage = (false /*_vote[optionIndex] != null*/) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
+      String checkboxImage = 'images/checkbox-unselected.png'; // (_vote[optionIndex] != null) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = poll.options![optionIndex];
       String? votesString;
@@ -242,7 +242,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     if (_progressKeys != null) {
       double progressWidth = -1.0;
       for (GlobalKey progressKey in _progressKeys!) {
-        final RenderObject? progressRender = progressKey?.currentContext?.findRenderObject();
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
         if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
           if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
             progressWidth = progressRender.size.width;

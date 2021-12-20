@@ -18,7 +18,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -61,7 +60,7 @@ class HomePanel extends StatefulWidget {
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
   List<dynamic>? _contentListCodes;
-  StreamController<void>? _refreshController;
+  StreamController<void> _refreshController = StreamController.broadcast();
   GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
@@ -75,14 +74,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       HomeGiesWidget.notifyPageChanged,
     ]);
     _contentListCodes = _buildContentListCodes() ?? [];
-    _refreshController = StreamController.broadcast();
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _refreshController!.close();
+    _refreshController.close();
     super.dispose();
   }
 
@@ -223,11 +221,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   Future<void> _onPullToRefresh() async {
     LiveStats().refresh();
-    _refreshController!.add(null);
+    _refreshController.add(null);
   }
 
   void _ensureGiesVisible() {
-    if (_giesWidgetKey?.currentContext != null) {
+    if (_giesWidgetKey.currentContext != null) {
       Scrollable.ensureVisible(_giesWidgetKey.currentContext!, duration: Duration(milliseconds: 300));
     }
   }

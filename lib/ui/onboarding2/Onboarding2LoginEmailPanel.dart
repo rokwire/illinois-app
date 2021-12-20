@@ -251,7 +251,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     Visibility(visible: AppString.isStringNotEmpty(_validationErrorText), child:
                       Padding(key:_validationErrorKey, padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                        Text(AppString.getDefaultEmptyString(_validationErrorText ?? '')!, style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(AppString.getDefaultEmptyString(_validationErrorText ?? ''), style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                     ),
                   ],),
@@ -366,7 +366,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       String confirmPassword = _confirmPasswordController.text;
 
       String strengthRegEx = r'^(?=(.*[a-z]){1,})(?=(.*[A-Z]){1,})(?=(.*[0-9]){1,})(?=(.*[!@#$%^&*()\-__+.]){1,}).{8,}$';
-      if ((password == null) || password.isEmpty) {
+      if (password.isEmpty) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else if (!RegExp(strengthRegEx).hasMatch(password)) {
@@ -415,7 +415,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
       String password = _passwordController.text;
 
-      if ((password == null) || password.isEmpty) {
+      if (password.isEmpty) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else {

@@ -17,6 +17,7 @@
 import 'dart:math';
 
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/utils/Utils.dart';
 
 
 class Poll {
@@ -118,11 +119,11 @@ class Poll {
     userVote!.apply(pollVote);
   }
 
-  static List<Poll?> fromJsonList(List<dynamic>? jsonList) {
-    List<Poll?> polls = [];
+  static List<Poll> fromJsonList(List<dynamic>? jsonList) {
+    List<Poll> polls = [];
     if (jsonList != null) {
       for (dynamic jsonEntry in jsonList) {
-        polls.add(Poll.fromJson(jsonEntry));
+        AppList.add(polls, Poll.fromJson(jsonEntry));
       }
     }
     return polls;

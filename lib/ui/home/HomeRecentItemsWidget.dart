@@ -87,7 +87,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   void _loadRecentItems() {
     setState(() {
-      _recentItems = RecentItems().recentItems?.toSet()?.toList();
+      _recentItems = RecentItems().recentItems.toSet().toList();
     });
   }
 
@@ -98,7 +98,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
         SchedulerBinding.instance!.addPostFrameCallback((_) => setState(() {
-          _recentItems = RecentItems().recentItems?.toSet()?.toList();
+          _recentItems = RecentItems().recentItems.toSet().toList();
         }));
       }
     }

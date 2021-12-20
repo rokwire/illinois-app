@@ -183,11 +183,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _handleSelectionTap(InboxMessage message) {
     setState(() {
-      if (_selectedMessageIds.contains(message?.messageId)) {
-        _selectedMessageIds.remove(message?.messageId);
+      if (_selectedMessageIds.contains(message.messageId)) {
+        _selectedMessageIds.remove(message.messageId);
         AppSemantics.announceMessage(context, "Deselected");
       } else {
-        _selectedMessageIds.add(message?.messageId);
+        _selectedMessageIds.add(message.messageId);
         AppSemantics.announceMessage(context, "Selected");
       }
     });
@@ -323,8 +323,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
     setState(() {
       switch(filterType) {
-        case _FilterType.Category: _selectedCategory = filterEntry?.value; break;
-        case _FilterType.Time: _selectedTime = filterEntry?.value; break;
+        case _FilterType.Category: _selectedCategory = filterEntry.value; break;
+        case _FilterType.Time: _selectedTime = filterEntry.value; break;
+        default: break;
       }
       _selectedFilter = null;
     });
@@ -767,7 +768,7 @@ class _FilterEntry {
     _name = name ?? value?.toString(),
     _value = value;
 
-  static _FilterEntry? entryInList(List<_FilterEntry> entries, dynamic value) {
+  static _FilterEntry? entryInList(List<_FilterEntry>? entries, dynamic value) {
     if (entries != null) {
       for (_FilterEntry entry in entries) {
         if (entry.value == value) {

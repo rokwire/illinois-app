@@ -207,7 +207,7 @@ class _Onboarding2PersonalizePanelState extends State<Onboarding2PersonalizePane
 
   void _goNext(BuildContext context) {
     Onboarding2().storePersonalizeChoice(_toggled);
-    if (Onboarding2().getPersonalizeChoice!) {
+    if (Onboarding2().getPersonalizeChoice) {
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => Onboarding2ImprovePanel()));
     } else {

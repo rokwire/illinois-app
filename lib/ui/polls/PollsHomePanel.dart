@@ -46,13 +46,13 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   _PollType? _selectedPollType;
 
-  List<Poll?>? _myPolls;
+  List<Poll>? _myPolls;
   String? _myPollsCursor;
   String? _myPollsError;
   bool _myPollsLoading = false;
   
-  List<Poll?>? _recentPolls;
-  List<Poll?>? _recentLocalPolls;
+  List<Poll>? _recentPolls;
+  List<Poll>? _recentLocalPolls;
   String? _recentPollsCursor;
   String? _recentPollsError;
   bool _recentPollsLoading = false;
@@ -208,8 +208,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildPollsContent(){
 
-    List<Poll?>? polls;
-    List<Poll?>? localPolls;
+    List<Poll>? polls;
+    List<Poll>? localPolls;
     late bool pollsLoading;
     String? pollsError;
     if (_selectedPollType == _PollType.myPolls) {
@@ -262,7 +262,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   }
 
-  List<Poll?>? get _polls {
+  List<Poll>? get _polls {
     if (_selectedPollType == _PollType.myPolls) {
       return _myPolls;
     }
@@ -274,7 +274,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
   }
 
-  Widget _buildPolls(List<Poll?>? polls1, List<Poll?>? polls2, bool pollsLoading) {
+  Widget _buildPolls(List<Poll>? polls1, List<Poll>? polls2, bool pollsLoading) {
 
     List<Widget> content = [];
 
@@ -438,7 +438,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   void _evalBleDescriptionHeight() {
     try {
-      final RenderObject? renderBox = _keyBleDescriptionText?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _keyBleDescriptionText.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
         _bleDescriptionTextHeight = renderBox.size.height;
       }
@@ -529,7 +529,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           }
         });
       }).catchError((e){
-        _myPollsError = e.toString() ?? "Unknown error occured";
+        _myPollsError = e.toString();
       }).whenComplete((){
         setState((){
           _myPollsLoading = false;
@@ -556,7 +556,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           }
         });
       }).catchError((e){
-        _recentPollsError = e.toString() ?? "Unknown error occured";
+        _recentPollsError = e.toString();
       }).whenComplete((){
         setState((){
           _recentPollsLoading = false;
@@ -565,11 +565,11 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     }
   }
 
-  void _stripRecentLocalPolls(List<Poll?>?recentPolls) {
+  void _stripRecentLocalPolls(List<Poll>?recentPolls) {
     if (recentPolls != null) {
       for (Poll? poll in recentPolls) {
         for (int index = _recentLocalPolls!.length - 1; 0 <= index; index--) {
-          Poll localRecentPoll = _recentLocalPolls![index]!;
+          Poll localRecentPoll = _recentLocalPolls![index];
           if (localRecentPoll.pollId == poll!.pollId) {
             _recentLocalPolls!.removeAt(index);
           }
@@ -589,10 +589,10 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _updatePollInList(poll, _recentLocalPolls);
   }
 
-  void _updatePollInList(Poll poll, List<Poll?>?polls) {
+  void _updatePollInList(Poll? poll, List<Poll>?polls) {
     if ((poll != null) && (polls != null)) {
       for (int index = 0; index < polls.length; index++) {
-        if (polls[index]!.pollId == poll.pollId) {
+        if (polls[index].pollId == poll.pollId) {
           polls[index] = poll;
         }
       }
@@ -768,9 +768,9 @@ class _PollCardState extends State<_PollCard>{
         decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
         child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
         <Widget>[
-          Semantics(excludeSemantics: true, label: pollStatus!+","+votesNum!,
+          Semantics(excludeSemantics: true, label: "$pollStatus,$votesNum",
           child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
-            Text(votesNum, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
+            Text(votesNum ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
             Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),),
             Expanded(child:
             Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
@@ -923,7 +923,7 @@ class _PollCardState extends State<_PollCard>{
     _setStartButtonProgress(true);
       Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
         _setStartButtonProgress(false);
-        AppAlert.showDialogResult(context, e.toString() ?? "Unknown error occured");
+        AppAlert.showDialogResult(context, e.toString());
       });
   }
 
@@ -931,7 +931,7 @@ class _PollCardState extends State<_PollCard>{
     _setEndButtonProgress(true);
       Polls().close(widget.poll!.pollId).then((result) => _setEndButtonProgress(false)).catchError((e){
         _setEndButtonProgress(false);
-        AppAlert.showDialogResult(context, e.toString() ?? "Unknown error occured");
+        AppAlert.showDialogResult(context, e.toString());
       });
 
   }
@@ -944,7 +944,7 @@ class _PollCardState extends State<_PollCard>{
     if (_progressKeys != null) {
       double progressWidth = -1.0;
       for (GlobalKey progressKey in _progressKeys!) {
-        final RenderObject? progressRender = progressKey?.currentContext?.findRenderObject();
+        final RenderObject? progressRender = progressKey.currentContext?.findRenderObject();
         if ((progressRender is RenderBox) && (0 < progressRender.size.width)) {
           if ((progressWidth < 0.0) || (progressRender.size.width < progressWidth)) {
             progressWidth = progressRender.size.width;

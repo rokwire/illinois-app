@@ -141,7 +141,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   Widget _buildContent() {
     List<Widget> pages = <Widget>[];
     for (TweetsPage tweetsPage in _tweetsPages) {
-      if (tweetsPage?.tweets != null) {
+      if (tweetsPage.tweets != null) {
         for (Tweet? tweet in tweetsPage.tweets!) {
           pages.add(_TweetWidget(tweet: tweet,));
         }
