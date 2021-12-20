@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ## [3.1.3] - 2021-12-20
+- Fix bad concurrent Groups login API synchronisation [#1150](https://github.com/rokwire/illinois-app/issues/1150).
 - Updated ui for add image for post and reply [1134](https://github.com/rokwire/illinois-app/issues/1134)
 
 ## [3.1.2] - 2021-12-17
