@@ -118,9 +118,6 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
   }
 
   Widget _buildButtons() {
-    bool assetsEnabled = true;
-    bool netEnabled = true;
-
     bool applyEnabled = (_contentSource == null) || (_contentModified == true);
     bool previewEnabled = (_contentSource != null) && (_contentModified != true);
 
@@ -128,8 +125,8 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
       Row(children: <Widget>[
         Expanded(child: RoundedButton(
           label: "Init From Assets",
-          textColor: assetsEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-          borderColor: assetsEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+          textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.surfaceAccent,
+          borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.surfaceAccent,
           backgroundColor: Styles().colors!.white,
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
@@ -140,8 +137,8 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         Container(width: 8,),
         Expanded(child: RoundedButton(
           label: "Init From Net",
-          textColor: netEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-          borderColor: netEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+          textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.surfaceAccent,
+          borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.surfaceAccent,
           backgroundColor: Styles().colors!.white,
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
@@ -204,7 +201,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
                 _contentSource = Guide().contentSource;
                 _contentModified = false;
                 _processingContent = false;
-                _contentTextController!.text = contentString ?? '';
+                _contentTextController!.text = contentString;
               });
             }
             else {
@@ -242,7 +239,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
             _contentSource = Guide().contentSource;
             _contentModified = false;
             _processingContent = false;
-            _contentTextController!.text = contentString ?? '';
+            _contentTextController!.text = contentString;
           });
         }
         else {
@@ -263,7 +260,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
           _contentSource = Guide().contentSource;
           _contentModified = false;
           _processingContent = false;
-          _contentTextController!.text = contentString ?? '';
+          _contentTextController!.text = contentString;
         });
         AppAlert.showDialogResult(context, "JSON conent applied.");
       }

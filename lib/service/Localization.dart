@@ -45,7 +45,7 @@ class Localization with Service implements NotificationsListener {
 
   // Multilanguage support
   final List<String> defaultSupportedLanguages = ['en', 'es','zh'];
-  List<String> get supportedLanguages => (Config()?.supportedLocales?.isNotEmpty??false) ? Config().supportedLocales!.cast<String>() : defaultSupportedLanguages;
+  List<String> get supportedLanguages => (Config().supportedLocales?.isNotEmpty??false) ? Config().supportedLocales!.cast<String>() : defaultSupportedLanguages;
   Iterable<Locale> supportedLocales() => supportedLanguages.map<Locale>((language) => Locale(language, ""));  
 
   // Data
@@ -105,7 +105,7 @@ class Localization with Service implements NotificationsListener {
   }
 
   set currentLocale(Locale? value)  {
-    if ((value == null) || (value?.languageCode == _defaultLocale?.languageCode)) {
+    if ((value == null) || (value.languageCode == _defaultLocale?.languageCode)) {
       // use default
       _currentLocale = null;
       _localeStrings = _localeAssetsStrings = _localeCachedStrings = null;

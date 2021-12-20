@@ -246,7 +246,7 @@ class ServiceError {
   ServiceError({this.title, this.description, this.source, this.severity});
 
   String toString() {
-    return "ServiceError: ${source?.runtimeType?.toString()}: $title\n$description";
+    return "ServiceError: ${source?.runtimeType.toString()}: $title\n$description";
   }
 
   bool operator ==(o) =>

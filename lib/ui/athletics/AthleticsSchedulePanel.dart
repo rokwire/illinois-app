@@ -55,7 +55,7 @@ class _AthleticsSchedulePanelState extends State<AthleticsSchedulePanel> {
   @override
   Widget build(BuildContext context) {
     String headerLabel = widget.sport?.name ?? Localization().getStringEx('panel.athletics_schedule.header.title', 'SCHEDULE')!;
-    String scheduleYear = AppString.getDefaultEmptyString(_scheduleYear)!;
+    String scheduleYear = AppString.getDefaultEmptyString(_scheduleYear);
     String scheduleLabel = scheduleYear + " " + Localization().getStringEx("panel.athletics_schedule.label.schedule.title", "Schedule")!;
     int itemsCount = _displayList?.length ?? 0;
     return Scaffold(

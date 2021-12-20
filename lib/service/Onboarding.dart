@@ -116,7 +116,7 @@ class Onboarding with Service implements NotificationsListener {
     NotificationService().notify(notifyFinished, context);
   }
 
-  Future<dynamic> _nextPanel(OnboardingPanel panel) async {
+  Future<dynamic> _nextPanel(OnboardingPanel? panel) async {
     if (_contentCodes != null) {
       int? nextPanelIndex;
       if (panel == null) {

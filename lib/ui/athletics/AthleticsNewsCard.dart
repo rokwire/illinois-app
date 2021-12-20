@@ -208,7 +208,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   }
 
   bool _showTopBorder(){
-    return widget.news?.imageUrl == null ?? true;
+    return widget.news?.imageUrl == null;
   }
 
   void _onTapSave() {

@@ -108,9 +108,9 @@ class Onboarding2 with Service{
   int get getPrivacyLevel{
     //TBD refactoring
     int privacyLevel = -1;
-    if(getExploreCampusChoice!){
-      if(getPersonalizeChoice!){
-        if(getImproveChoice!){
+    if(getExploreCampusChoice){
+      if(getPersonalizeChoice){
+        if(getImproveChoice){
           privacyLevel = 5;
         } else {
           //!getImproveChoice
@@ -122,8 +122,8 @@ class Onboarding2 with Service{
       }
     } else {
       //!getExploreCampusChoice
-      if(getPersonalizeChoice!){
-        if(getImproveChoice!){
+      if(getPersonalizeChoice){
+        if(getImproveChoice){
           privacyLevel = 5;
         } else {
           //!getImproveChoice

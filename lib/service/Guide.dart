@@ -330,7 +330,7 @@ class Guide with Service implements NotificationsListener {
     false;
   }
 
-  static bool _checkPromotionInterval(Map<String, dynamic> promotion) {
+  static bool _checkPromotionInterval(Map<String, dynamic>? promotion) {
     Map<String, dynamic>? interval = (promotion != null) ? AppJson.mapValue(promotion['interval']) : null;
     if (interval != null) {
       DateTime now = DateTime.now().toUtc();
@@ -350,7 +350,7 @@ class Guide with Service implements NotificationsListener {
     return true;
   }
 
-  static bool _checkPromotionRoles(Map<String, dynamic> promotion) {
+  static bool _checkPromotionRoles(Map<String, dynamic>? promotion) {
     dynamic roles = (promotion != null) ? promotion['roles'] : null;
     return (roles != null) ? AppBoolExpr.eval(roles, (String? argument) {
       UserRole? userRole = UserRole.fromString(argument);
@@ -358,7 +358,7 @@ class Guide with Service implements NotificationsListener {
     }) : true; 
   }
 
-  static bool _checkPromotionCard(Map<String, dynamic> promotion) {
+  static bool _checkPromotionCard(Map<String, dynamic>? promotion) {
     Map<String, dynamic>? card = (promotion != null) ? AppJson.mapValue(promotion['card']) : null;
     if (card != null) {
       dynamic cardRole = card['role'];
@@ -428,7 +428,7 @@ class Guide with Service implements NotificationsListener {
     }
   }
 
-  void _handleGuideDetail(Map<String, dynamic> params) {
+  void _handleGuideDetail(Map<String, dynamic>? params) {
     if ((params != null) && params.isNotEmpty) {
       if (_guideDetailsCache != null) {
         _cacheGuideDetail(params);
@@ -680,7 +680,7 @@ class GuideSection {
   
   GuideSection({this.name, this.date});
 
-  static GuideSection? fromGuideEntry(Map<String, dynamic> guideEntry) {
+  static GuideSection? fromGuideEntry(Map<String, dynamic>? guideEntry) {
     return (guideEntry != null) ? GuideSection(
         name: AppJson.stringValue(Guide().entryValue(guideEntry, 'section')),
         date: Guide().isEntryReminder(guideEntry) ? Guide().reminderSectionDate(guideEntry) : null,
@@ -764,6 +764,7 @@ String? guideContentSourceToString(GuideContentSource? value) {
   switch (value) {
     case GuideContentSource.Net:   return 'Net';
     case GuideContentSource.Debug: return 'Debug';
+    default: break;
   }
   return null;
 }

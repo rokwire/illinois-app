@@ -76,9 +76,9 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
       );
     }
 
-    String title = widget?._game?.title ?? "";
-    String subTitle = widget?._game?.shortDescription ?? "";
-    String displayTime = widget?._game?.displayTime ?? "";
+    String title = widget._game?.title ?? "";
+    String subTitle = widget._game?.shortDescription ?? "";
+    String displayTime = widget._game?.displayTime ?? "";
 
     return GestureDetector(
       onTap: _onTapSchedule,
@@ -159,7 +159,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   }
 
   Widget _cardTimeDetail() {
-    String displayTime = widget._game!.displayTime;
+    String? displayTime = widget._game?.displayTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Padding(
         padding: EdgeInsets.only(top: 12, left: 24, right: 24),
@@ -178,7 +178,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     }
   }
 
-  Widget _cardAction(BuildContext context) {
+  Widget? _cardAction(BuildContext context) {
     SportDefinition? sport = Sports().getSportByShortName(widget._game!.sport?.shortName);
     bool hasTickets = _hasTickets();
     return Semantics(
@@ -237,7 +237,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
     if (result == null) {
       return null;
     }
-    String formattedResult = AppString.getDefaultEmptyString(result.status) ?? '';
+    String formattedResult = AppString.getDefaultEmptyString(result.status);
     if (AppString.isStringNotEmpty(result.teamScore)) {
       formattedResult += ' ' + result.teamScore!;
       if (AppString.isStringNotEmpty(result.opponentScore)) {
@@ -263,7 +263,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                     Expanded(
                       child: Container(),
                     ),
-                    Text(formattedResult!, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                    Text(formattedResult, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                   ])))
         ],
       ),

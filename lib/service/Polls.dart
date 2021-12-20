@@ -149,52 +149,50 @@ class Polls with Service implements NotificationsListener {
 
   Future<void> create(Poll poll) async {
     if(_enabled) {
-      if (poll != null) {
-        try {
-          String url = '${Config().quickPollsUrl}/pollcreate';
-          Response? response = await Network().post(url, body: json.encode(poll.toJson()), auth: NetworkAuth.Auth2);
-          int responseCode = response?.statusCode ?? -1;
-          String? responseString = response?.body;
-          if ((response != null) && (response.statusCode == 200)) {
-            Map<String, dynamic>? responseJson = AppJson.decode(responseString);
-            String? pollId = (responseJson != null) ? responseJson['id'] : null;
-            if (pollId != null) {
-              poll.pollId = pollId;
+      try {
+        String url = '${Config().quickPollsUrl}/pollcreate';
+        Response? response = await Network().post(url, body: json.encode(poll.toJson()), auth: NetworkAuth.Auth2);
+        int responseCode = response?.statusCode ?? -1;
+        String? responseString = response?.body;
+        if ((response != null) && (response.statusCode == 200)) {
+          Map<String, dynamic>? responseJson = AppJson.decode(responseString);
+          String? pollId = (responseJson != null) ? responseJson['id'] : null;
+          if (pollId != null) {
+            poll.pollId = pollId;
 
-              Analytics().logPoll(poll, Analytics.LogPollCreateActionName);
+            Analytics().logPoll(poll, Analytics.LogPollCreateActionName);
 
-              _addPollToChunks(poll);
+            _addPollToChunks(poll);
 
-              if (poll.status == PollStatus.opened) {
-                Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
-                /*if (poll.isFirebase) {
-                  FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
-                }
-                else {
-                  PollsPlugin().openPoll(poll.pollId);
-                }*/
+            if (poll.status == PollStatus.opened) {
+              Analytics().logPoll(poll, Analytics.LogPollOpenActionName);
+              /*if (poll.isFirebase) {
+                FirebaseMessaging().send(topic:'polls', message:{'type':'poll_open', 'poll_id': pollId});
               }
+              else {
+                PollsPlugin().openPoll(poll.pollId);
+              }*/
+            }
 
-              Timer(Duration(milliseconds: 500), () {
-                NotificationService().notify(notifyCreated, poll.pollId);
-                _presentWaiting();
-              });
-            }
-            else {
-              throw Localization().getStringEx('logic.general.invalid_response', 'Invalid server response')!;
-            }
+            Timer(Duration(milliseconds: 500), () {
+              NotificationService().notify(notifyCreated, poll.pollId);
+              _presentWaiting();
+            });
           }
           else {
-            throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['$responseCode', '$responseString']);
+            throw Localization().getStringEx('logic.general.invalid_response', 'Invalid server response')!;
           }
-        } on Exception catch (e) {
-          print(e.toString());
-          throw e;
         }
+        else {
+          throw sprintf(Localization().getStringEx('logic.general.response_error', 'Response Error: %s %s')!, ['$responseCode', '$responseString']);
+        }
+      } on Exception catch (e) {
+        print(e.toString());
+        throw e;
       }
-      else {
-        throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
-      }
+    }
+    else {
+      throw Localization().getStringEx('logic.general.internal_error', 'Internal Error Occured')!;
     }
     return null;
   }
@@ -240,7 +238,7 @@ class Polls with Service implements NotificationsListener {
           String url = '${Config().quickPollsUrl}/pollvote/$pollId';
           Map<String, dynamic> voteJson = {
             'userid': Auth2().accountId,
-            'answer': vote?.toVotesJson(),
+            'answer': vote.toVotesJson(),
           };
           String voteString = json.encode(voteJson);
           Response? response = await Network().post(url, body: voteString, auth: NetworkAuth.Auth2);
@@ -569,7 +567,7 @@ class Polls with Service implements NotificationsListener {
             String dataString = utf8.decode(data).trim();
             _setEventListenerTimer(pollId);
             
-            if(dataString?.isNotEmpty ?? false){
+            if(dataString.isNotEmpty){
               String eventName = dataString.substring(dataString.indexOf(":")+1, dataString.indexOf("\n"));
               String eventData = dataString.substring(dataString.lastIndexOf(":")+1);
               _onPollEvent(pollId, eventName, eventData);
@@ -629,7 +627,7 @@ class Polls with Service implements NotificationsListener {
 
   void _removePollChunk(_PollChunk pollChunk) {
     pollChunk.closeEventStream(permanent: true);
-    _pollChunks.remove(pollChunk?.poll?.pollId);
+    _pollChunks.remove(pollChunk.poll?.pollId);
     _savePollChunks();
   }
 
@@ -687,7 +685,7 @@ class Polls with Service implements NotificationsListener {
   }
 
   void _launchPollNotification(Poll poll) {
-    String? creator = poll?.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
+    String? creator = poll.creatorUserName ?? Localization().getStringEx('panel.poll_prompt.text.someone', 'Someone');
     String? wantsToKnow = sprintf(Localization().getStringEx('panel.poll_prompt.text.wants_to_know', '%s wants to know')!, [creator]);
     NativeCommunicator().launchNotification(body: poll.title, subtitle: wantsToKnow);
   }
@@ -801,6 +799,7 @@ String? _pollUIStatusToString(_PollUIStatus? status) {
     case _PollUIStatus.presentVote : return 'presentVote';
     case _PollUIStatus.waitingClose : return 'waitingClose';
     case _PollUIStatus.presentResult : return 'presentResult';
+    default: break;
   }
   return null;
 }
