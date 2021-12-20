@@ -36,7 +36,7 @@ import io.flutter.view.FlutterMain;
 
 public class App extends Application implements LifecycleObserver, PluginRegistry.PluginRegistrantCallback {
 
-    private static final String CHANNEL_ID = "Polls_Channel_ID";
+    private static final String CHANNEL_ID = "Notifications_Channel_ID";
 
     public boolean inBackground = true;
 
@@ -68,7 +68,7 @@ public class App extends Application implements LifecycleObserver, PluginRegistr
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Default_channel";
-            String description = "Default poll channel";
+            String description = "Default notifications channel";
             int importance = android.app.NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);

@@ -5,10 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-##[3.1.2] - 2021-12-17
+## [3.1.2] - 2021-12-17
 - Updated ui for add image for post and reply [1134](https://github.com/rokwire/illinois-app/issues/1134)
 
-##[3.1.1] - 2021-12-15
+## [3.1.1] - 2021-12-15
 ### Added
 - Implemented add image for Post Reply. [1134](https://github.com/rokwire/illinois-app/issues/1134).
 
@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show GIES role button again, updated GIES widget title [#1132](https://github.com/rokwire/illinois-app/issues/1132).
 - Add image to group posts [#1134](https://github.com/rokwire/illinois-app/issues/1134)
+
+## [3.0.70] - 2021-12-20
+### Changed
+- Removed Bluetooth support for Polls [#1146](https://github.com/rokwire/illinois-app/issues/1146).
+### Fixed
+- Acknowledged integer latitude/longitude when evaluating explore location distance.
 
 ## [3.0.69] - 2021-12-16
 ### Changed

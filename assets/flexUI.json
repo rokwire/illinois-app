@@ -34,7 +34,7 @@
 		"settings.privacy": ["buttons", "delete"],
 		"settings.privacy.buttons": ["personal_info", "notifications"],
 
-		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "bluetooth_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
+		"onboarding":["get_started", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
@@ -94,7 +94,6 @@
 
 			"onboarding.notifications_auth"   : 4,
 			"onboarding.location_auth"        : 2,
-			"onboarding.bluetooth_auth"       : 2,
 			"onboarding.roles"                : 3,
 			"onboarding.login_netid"          : 3,
 			"onboarding.login_phone"          : 3,
@@ -137,7 +136,6 @@
 			"settings.connected.email.login"      : { "emailLoggedIn": false }
 		},
 		"platform":{
-			"onboarding.bluetooth_auth"     : { "os": "ios" },
 			"onboarding.notifications_auth" : { "os": "ios" }
 		},
 		"illini_cash": {
