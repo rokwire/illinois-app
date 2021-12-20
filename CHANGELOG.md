@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Removed Bluetooth support for Polls [#1146](https://github.com/rokwire/illinois-app/issues/1146).
 ### Fixed
+- Fix bad concurrent Groups login API synchronisation [#1150](https://github.com/rokwire/illinois-app/issues/1150).
 - Acknowledged integer latitude/longitude when evaluating explore location distance.
 
 ## [3.0.69] - 2021-12-16
