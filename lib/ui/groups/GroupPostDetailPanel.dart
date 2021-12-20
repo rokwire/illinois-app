@@ -30,6 +30,7 @@ import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/ModalImageDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
@@ -62,6 +63,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   GroupPost? _editingPost; //Edit Mode for Reply {Data Edit}
   GroupPost? _preparedReplyData; //Data for New/Edit Reply {Data Edit/Create}
   String? _selectedReplyId; // Thread Id target for New Reply {Data Create}
+  String? _modalImageUrl; // Image presentation
   bool _editMainPost = false; //Editing Mode for Main Post
   bool _loading = false;
 
@@ -128,9 +130,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
               Column(children: [
                 Container(height: _sliverHeaderHeight ?? 0,),
-                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-                    _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
                 _buildPostContent(),
+                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
+                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost): Container(),
+                _buildRepliesSection(),
                 _buildPostEdit(),
             ],)),
             Visibility(
@@ -264,22 +267,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           ]),
           Visibility(
               visible: _loading,
-              child: Center(child: CircularProgressIndicator()))
+              child: Center(child: CircularProgressIndicator())),
+          _createModalPhotoDialog()
         ]));
   }
 
   Widget _buildPostContent() {
-    List<GroupPost?>? replies;
-    if (_focusedReply != null) {
-      replies = _generateFocusedThreadList();
-    }
-    else if (_editingPost != null) {
-      replies = [_editingPost];
-    }
-    else {
-      replies = _post?.replies;
-    }
-
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -375,20 +368,35 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               ])),
                     ],
                   )),
-              Padding(
-                  padding: EdgeInsets.only(
-                      bottom: _outerPadding),
-                  child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null))
+
             ])));
   }
+
+  _buildRepliesSection(){
+    List<GroupPost>? replies;
+    if (_focusedReply != null) {
+      replies = _generateFocusedThreadList();
+    }
+    else if (_editingPost != null) {
+      replies = [_editingPost!];
+    }
+    else {
+      replies = _post?.replies;
+    }
+
+    return Padding(
+        padding: EdgeInsets.only(
+            bottom: _outerPadding),
+        child: _buildRepliesWidget(replies: replies, focusedReplyId: _focusedReply?.id, showRepliesCount: _focusedReply == null));
+  }
   
-  List<GroupPost?> _generateFocusedThreadList(){
-    List<GroupPost?> result = [];
+  List<GroupPost> _generateFocusedThreadList(){
+    List<GroupPost> result = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
       result.addAll(widget.replyThread!);
     }
     if(_focusedReply!=null){
-      result.add(_focusedReply);
+      result.add(_focusedReply!);
     }
     
     return result;
@@ -542,13 +550,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildRepliesWidget(
-      {List<GroupPost?>? replies,
+      {List<GroupPost>? replies,
       double leftPaddingOffset = 0,
       bool nestedReply = false,
       bool showRepliesCount = true,
       String? focusedReplyId,
       }) {
-    List<GroupPost?>? visibleReplies = _getVisibleReplies(replies);
+    List<GroupPost>? visibleReplies = _getVisibleReplies(replies);
     if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
     }
@@ -582,15 +590,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
                 onIconTap: optionsFunctionTap,
+                onImageTap: (){_showModalImage(reply.imageUrl);},
                 onCardTap: (){_onTapReplyCard(reply);},
             ))));
-      if(reply?.id == focusedReplyId) {
-        if(AppCollection.isCollectionNotEmpty(reply?.replies)){
+      if(reply.id == focusedReplyId) {
+        if(AppCollection.isCollectionNotEmpty(reply.replies)){
           replyWidgetList.add(Container(height: 8,));
           replyWidgetList.add(_buildRepliesHeader());
         }
         replyWidgetList.add(_buildRepliesWidget(
-            replies: reply?.replies,
+            replies: reply.replies,
             leftPaddingOffset: (leftPaddingOffset /*+ 5*/),
             nestedReply: true,
             focusedReplyId: focusedReplyId
@@ -653,7 +662,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       excludeSemantics: true,
                       child: ScalableSmallRoundedButton(
                         maxLines: 2,
-                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Change Image"), // TBD localize
+                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                         textColor: Styles().colors!.fillColorPrimary,
                         onTap: (){ _onTapAddImage(post);},
                       )))):
@@ -724,11 +733,32 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]);
   }
 
-  List<GroupPost?>? _getVisibleReplies(List<GroupPost?>? replies) {
+
+  Widget _createModalPhotoDialog(){
+    return _modalImageUrl!=null ? ModalImageDialog(
+        imageUrl: _modalImageUrl,
+        fit: BoxFit.scaleDown,
+        onClose: () {
+          Analytics.instance.logSelect(target: "Close");
+          _modalImageUrl = null;
+          setState(() {});
+        }
+    ) : Container();
+  }
+
+  void _showModalImage(String? url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
+  }
+
+  List<GroupPost>? _getVisibleReplies(List<GroupPost>? replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
-    List<GroupPost?> visibleReplies = [];
+    List<GroupPost> visibleReplies = [];
     bool currentUserIsMemberOrAdmin =
         widget.group?.currentUserIsMemberOrAdmin ?? false;
     for (GroupPost? reply in replies!) {
