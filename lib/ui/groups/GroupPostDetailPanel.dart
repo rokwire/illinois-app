@@ -85,7 +85,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
     _preparedReplyData = GroupPost();
-    _post = widget.post;
+    _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
@@ -481,8 +481,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             _isCreatePost? Container():
              Container(
                padding: EdgeInsets.only(bottom: 12),
-               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false)) //TBD think for better way to prepare reply
-          ],
+               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false))],
         )
     );
   }
@@ -667,7 +666,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         maxLines: 2,
                         label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                         textColor: Styles().colors.fillColorPrimary,
-                        onTap: (){ _onTapAddImage(post);},
+                        onTap: (){ _onTapAddImage(post);} 
                       )))):
           Container()
         ]));
@@ -1029,7 +1028,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     FocusScope.of(context).unfocus();
     
     String subject;
+    String body = _bodyController.text;
+    String imageUrl;
+
     if (_isCreatePost) {
+      imageUrl = _post?.imageUrl;
       subject = _subjectController.text;
       if (AppString.isStringEmpty(subject)) {
         AppAlert.showDialogResult(
@@ -1040,8 +1043,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         return;
       }
     }
-    
-    String body = _bodyController.text;
+
     if (AppString.isStringEmpty(body)) {
       String validationMsg = (_isCreatePost || (_editingPost != null))
           ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
@@ -1053,13 +1055,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingPost != null) {
-      String imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost.imageUrl;
+      imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost.imageUrl;
       GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
       String parentId;
+
+      imageUrl =  _preparedReplyData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
@@ -1070,7 +1074,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         parentId = _post.id;
       }
       
-      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: _preparedReplyData?.imageUrl);
+      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
       Groups().createPost(widget.group?.id, post).then((succeeded) {
         _onCreateFinished(succeeded);
       });
@@ -1323,7 +1327,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isCreatePost {
-    return (_post == null);
+    return (_post == null || _post?.id == null) ;
   }
 
   // Notifications Listener
