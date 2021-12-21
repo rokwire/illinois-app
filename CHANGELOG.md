@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed content update check in HomeCampusToolsWidget, WalletSheet and TabBarWidget.
+- Crashes in Athletics Roster [#1155](https://github.com/rokwire/illinois-app/issues/1155). 
 
 ## [3.0.70] - 2021-12-20
 ### Changed
