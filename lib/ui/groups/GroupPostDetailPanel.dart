@@ -55,14 +55,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   static final double _outerPadding = 16;
 
   GroupPost _post; //Main post {Data Presentation}
-  GroupPost _focusedReply; //Focused on Reply {Data Presentation}
-  GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
-  String _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  PostDataModel _postEditData = PostDataModel(); //used for Reply Create / Edit;
-  bool _editMainPost = false; //Editing Mode for Main Post
   TextEditingController _mainPostController = TextEditingController(); //Main Post Edit
+  bool _editMainPost = false; //Editing Mode for Main Post
+
+  GroupPost _focusedReply; //Focused on Reply {Replies Thread Presentation}
+  String _selectedReplyId; // Thread Id target for New Reply {Data Create}
+  GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
+  PostDataModel _postEditData = PostDataModel(); //used for Reply Create / Edit;
+
   String _modalImageUrl; // ModalImageDial presentation
   bool _loading = false;
+
   //Scroll and focus utils
   ScrollController _scrollController = ScrollController();
   final GlobalKey _sliverHeaderKey = GlobalKey();
@@ -81,6 +84,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
@@ -437,23 +441,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               ])
             ])));
   }
-  //_buildImageSection(, explicitlyShowAddButton: _editingPost!=null, showSlant: false, wrapContent: true)
+
   Widget _buildReplyImageSection(){
-    return Container(
-        child: Column(
-          children: [
-             Container(
-               padding: EdgeInsets.only(bottom: 12),
-               child: ImageChooserWidget(
-                  imageUrl: _postEditData?.imageUrl,
-                  showSlant: false,
-                  wrapContent: true,
-                  buttonVisible: _editingPost!=null,
-                  onImageChanged: (String imageUrl) => _postEditData?.imageUrl = imageUrl,
-                )
-             )],
+    return
+      Container(
+        padding: EdgeInsets.only(bottom: 12),
+        child: ImageChooserWidget(
+          imageUrl: _postEditData?.imageUrl,
+          showSlant: false,
+          wrapContent: true,
+          buttonVisible: _editingPost!=null,
+          onImageChanged: (String imageUrl) => _postEditData?.imageUrl = imageUrl,
         )
-    );
+     );
   }
 
   Widget _buildReplyTextField(){
@@ -900,6 +900,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       });
     }
   }
+
   //Scroll
   void _evalSliverHeaderHeight() {
     double sliverHeaderHeight;
@@ -918,7 +919,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _scrollToPostEdit() {
-
     BuildContext postEditContext = _postEditKey?.currentContext;
     //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
     RenderObject renderObject = postEditContext?.findRenderObject();
