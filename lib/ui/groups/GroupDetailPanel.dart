@@ -30,7 +30,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
-import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
+import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/ExpandableText.dart';
@@ -459,27 +459,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return
-      Column(children: [
-        Expanded(
-        child:Stack(
-          children: <Widget>[
-            Column(children: <Widget>[
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: content,
-                  ),
-                ),
+      ModalImageDialog.modalDialogContainer(
+        imageUrl: _modalImageUrl,
+        onClose: () {
+          Analytics.instance.logSelect(target: "Close");
+          _modalImageUrl = null;
+          setState(() {});
+        },
+        content: Column(children: <Widget>[
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: content,
               ),
-              _buildMembershipRequest(),
-              _buildCancelMembershipRequest(),
-            ],
+            ),
           ),
-          _createModalPhotoDialog()
-          ]))
-        ],);
+          _buildMembershipRequest(),
+          _buildCancelMembershipRequest(),
+        ],
+      ));
   }
 
   Widget _buildImageHeader(){
@@ -1005,18 +1005,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         }));
   }
 
-  Widget _createModalPhotoDialog(){
-    return _modalImageUrl!=null ? ModalImageDialog(
-        imageUrl: _modalImageUrl,
-        fit: BoxFit.scaleDown,
-        onClose: () {
-          Analytics.instance.logSelect(target: "Close");
-          _modalImageUrl = null;
-          setState(() {});
-        }
-    ) : Container();
-  }
-
   void _showModalImage(String url){
     if(url != null) {
       setState(() {
@@ -1263,7 +1251,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group))).then((result) {
       if (_refreshingPosts != true) {
         _refreshCurrentPosts();
       }
