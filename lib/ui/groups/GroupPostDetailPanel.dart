@@ -53,28 +53,25 @@ class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttrib
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
-  //Default behaviour is create new Post
-  GroupPost _post; //Focused on Main post {Data Presentation}
+
+  GroupPost _post; //Main post {Data Presentation}
   GroupPost _focusedReply; //Focused on Reply {Data Presentation}
   GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
   String _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  bool _editMainPost = false; //Editing Mode for Main Post
-  bool _loading = false;
-
   PostDataModel _postEditData = PostDataModel(); //used for Reply Create / Edit;
+  bool _editMainPost = false; //Editing Mode for Main Post
+  TextEditingController _mainPostController = TextEditingController(); //Main Post Edit
   String _modalImageUrl; // ModalImageDial presentation
-
-  TextEditingController _subjectController = TextEditingController();
-  TextEditingController _mainPostController = TextEditingController(); //Editing Mode for Main Post
-
+  bool _loading = false;
   //Scroll and focus utils
   ScrollController _scrollController = ScrollController();
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
+  double _sliverHeaderHeight;
+  //Refresh
   GlobalKey _postInputKey = GlobalKey();
   GlobalKey _postImageHolderKey = GlobalKey();
-  double _sliverHeaderHeight;
 
   @override
   void initState() {
@@ -96,7 +93,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void dispose() {
     super.dispose();
     NotificationService().unsubscribe(this);
-    _subjectController.dispose();
     _mainPostController.dispose();
   }
 
@@ -134,16 +130,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
-          _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)
-            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _editMainPost || _isCreatePost , onImageChanged: (url) => _post.imageUrl = url,) //TBD Use Data model instead of direct post change
+          _editMainPost || AppString.isStringNotEmpty(_post?.imageUrl)
+            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _editMainPost, onImageChanged: (url) => _post.imageUrl = url,) //TBD Use Data model instead of direct post change
             : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
           _buildPostEdit(),
-        ],)),
-        Visibility(
-            visible: !_isCreatePost,
-            child: Container(
+          ],)),
+       Container(
                 key: _sliverHeaderKey,
                 color: Styles().colors.background,
                 padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
@@ -269,7 +263,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                   true,
                                                 ))))))
                           ]),
-                    ])))
+                    ]))
       ]),
       Visibility(
           visible: _loading,
@@ -281,10 +275,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
-        child: Visibility(
-            visible: !_isCreatePost,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(
                   padding: EdgeInsets.only(
                       left: _outerPadding,
@@ -377,7 +368,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     ],
                   )),
 
-            ])));
+            ]));
   }
 
   _buildRepliesSection(){
@@ -418,39 +409,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         visible: currentUserIsMemberOrAdmin,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Visibility(
-                  visible: _isCreatePost,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            Localization().getStringEx(
-                                'panel.group.detail.post.create.subject.label',
-                                'Subject'),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: Styles().fontFamilies.bold,
-                                color: Styles().colors.fillColorPrimary)),
-                        Padding(
-                            padding: EdgeInsets.only(top: 8),
-                            child: TextField(
-                                controller: _subjectController,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                    hintText: Localization().getStringEx(
-                                        'panel.group.detail.post.create.subject.field.hint',
-                                        'Write a Subject'),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Styles().colors.mediumGray,
-                                            width: 0.0))),
-                                style: TextStyle(
-                                    color: Styles().colors.textBackground,
-                                    fontSize: 16,
-                                    fontFamily: Styles().fontFamilies.regular)))
-                      ])),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               _buildReplyTextField(),
               _buildReplyImageSection(),
               Row(children: [
@@ -483,7 +442,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return Container(
         child: Column(
           children: [
-            _isCreatePost? Container():
              Container(
                padding: EdgeInsets.only(bottom: 12),
                child: ImageChooserWidget(
@@ -609,15 +567,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       }
     }
     return visibleReplies;
-  }
-
-  //Dialog
-  void _showModalImage(String url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
-    }
   }
 
   //Tap Actions
@@ -875,25 +824,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
-    String subject;
     String body = _postEditData?.body;
     String imageUrl;
 
-    if (_isCreatePost) {
-      imageUrl = _post?.imageUrl;
-      subject = _subjectController.text;
-      if (AppString.isStringEmpty(subject)) {
-        AppAlert.showDialogResult(
-            context,
-            Localization().getStringEx(
-                'panel.group.detail.post.create.validation.subject.msg',
-                "Post subject required"));
-        return;
-      }
-    }
-
     if (AppString.isStringEmpty(body)) {
-      String validationMsg = (_isCreatePost || (_editingPost != null))
+      String validationMsg = ((_editingPost != null))
           ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
           : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -922,29 +857,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         parentId = _post.id;
       }
       
-      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
+      GroupPost post = GroupPost(parentId: parentId, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
       Groups().createPost(widget.group?.id, post).then((succeeded) {
-        _onCreateFinished(succeeded);
+        _onSendFinished(succeeded);
       });
     }
   }
 
-  void _onCreateFinished(bool succeeded) {
+  void _onSendFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
       _clearSelectedReplyId();
       _clearBodyControllerContent();
       Navigator.of(context).pop(true);
     } else {
-      AppAlert.showDialogResult(
-          context,
-          _isCreatePost
-              ? Localization().getStringEx(
-                  'panel.group.detail.post.create.post.failed.msg',
-                  'Failed to create new post.')
-              : Localization().getStringEx(
-                  'panel.group.detail.post.create.reply.failed.msg',
-                  'Failed to create new reply.'));
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.reply.failed.msg', 'Failed to create new reply.'));
     }
   }
 
@@ -965,6 +892,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _postEditData.body = '';
   }
 
+  //Modal Image Dialog
+  void _showModalImage(String url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
+  }
   //Scroll
   void _evalSliverHeaderHeight() {
     double sliverHeaderHeight;
@@ -1082,26 +1017,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  bool get _isCreatePost {
-    return (_post == null || _post?.id == null) ;
-  }
-
   // Notifications Listener
-
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
     }
   }
-}
-
-//Model For editable post data. Helping to keep GroupPost immutable
-class PostDataModel {
-  String body;
-  String subject;
-  String imageUrl;
-
-  PostDataModel({this.body, this.subject, this.imageUrl});
-
 }

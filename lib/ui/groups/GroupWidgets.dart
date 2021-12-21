@@ -1445,10 +1445,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
   
   EdgeInsets _padding;
   String _hint;
-  // (_isCreatePost ? Localization().getStringEx(
-  // "panel.group.detail.post.create.body.field.hint",
-  // "Write a Post ..."))
-  
+
   @override
   void initState() {
     super.initState();

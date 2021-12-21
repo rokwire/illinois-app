@@ -926,6 +926,15 @@ class GroupPost {
   }
 }
 
+//Model for editable post data. Helping to keep GroupPost immutable. Internal use
+class PostDataModel {
+  String body;
+  String subject;
+  String imageUrl;
+
+  PostDataModel({this.body, this.subject, this.imageUrl});
+}
+
 //////////////////////////////
 // GroupError
 

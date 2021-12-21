@@ -30,6 +30,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/groups/GroupAllEventsPanel.dart';
 import 'package:illinois/ui/groups/GroupMembershipRequestPanel.dart';
+import 'package:illinois/ui/groups/GroupPostCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupQrCodePanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -1251,7 +1252,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group))).then((result) {
       if (_refreshingPosts != true) {
         _refreshCurrentPosts();
       }
