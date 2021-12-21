@@ -25,16 +25,13 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -60,13 +57,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   GroupPost _post; //Focused on Main post {Data Presentation}
   GroupPost _focusedReply; //Focused on Reply {Data Presentation}
   GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
-  GroupPost _preparedReplyData; //Data for New/Edit Reply {Data Edit/Create}
   String _selectedReplyId; // Thread Id target for New Reply {Data Create}
   bool _editMainPost = false; //Editing Mode for Main Post
   bool _loading = false;
 
   PostDataModel _postEditData = PostDataModel(); //used for Reply Create / Edit;
-  String _modalImageUrl; // Image presentation
+  String _modalImageUrl; // ModalImageDial presentation
 
   TextEditingController _subjectController = TextEditingController();
   TextEditingController _mainPostController = TextEditingController(); //Editing Mode for Main Post
@@ -77,13 +73,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
   GlobalKey _postInputKey = GlobalKey();
+  GlobalKey _postImageHolderKey = GlobalKey();
   double _sliverHeaderHeight;
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
-    _preparedReplyData = GroupPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
@@ -138,8 +134,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
-          _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-          _buildImageSection(_post, explicitlyShowAddButton: _editMainPost || _isCreatePost): Container(),
+          _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)
+            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _editMainPost || _isCreatePost , onImageChanged: (url) => _post.imageUrl = url,) //TBD Use Data model instead of direct post change
+            : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
           _buildPostEdit(),
@@ -481,7 +478,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               ])
             ])));
   }
-
+  //_buildImageSection(, explicitlyShowAddButton: _editingPost!=null, showSlant: false, wrapContent: true)
   Widget _buildReplyImageSection(){
     return Container(
         child: Column(
@@ -489,7 +486,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             _isCreatePost? Container():
              Container(
                padding: EdgeInsets.only(bottom: 12),
-               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false, wrapContent: true))],
+               child: ImageChooserWidget(
+                  imageUrl: _postEditData?.imageUrl,
+                  showSlant: false,
+                  wrapContent: true,
+                  buttonVisible: _editingPost!=null,
+                  onImageChanged: (String imageUrl) => _postEditData?.imageUrl = imageUrl,
+                )
+             )],
         )
     );
   }
@@ -589,50 +593,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     ));
   }
 
-  //Image
-  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton = false, showSlant = true, wrapContent = false}) { //TBD localization
-    final double _imageHeight = 200;
-    String postImageUrl = post?.imageUrl;
-    return Container(
-        constraints: BoxConstraints(
-          maxHeight: (postImageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
-        ),
-        color: Styles().colors.background,
-        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(postImageUrl)
-              ? Positioned.fill(child: Image.network(postImageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
-              : Container(),
-          Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
-          Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
-          AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
-              ? Container(
-              child: Center(
-                  child: Semantics(
-                      label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
-                      hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
-                      button: true,
-                      excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                        maxLines: 2,
-                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: (){ _onTapAddImage(post);}
-                      )))):
-          Container()
-        ]));
-  }
-
-  //Dialog
-  void _showModalImage(String url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
-    }
-  }
-
   List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
@@ -649,6 +609,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       }
     }
     return visibleReplies;
+  }
+
+  //Dialog
+  void _showModalImage(String url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
+    }
   }
 
   //Tap Actions
@@ -843,10 +812,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (mounted) {
       setState(() {
         _editingPost = reply;
-        _preparedReplyData.imageUrl = _editingPost?.imageUrl;
+        _postEditData?.imageUrl = reply?.imageUrl;
         _postEditData.body = reply?.body;
       });
-      _postInputKey = GlobalKey(); //Refresh InputField to hook new data
+      _postInputKey = GlobalKey(); //Refresh InputField to hook new data //Edit Reply
+      _postImageHolderKey = GlobalKey(); //Refresh ImageHolder to hook new data // Edit Reply
       _scrollToPostEdit();
     }
   }
@@ -892,7 +862,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_editingPost != null) {
       setState(() {
         _editingPost = null;
-        _preparedReplyData.imageUrl = null;
+        _postEditData.imageUrl = null;
         _postEditData.body = '';
       });
     }
@@ -933,7 +903,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingPost != null) {
-      imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost.imageUrl;
+      imageUrl = AppString.isStringNotEmpty(_postEditData?.imageUrl) ? _postEditData?.imageUrl : _editingPost.imageUrl;
       GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
@@ -941,7 +911,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     } else {
       String parentId;
 
-      imageUrl =  _preparedReplyData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
+      imageUrl =  _postEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
@@ -993,20 +963,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _clearBodyControllerContent() {
     _postEditData.body = '';
-  }
-
-  void _onTapAddImage(GroupPost post) async {
-    Analytics.instance.logSelect(target: "Add Image");
-    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
-    if (AppString.isStringNotEmpty(imageUrl)) {
-      post.imageUrl = imageUrl;
-      if (mounted) {
-        //TBD notify
-        setState(() {
-        });
-      }
-    }
-    Log.d("Image Url: $imageUrl");
   }
 
   //Scroll

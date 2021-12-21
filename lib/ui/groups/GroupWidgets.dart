@@ -26,6 +26,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Content.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
+import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -36,6 +37,7 @@ import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
+import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 import 'package:sprintf/sprintf.dart';
@@ -1683,4 +1685,81 @@ class _FontIcon extends StatelessWidget {
         child:GestureDetector(
             onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
   }
+}
+
+typedef void OnImageChangedListener(String imageUrl);
+class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
+  final String imageUrl;
+  final bool wrapContent;
+  final bool showSlant;
+  final bool buttonVisible;
+  final OnImageChangedListener onImageChanged;
+
+  const ImageChooserWidget({Key key, this.imageUrl, this.onImageChanged, this.wrapContent = false, this.showSlant = true, this.buttonVisible = false}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ImageChooserState();
+}
+
+class _ImageChooserState extends State<ImageChooserWidget>{
+  String _imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _imageUrl = widget?.imageUrl;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double _imageHeight = 200;
+    bool wrapContent = widget?.wrapContent;
+    bool explicitlyShowAddButton = widget?.buttonVisible;
+    bool showSlant = widget.showSlant;
+
+    return Container(
+        constraints: BoxConstraints(
+          maxHeight: (_imageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
+        ),
+        color: Styles().colors.background,
+        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          AppString.isStringNotEmpty(_imageUrl)
+              ? Positioned.fill(child: Image.network(_imageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
+              : Container(),
+          Visibility( visible: showSlant,
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
+          Visibility( visible: showSlant,
+              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
+          AppString.isStringEmpty(_imageUrl) || explicitlyShowAddButton
+              ? Container(
+              child: Center(
+                  child: Semantics(
+                      label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
+                      hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
+                      button: true,
+                      excludeSemantics: true,
+                      child: ScalableSmallRoundedButton(
+                          maxLines: 2,
+                          label:AppString.isStringEmpty(_imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                          textColor: Styles().colors.fillColorPrimary,
+                          onTap: (){ _onTapAddImage();}
+                      )))):
+          Container()
+        ]));
+  }
+
+  void _onTapAddImage() async {
+    Analytics.instance.logSelect(target: "Add Image");
+    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
+    if (AppString.isStringNotEmpty(imageUrl)) {
+      widget?.onImageChanged(imageUrl);
+      if (mounted) {
+        setState(() {
+          _imageUrl = imageUrl;
+        });
+      }
+    }
+    Log.d("Image Url: $imageUrl");
+  }
+
 }
