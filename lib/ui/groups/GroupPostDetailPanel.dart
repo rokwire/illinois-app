@@ -62,14 +62,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
   GroupPost _preparedReplyData; //Data for New/Edit Reply {Data Edit/Create}
   String _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  String _modalImageUrl; // Image presentation
   bool _editMainPost = false; //Editing Mode for Main Post
   bool _loading = false;
 
+  PostDataModel _postEditData = PostDataModel(); //used for Reply Create / Edit;
+  String _modalImageUrl; // Image presentation
+
   TextEditingController _subjectController = TextEditingController();
-  TextEditingController _bodyController = TextEditingController();
-  TextEditingController _linkTextController = TextEditingController();
-  TextEditingController _linkUrlController = TextEditingController();
   TextEditingController _mainPostController = TextEditingController(); //Editing Mode for Main Post
 
   //Scroll and focus utils
@@ -77,6 +76,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
+  GlobalKey _postInputKey = GlobalKey();
   double _sliverHeaderHeight;
 
   @override
@@ -101,9 +101,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     super.dispose();
     NotificationService().unsubscribe(this);
     _subjectController.dispose();
-    _bodyController.dispose();
-    _linkTextController.dispose();
-    _linkUrlController.dispose();
     _mainPostController.dispose();
   }
 
@@ -391,7 +388,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
-    else if (_editingPost != null) {
+    else if (_editingPost != null) { //TBD check this
       replies = [_editingPost];
     }
     else {
@@ -498,68 +495,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildReplyTextField(){
-    return Container(
-      child: Column(
-        children: [
-          Padding(
-              padding: EdgeInsets.only(top: _isCreatePost ? 16 : 0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _FontIcon(
-                        onTap: _onTapBold,
-                        buttonLabel: "Bold",
-                        iconPath: 'images/icon-bold.png'),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: _FontIcon(
-                            onTap: _onTapItalic,
-                            buttonLabel: "Italic",
-                            iconPath: 'images/icon-italic.png')),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: _FontIcon(
-                            onTap: _onTapUnderline,
-                            buttonLabel: "Underline",
-                            iconPath: 'images/icon-underline.png')),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Semantics(button: true, child:
-                        GestureDetector(
-                            onTap: _onTapEditLink,
-                            child: Text(
-                                Localization().getStringEx(
-                                    'panel.group.detail.post.create.link.label',
-                                    'Link'),
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                    fontFamily:
-                                    Styles().fontFamilies.medium)))))
-                  ])),
-          Padding(
-              padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-              child: TextField(
-                  controller: _bodyController,
-                  maxLines: 15,
-                  minLines: 1,
-                  decoration: InputDecoration(
-                      hintText: (_isCreatePost ? Localization().getStringEx(
-                          "panel.group.detail.post.create.body.field.hint",
-                          "Write a Post ...") : Localization().getStringEx(
-                          "panel.group.detail.post.reply.create.body.field.hint",
-                          "Write a Reply ...")),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray,
-                              width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
-        ],
-      )
+    return PostInputField(
+      key: _postInputKey,
+      text: _postEditData?.body,
+      onBodyChanged: (text) => _postEditData.body = text,
     );
   }
 
@@ -686,68 +625,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Dialog
-  Widget _buildLinkDialog() {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              Localization().getStringEx(
-                  'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link'),
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Styles().colors.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies.medium)),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkTextController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkUrlController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular)))
-        ]);
-  }
-
   void _showModalImage(String url){
     if(url != null) {
       setState(() {
@@ -966,9 +843,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (mounted) {
       setState(() {
         _editingPost = reply;
-        _preparedReplyData.imageUrl = reply?.imageUrl;
+        _preparedReplyData.imageUrl = _editingPost?.imageUrl;
+        _postEditData.body = reply?.body;
       });
-      _bodyController.text = (reply ?? _post)?.body;
+      _postInputKey = GlobalKey(); //Refresh InputField to hook new data
       _scrollToPostEdit();
     }
   }
@@ -1015,7 +893,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       setState(() {
         _editingPost = null;
         _preparedReplyData.imageUrl = null;
-        _bodyController.text = '';
+        _postEditData.body = '';
       });
     }
     else {
@@ -1028,7 +906,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     FocusScope.of(context).unfocus();
     
     String subject;
-    String body = _bodyController.text;
+    String body = _postEditData?.body;
     String imageUrl;
 
     if (_isCreatePost) {
@@ -1114,7 +992,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _clearBodyControllerContent() {
-    _bodyController.text = '';
+    _postEditData.body = '';
   }
 
   void _onTapAddImage(GroupPost post) async {
@@ -1129,84 +1007,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       }
     }
     Log.d("Image Url: $imageUrl");
-  }
-
-  //HTML Body input Actions
-  void _onTapBold() {
-    Analytics().logSelect(target: 'Bold');
-    _wrapBodySelection('<b>', '</b>');
-  }
-
-  void _onTapItalic() {
-    Analytics().logSelect(target: 'Italic');
-    _wrapBodySelection('<i>', '</i>');
-  }
-
-  void _onTapUnderline() {
-    Analytics().logSelect(target: 'Underline');
-    _wrapBodySelection('<u>', '</u>');
-  }
-
-  void _onTapEditLink() {
-    Analytics().logSelect(target: 'Edit Link');
-    int linkStartPosition = _bodyController.selection.start;
-    int linkEndPosition = _bodyController.selection.end;
-    _linkTextController.text = AppString.getDefaultEmptyString(
-        value: _bodyController.selection?.textInside(_bodyController.text));
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: _buildLinkDialog(),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Analytics().logSelect(target: 'Set Link Url');
-                _onTapOkLink(linkStartPosition, linkEndPosition);
-              },
-              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
-          TextButton(
-              onPressed: () {
-                Analytics().logSelect(target: 'Cancel');
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
-        ]);
-  }
-
-  void _onTapOkLink(int startPosition, int endPosition) {
-    Navigator.of(context).pop();
-    if ((startPosition < 0) || (endPosition < 0)) {
-      return;
-    }
-    String linkText = _linkTextController.text;
-    _linkTextController.text = '';
-    String linkUrl = _linkUrlController.text;
-    _linkUrlController.text = '';
-    String currentText = _bodyController.text;
-    currentText =
-        currentText.replaceRange(startPosition, endPosition, linkText);
-    _bodyController.text = currentText;
-    endPosition = startPosition + linkText.length;
-    _wrapBody('<a href="$linkUrl">', '</a>', startPosition, endPosition);
-  }
-
-  void _wrapBodySelection(String firstValue, String secondValue) {
-    int startPosition = _bodyController.selection.start;
-    int endPosition = _bodyController.selection.end;
-    if ((startPosition < 0) || (endPosition < 0)) {
-      return;
-    }
-    _wrapBody(firstValue, secondValue, startPosition, endPosition);
-  }
-
-  void _wrapBody(String firstValue, String secondValue, int startPosition,
-      int endPosition) {
-    String currentText = _bodyController.text;
-    String result = AppString.wrapRange(
-        currentText, firstValue, secondValue, startPosition, endPosition);
-    _bodyController.text = result;
-    _bodyController.selection = TextSelection.fromPosition(
-        TextPosition(offset: (endPosition + firstValue.length)));
   }
 
   //Scroll
@@ -1340,16 +1140,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 }
 
-class _FontIcon extends StatelessWidget {
-  final Function onTap;
-  final String iconPath;
-  final String buttonLabel;
-  _FontIcon({@required this.onTap, @required this.iconPath, this.buttonLabel});
+//Model For editable post data. Helping to keep GroupPost immutable
+class PostDataModel {
+  String body;
+  String subject;
+  String imageUrl;
 
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(button: true, label: buttonLabel,
-      child:GestureDetector(
-        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
-  }
+  PostDataModel({this.body, this.subject, this.imageUrl});
+
 }
