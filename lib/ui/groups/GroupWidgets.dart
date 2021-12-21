@@ -1713,21 +1713,22 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     bool wrapContent = widget?.wrapContent;
     bool explicitlyShowAddButton = widget?.buttonVisible;
     bool showSlant = widget.showSlant;
+    String imageUrl = _imageUrl ?? widget.imageUrl; // For some reason sometimes the widget url is present but the _imageUrl is null
 
     return Container(
         constraints: BoxConstraints(
-          maxHeight: (_imageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
+          maxHeight: (imageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
         ),
         color: Styles().colors.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(_imageUrl)
-              ? Positioned.fill(child: Image.network(_imageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
+          AppString.isStringNotEmpty(imageUrl)
+              ? Positioned.fill(child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
-          AppString.isStringEmpty(_imageUrl) || explicitlyShowAddButton
+          AppString.isStringEmpty(imageUrl) || explicitlyShowAddButton
               ? Container(
               child: Center(
                   child: Semantics(
@@ -1737,7 +1738,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
                       excludeSemantics: true,
                       child: ScalableSmallRoundedButton(
                           maxLines: 2,
-                          label:AppString.isStringEmpty(_imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
+                          label:AppString.isStringEmpty(imageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
                           textColor: Styles().colors.fillColorPrimary,
                           onTap: (){ _onTapAddImage();}
                       )))):
