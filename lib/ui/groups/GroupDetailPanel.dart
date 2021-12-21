@@ -459,27 +459,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
 
     return
-      Column(children: [
-        Expanded(
-        child:Stack(
-          children: <Widget>[
-            Column(children: <Widget>[
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: content,
-                  ),
-                ),
+      ModalImageDialog.modalDialogContainer(
+        imageUrl: _modalImageUrl,
+        onClose: () {
+          Analytics.instance.logSelect(target: "Close");
+          _modalImageUrl = null;
+          setState(() {});
+        },
+        content: Column(children: <Widget>[
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: content,
               ),
-              _buildMembershipRequest(),
-              _buildCancelMembershipRequest(),
-            ],
+            ),
           ),
-          _createModalPhotoDialog()
-          ]))
-        ],);
+          _buildMembershipRequest(),
+          _buildCancelMembershipRequest(),
+        ],
+      ));
   }
 
   Widget _buildImageHeader(){
@@ -1003,18 +1003,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 ])
               ]));
         }));
-  }
-
-  Widget _createModalPhotoDialog(){
-    return _modalImageUrl!=null ? ModalImageDialog(
-        imageUrl: _modalImageUrl,
-        fit: BoxFit.scaleDown,
-        onClose: () {
-          Analytics.instance.logSelect(target: "Close");
-          _modalImageUrl = null;
-          setState(() {});
-        }
-    ) : Container();
   }
 
   void _showModalImage(String url){

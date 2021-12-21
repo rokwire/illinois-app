@@ -1347,9 +1347,22 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 class ModalImageDialog extends StatelessWidget{
   final String imageUrl;
   final GestureTapCallback onClose;
-  final BoxFit fit;
 
-  ModalImageDialog({this.imageUrl, this.onClose, this.fit = BoxFit.cover});
+  ModalImageDialog({this.imageUrl, this.onClose});
+
+  static  Widget modalDialogContainer({Widget content, String imageUrl, Function onClose}){
+      return Stack(children: [
+        content,
+        buildModalPhotoDialog(imageUrl: imageUrl, onClose: onClose)
+      ]);
+  }
+
+  static Widget buildModalPhotoDialog({String imageUrl, Function onClose}){
+    return imageUrl!=null ? ModalImageDialog(
+        imageUrl: imageUrl,
+        onClose: onClose
+    ) : Container();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1364,7 +1377,6 @@ class ModalImageDialog extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  // color: Styles().colors.blackTransparent06,
                     child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: GestureDetector(
@@ -1394,7 +1406,7 @@ class ModalImageDialog extends StatelessWidget{
                                       ),
                                     ),
                                     Container(
-                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: fit,): Container(),
+                                      child: AppString.isStringNotEmpty(imageUrl) ? Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fitWidth,): Container(),
                                     )
                                   ],
                                 ))

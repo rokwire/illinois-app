@@ -124,152 +124,163 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             centerTitle: true),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: TabBarWidget(),
-        body: Stack(children: [
-          Stack(alignment: Alignment.topCenter, children: [
-            SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
-              Column(children: [
-                Container(height: _sliverHeaderHeight ?? 0,),
-                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost || _isCreatePost): Container(),
-                _buildPostContent(),
-                _buildRepliesSection(),
-                _buildPostEdit(),
-            ],)),
-            Visibility(
-                visible: !_isCreatePost,
-                child: Container(
-                    key: _sliverHeaderKey,
-                    color: Styles().colors.background,
-                    padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
+        body: ModalImageDialog.modalDialogContainer(
+          content: _buildContent(),
+          imageUrl: _modalImageUrl,
+          onClose: () {
+            Analytics.instance.logSelect(target: "Close");
+            _modalImageUrl = null;
+            setState(() {});
+          }
+        ));
+  }
+
+  Widget _buildContent(){
+    return Stack(children: [
+      Stack(alignment: Alignment.topCenter, children: [
+        SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
+        Column(children: [
+          Container(height: _sliverHeaderHeight ?? 0,),
+          _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
+          _buildImageSection(_post, explicitlyShowAddButton: _editMainPost || _isCreatePost): Container(),
+          _buildPostContent(),
+          _buildRepliesSection(),
+          _buildPostEdit(),
+        ],)),
+        Visibility(
+            visible: !_isCreatePost,
+            child: Container(
+                key: _sliverHeaderKey,
+                color: Styles().colors.background,
+                padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: Semantics(
+                                    sortKey: OrdinalSortKey(1),
+                                    container: true,
+                                    child: Text(
+                                        AppString.getDefaultEmptyString(
+                                            value: _post?.subject),
+                                        maxLines: 5,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Styles().fontFamilies.bold,
+                                            fontSize: 24,
+                                            color: Styles()
+                                                .colors
+                                                .fillColorPrimary)))),
+                            Visibility(
+                                visible: _isEditPostVisible && !widget.hidePostOptions,
+                                child: Semantics(
+                                    container: true,
+                                    sortKey: OrdinalSortKey(5),
+                                    child: Container(
                                         child: Semantics(
-                                          sortKey: OrdinalSortKey(1),
-                                          container: true,
-                                          child: Text(
-                                            AppString.getDefaultEmptyString(
-                                                value: _post?.subject),
-                                            maxLines: 5,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    Styles().fontFamilies.bold,
-                                                fontSize: 24,
-                                                color: Styles()
-                                                    .colors
-                                                    .fillColorPrimary)))),
-                                    Visibility(
-                                        visible: _isEditPostVisible && !widget.hidePostOptions,
-                                        child: Semantics(
-                                            container: true,
-                                            sortKey: OrdinalSortKey(5),
-                                            child: Container(
-                                                child: Semantics(
-                                                    label: Localization()
-                                                        .getStringEx(
-                                                        'panel.group.detail.post.reply.edit.label',
-                                                        "Edit"),
-                                                    button: true,
-                                                    child: GestureDetector(
-                                                        onTap: _onTapEdit,
-                                                        child: Container(
-                                                            color: Colors
-                                                                .transparent,
-                                                            child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: 16,
-                                                                    top: 22,
-                                                                    bottom: 10,
-                                                                    right: (_isReplyVisible
-                                                                        ? (_outerPadding /
-                                                                        2)
-                                                                        : _outerPadding)),
-                                                                child:
-                                                                Image.asset(
-                                                                  'images/icon-edit.png',
-                                                                  width: 20,
-                                                                  height: 20,
-                                                                  excludeFromSemantics:
-                                                                  true,
-                                                                )))))))),
-                                    Visibility(
-                                        visible: _isDeletePostVisible && !widget.hidePostOptions,
-                                        child: Semantics(
-                                            container: true,
-                                            sortKey: OrdinalSortKey(5),
-                                            child: Container(
-                                                child: Semantics(
-                                                    label: Localization()
-                                                        .getStringEx(
-                                                            'panel.group.detail.post.reply.delete.label',
-                                                            "Delete"),
-                                                    button: true,
-                                                    child: GestureDetector(
-                                                        onTap: _onTapDeletePost,
-                                                        child: Container(
-                                                            color: Colors
-                                                                .transparent,
-                                                            child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: 16,
-                                                                    top: 22,
-                                                                    bottom: 10,
-                                                                    right: (_isReplyVisible
-                                                                        ? (_outerPadding /
-                                                                            2)
-                                                                        : _outerPadding)),
-                                                                child:
-                                                                    Image.asset(
-                                                                  'images/trash.png',
-                                                                  width: 20,
-                                                                  height: 20,
-                                                                  excludeFromSemantics:
-                                                                      true,
-                                                                )))))))),
-                                    Visibility(
-                                        visible: _isReplyVisible && !widget.hidePostOptions,
-                                        child: Semantics(
-                                            label: Localization().getStringEx(
-                                                'panel.group.detail.post.reply.reply.label',
-                                                "Reply"),
+                                            label: Localization()
+                                                .getStringEx(
+                                                'panel.group.detail.post.reply.edit.label',
+                                                "Edit"),
                                             button: true,
                                             child: GestureDetector(
-                                                onTap: _onTapHeaderReply,
+                                                onTap: _onTapEdit,
                                                 child: Container(
-                                                    color: Colors.transparent,
+                                                    color: Colors
+                                                        .transparent,
                                                     child: Padding(
                                                         padding: EdgeInsets.only(
-                                                            left:
-                                                                (_isDeletePostVisible
-                                                                    ? 8
-                                                                    : 16),
+                                                            left: 16,
                                                             top: 22,
                                                             bottom: 10,
-                                                            right:
-                                                                _outerPadding),
-                                                        child: Image.asset(
-                                                          'images/icon-group-post-reply.png',
+                                                            right: (_isReplyVisible
+                                                                ? (_outerPadding /
+                                                                2)
+                                                                : _outerPadding)),
+                                                        child:
+                                                        Image.asset(
+                                                          'images/icon-edit.png',
                                                           width: 20,
                                                           height: 20,
-                                                          fit: BoxFit.fill,
                                                           excludeFromSemantics:
-                                                              true,
-                                                        ))))))
-                                  ]),
-                        ])))
-          ]),
-          Visibility(
-              visible: _loading,
-              child: Center(child: CircularProgressIndicator())),
-          _createModalPhotoDialog()
-        ]));
+                                                          true,
+                                                        )))))))),
+                            Visibility(
+                                visible: _isDeletePostVisible && !widget.hidePostOptions,
+                                child: Semantics(
+                                    container: true,
+                                    sortKey: OrdinalSortKey(5),
+                                    child: Container(
+                                        child: Semantics(
+                                            label: Localization()
+                                                .getStringEx(
+                                                'panel.group.detail.post.reply.delete.label',
+                                                "Delete"),
+                                            button: true,
+                                            child: GestureDetector(
+                                                onTap: _onTapDeletePost,
+                                                child: Container(
+                                                    color: Colors
+                                                        .transparent,
+                                                    child: Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: 16,
+                                                            top: 22,
+                                                            bottom: 10,
+                                                            right: (_isReplyVisible
+                                                                ? (_outerPadding /
+                                                                2)
+                                                                : _outerPadding)),
+                                                        child:
+                                                        Image.asset(
+                                                          'images/trash.png',
+                                                          width: 20,
+                                                          height: 20,
+                                                          excludeFromSemantics:
+                                                          true,
+                                                        )))))))),
+                            Visibility(
+                                visible: _isReplyVisible && !widget.hidePostOptions,
+                                child: Semantics(
+                                    label: Localization().getStringEx(
+                                        'panel.group.detail.post.reply.reply.label',
+                                        "Reply"),
+                                    button: true,
+                                    child: GestureDetector(
+                                        onTap: _onTapHeaderReply,
+                                        child: Container(
+                                            color: Colors.transparent,
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left:
+                                                    (_isDeletePostVisible
+                                                        ? 8
+                                                        : 16),
+                                                    top: 22,
+                                                    bottom: 10,
+                                                    right:
+                                                    _outerPadding),
+                                                child: Image.asset(
+                                                  'images/icon-group-post-reply.png',
+                                                  width: 20,
+                                                  height: 20,
+                                                  fit: BoxFit.fill,
+                                                  excludeFromSemantics:
+                                                  true,
+                                                ))))))
+                          ]),
+                    ])))
+      ]),
+      Visibility(
+          visible: _loading,
+          child: Center(child: CircularProgressIndicator())),
+    ]);
   }
 
   Widget _buildPostContent() {
@@ -735,19 +746,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       fontSize: 16,
                       fontFamily: Styles().fontFamilies.regular)))
         ]);
-  }
-
-
-  Widget _createModalPhotoDialog(){
-    return _modalImageUrl!=null ? ModalImageDialog(
-        imageUrl: _modalImageUrl,
-        fit: BoxFit.scaleDown,
-        onClose: () {
-          Analytics.instance.logSelect(target: "Close");
-          _modalImageUrl = null;
-          setState(() {});
-        }
-    ) : Container();
   }
 
   void _showModalImage(String url){
