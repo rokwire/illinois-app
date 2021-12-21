@@ -55,14 +55,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
   GroupPost _post; //Main post {Data Presentation}
-  TextEditingController _mainPostController = TextEditingController(); //Main Post Edit
-  bool _editMainPost = false; //Editing Mode for Main Post
+  PostDataModel _mainPostUpdateData;//Main Post Edit
 
   //Reply - Edit/Create/Show
-  GroupPost _focusedReply; //Focused on Reply {Replies Thread Presentation}
+  GroupPost _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
   String _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
-  PostDataModel _postEditData = PostDataModel(); //used for Reply Create / Edit;
+  GroupPost _editingReply; //Edit Mode for Reply {Data Edit}
+  PostDataModel _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
   String _modalImageUrl; // ModalImageDial presentation
   bool _loading = false;
@@ -98,7 +97,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void dispose() {
     super.dispose();
     NotificationService().unsubscribe(this);
-    _mainPostController.dispose();
   }
 
   @override
@@ -135,8 +133,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
-          _editMainPost || AppString.isStringNotEmpty(_post?.imageUrl)
-            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _editMainPost, onImageChanged: (url) => _post.imageUrl = url,) //TBD Use Data model instead of direct post change
+          _isEditMainPost || AppString.isStringNotEmpty(_post?.imageUrl) //TBD remove if statement
+            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData.imageUrl = url,)
             : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
@@ -183,7 +181,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                                 "Edit"),
                                             button: true,
                                             child: GestureDetector(
-                                                onTap: _onTapEdit,
+                                                onTap: _onTapEditMainPost,
                                                 child: Container(
                                                     color: Colors
                                                         .transparent,
@@ -277,6 +275,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostContent() {
+    TextEditingController bodyController = TextEditingController();
+    bodyController.text = _mainPostUpdateData?.body;
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -289,7 +289,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Visibility(visible: !_editMainPost,
+                      Visibility(visible: !_isEditMainPost,
                           child: Semantics(
                               container: true,
                               child: Html(
@@ -303,7 +303,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   onLinkTap: (url, context, attributes, element) =>
                                       _onTapPostLink(url)))),
                       Visibility(
-                          visible: _editMainPost,
+                          visible: _isEditMainPost,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -311,7 +311,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                                     child: TextField(
-                                        controller: _mainPostController,
+                                        onChanged: (txt) => _mainPostUpdateData.body = txt,
+                                        controller: bodyController,
                                         maxLines: null,
                                         autofocus: true,
                                         decoration: InputDecoration(
@@ -333,7 +334,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           borderColor: Styles().colors.fillColorSecondary,
                                           textColor: Styles().colors.fillColorPrimary,
                                           backgroundColor: Styles().colors.white,
-                                          onTap: _onTapSave)),
+                                          onTap: _onTapUpdateMainPost)),
                                 ])
 
 
@@ -381,8 +382,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
-    else if (_editingPost != null) { //TBD check this
-      replies = [_editingPost];
+    else if (_editingReply != null) { //TBD check this
+      replies = [_editingReply];
     }
     else {
       replies = _post?.replies;
@@ -421,7 +422,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 Flexible(
                     flex: 1,
                     child: RoundedButton(
-                        label: (_editingPost != null) ?
+                        label: (_editingReply != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         borderColor: Styles().colors.fillColorSecondary,
@@ -448,11 +449,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       Container(
         padding: EdgeInsets.only(bottom: 12),
         child: ImageChooserWidget(
-          imageUrl: _postEditData?.imageUrl,
+          imageUrl: _replyEditData?.imageUrl,
           showSlant: false,
           wrapContent: true,
-          buttonVisible: _editingPost!=null,
-          onImageChanged: (String imageUrl) => _postEditData?.imageUrl = imageUrl,
+          buttonVisible: _editingReply!=null,
+          onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
         )
      );
   }
@@ -460,8 +461,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildReplyTextField(){
     return PostInputField(
       key: _postInputKey,
-      text: _postEditData?.body,
-      onBodyChanged: (text) => _postEditData.body = text,
+      text: _replyEditData?.body,
+      onBodyChanged: (text) => _replyEditData.body = text,
     );
   }
 
@@ -730,17 +731,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapEdit(){
+  void _onTapEditMainPost(){
+    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl);
     if(mounted){
-      _mainPostController.text = _post.body;
       setState(() {
-        _editMainPost = true;
       });
     }
   }
 
-  void _onTapSave(){
-    String body = _mainPostController.text;
+  void _onTapUpdateMainPost(){
+    String body = _mainPostUpdateData?.body;
+    String imageUrl = _mainPostUpdateData.imageUrl ?? _post?.imageUrl;
     if (AppString.isStringEmpty(body)) {
       String validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -749,9 +750,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: _post.imageUrl, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
-      _editMainPost = false;
+      _mainPostUpdateData = null;
       _setLoading(false);
     });
 
@@ -761,9 +762,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
       setState(() {
-        _editingPost = reply;
-        _postEditData?.imageUrl = reply?.imageUrl;
-        _postEditData.body = reply?.body;
+        _editingReply = reply;
+        _replyEditData?.imageUrl = reply?.imageUrl;
+        _replyEditData?.body = reply?.body;
       });
       _postInputKey = GlobalKey(); //Refresh InputField to hook new data //Edit Reply
       _postImageHolderKey = GlobalKey(); //Refresh ImageHolder to hook new data // Edit Reply
@@ -809,11 +810,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapCancel() {
     Analytics().logSelect(target: 'Cancel');
-    if (_editingPost != null) {
+    if (_editingReply != null) {
       setState(() {
-        _editingPost = null;
-        _postEditData.imageUrl = null;
-        _postEditData.body = '';
+        _editingReply = null;
+        _replyEditData.imageUrl = null;
+        _replyEditData.body = '';
       });
     }
     else {
@@ -825,11 +826,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
-    String body = _postEditData?.body;
+    String body = _replyEditData?.body;
     String imageUrl;
 
     if (AppString.isStringEmpty(body)) {
-      String validationMsg = ((_editingPost != null))
+      String validationMsg = ((_editingReply != null))
           ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
           : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -838,16 +839,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
     
     _setLoading(true);
-    if (_editingPost != null) {
-      imageUrl = AppString.isStringNotEmpty(_postEditData?.imageUrl) ? _postEditData?.imageUrl : _editingPost.imageUrl;
-      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, imageUrl: imageUrl , body: body, private: true);
+    if (_editingReply != null) {
+      imageUrl = AppString.isStringNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply.imageUrl;
+      GroupPost postToUpdate = GroupPost(id: _editingReply.id, subject: _editingReply.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
       String parentId;
 
-      imageUrl =  _postEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
+      imageUrl =  _replyEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
@@ -890,7 +891,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _clearBodyControllerContent() {
-    _postEditData.body = '';
+    _replyEditData.body = '';
   }
 
   //Modal Image Dialog
@@ -1007,6 +1008,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   bool get _isReplyVisible {
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+  bool get _isEditMainPost{
+    return _mainPostUpdateData!=null;
   }
 
   // Notifications Listener
