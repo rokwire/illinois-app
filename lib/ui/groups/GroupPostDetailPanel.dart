@@ -53,11 +53,12 @@ class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttrib
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
-
+  //Main Post - Edit/Show
   GroupPost _post; //Main post {Data Presentation}
   TextEditingController _mainPostController = TextEditingController(); //Main Post Edit
   bool _editMainPost = false; //Editing Mode for Main Post
 
+  //Reply - Edit/Create/Show
   GroupPost _focusedReply; //Focused on Reply {Replies Thread Presentation}
   String _selectedReplyId; // Thread Id target for New Reply {Data Create}
   GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
