@@ -745,7 +745,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
-    String htmlModifiedBody = _replaceNewLineSymbols(body);
+    String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
 
     _setLoading(true);
     GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: _post.imageUrl, private: true);
@@ -834,7 +834,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
-    String htmlModifiedBody = _replaceNewLineSymbols(body);
+    String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
     
     _setLoading(true);
     if (_editingPost != null) {
@@ -967,15 +967,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
       } catch (e) {}
     }
-  }
-
-  String _replaceNewLineSymbols(String value) {
-    if (AppString.isStringEmpty(value)) {
-      return value;
-    }
-    value = value.replaceAll('\r\n', '</br>');
-    value = value.replaceAll('\n', '</br>');
-    return value;
   }
 
   //Getters
