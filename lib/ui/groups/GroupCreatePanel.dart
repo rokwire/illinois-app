@@ -38,6 +38,7 @@ class GroupCreatePanel extends StatefulWidget {
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
+  final _authManGroupNameController = TextEditingController();
 
   Group? _group;
 
@@ -46,8 +47,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
-  bool get _canSave => AppString.isStringNotEmpty(_group!.title)
-      && AppString.isStringNotEmpty(_group!.category);
+
+  bool get _canSave {
+    return AppString.isStringNotEmpty(_group?.title) &&
+        AppString.isStringNotEmpty(_group?.category) &&
+        (!(_group?.authManEnabled ?? false) || (AppString.isStringNotEmpty(_group?.authManGroupName)));
+  }
+
   bool get _loading => _groupCategoeriesLoading;
 
   @override
@@ -134,7 +140,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildPrivacyDropDown(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership")!, "images/icon-member.png"),
                             _buildMembershipLayout(),
-                            Container(height: 24,),
+                            Container(height: 8),
+                            _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "Authman")!, "images/icon-member.png"),
+                            _buildAuthManLayout(),
+                            Container(height: 40),
                         ],),)
 
                       ]),
@@ -474,7 +483,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions")!,
                 description: questionsDescription,
                 onTap: _onTapQuestions)),
-        Container(height: 40),
+        Container(height: 20),
       ]),
     );
   }
@@ -522,6 +531,63 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     });
   }
 
+  // AuthMan Group
+  Widget _buildAuthManLayout() {
+    bool isAuthManGroup = _group?.authManEnabled ?? false;
+    return Padding(
+        padding: EdgeInsets.only(left: 16, top: 12, right: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors.white,
+                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this an Authman Group"),
+                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                  GestureDetector(
+                      onTap: _onTapAuthMan,
+                      child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+                ])
+              ])),
+          Visibility(
+              visible: isAuthManGroup,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "AUTHMAN GROUP NAME"), null, true),
+                Container(
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
+                    child: TextField(
+                      onChanged: _onAuthManGroupNameChanged,
+                      controller: _authManGroupNameController,
+                      maxLines: 5,
+                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                      style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                    ))
+              ]))
+        ]));
+  }
+
+  void _onTapAuthMan() {
+    Analytics.instance.logSelect(target: "AuthMan Group");
+    if (_group != null) {
+      _group.authManEnabled = !(_group.authManEnabled ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void _onAuthManGroupNameChanged(String name) {
+    if (_group != null) {
+      _group.authManGroupName = name;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //Buttons
   Widget _buildButtonsLayout() {
     return
@@ -557,6 +623,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       setState(() {
         _creating = true;
       });
+      // if the group is not authman then clear authman group name
+      if ((_group != null) && (_group!.authManEnabled != true)) {
+        _group!.authManGroupName = null;
+      }
       Groups().createGroup(_group).then((GroupError? error) {
         if (mounted) {
           setState(() {

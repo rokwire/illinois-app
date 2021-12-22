@@ -840,3 +840,15 @@ class AppBundle {
     return null;
   }
 }
+
+
+class AppHtml {
+  static String replaceNewLineSymbols(String value) {
+    if (AppString.isStringEmpty(value)) {
+      return value;
+    }
+    value = value.replaceAll('\r\n', '</br>');
+    value = value.replaceAll('\n', '</br>');
+    return value;
+  }
+}

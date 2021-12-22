@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed content update check in HomeCampusToolsWidget, WalletSheet and TabBarWidget.
+- Crashes in Athletics Roster [#1155](https://github.com/rokwire/illinois-app/issues/1155). 
+### Added
+- Authman integration for Groups [#1159](https://github.com/rokwire/illinois-app/issues/1159).
 
 ## [3.1.3] - 2021-12-20
 - Fix bad concurrent Groups login API synchronisation [#1150](https://github.com/rokwire/illinois-app/issues/1150).

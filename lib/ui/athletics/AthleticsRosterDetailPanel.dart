@@ -192,9 +192,9 @@ class _RosterDetailHeading extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    String? sportLabel = sport!.name;
-    String? rosterName = roster!.name;
-    String? number = roster!.numberString;
+    String? sportLabel = sport?.name;
+    String? rosterName = roster?.name;
+    String? number = roster?.numberString;
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
@@ -221,7 +221,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
-                                    child: Text(sport!.name!,
+                                    child: Text(AppString.getDefaultEmptyString(sport?.name),
                                       style: TextStyle(
                                           color: Styles().colors!.surfaceAccent,
                                           fontFamily: Styles().fontFamilies!.medium,
@@ -238,7 +238,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Expanded(
-                                    child: Text(roster!.name!,
+                                    child: Text(AppString.getDefaultEmptyString(roster?.name),
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontFamily: Styles().fontFamilies!.bold,
@@ -246,7 +246,7 @@ class _RosterDetailHeading extends StatelessWidget{
                                       ),
                                     ),
                                   ),
-                                  Text(roster!.numberString!,
+                                  Text(AppString.getDefaultEmptyString(roster?.numberString),
                                     style: TextStyle(
                                         color: Styles().colors!.whiteTransparent06,
                                         fontFamily: Styles().fontFamilies!.medium,
@@ -309,7 +309,7 @@ class _LineEntryWidget extends StatelessWidget{
               Container(
                 width: 120.0,
                 child: Text(
-                  title!,
+                  AppString.getDefaultEmptyString(title),
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
@@ -318,7 +318,7 @@ class _LineEntryWidget extends StatelessWidget{
               ),
               Expanded(child:
               Text(
-                value!,
+                AppString.getDefaultEmptyString(value),
                 style: TextStyle(
                   fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,
