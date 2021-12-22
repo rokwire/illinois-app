@@ -836,3 +836,14 @@ class AppBoolExpr {
     return true; // allow everything that is not defined or we do not understand
   }
 }
+
+class AppHtml {
+  static String replaceNewLineSymbols(String value) {
+    if (AppString.isStringEmpty(value)) {
+      return value;
+    }
+    value = value.replaceAll('\r\n', '</br>');
+    value = value.replaceAll('\n', '</br>');
+    return value;
+  }
+}

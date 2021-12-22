@@ -25,16 +25,13 @@ import 'package:illinois/model/Groups.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Groups.dart';
 import 'package:illinois/service/Localization.dart';
-import 'package:illinois/service/Log.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/RoundedButton.dart';
-import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
-import 'package:illinois/ui/widgets/TrianglePainter.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -56,21 +53,18 @@ class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttrib
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
-  //Default behaviour is create new Post
-  GroupPost _post; //Focused on Main post {Data Presentation}
-  GroupPost _focusedReply; //Focused on Reply {Data Presentation}
-  GroupPost _editingPost; //Edit Mode for Reply {Data Edit}
-  GroupPost _preparedReplyData; //Data for New/Edit Reply {Data Edit/Create}
-  String _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  String _modalImageUrl; // Image presentation
-  bool _editMainPost = false; //Editing Mode for Main Post
-  bool _loading = false;
+  //Main Post - Edit/Show
+  GroupPost _post; //Main post {Data Presentation}
+  PostDataModel _mainPostUpdateData;//Main Post Edit
 
-  TextEditingController _subjectController = TextEditingController();
-  TextEditingController _bodyController = TextEditingController();
-  TextEditingController _linkTextController = TextEditingController();
-  TextEditingController _linkUrlController = TextEditingController();
-  TextEditingController _mainPostController = TextEditingController(); //Editing Mode for Main Post
+  //Reply - Edit/Create/Show
+  GroupPost _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
+  String _selectedReplyId; // Thread Id target for New Reply {Data Create}
+  GroupPost _editingReply; //Edit Mode for Reply {Data Edit}
+  PostDataModel _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
+
+  String _modalImageUrl; // ModalImageDial presentation
+  bool _loading = false;
 
   //Scroll and focus utils
   ScrollController _scrollController = ScrollController();
@@ -78,16 +72,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
   double _sliverHeaderHeight;
+  //Refresh
+  GlobalKey _postInputKey = GlobalKey();
+  GlobalKey _postImageHolderKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
-    _preparedReplyData = GroupPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
@@ -100,11 +97,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void dispose() {
     super.dispose();
     NotificationService().unsubscribe(this);
-    _subjectController.dispose();
-    _bodyController.dispose();
-    _linkTextController.dispose();
-    _linkUrlController.dispose();
-    _mainPostController.dispose();
   }
 
   @override
@@ -124,162 +116,171 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             centerTitle: true),
         backgroundColor: Styles().colors.background,
         bottomNavigationBar: TabBarWidget(),
-        body: Stack(children: [
-          Stack(alignment: Alignment.topCenter, children: [
-            SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
-              Column(children: [
-                Container(height: _sliverHeaderHeight ?? 0,),
-                _editMainPost || _isCreatePost || AppString.isStringNotEmpty(_post?.imageUrl)?
-                  _buildImageSection(_post, explicitlyShowAddButton: _editMainPost || _isCreatePost): Container(),
-                _buildPostContent(),
-                _buildRepliesSection(),
-                _buildPostEdit(),
-            ],)),
-            Visibility(
-                visible: !_isCreatePost,
-                child: Container(
-                    key: _sliverHeaderKey,
-                    color: Styles().colors.background,
-                    padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
+        body: ModalImageDialog.modalDialogContainer(
+          content: _buildContent(),
+          imageUrl: _modalImageUrl,
+          onClose: () {
+            Analytics.instance.logSelect(target: "Close");
+            _modalImageUrl = null;
+            setState(() {});
+          }
+        ));
+  }
+
+  Widget _buildContent(){
+    return Stack(children: [
+      Stack(alignment: Alignment.topCenter, children: [
+        SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
+        Column(children: [
+          Container(height: _sliverHeaderHeight ?? 0,),
+          _isEditMainPost || AppString.isStringNotEmpty(_post?.imageUrl) //TBD remove if statement
+            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData.imageUrl = url,)
+            : Container(),
+          _buildPostContent(),
+          _buildRepliesSection(),
+          _buildPostEdit(),
+          ],)),
+       Container(
+                key: _sliverHeaderKey,
+                color: Styles().colors.background,
+                padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                                child: Semantics(
+                                    sortKey: OrdinalSortKey(1),
+                                    container: true,
+                                    child: Text(
+                                        AppString.getDefaultEmptyString(
+                                            value: _post?.subject),
+                                        maxLines: 5,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Styles().fontFamilies.bold,
+                                            fontSize: 24,
+                                            color: Styles()
+                                                .colors
+                                                .fillColorPrimary)))),
+                            Visibility(
+                                visible: _isEditPostVisible && !widget.hidePostOptions,
+                                child: Semantics(
+                                    container: true,
+                                    sortKey: OrdinalSortKey(5),
+                                    child: Container(
                                         child: Semantics(
-                                          sortKey: OrdinalSortKey(1),
-                                          container: true,
-                                          child: Text(
-                                            AppString.getDefaultEmptyString(
-                                                value: _post?.subject),
-                                            maxLines: 5,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    Styles().fontFamilies.bold,
-                                                fontSize: 24,
-                                                color: Styles()
-                                                    .colors
-                                                    .fillColorPrimary)))),
-                                    Visibility(
-                                        visible: _isEditPostVisible && !widget.hidePostOptions,
-                                        child: Semantics(
-                                            container: true,
-                                            sortKey: OrdinalSortKey(5),
-                                            child: Container(
-                                                child: Semantics(
-                                                    label: Localization()
-                                                        .getStringEx(
-                                                        'panel.group.detail.post.reply.edit.label',
-                                                        "Edit"),
-                                                    button: true,
-                                                    child: GestureDetector(
-                                                        onTap: _onTapEdit,
-                                                        child: Container(
-                                                            color: Colors
-                                                                .transparent,
-                                                            child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: 16,
-                                                                    top: 22,
-                                                                    bottom: 10,
-                                                                    right: (_isReplyVisible
-                                                                        ? (_outerPadding /
-                                                                        2)
-                                                                        : _outerPadding)),
-                                                                child:
-                                                                Image.asset(
-                                                                  'images/icon-edit.png',
-                                                                  width: 20,
-                                                                  height: 20,
-                                                                  excludeFromSemantics:
-                                                                  true,
-                                                                )))))))),
-                                    Visibility(
-                                        visible: _isDeletePostVisible && !widget.hidePostOptions,
-                                        child: Semantics(
-                                            container: true,
-                                            sortKey: OrdinalSortKey(5),
-                                            child: Container(
-                                                child: Semantics(
-                                                    label: Localization()
-                                                        .getStringEx(
-                                                            'panel.group.detail.post.reply.delete.label',
-                                                            "Delete"),
-                                                    button: true,
-                                                    child: GestureDetector(
-                                                        onTap: _onTapDeletePost,
-                                                        child: Container(
-                                                            color: Colors
-                                                                .transparent,
-                                                            child: Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: 16,
-                                                                    top: 22,
-                                                                    bottom: 10,
-                                                                    right: (_isReplyVisible
-                                                                        ? (_outerPadding /
-                                                                            2)
-                                                                        : _outerPadding)),
-                                                                child:
-                                                                    Image.asset(
-                                                                  'images/trash.png',
-                                                                  width: 20,
-                                                                  height: 20,
-                                                                  excludeFromSemantics:
-                                                                      true,
-                                                                )))))))),
-                                    Visibility(
-                                        visible: _isReplyVisible && !widget.hidePostOptions,
-                                        child: Semantics(
-                                            label: Localization().getStringEx(
-                                                'panel.group.detail.post.reply.reply.label',
-                                                "Reply"),
+                                            label: Localization()
+                                                .getStringEx(
+                                                'panel.group.detail.post.reply.edit.label',
+                                                "Edit"),
                                             button: true,
                                             child: GestureDetector(
-                                                onTap: _onTapHeaderReply,
+                                                onTap: _onTapEditMainPost,
                                                 child: Container(
-                                                    color: Colors.transparent,
+                                                    color: Colors
+                                                        .transparent,
                                                     child: Padding(
                                                         padding: EdgeInsets.only(
-                                                            left:
-                                                                (_isDeletePostVisible
-                                                                    ? 8
-                                                                    : 16),
+                                                            left: 16,
                                                             top: 22,
                                                             bottom: 10,
-                                                            right:
-                                                                _outerPadding),
-                                                        child: Image.asset(
-                                                          'images/icon-group-post-reply.png',
+                                                            right: (_isReplyVisible
+                                                                ? (_outerPadding /
+                                                                2)
+                                                                : _outerPadding)),
+                                                        child:
+                                                        Image.asset(
+                                                          'images/icon-edit.png',
                                                           width: 20,
                                                           height: 20,
-                                                          fit: BoxFit.fill,
                                                           excludeFromSemantics:
-                                                              true,
-                                                        ))))))
-                                  ]),
-                        ])))
-          ]),
-          Visibility(
-              visible: _loading,
-              child: Center(child: CircularProgressIndicator())),
-          _createModalPhotoDialog()
-        ]));
+                                                          true,
+                                                        )))))))),
+                            Visibility(
+                                visible: _isDeletePostVisible && !widget.hidePostOptions,
+                                child: Semantics(
+                                    container: true,
+                                    sortKey: OrdinalSortKey(5),
+                                    child: Container(
+                                        child: Semantics(
+                                            label: Localization()
+                                                .getStringEx(
+                                                'panel.group.detail.post.reply.delete.label',
+                                                "Delete"),
+                                            button: true,
+                                            child: GestureDetector(
+                                                onTap: _onTapDeletePost,
+                                                child: Container(
+                                                    color: Colors
+                                                        .transparent,
+                                                    child: Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: 16,
+                                                            top: 22,
+                                                            bottom: 10,
+                                                            right: (_isReplyVisible
+                                                                ? (_outerPadding /
+                                                                2)
+                                                                : _outerPadding)),
+                                                        child:
+                                                        Image.asset(
+                                                          'images/trash.png',
+                                                          width: 20,
+                                                          height: 20,
+                                                          excludeFromSemantics:
+                                                          true,
+                                                        )))))))),
+                            Visibility(
+                                visible: _isReplyVisible && !widget.hidePostOptions,
+                                child: Semantics(
+                                    label: Localization().getStringEx(
+                                        'panel.group.detail.post.reply.reply.label',
+                                        "Reply"),
+                                    button: true,
+                                    child: GestureDetector(
+                                        onTap: _onTapHeaderReply,
+                                        child: Container(
+                                            color: Colors.transparent,
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left:
+                                                    (_isDeletePostVisible
+                                                        ? 8
+                                                        : 16),
+                                                    top: 22,
+                                                    bottom: 10,
+                                                    right:
+                                                    _outerPadding),
+                                                child: Image.asset(
+                                                  'images/icon-group-post-reply.png',
+                                                  width: 20,
+                                                  height: 20,
+                                                  fit: BoxFit.fill,
+                                                  excludeFromSemantics:
+                                                  true,
+                                                ))))))
+                          ]),
+                    ]))
+      ]),
+      Visibility(
+          visible: _loading,
+          child: Center(child: CircularProgressIndicator())),
+    ]);
   }
 
   Widget _buildPostContent() {
+    TextEditingController bodyController = TextEditingController();
+    bodyController.text = _mainPostUpdateData?.body;
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
-        child: Visibility(
-            visible: !_isCreatePost,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Padding(
                   padding: EdgeInsets.only(
                       left: _outerPadding,
@@ -288,7 +289,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Visibility(visible: !_editMainPost,
+                      Visibility(visible: !_isEditMainPost,
                           child: Semantics(
                               container: true,
                               child: Html(
@@ -302,7 +303,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                   onLinkTap: (url, context, attributes, element) =>
                                       _onTapPostLink(url)))),
                       Visibility(
-                          visible: _editMainPost,
+                          visible: _isEditMainPost,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -310,7 +311,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                                     child: TextField(
-                                        controller: _mainPostController,
+                                        onChanged: (txt) => _mainPostUpdateData.body = txt,
+                                        controller: bodyController,
                                         maxLines: null,
                                         autofocus: true,
                                         decoration: InputDecoration(
@@ -332,7 +334,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           borderColor: Styles().colors.fillColorSecondary,
                                           textColor: Styles().colors.fillColorPrimary,
                                           backgroundColor: Styles().colors.white,
-                                          onTap: _onTapSave)),
+                                          onTap: _onTapUpdateMainPost)),
                                 ])
 
 
@@ -372,7 +374,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     ],
                   )),
 
-            ])));
+            ]));
   }
 
   _buildRepliesSection(){
@@ -380,8 +382,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
-    else if (_editingPost != null) {
-      replies = [_editingPost];
+    else if (_editingReply != null) { //TBD check this
+      replies = [_editingReply];
     }
     else {
       replies = _post?.replies;
@@ -413,46 +415,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         visible: currentUserIsMemberOrAdmin,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Visibility(
-                  visible: _isCreatePost,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            Localization().getStringEx(
-                                'panel.group.detail.post.create.subject.label',
-                                'Subject'),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontFamily: Styles().fontFamilies.bold,
-                                color: Styles().colors.fillColorPrimary)),
-                        Padding(
-                            padding: EdgeInsets.only(top: 8),
-                            child: TextField(
-                                controller: _subjectController,
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                    hintText: Localization().getStringEx(
-                                        'panel.group.detail.post.create.subject.field.hint',
-                                        'Write a Subject'),
-                                    border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Styles().colors.mediumGray,
-                                            width: 0.0))),
-                                style: TextStyle(
-                                    color: Styles().colors.textBackground,
-                                    fontSize: 16,
-                                    fontFamily: Styles().fontFamilies.regular)))
-                      ])),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               _buildReplyTextField(),
               _buildReplyImageSection(),
               Row(children: [
                 Flexible(
                     flex: 1,
                     child: RoundedButton(
-                        label: (_editingPost != null) ?
+                        label: (_editingReply != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
                         borderColor: Styles().colors.fillColorSecondary,
@@ -475,80 +445,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildReplyImageSection(){
-    return Container(
-        child: Column(
-          children: [
-            _isCreatePost? Container():
-             Container(
-               padding: EdgeInsets.only(bottom: 12),
-               child: _buildImageSection(_preparedReplyData, explicitlyShowAddButton: _editingPost!=null, showSlant: false, wrapContent: true))],
+    return
+      Container(
+        padding: EdgeInsets.only(bottom: 12),
+        child: ImageChooserWidget(
+          imageUrl: _replyEditData?.imageUrl,
+          showSlant: false,
+          wrapContent: true,
+          buttonVisible: _editingReply!=null,
+          onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
         )
-    );
+     );
   }
 
   Widget _buildReplyTextField(){
-    return Container(
-      child: Column(
-        children: [
-          Padding(
-              padding: EdgeInsets.only(top: _isCreatePost ? 16 : 0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _FontIcon(
-                        onTap: _onTapBold,
-                        buttonLabel: "Bold",
-                        iconPath: 'images/icon-bold.png'),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: _FontIcon(
-                            onTap: _onTapItalic,
-                            buttonLabel: "Italic",
-                            iconPath: 'images/icon-italic.png')),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: _FontIcon(
-                            onTap: _onTapUnderline,
-                            buttonLabel: "Underline",
-                            iconPath: 'images/icon-underline.png')),
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Semantics(button: true, child:
-                        GestureDetector(
-                            onTap: _onTapEditLink,
-                            child: Text(
-                                Localization().getStringEx(
-                                    'panel.group.detail.post.create.link.label',
-                                    'Link'),
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                    fontFamily:
-                                    Styles().fontFamilies.medium)))))
-                  ])),
-          Padding(
-              padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
-              child: TextField(
-                  controller: _bodyController,
-                  maxLines: 15,
-                  minLines: 1,
-                  decoration: InputDecoration(
-                      hintText: (_isCreatePost ? Localization().getStringEx(
-                          "panel.group.detail.post.create.body.field.hint",
-                          "Write a Post ...") : Localization().getStringEx(
-                          "panel.group.detail.post.reply.create.body.field.hint",
-                          "Write a Reply ...")),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray,
-                              width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
-        ],
-      )
+    return PostInputField(
+      key: _postInputKey,
+      text: _replyEditData?.body,
+      onBodyChanged: (text) => _replyEditData.body = text,
     );
   }
 
@@ -637,125 +551,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         )
       ],
     ));
-  }
-
-  //Image
-  Widget _buildImageSection(GroupPost post, {bool explicitlyShowAddButton = false, showSlant = true, wrapContent = false}) { //TBD localization
-    final double _imageHeight = 200;
-    String postImageUrl = post?.imageUrl;
-    return Container(
-        constraints: BoxConstraints(
-          maxHeight: (postImageUrl!=null || !wrapContent)? _imageHeight : (double.infinity),
-        ),
-        color: Styles().colors.background,
-        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
-          AppString.isStringNotEmpty(postImageUrl)
-              ? Positioned.fill(child: Image.network(postImageUrl, excludeFromSemantics: true, fit: BoxFit.cover))
-              : Container(),
-          Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.fillColorSecondaryTransparent05, left: false), child: Container(height: 53))),
-          Visibility( visible: showSlant,
-              child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors.background), child: Container(height: 30))),
-          AppString.isStringEmpty(postImageUrl) || explicitlyShowAddButton
-              ? Container(
-              child: Center(
-                  child: Semantics(
-                      label: Localization().getStringEx("panel.group.detail.post.add_image", "Add cover image"),
-                      hint: Localization().getStringEx("panel.group.detail.post.add_image.hint", ""),
-                      button: true,
-                      excludeSemantics: true,
-                      child: ScalableSmallRoundedButton(
-                        maxLines: 2,
-                        label:AppString.isStringEmpty(postImageUrl)? Localization().getStringEx("panel.group.detail.post.add_image", "Add image") : Localization().getStringEx("panel.group.detail.post.change_image", "Edit Image"), // TBD localize
-                        textColor: Styles().colors.fillColorPrimary,
-                        onTap: (){ _onTapAddImage(post);}
-                      )))):
-          Container()
-        ]));
-  }
-
-  //Dialog
-  Widget _buildLinkDialog() {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-              Localization().getStringEx(
-                  'panel.group.detail.post.create.dialog.link.edit.header',
-                  'Edit Link'),
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Styles().colors.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies.medium)),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.text.label',
-                      'Link Text:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkTextController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular))),
-          Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Text(
-                  Localization().getStringEx(
-                      'panel.group.detail.post.create.dialog.link.url.label',
-                      'Link URL:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.fillColorPrimary))),
-          Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: TextField(
-                  controller: _linkUrlController,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Styles().colors.mediumGray, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular)))
-        ]);
-  }
-
-
-  Widget _createModalPhotoDialog(){
-    return _modalImageUrl!=null ? ModalImageDialog(
-        imageUrl: _modalImageUrl,
-        fit: BoxFit.scaleDown,
-        onClose: () {
-          Analytics.instance.logSelect(target: "Close");
-          _modalImageUrl = null;
-          setState(() {});
-        }
-    ) : Container();
-  }
-
-  void _showModalImage(String url){
-    if(url != null) {
-      setState(() {
-        _modalImageUrl = url;
-      });
-    }
   }
 
   List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
@@ -936,28 +731,28 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapEdit(){
+  void _onTapEditMainPost(){
+    _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl);
     if(mounted){
-      _mainPostController.text = _post.body;
       setState(() {
-        _editMainPost = true;
       });
     }
   }
 
-  void _onTapSave(){
-    String body = _mainPostController.text;
+  void _onTapUpdateMainPost(){
+    String body = _mainPostUpdateData?.body;
+    String imageUrl = _mainPostUpdateData.imageUrl ?? _post?.imageUrl;
     if (AppString.isStringEmpty(body)) {
       String validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
-    String htmlModifiedBody = _replaceNewLineSymbols(body);
+    String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: _post.imageUrl, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
-      _editMainPost = false;
+      _mainPostUpdateData = null;
       _setLoading(false);
     });
 
@@ -967,10 +762,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
       setState(() {
-        _editingPost = reply;
-        _preparedReplyData.imageUrl = reply?.imageUrl;
+        _editingReply = reply;
+        _replyEditData?.imageUrl = reply?.imageUrl;
+        _replyEditData?.body = reply?.body;
       });
-      _bodyController.text = (reply ?? _post)?.body;
+      _postInputKey = GlobalKey(); //Refresh InputField to hook new data //Edit Reply
+      _postImageHolderKey = GlobalKey(); //Refresh ImageHolder to hook new data // Edit Reply
       _scrollToPostEdit();
     }
   }
@@ -1013,11 +810,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapCancel() {
     Analytics().logSelect(target: 'Cancel');
-    if (_editingPost != null) {
+    if (_editingReply != null) {
       setState(() {
-        _editingPost = null;
-        _preparedReplyData.imageUrl = null;
-        _bodyController.text = '';
+        _editingReply = null;
+        _replyEditData.imageUrl = null;
+        _replyEditData.body = '';
       });
     }
     else {
@@ -1029,43 +826,29 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
-    String subject;
-    String body = _bodyController.text;
+    String body = _replyEditData?.body;
     String imageUrl;
 
-    if (_isCreatePost) {
-      imageUrl = _post?.imageUrl;
-      subject = _subjectController.text;
-      if (AppString.isStringEmpty(subject)) {
-        AppAlert.showDialogResult(
-            context,
-            Localization().getStringEx(
-                'panel.group.detail.post.create.validation.subject.msg',
-                "Post subject required"));
-        return;
-      }
-    }
-
     if (AppString.isStringEmpty(body)) {
-      String validationMsg = (_isCreatePost || (_editingPost != null))
+      String validationMsg = ((_editingReply != null))
           ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
           : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
-    String htmlModifiedBody = _replaceNewLineSymbols(body);
+    String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
     
     _setLoading(true);
-    if (_editingPost != null) {
-      imageUrl = AppString.isStringNotEmpty(_preparedReplyData?.imageUrl) ? _preparedReplyData?.imageUrl : _editingPost.imageUrl;
-      GroupPost postToUpdate = GroupPost(id: _editingPost.id, subject: _editingPost.subject, imageUrl: imageUrl , body: body, private: true);
+    if (_editingReply != null) {
+      imageUrl = AppString.isStringNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply.imageUrl;
+      GroupPost postToUpdate = GroupPost(id: _editingReply.id, subject: _editingReply.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
       String parentId;
 
-      imageUrl =  _preparedReplyData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
+      imageUrl =  _replyEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
@@ -1076,29 +859,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         parentId = _post.id;
       }
       
-      GroupPost post = GroupPost(parentId: parentId, subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
+      GroupPost post = GroupPost(parentId: parentId, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
       Groups().createPost(widget.group?.id, post).then((succeeded) {
-        _onCreateFinished(succeeded);
+        _onSendFinished(succeeded);
       });
     }
   }
 
-  void _onCreateFinished(bool succeeded) {
+  void _onSendFinished(bool succeeded) {
     _setLoading(false);
     if (succeeded) {
       _clearSelectedReplyId();
       _clearBodyControllerContent();
       Navigator.of(context).pop(true);
     } else {
-      AppAlert.showDialogResult(
-          context,
-          _isCreatePost
-              ? Localization().getStringEx(
-                  'panel.group.detail.post.create.post.failed.msg',
-                  'Failed to create new post.')
-              : Localization().getStringEx(
-                  'panel.group.detail.post.create.reply.failed.msg',
-                  'Failed to create new reply.'));
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.group.detail.post.create.reply.failed.msg', 'Failed to create new reply.'));
     }
   }
 
@@ -1116,99 +891,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _clearBodyControllerContent() {
-    _bodyController.text = '';
+    _replyEditData.body = '';
   }
 
-  void _onTapAddImage(GroupPost post) async {
-    Analytics.instance.logSelect(target: "Add Image");
-    String imageUrl = await showDialog(context: context, builder: (_) => Material(type: MaterialType.transparency, child: GroupAddImageWidget()));
-    if (AppString.isStringNotEmpty(imageUrl)) {
-      post.imageUrl = imageUrl;
-      if (mounted) {
-        //TBD notify
-        setState(() {
-        });
-      }
+  //Modal Image Dialog
+  void _showModalImage(String url){
+    if(url != null) {
+      setState(() {
+        _modalImageUrl = url;
+      });
     }
-    Log.d("Image Url: $imageUrl");
-  }
-
-  //HTML Body input Actions
-  void _onTapBold() {
-    Analytics().logSelect(target: 'Bold');
-    _wrapBodySelection('<b>', '</b>');
-  }
-
-  void _onTapItalic() {
-    Analytics().logSelect(target: 'Italic');
-    _wrapBodySelection('<i>', '</i>');
-  }
-
-  void _onTapUnderline() {
-    Analytics().logSelect(target: 'Underline');
-    _wrapBodySelection('<u>', '</u>');
-  }
-
-  void _onTapEditLink() {
-    Analytics().logSelect(target: 'Edit Link');
-    int linkStartPosition = _bodyController.selection.start;
-    int linkEndPosition = _bodyController.selection.end;
-    _linkTextController.text = AppString.getDefaultEmptyString(
-        value: _bodyController.selection?.textInside(_bodyController.text));
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: _buildLinkDialog(),
-        actions: [
-          TextButton(
-              onPressed: () {
-                Analytics().logSelect(target: 'Set Link Url');
-                _onTapOkLink(linkStartPosition, linkEndPosition);
-              },
-              child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
-          TextButton(
-              onPressed: () {
-                Analytics().logSelect(target: 'Cancel');
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                  Localization().getStringEx('dialog.cancel.title', 'Cancel')))
-        ]);
-  }
-
-  void _onTapOkLink(int startPosition, int endPosition) {
-    Navigator.of(context).pop();
-    if ((startPosition < 0) || (endPosition < 0)) {
-      return;
-    }
-    String linkText = _linkTextController.text;
-    _linkTextController.text = '';
-    String linkUrl = _linkUrlController.text;
-    _linkUrlController.text = '';
-    String currentText = _bodyController.text;
-    currentText =
-        currentText.replaceRange(startPosition, endPosition, linkText);
-    _bodyController.text = currentText;
-    endPosition = startPosition + linkText.length;
-    _wrapBody('<a href="$linkUrl">', '</a>', startPosition, endPosition);
-  }
-
-  void _wrapBodySelection(String firstValue, String secondValue) {
-    int startPosition = _bodyController.selection.start;
-    int endPosition = _bodyController.selection.end;
-    if ((startPosition < 0) || (endPosition < 0)) {
-      return;
-    }
-    _wrapBody(firstValue, secondValue, startPosition, endPosition);
-  }
-
-  void _wrapBody(String firstValue, String secondValue, int startPosition,
-      int endPosition) {
-    String currentText = _bodyController.text;
-    String result = AppString.wrapRange(
-        currentText, firstValue, secondValue, startPosition, endPosition);
-    _bodyController.text = result;
-    _bodyController.selection = TextSelection.fromPosition(
-        TextPosition(offset: (endPosition + firstValue.length)));
   }
 
   //Scroll
@@ -1229,7 +921,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _scrollToPostEdit() {
-
     BuildContext postEditContext = _postEditKey?.currentContext;
     //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
     RenderObject renderObject = postEditContext?.findRenderObject();
@@ -1280,15 +971,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  String _replaceNewLineSymbols(String value) {
-    if (AppString.isStringEmpty(value)) {
-      return value;
-    }
-    value = value.replaceAll('\r\n', '</br>');
-    value = value.replaceAll('\n', '</br>');
-    return value;
-  }
-
   //Getters
   bool _isEditVisible(GroupPost post) {
     return _isCurrentUserCreator(post);
@@ -1328,30 +1010,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  bool get _isCreatePost {
-    return (_post == null || _post?.id == null) ;
+  bool get _isEditMainPost{
+    return _mainPostUpdateData!=null;
   }
 
   // Notifications Listener
-
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
     }
-  }
-}
-
-class _FontIcon extends StatelessWidget {
-  final Function onTap;
-  final String iconPath;
-  final String buttonLabel;
-  _FontIcon({@required this.onTap, @required this.iconPath, this.buttonLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(button: true, label: buttonLabel,
-      child:GestureDetector(
-        onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
   }
 }
