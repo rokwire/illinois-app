@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -108,7 +109,7 @@ class Network  {
 
           Map<String, String>? requestHeaders = await _prepareHeaders(headers, auth, uri);
 
-          Future<Http.Response?>? response;
+          Future<Http.Response?> response;
           if (body != null) {
             response = _get2(uri, headers: requestHeaders, body: body, encoding: encoding, timeout: timeout, client: client);
           }
@@ -119,7 +120,7 @@ class Network  {
             response = Http.get(uri, headers: requestHeaders);
           }
           
-          if ((timeout != null)) {
+          if (timeout != null) {
             response = response.timeout(Duration(seconds: timeout), onTimeout: _responseTimeoutHandler);
           }
 
@@ -525,8 +526,8 @@ class Network  {
     }
   }
 
-  Http.Response? _responseTimeoutHandler() {
-    return null;
+  Http.Response _responseTimeoutHandler() {
+    return Http.Response('Request Timeout', 408);
   }
 
   Uint8List? _responseBytesHandler() {
