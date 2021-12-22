@@ -221,7 +221,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadEvents() {
-    Set<String?>? favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
+    Set<String>? favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteEventIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -241,12 +241,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadDinings() {
-    Set<String?>? favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
+    Set<String>? favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteDiningIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
-      DiningService().loadBackendDinings(false, null, null).then((List<Dining?>? items) {
+      DiningService().loadBackendDinings(false, null, null).then((List<Dining>? items) {
         setState(() {
           _progress--;
           _dinings = _buildFilteredItems(items, favoriteDiningIds);
@@ -261,7 +261,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadAthletics() {
-    Set<String?>? favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
+    Set<String>? favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteGameIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -281,7 +281,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadNews() {
-    Set<String?>? favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
+    Set<String>? favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteNewsIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -304,7 +304,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (!_laundryAvailable) {
       return;
     }
-    Set<String?>? favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
+    Set<String>? favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteLaundryIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
@@ -369,11 +369,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
   }
 
-  List<Favorite?>? _buildFilteredItems(List<Favorite?>? items, Set<String?>? ids) {
+  List<Favorite>? _buildFilteredItems(List<Favorite>? items, Set<String>? ids) {
     if (AppCollection.isCollectionEmpty(items) || AppCollection.isCollectionEmpty(ids)) {
       return null;
     }
-    List<Favorite?> result = [];
+    List<Favorite> result = [];
     items!.forEach((Favorite? item) {
       String? id = item!.favoriteId;
       if (AppString.isStringNotEmpty(id) && ids!.contains(id)) {

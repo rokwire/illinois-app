@@ -40,7 +40,7 @@ class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPag
 }
 
 class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPanel> {
-  late List<GroupMembershipQuestion?> _questions;
+  late List<GroupMembershipQuestion> _questions;
   late List<FocusNode> _focusNodes;
   late List<TextEditingController> _controllers;
   bool? _submitting;
@@ -114,7 +114,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   List<Widget> _buildQuestions() {
     List<Widget> content = [];
     for (int index = 0; index < _questions.length; index++) {
-      content.add(_buildQuestion(question: _questions[index]!.question!, controller:_controllers[index], focusNode: _focusNodes[index]));
+      content.add(_buildQuestion(question: _questions[index].question!, controller:_controllers[index], focusNode: _focusNodes[index]));
     }
     return content;
   }
@@ -174,7 +174,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
     if (_submitting != true) {
       List<GroupMembershipAnswer> answers = [];
       for (int index = 0; index < _questions.length; index++) {
-        String? question = _questions[index]!.question;
+        String? question = _questions[index].question;
         TextEditingController controller = _controllers[index];
         FocusNode focusNode = _focusNodes[index];
         String answer = controller.text;

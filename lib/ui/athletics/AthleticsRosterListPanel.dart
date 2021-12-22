@@ -41,13 +41,13 @@ class AthleticsRosterListPanel extends StatefulWidget {
 
 class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> implements RoundedTabListener, _RosterItemListener{
 
-  final String? _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name") ;
-  final String? _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position");
-  final String? _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number");
+  final String _tabFilterByName = Localization().getStringEx("panel.athletics_roster_list.button.by_name.title", "By Name")!;
+  final String _tabFilterByPosition = Localization().getStringEx("panel.athletics_roster_list.button.by_position.title", "By Position")!;
+  final String _tabFilterByNumber = Localization().getStringEx("panel.athletics_roster_list.button.by_number.title", "By Number")!;
 
   int? _selectedTabIndex = 0;
   late List<RoundedTab> _tabs;
-  late List<String?> _tabStrings;
+  late List<String> _tabStrings;
   List<Roster>? allRosters;
 
   _AthleticsRosterListPanelState(this.allRosters);

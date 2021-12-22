@@ -55,12 +55,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   bool? _hasMoreMessages;
   
   bool? _loading, _loadingMore, _processingOption;
-  List<InboxMessage?> _messages = <InboxMessage>[];
+  List<InboxMessage> _messages = <InboxMessage>[];
   List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
 
   bool _isEditMode = false;
-  Set<String?> _selectedMessageIds = Set<String?>();
+  Set<String> _selectedMessageIds = Set<String>();
 
   @override
   void initState() {
@@ -183,12 +183,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _handleSelectionTap(InboxMessage message) {
     setState(() {
-      if (_selectedMessageIds.contains(message.messageId)) {
-        _selectedMessageIds.remove(message.messageId);
-        AppSemantics.announceMessage(context, "Deselected");
-      } else {
-        _selectedMessageIds.add(message.messageId);
-        AppSemantics.announceMessage(context, "Selected");
+      if (message.messageId != null) {
+        if (_selectedMessageIds.contains(message.messageId)) {
+          _selectedMessageIds.remove(message.messageId);
+          AppSemantics.announceMessage(context, "Deselected");
+        } else {
+          _selectedMessageIds.add(message.messageId!);
+          AppSemantics.announceMessage(context, "Selected");
+        }
       }
     });
   }
@@ -534,8 +536,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   void _onSelectAll() {
     Analytics.instance.logSelect(target: "Select All");
     setState(() {
-      for (InboxMessage? message in _messages) {
-        _selectedMessageIds.add(message!.messageId);
+      for (InboxMessage message in _messages) {
+        if (message.messageId != null) {
+          _selectedMessageIds.add(message.messageId!);
+        }
       }
     });
   }
@@ -605,7 +609,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Future<void> _onPullToRefresh() async {
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime!] : null;
-    List<InboxMessage?>? messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage>? messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
@@ -637,7 +641,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime!] : null;
-    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage?>? messages) {
+    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -661,7 +665,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime!] : null;
-    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage?>? messages) {
+    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -682,7 +686,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime!] : null;
-    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage?>? messages) {
+    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {

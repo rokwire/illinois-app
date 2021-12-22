@@ -125,6 +125,17 @@ class ExploreCategory {
     };
   }
 
+  static List<ExploreCategory>? listFromJson(List<dynamic>? jsonList) {
+    List<ExploreCategory>? result;
+    if (jsonList is List) {
+      result = <ExploreCategory>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, ExploreCategory.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
 }
 
 //////////////////////////////

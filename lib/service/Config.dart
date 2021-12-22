@@ -57,7 +57,7 @@ class Config with Service implements NotificationsListener {
   String?               _appPlatformId;
   DateTime?             _pausedDateTime;
   
-  final Set<String?>    _reportedUpgradeVersions = Set<String?>();
+  final Set<String>    _reportedUpgradeVersions = Set<String>();
 
   // Singletone Instance
 
@@ -485,7 +485,7 @@ class Config with Service implements NotificationsListener {
     if (permanent) {
       Storage().reportedUpgradeVersion = version;
     }
-    else {
+    else if (version != null) {
       _reportedUpgradeVersions.add(version);
     }
   }

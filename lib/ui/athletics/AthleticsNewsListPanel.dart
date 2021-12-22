@@ -50,7 +50,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   List<News>? _displayNews;
 
   //filters
-  late List<String?> _filters;
+  late List<String> _filters;
   bool _filterOptionsVisible = false;
   int _selectedFilterIndex = 0;
   ScrollController _scrollController = new ScrollController();
@@ -125,13 +125,13 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   _initFilter() async{
     _filters = [];
-   _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News"));
+   _filters.add(Localization().getStringEx("panel.athletics_news_list.label.all_news.title", "All Athletics News")!);
     List<SportDefinition> sportTypes = Sports().sports!;
    sportTypes.forEach((SportDefinition type){
-       _filters.add(type.name);
+      AppList.add(_filters, type.name);
    });
     if (AppString.isStringNotEmpty(widget.sportName)) {
-      int initialSelectedFilterIndex = _filters.indexOf(widget.sportName);
+      int initialSelectedFilterIndex = (widget.sportName != null) ? _filters.indexOf(widget.sportName!) : -1;
       if (initialSelectedFilterIndex >= 0 &&
           initialSelectedFilterIndex < _filters.length) {
         _selectedFilterIndex = initialSelectedFilterIndex;
@@ -197,7 +197,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
 
   Widget _buildFilterValuesContainer() {
 
-    List<String?> filterValues = _filters;
+    List<String> filterValues = _filters;
     return Visibility(visible: _filterOptionsVisible, child: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 95, bottom: 40),
         child: Container(decoration: BoxDecoration(
@@ -280,7 +280,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
   }
 
   void _onFilterValueClick(int newValueIndex) {
-    Analytics.instance.logSelect(target: "Filter: "+_filters[newValueIndex]!) ;
+    Analytics.instance.logSelect(target: "Filter: ${_filters[newValueIndex]}") ;
     setState(() {
       _selectedFilterIndex = newValueIndex;
       _filterOptionsVisible = false;

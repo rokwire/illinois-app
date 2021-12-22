@@ -70,23 +70,23 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   bool get _isLoading => _isCategoryLoading || _isEventLoading;
 
   // Categories Filter
-  final String? _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories");
-  late List<String?> _eventCategories;
+  final String _allCategoriesConst = Localization().getStringEx("panel.find_event.label.all_categories", "All categories")!;
+  late List<String> _eventCategories;
   String? _selectedEventCategory;
 
   // Tags Filter
-  final String? _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags');
-  final String? _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags');
-  late List<String?> _tags;
+  final String _tagFilterAllTags = Localization().getStringEx('panel.find_event.filter.tags.all', 'All Tags')!;
+  final String _tagFilterMyTags = Localization().getStringEx('panel.find_event.filter.tags.my', 'My Tags')!;
+  late List<String> _tags;
   String? _selectedTag;
 
   // Time Filter
-  final String? _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming");
-  final String? _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today");
-  final String? _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days");
-  final String? _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend");
-  final String? _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days");
-  late List<String?> _time;
+  final String _timeFilterUpcoming = Localization().getStringEx("panel.find_event.filter.time.upcoming","Upcoming")!;
+  final String _timeFilterToday = Localization().getStringEx("panel.find_event.filter.time.today","Today")!;
+  final String _timeFilterNextSevenDays = Localization().getStringEx("find_event.find_event.filter.time.next_7_days","Next 7 days")!;
+  final String _timeFilterThisWeekend = Localization().getStringEx("panel.find_event.filter.time.this_weekend","This Weekend")!;
+  final String _timeFilterNextMonth = Localization().getStringEx("panel.find_event.filter.time.next_30_days","Next 30 days")!;
+  late List<String> _time;
   String? __selectedTime;
   String? get _selectedTime => __selectedTime;
   set _selectedTime(String? value){
@@ -100,7 +100,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   List<Event>? _events;
   List<Event>? _filteredEvents;
   final List<Event> _selectedEvents = [];
-  final Set<String?> _selectedEventIds = Set<String?>();
+  final Set<String> _selectedEventIds = Set<String>();
 
   FilterType __activeFilterType = FilterType.none;
   bool get _hasActiveFilter{ return _activeFilterType != FilterType.none; }
@@ -141,11 +141,13 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   void _loadEventCategories() {
     if (Connectivity().isNotOffline) {
       setState(() {_isCategoryLoading = true;});
-      ExploreService().loadEventCategoriesEx().then((List<ExploreCategory?>? result) {
+      ExploreService().loadEventCategoriesEx().then((List<ExploreCategory>? result) {
         _eventCategories = [];
         _eventCategories.add(_allCategoriesConst);
         if(AppCollection.isCollectionNotEmpty(result)){
-          _eventCategories.addAll(result!.map((category)=>category!.name));
+          for (ExploreCategory category in result!) {
+            AppList.add(_eventCategories, category.name);
+          }
         }
         setState(() {_isCategoryLoading = false;});
       });
@@ -501,9 +503,9 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
   }
 
   void _onSelectedEvent(Event? event){
-    if(event != null) {
-      _selectedEvents.add(event);
-      _selectedEventIds.add(event.id);
+    if(event?.id != null) {
+      _selectedEvents.add(event!);
+      _selectedEventIds.add(event.id!);
       setState(() {});
     }
   }

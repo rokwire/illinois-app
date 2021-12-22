@@ -424,10 +424,10 @@ class ExplorePanelState extends State<ExplorePanel>
     ];
   }
 
-  List<String?> _getFilterCategoriesValues() {
-    List<String?> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories'));
-    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories'));
+  List<String> _getFilterCategoriesValues() {
+    List<String> categoriesValues = [];
+    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.all', 'All Categories')!);
+    categoriesValues.add(Localization().getStringEx('panel.explore.filter.categories.my', 'My Categories')!);
     if (_eventCategories != null) {
       for (var category in _eventCategories!) {
         categoriesValues.add(category['category']);
@@ -436,10 +436,10 @@ class ExplorePanelState extends State<ExplorePanel>
     return categoriesValues;
   }
 
-  List<String?> _getFilterTagsValues() {
-    List<String?> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags'));
-    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags'));
+  List<String> _getFilterTagsValues() {
+    List<String> tagsValues = [];
+    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.all', 'All Tags')!);
+    tagsValues.add(Localization().getStringEx('panel.explore.filter.tags.my', 'My Tags')!);
     return tagsValues;
   }
 
@@ -558,7 +558,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return explores;
   }
 
-  Future<List<Explore?>?> _loadDining(List<ExploreFilter>? selectedFilterList) async {
+  Future<List<Explore>?> _loadDining(List<ExploreFilter>? selectedFilterList) async {
     String? workTime = _getSelectedWorkTime(selectedFilterList);
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (AppCollection.isCollectionNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
@@ -652,7 +652,7 @@ class ExplorePanelState extends State<ExplorePanel>
               selectedCategories.addAll(userCategories);
             }
           }
-          List<String?> filterCategoriesValues = _getFilterCategoriesValues();
+          List<String> filterCategoriesValues = _getFilterCategoriesValues();
           if (filterCategoriesValues.isNotEmpty) {
             for (int selectedCategoryIndex in selectedIndexes) {
               if ((selectedCategoryIndex < filterCategoriesValues.length) &&

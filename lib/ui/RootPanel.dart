@@ -91,8 +91,8 @@ class RootPanel extends StatefulWidget {
 
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
 
-  List<RootTab?>  _tabs = [];
-  Map<RootTab?, Widget> _panels = {};
+  List<RootTab>  _tabs = [];
+  Map<RootTab, Widget> _panels = {};
 
   TabController?  _tabBarController;
   int            _currentTabIndex = 0;
@@ -294,7 +294,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   int _getIndexByRootTab(RootTab? rootTab) {
-    return _tabs.indexOf(rootTab);
+    return (rootTab != null) ? _tabs.indexOf(rootTab) : -1;
   }
 
   Widget? _getTabPanelAtIndex(int index) {
@@ -551,7 +551,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _updateContent() {
-    List<RootTab?> tabs = _getTabs();
+    List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
       _updatePanels(tabs);
       if (mounted) {
@@ -567,23 +567,23 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  void _updatePanels(List<RootTab?> tabs) {
-    for (RootTab? rootTab in tabs) {
+  void _updatePanels(List<RootTab> tabs) {
+    for (RootTab rootTab in tabs) {
       if (_panels[rootTab] == null) {
-      Widget? panel = _createPanelForTab(rootTab);
-      if (panel != null) {
-        _panels[rootTab] = panel;
-      }
+        Widget? panel = _createPanelForTab(rootTab);
+        if (panel != null) {
+          _panels[rootTab] = panel;
+        }
       }
     }
   }
 
-  static List<RootTab?> _getTabs() {
-    List<RootTab?> tabs = [];
+  static List<RootTab> _getTabs() {
+    List<RootTab> tabs = [];
     List<String>? codes = _getTabbarCodes();
     if (codes != null) {
       for (String code in codes) {
-        tabs.add(rootTabFromString(code));
+        AppList.add(tabs, rootTabFromString(code));
       }
     }
     return tabs;

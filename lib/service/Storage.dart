@@ -524,21 +524,23 @@ class Storage with Service {
     return (topicsList != null) ? Set.from(topicsList) : null;
   }
 
-  set firebaseMessagingSubscriptionTopics(Set<String?>? value) {
+  set firebaseMessagingSubscriptionTopics(Set<String>? value) {
     List<String>? topicsList = (value != null) ? List.from(value) : null;
     _setStringListWithName(firebaseMessagingSubscriptionTopicsKey, topicsList);
   }
 
   void addFirebaseMessagingSubscriptionTopic(String? value) {
-    Set<String?> topics = firebaseMessagingSubscriptionTopics ?? Set();
-    topics.add(value);
-    firebaseMessagingSubscriptionTopics = topics;
+    if (value != null) {
+      Set<String> topics = firebaseMessagingSubscriptionTopics ?? Set();
+      topics.add(value);
+      firebaseMessagingSubscriptionTopics = topics;
+    }
   }
 
   void removeFirebaseMessagingSubscriptionTopic(String? value) {
-    Set<String>? topics = firebaseMessagingSubscriptionTopics;
-    if (topics != null) {
-      topics.remove(value);
+    if (value != null) {
+      Set<String>? topics = firebaseMessagingSubscriptionTopics;
+      topics?.remove(value);
       firebaseMessagingSubscriptionTopics = topics;
     }
   }

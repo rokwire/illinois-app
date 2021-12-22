@@ -73,18 +73,18 @@ class GeoFenceRegion {
     return (data is GeoFenceBeacon) ? (data as GeoFenceBeacon?) : null;
   }
 
-  static LinkedHashMap<String?, GeoFenceRegion?>? mapFromJsonList(List<dynamic>? values) {
-    Map<String?, GeoFenceRegion?>? regions;
+  static LinkedHashMap<String, GeoFenceRegion>? mapFromJsonList(List<dynamic>? values) {
+    LinkedHashMap<String, GeoFenceRegion>? regions;
     if (values != null) {
-      regions = Map();
+      regions = LinkedHashMap();
       for (dynamic value in values) {
         GeoFenceRegion? region = GeoFenceRegion.fromJson(value);
         if (region?.id != null) {
-          regions[region!.id] = region;
+          regions[region!.id!] = region;
         }
       }
     }
-    return regions as LinkedHashMap<String?, GeoFenceRegion?>?;
+    return regions;
   }
 
   @override

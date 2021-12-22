@@ -40,7 +40,7 @@ enum _FilterType { none, category, tags }
 enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener{
-  final String? _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories");
+  final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All categories")!;
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
@@ -242,9 +242,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isFilterLoading = true;
     });
-    List<String?> categories = [];
+    List<String> categories = [];
     categories.add(_allCategoriesValue);
-    List<String?>? groupCategories = await Groups().loadCategories();
+    List<String>? groupCategories = await Groups().loadCategories();
     if (AppCollection.isCollectionNotEmpty(groupCategories)) {
       categories.addAll(groupCategories!);
     }

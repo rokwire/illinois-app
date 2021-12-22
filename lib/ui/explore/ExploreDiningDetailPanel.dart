@@ -985,11 +985,11 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
           Auth2().prefs?.includedFoodTypes,
           Auth2().prefs?.excludedFoodIngredients
       );
-      Map<String?, List<DiningProductItem>> productStationMapping = DiningUtils
+      Map<String, List<DiningProductItem>> productStationMapping = DiningUtils
           .getCategoryGroupedProducts(mealProducts);
 
       if (_productItems != null && _productItems!.isNotEmpty) {
-        List<String?> stations = productStationMapping.keys.toList();
+        List<String> stations = productStationMapping.keys.toList();
 
         for(String? stationName in stations){
           List<DiningProductItem> products = productStationMapping[stationName]!;

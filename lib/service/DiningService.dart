@@ -230,7 +230,7 @@ class DiningService  with Service {
   }
 
   // Helpers
-  void _sortExploresByLocation(List<Explore?> explores, Position locationData) {
+  void _sortExploresByLocation(List<Explore> explores, Position locationData) {
     explores.sort((Explore? explore1, Explore? explore2) {
       double distance1 = AppLocation.distance(explore1!.exploreLocation!.latitude as double, explore1.exploreLocation!.longitude as double, locationData.latitude, locationData.longitude);
       double distance2 = AppLocation.distance(explore2!.exploreLocation!.latitude as double, explore2.exploreLocation!.longitude as double, locationData.latitude, locationData.longitude);
@@ -246,7 +246,7 @@ class DiningService  with Service {
     });
   }
 
-  void _sortExploresByName(List<Explore?> explores) {
+  void _sortExploresByName(List<Explore> explores) {
     explores.sort((Explore? explore1, Explore? explore2) {
       return (explore1?.exploreTitle ?? "").compareTo(explore2?.exploreTitle ?? "");
     });
@@ -308,15 +308,17 @@ class DiningUtils{
     return mapping;
   }
 
-  static Map<String?,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem>? allProducts){
-    Map<String?, List<DiningProductItem>> mapping = Map<String?,
+  static Map<String,List<DiningProductItem>> getCategoryGroupedProducts(List<DiningProductItem>? allProducts){
+    Map<String, List<DiningProductItem>> mapping = Map<String,
         List<DiningProductItem>>();
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
-        if(!mapping.containsKey(item.category)){
-          mapping[item.category] = [];
+        if (item.category != null) {
+          if(!mapping.containsKey(item.category)){
+            mapping[item.category!] = [];
+          }
+          mapping[item.category!]!.add(item);
         }
-        mapping[item.category]!.add(item);
       }
     }
     return mapping;

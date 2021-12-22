@@ -263,7 +263,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
                   ),
                 ]),
                 Padding(padding: EdgeInsets.only(top: 10), child:
-                  Column(children: _buildDetails() as List<Widget>),
+                  Column(children: _buildDetails()),
                 )
               ])
             )
@@ -282,8 +282,8 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     ),);
   }
 
-  List<Widget?> _buildDetails() {
-    List<Widget?> details =  [];
+  List<Widget> _buildDetails() {
+    List<Widget> details =  [];
     if(AppString.isStringNotEmpty(widget.item!.recentTime)) {
       Widget? dateDetail = widget.showDate ? _dateDetail() : null;
       if (dateDetail != null) {
@@ -294,8 +294,8 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
         if (details.isNotEmpty) {
           details.add(Container(height: 8,));
         }
+        details.add(timeDetail);
       }
-      details.add(timeDetail);
     }
     Widget? descriptionDetail = ((widget.item!.recentItemType == RecentItemType.guide) && AppString.isStringNotEmpty(widget.item!.recentDescripton)) ? _descriptionDetail() : null;
     if (descriptionDetail != null) {

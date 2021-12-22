@@ -104,7 +104,7 @@ class Inbox with Service implements NotificationsListener {
 
   // Inbox APIs
 
-  Future<List<InboxMessage?>?> loadMessages({DateTime? startDate, DateTime? endDate, String? category, Iterable? messageIds, int? offset, int? limit }) async {
+  Future<List<InboxMessage>?> loadMessages({DateTime? startDate, DateTime? endDate, String? category, Iterable? messageIds, int? offset, int? limit }) async {
     
     String urlParams = "";
     

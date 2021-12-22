@@ -180,7 +180,7 @@ class GeoFence with Service implements NotificationsListener {
     await _cacheFile?.writeAsString(regionsString ?? '', flush: true);
   }
 
-  Future<LinkedHashMap<String?, GeoFenceRegion?>?> _loadRegionsFromCache() async {
+  Future<LinkedHashMap<String, GeoFenceRegion>?> _loadRegionsFromCache() async {
     return _regionsFromJsonString(await _loadRegionsStringFromCache());
   }
 
@@ -214,7 +214,7 @@ class GeoFence with Service implements NotificationsListener {
     }
   }
 
-  static LinkedHashMap<String?, GeoFenceRegion?>? _regionsFromJsonString(String? jsonString) {
+  static LinkedHashMap<String, GeoFenceRegion>? _regionsFromJsonString(String? jsonString) {
     List<dynamic>? jsonList = AppJson.decode(jsonString);
     return (jsonList != null) ? GeoFenceRegion.mapFromJsonList(jsonList) : null;
   }

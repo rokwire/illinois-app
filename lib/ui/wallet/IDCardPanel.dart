@@ -116,9 +116,9 @@ class _IDCardPanelState extends State<IDCardPanel>
   Future<bool?> _loadBuildingAccess() async {
     if (AppString.isStringNotEmpty(Config().padaapiUrl) && AppString.isStringNotEmpty(Config().padaapiApiKey) && AppString.isStringNotEmpty(Auth2().authCard?.uin)) {
       String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
-      Map<String, String?> headers = {
+      Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
-        Network.RokwirePadaapiKey: Config().padaapiApiKey
+        Network.RokwirePadaapiKey: Config().padaapiApiKey!
       };
       Response? response = await Network().get(url, headers: headers);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? AppJson.decodeMap(response?.body) : null;

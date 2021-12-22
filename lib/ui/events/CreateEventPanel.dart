@@ -1781,7 +1781,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       Event mainEvent = _constructEventFromData();
       Event? eventToDisplay;
       Group? groupToDisplay;
-      List<String?> createEventFailedForGroupNames = [];
+      List<String> createEventFailedForGroupNames = [];
       List<Group>? otherGroupsToSave;
 
       // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
@@ -1804,14 +1804,14 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
             groupToDisplay = widget.group;
           } else {
             // Failed to link event to group
-            createEventFailedForGroupNames.add(widget.group!.title);
+            AppList.add(createEventFailedForGroupNames, widget.group?.title);
           }
         } else {
           // Succeeded to create event that has no group
           eventToDisplay = mainEvent;
         }
       } else if (hasGroup) {
-        createEventFailedForGroupNames.add(widget.group!.title);
+        AppList.add(createEventFailedForGroupNames, widget.group?.title);
       }
 
       // Save the event to the other selected groups that the user is admin.
@@ -1830,11 +1830,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
               }
             } else {
               // Failed to link event to group
-              createEventFailedForGroupNames.add(group.title);
+              AppList.add(createEventFailedForGroupNames, group.title);
             }
           } else {
             // Failed to create event for group
-            createEventFailedForGroupNames.add(group.title);
+            AppList.add(createEventFailedForGroupNames, group.title);
           }
         }
       }

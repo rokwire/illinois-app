@@ -115,14 +115,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _applyMembersFilter(){
-    List<String?> membersFilter = [];
-    _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members!.length.toString());
-    _selectedMembersFilter = _allMembersFilter;
-    membersFilter.add(_allMembersFilter);
+    List<String> membersFilter = [];
+    _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members!.length.toString());
+    if (_allMembersFilter != null) {
+      membersFilter.add(_allMembersFilter!);
+    }
     if(AppCollection.isCollectionNotEmpty(_members)){
-      for(Member? member in _members!){
-        if(AppString.isStringNotEmpty(member!.officerTitle) && !membersFilter.contains(member.officerTitle)){
-          membersFilter.add(member.officerTitle);
+      for(Member member in _members!){
+        if(AppString.isStringNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
+          membersFilter.add(member.officerTitle!);
         }
       }
     }

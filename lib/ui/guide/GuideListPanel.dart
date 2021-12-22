@@ -137,18 +137,18 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         context: context,
         titleWidget: Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),),
       ),
-      body: Column(children: _buildContent() as List<Widget>),
+      body: Column(children: _buildContent()),
       backgroundColor: Styles().colors!.background,
     );
   }
 
-  List<Widget?> _buildContent() {
-    List<Widget?> contentList = <Widget?>[];
+  List<Widget> _buildContent() {
+    List<Widget> contentList = <Widget>[];
 
     if ((_guideItems != null) && (0 < _guideItems!.length)) {
 
       if ((_features != null) && _features!.isNotEmpty) {
-        contentList.add(_buildFeatures());
+        contentList.add(_buildFeatures()!);
       }
 
       if (widget.section != null) {

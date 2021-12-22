@@ -251,7 +251,7 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<List<ExploreCategory?>?> loadEventCategoriesEx() async {
+  Future<List<ExploreCategory>?> loadEventCategoriesEx() async {
     http.Response? response;
     if(_enabled) {
       try {
@@ -263,9 +263,7 @@ class ExploreService with Service implements NotificationsListener {
       }
       String? responseBody = response?.body;
       if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-        List<dynamic>? categoriesJson = AppJson.decode(responseBody);
-        List<ExploreCategory?>? categories = AppCollection.isCollectionNotEmpty(categoriesJson) ? categoriesJson!.map((entry) => ExploreCategory.fromJson(entry)).toList() : null;
-        return categories;
+        return ExploreCategory.listFromJson(AppJson.decodeList(responseBody));
       } else {
         Log.e('Failed to load event categories');
         Log.e(responseBody);

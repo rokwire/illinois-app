@@ -83,9 +83,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
   int                _allEventsCount = 0;
-  List<GroupEvent?>?   _groupEvents;
-  List<GroupPost?>    _visibleGroupPosts = <GroupPost>[];
-  List<Member?>?       _groupAdmins;
+  List<GroupEvent>?  _groupEvents;
+  List<GroupPost>    _visibleGroupPosts = <GroupPost>[];
+  List<Member>?      _groupAdmins;
 
   _DetailTab         _currentTab = _DetailTab.Events;
 
@@ -202,7 +202,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     setState(() {
       _updatingEvents = true;
     });
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent?>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
@@ -215,7 +215,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _refreshEvents() {
-    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent?>>? eventsMap) {
+    Groups().loadEvents(_group, limit: 3).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
           bool hasEventsMap = AppCollection.isCollectionNotEmpty(eventsMap?.values);
@@ -247,7 +247,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_refreshingPosts != true)) {
       int limit = _visibleGroupPosts.length + (delta ?? 0);
       _refreshingPosts = true;
-      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost?>? posts) {
+      Groups().loadGroupPosts(widget.groupId, offset: 0, limit: limit, order: GroupSortOrder.desc).then((List<GroupPost>? posts) {
         _refreshingPosts = false;
         if (mounted && (posts != null)) {
           setState(() {
@@ -281,7 +281,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Future<void> _loadPostsPage() async {
-    List<GroupPost?>? postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _visibleGroupPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
+    List<GroupPost>? postsPage = await Groups().loadGroupPosts(widget.groupId, offset: _visibleGroupPosts.length, limit: _postsPageSize, order: GroupSortOrder.desc);
     if (postsPage != null) {
       _visibleGroupPosts.addAll(postsPage);
       if (postsPage.length < _postsPageSize) {
@@ -804,7 +804,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (i > 0) {
         postsContent.add(Container(height: 16));
       }
-      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group, onImageTap: (){_showModalImage(post?.imageUrl);}));
+      postsContent.add(GroupPostCard(key: (i == 0) ? _lastPostKey : null, post: post, group: _group, onImageTap: (){_showModalImage(post.imageUrl);}));
     }
 
     if ((_group != null) && _group!.currentUserIsMemberOrAdmin && (_hasMorePosts != false) && (0 < _visibleGroupPosts.length)) {

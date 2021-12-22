@@ -157,12 +157,14 @@ class LaundryService /* with Service */ {
     if (AppCollection.isCollectionEmpty(jsonData)) {
       return null;
     }
-    Map<String?, Location?> locationMapping = Map();
+    Map<String, Location> locationMapping = Map();
     for (dynamic jsonEntry in jsonData!) {
       String? locationIdentifier = jsonEntry['laundry_location'];
       Location? locationDetails =
           Location.fromJSON(jsonEntry['location_details']);
-      locationMapping.putIfAbsent(locationIdentifier, () => locationDetails);
+      if ((locationIdentifier != null) && (locationDetails != null)) {
+        locationMapping.putIfAbsent(locationIdentifier, () => locationDetails);
+      }
     }
     return locationMapping;
   }

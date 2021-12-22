@@ -319,7 +319,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     if (selectedFilter == null) {
       return Container();
     }
-    List<String?> filterValues = _getFilterValuesByType(selectedFilter.type)!;
+    List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
     return Visibility(
       visible: _filterOptionsVisible,
       child: Padding(
@@ -347,7 +347,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       label: filterValues[filterIndex],
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: "+filterValues[filterIndex]!);
+                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
                         _onFilterValueClick(selectedFilter!, filterIndex);
                       },
                     );
@@ -457,7 +457,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _refreshEvents();
   }
 
-  List<String?>? _getFilterValuesByType(_EventFilterType filterType) {
+  List<String>? _getFilterValuesByType(_EventFilterType filterType) {
     switch (filterType) {
       case _EventFilterType.categories:
         return _getFilterCategoriesValues();
@@ -479,21 +479,21 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  List<String?>? _getFilterCategoriesValues() {
+  List<String>? _getFilterCategoriesValues() {
     if (AppCollection.isCollectionEmpty(_eventCategories)) {
       return null;
     }
-    List<String?> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
+    List<String> categoriesValues = [];
+    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks')!);
     for (var category in _eventCategories!) {
       categoriesValues.add(category);
     }
     return categoriesValues;
   }
 
-  List<String?> _getFilterTagsValues() {
-    List<String?> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
+  List<String>? _getFilterTagsValues() {
+    List<String> tagsValues = [];
+    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags')!);
 
     if (_visibleTags != null) {
       for (var tag in _visibleTags!) {
