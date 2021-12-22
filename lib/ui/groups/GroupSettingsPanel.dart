@@ -48,6 +48,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
+  final _authManGroupNameController = TextEditingController();
+
   List<GroupPrivacy> _groupPrivacyOptions;
   List<String> _groupCategories;
 
@@ -109,6 +111,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Container(height: 12, color: Styles().colors.background),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
+                            _buildAuthManLayout(),
                             Container(height: 24,  color: Styles().colors.background,),
                           ],),)
                       ]),
@@ -615,7 +618,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
-          Container(height: 40,),
+          Container(height: 20,),
     ]),);
   }
 
@@ -678,6 +681,75 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     });
   }
 
+  // AuthMan Group
+  Widget _buildAuthManLayout() {
+    bool isAuthManGroup = _group?.authManEnabled ?? false;
+
+    return Container(
+        color: Styles().colors.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(children: <Widget>[
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "Authman"), "images/icon-member.png"),
+          Container(height: 12),
+          Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Styles().colors.white,
+                        border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(4))),
+                    padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this an Authman Group"),
+                            style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                        GestureDetector(
+                            onTap: _onTapAuthMan,
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+                      ])
+                    ])),
+                Visibility(
+                    visible: isAuthManGroup,
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(children: [
+                        _buildInfoHeader(Localization().getStringEx("panel.groups_settings.authman.group.name.label", "AUTHMAN GROUP NAME"), null),
+                        Padding(padding: EdgeInsets.only(top: 14), child: Text('*', style: TextStyle(color: Styles().colors.fillColorSecondary, fontSize: 18, fontFamily: Styles().fontFamilies.bold)))
+                      ]),
+                      Container(
+                          decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
+                          child: TextField(
+                            onChanged: _onAuthManGroupNameChanged,
+                            controller: _authManGroupNameController,
+                            maxLines: 5,
+                            decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                            style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                          ))
+                    ]))
+              ])),
+        ]));
+  }
+
+  void _onTapAuthMan() {
+    Analytics.instance.logSelect(target: "AuthMan Group");
+    if (_group != null) {
+      _group.authManEnabled = !(_group.authManEnabled ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void _onAuthManGroupNameChanged(String name) {
+    if (_group != null) {
+      _group.authManGroupName = name;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   //Buttons
   Widget _buildButtonsLayout() {
     return SafeArea(child: Container( color: Styles().colors.white,
@@ -712,6 +784,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _loading = true;
     });
+
+    // if the group is not authman then clear authman group name
+    if (!(_group.authManEnabled ?? false)) {
+      _group.authManGroupName = null;
+    }
+
     Groups().updateGroup(_group).then((GroupError error){
       if (mounted) {
         setState(() {
