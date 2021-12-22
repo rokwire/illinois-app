@@ -148,6 +148,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _eventDescriptionController.text=_group.description;
       if(_group.webURL!=null)
         _linkController.text = _group.webURL;
+      if (_group.authManGroupName != null) {
+        _authManGroupNameController.text = _group.authManGroupName;
+      }
     }
   }
 
