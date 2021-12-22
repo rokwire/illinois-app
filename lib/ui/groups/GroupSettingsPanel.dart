@@ -109,6 +109,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Container(height: 12, color: Styles().colors.background),
                             _buildPrivacyDropDown(),
                             _buildMembershipLayout(),
+                            _buildAuthManLayout(),
                             Container(height: 24,  color: Styles().colors.background,),
                           ],),)
                       ]),
@@ -615,7 +616,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
-          Container(height: 40,),
+          Container(height: 20,),
     ]),);
   }
 
@@ -676,6 +677,28 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       }
       setState(() {});
     });
+  }
+
+  // AuthMan Group
+  Widget _buildAuthManLayout() {
+    bool isAuthManGroup = _group?.isAuthManGroup ?? false;
+    return Container(color: Styles().colors.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(Localization().getStringEx("panel.groups_settings.is_authman.label", "Is this an Authman Group"),
+          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+      GestureDetector(
+          onTap: _onTapAuthMan,
+          child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+    ])));
+  }
+
+  void _onTapAuthMan() {
+    Analytics.instance.logSelect(target: "AuthMan Group");
+    if (_group != null) {
+      _group.isAuthManGroup = !(_group.isAuthManGroup ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   //Buttons

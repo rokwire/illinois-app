@@ -134,7 +134,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildPrivacyDropDown(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                             _buildMembershipLayout(),
-                            Container(height: 24,),
+                            Container(height: 8),
+                            _buildAuthManLayout(),
+                            Container(height: 40),
                         ],),)
 
                       ]),
@@ -473,7 +475,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
                 description: questionsDescription,
                 onTap: _onTapQuestions)),
-        Container(height: 40),
+        Container(height: 20),
       ]),
     );
   }
@@ -519,6 +521,28 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
       setState(() {});
     });
+  }
+
+  // AuthMan Group
+  Widget _buildAuthManLayout() {
+    bool isAuthManGroup = _group?.isAuthManGroup ?? false;
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(Localization().getStringEx("panel.groups_create.is_authman.label", "Is this an Authman Group"),
+          style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+      GestureDetector(
+          onTap: _onTapAuthMan,
+          child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+    ]));
+  }
+
+  void _onTapAuthMan() {
+    Analytics.instance.logSelect(target: "AuthMan Group");
+    if (_group != null) {
+      _group.isAuthManGroup = !(_group.isAuthManGroup ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   //Buttons
