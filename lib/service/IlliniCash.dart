@@ -301,8 +301,8 @@ class IlliniCash with Service implements NotificationsListener {
         if (!_buyIlliniCashInProgress) {
           _buyIlliniCashInProgress = true;
 
-          bool eligible = await (_isEligible(uin: uin, firstName: firstName, lastName: lastName) as FutureOr<bool>);
-          if (!eligible) {
+          bool? eligible = await _isEligible(uin: uin, firstName: firstName, lastName: lastName);
+          if (eligible != true) {
             _throwBuyIlliniCashError(Localization().getStringEx("panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text", "The recipient is not eligible to buy Illini Cash"));
           }
 

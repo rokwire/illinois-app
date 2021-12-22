@@ -551,7 +551,7 @@ class Groups with Service implements NotificationsListener {
     if(creatorGroupId!=null){
       Group? creatorGroup = await loadGroup(creatorGroupId);
       if(creatorGroup!=null && creatorGroup.currentUserIsAdmin){
-        deleteResult = await (ExploreService().deleteEvent(event.id) as FutureOr<bool>);
+        deleteResult = await ExploreService().deleteEvent(event.id);
       }
     }
     NotificationService().notify(Groups.notifyGroupEventsUpdated);
