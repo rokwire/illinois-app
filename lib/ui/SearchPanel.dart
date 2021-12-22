@@ -254,7 +254,7 @@ class _SearchPanelState extends State<SearchPanel> {
     }
   }
 
-  void _searchEvents(String keyword) {
+  void _searchEvents(String? keyword) {
     if (keyword == null) {
       return;
     }

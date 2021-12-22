@@ -178,7 +178,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
         TextEditingController controller = _controllers[index];
         FocusNode focusNode = _focusNodes[index];
         String answer = controller.text;
-        if ((answer != null) && (0 < answer.length)) {
+        if (0 < answer.length) {
           answers.add(GroupMembershipAnswer(question: question, answer: answer));
         }
         else {

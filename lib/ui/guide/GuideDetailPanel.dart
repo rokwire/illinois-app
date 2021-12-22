@@ -427,7 +427,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
 
     }
 
-    return ((contentList != null) && (0 < contentList.length)) ?
+    return (0 < contentList.length) ?
       Container(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32), child:
         Row(children: [
           Expanded(child:

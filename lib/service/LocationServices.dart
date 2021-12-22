@@ -64,7 +64,8 @@ class LocationServices with Service implements NotificationsListener {
   @override
   void destroyService() {
     NotificationService().unsubscribe(this);
-    _closeLocationMonitor();
+    _locationMonitor?.cancel();
+    _locationMonitor = null;
   }
 
   @override

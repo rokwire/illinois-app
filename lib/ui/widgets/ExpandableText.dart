@@ -25,8 +25,7 @@ class ExpandableText extends StatefulWidget {
         this.trimLines = 3,
         this.style,
         this.iconColor,
-      })  : assert(text != null),
-        super(key: key);
+      })  : super(key: key);
 
   final String text;
   final int trimLines;

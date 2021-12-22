@@ -134,7 +134,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
           _isEditMainPost || AppString.isStringNotEmpty(_post?.imageUrl) //TBD remove if statement
-            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData.imageUrl = url,)
+            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
             : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
@@ -142,7 +142,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           ],)),
        Container(
                 key: _sliverHeaderKey,
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,16 +157,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                     sortKey: OrdinalSortKey(1),
                                     container: true,
                                     child: Text(
-                                        AppString.getDefaultEmptyString(
-                                            value: _post?.subject),
+                                        AppString.getDefaultEmptyString(_post?.subject),
                                         maxLines: 5,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontFamily:
-                                            Styles().fontFamilies.bold,
+                                            Styles().fontFamilies!.bold,
                                             fontSize: 24,
                                             color: Styles()
-                                                .colors
+                                                .colors!
                                                 .fillColorPrimary)))),
                             Visibility(
                                 visible: _isEditPostVisible && !widget.hidePostOptions,
@@ -276,7 +275,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   Widget _buildPostContent() {
     TextEditingController bodyController = TextEditingController();
-    bodyController.text = _mainPostUpdateData?.body;
+    bodyController.text = _mainPostUpdateData?.body ?? '';
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -311,7 +310,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                                     child: TextField(
-                                        onChanged: (txt) => _mainPostUpdateData.body = txt,
+                                        onChanged: (txt) => _mainPostUpdateData?.body = txt,
                                         controller: bodyController,
                                         maxLines: null,
                                         autofocus: true,
@@ -331,9 +330,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                       child: RoundedButton(
                                           label:
                                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
-                                          borderColor: Styles().colors.fillColorSecondary,
-                                          textColor: Styles().colors.fillColorPrimary,
-                                          backgroundColor: Styles().colors.white,
+                                          borderColor: Styles().colors!.fillColorSecondary,
+                                          textColor: Styles().colors!.fillColorPrimary,
+                                          backgroundColor: Styles().colors!.white,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
 
@@ -383,7 +382,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       replies = _generateFocusedThreadList();
     }
     else if (_editingReply != null) { //TBD check this
-      replies = [_editingReply];
+      replies = [_editingReply!];
     }
     else {
       replies = _post?.replies;
@@ -462,7 +461,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return PostInputField(
       key: _postInputKey,
       text: _replyEditData?.body,
-      onBodyChanged: (text) => _replyEditData.body = text,
+      onBodyChanged: (text) => _replyEditData?.body = text,
     );
   }
 
@@ -553,7 +552,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     ));
   }
 
-  List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
+  List<GroupPost>? _getVisibleReplies(List<GroupPost>? replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
@@ -740,8 +739,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapUpdateMainPost(){
-    String body = _mainPostUpdateData?.body;
-    String imageUrl = _mainPostUpdateData.imageUrl ?? _post?.imageUrl;
+    String? body = _mainPostUpdateData?.body;
+    String? imageUrl = _mainPostUpdateData?.imageUrl ?? _post?.imageUrl;
     if (AppString.isStringEmpty(body)) {
       String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
@@ -750,7 +749,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
@@ -814,8 +813,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_editingReply != null) {
       setState(() {
         _editingReply = null;
-        _replyEditData.imageUrl = null;
-        _replyEditData.body = '';
+        _replyEditData?.imageUrl = null;
+        _replyEditData?.body = '';
       });
     }
     else {
@@ -827,13 +826,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
-    String body = _replyEditData?.body;
-    String imageUrl;
+    String? body = _replyEditData?.body;
+    String? imageUrl;
 
     if (AppString.isStringEmpty(body)) {
       String validationMsg = ((_editingReply != null))
-          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
-          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
+          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")!
+          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required")!;
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
@@ -841,8 +840,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingReply != null) {
-      imageUrl = AppString.isStringNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply.imageUrl;
-      GroupPost postToUpdate = GroupPost(id: _editingReply.id, subject: _editingReply.subject, imageUrl: imageUrl , body: body, private: true);
+      imageUrl = AppString.isStringNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply?.imageUrl;
+      GroupPost postToUpdate = GroupPost(id: _editingReply?.id, subject: _editingReply?.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
@@ -892,11 +891,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _clearBodyControllerContent() {
-    _replyEditData.body = '';
+    _replyEditData?.body = '';
   }
 
   //Modal Image Dialog
-  void _showModalImage(String url){
+  void _showModalImage(String? url){
     if(url != null) {
       setState(() {
         _modalImageUrl = url;
@@ -922,7 +921,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _scrollToPostEdit() {
-    BuildContext postEditContext = _postEditKey?.currentContext;
+    BuildContext? postEditContext = _postEditKey.currentContext;
     //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
     RenderObject? renderObject = postEditContext?.findRenderObject();
     RenderAbstractViewport? viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;

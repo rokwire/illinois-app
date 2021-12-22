@@ -143,7 +143,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
   }
 
   void _didLogin(_) {
-    Navigator.of(context)?.popUntil((Route route) {
+    Navigator.of(context).popUntil((Route route) {
       bool isCurrent = (AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType);
       if (isCurrent) {
         Navigator.of(context).pop();

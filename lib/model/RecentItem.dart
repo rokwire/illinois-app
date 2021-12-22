@@ -40,7 +40,7 @@ class RecentItem{
 
   RecentItem({this.recentItemType, this.recentTitle, this.recentDescripton,this.recentTime, this.recentOriginalJson});
 
-  static RecentItem? fromJson(Map<String, dynamic> json){
+  static RecentItem? fromJson(Map<String, dynamic>? json){
     return (json != null) ? RecentItem(
       recentItemType: recentTypeFromString(json["recent_type"]),
       recentTitle: json["recent_title"],
@@ -52,66 +52,44 @@ class RecentItem{
 
   static RecentItem? fromOriginalType(dynamic item){
     if(item is Event) {
-      Event event = item;
-      if (event != null) {
-        bool recurringEvent = event.isRecurring;
-        String? recentTime = recurringEvent ? event.displayRecurringDates : event.displayDateTime;
-        RecentItem eventItem = RecentItem(
-            recentItemType: RecentItemType.event,
-            recentTitle: event.exploreTitle,
-            recentDescripton: event.shortDescription,
-            recentTime: recentTime,
-            recentOriginalJson: event.toJson()
-        );
-        return eventItem;
-      }
+      return RecentItem(
+          recentItemType: RecentItemType.event,
+          recentTitle: item.exploreTitle,
+          recentDescripton: item.shortDescription,
+          recentTime: item.isRecurring ? item.displayRecurringDates : item.displayDateTime,
+          recentOriginalJson: item.toJson()
+      );
     } else if(item is Dining) {
-      Dining dining = item;
-      if (dining != null) {
-        RecentItem diningItem = RecentItem(
-            recentItemType: RecentItemType.dining,
-            recentTitle: dining.exploreTitle,
-            recentDescripton: dining.shortDescription,
-            recentTime: "",//dining.getDisplayWorkTime(), // MD: Temporary disabled Issue
-            recentOriginalJson: dining.toJson()
-        );
-        return diningItem;
-      }
+      return RecentItem(
+          recentItemType: RecentItemType.dining,
+          recentTitle: item.exploreTitle,
+          recentDescripton: item.shortDescription,
+          recentTime: "",//item.getDisplayWorkTime(), // MD: Temporary disabled Issue
+          recentOriginalJson: item.toJson()
+      );
     } else if(item is Game) {
-      Game game = item;
-      if (game != null) {
-        RecentItem gameItem = RecentItem(
-            recentItemType: RecentItemType.game,
-            recentTitle: game.title,
-            recentDescripton: game.shortDescription,
-            recentTime: game.displayTime,
-            recentOriginalJson: game.jsonData
-        );
-        return gameItem;
-      }
+      return RecentItem(
+          recentItemType: RecentItemType.game,
+          recentTitle: item.title,
+          recentDescripton: item.shortDescription,
+          recentTime: item.displayTime,
+          recentOriginalJson: item.jsonData
+      );
     } else if(item is News) {
-      News news = item;
-      if (news != null) {
-        RecentItem gameItem = RecentItem(
-            recentItemType: RecentItemType.news,
-            recentTitle: news.title,
-            recentDescripton: news.description,
-            recentTime: news.displayTime,
-            recentOriginalJson: news.json
-        );
-        return gameItem;
-      }
+      return RecentItem(
+          recentItemType: RecentItemType.news,
+          recentTitle: item.title,
+          recentDescripton: item.description,
+          recentTime: item.displayTime,
+          recentOriginalJson: item.json
+      );
     } else if(item is Explore) {
-      Explore explore = item;
-      if(explore!=null){
-        RecentItem exploreItem = RecentItem(
-            recentItemType: RecentItemType.explore,
-            recentTitle: explore.exploreTitle,
-            recentDescripton: explore.exploreShortDescription,
-            recentOriginalJson: explore.toJson()
-        );
-        return exploreItem;
-      }
+      return RecentItem(
+          recentItemType: RecentItemType.explore,
+          recentTitle: item.exploreTitle,
+          recentDescripton: item.exploreShortDescription,
+          recentOriginalJson: item.toJson()
+      );
     }
 
     return null;
@@ -161,18 +139,15 @@ class RecentItem{
       case RecentItemType.guide:
         return 'images/icon-news.png';
       case RecentItemType.explore:
-        {
-          if (Event.canJson(recentOriginalJson)) {
-            return 'images/icon-calendar.png';
-          }
-          else if (Dining.canJson(recentOriginalJson)) {
-            return 'images/icon-dining-yellow.png';
-          }
-          else {
-            return null;
-          }
+        if (Event.canJson(recentOriginalJson)) {
+          return 'images/icon-calendar.png';
         }
-        break;
+        else if (Dining.canJson(recentOriginalJson)) {
+          return 'images/icon-dining-yellow.png';
+        }
+        else {
+          return null;
+        }
       default:
         return null;
     }
@@ -225,7 +200,7 @@ class RecentItem{
     }
   }
 
-  static List<RecentItem> createFromList(List items ){
+  static List<RecentItem> createFromList(List? items ){
     List<RecentItem> result = [];
     if(items!=null && items.isNotEmpty){
       items.forEach((dynamic each){

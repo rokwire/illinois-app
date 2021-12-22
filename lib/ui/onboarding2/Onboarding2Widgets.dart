@@ -119,7 +119,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
                           style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
                         )
                         ),
-                        (_image != null) ? Padding(padding: EdgeInsets.only(left: 7), child: _image) : Container(),
+                        Padding(padding: EdgeInsets.only(left: 7), child: _image),
                       ],
                     ),
                   ),

@@ -734,7 +734,7 @@ class AppDeviceOrientation {
     return orientationsList;
   }
 
-  static List<String>? toStrList(List<DeviceOrientation> orientationsList) {
+  static List<String>? toStrList(List<DeviceOrientation>? orientationsList) {
     
     List<String>? stringsList;
     if (orientationsList != null) {
@@ -780,7 +780,7 @@ class AppGeometry {
 
 class AppBoolExpr {
   
-  static bool eval(dynamic expr, bool? Function(String?) evalArg) {
+  static bool eval(dynamic expr, bool? Function(String?)? evalArg) {
     
     if (expr is String) {
 
@@ -843,12 +843,10 @@ class AppBundle {
 
 
 class AppHtml {
-  static String replaceNewLineSymbols(String value) {
+  static String replaceNewLineSymbols(String? value) {
     if (AppString.isStringEmpty(value)) {
-      return value;
+      return value!;
     }
-    value = value.replaceAll('\r\n', '</br>');
-    value = value.replaceAll('\n', '</br>');
-    return value;
+    return value!.replaceAll('\r\n', '</br>').replaceAll('\n', '</br>');
   }
 }

@@ -129,7 +129,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(mainText)!,
+                  AppString.getDefaultEmptyString(mainText),
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                 ),
               ),
@@ -140,7 +140,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 24),
                 child: Text(
-                  AppString.getDefaultEmptyString(bullet)!,
+                  AppString.getDefaultEmptyString(bullet),
                   style: TextStyle(fontSize: 20, color: Styles().colors!.textBackground),
                 ),
               ),
@@ -150,7 +150,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
               child: Padding(
                 padding: EdgeInsets.only(left: 24, right: 24, top: 6),
                 child: Text(
-                  AppString.getDefaultEmptyString(secondaryText)!,
+                  AppString.getDefaultEmptyString(secondaryText),
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular),
                 ),
               ),
@@ -213,7 +213,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                             excludeSemantics: true,
                             child:
                             Text(
-                              AppString.getDefaultEmptyString(sectionHeaderText)!,
+                              AppString.getDefaultEmptyString(sectionHeaderText),
                               style: TextStyle(color: Colors.white, fontSize: 20),
                             )
                         )
@@ -355,7 +355,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
                         excludeSemantics: true,
                         child:
                         Text(
-                          AppString.getDefaultEmptyString(resourceHeaderTitle)!,
+                          AppString.getDefaultEmptyString(resourceHeaderTitle),
                           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
                         ),
                       )

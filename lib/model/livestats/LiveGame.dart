@@ -36,8 +36,8 @@ class LiveGame {
       this.visitingScore,
       this.custom});
 
-  static LiveGame fromJson(Map<String, dynamic> json) {
-    return LiveGame(
+  static LiveGame? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? LiveGame(
         gameId: json['GameId'],
         path: json['Path'],
         hasStarted: json['HasStarted'] == 'true',
@@ -47,6 +47,6 @@ class LiveGame {
         homeScore: int.parse(json['HomeScore']),
         visitingScore: int.parse(json['VisitingScore']),
         custom: json["Custom"]
-        );
+        ) : null;
   }
 }

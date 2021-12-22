@@ -20,7 +20,7 @@ class ImageType {
 
   ImageType({this.identifier, this.width});
 
-  static ImageType? fromJson(Map<String, dynamic> json) {
+  static ImageType? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? ImageType(
         identifier: json['identifier'],
         width: json['width']

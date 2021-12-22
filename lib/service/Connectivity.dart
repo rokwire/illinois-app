@@ -69,10 +69,7 @@ class Connectivity with Service {
 
   @override
   void destroyService() {
-    if (_connectivitySubscription != null) {
-      _connectivitySubscription!.cancel();
-      _connectivitySubscription = null;
-    }
+    _connectivitySubscription?.cancel();
   }
 
   void _onConnectivityChanged(ConnectivityPlugin.ConnectivityResult result) {
@@ -87,11 +84,12 @@ class Connectivity with Service {
     }
   }
 
-  ConnectivityStatus? _statusFromResult(ConnectivityPlugin.ConnectivityResult result) {
+  ConnectivityStatus? _statusFromResult(ConnectivityPlugin.ConnectivityResult? result) {
     switch(result) {
       case ConnectivityPlugin.ConnectivityResult.wifi: return ConnectivityStatus.wifi;
       case ConnectivityPlugin.ConnectivityResult.mobile: return ConnectivityStatus.mobile;
       case ConnectivityPlugin.ConnectivityResult.none: return ConnectivityStatus.none;
+      default: break;
     }
     return null;
   }

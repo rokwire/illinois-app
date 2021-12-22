@@ -241,9 +241,9 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   void _didLogin(_) {
-    Navigator.of(context)?.popUntil((Route route){
+    Navigator.of(context).popUntil((Route route){
       Widget? _widget = AppNavigation.routeRootWidget(route, context: context);
-      return _widget == null || _widget?.runtimeType == widget.runtimeType;
+      return _widget == null || _widget.runtimeType == widget.runtimeType;
     });
   }
 
@@ -403,7 +403,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   }
 
   Widget _buildMTDBusCard(){
-    String expires = Auth2()?.authCard?.expirationDate ?? "";
+    String expires = Auth2().authCard?.expirationDate ?? "";
     return _Card(
       key: _mtdCardKey,
       title: Localization().getStringEx("panel.wallet.label.mtd.title", "MTD",),
@@ -414,7 +414,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              Auth2()?.authCard?.role ?? "",
+              Auth2().authCard?.role ?? "",
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.extraBold,
@@ -470,7 +470,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
               ),
             ),
             Text(
-              Auth2()?.authCard?.uin ?? "",
+              Auth2().authCard?.uin ?? "",
               style: TextStyle(
                 color: Styles().colors!.fillColorPrimary,
                 fontFamily: Styles().fontFamilies!.extraBold,
@@ -519,7 +519,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
             
             Container(height: 5,),
             Text(
-              Auth2()?.authCard?.libraryNumber ?? "",
+              Auth2().authCard?.libraryNumber ?? "",
               style: TextStyle(
                   fontFamily: Styles().fontFamilies!.light,
                   fontSize: 12,

@@ -159,7 +159,7 @@ class _SettingsLoginPhonePanelState extends State<SettingsLoginPhonePanel> {
   }
 
   void _didPhoneVer(_) {
-    Navigator.of(context)?.popUntil((Route route){
+    Navigator.of(context).popUntil((Route route){
       return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
     });
     Navigator.pop(context,true);

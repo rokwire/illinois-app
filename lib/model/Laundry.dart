@@ -77,14 +77,13 @@ class LaundryRoom implements Favorite {
   }
 
   static String? _roomStatusToString(LaundryRoomStatus? roomStatus) {
-    if (roomStatus == null) {
-      return null;
-    }
-    switch (roomStatus) {
-      case LaundryRoomStatus.online:
-        return 'online';
-      case LaundryRoomStatus.offline:
-        return 'offline';
+    if (roomStatus != null) {
+      switch (roomStatus) {
+        case LaundryRoomStatus.online:
+          return 'online';
+        case LaundryRoomStatus.offline:
+          return 'offline';
+      }
     }
     return null;
   }

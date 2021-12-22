@@ -433,7 +433,7 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
 
       //split names
       List<String> splitNames = fullName.split(" ");
-      int namesLength = (splitNames.length ?? 0);
+      int namesLength = splitNames.length;
       if(namesLength > 3){
         //Not sure if possible but handle the case
         //Everything after first and middle name will be last name containing spaces
@@ -511,15 +511,15 @@ class _SettingsPersonalInfoPanelState extends State<SettingsPersonalInfoPanel> i
   }
 
   String get _customFullName {
-    return _nameController?.value?.text??"";
+    return _nameController?.value.text??"";
   }
   
   String get _customEmail {
-      return _emailController?.value?.text??"";
+      return _emailController?.value.text??"";
   }
   
   String get _customPhone {
-      return _phoneController?.value?.text??"";
+      return _phoneController?.value.text??"";
   }
 }
 

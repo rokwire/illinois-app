@@ -22,7 +22,7 @@ class SportSeasons {
 
   SportSeasons({this.code, this.label, this.staff, this.seasons});
 
-  static SportSeasons? fromJson(Map<String, dynamic> json) {
+  static SportSeasons? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -45,7 +45,7 @@ class SportSeasonSchedule {
 
   SportSeasonSchedule({this.year, this.roster, this.schedule});
 
-  static SportSeasonSchedule? fromJson(Map<String, dynamic> json) {
+  static SportSeasonSchedule? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }
@@ -111,7 +111,7 @@ class SportDefinition {
     this.hasSortByNumber, this.hasScores, this.gender, this.ticketed,
     this.iconPath});
 
-  static SportDefinition? fromJson(Map<String, dynamic> json) {
+  static SportDefinition? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
       return null;
     }

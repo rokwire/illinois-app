@@ -275,7 +275,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
       Widget? tabPanel = _getTabPanelAtIndex(index);
       if (tabPanel != null) {
-        Analytics.instance.logPage(name:tabPanel?.runtimeType?.toString());
+        Analytics.instance.logPage(name:tabPanel.runtimeType.toString());
       }
 
       if (mounted) {
@@ -640,16 +640,16 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseHomeNotification() {
     // Pop to Home Panel and select the first tab
-    Navigator.of(context)?.popUntil((route) => route.isFirst);
+    Navigator.of(context).popUntil((route) => route.isFirst);
     selectTab(rootTab: RootTab.Home);
   }
 
   void _onFirebaseInboxNotification() {
-    Navigator.of(context)?.push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
   }
 }
 
-RootTab? rootTabFromString(String value) {
+RootTab? rootTabFromString(String? value) {
   if (value != null) {
     if (value == 'home') {
       return RootTab.Home;
@@ -676,7 +676,7 @@ class _FavoritesSavedDialog extends StatefulWidget {
     return _FavoritesSavedDialogState();
   }
 
-  static void show(BuildContext context) {
+  static void show(BuildContext? context) {
     bool favoriteDialogWasShown = Storage().favoritesDialogWasVisible!;
     if (favoriteDialogWasShown || context == null) {
       return;

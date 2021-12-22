@@ -130,10 +130,10 @@ class LiveStats with Service implements NotificationsListener {
     }
   }
 
-  void _onScoreChanged(Map<String, dynamic> newScore) {
+  void _onScoreChanged(Map<String, dynamic>? newScore) {
     Log.d("On live game changed");
 
-     LiveGame liveGame = LiveGame.fromJson(newScore);
+     LiveGame? liveGame = LiveGame.fromJson(newScore);
      if (liveGame != null)
        _updateLiveGame(liveGame);
   }
@@ -172,8 +172,7 @@ class LiveStats with Service implements NotificationsListener {
         List<LiveGame> result = [];
         if (gamesList != null) {
           for (dynamic current in gamesList) {
-            LiveGame liveGame = LiveGame.fromJson(current);
-            result.add(liveGame);
+            AppList.add(result, LiveGame.fromJson(current));
           }
         }
         _liveGames = result;

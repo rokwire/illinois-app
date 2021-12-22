@@ -41,12 +41,10 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
       if (AppCollection.isCollectionNotEmpty(contentList)) {
       List<Widget> content = <Widget>[];
       for (Widget entry in contentList) {
-        if (entry != null) {
-          if (content.isNotEmpty) {
-            content.add(Container(height: 10,),);
-          }
-          content.add(entry);
+        if (content.isNotEmpty) {
+          content.add(Container(height: 10,),);
         }
+        content.add(entry);
       }
 
       if (content.isNotEmpty) {

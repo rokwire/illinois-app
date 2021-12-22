@@ -43,7 +43,7 @@ class NotificationService {
     }
   }
 
-  void _subscribe(NotificationsListener listener, String name) {
+  void _subscribe(NotificationsListener? listener, String? name) {
     if ((listener != null) && (name != null)) {
       Set<NotificationsListener>? listenersForName = _listeners[name];
       if (listenersForName == null) {
@@ -69,7 +69,7 @@ class NotificationService {
     }
   }
 
-  void _unsubscribe(NotificationsListener listener, String name) {
+  void _unsubscribe(NotificationsListener? listener, String? name) {
     if ((listener != null) && (name != null)) {
       // Unsubscribe for 'name'
       Set<NotificationsListener>? listenersForName = _listeners[name];

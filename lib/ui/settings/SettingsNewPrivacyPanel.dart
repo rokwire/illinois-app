@@ -257,7 +257,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                             Container(
                               padding: EdgeInsets.only(top: 42, bottom: 10, left: 40, right: 40),
                               child:
-                              Semantics(button:false,  hint: "${_sliderValue?.round()?.toString() ?? ""}",
+                              Semantics(button:false,  hint: "${_sliderValue?.round().toString() ?? ""}",
                                 child: Text(
                                   Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.update_privacy.title", "Your new \nprivacy level")!,
                                   style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),
@@ -343,7 +343,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
                                 child: Semantics(
                                   label: Localization().getStringEx("panel.settings.new_privacy.privacy.dialog.label.new_privacy", "Privacy Level: "),
                                   child: Text(
-                                    _sliderValue?.round()?.toString() ?? "",
+                                    _sliderValue?.round().toString() ?? "",
                                     style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
                                   ),
                                 )
@@ -640,7 +640,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
 
   @override
   void dispose() {
-    if(_animationControllers!=null && _animationControllers.isNotEmpty) {
+    if(_animationControllers.isNotEmpty) {
       _animationControllers.forEach((controller) {
         controller.dispose();
       });
@@ -749,7 +749,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
 
   List<Widget> _buildCategoryEntries(PrivacyCategory category){
     List<Widget> entries = [];
-    if(category?.entries2?.isNotEmpty??false){
+    if(category.entries2?.isNotEmpty??false){
       category.entries2!.forEach((entry) {
         entries.add(_PrivacyEntry(data: entry, currentPrivacyLevel: widget.selectedPrivacyLevel?.round()??0,));
       });
@@ -759,11 +759,11 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
 
   void _onTapExpandAll(){
     if(_canClose){
-      expansionState?.forEach((key, value) {
+      expansionState.forEach((key, value) {
         expansionState[key] = false;
       });
     } else {
-      expansionState?.forEach((key, value) {
+      expansionState.forEach((key, value) {
         expansionState[key] = true;
       });
     }

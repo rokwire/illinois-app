@@ -539,14 +539,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
               decoration: BoxDecoration(
-                  color: Styles().colors.white,
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  color: Styles().colors!.white,
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
                   borderRadius: BorderRadius.all(Radius.circular(4))),
               padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this an Authman Group"),
-                      style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
+                  Text(Localization().getStringEx("panel.groups_create.authman.enabled.label", "Is this an Authman Group")!,
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
                   GestureDetector(
                       onTap: _onTapAuthMan,
                       child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
@@ -557,13 +557,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _buildSectionTitle(Localization().getStringEx("panel.groups_create.authman.group.name.label", "AUTHMAN GROUP NAME"), null, true),
                 Container(
-                    decoration: BoxDecoration(border: Border.all(color: Styles().colors.fillColorPrimary, width: 1), color: Styles().colors.white),
+                    decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white),
                     child: TextField(
                       onChanged: _onAuthManGroupNameChanged,
                       controller: _authManGroupNameController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                      style: TextStyle(color: Styles().colors.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies.regular),
+                      style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                     ))
               ]))
         ]));
@@ -572,7 +572,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onTapAuthMan() {
     Analytics.instance.logSelect(target: "AuthMan Group");
     if (_group != null) {
-      _group.authManEnabled = !(_group.authManEnabled ?? false);
+      _group!.authManEnabled = (_group!.authManEnabled != true);
       if (mounted) {
         setState(() {});
       }
@@ -581,7 +581,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onAuthManGroupNameChanged(String name) {
     if (_group != null) {
-      _group.authManGroupName = name;
+      _group!.authManGroupName = name;
     }
     if (mounted) {
       setState(() {});

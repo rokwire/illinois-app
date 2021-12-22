@@ -80,7 +80,7 @@ class HomeHeader extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(left: 30),
                   child: Text(
-                    AppString.getDefaultEmptyString(subTitle)!,
+                    AppString.getDefaultEmptyString(subTitle),
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,

@@ -288,7 +288,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     return optionWidgets;
   }
 
-  void _onTapButtonOption(RuleOption ruleOption) {
+  void _onTapButtonOption(RuleOption? ruleOption) {
     if (ruleOption == null) {
       return;
     }

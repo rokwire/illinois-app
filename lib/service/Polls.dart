@@ -751,11 +751,6 @@ class _PollChunk {
 
   _PollChunk({this.poll, this.status });
 
-  @override
-  void dispose() {
-    eventListener?.cancel();
-  }
-
   bool get canPresent {
     if ((status == _PollUIStatus.waitingVote) &&
         (poll!.status == PollStatus.opened) &&
@@ -774,18 +769,15 @@ class _PollChunk {
 
   // This method is unused but keep it to suppress the must close subscription warning
   void closeEventStream({bool permanent = true}) {
-    if (eventListener != null) {
-      eventListener!.cancel();
-      eventListener = null;
-    }
-    if (eventListenerTimer != null) {
-      eventListenerTimer!.cancel();
-      eventListenerTimer = null;
-    }
-    if (eventClient != null) {
-      eventClient!.close();
-      eventClient = null;
-    }
+    eventListener?.cancel();
+    eventListener = null;
+
+    eventListenerTimer?.cancel();
+    eventListenerTimer = null;
+
+    eventClient?.close();
+    eventClient = null;
+
     if (permanent) {
       lastEventId = null;
     }

@@ -45,29 +45,27 @@ class LaundryService /* with Service */ {
     if (response?.statusCode == 200) {
       xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
-      if (laundryRoomsXml != null) {
-        rooms = [];
-        laundryRoomsXml.map((xml.XmlElement item) {
-          String? location = _getValueFromXmlItem(item.findElements("location"));
-          String? campusName =
-              _getValueFromXmlItem(item.findElements("campus_name"));
-          String? name =
-              _getValueFromXmlItem(item.findElements("laundry_room_name"));
-          String? statusValue = _getValueFromXmlItem(item.findElements("status"));
-          Location? roomLocationDetails;
-          if (mappingExists) {
-            roomLocationDetails = locationMapping[location];
-          }
-          LaundryRoomStatus? roomStatus =
-              LaundryRoom.roomStatusFromString(statusValue);
-          rooms!.add(LaundryRoom(
-              id: location,
-              campusName: campusName,
-              title: name,
-              status: roomStatus,
-              location: roomLocationDetails));
-        }).toList();
-      }
+      rooms = [];
+      laundryRoomsXml.map((xml.XmlElement item) {
+        String? location = _getValueFromXmlItem(item.findElements("location"));
+        String? campusName =
+            _getValueFromXmlItem(item.findElements("campus_name"));
+        String? name =
+            _getValueFromXmlItem(item.findElements("laundry_room_name"));
+        String? statusValue = _getValueFromXmlItem(item.findElements("status"));
+        Location? roomLocationDetails;
+        if (mappingExists) {
+          roomLocationDetails = locationMapping[location];
+        }
+        LaundryRoomStatus? roomStatus =
+            LaundryRoom.roomStatusFromString(statusValue);
+        rooms!.add(LaundryRoom(
+            id: location,
+            campusName: campusName,
+            title: name,
+            status: roomStatus,
+            location: roomLocationDetails));
+      }).toList();
     } else {
       Log.e('Failed to load laundry rooms:');
       Log.e(responseBody);
@@ -87,22 +85,20 @@ class LaundryService /* with Service */ {
       final String zeroValue = '0';
       xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
       var laundryRoomsXml = roomsXmlResponse.findAllElements('laundryroom');
-      if (laundryRoomsXml != null) {
-        for (xml.XmlElement item in laundryRoomsXml) {
-          String? location = _getValueFromXmlItem(item.findElements("location"));
-          if (laundryLocation == location) {
-            String? availableWashers = _getValueFromXmlItem(item.findElements("available_washers"));
-            String? availableDryers = _getValueFromXmlItem(item.findElements("available_dryers"));
-            if (undefinedValue == availableWashers) {
-              availableWashers = zeroValue;
-            }
-            if (undefinedValue == availableDryers) {
-              availableDryers = zeroValue;
-            }
-            return LaundryRoomAvailability(location: location, availableWashers: availableWashers, availableDryers: availableDryers);
-          } else {
-            continue;
+      for (xml.XmlElement item in laundryRoomsXml) {
+        String? location = _getValueFromXmlItem(item.findElements("location"));
+        if (laundryLocation == location) {
+          String? availableWashers = _getValueFromXmlItem(item.findElements("available_washers"));
+          String? availableDryers = _getValueFromXmlItem(item.findElements("available_dryers"));
+          if (undefinedValue == availableWashers) {
+            availableWashers = zeroValue;
           }
+          if (undefinedValue == availableDryers) {
+            availableDryers = zeroValue;
+          }
+          return LaundryRoomAvailability(location: location, availableWashers: availableWashers, availableDryers: availableDryers);
+        } else {
+          continue;
         }
       }
     } else {
@@ -124,33 +120,31 @@ class LaundryService /* with Service */ {
     if (response?.statusCode == 200) {
       xml.XmlDocument roomsXmlResponse = xml.XmlDocument.parse(responseBody!);
       var appliancesXml = roomsXmlResponse.findAllElements('appliance');
-      if (appliancesXml != null) {
-        laundryRoomAppliances = [];
-        appliancesXml.map((xml.XmlElement item) {
-          String? applianceDescKey =
-              _getValueFromXmlItem(item.findElements("appliance_desc_key"));
-          String? lrmStatus = _getValueFromXmlItem(item.findElements("lrm_status"));
-          String? applianceType =
-              _getValueFromXmlItem(item.findElements("appliance_type"));
-          String? status = _getValueFromXmlItem(item.findElements("status"));
-          String? outOfService =
-              _getValueFromXmlItem(item.findElements("out_of_service"));
-          String? label = _getValueFromXmlItem(item.findElements("label"));
-          String? avgCycleTime =
-              _getValueFromXmlItem(item.findElements("avg_cycle_time"));
-          String? timeRemaining =
-              _getValueFromXmlItem(item.findElements("time_remaining"));
-          laundryRoomAppliances!.add(LaundryRoomAppliance(
-              applianceDescKey: applianceDescKey,
-              lrmStatus: lrmStatus,
-              applianceType: applianceType,
-              status: status,
-              outOfService: outOfService,
-              label: label,
-              avgCycleTime: avgCycleTime,
-              timeRemaining: timeRemaining));
-        }).toList();
-      }
+      laundryRoomAppliances = [];
+      appliancesXml.map((xml.XmlElement item) {
+        String? applianceDescKey =
+            _getValueFromXmlItem(item.findElements("appliance_desc_key"));
+        String? lrmStatus = _getValueFromXmlItem(item.findElements("lrm_status"));
+        String? applianceType =
+            _getValueFromXmlItem(item.findElements("appliance_type"));
+        String? status = _getValueFromXmlItem(item.findElements("status"));
+        String? outOfService =
+            _getValueFromXmlItem(item.findElements("out_of_service"));
+        String? label = _getValueFromXmlItem(item.findElements("label"));
+        String? avgCycleTime =
+            _getValueFromXmlItem(item.findElements("avg_cycle_time"));
+        String? timeRemaining =
+            _getValueFromXmlItem(item.findElements("time_remaining"));
+        laundryRoomAppliances!.add(LaundryRoomAppliance(
+            applianceDescKey: applianceDescKey,
+            lrmStatus: lrmStatus,
+            applianceType: applianceType,
+            status: status,
+            outOfService: outOfService,
+            label: label,
+            avgCycleTime: avgCycleTime,
+            timeRemaining: timeRemaining));
+      }).toList();
     } else {
       Log.e('Failed to load laundry room appliances:');
       Log.e(responseBody);

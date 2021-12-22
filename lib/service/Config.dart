@@ -199,10 +199,10 @@ class Config with Service implements NotificationsListener {
     return null;
   }
 
-  void _decryptSecretKeys(Map<String, dynamic> config) {
+  void _decryptSecretKeys(Map<String, dynamic>? config) {
     dynamic secretKeys = (config != null) ? config['secretKeys'] : null;
     if (secretKeys is String) {
-      config['secretKeys'] = AppJson.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
+      config!['secretKeys'] = AppJson.decodeMap(AESCrypt.decrypt(secretKeys, key: encryptionKey, iv: encryptionIV));
     }
   }
 
@@ -567,10 +567,8 @@ class Config with Service implements NotificationsListener {
     if ((assetsCacheDir != null) && (assetsUrl != null)) {
       try {
         Uri assetsUri = Uri.parse(assetsUrl);
-        if (assetsUri.pathSegments != null) {
-          for (String pathSegment in assetsUri.pathSegments) {
-            assetsCacheDir = join(assetsCacheDir!, pathSegment);
-          }
+        for (String pathSegment in assetsUri.pathSegments) {
+          assetsCacheDir = join(assetsCacheDir!, pathSegment);
         }
       }
       on Exception catch(e) {

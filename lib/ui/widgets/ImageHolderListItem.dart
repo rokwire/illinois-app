@@ -105,7 +105,6 @@ class ImageHolderListItem extends StatelessWidget {
   }
 
   bool useSlantImage() {
-    return placeHolderSlantResource != null &&
-        placeHolderSlantResource.isNotEmpty;
+    return placeHolderSlantResource.isNotEmpty;
   }
 }

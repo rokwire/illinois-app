@@ -79,7 +79,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
 
   @override
   Widget build(BuildContext context) {
-    double height = 35 + (TabBarWidget.tabTextSize * (MediaQuery.of(context).textScaleFactor?? 60)); // 35 is icon height + paddings
+    double height = 35 + (TabBarWidget.tabTextSize * MediaQuery.of(context).textScaleFactor); // 35 is icon height + paddings
     if(TabBarWidget.tabBarHeight < height){
       TabBarWidget.tabBarHeight = height;
     }
@@ -90,6 +90,7 @@ class _TabBarWidgetState extends State<TabBarWidget>  implements NotificationsLi
       case ConfigEnvironment.dev:        backgroundColor = Colors.yellowAccent; break;
       case ConfigEnvironment.test:       backgroundColor = Colors.lightGreenAccent; break;
       case ConfigEnvironment.production: backgroundColor = Colors.white; break;
+      default: break;
     }
     return Container(
       decoration: BoxDecoration(

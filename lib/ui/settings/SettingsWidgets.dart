@@ -144,12 +144,10 @@ class _SettingsDialogState extends State<SettingsDialog>{
     if(widget.options?.isNotEmpty??false){
       List<Widget> options = [];
       widget.options!.forEach((option){
-        Widget optionWidget = _buildOptionButton(option);
-        if(optionWidget!=null)
-          options.add(optionWidget);
+        options.add(_buildOptionButton(option));
       });
 
-      if(options?.isNotEmpty??false)
+      if(options.isNotEmpty)
         return Container(
           padding: EdgeInsets.only(top: 18),
           child:SingleChildScrollView(child:Column(
@@ -163,9 +161,8 @@ class _SettingsDialogState extends State<SettingsDialog>{
   }
 
   Widget _buildOptionButton(String option){
-    bool isChecked = selectedOptions?.contains(option) ?? false;
+    bool isChecked = selectedOptions.contains(option);
     return
-      option == null ? Container() :
         AppSemantics.buildCheckBoxSemantics( selected: isChecked, title: option,
           child: GestureDetector(
             child: Container(
@@ -248,7 +245,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   }
 
   bool get _getIsContinueEnabled{
-     return widget.options == null || (selectedOptions != null && selectedOptions.isNotEmpty);
+     return widget.options == null || selectedOptions.isNotEmpty;
   }
 
 

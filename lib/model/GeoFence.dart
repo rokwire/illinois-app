@@ -27,7 +27,7 @@ class GeoFenceRegion {
   
   GeoFenceRegion({this.id, this.types, this.name, this.enabled, this.data});
 
-  static GeoFenceRegion? fromJson(Map<String, dynamic> json) {
+  static GeoFenceRegion? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? GeoFenceRegion(
       id: json['id'],
       types: Set.from(json['types']),
@@ -178,7 +178,7 @@ class GeoFenceBeacon {
     };
   }
 
-  bool containsBeacon(GeoFenceBeacon beacon) {
+  bool containsBeacon(GeoFenceBeacon? beacon) {
     return (beacon != null) &&
       ((uuid == null) || (uuid == beacon.uuid)) &&
       ((major == null) || (major == beacon.major)) &&

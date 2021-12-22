@@ -646,7 +646,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
 
     bool favorite = Auth2().isFavorite(item);
     Color? headerColor = _cardHeaderColor(item);
-    String title = AppString.getDefaultEmptyString(_cardTitle(item))!;
+    String title = AppString.getDefaultEmptyString(_cardTitle(item));
     String? cardDetailLabel = AppString.getDefaultEmptyString(_cardDetailLabel(item));
     String? cardDetailImgRes = _cardDetailImageResource(item);
     bool detailVisible = AppString.isStringNotEmpty(cardDetailLabel);
@@ -709,10 +709,10 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes, excludeFromSemantics: true),),
                           Expanded(child:
-                            Text(cardDetailLabel!, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                            Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                           )
                         ],) :
-                        Text(cardDetailLabel!, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                        Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                   )),)
                 ]),
               ),
@@ -807,11 +807,11 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     }
   }
 
-  Widget _buildCompositEventCard(Event item){
+  Widget _buildCompositEventCard(Event? item){
       return ExploreCard(explore: item,showTopBorder: true, horizontalPadding: 0,border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         onTap:(){
           if (item != null) {
-            if (item.isComposite ?? false) {
+            if (item.isComposite) {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: item)));
             } else {
               Navigator.push(context, CupertinoPageRoute(builder: (context) =>

@@ -223,8 +223,8 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
       String optionString = _poll!.options![optionIndex];
       String? votesString;
       int votesCount = _optionVotes(optionIndex);
-      double votesPercent = ((0 < totalVotes) && (votesCount != null)) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
-      if ((votesCount == null) || (votesCount <= 0)) {
+      double votesPercent = (0 < totalVotes) ? (votesCount.toDouble() / totalVotes.toDouble() * 100.0) : 0.0;
+      if (votesCount <= 0) {
         votesString = '';
       }
       else if (votesCount == 1) {
