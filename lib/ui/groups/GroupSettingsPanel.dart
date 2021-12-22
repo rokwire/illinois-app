@@ -681,7 +681,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
-    bool isAuthManGroup = _group?.isAuthManGroup ?? false;
+    bool isAuthManGroup = _group?.authManEnabled ?? false;
     return Container(color: Styles().colors.background, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Text(Localization().getStringEx("panel.groups_settings.is_authman.label", "Is this an Authman Group"),
           style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary)),
@@ -694,7 +694,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   void _onTapAuthMan() {
     Analytics.instance.logSelect(target: "AuthMan Group");
     if (_group != null) {
-      _group.isAuthManGroup = !(_group.isAuthManGroup ?? false);
+      _group.authManEnabled = !(_group.authManEnabled ?? false);
       if (mounted) {
         setState(() {});
       }

@@ -38,7 +38,7 @@ class Group {
   String              description;
   GroupPrivacy        privacy;
   bool                certified;
-  bool                isAuthManGroup;
+  bool                authManEnabled;
   DateTime            dateCreatedUtc;
   DateTime            dateUpdatedUtc;
 
@@ -74,7 +74,7 @@ class Group {
     try { description     = json['description'];  } catch(e) { print(e.toString()); }
     try { privacy         = groupPrivacyFromString(json['privacy']); } catch(e) { print(e.toString()); }
     try { certified       = json['certified']; } catch(e) { print(e.toString()); }
-    try { isAuthManGroup  = json['is_authman']; } catch(e) { print(e.toString()); }
+    try { authManEnabled  = json['authman_enabled']; } catch(e) { print(e.toString()); }
     try { dateCreatedUtc  = groupUtcDateTimeFromString(json['date_created']); } catch(e) { print(e.toString()); }
     try { dateUpdatedUtc  = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
     try { imageURL        = json['image_url'];     } catch(e) { print(e.toString()); }
@@ -96,7 +96,7 @@ class Group {
     json['description']          = description;
     json['privacy']              = groupPrivacyToString(privacy);
     json['certified']            = certified;
-    json['is_authman']           = isAuthManGroup;
+    json['authman_enabled']      = authManEnabled;
     json['date_created']         = groupUtcDateTimeToString(dateCreatedUtc);
     json['date_updated']         = groupUtcDateTimeToString(dateUpdatedUtc);
     json['image_url']            = imageURL;
@@ -116,7 +116,7 @@ class Group {
     description     = other?.description;
     privacy         = other?.privacy;
     certified       = other?.certified;
-    isAuthManGroup  = other?.isAuthManGroup;
+    authManEnabled  = other?.authManEnabled;
     dateCreatedUtc  = other?.dateCreatedUtc;
     dateUpdatedUtc  = other?.dateUpdatedUtc;
     imageURL        = other?.imageURL;
