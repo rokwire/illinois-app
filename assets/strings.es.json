@@ -1554,6 +1554,9 @@
     "panel.groups_create.membership.questions.title": "Membership Questions",
     "panel.groups_create.button.hide.title": "Hide this group",
     "panel.groups_create.button.hide.hint": "",
+    "panel.groups_create.authman.section.title": "Authman",
+    "panel.groups_create.authman.enabled.label": "Is this an Authman Group",
+    "panel.groups_create.authman.group.name.label": "AUTHMAN GROUP NAME",
     
     "panel.groups.common.privacy.title.private": "Private",
     "panel.groups.common.privacy.title.public":  "Public",
@@ -1781,6 +1784,9 @@
     "panel.groups_settings.button.update.title": "Update Settings",
     "panel.groups_settings.button.tags.title": "Tags",
     "panel.groups_settings.button.tags.hint": "",
+    "panel.groups_settings.authman.section.title": "Authman",
+    "panel.groups_settings.authman.enabled.label": "Is this an Authman Group",
+    "panel.groups_settings.authman.group.name.label": "AUTHMAN GROUP NAME",
 
     "panel.group.tags.header.title": "Group Tags",
     "panel.group.tags.button.done.title": "Done",
