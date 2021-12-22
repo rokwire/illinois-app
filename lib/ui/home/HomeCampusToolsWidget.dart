@@ -120,10 +120,12 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   Widget build(BuildContext context) {
     List<Widget> widgets = [];
     final int widgetsPerRow = 2;
-    for (String code in _contentListCodes as Iterable<String>) {
-      Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
-      if (widget != null) {
-        widgets.add(widget);
+    if (_contentListCodes != null) {
+      for (String code in _contentListCodes!) {
+        Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
+        if (widget != null) {
+          widgets.add(widget);
+        }
       }
     }
     int widgetsCount = widgets.length;

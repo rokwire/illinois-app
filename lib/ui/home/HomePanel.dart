@@ -206,7 +206,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     List<dynamic>? contentList = FlexUI()[source];
     if (contentList != null) {
       result = [];
-      for (String contentEntry in contentList as Iterable<String>) {
+      for (String contentEntry in contentList) {
         dynamic list = FlexUI()['$source.$contentEntry'];
         if (list is List) {
           result.addAll(list);

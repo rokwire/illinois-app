@@ -30,7 +30,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
     List<Widget> contentList = [];
 
     List<dynamic> codes = FlexUI()['home.content.connect'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       if (code == 'netid') {
         contentList.add(HomeLoginNetIdWidget());
       } else if (code == 'phone_or_email') {

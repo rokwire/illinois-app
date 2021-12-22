@@ -108,7 +108,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
 
     List<dynamic> codes = FlexUI()['settings'] ?? [];
 
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       if (code == 'user_info') {
         contentList.add(_buildUserInfo());
       }
@@ -257,7 +257,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     );
 
     List<dynamic> codes = FlexUI()['settings.connect'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       if (code == 'netid') {
           contentList.add(Padding(
             padding: EdgeInsets.all(10),
@@ -413,7 +413,7 @@ class _SettingsHomePanelState extends State<SettingsHomePanel> implements Notifi
     List<Widget> contentList =  [];
 
     List<dynamic> codes = FlexUI()['settings.connected'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       if (code == 'netid') {
         contentList.add(_OptionsSection(
           title: Localization().getStringEx("panel.settings.home.net_id.title", "Illinois NetID"),

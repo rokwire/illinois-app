@@ -92,7 +92,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['browse'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       if (code == 'all') {
         contentList.add(_buildBrowseAll());
       }
@@ -155,7 +155,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 
     const int gridWidth = 2;
     List<dynamic> codes = FlexUI()['browse.all'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       Widget? entry = _buildBrowseAllEntry(code);
       if (entry != null) {
         
@@ -331,7 +331,7 @@ class _BrowsePanelState extends State<BrowsePanel> implements NotificationsListe
 //      Container(height: 1, color: Styles().colors.surfaceAccent,),
     ];
     List<dynamic> codes = FlexUI()['browse.content'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       Widget? entry = _buildBrowseContentEntry(code);
       if (entry != null) {
         list.add(entry);

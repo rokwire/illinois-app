@@ -437,7 +437,7 @@ class PaymentTypeHelper {
     }
     else {
       List<PaymentType> paymentTypes = [];
-      for (String paymentTypeString in paymentTypesList as Iterable<String>) {
+      for (String paymentTypeString in paymentTypesList) {
         PaymentType? paymentType = PaymentTypeHelper.paymentTypeFromString(paymentTypeString);
         if (paymentType != null) {
           paymentTypes.add(paymentType);

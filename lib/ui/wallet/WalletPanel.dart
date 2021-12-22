@@ -144,7 +144,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   List<Widget> _buildContentList() {
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['wallet'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       dynamic widget;
       if (code == 'connect') {
         widget = _buildConnect();
@@ -174,7 +174,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
   Widget _buildConnect() {
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['wallet.connect'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       Widget? widget;
       if (code == 'netid') {
         widget = _buildLoginNetIdButton();
@@ -251,7 +251,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
 
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['wallet.content'] ?? [];
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       Widget? widget;
       if (code == 'illini_cash') {
         widget = _buildIlliniCash();
@@ -356,7 +356,7 @@ class _WalletPanelState extends State<WalletPanel> implements NotificationsListe
     List<Widget> contentList = [];
     List<dynamic> codes = FlexUI()['wallet.cards'] ?? [];
     contentList.add(Container(width: 8,));
-    for (String code in codes as Iterable<String>) {
+    for (String code in codes) {
       Widget? widget;
       if (code == 'bus_pass') {
         widget = _buildMTDBusCard();
