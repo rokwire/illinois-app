@@ -156,7 +156,7 @@ class _FlexContentWidgetState extends State<FlexContentWidget> implements Notifi
       return Container();
     }
     List<Widget> buttons = [];
-    for (Map<String, dynamic> buttonContent in buttonsJsonContent as Iterable<Map<String, dynamic>>) {
+    for (Map<String, dynamic> buttonContent in buttonsJsonContent!) {
       String? title = buttonContent['title'];
       buttons.add(Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
         RoundedButton(

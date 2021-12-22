@@ -233,9 +233,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         content.add(_buildDateTitle(date!));
         Map? categoryEvents = _sortedEvents![date];
         if (categoryEvents != null && categoryEvents.isNotEmpty) {
-          for (String? category in categoryEvents.keys as Iterable<String?>) {
+          for (String category in categoryEvents.keys) {
             if (AppString.isStringNotEmpty(category)) {
-              content.add(_buildCategoryTitle(category!));
+              content.add(_buildCategoryTitle(category));
             }
             List<Event> events = categoryEvents[category];
             for (Event event in events) {

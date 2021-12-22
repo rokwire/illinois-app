@@ -82,10 +82,10 @@ class Group {
     try { dateUpdatedUtc    = groupUtcDateTimeFromString(json['date_updated']); } catch(e) { print(e.toString()); }
     try { imageURL          = json['image_url'];     } catch(e) { print(e.toString()); }
     try { webURL            = json['web_url'];       } catch(e) { print(e.toString()); }
-    try { tags              = (json['tags'] as List).cast<String>(); } catch(e) { print(e.toString()); }
+    try { tags              = AppJson.listStringsValue(json['tags']); } catch(e) { print(e.toString()); }
     try { membershipQuest   = GroupMembershipQuest.fromJson(json['membershipQuest']); } catch(e) { print(e.toString()); }
     try { members           = Member.listFromJson(json['members']); } catch(e) { print(e.toString()); }
-    try { questions         = GroupMembershipQuestion.listFromStringList((json['membership_questions'] as List).cast<String>()); } catch(e) { print(e.toString()); }
+    try { questions         = GroupMembershipQuestion.listFromStringList(AppJson.stringListValue(json['membership_questions'])); } catch(e) { print(e.toString()); }
   }
 
   Map<String, dynamic> toJson({bool withId = true}) {
@@ -588,7 +588,7 @@ class GroupMembershipStep {
 
   void _initFromJson(Map<String, dynamic> json) {
     try { description = json['description'];   } catch(e) { print(e.toString()); }
-    try { eventIds    = (json['eventIds'] as List?)?.cast<String>(); } catch(e) { print(e.toString()); }
+    try { eventIds    = AppJson.stringListValue(json['eventIds']); } catch(e) { print(e.toString()); }
   }
 
   void _initFromOther(GroupMembershipStep? other) {

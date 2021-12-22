@@ -282,8 +282,8 @@ class Sports with Service implements NotificationsListener {
         List<dynamic>? jsonData = AppJson.decode(responseBody);
         if (AppCollection.isCollectionNotEmpty(jsonData)) {
           List<Roster> rosters = [];
-          for (Map<String, dynamic> jsonEntry in jsonData as Iterable<Map<String, dynamic>>) {
-            Roster? roster = Roster.fromJson(jsonEntry);
+          for (dynamic jsonEntry in jsonData!) {
+            Roster? roster = Roster.fromJson(AppJson.mapValue(jsonEntry));
             if (roster != null) {
               rosters.add(roster);
             }
@@ -308,8 +308,8 @@ class Sports with Service implements NotificationsListener {
         List<dynamic>? jsonList = AppJson.decode(responseBody);
         if (AppCollection.isCollectionNotEmpty(jsonList)) {
           List<Coach> coaches = [];
-          for (Map<String, dynamic> jsonEntry in jsonList as Iterable<Map<String, dynamic>>) {
-            Coach? coach = Coach.fromJson(jsonEntry);
+          for (dynamic jsonEntry in jsonList!) {
+            Coach? coach = Coach.fromJson(AppJson.mapValue(jsonEntry));
             if (coach != null) {
               coaches.add(coach);
             }
@@ -543,8 +543,8 @@ class Sports with Service implements NotificationsListener {
         List<dynamic>? jsonData = AppJson.decode(responseBody);
         if (AppCollection.isCollectionNotEmpty(jsonData)) {
           List<News> newsList = [];
-          for (Map<String, dynamic> jsonEntry in jsonData as Iterable<Map<String, dynamic>>) {
-            News? news = News.fromJson(jsonEntry);
+          for (dynamic jsonEntry in jsonData!) {
+            News? news = News.fromJson(AppJson.mapValue(jsonEntry));
             if (news != null) {
               newsList.add(news);
             }

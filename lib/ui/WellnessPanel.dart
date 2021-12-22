@@ -317,7 +317,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
     List<Widget> resourceSections = [];
     List<dynamic>? resources = AppMapPathKey.entry(_jsonContent, 'resources');
     if (AppCollection.isCollectionNotEmpty(resources)) {
-      for (Map<String, dynamic> resourceItem in resources as Iterable<Map<String, dynamic>>) {
+      for (Map<String, dynamic> resourceItem in resources!) {
         String? resourceHeaderTitleKey = AppMapPathKey.entry(resourceItem, 'title');
         String? resourceHeaderTitle = Localization().getStringFromKeyMapping(resourceHeaderTitleKey, _stringsContent);
         bool isTitleVisible = AppString.isStringNotEmpty(resourceHeaderTitle);
@@ -441,7 +441,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   List<Widget> _buildSocialMediaButtons(List<dynamic>? socialItems) {
     List<Widget> socialWidgets = [];
     if (AppCollection.isCollectionNotEmpty(socialItems)) {
-      for (Map<String, dynamic> socialItem in socialItems as Iterable<Map<String, dynamic>>) {
+      for (Map<String, dynamic> socialItem in socialItems!) {
         String? type = AppMapPathKey.entry(socialItem, 'type');
         String? imagePath = _getImagePathBySocialMediaType(type);
         if (!AppString.isStringEmpty(imagePath)) {
@@ -470,7 +470,7 @@ class _WellnessPanelState extends State<WellnessPanel> implements NotificationsL
   List<Widget> _buildRibbonButtons(List<dynamic>? buttonsContent) {
     List<Widget> buttonWidgets = [];
     if (AppCollection.isCollectionNotEmpty(buttonsContent)) {
-      for (Map<String, dynamic> ribbonButtonSource in buttonsContent as Iterable<Map<String, dynamic>>) {
+      for (Map<String, dynamic> ribbonButtonSource in buttonsContent!) {
         String? titleKey = AppMapPathKey.entry(ribbonButtonSource, 'title');
         String? title = Localization().getStringFromKeyMapping(titleKey, _stringsContent);
         String? icon = AppMapPathKey.entry(ribbonButtonSource, 'icon');

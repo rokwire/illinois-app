@@ -70,8 +70,8 @@ class DiningService  with Service {
         // 1.2.2 Load Menu Schedules
         List<dynamic>? diningLocations = jsonData["DiningOptions"];
         if (diningLocations != null && diningLocations.isNotEmpty) {
-          for (Map<String, dynamic> diningLocation in diningLocations as Iterable<Map<String, dynamic>>) {
-            AppList.add(dinings, Dining.fromJson(diningLocation));
+          for (dynamic diningLocation in diningLocations) {
+            AppList.add(dinings, Dining.fromJson(AppJson.mapValue(diningLocation)));
           }
         }
       }
@@ -133,8 +133,8 @@ class DiningService  with Service {
           List<dynamic>? jsonList = AppJson.decode(response.body);
           List<DiningProductItem> productList = [];
           if (AppCollection.isCollectionNotEmpty(jsonList)) {
-            for (Map<String, dynamic> jsonEntry in jsonList as Iterable<Map<String, dynamic>>) {
-              DiningProductItem? item = DiningProductItem.fromJson(jsonEntry);
+            for (dynamic jsonEntry in jsonList!) {
+              DiningProductItem? item = DiningProductItem.fromJson(AppJson.mapValue(jsonEntry));
               if (item != null) {
                 productList.add(item);
               }
@@ -203,8 +203,8 @@ class DiningService  with Service {
         if (AppCollection.isCollectionNotEmpty(jsonList)) {
           List<DiningSpecial> list = [];
 
-          for (Map<String, dynamic> jsonEntry in jsonList as Iterable<Map<String, dynamic>>) {
-            AppList.add(list, DiningSpecial.fromJson(jsonEntry));
+          for (dynamic jsonEntry in jsonList!) {
+            AppList.add(list, DiningSpecial.fromJson(AppJson.mapValue(jsonEntry) ));
           }
 
           return list;

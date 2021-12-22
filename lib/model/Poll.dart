@@ -200,7 +200,7 @@ class PollVote {
     }
     else if (votes != null) {
       votesMap = {};
-      for (int optionIndex in votes as Iterable<int>) {
+      for (int optionIndex in votes) {
         votesMap[optionIndex] = (votesMap[optionIndex] ?? 0) + 1;
       }
     }

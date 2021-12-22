@@ -50,8 +50,8 @@ class ParkingEvent {
     List<ParkingLot>? lots;
     if (AppCollection.isCollectionNotEmpty(lotsJson)) {
       lots = [];
-      for (Map<String, dynamic> lotEntry in lotsJson as Iterable<Map<String, dynamic>>) {
-        AppList.add(lots, ParkingLot.fromJson(lotEntry));
+      for (dynamic lotEntry in lotsJson!) {
+        AppList.add(lots, ParkingLot.fromJson(AppJson.mapValue(lotEntry)));
       }
     }
 

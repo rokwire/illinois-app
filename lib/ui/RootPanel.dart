@@ -253,7 +253,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               backgroundColor: Styles().colors!.background,
             ),
         ),
-        onWillPop: _onWillPop as Future<bool> Function()?);
+        onWillPop: _onWillPop);
   }
 
   ///Public interface
@@ -306,18 +306,19 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return _getTabPanelAtIndex(_currentTabIndex);
   }
 
-  Future<bool?> _onWillPop() async {
+  Future<bool> _onWillPop() async {
     if (_currentTabIndex != 0) {
       selectTab(rootTab: RootTab.Home);
       return Future.value(false);
     }
-    return showDialog(
+    bool? result = await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return _buildExitDialog(context);
       },
     );
+    return result ?? false;
   }
 
   Widget _buildExitDialog(BuildContext context) {

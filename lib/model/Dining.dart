@@ -70,7 +70,7 @@ class Dining with Explore implements Favorite {
 
     if(json['DiningSchedules'] != null) {
       List<dynamic> menuSchedules = json['DiningSchedules'];
-      for (Map<String, dynamic> menuScheduleData in menuSchedules as Iterable<Map<String, dynamic>>) {
+      for (Map<String, dynamic> menuScheduleData in menuSchedules) {
         DiningSchedule? schedule = DiningSchedule.fromJson(menuScheduleData);
         if (schedule != null) {
           diningSchedules.add(schedule);
@@ -248,7 +248,7 @@ class Dining with Explore implements Favorite {
       diningSchedules = [];
 
       List<dynamic> menuSchedules = json['DiningSchedules'];
-      for (Map<String, dynamic> menuScheduleData in menuSchedules as Iterable<Map<String, dynamic>>) {
+      for (Map<String, dynamic> menuScheduleData in menuSchedules) {
         DiningSchedule? schedule = DiningSchedule.fromJson(menuScheduleData);
         if (schedule != null) {
           diningSchedules!.add(schedule);
@@ -729,7 +729,7 @@ class DiningSchedule {
       diningSchedules = [];
       for (dynamic jsonEntry in json) {
         if (jsonEntry is Map) {
-          DiningSchedule? diningSchedule = DiningSchedule.fromJson(jsonEntry as Map<String, dynamic>);
+          DiningSchedule? diningSchedule = DiningSchedule.fromJson(AppJson.mapValue(jsonEntry));
           if (diningSchedule != null) {
             diningSchedules.add(diningSchedule);
           }
