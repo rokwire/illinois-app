@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Do not allow users to join / leave Authman groups. [#1162](https://github.com/rokwire/illinois-app/issues/1162).
+
 ## [3.1.4] - 2021-12-22
 ### Fixed
 - Fixed content update check in HomeCampusToolsWidget, WalletSheet and TabBarWidget.
