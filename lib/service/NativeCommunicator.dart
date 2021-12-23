@@ -267,6 +267,16 @@ class NativeCommunicator with Service {
     return result;
   }
 
+  Future<AuthorizationStatus> queryTrackingAuthorization(String method) async {
+    AuthorizationStatus result;
+    try {
+      result = _authorizationStatusFromString(await _platformChannel.invokeMethod('tracking_authorization', {"method": method }));
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
+    return result;
+  }
+
   Future<String> getDeviceId() async {
     String result;
     try {
