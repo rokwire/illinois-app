@@ -90,7 +90,7 @@ class Groups with Service implements NotificationsListener {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([DeepLink()]);
+    return Set.from([DeepLink(), Config(), Auth2()]);
   }
 
   // NotificationsListener

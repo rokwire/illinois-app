@@ -124,6 +124,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canLeaveGroup {
+    if (_group?.authManEnabled ?? false) {
+      return false;
+    }
+
     Member? currentMemberUser = _group?.currentUserAsMember;
     if (currentMemberUser?.isAdmin ?? false) {
       return ((_group?.adminsCount ?? 0) > 1); // Do not allow an admin to leave group if he/she is the only one admin.

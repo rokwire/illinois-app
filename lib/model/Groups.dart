@@ -186,8 +186,8 @@ class Group {
     return (currentUser?.isMember ?? false) || (currentUser?.isAdmin ?? false);
   }
 
-  bool get currentUserCanJoin{
-    return currentUserAsMember == null;
+  bool get currentUserCanJoin {
+    return (currentUserAsMember == null) && (authManEnabled != true);
   }
 
   Color? get currentUserStatusColor{

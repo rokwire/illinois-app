@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -104,7 +105,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestPermissionsStatus(){
-    if (Auth2().privacyMatch(4)) {
+    if (Platform.isIOS && Auth2().privacyMatch(4)) {
 
       NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
         if (status == PermissionStatus.unknown) {
