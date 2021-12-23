@@ -40,6 +40,7 @@
 #import <Firebase/Firebase.h>
 #import <ZXingObjC/ZXingObjC.h>
 
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 #import <UserNotifications/UserNotifications.h>
 #import <SafariServices/SafariServices.h>
 #import <PassKit/PassKit.h>
@@ -84,6 +85,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 // Location Services
 @property (nonatomic) CLLocationManager *clLocationManager;
 @property (nonatomic) NSMutableSet<FlutterResult> *locationFlutterResults;
+
+// Tracking Authorization
+@property (nonatomic) NSMutableSet<FlutterResult> *trackingAuthorizationResults;
 
 @end
 
@@ -255,6 +259,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"location_services_permission"]) {
 		[self handleLocationServicesWithParameters:parameters result:result];
 	}
+	else if ([call.method isEqualToString:@"tracking_authorization"]) {
+		[self handleTrackingWithParameters:parameters result:result];
+	}
 	else if ([call.method isEqualToString:@"addToWallet"]) {
 		[self handleAddToWalletWithParameters:parameters result:result];
 	}
@@ -278,6 +285,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else if ([call.method isEqualToString:@"launchApp"]) {
 		[self handleLaunchApp:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"launchAppSettings"]) {
+		[self handleLaunchAppSettings:parameters result:result];
 	}
 }
 
@@ -394,6 +404,19 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
+- (void)handleTrackingWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSString *method = [parameters inaStringForKey:@"method"];
+	if ([method isEqualToString:@"query"]) {
+		[self queryTrackingAuthorizationWithFlutterResult:result];
+	}
+	else if ([method isEqualToString:@"request"]) {
+		[self requestTrackingAuthorizationWithFlutterResult:result];
+	}
+	else {
+		result(nil);
+	}
+}
+
 - (void)handleAddToWalletWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	NSString *base64CardData = [parameters inaStringForKey:@"cardBase64Data"];
 	NSData *cardData = [[NSData alloc] initWithBase64EncodedString:base64CardData options:0];
@@ -443,6 +466,17 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	NSURL *deepLinkUrl = deepLink != nil ? [NSURL URLWithString:deepLink] : nil;
 	if([UIApplication.sharedApplication canOpenURL:deepLinkUrl]){
 		[UIApplication.sharedApplication openURL:deepLinkUrl options:@{} completionHandler:^(BOOL success) {
+			result([NSNumber numberWithBool:success]);
+		}];
+	} else {
+		result([NSNumber numberWithBool:NO]);
+	}
+}
+
+- (void)handleLaunchAppSettings:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSURL *settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+	if ([UIApplication.sharedApplication canOpenURL:settingsUrl]){
+		[UIApplication.sharedApplication openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
 			result([NSNumber numberWithBool:success]);
 		}];
 	} else {
@@ -705,6 +739,58 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 			flutterResult([self.class locationServicesPermisionFromAuthorizationStatus:status]);
 		}
 	}
+}
+
+#pragma mark Tracking
+
+- (void)queryTrackingAuthorizationWithFlutterResult:(FlutterResult)result {
+
+	if (@available(iOS 14, *)) {
+		result([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:[ATTrackingManager trackingAuthorizationStatus]]);
+	} else {
+		result(@"allowed");
+	}
+}
+
+- (void)requestTrackingAuthorizationWithFlutterResult:(FlutterResult)result {
+
+	if (@available(iOS 14, *)) {
+		ATTrackingManagerAuthorizationStatus status = [ATTrackingManager trackingAuthorizationStatus];
+		if (status == ATTrackingManagerAuthorizationStatusNotDetermined) {
+			if (_trackingAuthorizationResults != nil) {
+				[_trackingAuthorizationResults addObject:result];
+			}
+			else {
+				__weak typeof(self) weakSelf = self;
+				_trackingAuthorizationResults = [[NSMutableSet alloc] initWithObjects:result, nil];
+				[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+					NSSet<FlutterResult> *flutterResults = weakSelf.trackingAuthorizationResults;
+					weakSelf.trackingAuthorizationResults = nil;
+					
+					for(FlutterResult flutterResult in flutterResults) {
+						flutterResult([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:status]);
+					}
+				}];
+			}
+		}
+		else {
+			result([self.class trackingPermisionFromTrackingManagerAuthorizationStatus:status]);
+		}
+	} else {
+		result(@"allowed");
+	}
+}
+
++ (NSString*)trackingPermisionFromTrackingManagerAuthorizationStatus:(NSUInteger)authorizationStatus {
+	if (@available(iOS 14, *)) {
+		switch (authorizationStatus) {
+			case ATTrackingManagerAuthorizationStatusNotDetermined:       return @"not_determined";
+			case ATTrackingManagerAuthorizationStatusRestricted:          return @"restricted";
+			case ATTrackingManagerAuthorizationStatusDenied:              return @"denied";
+			case ATTrackingManagerAuthorizationStatusAuthorized:          return @"allowed";
+		}
+	}
+	return nil;
 }
 
 #pragma mark Deep Links
