@@ -27,6 +27,7 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -88,14 +89,14 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
     Widget contentWidget;
     if (_isOnline == false) {
       contentWidget = _buildStatus(
-        title: "Web Content Not Available",
-        message: Localization().getStringEx("panel.web.offline.message", "You need to be online in order to perform this operation. Please check your Internet connection."),
+        title: Localization().getStringEx("panel.web.offline.title", "Web Content Not Available"),
+        message: Localization().getStringEx("panel.web.offline.message", "You need to be online in order to access web content. Please check your Internet connection."),
       );
     }
     else if (_isTrackingEnabled == false) {
       contentWidget = _buildStatus(
         title: "Web Content Blocked",
-        message: "You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='${NativeCommunicator.APP_SETTINGS_URI}'>here</a>.",
+        message: sprintf("You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>.", [NativeCommunicator.APP_SETTINGS_URI]),
       );
     }
     else if ((_isOnline == true) && (_isTrackingEnabled == true)) {
