@@ -693,13 +693,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
-  pinch_zoom:
-    dependency: "direct main"
-    description:
-      name: pinch_zoom
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   platform:
     dependency: transitive
     description:
