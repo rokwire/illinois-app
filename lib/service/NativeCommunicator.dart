@@ -320,6 +320,16 @@ class NativeCommunicator with Service {
     return appLaunched;
   }
 
+  Future<bool> launchAppSettings() async {
+    bool appLaunched = false;
+    try {
+      appLaunched = await _platformChannel.invokeMethod('launchAppSettings');
+    } catch (e) {
+      print(e.message);
+    }
+    return appLaunched;
+  }
+
   Future<void> launchTest() async {
     try {
       await _platformChannel.invokeMethod('test');

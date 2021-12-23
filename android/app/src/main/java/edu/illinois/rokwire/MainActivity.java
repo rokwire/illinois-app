@@ -544,6 +544,19 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    private boolean handleLaunchAppSettings(Object params) {
+        Uri settingsUri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+        Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, settingsUri);
+        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        boolean activityExists = settingsIntent.resolveActivityInfo(getPackageManager(), 0) != null;
+        if (activityExists) {
+            startActivity(settingsIntent);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private void handleSetLaunchScreenStatus(Object params) {
         String statusText = Utils.Map.getValueFromPath(params, "status", null);
 
@@ -657,6 +670,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.LAUNCH_APP:
                     boolean appLaunched = handleLaunchApp(methodCall.arguments);
                     result.success(appLaunched);
+                    break;
+                case Constants.LAUNCH_APP_SETTINGS:
+                    boolean settingsLaunched = handleLaunchAppSettings(methodCall.arguments);
+                    result.success(settingsLaunched);
                     break;
                 default:
                     result.notImplemented();

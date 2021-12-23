@@ -40,6 +40,7 @@ public class Constants {
     static final String ENCRYPTION_KEY_KEY = "encryptionKey";
     static final String BARCODE_KEY = "barcode";
     static final String LAUNCH_APP = "launchApp";
+    static final String LAUNCH_APP_SETTINGS = "launchAppSettings";
 
     //Maps
     public static final LatLng DEFAULT_INITIAL_CAMERA_POSITION = new LatLng(40.102116, -88.227129); //Illinois University: Center of Campus //(40.096230, -88.235899); // State Farm Center
