@@ -247,10 +247,10 @@ class NativeCommunicator with Service {
     return result;
   }
 
-  Future<NotificationsAuthorizationStatus> queryNotificationsAuthorization(String method) async {
-    NotificationsAuthorizationStatus result;
+  Future<AuthorizationStatus> queryNotificationsAuthorization(String method) async {
+    AuthorizationStatus result;
     try {
-      result = _notificationsAuthorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
+      result = _authorizationStatusFromString(await _platformChannel.invokeMethod('notifications_authorization', {"method": method }));
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -408,19 +408,27 @@ class NativeCommunicator with Service {
   }
 }
 
-enum NotificationsAuthorizationStatus {
+enum AuthorizationStatus {
   NotDetermined,
+  Restricted,
   Denied,
   Allowed
 }
 
-NotificationsAuthorizationStatus _notificationsAuthorizationStatusFromString(String value){
-  if("not_determined" == value)
-    return NotificationsAuthorizationStatus.NotDetermined;
-  else if("denied" == value)
-    return NotificationsAuthorizationStatus.Denied;
-  else if("allowed" == value)
-    return NotificationsAuthorizationStatus.Allowed;
-  else
+AuthorizationStatus _authorizationStatusFromString(String value){
+  if("not_determined" == value) {
+    return AuthorizationStatus.NotDetermined;
+  }
+  else if("restricted" == value) {
+    return AuthorizationStatus.Denied;
+  }
+  else if("denied" == value) {
+    return AuthorizationStatus.Denied;
+  }
+  else if("allowed" == value) {
+    return AuthorizationStatus.Allowed;
+  }
+  else {
     return null;
+  }
 }
