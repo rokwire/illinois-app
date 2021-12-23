@@ -32,7 +32,7 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
 
   @override
   Future<bool> get onboardingCanDisplayAsync async {
-    return (await NativeCommunicator().queryNotificationsAuthorization("query") == NotificationsAuthorizationStatus.NotDetermined);
+    return (await NativeCommunicator().queryNotificationsAuthorization("query") == AuthorizationStatus.NotDetermined);
   }
 
   @override
@@ -157,24 +157,24 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
   }
 
 void _requestAuthorization(BuildContext context) async {
-    NotificationsAuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationStatus != NotificationsAuthorizationStatus.NotDetermined) {
+    AuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationStatus != AuthorizationStatus.NotDetermined) {
       showDialog(context: context, builder: (context) => _buildDialogWidget(context, authorizationStatus));
     } else {
       authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+      if (authorizationStatus == AuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
       _goNext(context);
     }
   }
 
-  Widget _buildDialogWidget(BuildContext context, NotificationsAuthorizationStatus authorizationStatus) {
+  Widget _buildDialogWidget(BuildContext context, AuthorizationStatus authorizationStatus) {
     String message;
-    if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+    if (authorizationStatus == AuthorizationStatus.Allowed) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (authorizationStatus == NotificationsAuthorizationStatus.Denied) {
+    else if (authorizationStatus == AuthorizationStatus.Denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(
@@ -205,7 +205,7 @@ void _requestAuthorization(BuildContext context) async {
                     onPressed: () {
                       Analytics.instance.logAlert(text:"Already have access", selection: "Ok");
                       Navigator.of(context).pop();
-                      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+                      if (authorizationStatus == AuthorizationStatus.Allowed) {
                         _goNext(context);
                       }
                     },

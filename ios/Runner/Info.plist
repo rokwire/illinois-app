@@ -87,6 +87,8 @@
 	<string>Your calendar will be used to let you set reminders for important events.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Allow Illinois to send data to Apple’s speech recognition servers.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Cookies will be used to enhance your experience and improve our marketing efforts.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -242,12 +242,12 @@ class _SettingsNotificationsPanelState extends State<SettingsNotificationsPanel>
   }
 
   void _requestAuthorization(BuildContext context) async {
-    NotificationsAuthorizationStatus authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationSttus != NotificationsAuthorizationStatus.NotDetermined) {
+    AuthorizationStatus authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationSttus != AuthorizationStatus.NotDetermined) {
       _onOpenSystemSettings();
     } else {
       authorizationSttus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationSttus == NotificationsAuthorizationStatus.Allowed) {
+      if (authorizationSttus == AuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
       _onOpenSystemSettings();

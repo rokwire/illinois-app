@@ -16,15 +16,18 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -52,16 +55,27 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
 
 class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
-  _OnlineStatus _onlineStatus;
-  bool _pageLoaded = false;
-
+  bool _isOnline;
+  bool _isTrackingEnabled;
+  bool _isPageLoading = true;
   bool _isForeground = true;
 
   @override
   void initState() {
     super.initState();
-    _checkOnlineStatus();
     NotificationService().subscribe(this, AppLivecycle.notifyStateChanged);
+    _getOnline().then((bool isOnline) {
+      setState(() {
+        _isOnline = isOnline;
+      });
+      if (isOnline) {
+        _getTrackingEnabled().then((bool trackingEnabled) {
+          setState(() {
+            _isTrackingEnabled = trackingEnabled;
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -72,44 +86,52 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-          appBar: _getHeaderBar(),
-          backgroundColor: Styles().colors.background,
-          body: Column(
-            children: <Widget>[
-              Expanded(
-                  child: (_onlineStatus == _OnlineStatus.offline)
-                      ? _buildError()
-                      : Stack(
-                    children: _buildWebView(),
-                  )
-              ),
-              widget.hideToolBar? Container() :TabBarWidget()
-            ],
-          ));
+    Widget contentWidget;
+    if (_isOnline == false) {
+      contentWidget = _buildStatus(
+        title: Localization().getStringEx("panel.web.offline.title", "Web Content Not Available"),
+        message: Localization().getStringEx("panel.web.offline.message", "You need to be online in order to access web content. Please check your Internet connection."),
+      );
+    }
+    else if (_isTrackingEnabled == false) {
+      contentWidget = _buildStatus(
+        title: "Web Content Blocked",
+        message: sprintf("You have opted to deny cookie usage for web content in this app, therefore we have blocked access to web sites. If you change your mind, change your preference <a href='%s'>here</a>.", [NativeCommunicator.APP_SETTINGS_URI]),
+      );
+    }
+    else if ((_isOnline == true) && (_isTrackingEnabled == true)) {
+      contentWidget = _buildWebView();
+    }
+    else {
+      contentWidget = _buildInitializing();
+    }
+
+    return Scaffold(
+      appBar: _getHeaderBar(),
+      backgroundColor: Styles().colors.background,
+      body: Column(children: <Widget>[
+        Expanded(child: contentWidget),
+        widget.hideToolBar ? Container() : TabBarWidget()
+      ],),);
   }
 
-  List<Widget> _buildWebView() {
-    List<Widget> list = [];
-    list.add(Visibility(
-      visible: _isForeground,
-      child: WebView(
+  Widget _buildWebView() {
+    return Stack(children: [
+      Visibility(visible: _isForeground,
+        child: WebView(
         initialUrl: widget.url,
         javascriptMode: JavascriptMode.unrestricted,
         navigationDelegate: _processNavigation,
         onPageFinished: (url) {
           setState(() {
-            _pageLoaded = true;
+            _isPageLoading = false;
           });
-        },
-        ),
-    ));
-
-    if (!_pageLoaded) {
-      list.add(Center(child: CircularProgressIndicator()));
-    }
-
-    return list;
+        },),),
+      Visibility(visible: _isPageLoading,
+        child: Center(
+          child: CircularProgressIndicator(),
+      )),
+    ],);
   }
 
   FutureOr<NavigationDecision> _processNavigation(NavigationRequest navigation) {
@@ -123,36 +145,56 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
     }
   }
 
-  Widget _buildError(){
-    return Center(
-      child: Container(
-          width: 280,
-          child: Text(
-            Localization().getStringEx(
-                'panel.web.offline.message', 'You need to be online in order to perform this operation. Please check your Internet connection.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Styles().colors.fillColorPrimary,
-            ),
-          )),
+  Widget _buildStatus({String title, String message}) {
+    List<Widget> contentList = <Widget>[];
+    contentList.add(Expanded(flex: 1, child: Container()));
+    
+    if (title != null) {
+      contentList.add(Html(data: title,
+          onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
+          style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(32), textAlign: TextAlign.center, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      );
+    }
+
+    if ((title != null) && (message != null)) {
+      contentList.add(Container(height: 48));
+    }
+
+    if ((message != null)) {
+      contentList.add(Html(data: message,
+        onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
+        style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+      );
+    }
+
+    contentList.add(Expanded(flex: 3, child: Container()));
+
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+      Column(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center, children: contentList,)
     );
   }
 
+  Widget _buildInitializing(){
+    return Center(child:
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary),),
+    );
+  }
 
-  void _checkOnlineStatus() async {
+  static Future<bool> _getOnline() async {
+    List<InternetAddress> result;
     try {
-      final result = await InternetAddress.lookup('www.example.com');
-      setState(() {
-        _onlineStatus = (result.isNotEmpty && result[0].rawAddress.isNotEmpty)
-            ? _OnlineStatus.online
-            : _OnlineStatus.offline;
-      });
+      result = await InternetAddress.lookup('www.example.com');
     } on SocketException catch (_) {
-      setState(() {
-        _onlineStatus = _OnlineStatus.offline;
-      });
     }
+    return ((result != null) && result.isNotEmpty && (result.first.rawAddress != null) && result.first.rawAddress.isNotEmpty);
+  }
+
+  static Future<bool> _getTrackingEnabled() async {
+    AuthorizationStatus status = await NativeCommunicator().queryTrackingAuthorization('query');
+    if (status == AuthorizationStatus.NotDetermined) {
+      status = await NativeCommunicator().queryTrackingAuthorization('request');
+    }
+    return (status == AuthorizationStatus.Allowed);
   }
 
   Widget _getHeaderBar() {
@@ -160,8 +202,14 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
       titleWidget: Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
   }
 
+  void _onTapStatusLink(String url) {
+    if (AppString.isStringNotEmpty(url)) {
+      launch(url);
+    }
+  }
+
   void onNotification(String name, dynamic param){
-    if(name == AppLivecycle.notifyStateChanged) {
+    if (name == AppLivecycle.notifyStateChanged) {
       setState(() {
         _isForeground = (param == AppLifecycleState.resumed);
       });
@@ -170,4 +218,3 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
 }
 
-enum _OnlineStatus { online, offline }
