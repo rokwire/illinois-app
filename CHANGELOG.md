@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [3.0.72] - 2021-12-23
 ### Fixed
 - Fixed content update check in HomeCampusToolsWidget, WalletSheet and TabBarWidget.
 - Crashes in Athletics Roster [#1155](https://github.com/rokwire/illinois-app/issues/1155). 
@@ -12,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Request tracking authorization before displaying web content [#1161](https://github.com/rokwire/illinois-app/issues/1161). 
 ### Added
 - Added Config and Auth2 dependency in Groups service. 
+
+## [3.0.71] - 2021-12-21
+Version number increased when submitting to app store.
 
 ## [3.0.70] - 2021-12-20
 ### Changed
