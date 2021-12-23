@@ -20,18 +20,21 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/NotificationService.dart';
 import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/Utils.dart';
 
-class NativeCommunicator with Service {
+class NativeCommunicator with Service implements NotificationsListener {
   
+  static const String APP_SETTINGS_URI = '${DeepLink.ROKWIRE_URL}/app_settings';
+
   static const String notifyMapSelectExplore  = "edu.illinois.rokwire.nativecommunicator.map.explore.select";
   static const String notifyMapClearExplore   = "edu.illinois.rokwire.nativecommunicator.map.explore.clear";
   
-  static const String notifyMapRouteStart    = "edu.illinois.rokwire.nativecommunicator.map.route.start";
-  static const String notifyMapRouteFinish   = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
+  static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
+  static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
   
   static const String notifyGeoFenceRegionsEnter     = "edu.illinois.rokwire.nativecommunicator.geofence.regions.enter";
   static const String notifyGeoFenceRegionsExit      = "edu.illinois.rokwire.nativecommunicator.geofence.regions.exit";
@@ -53,6 +56,9 @@ class NativeCommunicator with Service {
 
   @override
   void createService() {
+    NotificationService().subscribe(this,[
+      DeepLink.notifyUri,
+    ]);
     _platformChannel.setMethodCallHandler(_handleMethodCall);
   }
 
@@ -63,8 +69,22 @@ class NativeCommunicator with Service {
   }
 
   @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return Set.from([Config(), DeepLink()]);
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
   }
 
   Future<void> _nativeInit() async {
@@ -72,6 +92,19 @@ class NativeCommunicator with Service {
       await _platformChannel.invokeMethod('init', { "keys": Config().secretKeys });
     } on PlatformException catch (e) {
       print(e.message);
+    }
+  }
+
+  void _onDeepLinkUri(Uri uri) {
+    if (uri != null) {
+      Uri settingsUri = Uri.tryParse(APP_SETTINGS_URI);
+      if ((settingsUri != null) &&
+          (settingsUri.scheme == uri.scheme) &&
+          (settingsUri.authority == uri.authority) &&
+          (settingsUri.path == uri.path))
+      {
+        launchAppSettings();
+      }
     }
   }
 
