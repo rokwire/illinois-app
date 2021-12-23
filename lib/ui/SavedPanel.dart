@@ -106,8 +106,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _requestPermissionsStatus(){
     if (Platform.isIOS && Auth2().privacyMatch(4)) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((NotificationsAuthorizationStatus authorizationStatus){
-        if((NotificationsAuthorizationStatus.NotDetermined == authorizationStatus)){
+      NativeCommunicator().queryNotificationsAuthorization("query").then((AuthorizationStatus authorizationStatus){
+        if((AuthorizationStatus.NotDetermined == authorizationStatus)){
           setState(() {
             _showNotificationPermissionPrompt = true;
           });
@@ -117,13 +117,13 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestAuthorization() async {
-    NotificationsAuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationStatus != NotificationsAuthorizationStatus.NotDetermined) {
+    AuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
+    if (authorizationStatus != AuthorizationStatus.NotDetermined) {
       showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context, authorizationStatus));
     }
     else {
       authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+      if (authorizationStatus == AuthorizationStatus.Allowed) {
         Analytics.instance.updateNotificationServices();
       }
       setState(() {
@@ -382,12 +382,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return result;
   }
 
-  Widget _buildNotificationPermissionDialogWidget(BuildContext context, NotificationsAuthorizationStatus authorizationStatus) {
+  Widget _buildNotificationPermissionDialogWidget(BuildContext context, AuthorizationStatus authorizationStatus) {
     String message;
-    if (authorizationStatus == NotificationsAuthorizationStatus.Allowed) {
+    if (authorizationStatus == AuthorizationStatus.Allowed) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (authorizationStatus == NotificationsAuthorizationStatus.Denied) {
+    else if (authorizationStatus == AuthorizationStatus.Denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(

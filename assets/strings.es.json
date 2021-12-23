@@ -1492,7 +1492,10 @@
 
     "panel.debug_messaging.header.title": "Mensajes",
 
-    "panel.web.offline.message": "Debe estar en línea para realizar esta operación. Por favor revise su conexion a internet.",
+    "panel.web.offline.title": "Contenido web no disponible",
+    "panel.web.offline.message": "Debe estar en línea para acceder al contenido web. Por favor revise su conexion a internet.",
+    "panel.web.tracking_disabled.title": "Contenido web bloqueado",
+    "panel.web.tracking_disabled.message": "Ha optado por denegar el uso de cookies para el contenido web en esta aplicación, por lo tanto, hemos bloqueado el acceso a los sitios web. Si cambia de opinión, cambie su preferencia <a href='%s'> aquí </a>.",
 
     "panel.groups_admin.header.title": "Vista de administrador",
     "panel.groups_admin.label.members": "Miembros",
