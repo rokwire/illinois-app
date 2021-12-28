@@ -26,17 +26,17 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 import 'package:illinois/ui/widgets/SwipeDetector.dart';
 
 class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
-  final Map<String, dynamic> onboardingContext;
+  final Map<String, dynamic>? onboardingContext;
   OnboardingAuthLocationPanel({this.onboardingContext});
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.location.label.title', "Know what's nearby");
+    String titleText = Localization().getStringEx('panel.onboarding.location.label.title', "Know what's nearby")!;
     String notRightNow = Localization().getStringEx(
         'panel.onboarding.location.button.dont_allow.title',
-        'Not right now');
+        'Not right now')!;
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -71,9 +71,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               child: Text(titleText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontFamily: Styles().fontFamilies!.bold,
                                     fontSize: 32,
-                                    color: Styles().colors.fillColorPrimary),
+                                    color: Styles().colors!.fillColorPrimary),
                               )),
                         )),
                     Container(
@@ -86,12 +86,12 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                         child: Text(
                           Localization().getStringEx(
                               'panel.onboarding.location.label.description',
-                              "Share your location to know what's nearest to you while on campus."),
+                              "Share your location to know what's nearest to you while on campus.")!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontFamily: Styles().fontFamilies.regular,
+                              fontFamily: Styles().fontFamilies!.regular,
                               fontSize: 20,
-                              color: Styles().colors.fillColorPrimary),
+                              color: Styles().colors!.fillColorPrimary),
                         ),
                       )),
                     ]),
@@ -108,9 +108,9 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                       hint: Localization().getStringEx(
                           'panel.onboarding.location.button.allow.hint',
                           ''),
-                      borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.background,
-                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.background,
+                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _requestLocation(context),
                     ),
                     GestureDetector(
@@ -130,11 +130,11 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                               child: Text(
                                 notRightNow,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.medium,
+                                    fontFamily: Styles().fontFamilies!.medium,
                                     fontSize: 16,
-                                    color: Styles().colors.fillColorPrimary,
+                                    color: Styles().colors!.fillColorPrimary,
                                     decoration: TextDecoration.underline,
-                                    decorationColor: Styles().colors.fillColorSecondary,
+                                    decorationColor: Styles().colors!.fillColorSecondary,
                                     decorationThickness: 1,
                                     decorationStyle:
                                         TextDecorationStyle.solid),
@@ -149,28 +149,28 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
 
   void _requestLocation(BuildContext context) async {
     Analytics.instance.logSelect(target: 'Share My locaiton') ;
-    await LocationServices.instance.status.then((LocationServicesStatus status){
+    await LocationServices.instance.status.then((LocationServicesStatus? status){
       if (status == LocationServicesStatus.ServiceDisabled) {
         LocationServices.instance.requestService();
       }
       else if (status == LocationServicesStatus.PermissionNotDetermined) {
-        LocationServices.instance.requestPermission().then((LocationServicesStatus status) {
+        LocationServices.instance.requestPermission().then((LocationServicesStatus? status) {
           _goNext(context);
         });
       }
       else if (status == LocationServicesStatus.PermissionDenied) {
-        String message = Localization().getStringEx('panel.onboarding.location.label.access_denied', 'You have already denied access to this app.');
-        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message, pushNext : false ));
+        String? message = Localization().getStringEx('panel.onboarding.location.label.access_denied', 'You have already denied access to this app.');
+        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : false ));
       }
       else if (status == LocationServicesStatus.PermissionAllowed) {
-        String message = Localization().getStringEx('panel.onboarding.location.label.access_granted', 'You have already granted access to this app.');
-        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message, pushNext : true ));
+        String? message = Localization().getStringEx('panel.onboarding.location.label.access_granted', 'You have already granted access to this app.');
+        showDialog(context: context, builder: (context) => _buildDialogWidget(context, message:message!, pushNext : true ));
       }
     });
   }
 
-  Widget _buildDialogWidget(BuildContext context, {String message, bool pushNext}) {
-    String okTitle = Localization().getStringEx('dialog.ok.title', 'OK');
+  Widget _buildDialogWidget(BuildContext context, {required String message, bool? pushNext}) {
+    String okTitle = Localization().getStringEx('dialog.ok.title', 'OK')!;
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -178,7 +178,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois'),
+              Localization().getStringEx('app.title', 'Illinois')!,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -187,7 +187,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 message,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),
@@ -198,7 +198,7 @@ class OnboardingAuthLocationPanel extends StatelessWidget with OnboardingPanel {
                 TextButton(
                     onPressed: () {
                       Analytics.instance.logAlert(text: message, selection:okTitle);
-                      if (pushNext) {
+                      if (pushNext!) {
                         _goNext(context, replace : true);
                       }
                       else {

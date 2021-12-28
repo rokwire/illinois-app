@@ -83,13 +83,13 @@ class _HomeHighlightedFeaturesState extends State<HomeHighlightedFeatures>{
 
   Widget _buildHeader() {
     return Semantics(container: true, header: true,
-      child: Container(color: Styles().colors.fillColorPrimary, child:
+      child: Container(color: Styles().colors!.fillColorPrimary, child:
         Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Padding(padding: EdgeInsets.only(right: 16), child: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),),
             Expanded(child:
-            Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features'), style:
-            TextStyle(color: Styles().colors.white, fontFamily: Styles().fontFamilies.extraBold, fontSize: 20,),),),
+            Text(Localization().getStringEx('widgets.home_highlighted_features.header.title',  'Highlighted Features') ?? '', style:
+            TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),
     ],),),));
   }
 

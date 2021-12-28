@@ -34,7 +34,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     return Scaffold(body:
-      Container(color: Styles().colors.background, child:
+      Container(color: Styles().colors!.background, child:
         Column(children: [
           Expanded(child:
             SingleChildScrollView(child:
@@ -44,7 +44,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 ),
                 Container(height: 14,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."), textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.fillColorPrimary,),),
+                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem.")!, textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
                 ),
               ]),
             )
@@ -57,9 +57,9 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                   hint: Localization().getStringEx("panel.onboarding2.get_started.button.continue.hint", ''),
                   fontSize: 16,
                   padding: EdgeInsets.symmetric(vertical: 12),
-                  borderColor: Styles().colors.fillColorSecondary,
-                  backgroundColor: Styles().colors.white,
-                  textColor: Styles().colors.fillColorPrimary,
+                  borderColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  textColor: Styles().colors!.fillColorPrimary,
                   onTap: () => _onGoNext(context),
                 ),
                 Onboarding2UnderlinedButton(

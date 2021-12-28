@@ -52,7 +52,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SafeArea(child:SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -60,7 +60,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
               Expanded(child:
                 SingleChildScrollView(child:
                   Container(
-                    color: Styles().colors.white,
+                    color: Styles().colors!.white,
                     child:Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -70,17 +70,17 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                           child:Row(children: [
                             Expanded(
                               flex:1,
-                              child: Container(color: Styles().colors.fillColorPrimary,)
+                              child: Container(color: Styles().colors!.fillColorPrimary,)
                             ),
                             Container(width: 2,),
                             Expanded(
                                 flex:1,
-                                child: Container(color: Styles().colors.backgroundVariant,)
+                                child: Container(color: Styles().colors!.backgroundVariant,)
                             ),
                             Container(width: 2,),
                             Expanded(
                                 flex:1,
-                                child: Container(color: Styles().colors.backgroundVariant,)
+                                child: Container(color: Styles().colors!.backgroundVariant,)
                             ),
                           ],)
                         ),
@@ -102,12 +102,12 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    _title,
+                                    _title!,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Styles().colors.fillColorPrimary,
+                                        color: Styles().colors!.fillColorPrimary,
                                         fontSize: 24,
-                                        fontFamily: Styles().fontFamilies.bold,
+                                        fontFamily: Styles().fontFamilies!.bold,
                                         height: 1.4
                                   ))
                               ),
@@ -120,12 +120,12 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               child: Align(
                                   alignment: Alignment.topCenter,
                                   child: Text(
-                                    _description,
+                                    _description!,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        fontFamily: Styles().fontFamilies.regular,
+                                        fontFamily: Styles().fontFamilies!.regular,
                                         fontSize: 16,
-                                        color: Styles().colors.fillColorPrimary),
+                                        color: Styles().colors!.fillColorPrimary),
                                   )),
                             )),
                         Container(height: 10,),
@@ -146,12 +146,12 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                       child:Column(
                                       children:[
                                         CustomPaint(
-                                          painter: TrianglePainter(painterColor: Styles().colors.background,),
+                                          painter: TrianglePainter(painterColor: Styles().colors!.background,),
                                           child: Container(
                                             height: 80,
                                           ),
                                         ),
-                                        Container(height: 20, color: Styles().colors.background,)
+                                        Container(height: 20, color: Styles().colors!.background,)
                                     ]),
                                   ),
                                 ),
@@ -188,9 +188,9 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                       hint: Localization().getStringEx('panel.onboarding2.explore_campus.button.continue.hint', ''),
                       fontSize: 16,
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Styles().colors.white,
-                      borderColor: Styles().colors.fillColorSecondaryVariant,
-                      textColor: Styles().colors.fillColorPrimary,
+                      backgroundColor: Styles().colors!.white,
+                      borderColor: Styles().colors!.fillColorSecondaryVariant,
+                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: () => _goNext(context),
                     )
                   ],
@@ -217,7 +217,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
 
   Future<void> _requestLocationPermissionsIfNeeded() async {
     if (_toggled) {
-      LocationServicesStatus status = await LocationServices.instance.status;
+      LocationServicesStatus? status = await LocationServices.instance.status;
       /* This seems nonsence:
       if (status == LocationServicesStatus.ServiceDisabled) {
         status = await LocationServices.instance.requestService();
@@ -240,34 +240,34 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
         Text(
-          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.title',"Location Specific Services "),
+          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.title',"Location Specific Services ")!,
           style: Onboarding2InfoDialog.titleStyle,),
         Container(height: 8,),
-        Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. "),
+        Text(Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content1',"When Location Services is enabled, the app can find events and services near you and provide interactive maps. ")!,
           style: Onboarding2InfoDialog.contentStyle,
         ),
         Container(height: 10,),
         Text(
-          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you."),
+          Localization().getStringEx('panel.onboarding2.explore_campus.learn_more.location_services.content2',"When Bluetooth is enabled, the app can exchange information with other devices for MTD pass. Bluetooth helps you find your seat, parking spot, in-building messaging and outdoor services that may be near you.")!,
           style: Onboarding2InfoDialog.contentStyle,),
         ]
       )
     );
   }
 
-  String get _title{
+  String? get _title{
     return Localization().getStringEx('panel.onboarding2.explore_campus.label.title', 'Enable location specific services?');
   }
 
-  String get _description{
+  String? get _description{
     return Localization().getStringEx('panel.onboarding2.explore_campus.label.description', 'Easily find events on campus and connect to nearby users.');
   }
 
-  String get _toggledButtonTitle{
+  String? get _toggledButtonTitle{
     return Localization().getStringEx('panel.onboarding2.explore_campus.button.toggle.title', 'Enable location services.');
   }
 
-  String get _unToggledButtonTitle{
+  String? get _unToggledButtonTitle{
     return Localization().getStringEx('panel.onboarding2.explore_campus.button.untoggle.title', 'Don\'t enable location services.');
   }
 }

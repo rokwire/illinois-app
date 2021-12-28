@@ -18,7 +18,6 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -60,8 +59,8 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener {
   
-  List<dynamic> _contentListCodes;
-  StreamController<void> _refreshController;
+  List<dynamic>? _contentListCodes;
+  StreamController<void> _refreshController = StreamController.broadcast();
   GlobalKey _giesWidgetKey = GlobalKey();
 
   @override
@@ -75,7 +74,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       HomeGiesWidget.notifyPageChanged,
     ]);
     _contentListCodes = _buildContentListCodes() ?? [];
-    _refreshController = StreamController.broadcast();
     super.initState();
   }
 
@@ -103,7 +101,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           SliverList(
             delegate: SliverChildListDelegate(<Widget>[
               Container(
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,7 +112,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           ),
         ],
       ),),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
     );
   }
 
@@ -122,8 +120,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     List<Widget> widgets = [];
 
-    for (dynamic code in _contentListCodes) {
-      Widget widget;
+    for (dynamic code in _contentListCodes!) {
+      Widget? widget;
 
       if (code == 'game_day') {
         widget = HomeGameDayWidget(refreshController: _refreshController);
@@ -203,9 +201,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
-  List<dynamic> _buildContentListCodes({String source = 'home'}) {
-    List<dynamic> result;
-    List<dynamic> contentList = FlexUI()[source];
+  List<dynamic>? _buildContentListCodes({String source = 'home'}) {
+    List<dynamic>? result;
+    List<dynamic>? contentList = FlexUI()[source];
     if (contentList != null) {
       result = [];
       for (String contentEntry in contentList) {
@@ -227,8 +225,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _ensureGiesVisible() {
-    if (_giesWidgetKey?.currentContext != null) {
-      Scrollable.ensureVisible(_giesWidgetKey.currentContext, duration: Duration(milliseconds: 300));
+    if (_giesWidgetKey.currentContext != null) {
+      Scrollable.ensureVisible(_giesWidgetKey.currentContext!, duration: Duration(milliseconds: 300));
     }
   }
 
@@ -272,12 +270,12 @@ class _SliverHomeHeaderBar extends SliverAppBar {
   final bool settingsVisible;
 
   _SliverHomeHeaderBar(
-      {@required this.context,  this.searchVisible = false, this.savedVisible = false, this.settingsVisible = false})
+      {required this.context,  this.searchVisible = false, this.savedVisible = false, this.settingsVisible = false})
       : super(
       pinned: true,
       floating: true,
       primary:true,
-      backgroundColor: Styles().colors.fillColorPrimaryVariant,
+      backgroundColor: Styles().colors!.fillColorPrimaryVariant,
       title: ExcludeSemantics(
           child: IconButton(
               icon: Image.asset('images/block-i-orange.png'),
@@ -326,12 +324,12 @@ class _SliverHomeHeaderBar extends SliverAppBar {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Text(Localization().getStringEx(
-                    'headerbar.saved.title', 'Saved'),
+                    'headerbar.saved.title', 'Saved')!,
                     style: TextStyle(color: Colors.white,
                         fontSize: 16,
-                        fontFamily: Styles().fontFamilies.semiBold,
+                        fontFamily: Styles().fontFamilies!.semiBold,
                         decoration: TextDecoration.underline,
-                        decorationColor: Styles().colors.fillColorSecondary,
+                        decorationColor: Styles().colors!.fillColorSecondary,
                         decorationThickness: 1,
                         decorationStyle: TextDecorationStyle.solid)),),))),
 

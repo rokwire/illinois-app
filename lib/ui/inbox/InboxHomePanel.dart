@@ -49,14 +49,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   final int _messagesPageSize = 8;
 
-  String _selectedCategory;
-  _TimeFilter _selectedTime;
-  _FilterType _selectedFilter;
-  bool _hasMoreMessages;
+  String? _selectedCategory;
+  _TimeFilter? _selectedTime;
+  _FilterType? _selectedFilter;
+  bool? _hasMoreMessages;
   
-  bool _loading, _loadingMore, _processingOption;
+  bool? _loading, _loadingMore, _processingOption;
   List<InboxMessage> _messages = <InboxMessage>[];
-  List<dynamic> _contentList;
+  List<dynamic>? _contentList;
   ScrollController _scrollController = ScrollController();
 
   bool _isEditMode = false;
@@ -97,7 +97,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           ),
           TabBarWidget(),
         ],)),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
     );
   }
 
@@ -112,7 +112,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       ),
       Visibility(visible: (_loading == true), child:
         Align(alignment: Alignment.center, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), )
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
         )
       ),
       Visibility(visible: (_selectedFilter != null), child:
@@ -125,8 +125,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildMessagesContent() {
-    if ((_contentList != null) && (0 < _contentList.length)) {
-      int count = _contentList.length + ((_loadingMore == true) ? 1 : 0);
+    if ((_contentList != null) && (0 < _contentList!.length)) {
+      int count = _contentList!.length + ((_loadingMore == true) ? 1 : 0);
       return ListView.separated(
         separatorBuilder: (context, index) => Container(height: 24),
         itemCount: count,
@@ -136,14 +136,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     else {
       return Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages'), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.inbox.label.content.empty', 'No messages')!, textAlign: TextAlign.center,),
         Expanded(child: Container(), flex: 3),
       ]);
     }
   }
 
   Widget _buildListEntry(BuildContext context, int index) {
-    dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList.length)) ? _contentList[index] : null;
+    dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
     if (entry is InboxMessage) {
       return _InboxMessageCard(
         message: entry,
@@ -158,10 +158,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     }
   }
 
-  Widget _buildListHeading({String text}) {
-    return Container(color: Styles().colors.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
+  Widget _buildListHeading({String? text}) {
+    return Container(color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
         Semantics(header: true, child:
-          Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 16, color: Styles().colors.white),)
+          Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Styles().colors!.white),)
         )
     );
   }
@@ -170,7 +170,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     return Container(padding: EdgeInsets.all(6), child:
       Align(alignment: Alignment.center, child:
         SizedBox(width: 24, height: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary),),),),);
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),),),);
   }
 
   void _onTapMessage(InboxMessage message) {
@@ -183,18 +183,20 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   void _handleSelectionTap(InboxMessage message) {
     setState(() {
-      if (_selectedMessageIds.contains(message?.messageId)) {
-        _selectedMessageIds.remove(message?.messageId);
-        AppSemantics.announceMessage(context, "Deselected");
-      } else {
-        _selectedMessageIds.add(message?.messageId);
-        AppSemantics.announceMessage(context, "Selected");
+      if (message.messageId != null) {
+        if (_selectedMessageIds.contains(message.messageId)) {
+          _selectedMessageIds.remove(message.messageId);
+          AppSemantics.announceMessage(context, "Deselected");
+        } else {
+          _selectedMessageIds.add(message.messageId!);
+          AppSemantics.announceMessage(context, "Selected");
+        }
       }
     });
   }
 
   void _handleRedirectTap(InboxMessage message) {
-    FirebaseMessaging().processDataMessage(message?.data, allowedTypes: {
+    FirebaseMessaging().processDataMessage(message.data, allowedTypes: {
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
       FirebaseMessaging.payloadTypeAthleticsGameStarted,
@@ -227,7 +229,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     ),),);
   }
 
-  void _onFilter(_FilterType filterType) {
+  void _onFilter(_FilterType? filterType) {
     setState(() {
       _selectedFilter = (filterType != _selectedFilter) ? filterType : null;
     });
@@ -249,7 +251,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
     List<_FilterEntry> filterValues;
     dynamic selectedFilterValue;
-    List<String> subLabels;
+    List<String>? subLabels;
     switch(_selectedFilter) {
       case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
@@ -257,12 +259,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     }
 
     return Padding(padding: EdgeInsets.only(top: 6, left: 16, right: 16, bottom: 32), child:
-      Container(decoration: BoxDecoration(color: Styles().colors.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
+      Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
         Padding(padding: EdgeInsets.only(top: 2), child:
           Container(color: Colors.white, child:
             ListView.separated(
               shrinkWrap: true,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors.fillColorPrimaryTransparent03,),
+              separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
               itemCount: filterValues.length,
               itemBuilder: (context, index) {
                 return FilterListItemWidget(
@@ -286,22 +288,22 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
     List<String> timeDates = <String>[];
     for (_FilterEntry timeEntry in _times) {
-      String timeDate;
-      _DateInterval interval = intervals[timeEntry.value];
+      String? timeDate;
+      _DateInterval? interval = intervals[timeEntry.value];
       if (interval != null) {
-        DateTime startDate = interval.startDate;
-        String startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);
+        DateTime startDate = interval.startDate!;
+        String? startStr = AppDateTime().formatDateTime(interval.startDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);
 
         DateTime endDate = interval.endDate ?? today;
         if (1 < endDate.difference(startDate).inDays) {
-          String endStr = AppDateTime().formatDateTime(endDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);  
+          String? endStr = AppDateTime().formatDateTime(endDate, format: AppDateTime.eventFilterDisplayDateFormat, ignoreTimeZone: true);  
           timeDate = "$startStr - $endStr";
         }
         else {
           timeDate = startStr;
         }
       }
-      timeDates.add(timeDate);
+      timeDates.add(timeDate ?? '');
     }
 
     return timeDates;
@@ -319,12 +321,13 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     };
   }
 
-  void _onFilterValue(_FilterType filterType, _FilterEntry filterEntry) {
+  void _onFilterValue(_FilterType? filterType, _FilterEntry filterEntry) {
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
     setState(() {
       switch(filterType) {
-        case _FilterType.Category: _selectedCategory = filterEntry?.value; break;
-        case _FilterType.Time: _selectedTime = filterEntry?.value; break;
+        case _FilterType.Category: _selectedCategory = filterEntry.value; break;
+        case _FilterType.Time: _selectedTime = filterEntry.value; break;
+        default: break;
       }
       _selectedFilter = null;
     });
@@ -334,7 +337,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   // Header bar
 
-  Widget _buildHeaderBar() {
+  PreferredSizeWidget _buildHeaderBar() {
     List<Widget> actions = <Widget>[];
     if (_isEditMode == true) {
       actions.addAll(<Widget>[
@@ -351,7 +354,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         AppBar(
           title: _buildTitle(),
           centerTitle: true,
-          backgroundColor: Styles().colors.fillColorPrimaryVariant,
+          backgroundColor: Styles().colors!.fillColorPrimaryVariant,
           leading: ((_isEditMode == true) && _isAnyMessageSelected) ? _buildOptionsButton() : _buildBackButton(),
           actions: actions
         )
@@ -360,7 +363,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   }
 
   Widget _buildTitle() {
-    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),);
+    return Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),);
   }
 
   Widget _buildBackButton() {
@@ -375,7 +378,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
         Visibility(visible: (_processingOption == true), child:
           Container(padding: EdgeInsets.all(13), child:
             SizedBox(width: 22, height: 22, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.white),),
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white),),
             ),
           ),
         ),
@@ -386,28 +389,28 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All')!, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       ));
   }
 
@@ -420,11 +423,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
           Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies.bold),)
+            Text(headingText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
           )]),
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors!.fillColorPrimaryTransparent015, height: 1))]),
 
         InkWell(onTap: () => _onDelete(context), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -433,13 +436,13 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
                 Image.asset('images/icon-delete-group.png')
               ),
               Expanded(child:
-                Text("Delete", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.bold),)
+                Text("Delete", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold),)
               ),
             ]),
           )
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors!.fillColorPrimaryTransparent015, height: 1))]),
 
         InkWell(onTap: () => _onCancelOptions(context), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -448,35 +451,35 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
                 Image.asset('images/close-orange.png', width: 18, height: 18)
               ),
               Expanded(child:
-                Text("Cancel", style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies.bold),)
+                Text("Cancel", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold),)
               ),
             ]),
           )
         ),
 
-        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors.fillColorPrimaryTransparent015, height: 1))]),
+        Row(children:<Widget>[Expanded(child: Container(color: Styles().colors!.fillColorPrimaryTransparent015, height: 1))]),
       ]),
     );
   }
 
-  Widget _buildConfirmationDialog(BuildContext context, {String title, String message, String positiveButtonTitle, String negativeButtonTitle, Function onPositive}) {
+  Widget _buildConfirmationDialog(BuildContext context, {String? title, String? message, String? positiveButtonTitle, String? negativeButtonTitle, void Function()? onPositive}) {
     return StatefulBuilder(builder: (context, setState) {
       return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
         Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), ), child:
           Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             Row(children: <Widget>[
               Expanded(child:
-                Container(decoration: BoxDecoration(color: Styles().colors.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
+                Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.vertical(top: Radius.circular(8)), ), child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Text(title, style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: Styles().fontFamilies.bold),),
+                        Text(title!, style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),),
                       ),
                       Semantics(label: "Close", button: true,  child:
                         GestureDetector(onTap: () => Navigator.pop(context), child:
-                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors.white, width: 2), ), child:
+                          Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2), ), child:
                             Center(child:
-                              Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies.bold), semanticsLabel: "",),
+                              Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold), semanticsLabel: "",),
                             ),
                           )
                         ),
@@ -490,15 +493,15 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
             Padding(padding: const EdgeInsets.all(16), child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16),
-                Text(message, textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 18, color: Styles().colors.fillColorPrimary),),
+                Text(message!, textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),),
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
-                    RoundedButton(label: negativeButtonTitle, onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors.fillColorPrimary, textColor: Styles().colors.fillColorPrimary,),
+                    RoundedButton(label: negativeButtonTitle, onTap: () => _onCancelConfirmation(message: message, selection: negativeButtonTitle), backgroundColor: Colors.transparent, borderColor: Styles().colors!.fillColorPrimary, textColor: Styles().colors!.fillColorPrimary,),
                   ),
                   Container(width: 8, ),
                   Expanded(child:
-                    RoundedButton(label: positiveButtonTitle, onTap: onPositive, backgroundColor: Styles().colors.fillColorSecondaryVariant, borderColor: Styles().colors.fillColorSecondaryVariant, textColor: Styles().colors.surface, ),
+                    RoundedButton(label: positiveButtonTitle, onTap: onPositive, backgroundColor: Styles().colors!.fillColorSecondaryVariant, borderColor: Styles().colors!.fillColorSecondaryVariant, textColor: Styles().colors!.surface, ),
                   ),
                 ],)
               ],)
@@ -534,7 +537,9 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     Analytics.instance.logSelect(target: "Select All");
     setState(() {
       for (InboxMessage message in _messages) {
-        _selectedMessageIds.add(message.messageId);
+        if (message.messageId != null) {
+          _selectedMessageIds.add(message.messageId!);
+        }
       }
     });
   }
@@ -596,15 +601,15 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     });
   }
 
-  void _onCancelConfirmation({String message, String selection}) {
+  void _onCancelConfirmation({String? message, String? selection}) {
     Analytics.instance.logAlert(text: "Remove My Information", selection: "No");
     Navigator.pop(context);
   }
 
   Future<void> _onPullToRefresh() async {
     int limit = max(_messages.length, _messagesPageSize);
-    _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage> messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    List<InboxMessage>? messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
@@ -635,8 +640,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       _loading = true;
     });
 
-    _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage> messages) {
+    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -659,8 +664,8 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
       _loadingMore = true;
     });
 
-    _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage> messages) {
+    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -674,14 +679,14 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     });
   }
 
-  void _refreshContent({int messagesCount}) {
+  void _refreshContent({int? messagesCount}) {
     setState(() {
       _loading = true;
     });
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
-    _DateInterval selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage> messages) {
+    _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
+    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -702,11 +707,11 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   List<dynamic> _buildContentList() {
     Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
     Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
-    List<InboxMessage> otherList;
-    for (InboxMessage message in _messages) {
-      _TimeFilter timeFilter = _filterTypeFromDate(message.dateCreatedUtc?.toLocal(), intervals: intervals);
+    List<InboxMessage>? otherList;
+    for (InboxMessage? message in _messages) {
+      _TimeFilter? timeFilter = _filterTypeFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
       if (timeFilter != null) {
-        List<InboxMessage> timeList = timesMap[timeFilter];
+        List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
           timesMap[timeFilter] = timeList = <InboxMessage>[];
         }
@@ -722,10 +727,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
     List<dynamic> contentList = <dynamic>[];
     for (_FilterEntry timeEntry in _times) {
-      _TimeFilter timeFilter = timeEntry.value;
-      List<InboxMessage> timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
+      _TimeFilter? timeFilter = timeEntry.value;
+      List<InboxMessage>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
       if (timeList != null) {
-        contentList.add(timeEntry.name.toUpperCase());
+        contentList.add(timeEntry.name!.toUpperCase());
         contentList.addAll(timeList);
       }
     }
@@ -738,10 +743,10 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     return contentList;
   }
 
-  _TimeFilter _filterTypeFromDate(DateTime dateTime, { Map<_TimeFilter, _DateInterval> intervals }) {
+  _TimeFilter? _filterTypeFromDate(DateTime? dateTime, { Map<_TimeFilter, _DateInterval>? intervals }) {
     for (_FilterEntry timeEntry in _times) {
-      _TimeFilter timeFilter = timeEntry.value;
-      _DateInterval timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
+      _TimeFilter? timeFilter = timeEntry.value;
+      _DateInterval? timeInterval = ((intervals != null) && (timeFilter != null)) ? intervals[timeFilter] : null;
       if ((timeInterval != null) && (timeInterval.contains(dateTime))) {
         return timeFilter;
       }
@@ -757,17 +762,17 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 }
 
 class _FilterEntry {
-  final String _name;
+  final String? _name;
   final dynamic _value;
   
-  String get name => _name;
+  String? get name => _name;
   dynamic get value => _value;
   
-  _FilterEntry({String name, dynamic value}) :
+  _FilterEntry({String? name, dynamic value}) :
     _name = name ?? value?.toString(),
     _value = value;
 
-  static _FilterEntry entryInList(List<_FilterEntry> entries, dynamic value) {
+  static _FilterEntry? entryInList(List<_FilterEntry>? entries, dynamic value) {
     if (entries != null) {
       for (_FilterEntry entry in entries) {
         if (entry.value == value) {
@@ -780,19 +785,19 @@ class _FilterEntry {
 }
 
 class _DateInterval {
-  final DateTime startDate;
-  final DateTime endDate;
+  final DateTime? startDate;
+  final DateTime? endDate;
   
   _DateInterval({this.startDate, this.endDate});
 
-  bool contains(DateTime dateTime) {
+  bool contains(DateTime? dateTime) {
     if (dateTime == null) {
       return false;
     }
-    else if ((startDate != null) && startDate.isAfter(dateTime)) {
+    else if ((startDate != null) && startDate!.isAfter(dateTime)) {
       return false;
     }
-    else if ((endDate != null) && endDate.isBefore(dateTime)) {
+    else if ((endDate != null) && endDate!.isBefore(dateTime)) {
       return false;
     }
     else {
@@ -810,9 +815,9 @@ enum _FilterType {
 }
 
 class _InboxMessageCard extends StatefulWidget {
-  final InboxMessage message;
-  final bool selected;
-  final Function onTap;
+  final InboxMessage? message;
+  final bool? selected;
+  final void Function()? onTap;
   
   _InboxMessageCard({this.message, this.selected, this.onTap });
 
@@ -824,7 +829,7 @@ class _InboxMessageCard extends StatefulWidget {
 
 class _InboxMessageCardState extends State<_InboxMessageCard> implements NotificationsListener {
 
-  bool _isFavorite;
+  late bool _isFavorite;
 
   @override
   void initState() {
@@ -858,9 +863,9 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
       Container(
         decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors!.white,
           borderRadius: BorderRadius.all(Radius.circular(4)),
-          boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+          boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         clipBehavior: Clip.none,
         child: Stack(children: [
@@ -881,33 +886,33 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                       Padding(padding: EdgeInsets.only(bottom: 3), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 16, color: Styles().colors.fillColorPrimary))
+                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
                     
                     AppString.isStringNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary))
+                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
 
                     AppString.isStringNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textBackground))
+                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground))
                       )])) : Container(),
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 14, color: Styles().colors.textSurface))
+                        Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface))
                     )]),
                   ])
                 ),
               ],)
             ),
           ),
-          Container(color: Styles().colors.fillColorSecondary, height: 4),
+          Container(color: Styles().colors!.fillColorSecondary, height: 4),
           Visibility(visible: Auth2().canFavorite, child:
             Align(alignment: Alignment.topRight, child:
             Semantics(
@@ -928,7 +933,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   }
 
   void _onTapFavorite() {
-    Analytics.instance.logSelect(target: "Favorite: ${widget.message.subject}");
+    Analytics.instance.logSelect(target: "Favorite: ${widget.message!.subject}");
     setState(() {
       Auth2().prefs?.toggleFavorite(widget.message);
     });

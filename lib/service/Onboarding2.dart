@@ -81,28 +81,28 @@ class Onboarding2 with Service{
     NotificationService().notify(notifyFinished, context);
   }
   
-  void storeExploreCampusChoice(bool choice){
+  void storeExploreCampusChoice(bool? choice){
     Storage().onBoardingExploreCampus = choice;
   }
 
-  void storePersonalizeChoice(bool choice){
+  void storePersonalizeChoice(bool? choice){
     Storage().onBoardingPersonalizeChoice = choice;
   }
 
-  void storeImproveChoice(bool choice){
+  void storeImproveChoice(bool? choice){
     Storage().onBoardingImproveChoice = choice;
   }
 
   bool get getExploreCampusChoice{
-    return Storage().onBoardingExploreCampus;
+    return Storage().onBoardingExploreCampus ?? false;
   }
 
   bool get getPersonalizeChoice{
-    return Storage().onBoardingPersonalizeChoice;
+    return Storage().onBoardingPersonalizeChoice ?? false;
   }
 
   bool get getImproveChoice{
-    return Storage().onBoardingImproveChoice;
+    return Storage().onBoardingImproveChoice ?? false;
   }
 
   int get getPrivacyLevel{

@@ -27,7 +27,7 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with OnboardingPanel {
 
-  final Map<String, dynamic> onboardingContext;
+  final Map<String, dynamic>? onboardingContext;
 
   Onboarding2LoginPhoneOrEmailStatementPanel({this.onboardingContext});
 
@@ -49,10 +49,10 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email');
+    String titleString = Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.text', 'Login by phone or email')!;
     EdgeInsetsGeometry backButtonInsets = EdgeInsets.only(left: 10, top: 20 + MediaQuery.of(context).padding.top, right: 20, bottom: 20);
 
-    return Scaffold(backgroundColor: Styles().colors.background, body:
+    return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
         Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
         Column(children:[
@@ -63,13 +63,13 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                   Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, header:true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                       Center(child:
-                        Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                        Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)),
                       )
                     ),
                   ),
                   Container(height: 24,),
                   Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))
+                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.')!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                   ),
                 ]),
               ),
@@ -82,9 +82,9 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                 hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.continue.hint', ''),
                 fontSize: 16,
                 padding: EdgeInsets.symmetric(vertical: 12),
-                borderColor: Styles().colors.fillColorSecondary,
-                backgroundColor: Styles().colors.white,
-                textColor: Styles().colors.fillColorPrimary,
+                borderColor: Styles().colors!.fillColorSecondary,
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors!.fillColorPrimary,
                 onTap: _onContinueTapped,
               ),
               Onboarding2UnderlinedButton(
@@ -108,7 +108,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
   void _onSkipTapped() {
     Analytics.instance.logSelect(target: 'Not right now');
-    Function onContinue = (widget.onboardingContext != null) ? widget.onboardingContext["onContinueAction"] : null; // Hook this panels to Onboarding2
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
     if (onContinue != null) {
       onContinue();
     }

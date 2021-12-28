@@ -16,7 +16,7 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/flutter_html.dart' as FlutterHtml;
 import 'package:illinois/service/AppLivecycle.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -29,21 +29,21 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart' as FlutterWebView;
 
 class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPageAttributes{
-  final String url;
-  final String analyticsName;
-  final String title;
+  final String? url;
+  final String? analyticsName;
+  final String? title;
   final bool hideToolBar;
 
-  WebPanel({@required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
+  WebPanel({required this.url, this.analyticsName, this.title = "", this.hideToolBar = false});
 
   @override
   _WebPanelState createState() => _WebPanelState();
 
   @override
-  String get analyticsPageName {
+  String? get analyticsPageName {
     return analyticsName;
   }
 
@@ -55,8 +55,8 @@ class WebPanel extends StatefulWidget implements AnalyticsPageName, AnalyticsPag
 
 class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
-  bool _isOnline;
-  bool _isTrackingEnabled;
+  bool? _isOnline;
+  bool? _isTrackingEnabled;
   bool _isPageLoading = true;
   bool _isForeground = true;
 
@@ -108,7 +108,7 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
     return Scaffold(
       appBar: _getHeaderBar(),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       body: Column(children: <Widget>[
         Expanded(child: contentWidget),
         widget.hideToolBar ? Container() : TabBarWidget()
@@ -118,9 +118,9 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
   Widget _buildWebView() {
     return Stack(children: [
       Visibility(visible: _isForeground,
-        child: WebView(
+        child: FlutterWebView.WebView(
         initialUrl: widget.url,
-        javascriptMode: JavascriptMode.unrestricted,
+        javascriptMode: FlutterWebView.JavascriptMode.unrestricted,
         navigationDelegate: _processNavigation,
         onPageFinished: (url) {
           setState(() {
@@ -134,25 +134,25 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
     ],);
   }
 
-  FutureOr<NavigationDecision> _processNavigation(NavigationRequest navigation) {
+  FutureOr<FlutterWebView.NavigationDecision> _processNavigation(FlutterWebView.NavigationRequest navigation) {
     String url = navigation.url;
     if (AppUrl.launchInternal(url)) {
-      return NavigationDecision.navigate;
+      return FlutterWebView.NavigationDecision.navigate;
     }
     else {
       launch(url);
-      return NavigationDecision.prevent;
+      return FlutterWebView.NavigationDecision.prevent;
     }
   }
 
-  Widget _buildStatus({String title, String message}) {
+  Widget _buildStatus({String? title, String? message}) {
     List<Widget> contentList = <Widget>[];
     contentList.add(Expanded(flex: 1, child: Container()));
     
     if (title != null) {
-      contentList.add(Html(data: title,
+      contentList.add(FlutterHtml.Html(data: title,
           onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
-          style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.bold, fontSize: FontSize(32), textAlign: TextAlign.center, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+          style: { "body": FlutterHtml.Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FlutterHtml.FontSize(32), textAlign: TextAlign.center, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       );
     }
 
@@ -161,9 +161,9 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
     }
 
     if ((message != null)) {
-      contentList.add(Html(data: message,
+      contentList.add(FlutterHtml.Html(data: message,
         onLinkTap: (url, context, attributes, element) => _onTapStatusLink(url),
-        style: { "body": Style(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.regular, fontSize: FontSize(20), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
+        style: { "body": FlutterHtml.Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FlutterHtml.FontSize(20), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero), },),
       );
     }
 
@@ -176,35 +176,35 @@ class _WebPanelState extends State<WebPanel> implements NotificationsListener{
 
   Widget _buildInitializing(){
     return Center(child:
-      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorPrimary),),
+      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors!.fillColorPrimary!),),
     );
   }
 
   static Future<bool> _getOnline() async {
-    List<InternetAddress> result;
+    List<InternetAddress>? result;
     try {
       result = await InternetAddress.lookup('www.example.com');
     } on SocketException catch (_) {
     }
-    return ((result != null) && result.isNotEmpty && (result.first.rawAddress != null) && result.first.rawAddress.isNotEmpty);
+    return ((result != null) && result.isNotEmpty && result.first.rawAddress.isNotEmpty);
   }
 
   static Future<bool> _getTrackingEnabled() async {
-    AuthorizationStatus status = await NativeCommunicator().queryTrackingAuthorization('query');
+    AuthorizationStatus? status = await NativeCommunicator().queryTrackingAuthorization('query');
     if (status == AuthorizationStatus.NotDetermined) {
       status = await NativeCommunicator().queryTrackingAuthorization('request');
     }
     return (status == AuthorizationStatus.Allowed);
   }
 
-  Widget _getHeaderBar() {
+  PreferredSizeWidget _getHeaderBar() {
     return SimpleHeaderBarWithBack(context: context,
-      titleWidget: Text(widget.title, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+      titleWidget: Text(widget.title!, style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
   }
 
-  void _onTapStatusLink(String url) {
+  void _onTapStatusLink(String? url) {
     if (AppString.isStringNotEmpty(url)) {
-      launch(url);
+      launch(url!);
     }
   }
 

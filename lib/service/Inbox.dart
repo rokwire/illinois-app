@@ -19,12 +19,12 @@ class Inbox with Service implements NotificationsListener {
 
   static const String notifyInboxUserInfoChanged   = "edu.illinois.rokwire.inbox.user.info.changed";
 
-  String   _fcmToken;
-  String   _fcmUserId;
-  bool     _isServiceInitialized;
-  DateTime _pausedDateTime;
+  String?   _fcmToken;
+  String?   _fcmUserId;
+  bool?     _isServiceInitialized;
+  DateTime? _pausedDateTime;
   
-  InboxUserInfo _userInfo;
+  InboxUserInfo? _userInfo;
 
   // Singletone instance
 
@@ -87,13 +87,13 @@ class Inbox with Service implements NotificationsListener {
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
     if (state == AppLifecycleState.paused) {
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
       if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime);
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _processFcmToken();
           _loadUserInfo();
@@ -104,7 +104,7 @@ class Inbox with Service implements NotificationsListener {
 
   // Inbox APIs
 
-  Future<List<InboxMessage>> loadMessages({DateTime startDate, DateTime endDate, String category, Iterable messageIds, int offset, int limit }) async {
+  Future<List<InboxMessage>?> loadMessages({DateTime? startDate, DateTime? endDate, String? category, Iterable? messageIds, int? offset, int? limit }) async {
     
     String urlParams = "";
     
@@ -142,33 +142,33 @@ class Inbox with Service implements NotificationsListener {
 
     dynamic body = (messageIds != null) ? AppJson.encode({ "ids": List.from(messageIds) }) : null;
 
-    String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
-    Response response = await Network().get(url, body: body, auth: NetworkAuth.Auth2);
+    String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages$urlParams" : null;
+    Response? response = await Network().get(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200) ? (InboxMessage.listFromJson(AppJson.decodeList(response?.body)) ?? []) : null;
   }
 
-  Future<bool> deleteMessages(Iterable messageIds) async {
-    String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages" : null;
-    String body = AppJson.encode({
+  Future<bool> deleteMessages(Iterable? messageIds) async {
+    String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/messages" : null;
+    String? body = AppJson.encode({
       "ids": (messageIds != null) ? List.from(messageIds) : null
     });
 
-    Response response = await Network().delete(url, body: body, auth: NetworkAuth.Auth2);
+    Response? response = await Network().delete(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200);
   }
 
-  Future<bool> sendMessage(InboxMessage message) async {
-    String url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
-    String body = AppJson.encode(message?.toJson());
+  Future<bool> sendMessage(InboxMessage? message) async {
+    String? url = (Config().notificationsUrl != null) ? "${Config().notificationsUrl}/api/message" : null;
+    String? body = AppJson.encode(message?.toJson());
 
-    Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
+    Response? response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
     return (response?.statusCode == 200);
   }
 
-  Future<bool> subscribeToTopic({String topic, String token}) async {
+  Future<bool> subscribeToTopic({String? topic, String? token}) async {
     _storeTopic(topic); // Store first, otherwise we have delay
     bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'subscribe');
-    if(!(result ?? false)){
+    if(!result){
       //if failed and not already stored remove
       Log.e("Unable to subscribe to topic: $topic");
     }
@@ -176,10 +176,10 @@ class Inbox with Service implements NotificationsListener {
     return result;
   }
 
-  Future<bool> unsubscribeFromTopic({String topic, String token}) async {
+  Future<bool> unsubscribeFromTopic({String? topic, String? token}) async {
     _removeStoredTopic(topic); //StoreFist, otherwise we have visual delay
     bool result = await _manageFCMSubscription(topic: topic, token: token, action: 'unsubscribe');
-    if(!(result ?? false)){
+    if(!result){
       //if failed //TBD
       Log.e("Unable to unsubscribe from topic: $topic");
     }
@@ -187,13 +187,13 @@ class Inbox with Service implements NotificationsListener {
     return result;
   }
 
-  Future<bool> _manageFCMSubscription({String topic, String token, String action}) async {
+  Future<bool> _manageFCMSubscription({String? topic, String? token, String? action}) async {
     if ((Config().notificationsUrl != null) && (topic != null) && (token != null) && (action != null)) {
       String url = "${Config().notificationsUrl}/api/topic/$topic/$action";
-      String body = AppJson.encode({
+      String? body = AppJson.encode({
         'token': token
       });
-      Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
+      Response? response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
       //Log.d("FCMTopic_$action($topic) => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
@@ -205,8 +205,8 @@ class Inbox with Service implements NotificationsListener {
   void _processFcmToken() {
     // We call _processFcmToken when FCM token changes or when user logs in/out.
     if (_isServiceInitialized == true) {
-      String fcmToken = FirebaseMessaging().token;
-      String userId = Auth2().accountId;
+      String? fcmToken = FirebaseMessaging().token;
+      String? userId = Auth2().accountId;
       if ((fcmToken != null) && (fcmToken != _fcmToken)) {
         _updateFCMToken(token: fcmToken, previousToken: _fcmToken).then((bool result) {
           if (result) {
@@ -224,16 +224,16 @@ class Inbox with Service implements NotificationsListener {
     }
   }
 
-  Future<bool> _updateFCMToken({String token, String previousToken}) async {
+  Future<bool> _updateFCMToken({String? token, String? previousToken}) async {
     if ((Config().notificationsUrl != null) && ((token != null) || (previousToken != null))) {
       String url = "${Config().notificationsUrl}/api/token";
-      String body = AppJson.encode({
+      String? body = AppJson.encode({
         'token': token,
         'previous_token': previousToken,
         'app_platform': Platform.operatingSystem,
         'app_version': Config().appVersion,
       });
-      Response response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
+      Response? response = await Network().post(url, body: body, auth: NetworkAuth.Auth2);
       //Log.d("FCMToken_update(${(token != null) ? 'token' : 'null'}, ${(previousToken != null) ? 'token' : 'null'}) / UserId: '${Auth2().accountId}'  => ${(response?.statusCode == 200) ? 'Yes' : 'No'}");
       return (response?.statusCode == 200);
     }
@@ -241,25 +241,25 @@ class Inbox with Service implements NotificationsListener {
   }
 
   //Topics storage
-  void _storeTopic(String topic){
+  void _storeTopic(String? topic){
     if(!Auth2().isLoggedIn){
       Storage().addFirebaseMessagingSubscriptionTopic(topic);
     } else {
       if(userInfo!=null){
-        if(_userInfo.topics == null){
-          _userInfo.topics = Set<String>();
+        if(_userInfo!.topics == null){
+          _userInfo!.topics = Set<String?>();
         }
-        userInfo.topics.add(topic);
+        userInfo!.topics!.add(topic);
       }
     }
   }
 
-  void _removeStoredTopic(String topic){
+  void _removeStoredTopic(String? topic){
     if(!Auth2().isLoggedIn){
       Storage().removeFirebaseMessagingSubscriptionTopic(topic);
     } else {
       if (userInfo?.topics != null) {
-        userInfo.topics.remove(topic);
+        userInfo!.topics!.remove(topic);
       }
     }
   }
@@ -267,10 +267,10 @@ class Inbox with Service implements NotificationsListener {
   //UserInfo
   Future<void> _loadUserInfo() async{
     try {
-      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().get("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2) : null;
       if(response?.statusCode == 200) {
-        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-        InboxUserInfo userInfo = InboxUserInfo.fromJson(jsonData);
+        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+        InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
         _applyUserInfo(userInfo);
       }
     } catch (e) {
@@ -279,13 +279,13 @@ class Inbox with Service implements NotificationsListener {
     }
   }
 
-  Future<bool> _putUserInfo(InboxUserInfo userInfo) async {
+  Future<bool> _putUserInfo(InboxUserInfo? userInfo) async {
     if (Auth2().isLoggedIn && Config().notificationsUrl != null && userInfo != null){
-      String body = AppJson.encode(userInfo?.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
-      Response response = await Network().put("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body);
+      String? body = AppJson.encode(userInfo.toJson()); // Update user API do not receive topics. Only update enable/disable notifications for now
+      Response? response = await Network().put("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body);
       if(response?.statusCode == 200) {
-        Map<String, dynamic> jsonData = AppJson.decode(response?.body);
-        InboxUserInfo userInfo = InboxUserInfo.fromJson(jsonData);
+        Map<String, dynamic>? jsonData = AppJson.decode(response?.body);
+        InboxUserInfo? userInfo = InboxUserInfo.fromJson(jsonData);
         _applyUserInfo(userInfo);
         return true;
       }
@@ -293,15 +293,15 @@ class Inbox with Service implements NotificationsListener {
     return false;
   }
 
-  Future<bool> applySettingNotificationsEnabled(bool value) async{
+  Future<bool> applySettingNotificationsEnabled(bool? value) async{
     if (_userInfo != null && value!=null){
-      userInfo.notificationsDisabled = value;
-      return _putUserInfo(InboxUserInfo(userId: _userInfo.userId, notificationsDisabled: value));
+      userInfo!.notificationsDisabled = value;
+      return _putUserInfo(InboxUserInfo(userId: _userInfo!.userId, notificationsDisabled: value));
     }
     return false;
   }
   
-  void _applyUserInfo(InboxUserInfo userInfo){
+  void _applyUserInfo(InboxUserInfo? userInfo){
     if(_userInfo != userInfo){
       Storage().inboxUserInfo = _userInfo = userInfo;
       NotificationService().notify(notifyInboxUserInfoChanged);
@@ -311,10 +311,10 @@ class Inbox with Service implements NotificationsListener {
   //Delete User
   void _deleteUser() async{
     try {
-      String body = AppJson.encode({
+      String? body = AppJson.encode({
         'notifications_disabled': true,
       });
-      Response response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body) : null;
+      Response? response = (Auth2().isLoggedIn && Config().notificationsUrl != null) ? await Network().delete("${Config().notificationsUrl}/api/user", auth: NetworkAuth.Auth2, body: body) : null;
       if(response?.statusCode == 200) {
         _applyUserInfo(null);
       }
@@ -324,7 +324,7 @@ class Inbox with Service implements NotificationsListener {
     }
   }
 
-  InboxUserInfo get userInfo{
+  InboxUserInfo? get userInfo{
     return _userInfo;
   }
 }

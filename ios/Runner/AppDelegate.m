@@ -256,9 +256,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"firebaseInfo"]) {
 		[self handleFirebaseInfoWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"notifications_authorization"]) {
-		[self handleNotificationsWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"location_services_permission"]) {
 		[self handleLocationServicesWithParameters:parameters result:result];
 	}
@@ -392,19 +389,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
     FIROptions *options = (firApp != nil) ? [firApp options] : nil;
     NSString *projectID = (options != nil) ? [options projectID] : nil;
     result(projectID);
-}
-
-- (void)handleNotificationsWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *method = [parameters inaStringForKey:@"method"];
-	if ([method isEqualToString:@"query"]) {
-		[self queryNotificationsAuthorizationWithFlutterResult:result];
-	}
-	else if ([method isEqualToString:@"request"]) {
-		[self requestNotificationsAuthorizationWithFlutterResult:result];
-	}
-	else {
-		result(nil);
-	}
 }
 
 - (void)handleLocationServicesWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -681,42 +665,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 */
 
 #pragma mark Push Notifications
-
-- (void)queryNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
-	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
-		result([self.class notificationServicesPermisionFromAuthorizationStatus:settings.authorizationStatus]);
-	}];
-}
-
-+ (NSString*)notificationServicesPermisionFromAuthorizationStatus:(UNAuthorizationStatus)authorizationStatus {
-	switch (authorizationStatus) {
-		case UNAuthorizationStatusNotDetermined:       return @"not_determined";
-		case UNAuthorizationStatusDenied:              return @"denied";
-		default:                                       return @"allowed";
-	}
-	return nil;
-}
-
-
-- (void)requestNotificationsAuthorizationWithFlutterResult:(FlutterResult)result {
-	__weak typeof(self) weakSelf = self;
-	[UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* settings) {
-		if (settings.authorizationStatus == UNAuthorizationStatusDenied) {
-			result([self.class notificationServicesPermisionFromAuthorizationStatus:UNAuthorizationStatusDenied]);
-		}
-		else {
-			UNAuthorizationOptions options = UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound;
-			[UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:options completionHandler:^(BOOL granted, NSError * _Nullable error){
-				dispatch_async(dispatch_get_main_queue(), ^{
-					result([self.class notificationServicesPermisionFromAuthorizationStatus:granted ? UNAuthorizationStatusAuthorized : UNAuthorizationStatusDenied]);
-					if (granted) {
-						[weakSelf registerForRemoteNotifications];
-					}
-				});
-			}];
-		}
-	}];
-}
 
 - (void)registerForRemoteNotifications {
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;

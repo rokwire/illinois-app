@@ -21,13 +21,13 @@ import 'package:illinois/service/Service.dart';
 typedef AppLifecycleCallback = void Function(AppLifecycleState state);
 
 class AppLivecycleWidgetsBindingObserver extends WidgetsBindingObserver {
-  final AppLifecycleCallback onAppLivecycleChange;
+  final AppLifecycleCallback? onAppLivecycleChange;
   AppLivecycleWidgetsBindingObserver({this.onAppLivecycleChange});
 
   @override
   Future<Null> didChangeAppLifecycleState(AppLifecycleState state) async {
     if (onAppLivecycleChange != null) {
-      onAppLivecycleChange(state);
+      onAppLivecycleChange!(state);
     }
   }
 }
@@ -36,7 +36,7 @@ class AppLivecycle with Service {
 
   static const String notifyStateChanged  = "edu.illinois.rokwire.applivecycle.state.changed";
 
-  WidgetsBindingObserver _bindingObserver;
+  WidgetsBindingObserver? _bindingObserver;
   AppLifecycleState _state = AppLifecycleState.resumed; // initial value
 
   // Singletone Instance
@@ -75,13 +75,13 @@ class AppLivecycle with Service {
   void _initBinding() {
     if ((WidgetsBinding.instance != null) && (_bindingObserver == null)) {
       _bindingObserver = new AppLivecycleWidgetsBindingObserver(onAppLivecycleChange:_onAppLivecycleChangeState);
-      WidgetsBinding.instance.addObserver(_bindingObserver);
+      WidgetsBinding.instance!.addObserver(_bindingObserver!);
     }
   }
 
   void _closeBinding() {
     if (_bindingObserver != null) {
-      WidgetsBinding.instance.removeObserver(_bindingObserver);
+      WidgetsBinding.instance!.removeObserver(_bindingObserver!);
       _bindingObserver = null;
     }
   }

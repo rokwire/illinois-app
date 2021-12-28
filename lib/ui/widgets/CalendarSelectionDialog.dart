@@ -8,14 +8,14 @@ import 'RoundedButton.dart';
 
 class CalendarSelectionDialog extends StatefulWidget {
 //  final
-  final Function onContinue;
+  final Function? onContinue;
 
-  const CalendarSelectionDialog({Key key, this.onContinue}) : super(key: key);
+  const CalendarSelectionDialog({Key? key, this.onContinue}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CalendarSelectionDialogState();
 
-  static void show({@required BuildContext context, Function onContinue}){
+  static void show({required BuildContext context, Function? onContinue}){
     showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -25,7 +25,7 @@ class CalendarSelectionDialog extends StatefulWidget {
 }
 
 class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
-  Calendar _selectedCalendar;
+  Calendar? _selectedCalendar;
   List<Calendar> _calendars = [];
 
   @override
@@ -87,7 +87,7 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
                   RoundedButton(label: "Choose",
                     onTap: () {
                       if (widget.onContinue != null) {
-                        widget.onContinue(_selectedCalendar);
+                        widget.onContinue!(_selectedCalendar);
                       }
                     }
                   ),
@@ -112,12 +112,12 @@ class _CalendarSelectionDialogState extends State<CalendarSelectionDialog>{
         children: <Widget>[
           Expanded(
               child:Text(
-                  calendar.name
+                  calendar.name!
               )),
-          calendar.id == _selectedCalendar.id
+          calendar.id == _selectedCalendar!.id
               ? Icon(
             Icons.radio_button_checked,
-            color: Styles().colors.fillColorPrimary,
+            color: Styles().colors!.fillColorPrimary,
           )
               : Icon(Icons.radio_button_unchecked),
         ],

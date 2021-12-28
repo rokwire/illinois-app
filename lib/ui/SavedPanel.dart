@@ -31,7 +31,6 @@ import 'package:illinois/service/DiningService.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/Inbox.dart';
 import 'package:illinois/service/LaundryService.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Guide.dart';
@@ -54,6 +53,7 @@ import 'package:illinois/ui/widgets/SectionTitlePrimary.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 
 import 'athletics/AthleticsNewsArticlePanel.dart';
 import 'events/CompositeEventsDetailPanel.dart';
@@ -61,7 +61,7 @@ import 'explore/ExploreDetailPanel.dart';
 
 class SavedPanel extends StatefulWidget {
 
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   SavedPanel({this.scrollController});
 
@@ -73,13 +73,13 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   int _progress = 0;
 
-  List<Favorite> _events;
-  List<Favorite> _dinings;
-  List<Favorite> _athletics;
-  List<Favorite> _news;
-  List<Favorite> _laundries;
-  List<Favorite> _guideItems;
-  List<Favorite> _inboxMessageItems;
+  List<Favorite>? _events;
+  List<Favorite>? _dinings;
+  List<Favorite>? _athletics;
+  List<Favorite>? _news;
+  List<Favorite>? _laundries;
+  List<Favorite>? _guideItems;
+  List<Favorite>? _inboxMessageItems;
 
   bool _showNotificationPermissionPrompt = false;
   bool _laundryAvailable = false;
@@ -106,24 +106,26 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _requestPermissionsStatus(){
     if (Platform.isIOS && Auth2().privacyMatch(4)) {
-      NativeCommunicator().queryNotificationsAuthorization("query").then((AuthorizationStatus authorizationStatus){
-        if((AuthorizationStatus.NotDetermined == authorizationStatus)){
+
+      NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
+        if (status == PermissionStatus.unknown) {
           setState(() {
             _showNotificationPermissionPrompt = true;
           });
         }
       });
+
     }
   }
 
   void _requestAuthorization() async {
-    AuthorizationStatus authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("query");
-    if (authorizationStatus != AuthorizationStatus.NotDetermined) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context, authorizationStatus));
+    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
+    if (permissionStatus != PermissionStatus.unknown) {
+      showDialog(context: context, builder: (context) => _buildNotificationPermissionDialogWidget(context, permissionStatus));
     }
     else {
-      authorizationStatus = await NativeCommunicator().queryNotificationsAuthorization("request");
-      if (authorizationStatus == AuthorizationStatus.Allowed) {
+      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
+      if (permissionStatus == PermissionStatus.granted) {
         Analytics.instance.updateNotificationServices();
       }
       setState(() {
@@ -138,7 +140,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       body: Column(children: <Widget>[
         Expanded(
           child: Container(
-            color: Styles().colors.background,
+            color: Styles().colors!.background,
             child: Stack(
               children: <Widget>[
                 CustomScrollView(
@@ -149,11 +151,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                           ? 'images/chevron-left-white.png'
                           : 'images/chevron-left-blue.png',
                       titleWidget: Text(
-                        Localization().getStringEx('panel.saved.header.label', 'Saved'),
+                        Localization().getStringEx('panel.saved.header.label', 'Saved')!,
                         style: TextStyle(
                             color: widget.scrollController == null
-                                ? Styles().colors.white
-                                : Styles().colors.fillColorPrimary,
+                                ? Styles().colors!.white
+                                : Styles().colors!.fillColorPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.0),
@@ -202,7 +204,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           ),
         ),
       ],),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: widget.scrollController == null
           ? TabBarWidget()
           : Container(height: 0,),
@@ -220,12 +222,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadEvents() {
-    Set<String> favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
+    Set<String>? favoriteEventIds = Auth2().prefs?.getFavorites(Event.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteEventIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
-      ExploreService().loadEventsByIds(favoriteEventIds).then((List<Event> events) {
+      ExploreService().loadEventsByIds(favoriteEventIds).then((List<Event>? events) {
         setState(() {
           _progress--;
           _events = _buildFilteredItems(events, favoriteEventIds);
@@ -240,12 +242,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadDinings() {
-    Set<String> favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
+    Set<String>? favoriteDiningIds = Auth2().prefs?.getFavorites(Dining.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteDiningIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
-      DiningService().loadBackendDinings(false, null, null).then((List<Dining> items) {
+      DiningService().loadBackendDinings(false, null, null).then((List<Dining>? items) {
         setState(() {
           _progress--;
           _dinings = _buildFilteredItems(items, favoriteDiningIds);
@@ -260,12 +262,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadAthletics() {
-    Set<String> favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
+    Set<String>? favoriteGameIds = Auth2().prefs?.getFavorites(Game.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteGameIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
-      Sports().loadGames().then((List<Game> athleticItems) {
+      Sports().loadGames().then((List<Game>? athleticItems) {
         setState(() {
           _progress--;
           _athletics = _buildFilteredItems(athleticItems, favoriteGameIds);
@@ -280,12 +282,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadNews() {
-    Set<String> favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
+    Set<String>? favoriteNewsIds = Auth2().prefs?.getFavorites(News.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteNewsIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
-      Sports().loadNews(null, 0).then((List<News> newsItems) {
+      Sports().loadNews(null, 0).then((List<News>? newsItems) {
         setState(() {
           _progress--;
           _news = _buildFilteredItems(newsItems, favoriteNewsIds);
@@ -303,12 +305,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (!_laundryAvailable) {
       return;
     }
-    Set<String> favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
+    Set<String>? favoriteLaundryIds = Auth2().prefs?.getFavorites(LaundryRoom.favoriteKeyName);
     if (AppCollection.isCollectionNotEmpty(favoriteLaundryIds) && Connectivity().isNotOffline) {
       setState(() {
         _progress++;
       });
-      LaundryService().getRoomData().then((List<LaundryRoom> laundries) {
+      LaundryService().getRoomData().then((List<LaundryRoom>? laundries) {
         setState(() {
           _progress--;
           _laundries = _buildFilteredItems(laundries, favoriteLaundryIds);
@@ -324,11 +326,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   void _loadGuideItems() {
 
-    Set<String> favoriteGuideIds = Auth2().prefs?.getFavorites(GuideFavorite.favoriteKeyName);
+    Set<String?>? favoriteGuideIds = Auth2().prefs?.getFavorites(GuideFavorite.favoriteKeyName);
     List<Favorite> guideItems = <Favorite>[];
     if (favoriteGuideIds != null) {
-      for (dynamic contentEntry in Guide().contentList) {
-        String guideEntryId = Guide().entryId(AppJson.mapValue(contentEntry));
+      for (dynamic contentEntry in Guide().contentList!) {
+        String? guideEntryId = Guide().entryId(AppJson.mapValue(contentEntry));
         
         if ((guideEntryId != null) && favoriteGuideIds.contains(guideEntryId)) {
           guideItems.add(GuideFavorite(
@@ -352,12 +354,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _loadInboxMessages() {
-    Set<String> favoriteMessageIds = Auth2().prefs?.getFavorites(InboxMessage.favoriteKeyName);
+    Set<String?>? favoriteMessageIds = Auth2().prefs?.getFavorites(InboxMessage.favoriteKeyName);
     if (favoriteMessageIds != null) {
       setState(() {
         _progress++;
       });
-      Inbox().loadMessages(messageIds: favoriteMessageIds).then((List<InboxMessage> messages) {
+      Inbox().loadMessages(messageIds: favoriteMessageIds).then((List<InboxMessage>? messages) {
         if (mounted) {
           setState(() {
             _progress--;
@@ -368,26 +370,26 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
   }
 
-  List<Favorite> _buildFilteredItems(List<Favorite> items, Set<String> ids) {
+  List<Favorite>? _buildFilteredItems(List<Favorite>? items, Set<String>? ids) {
     if (AppCollection.isCollectionEmpty(items) || AppCollection.isCollectionEmpty(ids)) {
       return null;
     }
     List<Favorite> result = [];
-    items.forEach((Favorite item) {
-      String id = item.favoriteId;
-      if (AppString.isStringNotEmpty(id) && ids.contains(id)) {
+    items!.forEach((Favorite? item) {
+      String? id = item!.favoriteId;
+      if (AppString.isStringNotEmpty(id) && ids!.contains(id)) {
         result.add(item);
       }
     });
     return result;
   }
 
-  Widget _buildNotificationPermissionDialogWidget(BuildContext context, AuthorizationStatus authorizationStatus) {
-    String message;
-    if (authorizationStatus == AuthorizationStatus.Allowed) {
+  Widget _buildNotificationPermissionDialogWidget(BuildContext context, PermissionStatus permissionStatus) {
+    String? message;
+    if (permissionStatus == PermissionStatus.granted) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (authorizationStatus == AuthorizationStatus.Denied) {
+    else if (permissionStatus == PermissionStatus.denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(
@@ -397,7 +399,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx('app.title', 'Illinois'),
+              Localization().getStringEx('app.title', 'Illinois')!,
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -406,7 +408,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                 message ?? '',
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                    fontFamily: Styles().fontFamilies.medium,
+                    fontFamily: Styles().fontFamilies!.medium,
                     fontSize: 16,
                     color: Colors.black),
               ),
@@ -422,7 +424,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
                         _showNotificationPermissionPrompt = false;
                       });
                     },
-                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')))
+                    child: Text(Localization().getStringEx('dialog.ok.title', 'OK')!))
               ],
             )
           ],
@@ -434,7 +436,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Widget _buildNotificationsSection() {
     return _showNotificationPermissionPrompt ? Padding(
       padding: const EdgeInsets.all(0),
-      child: Container(color: Styles().colors.fillColorPrimary, child:
+      child: Container(color: Styles().colors!.fillColorPrimary, child:
         Column(
         children: <Widget>[
           Row(
@@ -443,11 +445,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
               Padding(
                 padding: EdgeInsets.all(16),
                 child: Text(
-                  Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events."),
+                  Localization().getStringEx("panel.saved.notifications.label", "Don’t miss an event! Get reminders of upcoming events.")!,
                   style: TextStyle(
-                      fontFamily: Styles().fontFamilies.regular,
+                      fontFamily: Styles().fontFamilies!.regular,
                       fontSize: 16,
-                      color: Styles().colors.white
+                      color: Styles().colors!.white
                   ),
                 )
               )
@@ -473,7 +475,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     ) : Container();
   }
 
-  Widget _buildItemsSection({@required String headingTitle, @required String headingIconResource, @required List<Favorite> items}) {
+  Widget _buildItemsSection({required String? headingTitle, required String headingIconResource, required List<Favorite>? items}) {
     return _SavedItemsList(
       heading: headingTitle,
       headingIconRes: headingIconResource,
@@ -505,9 +507,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Widget _buildOffline() {
     return Column(children: <Widget>[
       Expanded(child: Container(), flex: 1),
-      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16),),
+      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline")!, style: TextStyle(fontSize: 16),),
       Container(height:8),
-      Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline")),
+      Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline")!),
       Expanded(child: Container(), flex: 3),
     ],);
   }
@@ -518,21 +520,21 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       child: Column(
         children: <Widget>[
           Container(height: 24,),
-          Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."),
+          Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here.")!,
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontFamily: Styles().fontFamilies.bold,
+                fontFamily: Styles().fontFamilies!.bold,
                 fontSize: 20,
-                color: Styles().colors.fillColorPrimary
+                color: Styles().colors!.fillColorPrimary
             ),
           ),
           Container(height: 24,),
-          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."),
+          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here.")!,
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontFamily: Styles().fontFamilies.regular,
+                fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,
-                color: Styles().colors.textBackground
+                color: Styles().colors!.textBackground
             ),
           ),
         ],
@@ -581,11 +583,11 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
 class _SavedItemsList extends StatefulWidget {
   final int limit;
-  final List<Favorite> items;
-  final String heading;
-  final String headingIconRes;
+  final List<Favorite>? items;
+  final String? heading;
+  final String? headingIconRes;
   final String slantImageRes;
-  final Color slantColor;
+  final Color? slantColor;
 
   _SavedItemsList(
       {this.items, this.limit = 3, this.heading, this.headingIconRes, this.slantImageRes = 'images/slant-down-right-blue.png',
@@ -603,14 +605,14 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     if (AppCollection.isCollectionEmpty(widget.items)) {
       return Container();
     }
-    bool showMoreButton = widget.limit < widget.items.length;
+    bool showMoreButton = widget.limit < widget.items!.length;
     return Column(
       children: <Widget>[
         SectionTitlePrimary(
             title: widget.heading,
             iconPath: widget.headingIconRes,
             slantImageRes: widget.slantImageRes,
-            slantColor: widget.slantColor ?? Styles().colors.fillColorPrimary,
+            slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: _buildListItems(context)),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
           label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx(
@@ -624,10 +626,10 @@ class _SavedItemsListState extends State<_SavedItemsList>{
   List<Widget> _buildListItems(BuildContext context) {
     List<Widget> widgets = [];
     if (AppCollection.isCollectionNotEmpty(widget.items)) {
-      int itemsCount = widget.items.length;
+      int itemsCount = widget.items!.length;
       int visibleCount = (_showAll ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
-        Favorite item = widget.items[i];
+        Favorite? item = widget.items![i];
         widgets.add(_buildItemCard(item));
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
@@ -637,17 +639,17 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return widgets;
   }
 
-  Widget _buildItemCard(Favorite item) {
+  Widget _buildItemCard(Favorite? item) {
     //Custom layout for super events before release
     if(item is Event && item.isComposite){
       return _buildCompositEventCard(item);
     }
 
     bool favorite = Auth2().isFavorite(item);
-    Color headerColor = _cardHeaderColor(item);
-    String title = AppString.getDefaultEmptyString(value: _cardTitle(item));
-    String cardDetailLabel = AppString.getDefaultEmptyString(value: _cardDetailLabel(item));
-    String cardDetailImgRes = _cardDetailImageResource(item);
+    Color? headerColor = _cardHeaderColor(item);
+    String title = AppString.getDefaultEmptyString(_cardTitle(item));
+    String? cardDetailLabel = AppString.getDefaultEmptyString(_cardDetailLabel(item));
+    String? cardDetailImgRes = _cardDetailImageResource(item);
     bool detailVisible = AppString.isStringNotEmpty(cardDetailLabel);
     return GestureDetector(onTap: () => _onTapItem(item), child: Semantics(
         label: title,
@@ -656,7 +658,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             Container(height: 7, color: headerColor,),
             Container(
               decoration: BoxDecoration(color: Colors.white,
-                  border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))),
               child: Padding(
                 padding: EdgeInsets.all(16),
@@ -672,7 +674,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                             child: Text(
                               title,
                               semanticsLabel: "",
-                              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20),
+                              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
                             ),
                           ),
                           Visibility(
@@ -708,10 +710,10 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(cardDetailImgRes, excludeFromSemantics: true),),
                           Expanded(child:
-                            Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                            Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                           )
                         ],) :
-                        Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.textBackground)),
+                        Text(cardDetailLabel, semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
                   )),)
                 ]),
               ),
@@ -720,7 +722,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
         )),);
   }
 
-  void _onTapItem(Favorite item) {
+  void _onTapItem(Favorite? item) {
     if (item is Event) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: item,)));
     } else if (item is Dining) {
@@ -743,25 +745,25 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     });
   }
 
-  Color _cardHeaderColor(Favorite item) {
+  Color? _cardHeaderColor(Favorite? item) {
     if (item is Explore) {
       return (item as Explore).uiColor;
     } else if (item is Game) {
-      return Styles().colors.fillColorPrimary;
+      return Styles().colors!.fillColorPrimary;
     } else if (item is News) {
-      return Styles().colors.fillColorPrimary;
+      return Styles().colors!.fillColorPrimary;
     } else if (item is LaundryRoom) {
-      return Styles().colors.accentColor2;
+      return Styles().colors!.accentColor2;
     } else if (item is GuideFavorite) {
-      return Styles().colors.accentColor3;
+      return Styles().colors!.accentColor3;
     } else if (item is InboxMessage) {
-      return Styles().colors.fillColorSecondary;
+      return Styles().colors!.fillColorSecondary;
     } else {
-      return Styles().colors.fillColorSecondary;
+      return Styles().colors!.fillColorSecondary;
     }
   }
 
-  String _cardTitle(Favorite item) {
+  String? _cardTitle(Favorite? item) {
     if (item is Explore) {
       return (item as Explore).exploreTitle;
     } else if (item is Game) {
@@ -779,7 +781,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     }
   }
 
-  String _cardDetailLabel(Favorite item) {
+  String? _cardDetailLabel(Favorite? item) {
     if (item is Event) {
       return item.displayDateTime;
     } else if (item is Dining) {
@@ -796,7 +798,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       return null;
   }
 
-  String _cardDetailImageResource(Favorite item) {
+  String? _cardDetailImageResource(Favorite? item) {
     if (item is GuideFavorite || item is InboxMessage) {
       return null;
     } else if (item is Event || item is Game || item is News) {
@@ -806,11 +808,11 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     }
   }
 
-  Widget _buildCompositEventCard(Event item){
-      return ExploreCard(explore: item,showTopBorder: true, horizontalPadding: 0,border: Border.all(color: Styles().colors.surfaceAccent, width: 1),
+  Widget _buildCompositEventCard(Event? item){
+      return ExploreCard(explore: item,showTopBorder: true, horizontalPadding: 0,border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         onTap:(){
           if (item != null) {
-            if (item.isComposite ?? false) {
+            if (item.isComposite) {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: item)));
             } else {
               Navigator.push(context, CupertinoPageRoute(builder: (context) =>

@@ -34,33 +34,33 @@ import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/service/Styles.dart';
 
 class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Group group;
+  final Group? group;
 
-  String get groupId => group?.id;
+  String? get groupId => group?.id;
 
-  GroupMembersPanel({@required this.group});
+  GroupMembersPanel({required this.group});
 
   @override
   _GroupMembersPanelState createState() => _GroupMembersPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener{
-  Group _group;
+  Group? _group;
   bool _isMembersLoading = false;
   bool _isPendingMembersLoading = false;
   bool get _isLoading => _isMembersLoading || _isPendingMembersLoading;
 
   bool _showAllRequestVisibility = true;
 
-  List<Member> _pendingMembers;
-  List<Member> _members;
+  List<Member>? _pendingMembers;
+  List<Member>? _members;
 
-  String _allMembersFilter;
-  String _selectedMembersFilter;
-  List<String> _membersFilter;
+  String? _allMembersFilter;
+  String? _selectedMembersFilter;
+  List<String>? _membersFilter;
 
   @override
   void initState() {
@@ -79,7 +79,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     setState(() {
       _isMembersLoading = true;
     });
-    Groups().loadGroup(widget.groupId).then((Group group){
+    Groups().loadGroup(widget.groupId).then((Group? group){
       if (mounted) {
         if(group != null) {
           _group = group;
@@ -95,15 +95,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _loadMembers(){
     setState(() {
       _isMembersLoading = false;
-      _pendingMembers = _group.getMembersByStatus(GroupMemberStatus.pending);
-      _pendingMembers.sort((member1, member2) => member1.name.compareTo(member2.name));
+      _pendingMembers = _group?.getMembersByStatus(GroupMemberStatus.pending);
+      _pendingMembers?.sort((member1, member2) => member1.name!.compareTo(member2.name!));
 
       _members = AppCollection.isCollectionNotEmpty(_group?.members)
-          ? _group.members.where((member) => (member.status != GroupMemberStatus.pending)).toList()
+          ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList()
           : [];
-      _members.sort((member1, member2){
+      _members!.sort((member1, member2){
         if(member1.status == member2.status){
-          return member1.name.compareTo(member2.name);
+          return member1.name!.compareTo(member2.name!);
         } else {
           if(member1.isAdmin && !member2.isAdmin) return -1;
           else if(!member1.isAdmin && member2.isAdmin) return 1;
@@ -116,13 +116,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _applyMembersFilter(){
     List<String> membersFilter = [];
-    _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)").replaceAll("#", _members.length.toString());
-    _selectedMembersFilter = _allMembersFilter;
-    membersFilter.add(_allMembersFilter);
+    _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All members (#)")!.replaceAll("#", _members!.length.toString());
+    if (_allMembersFilter != null) {
+      membersFilter.add(_allMembersFilter!);
+    }
     if(AppCollection.isCollectionNotEmpty(_members)){
-      for(Member member in _members){
+      for(Member member in _members!){
         if(AppString.isStringNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
-          membersFilter.add(member.officerTitle);
+          membersFilter.add(member.officerTitle!);
         }
       }
     }
@@ -135,7 +136,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if (name == Groups.notifyUserMembershipUpdated) {
       setState(() {});
     }
-    else if (param == _group.id && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
+    else if (param == _group!.id && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
       _reloadGroup();
     }
   }
@@ -143,19 +144,19 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         appBar: SimpleHeaderBarWithBack(
           context: context,
-          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",),
+          titleWidget: Text(Localization().getStringEx("panel.manage_members.header.title", "Manage Members",)!,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
-                fontFamily: Styles().fontFamilies.extraBold,
+                fontFamily: Styles().fontFamilies!.extraBold,
                 letterSpacing: 1.0),
           ),
         ),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Styles().colors.fillColorSecondary), ))
+            ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
             : SingleChildScrollView(
           child:Column(
             children: <Widget>[
@@ -171,18 +172,18 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   Widget _buildRequests(){
     if((_pendingMembers?.length ?? 0) > 0) {
       List<Widget> requests = [];
-      for (Member member in (_pendingMembers.length > 2 && _showAllRequestVisibility) ? _pendingMembers.sublist(0, 1) : _pendingMembers) {
+      for (Member? member in (_pendingMembers!.length > 2 && _showAllRequestVisibility) ? _pendingMembers!.sublist(0, 1) : _pendingMembers!) {
         if(requests.isNotEmpty){
           requests.add(Container(height: 10,));
         }
         requests.add(_PendingMemberCard(member: member, group: _group,));
       }
 
-      if(_pendingMembers.length > 2 && _showAllRequestVisibility){
+      if(_pendingMembers!.length > 2 && _showAllRequestVisibility){
         requests.add(Container(
           padding: EdgeInsets.only(top: 20, bottom: 10),
           child: SmallRoundedButton(
-            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests").replaceAll("#", _pendingMembers.length.toString()),
+            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests")!.replaceAll("#", _pendingMembers!.length.toString()),
             hint: Localization().getStringEx("panel.manage_members.button.see_all_requests.hint", ""),
             onTap: () {
               Analytics().logSelect(target: 'See all requests');
@@ -209,8 +210,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   Widget _buildMembers(){
     if((_members?.length ?? 0) > 0) {
       List<Widget> members = [];
-      for (Member member in _members) {
-        if(_selectedMembersFilter != _allMembersFilter && _selectedMembersFilter != member.officerTitle){
+      for (Member? member in _members!) {
+        if(_selectedMembersFilter != _allMembersFilter && _selectedMembersFilter != member!.officerTitle){
           continue;
         }
         if(members.isNotEmpty){
@@ -250,12 +251,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        color: Styles().colors.white,
+        color: Styles().colors!.white,
         child: Row(
           children: <Widget>[
             Expanded(
               child: Container(
-                child: GroupDropDownButton<String>(
+                child: GroupDropDownButton<String?>(
                   emptySelectionText: _allMembersFilter,
                   initialSelectedValue: _allMembersFilter,
                   items: _membersFilter,
@@ -278,24 +279,24 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 }
 
 class _PendingMemberCard extends StatelessWidget {
-  final Member member;
-  final Group group;
-  _PendingMemberCard({@required this.member, this.group});
+  final Member? member;
+  final Group? group;
+  _PendingMemberCard({required this.member, this.group});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Styles().colors.white,
+          color: Styles().colors!.white,
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(65),
-            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member.photoURL, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+            child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
           ),
           Expanded(
             child: Padding(
@@ -306,18 +307,18 @@ class _PendingMemberCard extends StatelessWidget {
                   Text(
                     member?.name ?? "",
                     style: TextStyle(
-                      fontFamily: Styles().fontFamilies.bold,
+                      fontFamily: Styles().fontFamilies!.bold,
                       fontSize: 20,
-                      color: Styles().colors.fillColorPrimary
+                      color: Styles().colors!.fillColorPrimary
                     ),
                   ),
                   Container(height: 4,),
                       ScalableRoundedButton(
                         label: Localization().getStringEx("panel.manage_members.button.review_request.title", "Review request"),
                         hint: Localization().getStringEx("panel.manage_members.button.review_request.hint", ""),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         fontSize: 16,
                         rightIcon: Image.asset('images/chevron-right.png'),
                         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -338,9 +339,9 @@ class _PendingMemberCard extends StatelessWidget {
 }
 
 class _GroupMemberCard extends StatelessWidget{
-  final Member member;
-  final Group group;
-  _GroupMemberCard({@required this.member, @required this.group});
+  final Member? member;
+  final Group? group;
+  _GroupMemberCard({required this.member, required this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -348,16 +349,16 @@ class _GroupMemberCard extends StatelessWidget{
       onTap: ()=>_onTapMemberCard(context),
       child: Container(
         decoration: BoxDecoration(
-            color: Styles().colors.white,
+            color: Styles().colors!.white,
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)
         ),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(65),
-              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member.photoURL, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
+              child: Container(width: 65, height: 65 ,child: AppString.isStringNotEmpty(member?.photoURL) ? Image.network(member!.photoURL!, excludeFromSemantics: true) : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true)),
             ),
             Expanded(
               child: Padding(
@@ -371,9 +372,9 @@ class _GroupMemberCard extends StatelessWidget{
                           Text(
                             member?.name ?? "",
                             style: TextStyle(
-                                fontFamily: Styles().fontFamilies.bold,
+                                fontFamily: Styles().fontFamilies!.bold,
                                 fontSize: 20,
-                                color: Styles().colors.fillColorPrimary
+                                color: Styles().colors!.fillColorPrimary
                             ),
                           )
                         )
@@ -385,15 +386,15 @@ class _GroupMemberCard extends StatelessWidget{
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: groupMemberStatusToColor(member.status),
+                            color: groupMemberStatusToColor(member!.status),
                             borderRadius: BorderRadius.all(Radius.circular(2)),
                           ),
                           child: Center(
-                            child: Text(groupMemberStatusToDisplayString(member.status).toUpperCase(),
+                            child: Text(groupMemberStatusToDisplayString(member!.status)!.toUpperCase(),
                               style: TextStyle(
-                                  fontFamily: Styles().fontFamilies.bold,
+                                  fontFamily: Styles().fontFamilies!.bold,
                                   fontSize: 12,
-                                  color: Styles().colors.white
+                                  color: Styles().colors!.white
                               ),
                             ),
                           ),

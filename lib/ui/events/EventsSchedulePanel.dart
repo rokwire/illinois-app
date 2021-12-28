@@ -48,7 +48,7 @@ enum _EventFilterType { categories, event_tags}
 
 class EventsSchedulePanel extends StatefulWidget {
 
-  final Event superEvent;
+  final Event? superEvent;
 
   EventsSchedulePanel({ this.superEvent});
 
@@ -58,26 +58,26 @@ class EventsSchedulePanel extends StatefulWidget {
 
 class EventsSchedulePanelState extends State<EventsSchedulePanel>
     with SingleTickerProviderStateMixin implements NotificationsListener {
-  List<Event> _events;
+  List<Event>? _events;
 
   List<_EventTab> _eventTabs = [];
   _EventTab  _selectedTab = _EventTab.All;
 
-  Map<String,Map<String,List<Event>>> _sortedEvents;
-  List<dynamic> _eventCategories;
-  List<String> _eventTags;
+  Map<String,Map<String,List<Event>>>? _sortedEvents;
+  List<dynamic>? _eventCategories;
+  List<String>? _eventTags;
   //Search tags
-  List<String> _visibleTags;
+  List<String>? _visibleTags;
   TextEditingController _textEditingController = TextEditingController();
   //
 
-  List<Event> _displayEvents;
+  List<Event>? _displayEvents;
 
-  Position _locationData;
-  LocationServicesStatus _locationServicesStatus;
+  Position? _locationData;
+  LocationServicesStatus? _locationServicesStatus;
 
-  List<_EventFilter> _tabFilters;
-  _EventFilter _initialSelectedFilter;
+  List<_EventFilter>? _tabFilters;
+  _EventFilter? _initialSelectedFilter;
   bool _filterOptionsVisible = false;
 
   ScrollController _scrollController = ScrollController();
@@ -85,11 +85,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   //Maps
   static const double MapBarHeight = 114;
 
-  bool _mapAllowed;
-  MapController _nativeMapController;
+  bool? _mapAllowed;
+  MapController? _nativeMapController;
   ListMapDisplayType _displayType = ListMapDisplayType.List;
   dynamic _selectedMapExplore;
-  AnimationController _mapExploreBarAnimationController;
+  late AnimationController _mapExploreBarAnimationController;
 
   bool _showSavedContent = false; //All by default
 
@@ -125,7 +125,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule'),
+        titleWidget: Text(Localization().getStringEx('panel.events_schedule.header.title', 'Event Schedule')!,
           style: TextStyle(
               color: Colors.white,
               fontSize: 16,
@@ -144,7 +144,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                 onTapList: () => _selectDisplayType(ListMapDisplayType.List),
                 onTapMap: () => _selectDisplayType(ListMapDisplayType.Map),),
             ),
-            Container( color: Styles().colors.white,
+            Container( color: Styles().colors!.white,
                    child : Padding(
                         padding: EdgeInsets.all(12),
                         child: Row(
@@ -159,7 +159,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container( color: Styles().colors.white,
+                      Container( color: Styles().colors!.white,
                         width: double.infinity,
                         child :
                         SingleChildScrollView(
@@ -173,7 +173,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       )),
                       Expanded(
                           child: Container(
-                            color: Styles().colors.background,
+                            color: Styles().colors!.background,
                             child: Center(
                               child: Stack(
                                 children: <Widget>[
@@ -190,7 +190,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               ),
             )
           ]),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -219,7 +219,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
     return Visibility(visible: (_displayType == ListMapDisplayType.List), child:
       Stack(children: [
-        Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors.background, child: exploresContent),
+        Container(padding: EdgeInsets.symmetric(horizontal: 16), color: Styles().colors!.background, child: exploresContent),
         _buildDimmedContainer(),
       ])
     );
@@ -228,10 +228,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   List<Widget> _constructListContent() {
     List<Widget> content = [];
     content.add(Container(height: 12));
-    if (_sortedEvents != null && _sortedEvents.isNotEmpty) {
-      for (String date in _sortedEvents.keys) {
-        content.add(_buildDateTitle(date));
-        Map categoryEvents = _sortedEvents[date];
+    if (_sortedEvents != null && _sortedEvents!.isNotEmpty) {
+      for (String? date in _sortedEvents!.keys) {
+        content.add(_buildDateTitle(date!));
+        Map? categoryEvents = _sortedEvents![date];
         if (categoryEvents != null && categoryEvents.isNotEmpty) {
           for (String category in categoryEvents.keys) {
             if (AppString.isStringNotEmpty(category)) {
@@ -254,8 +254,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Text(date,
       style: TextStyle(
         fontSize: 20,
-        color: Styles().colors.fillColorPrimary,
-        fontFamily: Styles().fontFamilies.extraBold
+        color: Styles().colors!.fillColorPrimary,
+        fontFamily: Styles().fontFamilies!.extraBold
       ),
     );
   }
@@ -264,8 +264,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Text(category,
         style: TextStyle(
             fontSize: 16,
-            color: Styles().colors.textBackground,
-            fontFamily: Styles().fontFamilies.extraBold
+            color: Styles().colors!.textBackground,
+            fontFamily: Styles().fontFamilies!.extraBold
         ));
   }
 
@@ -274,12 +274,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   //Event utils
-  String getEventDate(Event event) {
+  String? getEventDate(Event event) {
     return AppDateTime().getDisplayDay(dateTimeUtc: event.startDateGmt, allDay: event.allDay);
   }
 
   Widget _buildEmpty() {
-    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.');
+    String message =  Localization().getStringEx('panel.events_schedule.empty.events', 'No events.')!;
     return Container(child: Align(alignment: Alignment.center,
       child: Text(message, textAlign: TextAlign.center,),
     ));
@@ -307,9 +307,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   Widget _buildFilterValuesContainer() {
     
-    _EventFilter selectedFilter;
+    _EventFilter? selectedFilter;
     if (AppCollection.isCollectionNotEmpty(_tabFilters)) {
-      for (_EventFilter filter in _tabFilters) {
+      for (_EventFilter filter in _tabFilters!) {
         if (filter.active) {
           selectedFilter = filter;
           break;
@@ -319,14 +319,14 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     if (selectedFilter == null) {
       return Container();
     }
-    List<String> filterValues = _getFilterValuesByType(selectedFilter.type);
+    List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
     return Visibility(
       visible: _filterOptionsVisible,
       child: Padding(
           padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40),
           child: Container(
             decoration: BoxDecoration(
-              color: Styles().colors.fillColorSecondary,
+              color: Styles().colors!.fillColorSecondary,
               borderRadius: BorderRadius.circular(5.0),
             ),
             child: Padding(
@@ -337,18 +337,18 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   shrinkWrap: true,
                   separatorBuilder: (context, index) => Divider(
                     height: 1,
-                    color: Styles().colors.fillColorPrimaryTransparent03,
+                    color: Styles().colors!.fillColorPrimaryTransparent03,
                   ),
                   itemCount: filterValues.length + 1, // 1 ForSearchField
                   itemBuilder: (context, index) {
                     var filterIndex = index - 1;// 1 for Search field
-                    return index == 0 ? constructSearchField(selectedFilter) :
+                    return index == 0 ? constructSearchField(selectedFilter!) :
                     FilterListItemWidget(
                       label: filterValues[filterIndex],
-                      selected: (selectedFilter.selectedIndexes != null && selectedFilter.selectedIndexes.contains(filterIndex)),
+                      selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(filterIndex)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: "+filterValues[filterIndex]);
-                        _onFilterValueClick(selectedFilter, filterIndex);
+                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[filterIndex]}");
+                        _onFilterValueClick(selectedFilter!, filterIndex);
                       },
                     );
                   },
@@ -380,12 +380,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   onChanged: (text) => _onTextChanged(text),
                   onSubmitted: (_) => _onTapSearchTags(),
                   autofocus: true,
-                  cursorColor: Styles().colors.fillColorSecondary,
+                  cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
                   style: TextStyle(
                       fontSize: 16,
-                      fontFamily: Styles().fontFamilies.regular,
-                      color: Styles().colors.textBackground),
+                      fontFamily: Styles().fontFamilies!.regular,
+                      color: Styles().colors!.textBackground),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -402,7 +402,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                 onTap: _onTapSearchTags,
                 child: Image.asset(
                   'images/icon-search.png',
-                  color: Styles().colors.fillColorSecondary,
+                  color: Styles().colors!.fillColorSecondary,
                   width: 25,
                   height: 25,
                 ),
@@ -436,7 +436,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   void _onFilterTypeClicked(_EventFilter selectedFilter) {
     _refresh(() {
       if (_tabFilters != null) {
-        for (_EventFilter filter in _tabFilters) {
+        for (_EventFilter filter in _tabFilters!) {
           if (filter != selectedFilter) {
             filter.active = false;
           }
@@ -457,7 +457,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _refreshEvents();
   }
 
-  List<String> _getFilterValuesByType(_EventFilterType filterType) {
+  List<String>? _getFilterValuesByType(_EventFilterType filterType) {
     switch (filterType) {
       case _EventFilterType.categories:
         return _getFilterCategoriesValues();
@@ -468,7 +468,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  String _getFilterHintByType(_EventFilterType filterType) {
+  String? _getFilterHintByType(_EventFilterType filterType) {
     switch (filterType) {
       case _EventFilterType.categories:
         return Localization().getStringEx('panel.events_schedule.filter.categories.hint', '');
@@ -479,24 +479,24 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  List<String> _getFilterCategoriesValues() {
+  List<String>? _getFilterCategoriesValues() {
     if (AppCollection.isCollectionEmpty(_eventCategories)) {
       return null;
     }
     List<String> categoriesValues = [];
-    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks'));
-    for (var category in _eventCategories) {
+    categoriesValues.add(Localization().getStringEx('panel.events_schedule.filter.tracks.all', 'All Tracks')!);
+    for (var category in _eventCategories!) {
       categoriesValues.add(category);
     }
     return categoriesValues;
   }
 
-  List<String> _getFilterTagsValues() {
+  List<String>? _getFilterTagsValues() {
     List<String> tagsValues = [];
-    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags'));
+    tagsValues.add(Localization().getStringEx('panel.events_schedule.filter.tags.all', 'All Tags')!);
 
     if (_visibleTags != null) {
-      for (var tag in _visibleTags) {
+      for (var tag in _visibleTags!) {
         tagsValues.add(tag);
       }
     }
@@ -510,22 +510,22 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       return filterTypeWidgets;
     }
 
-    for (int i = 0; i < _tabFilters.length; i++) {
-      _EventFilter selectedFilter = _tabFilters[i];
+    for (int i = 0; i < _tabFilters!.length; i++) {
+      _EventFilter selectedFilter = _tabFilters![i];
       if (_initialSelectedFilter != null &&
-          _initialSelectedFilter.type == selectedFilter.type) {
+          _initialSelectedFilter!.type == selectedFilter.type) {
         selectedFilter = _EventFilter(
-            type: _initialSelectedFilter.type,
-            selectedIndexes: _initialSelectedFilter.selectedIndexes,
-            active: _initialSelectedFilter.active);
+            type: _initialSelectedFilter!.type,
+            selectedIndexes: _initialSelectedFilter!.selectedIndexes,
+            active: _initialSelectedFilter!.active);
         _initialSelectedFilter = null;
       }
-      List<String> filterValues = _getFilterValuesByType(selectedFilter.type);
+      List<String>? filterValues = _getFilterValuesByType(selectedFilter.type);
       if (AppCollection.isCollectionEmpty(filterValues)) {
         continue;
       }
       int filterValueIndex = selectedFilter.firstSelectedIndex;
-      String filterHeaderLabel = filterValues[filterValueIndex];
+      String? filterHeaderLabel = filterValues![filterValueIndex];
       filterTypeWidgets.add(FilterSelectorWidget(
         label: filterHeaderLabel,
         hint: _getFilterHintByType(selectedFilter.type),
@@ -576,13 +576,13 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _refresh((){});
   }
 
-  void _refresh(Function fn){
+  void _refresh(void fn()){
     if(mounted) {
       this.setState(fn);
     }
   }
 
-  static String eventTabName(_EventTab exploreTab) {
+  static String? eventTabName(_EventTab exploreTab) {
     switch (exploreTab) {
       case _EventTab.All:    return Localization().getStringEx('panel.events_schedule.button.all.title', 'All');
       case _EventTab.Saved:  return Localization().getStringEx('panel.events_schedule.tab.title.saved', 'Saved');
@@ -590,7 +590,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  static String exploreTabHint(_EventTab exploreTab) {
+  static String? exploreTabHint(_EventTab exploreTab) {
     switch (exploreTab) {
       case _EventTab.All:    return Localization().getStringEx('panel.events_schedule.button.all.hint', '');
       case _EventTab.Saved:  return Localization().getStringEx('panel.events_schedule.tab.title.saved', 'Saved');
@@ -601,16 +601,16 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   ///Maps
   ///
   Widget _buildMapView(BuildContext context) {
-    String title, description;
-    Color exploreColor = Colors.white;
+    String? title, description;
+    Color? exploreColor = Colors.white;
     if (_selectedMapExplore is Event) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
       exploreColor = _selectedMapExplore.uiColor;
     }
     else if  (_selectedMapExplore is List<Event>) {
-      String exploreName = ExploreHelper.getExploresListDisplayTitle(_selectedMapExplore);
-      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
+      String? exploreName = ExploreHelper.getExploresListDisplayTitle(_selectedMapExplore);
+      title = sprintf(Localization().getStringEx('panel.events_schedule.map.popup.title.format', '%d %s')!, [_selectedMapExplore?.length, exploreName]);
       description = _selectedMapExplore?.first?.exploreLocation?.description;
       exploreColor = _selectedMapExplore.first?.uiColor;
     }
@@ -629,8 +629,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
             height: MapBarHeight,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border(top: BorderSide(color: exploreColor, width: 2, style: BorderStyle.solid),
-                  bottom: BorderSide(color: Styles().colors.surfaceAccent, width: 1, style: BorderStyle.solid)),
+              border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid),
+                  bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid)),
             ),
             child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -640,14 +640,14 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                       Text((title != null) ? title : "",
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Styles().colors.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies.extraBold,
+                              color: Styles().colors!.fillColorPrimary,
+                              fontFamily: Styles().fontFamilies!.extraBold,
                               fontSize: 20)),
                       Text((description != null) ? description : "",
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               color: Colors.black38,
-                              fontFamily: Styles().fontFamilies.medium,
+                              fontFamily: Styles().fontFamilies!.medium,
                               fontSize: 16)),
                       Container(
                         height: 8,
@@ -663,8 +663,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                                     backgroundColor: Colors.white,
                                     height: 32,
                                     fontSize: 16.0,
-                                    textColor: Styles().colors.fillColorPrimary,
-                                    borderColor: Styles().colors.fillColorSecondary,
+                                    textColor: Styles().colors!.fillColorPrimary,
+                                    borderColor: Styles().colors!.fillColorSecondary,
                                     padding: EdgeInsets.symmetric(horizontal: 24),
                                     onTap: () {
                                       Analytics.instance.logSelect(target: 'Directions');
@@ -681,8 +681,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                               backgroundColor: Colors.white,
                               height: 32,
                               fontSize: 16.0,
-                              textColor: Styles().colors.fillColorPrimary,
-                              borderColor: Styles().colors.fillColorSecondary,
+                              textColor: Styles().colors!.fillColorPrimary,
+                              borderColor: Styles().colors!.fillColorSecondary,
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               onTap: () {
                                 Analytics.instance.logSelect(target: 'Details');
@@ -726,9 +726,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     });
 
     if (explore is Explore) {
-      Event event = (explore is Event) ? explore : null;
+      Event? event = (explore is Event) ? explore : null;
       if (event?.isGameEvent ?? false) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: event.speaker, sportName: event.registrationLabel,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: event!.speaker, sportName: event.registrationLabel,)));
       }
       else {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: explore, initialLocationData: _locationData,)));
@@ -746,29 +746,29 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _enableMyLocationOnMap();
   }
 
-  _placeEventOnMap(List<Event> explores) {
+  _placeEventOnMap(List<Event>? explores) {
     if (_nativeMapController != null) {
-      _nativeMapController.placePOIs(explores);
+      _nativeMapController!.placePOIs(explores);
     }
   }
 
   _enableMap(bool enable) {
     if (_nativeMapController != null) {
-      _nativeMapController.enable(enable);
+      _nativeMapController!.enable(enable);
       Analytics().logMapDisplay(action: enable ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
     }
   }
 
   _enableMyLocationOnMap() {
     if (_nativeMapController != null) {
-      _nativeMapController.enableMyLocation(_userLocationEnabled());
+      _nativeMapController!.enableMyLocation(_userLocationEnabled());
     }
   }
 
-  Explore _exploreFromMapExplore(Explore mapExplore) {
-    String mapExploreId = mapExplore?.exploreId;
+  Explore? _exploreFromMapExplore(Explore? mapExplore) {
+    String? mapExploreId = mapExplore?.exploreId;
     if ((_displayEvents != null) && (mapExploreId != null)) {
-      for (Explore displayExplore in _displayEvents) {
+      for (Explore displayExplore in _displayEvents!) {
         if ((displayExplore.runtimeType.toString() == mapExplore.runtimeType.toString()) && (displayExplore.exploreId != null) && (displayExplore.exploreId == mapExploreId)) {
           return displayExplore;
         }
@@ -777,7 +777,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return mapExplore; // null;
   }
 
-  List<Explore> _exploresFromMapExplores(List<Explore> mapExplores) {
+  List<Explore> _exploresFromMapExplores(List<Explore>? mapExplores) {
     List<Explore> explores = [];
     if (mapExplores != null) {
       for (Explore mapExplore in mapExplores) {
@@ -808,29 +808,29 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       return;
     }
     _sortedEvents = Map();
-    for(Event event in _events){
+    for(Event event in _events!){
         if(!_isEventMatchFilters(event)){
           continue;
         }
         //Sort by date
-        String eventDate = getEventDate(event);
-        Map<String,List<Event>> eventsForDate;
-        if(_sortedEvents.containsKey(eventDate))
-          eventsForDate = _sortedEvents[eventDate];
-        else {
-          eventsForDate = Map();
-          _sortedEvents[eventDate] = eventsForDate;
+        String? eventDate = getEventDate(event);
+        Map<String,List<Event>>? eventsForDate;
+        if(_sortedEvents!.containsKey(eventDate)) {
+          eventsForDate = _sortedEvents![eventDate];
+        }
+        else if (eventDate != null) {
+          _sortedEvents![eventDate] = eventsForDate = Map();
         }
         //Sort By Category
-        String category = event.track;
-        List<Event> eventsForCategory;
-        if(eventsForDate.containsKey(category))
+        String? category = event.track;
+        List<Event>? eventsForCategory;
+        if(eventsForDate!.containsKey(category)) {
           eventsForCategory = eventsForDate[category];
-        else {
-          eventsForCategory = [];
-          eventsForDate[category] = eventsForCategory;
         }
-        eventsForCategory.add(event);
+        else if (category != null) {
+          eventsForDate[category] = eventsForCategory = [];
+        }
+        eventsForCategory!.add(event);
     }
   }
 
@@ -840,7 +840,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       }
 
       //Categories
-      Set<dynamic> filteredCategories = getSelectedCategories(_tabFilters);
+      Set<dynamic>? filteredCategories = getSelectedCategories(_tabFilters);
       if(filteredCategories!=null && filteredCategories.isNotEmpty){
         if(!filteredCategories.contains(event.track)){
           return false;
@@ -848,7 +848,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       }
 
       //Tags
-      Set<dynamic> filteredTags = getSelectedTags(_tabFilters);
+      Set<dynamic>? filteredTags = getSelectedTags(_tabFilters);
       if(filteredTags!=null && filteredTags.isNotEmpty){
         return event.tags?.any((String tag) => filteredTags.contains(tag)) ?? false;
       }
@@ -859,23 +859,23 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   void _initEventsCategories() {
     _eventCategories = [];
     if (AppCollection.isCollectionNotEmpty(_events)) {
-      for (Event event in _events) {
-        String track = event.track;
-        if (AppString.isStringNotEmpty(track) && !_eventCategories.contains(track))
-          _eventCategories.add(track);
+      for (Event event in _events!) {
+        String? track = event.track;
+        if (AppString.isStringNotEmpty(track) && !_eventCategories!.contains(track))
+          _eventCategories!.add(track);
       }
     }
   }
 
   _initEventTags(){
     _eventTags = [];
-    if(_events!=null && _events.isNotEmpty){
-      for (Event event in _events){
-        List<String> eventTags = event.tags;
+    if(_events!=null && _events!.isNotEmpty){
+      for (Event event in _events!){
+        List<String>? eventTags = event.tags;
         if(eventTags!=null && eventTags.isNotEmpty) {
           for(String eventTag in eventTags) {
-            if(!_eventTags.contains(eventTag))
-              _eventTags.add(eventTag);
+            if(!_eventTags!.contains(eventTag))
+              _eventTags!.add(eventTag);
           }
         }
       }
@@ -884,42 +884,42 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _refreshVisibleSearchTags(){
     _visibleTags = _eventTags;
-    String searchPattern = _textEditingController?.text?.toString();
+    String searchPattern = _textEditingController.text;
     if( AppString.isStringNotEmpty(searchPattern)){
-      _visibleTags = _eventTags.where((String tag){
-          return tag?.startsWith(searchPattern);
+      _visibleTags = _eventTags!.where((String tag){
+          return tag.startsWith(searchPattern);
       }).toList();
     }
   }
 
-  Set<dynamic> getSelectedCategories(List<_EventFilter> selectedFilterList) {
-    _EventFilter categoriesFilter = selectedFilterList != null && selectedFilterList.length > 0 ? selectedFilterList[0] : null; //Index 0 are Categories
+  Set<dynamic>? getSelectedCategories(List<_EventFilter>? selectedFilterList) {
+    _EventFilter? categoriesFilter = selectedFilterList != null && selectedFilterList.length > 0 ? selectedFilterList[0] : null; //Index 0 are Categories
     if (categoriesFilter != null) {
       Set<int> selextedIndexes = categoriesFilter.selectedIndexes;
-      if (selextedIndexes == null || selextedIndexes.isEmpty ||
+      if (selextedIndexes.isEmpty ||
           selextedIndexes.contains(0)) {
         return null; //All Categories
       } else {
-        return _eventCategories.where((dynamic category){
-          return selextedIndexes.contains(_eventCategories.indexOf(category.toString()) + 1); //1 for the All categories button
-        })?.toSet();
+        return _eventCategories!.where((dynamic category){
+          return selextedIndexes.contains(_eventCategories!.indexOf(category.toString()) + 1); //1 for the All categories button
+        }).toSet();
       }
     }
 
     return null;
   }
 
-  Set<dynamic> getSelectedTags(List<_EventFilter> selectedFilterList) {
-    _EventFilter categoriesFilter = selectedFilterList != null && selectedFilterList.length > 1 ? selectedFilterList[1] : null; //Index 1 are Tags
+  Set<dynamic>? getSelectedTags(List<_EventFilter>? selectedFilterList) {
+    _EventFilter? categoriesFilter = selectedFilterList != null && selectedFilterList.length > 1 ? selectedFilterList[1] : null; //Index 1 are Tags
     if (categoriesFilter != null) {
       Set<int> selextedIndexes = categoriesFilter.selectedIndexes;
-      if (selextedIndexes == null || selextedIndexes.isEmpty ||
+      if (selextedIndexes.isEmpty ||
           selextedIndexes.contains(0)) {
         return null; //All Categories
       } else {
-        return _eventTags.where((dynamic tag){
-          return selextedIndexes.contains(_eventTags.indexOf(tag) + 1);//1 for the All tags button
-        })?.toSet();
+        return _eventTags!.where((dynamic tag){
+          return selextedIndexes.contains(_eventTags!.indexOf(tag) + 1);//1 for the All tags button
+        }).toSet();
       }
     }
 
@@ -929,11 +929,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   //LocationServices
   _initLocationService(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
+      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
         if (_locationServicesStatus == LocationServicesStatus.PermissionNotDetermined) {
-          LocationServices.instance.requestPermission().then((LocationServicesStatus locationServicesStatus) {
+          LocationServices.instance.requestPermission().then((LocationServicesStatus? locationServicesStatus) {
             _locationServicesStatus = locationServicesStatus;
             _refresh((){});
           });
@@ -977,7 +977,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   _onPrivacyLevelChanged(){
     if (Auth2().privacyMatch(2)) {
-      LocationServices.instance.status.then((LocationServicesStatus locationServicesStatus) {
+      LocationServices.instance.status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
       });
@@ -987,18 +987,18 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onLocationServicesStatusChanged(LocationServicesStatus status) {
+  void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
     if (Auth2().privacyMatch(2)) {
       _locationServicesStatus = status;
       _refresh((){});
     }
   }
 
-  void _onNativeMapSelectExplore(int mapID, dynamic exploreJson) {
-    if (_nativeMapController.mapId == mapID) {
+  void _onNativeMapSelectExplore(int? mapID, dynamic exploreJson) {
+    if (_nativeMapController!.mapId == mapID) {
       dynamic explore;
       if (exploreJson is Map) {
-        explore = _exploreFromMapExplore(Explore.fromJson(exploreJson));
+        explore = _exploreFromMapExplore(Explore.fromJson(exploreJson as Map<String, dynamic>?));
       }
       else if (exploreJson is List) {
         explore = _exploresFromMapExplores(Explore.listFromJson(exploreJson));
@@ -1010,8 +1010,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapClearExplore(int mapID) {
-    if (_nativeMapController.mapId == mapID) {
+  void _onNativeMapClearExplore(int? mapID) {
+    if (_nativeMapController!.mapId == mapID) {
       _selectMapExplore(null);
     }
   }
@@ -1022,10 +1022,10 @@ class _EventFilter {
   Set<int> selectedIndexes;
   bool active;
 
-  _EventFilter({@required this.type, this.selectedIndexes = const {0}, this.active = false});
+  _EventFilter({required this.type, this.selectedIndexes = const {0}, this.active = false});
 
   int get firstSelectedIndex {
-    if (selectedIndexes == null || selectedIndexes.isEmpty) {
+    if (selectedIndexes.isEmpty) {
       return -1;
     }
     return selectedIndexes.first;
@@ -1033,10 +1033,10 @@ class _EventFilter {
 }
 
 class EventScheduleCard extends StatefulWidget {
-  final Event event;
+  final Event? event;
   final bool showHeader;
-  final Color headerColor;
-  final String superEventTitle;
+  final Color? headerColor;
+  final String? superEventTitle;
 
   EventScheduleCard({this.event, this.showHeader = false, this.headerColor, this.superEventTitle});
 
@@ -1076,19 +1076,19 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
 
     return GestureDetector(onTap: _onTapSubEvent, child: Semantics(
         button: true,
-        label: widget.event.title,
+        label: widget.event!.title,
         child: Column(
           children: <Widget>[
             Visibility(
               visible: widget.showHeader,
               child: Container(
                 height: headerHeight,
-                color: widget.headerColor ?? Styles().colors.fillColorSecondary,
+                color: widget.headerColor ?? Styles().colors!.fillColorSecondary,
               ),
             ),
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white, border: Border.all(color: Styles().colors.surfaceAccent, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
+                  color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 0), borderRadius: BorderRadius.all(Radius.circular(5))),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -1106,8 +1106,8 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                                   child: Image.asset("images/icon-calendar.png"))),
                           Expanded(
                             child: Text(
-                              widget.event.title,
-                              style: TextStyle(color: Styles().colors.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies.extraBold),
+                              widget.event!.title!,
+                              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold),
                             ),
                           ),
                           Visibility(
@@ -1138,7 +1138,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event.displaySuperTime, style: TextStyle(color: Styles().colors.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies.medium)),
+                    child: Text(widget.event!.displaySuperTime, style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
                   )
                 ]),
               ),
@@ -1153,12 +1153,12 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
 }
 
 class _EventTabView extends StatelessWidget{
-  final String text;
-  final bool left;
-  final bool selected;
-  final GestureTapCallback onTap;
+  final String? text;
+  final bool? left;
+  final bool? selected;
+  final GestureTapCallback? onTap;
 
-  _EventTabView({Key key, this.text, this.left, this.selected, this.onTap}) : super(key: key);
+  _EventTabView({Key? key, this.text, this.left, this.selected, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1172,13 +1172,13 @@ class _EventTabView extends StatelessWidget{
           child: Container(
             height: 48,
             decoration: BoxDecoration(
-              color: selected ? Colors.white : Color(0xffededed),
+              color: selected! ? Colors.white : Color(0xffededed),
               border: Border.all(color: Color(0xffc1c1c1), width: 1, style: BorderStyle.solid),
-              borderRadius: left ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
+              borderRadius: left! ? BorderRadius.horizontal(left: Radius.circular(100.0)) : BorderRadius.horizontal(right: Radius.circular(100.0)),
             ),
             child: Center(
-                child: Text(text,
-                    style: TextStyle(fontFamily: selected ? Styles().fontFamilies.extraBold : Styles().fontFamilies.medium, fontSize: 16, color: Styles().colors.fillColorPrimary))),
+                child: Text(text!,
+                    style: TextStyle(fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
           )),
     );
   }

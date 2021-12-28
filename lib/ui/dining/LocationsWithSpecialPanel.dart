@@ -31,13 +31,13 @@ import 'package:geolocator/geolocator.dart';
 
 class LocationsWithSpecialPanel extends StatefulWidget {
 
-  final DiningSpecial special;
+  final DiningSpecial? special;
 
-  final Position locationData;
+  final Position? locationData;
 
   final bool onlyOpened;
 
-  LocationsWithSpecialPanel({@required this.special, this.onlyOpened = false, this.locationData});
+  LocationsWithSpecialPanel({required this.special, this.onlyOpened = false, this.locationData});
 
   _LocationsWithSpecialPanelState createState() => _LocationsWithSpecialPanelState();
 }
@@ -46,7 +46,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
 
   bool _isLoading = false;
 
-  List<Dining> _locationList;
+  List<Dining>? _locationList;
 
   @override
   void initState() {
@@ -59,15 +59,15 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
       _isLoading = true;
     });
 
-    DiningService().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining> list){
+    DiningService().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining>? list){
       setState(() {
         _isLoading = false;
       });
 
       if(list != null){
-        if(widget.special.hasLocationIds) {
+        if(widget.special!.hasLocationIds) {
           _locationList = list.where((location) {
-            return widget.special.locationIds.contains(location.id);
+            return widget.special!.locationIds!.contains(location.id);
           }).toList();
         }
         setState(() {});
@@ -76,7 +76,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
   }
 
   bool get _hasLocations{
-    return _locationList != null && _locationList.isNotEmpty;
+    return _locationList != null && _locationList!.isNotEmpty;
   }
 
   @override
@@ -84,9 +84,9 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
     return Scaffold(
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.food_special_offers.title.text", "Specials"),
+        titleWidget: Text(Localization().getStringEx("panel.food_special_offers.title.text", "Specials")!,
           style: TextStyle(
-              fontFamily: Styles().fontFamilies.extraBold,
+              fontFamily: Styles().fontFamilies!.extraBold,
               fontSize: 16
           ),
         ),
@@ -100,7 +100,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
           ),
         ],
       ),
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       bottomNavigationBar: TabBarWidget(),
     );
   }
@@ -129,9 +129,9 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
               children: <Widget>[
                 Container(height: 16,),
                 Html(
-                  data: widget.special.text ?? "",
+                  data: widget.special!.text ?? "",
                   style: {
-                    "body": Style(fontFamily: Styles().fontFamilies.regular, color: Styles().colors.textBackground,)
+                    "body": Style(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground,)
                   },
                 ),
                 /*Text(
@@ -144,12 +144,12 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
                 ),*/
                 Container(height: 20,),
                 Text(_hasLocations
-                    ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")
-                    : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations"),
+                    ? Localization().getStringEx("panel.food_special_offers.available.text", "Available at these locations")!
+                    : Localization().getStringEx("panel.food_special_offers.not_available.text", "No available locations")!,
                   style: TextStyle(
-                      fontFamily: Styles().fontFamilies.extraBold,
+                      fontFamily: Styles().fontFamilies!.extraBold,
                       fontSize: 16,
-                      color: Styles().colors.textBackground
+                      color: Styles().colors!.textBackground
                   ),
                 ),
                 Container(height: 16,),
@@ -168,13 +168,13 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
     List<Widget> list = [];
 
     if(_hasLocations) {
-      for (Dining dining in _locationList) {
+      for (Dining? dining in _locationList!) {
         if (list.isNotEmpty) {
           list.add(Container(height: 10,));
         }
         list.add(ExploreCard(
             explore: dining,
-            onTap: () => _onDiningTap(dining),
+            onTap: () => _onDiningTap(dining!),
             locationData: widget.locationData,
             hideInterests: true,
             showTopBorder: true)

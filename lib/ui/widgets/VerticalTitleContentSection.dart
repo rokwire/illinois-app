@@ -18,12 +18,12 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
 
 class VerticalTitleContentSection extends StatelessWidget {
-  final String title;
-  final String content;
+  final String? title;
+  final String? content;
   final double bottomPadding;
 
   const VerticalTitleContentSection(
-      {Key key, this.title, this.content, this.bottomPadding = 16})
+      {Key? key, this.title, this.content, this.bottomPadding = 16})
       : super(key: key);
 
   @override
@@ -39,7 +39,7 @@ class VerticalTitleContentSection extends StatelessWidget {
           Container(
               decoration: BoxDecoration(
                   border: Border(
-                      left: BorderSide(color: Styles().colors.fillColorSecondary, width: 3))
+                      left: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 3))
               ),
               child: Padding(padding: EdgeInsets.only(left: 10, right: 5),
                   child:
@@ -47,18 +47,18 @@ class VerticalTitleContentSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        title,
+                        title!,
                         maxLines: 1,
                         style: TextStyle(
-                            color: Styles().colors.fillColorPrimary,
+                            color: Styles().colors!.fillColorPrimary,
                             fontSize: 14,
-                            fontFamily: Styles().fontFamilies.regular),
+                            fontFamily: Styles().fontFamilies!.regular),
                       ),
-                      Text(content,
+                      Text(content!,
                           style: TextStyle(
-                              color: Styles().colors.fillColorPrimary,
+                              color: Styles().colors!.fillColorPrimary,
                               fontSize: 24,
-                              fontFamily: Styles().fontFamilies.extraBold)
+                              fontFamily: Styles().fontFamilies!.extraBold)
                       )
                     ],
                   )

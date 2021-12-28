@@ -21,6 +21,7 @@ import 'package:illinois/service/Service.dart';
 import 'package:illinois/service/Storage.dart';
 
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class RecentItems with Service implements NotificationsListener {
   
@@ -59,9 +60,9 @@ class RecentItems with Service implements NotificationsListener {
     return Set.from([Storage()]);
   }
 
-  void addRecentItem(RecentItem item) {
+  void addRecentItem(RecentItem? item) {
 
-    if ((item == null) || (recentItems?.contains(item) == true)) {
+    if ((item == null) || (recentItems.contains(item) == true)) {
       return;
     }
     recentItems.addFirst(item);
@@ -74,11 +75,11 @@ class RecentItems with Service implements NotificationsListener {
   }
 
   void _loadRecentItems() {
-    List<dynamic> jsonListData = Storage().recentItems;
+    List<dynamic>? jsonListData = Storage().recentItems;
     if (jsonListData != null) {
       List<RecentItem> recentItemsList = [];
-      for (Map<String, dynamic> jsonData in jsonListData) {
-        recentItemsList.add(RecentItem.fromJson(jsonData));
+      for (dynamic jsonData in jsonListData) {
+        AppList.add(recentItemsList, RecentItem.fromJson(AppJson.mapValue(jsonData) ));
       }
       _recentItems = Queue.from(recentItemsList);
       _notifyRecentItemsChanged();

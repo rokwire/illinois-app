@@ -42,7 +42,7 @@ class HomeCampusToolsWidget extends StatefulWidget {
 
 class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implements NotificationsListener {
 
-  List<dynamic> _contentListCodes;
+  List<dynamic>? _contentListCodes;
 
   @override
   void initState() {
@@ -61,8 +61,8 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
     super.dispose();
   }
 
-  Widget _widgetFromCode(BuildContext context, String code, int countPerRow) {
-    String label, hint, iconPath;
+  Widget? _widgetFromCode(BuildContext context, String code, int countPerRow) {
+    String? label, hint, iconPath;
     GestureTapCallback onTap;
     if (code == 'events') {
       label = Localization().getStringEx('widget.home_campus_tools.button.events.title', 'Events');
@@ -120,10 +120,12 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   Widget build(BuildContext context) {
     List<Widget> widgets = [];
     final int widgetsPerRow = 2;
-    for (String code in _contentListCodes) {
-      Widget widget = _widgetFromCode(context, code, widgetsPerRow);
-      if (widget != null) {
-        widgets.add(widget);
+    if (_contentListCodes != null) {
+      for (String code in _contentListCodes!) {
+        Widget? widget = _widgetFromCode(context, code, widgetsPerRow);
+        if (widget != null) {
+          widgets.add(widget);
+        }
       }
     }
     int widgetsCount = widgets.length;
@@ -151,7 +153,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
   }
 
   void _updateContentListCodes() {
-    List<dynamic> contentListCodes = FlexUI()['home.content.campus_tools'];
+    List<dynamic>? contentListCodes = FlexUI()['home.content.campus_tools'];
     if ((contentListCodes != null) && !DeepCollectionEquality().equals(_contentListCodes, contentListCodes)) {
       setState(() {
         _contentListCodes = contentListCodes;
@@ -205,7 +207,7 @@ class _HomeCampusToolsWidgetState extends State<HomeCampusToolsWidget> implement
 
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
-      launch(Config().myIlliniUrl);
+      launch(Config().myIlliniUrl!);
 
       //
       // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,

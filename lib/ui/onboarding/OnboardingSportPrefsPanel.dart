@@ -26,7 +26,7 @@ import 'package:illinois/service/Styles.dart';
 import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingSportPrefsPanel extends StatefulWidget with OnboardingPanel {
-  final Map<String, dynamic> onboardingContext;
+  final Map<String, dynamic>? onboardingContext;
   OnboardingSportPrefsPanel({this.onboardingContext});
 
   @override
@@ -46,7 +46,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
           children: <Widget>[
             Expanded(
               child: Stack(
-                alignment: Alignment.lerp(Alignment.center, Alignment.bottomCenter, 0.3),
+                alignment: Alignment.lerp(Alignment.center, Alignment.bottomCenter, 0.3)!,
                 children: <Widget>[
                   Column(
                     children: <Widget>[
@@ -55,7 +55,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: <Widget>[
-                            Container(decoration: BoxDecoration(color: Styles().colors.background)),
+                            Container(decoration: BoxDecoration(color: Styles().colors!.background)),
                             Padding(
                                 padding: EdgeInsets.only(left: 64, right: 64, top: 30),
                                 child: Align(
@@ -66,7 +66,7 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                                     excludeSemantics: true,
                                     child: Text(
                                       getTitleText(),
-                                      style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 24, color: Styles().colors.fillColorPrimary),
+                                      style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -98,9 +98,9 @@ class _OnboardingSportPrefsPanelState extends State<OnboardingSportPrefsPanel> {
                           label: Localization().getStringEx('panel.onboarding.sports.button.continue.title', 'Explore Illinois'),
                           hint: Localization().getStringEx('panel.onboarding.sports.button.continue.hint', ''),
                           enabled: _allowNext,
-                          backgroundColor: (Styles().colors.background),
-                          borderColor: (_allowNext ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimaryTransparent03),
-                          textColor: (_allowNext ? Styles().colors.fillColorPrimary : Styles().colors.fillColorPrimaryTransparent03),
+                          backgroundColor: (Styles().colors!.background),
+                          borderColor: (_allowNext ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimaryTransparent03),
+                          textColor: (_allowNext ? Styles().colors!.fillColorPrimary : Styles().colors!.fillColorPrimaryTransparent03),
                           onTap: () => pushNextPanel()),
                     ),
                   )

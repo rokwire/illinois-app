@@ -26,9 +26,9 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class OnboardingUpgradePanel extends StatefulWidget {
-  final String requiredVersion;
-  final String availableVersion;
-  OnboardingUpgradePanel({Key key, this.requiredVersion, this.availableVersion})
+  final String? requiredVersion;
+  final String? availableVersion;
+  OnboardingUpgradePanel({Key? key, this.requiredVersion, this.availableVersion})
       : super(key: key);
 
   @override
@@ -43,23 +43,23 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
     App.instance.homeContext = context;
     Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
-    String appName = Localization().getStringEx('app.title', 'Illinois');
-    String appVersion = Config().appVersion;
-    String title, message;
+    String? appName = Localization().getStringEx('app.title', 'Illinois');
+    String? appVersion = Config().appVersion;
+    String? title, message;
     if (widget.requiredVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.required.label.title', 'Upgrade Required');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.'), [appName, appVersion, widget.requiredVersion])
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.required.label.description', '%s app version %s requires an upgrade to version %s or later.')!, [appName, appVersion, widget.requiredVersion])
       ;
     } else if (widget.availableVersion != null) {
       title = Localization().getStringEx('panel.onboarding.upgrade.available.label.title', 'Upgrade Available');
-      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.'), [appName, appVersion, widget.availableVersion]);
+      message = sprintf(Localization().getStringEx('panel.onboarding.upgrade.available.label.description', '%s app version %s has newer version %s available.')!, [appName, appVersion, widget.availableVersion]);
     }
-    String notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
-    String dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
+    String? notNow = Localization().getStringEx('panel.onboarding.upgrade.button.not_now.title', 'Not right now');
+    String? dontShow = Localization().getStringEx('panel.onboarding.upgrade.button.dont_show.title', 'Don\'t show again');
     bool canSkip = (widget.requiredVersion == null);
 
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SafeArea(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -76,12 +76,12 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
               child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                    title,
+                    title!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
+                        fontFamily: Styles().fontFamilies!.bold,
                         fontSize: 32,
-                        color: Styles().colors.fillColorPrimary),
+                        color: Styles().colors!.fillColorPrimary),
                   )),
             )),
             Expanded(
@@ -90,12 +90,12 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: Text(
-                        message,
+                        message!,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontFamily: Styles().fontFamilies.regular,
+                            fontFamily: Styles().fontFamilies!.regular,
                             fontSize: 20,
-                            color: Styles().colors.fillColorPrimary),
+                            color: Styles().colors!.fillColorPrimary),
                       ),
                     ))),
             Padding(
@@ -106,7 +106,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                   RoundedButton(
                     label: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.title', 'Upgrade'),
                     hint: Localization().getStringEx('panel.onboarding.upgrade.button.upgrade.hint', ''),
-                    backgroundColor: Styles().colors.fillColorSecondary,
+                    backgroundColor: Styles().colors!.fillColorSecondary,
                     onTap: () => _onUpgradeClicked(context),
                   ),
                   canSkip
@@ -123,15 +123,15 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 20),
                                       child: Text(
-                                        dontShow,
+                                        dontShow!,
                                         style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.medium,
+                                            fontFamily: Styles().fontFamilies!.medium,
                                             fontSize: 16,
-                                            color: Styles().colors.fillColorPrimary,
+                                            color: Styles().colors!.fillColorPrimary,
                                             decoration:
                                                 TextDecoration.underline,
                                             decorationColor:
-                                                Styles().colors.fillColorSecondary,
+                                                Styles().colors!.fillColorSecondary,
                                             decorationThickness: 1,
                                             decorationStyle:
                                                 TextDecorationStyle.solid),
@@ -149,15 +149,15 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 20),
                                       child: Text(
-                                        notNow,
+                                        notNow!,
                                         style: TextStyle(
-                                            fontFamily: Styles().fontFamilies.medium,
+                                            fontFamily: Styles().fontFamilies!.medium,
                                             fontSize: 16,
-                                            color: Styles().colors.fillColorPrimary,
+                                            color: Styles().colors!.fillColorPrimary,
                                             decoration:
                                                 TextDecoration.underline,
                                             decorationColor:
-                                                Styles().colors.fillColorSecondary,
+                                                Styles().colors!.fillColorSecondary,
                                             decorationThickness: 1,
                                             decorationStyle:
                                                 TextDecorationStyle.solid),
@@ -176,7 +176,7 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
   }
 
   void _onUpgradeClicked(BuildContext context) async {
-    String upgradeUrl = Config().upgradeUrl;
+    String? upgradeUrl = Config().upgradeUrl;
     if ((upgradeUrl != null) && await url_launcher.canLaunch(upgradeUrl)) {
       await url_launcher.launch(upgradeUrl, forceSafariVC: false);
     }

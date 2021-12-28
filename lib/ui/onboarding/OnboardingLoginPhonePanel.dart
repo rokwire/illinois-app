@@ -27,8 +27,8 @@ import 'package:illinois/ui/widgets/ScalableWidgets.dart';
 
 class OnboardingLoginPhonePanel extends StatefulWidget with OnboardingPanel {
 
-  final Map<String, dynamic> onboardingContext;
-  final ValueSetter<dynamic> onFinish;
+  final Map<String, dynamic>? onboardingContext;
+  final ValueSetter<dynamic>? onFinish;
 
   OnboardingLoginPhonePanel({this.onboardingContext, this.onFinish});
 
@@ -50,10 +50,10 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
 
   @override
   Widget build(BuildContext context) {
-    String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number');
-    String skipTitle = Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.title', 'Not right now');
+    String titleString = Localization().getStringEx('panel.onboarding.login.phone.label.title', 'Verify your phone number')!;
+    String? skipTitle = Localization().getStringEx('panel.onboarding.login.phone.button.dont_continue.title', 'Not right now');
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: Stack(
           children: <Widget>[
             Column(children:[
@@ -89,7 +89,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                             padding: EdgeInsets.symmetric(horizontal: 18),
                             child: Center(
                               child: Text(titleString,
-                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.bold, fontSize: 36, color: Styles().colors.fillColorPrimary)),
+                                  textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)),
                             )),
                       ),
                       Container(
@@ -97,8 +97,8 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       ),
                       Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.'),
-                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary))),
+                          child: Text(Localization().getStringEx('panel.onboarding.login.phone.label.description', 'This saves your preferences so you can have the same experience on more than one device.')!,
+                              textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
                       Container(
                         height: 32,
                       ),
@@ -114,9 +114,9 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
                       hint: Localization().getStringEx('panel.onboarding.login.phone.button.continue.hint', ''),
                       fontSize: 16,
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      borderColor: Styles().colors.fillColorSecondary,
-                      backgroundColor: Styles().colors.white,
-                      textColor: Styles().colors.fillColorPrimary,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
                       onTap: _onLoginTapped,
                     ),
                     Onboarding2UnderlinedButton(
@@ -141,7 +141,7 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
   void _onLoginTapped() {
     Analytics.instance.logSelect(target: 'Verify My Phone Number');
     if (widget.onboardingContext != null) {
-      widget.onboardingContext['shouldVerifyPhone'] = true;
+      widget.onboardingContext!['shouldVerifyPhone'] = true;
       Onboarding().next(context, widget);
     }
     else {
@@ -151,15 +151,15 @@ class _OnboardingLoginPhonePanelState extends State<OnboardingLoginPhonePanel> {
 
   void _onSkipTapped() {
     Analytics.instance.logSelect(target: 'Not right now');
-    Function onSuccess = widget.onboardingContext!=null? widget.onboardingContext["onContinueAction"] : null; // Hook this panels to Onboarding2
+    Function? onSuccess = widget.onboardingContext!=null? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
     if(onSuccess!=null){
       onSuccess();
     } else if (widget.onboardingContext != null) {
-      widget.onboardingContext['shouldVerifyPhone'] = false;
+      widget.onboardingContext!['shouldVerifyPhone'] = false;
       Onboarding().next(context, widget);
     }
     else if (widget.onFinish != null) {
-      widget.onFinish(null);
+      widget.onFinish!(null);
     }
   }
 }

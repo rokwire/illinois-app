@@ -35,35 +35,35 @@ import 'package:illinois/ui/widgets/TabBarWidget.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final GroupPost post;
-  final GroupPost focusedReply;
-  final List<GroupPost> replyThread;
-  final Group group;
+  final GroupPost? post;
+  final GroupPost? focusedReply;
+  final List<GroupPost>? replyThread;
+  final Group? group;
   final bool hidePostOptions;
 
   GroupPostDetailPanel(
-      {@required this.group, this.post, this.focusedReply, this.hidePostOptions = false, this.replyThread});
+      {required this.group, this.post, this.focusedReply, this.hidePostOptions = false, this.replyThread});
 
   @override
   _GroupPostDetailPanelState createState() => _GroupPostDetailPanelState();
 
   @override
-  Map<String, dynamic> get analyticsPageAttributes => group?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
 class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements NotificationsListener {
   static final double _outerPadding = 16;
   //Main Post - Edit/Show
-  GroupPost _post; //Main post {Data Presentation}
-  PostDataModel _mainPostUpdateData;//Main Post Edit
+  GroupPost? _post; //Main post {Data Presentation}
+  PostDataModel? _mainPostUpdateData;//Main Post Edit
 
   //Reply - Edit/Create/Show
-  GroupPost _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
-  String _selectedReplyId; // Thread Id target for New Reply {Data Create}
-  GroupPost _editingReply; //Edit Mode for Reply {Data Edit}
-  PostDataModel _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
+  GroupPost? _focusedReply; //Focused on Reply {Replies Thread Presentation} // User when Refresh post thread
+  String? _selectedReplyId; // Thread Id target for New Reply {Data Create}
+  GroupPost? _editingReply; //Edit Mode for Reply {Data Edit}
+  PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
-  String _modalImageUrl; // ModalImageDial presentation
+  String? _modalImageUrl; // ModalImageDial presentation
   bool _loading = false;
 
   //Scroll and focus utils
@@ -71,7 +71,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   final GlobalKey _sliverHeaderKey = GlobalKey();
   final GlobalKey _postEditKey = GlobalKey();
   final GlobalKey _scrollContainerKey = GlobalKey();
-  double _sliverHeaderHeight;
+  double? _sliverHeaderHeight;
   //Refresh
   GlobalKey _postInputKey = GlobalKey();
   GlobalKey _postImageHolderKey = GlobalKey();
@@ -85,7 +85,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();
@@ -106,15 +106,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             leading: HeaderBackButton(),
             title: Text(
               Localization()
-                  .getStringEx('panel.group.detail.post.header.title', 'Post'),
+                  .getStringEx('panel.group.detail.post.header.title', 'Post')!,
               style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
-                  fontFamily: Styles().fontFamilies.extraBold,
+                  fontFamily: Styles().fontFamilies!.extraBold,
                   letterSpacing: 1),
             ),
             centerTitle: true),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         bottomNavigationBar: TabBarWidget(),
         body: ModalImageDialog.modalDialogContainer(
           content: _buildContent(),
@@ -134,7 +134,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
           _isEditMainPost || AppString.isStringNotEmpty(_post?.imageUrl) //TBD remove if statement
-            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData.imageUrl = url,)
+            ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
             : Container(),
           _buildPostContent(),
           _buildRepliesSection(),
@@ -142,7 +142,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           ],)),
        Container(
                 key: _sliverHeaderKey,
-                color: Styles().colors.background,
+                color: Styles().colors!.background,
                 padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,16 +157,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                     sortKey: OrdinalSortKey(1),
                                     container: true,
                                     child: Text(
-                                        AppString.getDefaultEmptyString(
-                                            value: _post?.subject),
+                                        AppString.getDefaultEmptyString(_post?.subject),
                                         maxLines: 5,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontFamily:
-                                            Styles().fontFamilies.bold,
+                                            Styles().fontFamilies!.bold,
                                             fontSize: 24,
                                             color: Styles()
-                                                .colors
+                                                .colors!
                                                 .fillColorPrimary)))),
                             Visibility(
                                 visible: _isEditPostVisible && !widget.hidePostOptions,
@@ -276,7 +275,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   Widget _buildPostContent() {
     TextEditingController bodyController = TextEditingController();
-    bodyController.text = _mainPostUpdateData?.body;
+    bodyController.text = _mainPostUpdateData?.body ?? '';
     return Semantics(
         sortKey: OrdinalSortKey(4),
         container: true,
@@ -293,11 +292,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                           child: Semantics(
                               container: true,
                               child: Html(
-                                  data: AppString.getDefaultEmptyString(value: _post?.body),
+                                  data: AppString.getDefaultEmptyString(_post?.body),
                                   style: {
                                     "body": Style(
-                                        color: Styles().colors.fillColorPrimary,
-                                        fontFamily: Styles().fontFamilies.regular,
+                                        color: Styles().colors!.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies!.regular,
                                         fontSize: FontSize(20))
                                   },
                                   onLinkTap: (url, context, attributes, element) =>
@@ -311,7 +310,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                 Container(
                                     padding: EdgeInsets.only(top: 8, bottom: _outerPadding),
                                     child: TextField(
-                                        onChanged: (txt) => _mainPostUpdateData.body = txt,
+                                        onChanged: (txt) => _mainPostUpdateData?.body = txt,
                                         controller: bodyController,
                                         maxLines: null,
                                         autofocus: true,
@@ -319,21 +318,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             hintText: "Edit the post",
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color: Styles().colors.mediumGray,
+                                                    color: Styles().colors!.mediumGray!,
                                                     width: 0.0))),
                                         style: TextStyle(
-                                            color: Styles().colors.textBackground,
+                                            color: Styles().colors!.textBackground,
                                             fontSize: 16,
-                                            fontFamily: Styles().fontFamilies.regular))),
+                                            fontFamily: Styles().fontFamilies!.regular))),
                                 Row(children: [
                                   Flexible(
                                       flex: 1,
                                       child: RoundedButton(
                                           label:
                                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update'),
-                                          borderColor: Styles().colors.fillColorSecondary,
-                                          textColor: Styles().colors.fillColorPrimary,
-                                          backgroundColor: Styles().colors.white,
+                                          borderColor: Styles().colors!.fillColorSecondary,
+                                          textColor: Styles().colors!.fillColorPrimary,
+                                          backgroundColor: Styles().colors!.white,
                                           onTap: _onTapUpdateMainPost)),
                                 ])
 
@@ -346,13 +345,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 4, right: _outerPadding),
                               child: Text(
                                   AppString.getDefaultEmptyString(
-                                      value: _post?.member?.name ),
+                                      _post?.member?.name ),
                                   style: TextStyle(
                                       fontFamily:
-                                      Styles().fontFamilies.medium,
+                                      Styles().fontFamilies!.medium,
                                       fontSize: 20,
                                       color: Styles()
-                                          .colors
+                                          .colors!
                                           .fillColorPrimary)))),
                       Semantics(
                           sortKey: OrdinalSortKey(3),
@@ -361,14 +360,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               padding: EdgeInsets.only(top: 3, right: _outerPadding),
                               child: Text(
                                   AppString.getDefaultEmptyString(
-                                      value: _post?.displayDateTime),
+                                      _post?.displayDateTime),
                                   semanticsLabel: "Updated ${widget.post?.getDisplayDateTime() ?? ""} ago",
                                   style: TextStyle(
                                       fontFamily:
-                                      Styles().fontFamilies.medium,
+                                      Styles().fontFamilies!.medium,
                                       fontSize: 16,
                                       color: Styles()
-                                          .colors
+                                          .colors!
                                           .fillColorPrimary)))),
 
                     ],
@@ -378,12 +377,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   _buildRepliesSection(){
-    List<GroupPost> replies;
+    List<GroupPost>? replies;
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
     else if (_editingReply != null) { //TBD check this
-      replies = [_editingReply];
+      replies = [_editingReply!];
     }
     else {
       replies = _post?.replies;
@@ -398,10 +397,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   List<GroupPost> _generateFocusedThreadList(){
     List<GroupPost> result = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
-      result.addAll(widget.replyThread);
+      result.addAll(widget.replyThread!);
     }
     if(_focusedReply!=null){
-      result.add(_focusedReply);
+      result.add(_focusedReply!);
     }
     
     return result;
@@ -425,9 +424,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: (_editingReply != null) ?
                           Localization().getStringEx('panel.group.detail.post.update.button.update.title', 'Update') :
                           Localization().getStringEx('panel.group.detail.post.create.button.send.title', 'Send'),
-                        borderColor: Styles().colors.fillColorSecondary,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         onTap: _onTapSend)),
                 Container(width: 20),
                 Flexible(
@@ -436,9 +435,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         label: Localization().getStringEx(
                             'panel.group.detail.post.create.button.cancel.title',
                             'Cancel'),
-                        borderColor: Styles().colors.textSurface,
-                        textColor: Styles().colors.fillColorPrimary,
-                        backgroundColor: Styles().colors.white,
+                        borderColor: Styles().colors!.textSurface,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        backgroundColor: Styles().colors!.white,
                         onTap: _onTapCancel))
               ])
             ])));
@@ -462,18 +461,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return PostInputField(
       key: _postInputKey,
       text: _replyEditData?.body,
-      onBodyChanged: (text) => _replyEditData.body = text,
+      onBodyChanged: (text) => _replyEditData?.body = text,
     );
   }
 
   Widget _buildRepliesWidget(
-      {List<GroupPost> replies,
+      {List<GroupPost>? replies,
       double leftPaddingOffset = 0,
       bool nestedReply = false,
       bool showRepliesCount = true,
-      String focusedReplyId,
+      String? focusedReplyId,
       }) {
-    List<GroupPost> visibleReplies = _getVisibleReplies(replies);
+    List<GroupPost>? visibleReplies = _getVisibleReplies(replies);
     if (AppCollection.isCollectionEmpty(visibleReplies)) {
       return Container();
     }
@@ -483,13 +482,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       replyWidgetList.add(Container(height: 8,));
     }
 
-    for (int i = 0; i < visibleReplies.length; i++) {
+    for (int i = 0; i < visibleReplies!.length; i++) {
       if (i > 0 || nestedReply) {
         replyWidgetList.add(Container(height: 10));
       }
-      GroupPost reply = visibleReplies[i];
-      String optionsIconPath;
-      Function optionsFunctionTap;
+      GroupPost? reply = visibleReplies[i];
+      String? optionsIconPath;
+      void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
         optionsIconPath = 'images/icon-groups-options-orange.png';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
@@ -507,16 +506,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
                 onIconTap: optionsFunctionTap,
-                onImageTap: (){_showModalImage(reply?.imageUrl);},
+                onImageTap: (){_showModalImage(reply.imageUrl);},
                 onCardTap: (){_onTapReplyCard(reply);},
             ))));
-      if(reply?.id == focusedReplyId) {
-        if(AppCollection.isCollectionNotEmpty(reply?.replies)){
+      if(reply.id == focusedReplyId) {
+        if(AppCollection.isCollectionNotEmpty(reply.replies)){
           replyWidgetList.add(Container(height: 8,));
           replyWidgetList.add(_buildRepliesHeader());
         }
         replyWidgetList.add(_buildRepliesWidget(
-            replies: reply?.replies,
+            replies: reply.replies,
             leftPaddingOffset: (leftPaddingOffset /*+ 5*/),
             nestedReply: true,
             focusedReplyId: focusedReplyId
@@ -540,12 +539,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 6, horizontal: _outerPadding),
-                color: Styles().colors.fillColorPrimary,
+                color: Styles().colors!.fillColorPrimary,
                 child: Text("Replies",
                     style: TextStyle(
                         fontSize: 18,
-                        fontFamily: Styles().fontFamilies.medium,
-                        color: Styles().colors.white)
+                        fontFamily: Styles().fontFamilies!.medium,
+                        color: Styles().colors!.white)
                 ),
               )
         )
@@ -553,15 +552,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     ));
   }
 
-  List<GroupPost> _getVisibleReplies(List<GroupPost> replies) {
+  List<GroupPost>? _getVisibleReplies(List<GroupPost>? replies) {
     if (AppCollection.isCollectionEmpty(replies)) {
       return null;
     }
     List<GroupPost> visibleReplies = [];
     bool currentUserIsMemberOrAdmin =
         widget.group?.currentUserIsMemberOrAdmin ?? false;
-    for (GroupPost reply in replies) {
-      bool replyVisible = (reply.private == false) ||
+    for (GroupPost? reply in replies!) {
+      bool replyVisible = (reply!.private == false) ||
           (reply.private == null) ||
           currentUserIsMemberOrAdmin;
       if (replyVisible) {
@@ -572,14 +571,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Tap Actions
-  void _onTapReplyCard(GroupPost reply){
+  void _onTapReplyCard(GroupPost? reply){
     Analytics().logSelect(target: 'Reply Card');
     List<GroupPost> thread = [];
     if(AppCollection.isCollectionNotEmpty(widget.replyThread)){
-      thread.addAll(widget.replyThread);
+      thread.addAll(widget.replyThread!);
     }
     if(_focusedReply!=null) {
-      thread.add(_focusedReply);
+      thread.add(_focusedReply!);
     }
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true, replyThread: thread,)));
   }
@@ -590,17 +589,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.delete.confirm.msg',
-            'Are you sure that you want to delete this post?')),
+            'Are you sure that you want to delete this post?')!),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Navigator.of(context).pop();
                 _deletePost();
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
               onPressed: () => Navigator.of(context).pop())
         ]);
   }
@@ -621,11 +620,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
-  void _onTapReplyOptions(GroupPost reply) {
+  void _onTapReplyOptions(GroupPost? reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
         context: context,
-        backgroundColor: Styles().colors.white,
+        backgroundColor: Styles().colors!.white,
         isScrollControlled: true,
         isDismissible: true,
         shape: RoundedRectangleBorder(
@@ -673,24 +672,24 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         });
   }
 
-  void _onTapDeleteReply(GroupPost reply) {
+  void _onTapDeleteReply(GroupPost? reply) {
     Analytics().logSelect(target: 'Delete Reply');
     AppAlert.showCustomDialog(
         context: context,
         contentWidget: Text(Localization().getStringEx(
             'panel.group.detail.post.reply.delete.confirm.msg',
-            'Are you sure that you want to delete this reply?')),
+            'Are you sure that you want to delete this reply?')!),
         actions: <Widget>[
           TextButton(
               child:
-                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+                  Text(Localization().getStringEx('dialog.yes.title', 'Yes')!),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'Yes');
                 Navigator.of(context).pop();
                 _deleteReply(reply);
               }),
           TextButton(
-              child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+              child: Text(Localization().getStringEx('dialog.no.title', 'No')!),
               onPressed: () {
                 Analytics().logAlert(text: 'Are you sure that you want to delete this reply?', selection: 'No');
                 Navigator.of(context).pop();
@@ -698,7 +697,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         ]);
   }
 
-  void _deleteReply(GroupPost reply) {
+  void _deleteReply(GroupPost? reply) {
     _setLoading(true);
     _clearSelectedReplyId();
     Groups().deletePost(widget.group?.id, reply).then((succeeded) {
@@ -719,7 +718,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapPostReply({GroupPost reply}) {
+  void _onTapPostReply({GroupPost? reply}) {
     Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
     if (mounted) {
@@ -740,17 +739,17 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _onTapUpdateMainPost(){
-    String body = _mainPostUpdateData?.body;
-    String imageUrl = _mainPostUpdateData.imageUrl ?? _post?.imageUrl;
+    String? body = _mainPostUpdateData?.body;
+    String? imageUrl = _mainPostUpdateData?.imageUrl ?? _post?.imageUrl;
     if (AppString.isStringEmpty(body)) {
-      String validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
+      String? validationMsg = Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required");
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
     String htmlModifiedBody = AppHtml.replaceNewLineSymbols(body);
 
     _setLoading(true);
-    GroupPost postToUpdate = GroupPost(id: _post.id, subject: _post.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
+    GroupPost postToUpdate = GroupPost(id: _post?.id, subject: _post?.subject, body: htmlModifiedBody, imageUrl: imageUrl, private: true);
     Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
       _mainPostUpdateData = null;
       _setLoading(false);
@@ -758,7 +757,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   }
 
-  void _onTapEditPost({GroupPost reply}) {
+  void _onTapEditPost({GroupPost? reply}) {
     Analytics().logSelect(target: 'Edit Reply');
     if (mounted) {
       setState(() {
@@ -772,7 +771,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  void _onTapPostLink(String url) {
+  void _onTapPostLink(String? url) {
     Analytics.instance.logSelect(target: 'link');
     if (AppString.isStringNotEmpty(url)) {
       Navigator.push(context,
@@ -784,9 +783,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
-        _post = posts.firstWhere((post) => (post.id == _post?.id), orElse: (){ return null; });
+        try { _post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: () => null); }
+        catch (e) {}
         _sortReplies(_post?.replies);
-        GroupPost updatedReply = deepFindPost(posts, _focusedReply?.id);
+        GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
           setState(() {
             _focusedReply = updatedReply;
@@ -813,8 +813,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_editingReply != null) {
       setState(() {
         _editingReply = null;
-        _replyEditData.imageUrl = null;
-        _replyEditData.body = '';
+        _replyEditData?.imageUrl = null;
+        _replyEditData?.body = '';
       });
     }
     else {
@@ -826,13 +826,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
     
-    String body = _replyEditData?.body;
-    String imageUrl;
+    String? body = _replyEditData?.body;
+    String? imageUrl;
 
     if (AppString.isStringEmpty(body)) {
       String validationMsg = ((_editingReply != null))
-          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")
-          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required");
+          ? Localization().getStringEx('panel.group.detail.post.create.validation.body.msg', "Post message required")!
+          : Localization().getStringEx('panel.group.detail.post.create.reply.validation.body.msg', "Reply message required")!;
       AppAlert.showDialogResult(context, validationMsg);
       return;
     }
@@ -840,23 +840,23 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     
     _setLoading(true);
     if (_editingReply != null) {
-      imageUrl = AppString.isStringNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply.imageUrl;
-      GroupPost postToUpdate = GroupPost(id: _editingReply.id, subject: _editingReply.subject, imageUrl: imageUrl , body: body, private: true);
+      imageUrl = AppString.isStringNotEmpty(_replyEditData?.imageUrl) ? _replyEditData?.imageUrl : _editingReply?.imageUrl;
+      GroupPost postToUpdate = GroupPost(id: _editingReply?.id, subject: _editingReply?.subject, imageUrl: imageUrl , body: body, private: true);
       Groups().updatePost(widget.group?.id, postToUpdate).then((succeeded) {
         _onUpdateFinished(succeeded);
       });
     } else {
-      String parentId;
+      String? parentId;
 
       imageUrl =  _replyEditData?.imageUrl ?? imageUrl; // if _preparedReplyData then this is new Reply if we already have image then this is create new post for group
       if (_selectedReplyId != null) {
         parentId = _selectedReplyId;
       }
       else if (_focusedReply != null) {
-        parentId = _focusedReply.id;
+        parentId = _focusedReply!.id;
       }
       else if (_post != null) {
-        parentId = _post.id;
+        parentId = _post!.id;
       }
       
       GroupPost post = GroupPost(parentId: parentId, body: htmlModifiedBody, private: true, imageUrl: imageUrl); // if no parentId then this is a new post for the group.
@@ -891,11 +891,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _clearBodyControllerContent() {
-    _replyEditData.body = '';
+    _replyEditData?.body = '';
   }
 
   //Modal Image Dialog
-  void _showModalImage(String url){
+  void _showModalImage(String? url){
     if(url != null) {
       setState(() {
         _modalImageUrl = url;
@@ -905,9 +905,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Scroll
   void _evalSliverHeaderHeight() {
-    double sliverHeaderHeight;
+    double? sliverHeaderHeight;
     try {
-      final RenderObject renderBox = _sliverHeaderKey?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _sliverHeaderKey.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
         sliverHeaderHeight = renderBox.size.height;
       }
@@ -921,15 +921,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _scrollToPostEdit() {
-    BuildContext postEditContext = _postEditKey?.currentContext;
+    BuildContext? postEditContext = _postEditKey.currentContext;
     //Scrollable.ensureVisible(postEditContext, duration: Duration(milliseconds: 10));
-    RenderObject renderObject = postEditContext?.findRenderObject();
-    RenderAbstractViewport viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
-    double postEditTop = viewport?.getOffsetToReveal(renderObject, 0.0)?.offset;
+    RenderObject? renderObject = postEditContext?.findRenderObject();
+    RenderAbstractViewport? viewport = (renderObject != null) ? RenderAbstractViewport.of(renderObject) : null;
+    double? postEditTop = (viewport != null) ? viewport.getOffsetToReveal(renderObject!, 0.0).offset : null;
 
-    BuildContext scrollContainerContext = _scrollContainerKey?.currentContext;
-    RenderObject scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
-    double scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size?.height : null;
+    BuildContext? scrollContainerContext = _scrollContainerKey.currentContext;
+    RenderObject? scrollContainerRenderBox = scrollContainerContext?.findRenderObject();
+    double? scrollContainerHeight = (scrollContainerRenderBox is RenderBox) ? scrollContainerRenderBox.size.height : null;
 
     if ((scrollContainerHeight != null) && (postEditTop != null)) {
       double offset = postEditTop - scrollContainerHeight + 120;
@@ -941,14 +941,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   //Utils
-  GroupPost deepFindPost(List<GroupPost> posts, String id){
+  GroupPost? deepFindPost(List<GroupPost>? posts, String? id){
     if(AppCollection.isCollectionEmpty(posts) || AppString.isStringEmpty(id)){
       return null;
     }
 
-    GroupPost result;
-    for(GroupPost post in posts){
-      if(post?.id == id){
+    GroupPost? result;
+    for(GroupPost post in posts!){
+      if(post.id == id){
         result = post;
         break;
       } else {
@@ -962,21 +962,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return result;
   }
 
-  void _sortReplies(List<GroupPost> replies){
+  void _sortReplies(List<GroupPost>? replies){
     if(AppCollection.isCollectionNotEmpty(replies)) {
       try {
-        replies.sort((post1, post2) =>
-            post1?.dateCreatedUtc?.compareTo(post2?.dateCreatedUtc));
+        replies!.sort((post1, post2) =>
+            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
       } catch (e) {}
     }
   }
 
   //Getters
-  bool _isEditVisible(GroupPost post) {
+  bool _isEditVisible(GroupPost? post) {
     return _isCurrentUserCreator(post);
   }
 
-  bool _isDeleteVisible(GroupPost item) {
+  bool _isDeleteVisible(GroupPost? item) {
     if (widget.group?.currentUserIsAdmin ?? false) {
       return true;
     } else if (widget.group?.currentUserIsMember ?? false) {
@@ -986,13 +986,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     }
   }
 
-  bool _isDeleteReplyVisible(GroupPost reply) {
+  bool _isDeleteReplyVisible(GroupPost? reply) {
     return _isDeleteVisible(reply);
   }
 
-  bool _isCurrentUserCreator(GroupPost item) {
-    String currentMemberEmail = widget.group?.currentUserAsMember?.userId;
-    String itemMemberUserId = item?.member?.userId;
+  bool _isCurrentUserCreator(GroupPost? item) {
+    String? currentMemberEmail = widget.group?.currentUserAsMember?.userId;
+    String? itemMemberUserId = item?.member?.userId;
     return AppString.isStringNotEmpty(currentMemberEmail) &&
         AppString.isStringNotEmpty(itemMemberUserId) &&
         (currentMemberEmail == itemMemberUserId);

@@ -35,7 +35,7 @@ class Onboarding with Service implements NotificationsListener {
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
 
-  List<dynamic> _contentCodes;
+  List<dynamic>? _contentCodes;
 
   // Singleton Factory
 
@@ -86,10 +86,10 @@ class Onboarding with Service implements NotificationsListener {
 
   // Implementation
 
-  Widget get startPanel {
-    for (int index = 0; index < _contentCodes.length; index++) {
-      OnboardingPanel nextPanel = _createPanel(code: _contentCodes[index], context: {});
-      if ((nextPanel != null) && nextPanel.onboardingCanDisplay) {
+  Widget? get startPanel {
+    for (int index = 0; index < _contentCodes!.length; index++) {
+      OnboardingPanel? nextPanel = _createPanel(code: _contentCodes![index], context: {});
+      if ((nextPanel != null) && (nextPanel is Widget) && nextPanel.onboardingCanDisplay && (nextPanel is Widget)) {
         return nextPanel as Widget;
       }
     }
@@ -116,25 +116,25 @@ class Onboarding with Service implements NotificationsListener {
     NotificationService().notify(notifyFinished, context);
   }
 
-  Future<dynamic> _nextPanel(OnboardingPanel panel) async {
+  Future<dynamic> _nextPanel(OnboardingPanel? panel) async {
     if (_contentCodes != null) {
-      int nextPanelIndex;
+      int? nextPanelIndex;
       if (panel == null) {
         nextPanelIndex = 0;
       }
       else {
-        String panelCode = _getPanelCode(panel: panel);
-        int panelIndex = _contentCodes.indexOf(panelCode);
+        String? panelCode = _getPanelCode(panel: panel);
+        int panelIndex = _contentCodes!.indexOf(panelCode);
         if (0 <= panelIndex) {
           nextPanelIndex = panelIndex + 1;
         }
       }
 
       if (nextPanelIndex != null) {
-        while (nextPanelIndex < _contentCodes.length) {
-          String nextPanelCode = _contentCodes[nextPanelIndex];
-          OnboardingPanel nextPanel = _createPanel(code: nextPanelCode, context: panel?.onboardingContext ?? {});
-          if ((nextPanel != null) && nextPanel.onboardingCanDisplay && await nextPanel.onboardingCanDisplayAsync) {
+        while (nextPanelIndex! < _contentCodes!.length) {
+          String? nextPanelCode = _contentCodes![nextPanelIndex];
+          OnboardingPanel? nextPanel = _createPanel(code: nextPanelCode, context: panel?.onboardingContext ?? {});
+          if ((nextPanel != null) && (nextPanel is Widget) && nextPanel.onboardingCanDisplay && await nextPanel.onboardingCanDisplayAsync) {
             return nextPanel as Widget;
           }
           else {
@@ -147,7 +147,7 @@ class Onboarding with Service implements NotificationsListener {
     return null;
   }
 
-  OnboardingPanel _createPanel({String code, Map<String, dynamic> context}) {
+  OnboardingPanel? _createPanel({String? code, Map<String, dynamic>? context}) {
     if (code != null) {
       if (code == 'get_started') {
         return OnboardingGetStartedPanel(onboardingContext: context);
@@ -186,7 +186,7 @@ class Onboarding with Service implements NotificationsListener {
     return null;
   }
 
-  static String _getPanelCode({OnboardingPanel panel}) {
+  static String? _getPanelCode({OnboardingPanel? panel}) {
     if (panel is OnboardingGetStartedPanel) {
       return 'get_started';
     }
@@ -227,7 +227,7 @@ class Onboarding with Service implements NotificationsListener {
 
 abstract class OnboardingPanel {
   
-  Map<String, dynamic> get onboardingContext {
+  Map<String, dynamic>? get onboardingContext {
     return null;
   }
   

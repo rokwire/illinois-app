@@ -27,15 +27,15 @@ class HomeSaferTestLocationsPanel extends StatefulWidget {
 
 class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPanel>{
   
-  List<HealthServiceLocation> _locations;
-  Core.Position _currentLocation;
-  bool _loadingLocations;
-  String _statusString;
+  List<HealthServiceLocation>? _locations;
+  Core.Position? _currentLocation;
+  bool? _loadingLocations;
+  String? _statusString;
 
   @override
   void initState() {
     _loadingLocations = true;
-    _loadLocations().then((List<HealthServiceLocation> locations) {
+    _loadLocations().then((List<HealthServiceLocation>? locations) {
       if (mounted) {
         if (locations == null) {
           setState(() {
@@ -73,26 +73,26 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
       contentWidget = _buildLoading();
     }
     else if (_statusString != null) {
-      contentWidget = _buildStatus(_statusString);
+      contentWidget = _buildStatus(_statusString!);
     }
     else if (AppCollection.isCollectionEmpty(_locations)) {
-      contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county") );
+      contentWidget = _buildStatus(Localization().getStringEx("panel.home.safer.test_locations.no_locations.text", "No Locations found for selected provider and county")! );
     }
     else {
       contentWidget = ListView.builder(
-        itemCount: _locations.length,
+        itemCount: _locations!.length,
         itemBuilder: (BuildContext context, int index) {
-          return _TestLocation(testLocation: _locations[index], /*distance: distance,*/);
+          return _TestLocation(testLocation: _locations![index], /*distance: distance,*/);
         },
       );
     }
 
     return Scaffold(
-      backgroundColor: Styles().colors.background,
+      backgroundColor: Styles().colors!.background,
       appBar: SimpleHeaderBarWithBack(
         context: context,
-        titleWidget: Text(Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations"),
-          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),
+        titleWidget: Text(Localization().getStringEx("panel.home.safer.test_locations.header.title", "Test Locations")!,
+          style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold),
         ),
       ),
       body: SafeArea(child:
@@ -118,28 +118,28 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 32), child:
       Column(children: [
         Expanded(flex: 1, child: Container()),
-        Text(text, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 20, color: Styles().colors.fillColorPrimary,)),
+        Text(text, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary,)),
         Expanded(flex: 3, child: Container()),
       ],),);
   }
 
-  Future<List<HealthServiceLocation>> _loadLocations() async {
-    String contentUrl = Config().contentUrl;
+  Future<List<HealthServiceLocation>?> _loadLocations() async {
+    String? contentUrl = Config().contentUrl;
     if ((contentUrl != null)) {
       String url = "$contentUrl/health_locations";
-      Response response = await Network().get(url, auth: NetworkAuth.Auth2);
-      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response.body)) : null;
+      Response? response = await Network().get(url, auth: NetworkAuth.Auth2);
+      return (response?.statusCode == 200) ? HealthServiceLocation.listFromJson(AppJson.decode(response!.body)) : null;
     }
     return null;
   }
 
-  Future<void> _sortLocations(List<HealthServiceLocation> locations) async {
+  Future<void> _sortLocations(List<HealthServiceLocation>? locations) async {
     
     if ((locations != null) && (1 < locations.length)) {
       
       // Ensure current location, if available
       if (_currentLocation == null) {
-        LocationServicesStatus status = await LocationServices.instance.status;
+        LocationServicesStatus? status = await LocationServices.instance.status;
         if (status == LocationServicesStatus.PermissionNotDetermined) {
           status = await LocationServices.instance.requestPermission();
         }
@@ -153,8 +153,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
         locations.sort((fistLocation, secondLocation) {
           if ((fistLocation.latitude != null) && (fistLocation.longitude != null)) {
             if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
-              double firstDistance = AppLocation.distance(fistLocation.latitude, fistLocation.longitude, _currentLocation.latitude, _currentLocation.longitude);
-              double secondDistance = AppLocation.distance(secondLocation.latitude, secondLocation.longitude, _currentLocation.latitude, _currentLocation.longitude);
+              double firstDistance = AppLocation.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double secondDistance = AppLocation.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
               return firstDistance.compareTo(secondDistance);
             }
             else {
@@ -179,8 +179,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
 // _TestLocation
 
 class _TestLocation extends StatelessWidget {
-  final HealthServiceLocation testLocation;
-  final double distance;
+  final HealthServiceLocation? testLocation;
+  final double? distance;
 
   _TestLocation({this.testLocation, this.distance});
 
@@ -188,19 +188,19 @@ class _TestLocation extends StatelessWidget {
   Widget build(BuildContext context) {
     
     bool canLocation = (testLocation?.latitude != null) && (testLocation?.longitude != null);
-    TextStyle textStyle = TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.textSurface,);
-    TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies.regular, fontSize: 16, color: Styles().colors.accentColor3, decoration: TextDecoration.underline);
+    TextStyle textStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface,);
+    TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.accentColor3, decoration: TextDecoration.underline);
 
     List<Widget> locationContent = <Widget>[
       Image.asset('images/icon-location.png',excludeFromSemantics: true),
       Container(width: 8),
     ];
 
-    if ((distance != null) && (distance > 0)) {
-      String distanceText = distance.toStringAsFixed(2) + Localization().getStringEx("panel.home.safer.test_locations.distance.text", "mi away");
+    if ((distance != null) && (distance! > 0)) {
+      String distanceText = distance!.toStringAsFixed(2) + Localization().getStringEx("panel.home.safer.test_locations.distance.text", "mi away")!;
       locationContent.add(Text(distanceText, style: textStyle,));
       if (canLocation) {
-        String directionsText = Localization().getStringEx("panel.home.safer.test_locations.distance.directions.text", "get directions");
+        String directionsText = Localization().getStringEx("panel.home.safer.test_locations.distance.directions.text", "get directions")!;
         locationContent.addAll(<Widget>[
           Text(" (", style: textStyle,),
           Text(directionsText, style: linkStyle,),
@@ -210,11 +210,11 @@ class _TestLocation extends StatelessWidget {
     }
     else if (testLocation?.fullAddress != null) {
       locationContent.add(
-        Text(testLocation.fullAddress, style: canLocation ? linkStyle : textStyle,
+        Text(testLocation!.fullAddress, style: canLocation ? linkStyle : textStyle,
       ));
     }
     else {
-      String unknownLocationText = Localization().getStringEx("panel.home.safer.test_locations.location.unknown", "unknown location");
+      String unknownLocationText = Localization().getStringEx("panel.home.safer.test_locations.location.unknown", "unknown location")!;
       locationContent.add(
         Text(unknownLocationText, style: canLocation ? linkStyle : textStyle,
       ));
@@ -226,14 +226,14 @@ class _TestLocation extends StatelessWidget {
         margin: EdgeInsets.only(top: 8, bottom: 8),
         padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         decoration: BoxDecoration(
-            color: Styles().colors.surface,
+            color: Styles().colors!.surface,
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            boxShadow: [BoxShadow(color: Styles().colors.blackTransparent018, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(testLocation?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies.extraBold, fontSize: 20, color: Styles().colors.fillColorPrimary, ),
+            Text(testLocation?.name ?? "", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, ),
             ),
             Semantics(button: true,
             child: GestureDetector(
@@ -292,11 +292,11 @@ class _TestLocation extends StatelessWidget {
       return Container();
     }
 
-    HealthLocationWaitTimeColor waitTimeColor = testLocation.waitTimeColor;
+    HealthLocationWaitTimeColor? waitTimeColor = testLocation!.waitTimeColor;
     bool isWaitTimeAvailable = (waitTimeColor == HealthLocationWaitTimeColor.red) ||
         (waitTimeColor == HealthLocationWaitTimeColor.yellow) ||
         (waitTimeColor == HealthLocationWaitTimeColor.green);
-    String waitTimeText = "";
+    String? waitTimeText = "";
     if(isWaitTimeAvailable)  {
       if(waitTimeColor == HealthLocationWaitTimeColor.red){
         waitTimeText = Localization().getStringEx('panel.home.safer.test_locations.wait_time.status.label.red', 'Long wait time');
@@ -329,11 +329,11 @@ class _TestLocation extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  waitTimeText,
+                  waitTimeText!,
                   style: TextStyle(
-                    fontFamily: Styles().fontFamilies.regular,
+                    fontFamily: Styles().fontFamilies!.regular,
                     fontSize: 16,
-                    color: Styles().colors.textSurface,
+                    color: Styles().colors!.textSurface,
                   ),
                 )
               ],
@@ -344,19 +344,19 @@ class _TestLocation extends StatelessWidget {
 
   Widget _buildWorkTime(){
     List<HealthLocationDayOfOperation> items = [];
-    HealthLocationDayOfOperation period;
+    HealthLocationDayOfOperation? period;
     LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods;
-    List<HealthLocationDayOfOperation> workTimes = testLocation?.daysOfOperation;
+    List<HealthLocationDayOfOperation>? workTimes = testLocation?.daysOfOperation;
     if(workTimes?.isNotEmpty ?? false){
-      workingPeriods = Map<int,HealthLocationDayOfOperation>.fromIterable(workTimes, key: (period) => period?.weekDay);
-      items = workingPeriods?.values?.toList()?? [];
+      workingPeriods = LinkedHashMap<int,HealthLocationDayOfOperation>.fromIterable(workTimes!, key: (period) => period.weekDay ?? 0);
+      items = workingPeriods.values.toList();
       period = _determineTodayPeriod(workingPeriods);
       if ((period == null) || !period.isOpen) {
         period = _findNextPeriod(workingPeriods);  
       }
     } else {
       return Container(
-        child: Text(Localization().getStringEx("panel.home.safer.test_locations.work_time.unknown","Unknown working time"))
+        child: Text(Localization().getStringEx("panel.home.safer.test_locations.work_time.unknown","Unknown working time")!)
       );
     }
 
@@ -366,7 +366,7 @@ class _TestLocation extends StatelessWidget {
       underline: Container(),
       value: period,
       onChanged: (value){},
-      icon: Image.asset('images/chevron-down.png', color: Styles().colors.fillColorSecondary, excludeFromSemantics: false,),
+      icon: Image.asset('images/chevron-down.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: false,),
       selectedItemBuilder:(context){
         return items.map<Widget>((entry){
           return Row(
@@ -377,9 +377,9 @@ class _TestLocation extends StatelessWidget {
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontFamily: Styles().fontFamilies.bold,
+                  fontFamily: Styles().fontFamilies!.bold,
                   fontSize: 16,
-                  color: Styles().colors.fillColorPrimary,
+                  color: Styles().colors!.fillColorPrimary,
                 ),
               ),)
             ],
@@ -393,9 +393,9 @@ class _TestLocation extends StatelessWidget {
 //            _getPeriodText(entry, activePeriod),
             entry.displayString,
             style: TextStyle(
-              fontFamily: Styles().fontFamilies.bold,
+              fontFamily: Styles().fontFamilies!.bold,
               fontSize: 16,
-              color: Styles().colors.fillColorPrimary,
+              color: Styles().colors!.fillColorPrimary,
             ),
           ),
         );
@@ -403,31 +403,31 @@ class _TestLocation extends StatelessWidget {
     );
   }
 
-  String _getPeriodText(HealthLocationDayOfOperation period, LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods){
-    String openText = Localization().getStringEx("panel.home.safer.test_locations.work_time.open_until","Open until");
-    String closedText = Localization().getStringEx("panel.home.safer.test_locations.work_time.closed_until","Closed until");
+  String _getPeriodText(HealthLocationDayOfOperation? period, LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods){
+    String? openText = Localization().getStringEx("panel.home.safer.test_locations.work_time.open_until","Open until");
+    String? closedText = Localization().getStringEx("panel.home.safer.test_locations.work_time.closed_until","Closed until");
     if((period != null) && period.isOpen){ //This is the active Period
-      String end = period?.closeTime;
+      String? end = period.closeTime;
       return "$openText $end";
     } else {
       //Closed until the next open period
-      HealthLocationDayOfOperation nextPeriod = _findNextPeriod(workingPeriods);
-      String nextOpenTime = nextPeriod!=null? nextPeriod.name +" "+nextPeriod.openTime : " ";
+      HealthLocationDayOfOperation? nextPeriod = _findNextPeriod(workingPeriods);
+      String nextOpenTime = nextPeriod!=null? nextPeriod.name! +" "+nextPeriod.openTime! : " ";
       return "$closedText $nextOpenTime";
     }
   }
 
-  HealthLocationDayOfOperation _determineTodayPeriod(LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods){
+  HealthLocationDayOfOperation? _determineTodayPeriod(LinkedHashMap<int,HealthLocationDayOfOperation>? workingPeriods){
     int currentWeekDay = DateTime.now().weekday;
     return workingPeriods!=null? workingPeriods[currentWeekDay] : null;
   }
 
-  HealthLocationDayOfOperation _findNextPeriod(
-      LinkedHashMap<int, HealthLocationDayOfOperation> workingPeriods) {
+  HealthLocationDayOfOperation? _findNextPeriod(
+      LinkedHashMap<int, HealthLocationDayOfOperation>? workingPeriods) {
     if (workingPeriods != null && workingPeriods.isNotEmpty) {
       // First, check if the current day period will open today
       int currentWeekDay = DateTime.now().weekday;
-      HealthLocationDayOfOperation period = workingPeriods[currentWeekDay];
+      HealthLocationDayOfOperation? period = workingPeriods[currentWeekDay];
       if ((period != null) && period.willOpen) return period;
 
       // Modulus math works better with 0 based indexes, and flutter uses 1 based
@@ -444,7 +444,7 @@ class _TestLocation extends StatelessWidget {
       }
 
       //If there is no nex period - return the fist element
-      return workingPeriods?.values?.toList()[0];
+      return workingPeriods.values.toList()[0];
     }
     return null;
   }
@@ -455,8 +455,8 @@ class _TestLocation extends StatelessWidget {
 
   void _onTapAddress(){
     Analytics.instance.logSelect(target: "COVID-19 Test Location");
-    double lat = testLocation?.latitude;
-    double lng = testLocation?.longitude;
+    double? lat = testLocation?.latitude;
+    double? lng = testLocation?.longitude;
     if ((lat != null) && (lng != null)) {
       NativeCommunicator().launchMap(
           target: {
@@ -476,11 +476,11 @@ class _TestLocation extends StatelessWidget {
 
   /* Hide wait times
   bool get _isLocationOpen{
-    HealthLocationDayOfOperation todayPeriod;
+    HealthLocationDayOfOperation? todayPeriod;
     if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
       todayPeriod = _determineTodayPeriod(
-          Map<int, HealthLocationDayOfOperation>.fromIterable(
-              testLocation.daysOfOperation, key: (period) => period?.weekDay));
+          LinkedHashMap<int, HealthLocationDayOfOperation>.fromIterable(
+              testLocation!.daysOfOperation!, key: (period) => period.weekDay ?? 0));
     }
 
     return todayPeriod?.isOpen ?? false;
@@ -492,25 +492,25 @@ class _TestLocation extends StatelessWidget {
 // HealthServiceLocation
 
 class HealthServiceLocation {
-  final String id;
-  final String name;
-  final String contact;
-  final String city;
-  final String address1;
-  final String address2;
-  final String state;
-  final String country;
-  final String zip;
-  final String url;
-  final String notes;
-  final double latitude;
-  final double longitude;
-  final HealthLocationWaitTimeColor waitTimeColor;
-  final List<HealthLocationDayOfOperation> daysOfOperation;
+  final String? id;
+  final String? name;
+  final String? contact;
+  final String? city;
+  final String? address1;
+  final String? address2;
+  final String? state;
+  final String? country;
+  final String? zip;
+  final String? url;
+  final String? notes;
+  final double? latitude;
+  final double? longitude;
+  final HealthLocationWaitTimeColor? waitTimeColor;
+  final List<HealthLocationDayOfOperation>? daysOfOperation;
   
   HealthServiceLocation({this.id, this.name, this.contact, this.city, this.address1, this.address2, this.state, this.country, this.zip, this.url, this.notes, this.latitude, this.longitude, this.waitTimeColor, this.daysOfOperation});
 
-  factory HealthServiceLocation.fromJson(Map<String, dynamic> json) {
+  static HealthServiceLocation? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? HealthServiceLocation(
       id: json['_id'],
       name: json['name'],
@@ -554,45 +554,42 @@ class HealthServiceLocation {
     address = address1?? "";
     if(address2?.isNotEmpty?? false) {
       address += address.isNotEmpty ? ", " : "";
-      address += address2;
+      address += address2!;
     }
     if(city?.isNotEmpty?? false) {
       address += address.isNotEmpty ? ", " : "";
-      address += city;
+      address += city!;
     }
     if(state?.isNotEmpty?? false) {
       address += address.isNotEmpty ? ", " : "";
-      address += state;
+      address += state!;
     }
     return address;
   }
 
-  static List<HealthServiceLocation> listFromJson(List<dynamic> json) {
-    List<HealthServiceLocation> values;
+  static List<HealthServiceLocation>? listFromJson(List<dynamic>? json) {
+    List<HealthServiceLocation>? values;
     if (json != null) {
       values = <HealthServiceLocation>[];
       for (dynamic entry in json) {
-        HealthServiceLocation value;
-        try { value = HealthServiceLocation.fromJson((entry as Map)?.cast<String, dynamic>()); }
-        catch(e) { print(e?.toString()); }
-        values.add(value);
+        AppList.add(values, HealthServiceLocation.fromJson(AppJson.mapValue(entry)));
       }
     }
     return values;
   }
 
-  static List<dynamic> listToJson(List<HealthServiceLocation> values) {
-    List<dynamic> json;
+  static List<dynamic>? listToJson(List<HealthServiceLocation>? values) {
+    List<dynamic>? json;
     if (values != null) {
       json = <dynamic>[];
       for (HealthServiceLocation value in values) {
-        json.add(value?.toJson());
+        json.add(value.toJson());
       }
     }
     return json;
   }
 
-  static HealthLocationWaitTimeColor waitTimeColorFromString(String colorString) {
+  static HealthLocationWaitTimeColor? waitTimeColorFromString(String? colorString) {
     if (colorString == 'red') {
       return HealthLocationWaitTimeColor.red;
     } else if (colorString == 'yellow') {
@@ -606,7 +603,7 @@ class HealthServiceLocation {
     }
   }
 
-  static String waitTimeColorToKeyString(HealthLocationWaitTimeColor color) {
+  static String? waitTimeColorToKeyString(HealthLocationWaitTimeColor? color) {
     switch (color) {
       case HealthLocationWaitTimeColor.red:
         return 'red';
@@ -621,16 +618,16 @@ class HealthServiceLocation {
     }
   }
 
-  static Color waitTimeColorHex(HealthLocationWaitTimeColor color) {
+  static Color? waitTimeColorHex(HealthLocationWaitTimeColor? color) {
     switch (color) {
       case HealthLocationWaitTimeColor.red:
-        return Styles().colors.saferLocationWaitTimeColorRed;
+        return Styles().colors!.saferLocationWaitTimeColorRed;
       case HealthLocationWaitTimeColor.yellow:
-        return Styles().colors.saferLocationWaitTimeColorYellow;
+        return Styles().colors!.saferLocationWaitTimeColorYellow;
       case HealthLocationWaitTimeColor.green:
-        return Styles().colors.saferLocationWaitTimeColorGreen;
+        return Styles().colors!.saferLocationWaitTimeColorGreen;
       default:
-        return Styles().colors.saferLocationWaitTimeColorGrey;
+        return Styles().colors!.saferLocationWaitTimeColorGrey;
     }
   }
 }
@@ -639,20 +636,20 @@ class HealthServiceLocation {
 // HealthLocationDayOfOperation
 
 class HealthLocationDayOfOperation {
-  final String name;
-  final String openTime;
-  final String closeTime;
+  final String? name;
+  final String? openTime;
+  final String? closeTime;
 
-  final int weekDay;
-  final int openMinutes;
-  final int closeMinutes;
+  final int? weekDay;
+  final int? openMinutes;
+  final int? closeMinutes;
 
   HealthLocationDayOfOperation({this.name, this.openTime, this.closeTime}) :
     weekDay = (name != null) ? AppDateTime.getWeekDayFromString(name.toLowerCase()) : null,
     openMinutes = _timeMinutes(openTime),
     closeMinutes = _timeMinutes(closeTime);
 
-  factory HealthLocationDayOfOperation.fromJson(Map<String,dynamic> json){
+  static HealthLocationDayOfOperation? fromJson(Map<String,dynamic>? json){
     return (json != null) ? HealthLocationDayOfOperation(
       name: json["name"],
       openTime: json["open_time"],
@@ -667,8 +664,8 @@ class HealthLocationDayOfOperation {
   bool get isOpen {
     if ((openMinutes != null) && (closeMinutes != null)) {
       int nowWeekDay = DateTime.now().weekday;
-      int nowMinutes = _timeOfDayMinutes(TimeOfDay.now());
-      return nowWeekDay == weekDay && openMinutes < nowMinutes && nowMinutes < closeMinutes;
+      int? nowMinutes = _timeOfDayMinutes(TimeOfDay.now());
+      return nowWeekDay == weekDay && openMinutes! < nowMinutes! && nowMinutes < closeMinutes!;
     }
     return false;
   }
@@ -676,22 +673,19 @@ class HealthLocationDayOfOperation {
   bool get willOpen {
     if (openMinutes != null) {
       int nowWeekDay = DateTime.now().weekday;
-      int nowMinutes = _timeOfDayMinutes(TimeOfDay.now());
-      return nowWeekDay == weekDay && nowMinutes < openMinutes;
+      int? nowMinutes = _timeOfDayMinutes(TimeOfDay.now());
+      return nowWeekDay == weekDay && nowMinutes! < openMinutes!;
     }
 
     return false;
   }
 
-  static List<HealthLocationDayOfOperation> listFromJson(List<dynamic> json) {
-    List<HealthLocationDayOfOperation> values;
+  static List<HealthLocationDayOfOperation>? listFromJson(List<dynamic>? json) {
+    List<HealthLocationDayOfOperation>? values;
     if (json != null) {
       values = <HealthLocationDayOfOperation>[];
       for (dynamic entry in json) {
-        HealthLocationDayOfOperation value;
-        try { value = HealthLocationDayOfOperation.fromJson((entry as Map)?.cast<String, dynamic>()); }
-        catch(e) { print(e?.toString()); }
-        values.add(value);
+        AppList.add(values, HealthLocationDayOfOperation.fromJson(AppJson.mapValue(entry)));
       }
     }
     return values;
@@ -699,13 +693,13 @@ class HealthLocationDayOfOperation {
 
   // Helper function for conversion work time string to number of minutes
 
-  static int _timeMinutes(String time, {String format = 'hh:mma'}) {
-    DateTime dateTime = (time != null) ? AppDateTime.parseDateTime(time.toUpperCase(), format: format) : null;
-    TimeOfDay timeOfDay = (dateTime != null) ? TimeOfDay.fromDateTime(dateTime) : null;
+  static int? _timeMinutes(String? time, {String format = 'hh:mma'}) {
+    DateTime? dateTime = (time != null) ? AppDateTime.parseDateTime(time.toUpperCase(), format: format) : null;
+    TimeOfDay? timeOfDay = (dateTime != null) ? TimeOfDay.fromDateTime(dateTime) : null;
     return _timeOfDayMinutes(timeOfDay);
   }
 
-  static int _timeOfDayMinutes(TimeOfDay timeOfDay) {
+  static int? _timeOfDayMinutes(TimeOfDay? timeOfDay) {
     return (timeOfDay != null) ? (timeOfDay.hour * 60 + timeOfDay.minute) : null;
   }
 }

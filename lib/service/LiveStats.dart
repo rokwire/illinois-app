@@ -38,10 +38,10 @@ class LiveStats with Service implements NotificationsListener {
     return _logic;
   }
 
-  List<LiveGame> _liveGames;
+  List<LiveGame>? _liveGames;
   Map<String, int> _currentTopics = new Map();
 
-  List<LiveGame> get liveGames => _liveGames;
+  List<LiveGame>? get liveGames => _liveGames;
 
   @override
   void createService() {
@@ -69,12 +69,12 @@ class LiveStats with Service implements NotificationsListener {
     return Set.from([Config(), Storage()]);
   }
 
-  bool hasLiveGame(String gameId) {
+  bool hasLiveGame(String? gameId) {
     if(_enabled) {
       if (_liveGames == null)
         return false;
 
-      for (LiveGame current in _liveGames) {
+      for (LiveGame current in _liveGames!) {
         if (current.gameId == gameId) {
           return true;
         }
@@ -83,12 +83,12 @@ class LiveStats with Service implements NotificationsListener {
     return false;
   }
 
-  LiveGame getLiveGame(String gameId) {
+  LiveGame? getLiveGame(String? gameId) {
     if(_enabled) {
       if (_liveGames == null)
         return null;
 
-      for (LiveGame current in _liveGames) {
+      for (LiveGame current in _liveGames!) {
         if (current.gameId == gameId) {
           return current;
         }
@@ -103,25 +103,25 @@ class LiveStats with Service implements NotificationsListener {
     }
   }
 
-  void addTopic(String topic) {
-    if(_enabled) {
+  void addTopic(String? topic) {
+    if(_enabled && (topic != null)) {
       //1. subscribe to Firebase
       FirebaseMessaging().subscribeToTopic(topic).then((bool success) {
         if (success) {
           //2. add it to the current topics
-          int currentCount = _currentTopics[topic];
+          int? currentCount = _currentTopics[topic];
           _currentTopics[topic] = currentCount == null ? 1 : currentCount + 1;
         } else {
-          Log.e("Error subscribing to topic " + topic);
+          Log.e("Error subscribing to topic $topic");
         }
       });
     }
   }
 
-  void removeTopic(String topic) {
-    if(_enabled) {
+  void removeTopic(String? topic) {
+    if(_enabled && (topic != null)) {
       //1. remove it from the current topics
-      int currentCount = _currentTopics[topic];
+      int currentCount = _currentTopics[topic]!;
       _currentTopics[topic] = currentCount - 1;
 
       //2. Unsubscribe if no more topic
@@ -130,10 +130,10 @@ class LiveStats with Service implements NotificationsListener {
     }
   }
 
-  void _onScoreChanged(Map<String, dynamic> newScore) {
+  void _onScoreChanged(Map<String, dynamic>? newScore) {
     Log.d("On live game changed");
 
-     LiveGame liveGame = LiveGame.fromJson(newScore);
+     LiveGame? liveGame = LiveGame.fromJson(newScore);
      if (liveGame != null)
        _updateLiveGame(liveGame);
   }
@@ -144,8 +144,8 @@ class LiveStats with Service implements NotificationsListener {
 
     //1. find the item index
     int itemIndex = -1;
-    for (int i = 0; i < _liveGames.length; i++) {
-      LiveGame current = _liveGames[i];
+    for (int i = 0; i < _liveGames!.length; i++) {
+      LiveGame current = _liveGames![i];
       if (current.gameId == liveGame.gameId) {
         itemIndex = i;
         break;
@@ -154,26 +154,25 @@ class LiveStats with Service implements NotificationsListener {
 
     //2. apply the live game in the list.
     if (itemIndex != -1)
-      _liveGames[itemIndex] = liveGame; //replace
+      _liveGames![itemIndex] = liveGame; //replace
     else
-      _liveGames.add(liveGame); //add
+      _liveGames!.add(liveGame); //add
 
     //3. notify listeners
     NotificationService().notify(notifyLiveGamesUpdated, liveGame);
   }
 
   void _loadLiveGames() {
-    String url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/v2/live-games" : null;
+    String? url = (Config().sportsServiceUrl != null) ? "${Config().sportsServiceUrl}/api/v2/live-games" : null;
     var response = Network().get(url, auth: NetworkAuth.Auth2);
     response.then((response) {
-    String responseBody = response?.body;
+    String? responseBody = response?.body;
       if ((response != null) && (response.statusCode == 200)) {
-        List<dynamic> gamesList = AppJson.decode(responseBody);
+        List<dynamic>? gamesList = AppJson.decode(responseBody);
         List<LiveGame> result = [];
         if (gamesList != null) {
           for (dynamic current in gamesList) {
-            LiveGame liveGame = LiveGame.fromJson(current);
-            result.add(liveGame);
+            AppList.add(result, LiveGame.fromJson(current));
           }
         }
         _liveGames = result;

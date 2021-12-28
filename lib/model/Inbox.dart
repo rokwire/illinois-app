@@ -6,21 +6,21 @@ import 'package:intl/intl.dart';
 import 'package:sprintf/sprintf.dart';
 
 class InboxMessage with Favorite {
-  final String   messageId;
-  final int      priority;
-  final String   topic;
-  final String   category;
+  final String?   messageId;
+  final int?      priority;
+  final String?   topic;
+  final String?   category;
   
-  final DateTime dateCreatedUtc;
-  final DateTime dateUpdatedUtc;
-  final DateTime dateSentUtc;
+  final DateTime? dateCreatedUtc;
+  final DateTime? dateUpdatedUtc;
+  final DateTime? dateSentUtc;
 
-  final String   subject;
-  final String   body;
-  final Map<String, dynamic> data;
+  final String?   subject;
+  final String?   body;
+  final Map<String, dynamic>? data;
   
-  final InboxSender          sender;
-  final List<InboxRecepient> recepients;
+  final InboxSender?          sender;
+  final List<InboxRecepient>? recepients;
 
   InboxMessage({this.messageId, this.priority, this.topic, this.category,
     this.dateCreatedUtc, this.dateUpdatedUtc, this.dateSentUtc,
@@ -28,7 +28,7 @@ class InboxMessage with Favorite {
     this.sender, this.recepients
   });
 
-  factory InboxMessage.fromJson(Map<String, dynamic> json) {
+  static InboxMessage? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxMessage(
       messageId: AppJson.stringValue(json['id']),
       priority: AppJson.intValue(json['priority']),
@@ -67,19 +67,19 @@ class InboxMessage with Favorite {
     };
   }
 
-  static List<InboxMessage> listFromJson(List<dynamic> jsonList) {
-    List<InboxMessage> result;
+  static List<InboxMessage>? listFromJson(List<dynamic>? jsonList) {
+    List<InboxMessage>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? InboxMessage.fromJson(jsonEntry) : null);
+        AppList.add(result, InboxMessage.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<InboxMessage> messagesList) {
-    List<dynamic> result;
+  static List<dynamic>? listToJson(List<InboxMessage>? messagesList) {
+    List<dynamic>? result;
     if (messagesList != null) {
       result = [];
       for (dynamic message in messagesList) {
@@ -103,9 +103,9 @@ class InboxMessage with Favorite {
     }
   }
 
-  String get displayInfo {
+  String? get displayInfo {
     
-    DateTime deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc ?? dateCreatedUtc);
+    DateTime? deviceDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateSentUtc ?? dateCreatedUtc);
     if (deviceDateTime != null) {
       DateTime now = DateTime.now();
       if (deviceDateTime.compareTo(now) < 0) {
@@ -154,10 +154,10 @@ class InboxMessage with Favorite {
   // Favorite
 
   @override
-  String get favoriteId => messageId;
+  String? get favoriteId => messageId;
 
   @override
-  String get favoriteTitle => subject;
+  String? get favoriteTitle => subject;
 
   @override
   String get favoriteKey => favoriteKeyName;
@@ -166,11 +166,11 @@ class InboxMessage with Favorite {
 }
 
 class InboxRecepient {
-  final String userId;
+  final String? userId;
   
   InboxRecepient({this.userId});
 
-  factory InboxRecepient.fromJson(Map<String, dynamic> json) {
+  static InboxRecepient? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxRecepient(
       userId: AppJson.stringValue(json['user_id'])
     ) : null;
@@ -182,19 +182,19 @@ class InboxRecepient {
     };
   }
 
-  static List<InboxRecepient> listFromJson(List<dynamic> jsonList) {
-    List<InboxRecepient> result;
+  static List<InboxRecepient>? listFromJson(List<dynamic>? jsonList) {
+    List<InboxRecepient>? result;
     if (jsonList != null) {
       result = [];
       for (dynamic jsonEntry in jsonList) {
-        result.add((jsonEntry is Map) ? InboxRecepient.fromJson(jsonEntry) : null);
+        AppList.add(result, InboxRecepient.fromJson(AppJson.mapValue(jsonEntry)));
       }
     }
     return result;
   }
 
-  static List<dynamic> listToJson(List<InboxRecepient> recepientsList) {
-    List<dynamic> result;
+  static List<dynamic>? listToJson(List<InboxRecepient>? recepientsList) {
+    List<dynamic>? result;
     if (recepientsList != null) {
       result = [];
       for (dynamic recepient in recepientsList) {
@@ -206,12 +206,12 @@ class InboxRecepient {
 }
 
 class InboxSender {
-  final InboxSenderType type;
-  final InboxSenderUser user;
+  final InboxSenderType? type;
+  final InboxSenderUser? user;
 
   InboxSender({this.type, this.user});
 
-  factory InboxSender.fromJson(Map<String, dynamic> json) {
+  static InboxSender? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxSender(
       type: inboxSenderTypeFromString(AppJson.stringValue(json['type'])),
       user: InboxSenderUser.fromJson(AppJson.mapValue(json['user'])),
@@ -227,12 +227,12 @@ class InboxSender {
 }
 
 class InboxSenderUser {
-  final String userId;
-  final String name;
+  final String? userId;
+  final String? name;
 
   InboxSenderUser({this.userId, this.name,});
 
-  factory InboxSenderUser.fromJson(Map<String, dynamic> json) {
+  static InboxSenderUser? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxSenderUser(
       userId: AppJson.stringValue(json['user_id']),
       name: AppJson.stringValue(json['name']),
@@ -249,7 +249,7 @@ class InboxSenderUser {
 
 enum InboxSenderType { System, User }
 
-InboxSenderType inboxSenderTypeFromString(String value) {
+InboxSenderType? inboxSenderTypeFromString(String? value) {
   if (value == 'system') {
     return InboxSenderType.System;
   }
@@ -261,24 +261,28 @@ InboxSenderType inboxSenderTypeFromString(String value) {
   }
 }
 
-String inboxSenderTypeToString(InboxSenderType value) {
-  switch(value) {
-    case InboxSenderType.System: return 'system';
-    case InboxSenderType.User: return 'user';
+String? inboxSenderTypeToString(InboxSenderType? value) {
+  if(value == InboxSenderType.System) {
+    return 'system';
   }
-  return null;
+  else if (value == InboxSenderType.User) {
+    return 'user';
+  }
+  else {
+    return null;
+  }
 }
 
 class InboxUserInfo{
-  String userId;
-  String dateCreated;
-  String dateUpdated;
-  Set<String> topics;
-  bool notificationsDisabled;
+  String? userId;
+  String? dateCreated;
+  String? dateUpdated;
+  Set<String?>? topics;
+  bool? notificationsDisabled;
 
   InboxUserInfo({this.userId, this.dateCreated, this.dateUpdated, this.topics, this.notificationsDisabled});
 
-  factory InboxUserInfo.fromJson(Map<String, dynamic> json) {
+  static InboxUserInfo? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? InboxUserInfo(
       userId: AppJson.stringValue(json["user_id"]),
       dateCreated: AppJson.stringValue(json["date_created"]),
@@ -311,5 +315,5 @@ class InboxUserInfo{
     (dateCreated?.hashCode ?? 0) ^
     (dateUpdated?.hashCode ?? 0) ^
     (notificationsDisabled?.hashCode ?? 0) ^
-    (DeepCollectionEquality().hash(topics) ?? 0);
+    (DeepCollectionEquality().hash(topics));
 }

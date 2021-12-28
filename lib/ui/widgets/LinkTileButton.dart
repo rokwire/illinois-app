@@ -18,10 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
 
 class LinkTileWideButton extends StatelessWidget {
-  final String iconPath;
-  final String label;
-  final String hint;
-  final GestureTapCallback onTap;
+  final String? iconPath;
+  final String? label;
+  final String? hint;
+  final GestureTapCallback? onTap;
 
   LinkTileWideButton({this.iconPath, this.label, this.hint = '', this.onTap});
 
@@ -47,14 +47,14 @@ class LinkTileWideButton extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Text(
-                      label,
+                      label!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontFamily: Styles().fontFamilies.bold,
+                          fontFamily: Styles().fontFamilies!.bold,
                           fontSize: 20,
-                          color: Styles().colors.fillColorPrimary),
+                          color: Styles().colors!.fillColorPrimary),
                     ),
-                    Image.asset((iconPath)),
+                    Image.asset(iconPath!),
                   ],
                 ),
               ),
@@ -67,11 +67,11 @@ class LinkTileWideButton extends StatelessWidget {
 }
 
 class LinkTileSmallButton extends StatelessWidget {
-  final String iconPath;
-  final String label;
-  final String hint;
-  final GestureTapCallback onTap;
-  final TextStyle textStyle;
+  final String? iconPath;
+  final String? label;
+  final String? hint;
+  final GestureTapCallback? onTap;
+  final TextStyle? textStyle;
 
   static const Color _boxShadowColor = Color.fromRGBO(19, 41, 75, 0.3);
 
@@ -83,9 +83,9 @@ class LinkTileSmallButton extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle style = textStyle??
         TextStyle(
-          fontFamily: Styles().fontFamilies.bold,
+          fontFamily: Styles().fontFamilies!.bold,
           fontSize: 20,
-          color: Styles().colors.fillColorPrimary
+          color: Styles().colors!.fillColorPrimary
         );
 
     return GestureDetector(
@@ -95,7 +95,7 @@ class LinkTileSmallButton extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(2),
             child: Container(
-              decoration: BoxDecoration(color: (Styles().colors.white),
+              decoration: BoxDecoration(color: (Styles().colors!.white),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: Colors.white, width: 2),
                   boxShadow: [BoxShadow(color: _boxShadowColor, spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
@@ -109,11 +109,11 @@ class LinkTileSmallButton extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(bottom: 16),
                       child:
-                      Image.asset((iconPath)),
+                      Image.asset(iconPath!),
                     ),
                     Container(height: 10,),
                     Text(
-                      label,
+                      label!,
                       textAlign: TextAlign.center,
                       style: style)
                   ],

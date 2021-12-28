@@ -4,21 +4,21 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/service/Styles.dart';
 
 class PrivacyLevelSlider extends StatefulWidget {
-  final double initialValue;
-  final Function onValueChanged;
-  final Color color;
+  final double? initialValue;
+  final Function? onValueChanged;
+  final Color? color;
 
-  const PrivacyLevelSlider({Key key, this.onValueChanged, this.initialValue, this.color}) : super(key: key);
+  const PrivacyLevelSlider({Key? key, this.onValueChanged, this.initialValue, this.color}) : super(key: key);
 
   @override
   _PrivacyLevelSliderState createState() => _PrivacyLevelSliderState();
 }
 
 class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
-  double _discreteValue;
-  Color _mainColor = Styles().colors.white;
-  Color _trackColor = Styles().colors.fillColorPrimaryVariant;
-  Color _inactiveTrackColor = Styles().colors.surfaceAccent;
+  double? _discreteValue;
+  Color? _mainColor = Styles().colors!.white;
+  Color? _trackColor = Styles().colors!.fillColorPrimaryVariant;
+  Color? _inactiveTrackColor = Styles().colors!.surfaceAccent;
 
   @override
   void initState() {
@@ -28,11 +28,11 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
 
   @override
   Widget build(BuildContext context) {
-    int _roundedValue = _discreteValue?.round();
+    int roundedValue = _discreteValue?.round() ?? 0;
     final ThemeData theme = Theme.of(context);
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 17),
-        color: widget?.color ?? Styles().colors.white,
+        color: widget.color ?? Styles().colors!.white,
         child: Column(
             children: <Widget>[
               Stack(
@@ -45,8 +45,8 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             child: Container(
                                 height: 11,
                                 decoration: BoxDecoration(
-                                  color: Styles().colors.fillColorPrimaryVariant,
-                                  border: Border.all(color: Styles().colors.fillColorPrimaryVariant, width: 1),
+                                  color: Styles().colors!.fillColorPrimaryVariant,
+                                  border: Border.all(color: Styles().colors!.fillColorPrimaryVariant!, width: 1),
                                   borderRadius: BorderRadius.circular(24.0),
                                 )),
                           )),
@@ -62,33 +62,33 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                             trackHeight: 10,
                             inactiveTickMarkColor: _inactiveTrackColor,
                             showValueIndicator: ShowValueIndicator.never,
-                            valueIndicatorTextStyle: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies.extraBold, color: Styles().colors.fillColorPrimary)),
+                            valueIndicatorTextStyle: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary)),
                         child: MergeSemantics(
                             child: Semantics(
                                 label: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.hint", "Privacy Level"),
                                 enabled: true,
-                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to") +
-                                    (_roundedValue + 1).toString(),
-                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to") +
-                                    (_roundedValue - 1).toString(),
+                                increasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.increase", "increased to")! +
+                                    (roundedValue + 1).toString(),
+                                decreasedValue: Localization().getStringEx("panel.settings.new_privacy.privacy.button.set_privacy.slider.decrease", "decreased to")! +
+                                    (roundedValue - 1).toString(),
                                 child:
                                 Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2), //Fix cut off circle
                                     child:
                                     Slider(
-                                      value: _discreteValue,
+                                      value: _discreteValue!,
                                       min: 1.0,
                                       max: 5.0,
                                       divisions: 5,
                                       semanticFormatterCallback: (double value) => value.round().toString(),
-                                      label: "$_roundedValue",
+                                      label: "$roundedValue",
                                       onChanged: (double value) {
                                         setState(() {
                                           _discreteValue = value;
                                           if(value>3.3 && value<4) { // remove the second 3rd division caused by {max == division}
                                             _discreteValue = value = 4;
                                           }
-                                          widget.onValueChanged(value);
+                                          widget.onValueChanged!(value);
                                         });
                                       },
                                     )
@@ -143,21 +143,21 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
         ));
   }
 
-  int get _currentLevel{
+  int? get _currentLevel{
     return _discreteValue?.round();
   }
 }
 
 class PrivacyIcon extends StatelessWidget{
-  final int currentPrivacyLevel;
+  final int? currentPrivacyLevel;
   final int minPrivacyLevel;
   final enabledIcon;
   final disabledIcon;
 
-  const PrivacyIcon({Key key, this.minPrivacyLevel = 1, this.enabledIcon, this.disabledIcon, this.currentPrivacyLevel}) : super(key: key);
+  const PrivacyIcon({Key? key, this.minPrivacyLevel = 1, this.enabledIcon, this.disabledIcon, this.currentPrivacyLevel}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Image.asset(currentPrivacyLevel>=minPrivacyLevel? enabledIcon : (disabledIcon??""), excludeFromSemantics: true,);
+    return Image.asset(currentPrivacyLevel!>=minPrivacyLevel? enabledIcon : (disabledIcon??""), excludeFromSemantics: true,);
   }
 
 }
@@ -169,7 +169,7 @@ class _CustomThumbShape extends SliderComponentShape {
   }
 
   @override
-  void paint(PaintingContext context, Offset center, {Animation<double> activationAnimation, Animation<double> enableAnimation, bool isDiscrete, TextPainter labelPainter, RenderBox parentBox, SliderThemeData sliderTheme, TextDirection textDirection, double value, double textScaleFactor, Size sizeWithOverflow}) {
+  void paint(PaintingContext context, Offset center, {Animation<double>? activationAnimation, required Animation<double> enableAnimation, bool? isDiscrete, required TextPainter labelPainter, RenderBox? parentBox, required SliderThemeData sliderTheme, TextDirection? textDirection, double? value, double? textScaleFactor, Size? sizeWithOverflow}) {
     final Canvas canvas = context.canvas;
     final ColorTween colorTween = ColorTween(
       begin: sliderTheme.disabledThumbColor,
@@ -177,36 +177,36 @@ class _CustomThumbShape extends SliderComponentShape {
     );
 
     final ColorTween colorTween2 = ColorTween(
-      begin: Styles().colors.white,
-      end: Styles().colors.white,
+      begin: Styles().colors!.white,
+      end: Styles().colors!.white,
     );
 
     final ColorTween colorTween3 = ColorTween(
-      begin: Styles().colors.fillColorSecondary,
-      end: Styles().colors.fillColorSecondary,
+      begin: Styles().colors!.fillColorSecondary,
+      end: Styles().colors!.fillColorSecondary,
     );
     final ColorTween colorTween4 = ColorTween(
-      begin: Styles().colors.fillColorPrimary,
-      end: Styles().colors.fillColorPrimary,
+      begin: Styles().colors!.fillColorPrimary,
+      end: Styles().colors!.fillColorPrimary,
     );
 
-    canvas.drawCircle(center, 25, Paint()..color = colorTween4.evaluate(enableAnimation));
-    canvas.drawCircle(center, 23, Paint()..color = colorTween2.evaluate(enableAnimation));
-    canvas.drawCircle(center, 21, Paint()..color = colorTween3.evaluate(enableAnimation));
-    canvas.drawCircle(center, 19, Paint()..color = colorTween.evaluate(enableAnimation));
+    canvas.drawCircle(center, 25, Paint()..color = colorTween4.evaluate(enableAnimation)!);
+    canvas.drawCircle(center, 23, Paint()..color = colorTween2.evaluate(enableAnimation)!);
+    canvas.drawCircle(center, 21, Paint()..color = colorTween3.evaluate(enableAnimation)!);
+    canvas.drawCircle(center, 19, Paint()..color = colorTween.evaluate(enableAnimation)!);
     labelPainter.paint(canvas, center + Offset(-labelPainter.width / 2.0, -labelPainter.height / 2.0));
   }
 }
 
 class _CustomTickMarkShape extends SliderTickMarkShape {
   @override
-  Size getPreferredSize({SliderThemeData sliderTheme, bool isEnabled}) {
+  Size getPreferredSize({SliderThemeData? sliderTheme, bool? isEnabled}) {
     return Size.fromRadius(3);
   }
 
   @override
   void paint(PaintingContext context, Offset center,
-      {RenderBox parentBox, SliderThemeData sliderTheme, Animation<double> enableAnimation, Offset thumbCenter, bool isEnabled, TextDirection textDirection}) {
+      {RenderBox? parentBox, SliderThemeData? sliderTheme, Animation<double>? enableAnimation, Offset? thumbCenter, bool? isEnabled, TextDirection? textDirection}) {
     //Don"t draw - we don"t want to show TickMarkers
   }
 }

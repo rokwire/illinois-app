@@ -21,16 +21,16 @@ import 'package:illinois/service/Styles.dart';
 
 class AthleticsSportItemWidget extends StatelessWidget {
   final SportDefinition sport;
-  final String label;
-  final GestureTapCallback onLabelTap;
-  final GestureTapCallback onCheckTap;
+  final String? label;
+  final GestureTapCallback? onLabelTap;
+  final GestureTapCallback? onCheckTap;
   final bool checkMarkVisibility;
   final bool selected;
   final bool showChevron;
 
   AthleticsSportItemWidget(
-      {@required this.label,
-      @required this.sport,
+      {required this.label,
+      required this.sport,
       this.onLabelTap,
       this.onCheckTap,
       this.showChevron = true,
@@ -44,8 +44,8 @@ class AthleticsSportItemWidget extends StatelessWidget {
         child: Semantics(
           label: label,
           value: (selected?Localization().getStringEx("toggle_button.status.checked", "checked",) :
-                Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +
-                ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"),
+                Localization().getStringEx("toggle_button.status.unchecked", "unchecked"))! +
+                ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox")!,
           button:true,
           excludeSemantics: true,
           child: Container(
@@ -57,14 +57,14 @@ class AthleticsSportItemWidget extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(right: 10),
-                    child: Image.asset(sport.iconPath, excludeFromSemantics: true),
+                    child: Image.asset(sport.iconPath!, excludeFromSemantics: true),
                   ),
                   Expanded(child:
                   Text(
-                    label,
+                    label!,
                     style: TextStyle(
-                        fontFamily: Styles().fontFamilies.bold,
-                        color: Styles().colors.fillColorPrimary,
+                        fontFamily: Styles().fontFamilies!.bold,
+                        color: Styles().colors!.fillColorPrimary,
                         fontSize: 16),
                   ),),
                   showChevron

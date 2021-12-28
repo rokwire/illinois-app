@@ -34,7 +34,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
         appBar: SimpleHeaderBarWithBack(
           context: context,
           titleWidget: Text(
-            Localization().getStringEx('panel.athletics_teams.header.title', 'Teams'),
+            Localization().getStringEx('panel.athletics_teams.header.title', 'Teams')!,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -57,7 +57,7 @@ class _AthleticsTeamsPanelState extends State<AthleticsTeamsPanel> {
             ),
           ]),
         ),
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         bottomNavigationBar: TabBarWidget(),
         );
   }

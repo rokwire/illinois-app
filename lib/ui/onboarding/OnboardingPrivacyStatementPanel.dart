@@ -27,7 +27,7 @@ import 'package:illinois/service/Styles.dart';
 
 class OnboardingPrivacyStatementPanel extends StatefulWidget with OnboardingPanel {
 
-  final Map<String, dynamic> onboardingContext;
+  final Map<String, dynamic>? onboardingContext;
   OnboardingPrivacyStatementPanel({this.onboardingContext});
   _OnboardingPrivacyStatementPanelState createState() => _OnboardingPrivacyStatementPanelState();
 }
@@ -35,7 +35,7 @@ class OnboardingPrivacyStatementPanel extends StatefulWidget with OnboardingPane
 class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyStatementPanel> {
 
   GlobalKey _headingKey = GlobalKey();
-  double _headingHeight;
+  double? _headingHeight;
 
   @override
   void initState() {
@@ -44,9 +44,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
 
   void _evalHeadingSize() {
     try {
-      final RenderObject renderBox = _headingKey?.currentContext?.findRenderObject();
+      final RenderObject? renderBox = _headingKey.currentContext?.findRenderObject();
       if (renderBox is RenderBox) {
-        setState(() { _headingHeight = renderBox.size?.height; });
+        setState(() { _headingHeight = renderBox.size.height; });
       }
     } on Exception catch (e) {
       print(e.toString());
@@ -60,20 +60,20 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
 
   @override
   Widget build(BuildContext context) {
-    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy');
-    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.');
+    String titleText = Localization().getStringEx('panel.onboarding.privacy.label.title', 'We care about your privacy')!;
+    String descriptionText = Localization().getStringEx('panel.onboarding.privacy.label.description', 'We only ask for personal information when we can use it to enhance your experience by enabling more features.')!;
 
     double headingWidth = MediaQuery.of(context).size.width;
     double headingHeight = _headingHeight ?? 0;
     double lockSize = headingHeight * 0.5;
     if (headingHeight == 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         _evalHeadingSize();
       });
     }
     
     return Scaffold(
-        backgroundColor: Styles().colors.background,
+        backgroundColor: Styles().colors!.background,
         body: SwipeDetector(
             onSwipeLeft: () => _goNext(context),
             onSwipeRight: () => _goBack(context),
@@ -108,9 +108,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                                 titleText,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontFamily: Styles().fontFamilies.bold,
+                                    fontFamily: Styles().fontFamilies!.bold,
                                     fontSize: 32,
-                                    color: Styles().colors.fillColorPrimary),
+                                    color: Styles().colors!.fillColorPrimary),
                               ),
                             )),
                       ),
@@ -125,9 +125,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                                   descriptionText,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontFamily: Styles().fontFamilies.regular,
+                                      fontFamily: Styles().fontFamilies!.regular,
                                       fontSize: 20,
-                                      color: Styles().colors.fillColorPrimary),
+                                      color: Styles().colors!.fillColorPrimary),
                                 )),
                           )),
                     ]),
@@ -143,9 +143,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                       child: ScalableRoundedButton(
                         label: Localization().getStringEx('panel.onboarding.privacy.button.continue.title', 'Set your privacy level'),
                         hint: Localization().getStringEx('panel.onboarding.privacy.button.continue.hint', ''),
-                        backgroundColor: Styles().colors.background,
-                        borderColor: Styles().colors.fillColorSecondaryVariant,
-                        textColor: Styles().colors.fillColorPrimary,
+                        backgroundColor: Styles().colors!.background,
+                        borderColor: Styles().colors!.fillColorSecondaryVariant,
+                        textColor: Styles().colors!.fillColorPrimary,
                         onTap: () => _goNext(context),
                       ),),
                   ],

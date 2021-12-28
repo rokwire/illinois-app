@@ -25,7 +25,7 @@ class Twitter  /* with Service */ {
 
   // Service
 
-  Future<TweetsPage> loadTweetsPage({int count, DateTime startTimeUtc, DateTime endTimeUtc, String userCategory, String token, bool noCache}) async {
+  Future<TweetsPage?> loadTweetsPage({int? count, DateTime? startTimeUtc, DateTime? endTimeUtc, String? userCategory, String? token, bool? noCache}) async {
     if ((Config().contentUrl != null) && (Config().twitterUserId(userCategory) != null)) {
       String url = "${Config().contentUrl}/twitter/users/${Config().twitterUserId(userCategory)}/tweets?$_tweetFieldsUrlParam&$_userFieldsUrlParam&$_mediaFieldsUrlParam&$_expansionsUrlParam&$_excludeUrlParam";
       if (token != null) {
@@ -39,12 +39,12 @@ class Twitter  /* with Service */ {
       }
       url += "&max_results=${count ?? Config().twitterTweetsCount}";
 
-      Map<String, String> headers = (noCache == true) ? {
+      Map<String, String>? headers = (noCache == true) ? {
         "Cache-Control" : "no-cache"
       } : null;
       
-      Response response = await Network().get(url, auth: NetworkAuth.Auth2, headers: headers);
-      String responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
+      Response? response = await Network().get(url, auth: NetworkAuth.Auth2, headers: headers);
+      String? responseString = ((response != null) && (response.statusCode == 200)) ? response.body : null;
       print("Twitter Page Load: ${response?.statusCode}\n${response?.body}");
       return TweetsPage.fromJson(AppJson.decodeMap(responseString));
     }

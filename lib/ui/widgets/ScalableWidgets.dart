@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Styles.dart';
 
 class ScalableRoundedButton extends StatelessWidget {
-  final String label;
-  final String hint;
-  final Color backgroundColor;
-  final Function onTap;
-  final Color textColor;
+  final String? label;
+  final String? hint;
+  final Color? backgroundColor;
+  final void Function()? onTap;
+  final Color? textColor;
   final TextAlign textAlign;
-  final String fontFamily;
+  final String? fontFamily;
   final double fontSize;
   final int maxLines;
-  final Color borderColor;
+  final Color? borderColor;
   final double borderWidth;
-  final Color secondaryBorderColor;
-  final List<BoxShadow> shadow;
+  final Color? secondaryBorderColor;
+  final List<BoxShadow>? shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
-  final Image leftIcon;
-  final Image rightIcon;
+  final Image? leftIcon;
+  final Image? rightIcon;
 
   ScalableRoundedButton(
       {this.label = '',
@@ -55,20 +55,20 @@ class ScalableRoundedButton extends StatelessWidget {
           onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
-              color: (backgroundColor ?? Styles().colors.fillColorPrimary),
+              color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
               border: Border.all(
-                  color: (borderColor != null) ? borderColor : (backgroundColor ?? Styles().colors.fillColorPrimary),
+                  color: (borderColor != null) ? borderColor! : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
                   width: borderWidth),
               borderRadius: borderRadius,
               boxShadow: this.shadow
             ),
             child: Container(
               decoration: BoxDecoration(
-                  color: (backgroundColor ?? Styles().colors.fillColorPrimary),
+                  color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
                   border: Border.all(
                       color: (secondaryBorderColor != null)
-                          ? secondaryBorderColor
-                          : (backgroundColor ?? Styles().colors.fillColorPrimary),
+                          ? secondaryBorderColor!
+                          : (backgroundColor ?? Styles().colors!.fillColorPrimary!),
                       width: borderWidth),
                   borderRadius: borderRadius),
               child: Padding(
@@ -77,9 +77,9 @@ class ScalableRoundedButton extends StatelessWidget {
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                     (leftIcon != null) ? Padding(padding: EdgeInsets.only(right: 5), child: leftIcon,) : Container(height: 0, width: 0),
                     Expanded(child:
-                      Text(label, textAlign: textAlign, maxLines: maxLines, overflow: TextOverflow.ellipsis,
+                      Text(label!, textAlign: textAlign, maxLines: maxLines, overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontFamily: fontFamily ?? Styles().fontFamilies.bold,
+                          fontFamily: fontFamily ?? Styles().fontFamilies!.bold,
                           fontSize: fontSize,
                           color: textColor,
                         ),
@@ -104,17 +104,17 @@ class ScalableRoundedButton extends StatelessWidget {
 }
 
 class ScalableFilterSelectorWidget extends StatelessWidget {
-  final String label;
-  final String hint;
-  final String labelFontFamily;
+  final String? label;
+  final String? hint;
+  final String? labelFontFamily;
   final double labelFontSize;
   final bool active;
   final EdgeInsets padding;
   final bool visible;
-  final GestureTapCallback onTap;
+  final GestureTapCallback? onTap;
 
   ScalableFilterSelectorWidget(
-      {@required this.label,
+      {required this.label,
         this.hint,
         this.labelFontFamily,
         this.labelFontSize = 16,
@@ -144,10 +144,10 @@ class ScalableFilterSelectorWidget extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child:
                           Text(
-                            label,
+                            label!,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontSize: labelFontSize, color: (active ? Styles().colors.fillColorSecondary : Styles().colors.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies.bold),
+                                fontSize: labelFontSize, color: (active ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary), fontFamily: labelFontFamily ?? Styles().fontFamilies!.bold),
                           ),
                         ),
                         Padding(
@@ -162,26 +162,26 @@ class ScalableFilterSelectorWidget extends StatelessWidget {
 }
 
 class ScalableSmallRoundedButton extends StatelessWidget{
-  final String label;
+  final String? label;
   final String hint;
-  final Color backgroundColor;
-  final Function onTap;
-  final Color textColor;
+  final Color? backgroundColor;
+  final void Function()? onTap;
+  final Color? textColor;
   final TextAlign textAlign;
-  final String fontFamily;
+  final String? fontFamily;
   final double fontSize;
-  final Color borderColor;
+  final Color? borderColor;
   final double borderWidth;
-  final Color secondaryBorderColor;
-  final List<BoxShadow> shadow;
+  final Color? secondaryBorderColor;
+  final List<BoxShadow>? shadow;
   final EdgeInsetsGeometry padding;
   final bool enabled;
-  final Image leftIcon;
-  final Image rightIcon;
+  final Image? leftIcon;
+  final Image? rightIcon;
   final int widthCoeficient;
   final int maxLines;
 
-  const ScalableSmallRoundedButton({Key key,
+  const ScalableSmallRoundedButton({Key? key,
     this.label = '',
     this.hint = '',
     this.backgroundColor,
@@ -217,9 +217,9 @@ class ScalableSmallRoundedButton extends StatelessWidget{
             label: this.label,
             hint: this.hint,
             onTap: onTap,
-            textColor: textColor ?? Styles().colors.fillColorPrimary,
-            borderColor: borderColor?? Styles().colors.fillColorSecondary,
-            backgroundColor: backgroundColor?? Styles().colors.background,
+            textColor: textColor ?? Styles().colors!.fillColorPrimary,
+            borderColor: borderColor?? Styles().colors!.fillColorSecondary,
+            backgroundColor: backgroundColor?? Styles().colors!.background,
             leftIcon: leftIcon,
             rightIcon: rightIcon,
             textAlign: textAlign,
