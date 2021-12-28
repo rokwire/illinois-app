@@ -89,7 +89,7 @@ class Onboarding with Service implements NotificationsListener {
   Widget? get startPanel {
     for (int index = 0; index < _contentCodes!.length; index++) {
       OnboardingPanel? nextPanel = _createPanel(code: _contentCodes![index], context: {});
-      if ((nextPanel != null) && nextPanel.onboardingCanDisplay) {
+      if ((nextPanel != null) && (nextPanel is Widget) && nextPanel.onboardingCanDisplay && (nextPanel is Widget)) {
         return nextPanel as Widget;
       }
     }
@@ -134,7 +134,7 @@ class Onboarding with Service implements NotificationsListener {
         while (nextPanelIndex! < _contentCodes!.length) {
           String? nextPanelCode = _contentCodes![nextPanelIndex];
           OnboardingPanel? nextPanel = _createPanel(code: nextPanelCode, context: panel?.onboardingContext ?? {});
-          if ((nextPanel != null) && nextPanel.onboardingCanDisplay && await nextPanel.onboardingCanDisplayAsync) {
+          if ((nextPanel != null) && (nextPanel is Widget) && nextPanel.onboardingCanDisplay && await nextPanel.onboardingCanDisplayAsync) {
             return nextPanel as Widget;
           }
           else {
