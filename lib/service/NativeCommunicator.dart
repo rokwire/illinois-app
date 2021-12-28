@@ -314,53 +314,55 @@ class NativeCommunicator with Service implements NotificationsListener {
     String? result;
     try {
       result = await _platformChannel.invokeMethod('deviceId');
-    }on PlatformException catch (e) {
+    } on PlatformException catch (e) {
       print(e.message);
     }
     return result;
   }
 
   Future<String?> encryptionKey({String? identifier, int? size}) async {
+    String? result;
     try {
-      return await _platformChannel.invokeMethod('encryptionKey', {
+      result = await _platformChannel.invokeMethod('encryptionKey', {
         'identifier': identifier,
         'size': size,
       });
     } catch (e) {
       print(e.toString());
     }
-    return null;
+    return result;
   }
 
   Future<Uint8List?> getBarcodeImageData(Map<String, dynamic> params) async {
+    Uint8List? result;
     try {
       String? base64String = await _platformChannel.invokeMethod('barcode', params);
-      return (base64String != null) ? base64Decode(base64String) : null;
+      result = (base64String != null) ? base64Decode(base64String) : null;
     }
     catch (e) {
       print(e.toString());
     }
-    return null;
+    return result;
   }
 
   Future<bool?> launchApp(Map<String, dynamic> params) async {
-    bool? appLaunched = false;
+    bool? result;
     try {
-      appLaunched = await (_platformChannel.invokeMethod('launchApp', params) as Future<bool>);
+      result = await _platformChannel.invokeMethod('launchApp', params);
     } catch (e) {
       print(e.toString());
     }
-    return appLaunched;
+    return result;
   }
 
-  Future<bool> launchAppSettings() async {
-    bool appLaunched = false;
+  Future<bool?> launchAppSettings() async {
+    bool? result;
     try {
-      appLaunched = await _platformChannel.invokeMethod('launchAppSettings');
+      result = await _platformChannel.invokeMethod('launchAppSettings');
     } catch (e) {
       print(e.toString);
     }
-    return appLaunched;
+    return result;
   }
 
   Future<void> launchTest() async {
