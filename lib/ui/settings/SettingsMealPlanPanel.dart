@@ -51,8 +51,8 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
 
   DateTime? _startDate;
   DateTime? _endDate;
-  List<BaseTransaction?>? _mealPlanTransactions;
-  List<BaseTransaction?>? _cafeCreditTransactions;
+  List<BaseTransaction>? _mealPlanTransactions;
+  List<BaseTransaction>? _cafeCreditTransactions;
 
   _SettingsMealPlanPanelState();
 
@@ -339,7 +339,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         ],),);
   }
 
-  Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction?>? transactionList) {
+  Widget _buildBalanceTableRow(bool loadingFlag, List<BaseTransaction>? transactionList) {
     if(Auth2().isLoggedIn) {
       if (loadingFlag) {
         return Center(child: Padding(padding: EdgeInsets.only(bottom: 20),
@@ -564,7 +564,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     );
   }
 
-  void _onMealPlanTransactionsLoaded(List<MealPlanTransaction?>? transactions) {
+  void _onMealPlanTransactionsLoaded(List<MealPlanTransaction>? transactions) {
     _showMealPlanTransactionsProgress(false, changeState: false);
     if (mounted) {
       setState(() {
@@ -573,7 +573,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     }
   }
 
-  void _onCafeCreditTransactionsLoaded(List<CafeCreditTransaction?>? transactions) {
+  void _onCafeCreditTransactionsLoaded(List<CafeCreditTransaction>? transactions) {
     _showCafeCreditTransactionsProgress(false, changeState: false);
     if (mounted) {
       setState(() {

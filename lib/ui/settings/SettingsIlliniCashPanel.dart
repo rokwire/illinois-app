@@ -50,7 +50,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
 
   DateTime? _startDate;
   DateTime? _endDate;
-  List<IlliniCashTransaction?>? _transactions;
+  List<IlliniCashTransaction>? _transactions;
   bool _transactionHistoryVisible = false;
   bool _transactionsLoading = false;
   bool _authLoading = false;
@@ -557,7 +557,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     );
   }
 
-  void _onTransactionsLoaded(List<IlliniCashTransaction?>? transactions) {
+  void _onTransactionsLoaded(List<IlliniCashTransaction>? transactions) {
     _showTransactionsProgress(false, changeState: false);
     if (mounted) {
       setState(() {
