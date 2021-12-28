@@ -151,17 +151,19 @@ class GeoFence with Service implements NotificationsListener {
   }
 
   Future<bool?> startRangingBeaconsInRegion(String regionId) async {
-    return await (NativeCommunicator().geoFence(beacons:{
+    dynamic result = await NativeCommunicator().geoFence(beacons:{
       'regionId': regionId,
       'action': 'start',
-    }) as Future<bool?>);
+    });
+    return (result is bool) ? result : null;
   }
 
   Future<bool?> stopRangingBeaconsInRegion(String regionId) async {
-    return await (NativeCommunicator().geoFence(beacons:{
+    dynamic result = await NativeCommunicator().geoFence(beacons:{
       'regionId': regionId,
       'action': 'stop',
-    }) as Future<bool?>);
+    });
+    return (result is bool) ? result : null;
   }
 
   // Implementation
