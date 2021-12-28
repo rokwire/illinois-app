@@ -111,7 +111,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
       DiningService().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
         if(dinings != null){
-          Dining? foundDining = Dining.diningFromList(dinings, id: dining!.id);
+          Dining? foundDining = Dining.entryInList(dinings, id: dining!.id);
           if(foundDining != null){
             dining = foundDining;
             _isDiningLoading = false;

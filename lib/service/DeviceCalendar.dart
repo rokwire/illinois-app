@@ -153,7 +153,7 @@ class DeviceCalendar with Service implements NotificationsListener{
     List<Calendar>? calendars = calendarsResult.data;
     _deviceCalendars = calendars!=null && calendars.isNotEmpty? calendars.where((Calendar calendar) => calendar.isReadOnly == false).toList() : null;
     if(AppCollection.isCollectionNotEmpty(_deviceCalendars)) {
-      _defaultCalendar = _deviceCalendars!.firstWhere((element) => element.isDefault!);
+      _defaultCalendar = (_deviceCalendars as List<Calendar?>).firstWhere((element) => (element?.isDefault == true), orElse: () => null);
       return true;
     }
     _debugMessage("No Calendars");

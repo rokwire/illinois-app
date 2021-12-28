@@ -783,7 +783,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (AppCollection.isCollectionNotEmpty(posts)) {
-        try { _post = posts!.firstWhere((post) => (post.id == _post!.id)); }
+        try { _post = (posts as List<GroupPost?>).firstWhere((post) => (post?.id == _post?.id), orElse: () => null); }
         catch (e) {}
         _sortReplies(_post?.replies);
         GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);

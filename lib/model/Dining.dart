@@ -333,7 +333,7 @@ class Dining with Explore implements Favorite {
     return AppDateTime().formatDateTime(dateUtc, format: 'EEEE, MMM d');
   }
 
-  static Dining? diningFromList(List<Dining>? dinings, { String? id}) {
+  static Dining? entryInList(List<Dining>? dinings, { String? id}) {
     if (dinings != null) {
       for (Dining dining in dinings) {
         if (dining.id == id) {

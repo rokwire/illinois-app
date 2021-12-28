@@ -541,7 +541,7 @@ class ExploreService with Service implements NotificationsListener {
   }
 
   Future<void> _buildEventsForSuperEvent(Event superEvent, EventTimeFilter? eventFilter) async {
-    List<Map<String, dynamic>?>? subEventsMap = superEvent.subEventsMap;
+    List<Map<String, dynamic>>? subEventsMap = superEvent.subEventsMap;
     if (AppCollection.isCollectionEmpty(subEventsMap)) {
       Log.e('Super event does not contain sub events!');
       return;
@@ -573,7 +573,7 @@ class ExploreService with Service implements NotificationsListener {
     if (AppCollection.isCollectionNotEmpty(subEventsJsonList)) {
       for (dynamic eventJson in subEventsJsonList!) {
         String? id = eventJson['id'];
-        Map<String, dynamic>? subEventJson = subEventsMap!.firstWhere((jsonEntry) => (id == jsonEntry!['id']), orElse: () {
+        Map<String, dynamic>? subEventJson = (subEventsMap as List<Map<String, dynamic>?>).firstWhere((jsonEntry) => (id == jsonEntry!['id']), orElse: () {
           print('No matching sub event');
           return null;
         });

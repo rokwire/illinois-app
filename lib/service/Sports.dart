@@ -118,7 +118,7 @@ class Sports with Service implements NotificationsListener {
   SportSocialMedia? getSocialMediaForSport(String? shortName) {
     if (AppString.isStringNotEmpty(shortName) && AppCollection.isCollectionNotEmpty(_socialMedias)) {
       try {
-        return _socialMedias!.firstWhere((socialMedia) => shortName == socialMedia.shortName);
+        return (_socialMedias as List<SportSocialMedia?>).firstWhere((socialMedia) => shortName == socialMedia?.shortName, orElse: () => null);
       }
       catch(e){}
     }
@@ -166,17 +166,17 @@ class Sports with Service implements NotificationsListener {
     if (AppCollection.isCollectionNotEmpty(_menSports)) {
       SportDefinition? firstExplicitItem;
       try {
-        firstExplicitItem = _menSports!.firstWhere((SportDefinition sportType) {
-          return sportType.customName?.toLowerCase() == "football";
-        });
+        firstExplicitItem = (_menSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
+          return sportType?.customName?.toLowerCase() == "football";
+        }, orElse: () => null);
       }
       catch(e) {}
 
       SportDefinition? secondExplicitItem;
       try {
-        secondExplicitItem = _menSports!.firstWhere((SportDefinition sportType) {
-          return sportType.customName?.toLowerCase() == "basketball";
-        });
+        secondExplicitItem = (_menSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
+          return sportType?.customName?.toLowerCase() == "basketball";
+        }, orElse: () => null);
       }
       catch(e) {}
 
@@ -198,17 +198,17 @@ class Sports with Service implements NotificationsListener {
     if (AppCollection.isCollectionNotEmpty(_womenSports)) {
       SportDefinition? firstExplicitItem;
       try {
-        firstExplicitItem = _womenSports!.firstWhere((SportDefinition sportType) {
-          return sportType.customName?.toLowerCase() == "volleyball";
-        });
+        firstExplicitItem = (_womenSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
+          return sportType?.customName?.toLowerCase() == "volleyball";
+        }, orElse: () => null);
       }
       catch(e) {}
 
       SportDefinition? secondExplicitItem;
       try {
-        secondExplicitItem = _womenSports!.firstWhere((SportDefinition sportType) {
-          return sportType.customName?.toLowerCase() == "basketball";
-        });
+        secondExplicitItem = (_womenSports as List<SportDefinition?>).firstWhere((SportDefinition? sportType) {
+          return sportType?.customName?.toLowerCase() == "basketball";
+        }, orElse: () => null);
       }
       catch(e) {}
 

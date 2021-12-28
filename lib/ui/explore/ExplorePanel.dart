@@ -466,8 +466,8 @@ class ExplorePanelState extends State<ExplorePanel>
         case ExploreTab.Events: 
           {
             if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (AppCollection.isCollectionNotEmpty(selectedFilterList)) ? selectedFilterList!.firstWhere((selectedFilter) =>
-              selectedFilter.type == _initialSelectedFilter!.type) : null;
+              ExploreFilter? filter = (AppCollection.isCollectionNotEmpty(selectedFilterList)) ? (selectedFilterList as List<ExploreFilter?>).firstWhere((selectedFilter) =>
+              selectedFilter?.type == _initialSelectedFilter?.type, orElse: () => null) : null;
               if (filter != null) {
                 int filterIndex = selectedFilterList!.indexOf(filter);
                 selectedFilterList.remove(filter);
