@@ -104,10 +104,9 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   void _loadAllRosters() {
-    Future<List<dynamic>?> result = Sports().loadRosters(widget.sport!.shortName);
-    result.then((list) {
+    Sports().loadRosters(widget.sport!.shortName).then((List<Roster>? result) {
       setState(() {
-        allRosters = list as List<Roster>?;
+        allRosters = result;
       });
     });
   }
