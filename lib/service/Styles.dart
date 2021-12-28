@@ -471,7 +471,7 @@ class UiFontFamilies{
   String? get thin         => _familyMap["thin"];
   String? get thinIt       => _familyMap["thin_italic"];
 
-  String? fromCode(String? code) => _familyMap[code!];
+  String? fromCode(String? code) => _familyMap[code];
 }
 
 class UiStyles {

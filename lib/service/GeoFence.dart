@@ -221,7 +221,7 @@ class GeoFence with Service implements NotificationsListener {
     return (jsonList != null) ? GeoFenceRegion.mapFromJsonList(jsonList) : null;
   }
 
-  static bool _areRegionsEqual(LinkedHashMap<String?, GeoFenceRegion?>? regions1, LinkedHashMap<String?, GeoFenceRegion?>? regions2) {
+  static bool _areRegionsEqual(LinkedHashMap<String, GeoFenceRegion>? regions1, LinkedHashMap<String, GeoFenceRegion>? regions2) {
     if ((regions1 != null) && (regions2 != null)) {
       if (regions1.length == regions2.length) {
         for (String? regionId in regions1.keys) {

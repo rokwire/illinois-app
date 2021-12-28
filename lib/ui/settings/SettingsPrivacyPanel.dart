@@ -626,7 +626,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget> {
   }
 
   Widget _buildCategoryDescriptionWidget(PrivacyCategory category) {
-    String? categoryStateDescription = PrivacyData().getLocalizedString(category.description != null ? category.description![widget.selectedPrivacyState!] : null);
+    String? categoryStateDescription = PrivacyData().getLocalizedString(category.description != null ? category.description![widget.selectedPrivacyState] : null);
     bool hasDescription = AppString.isStringNotEmpty(categoryStateDescription);
     return !hasDescription
         ? Container()

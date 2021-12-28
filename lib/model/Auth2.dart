@@ -1299,7 +1299,7 @@ class Auth2UserPrefs {
 
   dynamic getSetting({String? settingName}){
     if(_settings?.isNotEmpty ?? false){
-      return _settings![settingName!];
+      return _settings![settingName];
     }
 
     return null;//consider default TBD

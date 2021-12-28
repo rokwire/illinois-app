@@ -161,7 +161,7 @@ class Config with Service implements NotificationsListener {
       String? configsStr = AESCrypt.decrypt(configsStrEnc, key: encryptionKey, iv: encryptionIV);
       Map<String, dynamic>? configs = AppJson.decode(configsStr);
       String? configTarget = configEnvToString(_configEnvironment);
-      return (configs != null) ? configs[configTarget!] : null;
+      return (configs != null) ? configs[configTarget] : null;
     } catch (e) {
       print(e.toString());
     }

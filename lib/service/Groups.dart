@@ -109,7 +109,7 @@ class Groups with Service implements NotificationsListener {
   // Current User Membership
 
   Member? getUserMembership(String? groupId) {
-    return (_userMembership != null) ? _userMembership![groupId!] : null;
+    return (_userMembership != null) ? _userMembership![groupId] : null;
   }
 
   Future<bool> isAdminForGroup(String groupId) async{

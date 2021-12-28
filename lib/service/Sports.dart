@@ -376,10 +376,12 @@ class Sports with Service implements NotificationsListener {
     Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
     List<Game> preferredGames = [];
     for (Game game in gamesList!) {
-      if ((game.sport?.shortName != null) && !gamesMap.containsKey(game.sport!.shortName)) {
-        gamesMap[game.sport!.shortName!] = [];
+      if (game.sport?.shortName != null) {
+        if (!gamesMap.containsKey(game.sport!.shortName)) {
+          gamesMap[game.sport!.shortName!] = [];
+        }
+        gamesMap[game.sport!.shortName]?.add(game);
       }
-      gamesMap[game.sport!.shortName!]!.add(game);
     }
 
     // Step 2: Add all preferred games

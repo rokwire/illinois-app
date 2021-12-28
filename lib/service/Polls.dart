@@ -720,7 +720,7 @@ class Polls with Service implements NotificationsListener {
         if (pollsJson != null) {
           for (dynamic pollJson in pollsJson) {
             Poll poll = Poll.fromJson(pollJson)!;
-            _PollUIStatus? status = _pollUIStatusFromString(chunksJson[poll.pollId!]);
+            _PollUIStatus? status = _pollUIStatusFromString(chunksJson[poll.pollId]);
             if (poll.status != PollStatus.closed) {
               _addPollToChunks(poll, status: status, save: false);
             }

@@ -452,7 +452,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
 
-      List<ExploreFilter>? selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab!] : null;
+      List<ExploreFilter>? selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
       switch (_selectedTab) {
         
         case ExploreTab.All:
@@ -831,7 +831,7 @@ class ExplorePanelState extends State<ExplorePanel>
     int realIndex = _hasDiningSpecials ? index -1 : index;
     Explore? explore = _displayExplores![realIndex];
 
-    List<ExploreFilter>? selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab!] : null;
+    List<ExploreFilter>? selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
     Set<String>? tags  = _getSelectedEventTags(selectedFilterList);
 
     ExploreCard exploreView = ExploreCard(
@@ -1063,7 +1063,7 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildFilterValuesContainer() {
 
 
-    List<ExploreFilter>? tabFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab!] : null;
+    List<ExploreFilter>? tabFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
     ExploreFilter? selectedFilter;
     if (tabFilters != null && tabFilters.isNotEmpty) {
       for (ExploreFilter filter in tabFilters) {
@@ -1122,7 +1122,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   List<Widget> _buildFilterWidgets() {
     List<Widget> filterTypeWidgets = [];
-    List<ExploreFilter>? visibleFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab!] : null;
+    List<ExploreFilter>? visibleFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
     if (visibleFilters == null ||
         visibleFilters.isEmpty ||
         _eventCategories == null) {
@@ -1198,7 +1198,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onFilterTypeClicked(ExploreFilter selectedFilter) {
     // Analytics.instance.logSelect(target:...);
-    List<ExploreFilter>? tabFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab!] : null;
+    List<ExploreFilter>? tabFilters = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab] : null;
     _refresh(() {
       if (tabFilters != null) {
         for (ExploreFilter filter in tabFilters) {
@@ -1294,7 +1294,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _deactivateSelectedFilters() {
     List<ExploreFilter>? tabFilters = (_tabToFilterMap != null)
-        ? _tabToFilterMap![_selectedTab!] : null;
+        ? _tabToFilterMap![_selectedTab] : null;
     if (tabFilters != null && tabFilters.isNotEmpty) {
       for (ExploreFilter filter in tabFilters) {
         filter.active = false;

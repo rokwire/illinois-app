@@ -439,7 +439,7 @@ class _HomeGiesWidgetState extends State<HomeGiesWidget>  {
   }
 
   bool _progressStepCompleted(int? progressStep) {
-    Set<String>? progressPages = _progressPages[progressStep!];
+    Set<String>? progressPages = _progressPages[progressStep];
     return (progressPages == null) || _completedPages!.containsAll(progressPages);
   }
 

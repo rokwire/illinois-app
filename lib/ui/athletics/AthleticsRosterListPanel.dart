@@ -138,7 +138,7 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   }
 
   List<Widget> _constructRostersList(){
-    if(_tabStrings.isNotEmpty) {
+    if(_tabStrings.isNotEmpty && (_selectedTabIndex != null)) {
       if (_tabFilterByName == _tabStrings[_selectedTabIndex!]) {
         return _constructRostersByNameList();
       }
@@ -172,14 +172,18 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
   List<Widget> _constructRostersByPositionList(){
     List<Widget> widgets = [];
     Map<String,List<Roster>> categoryMap = Map<String,List<Roster>>();
-    for (Roster roster in allRosters!){
-      if((roster.position != null) && !categoryMap.containsKey(roster.position)){
-        categoryMap[roster.position!] = [];
+    if (allRosters != null) {
+      for (Roster roster in allRosters!){
+        if (roster.position != null) {
+          if(!categoryMap.containsKey(roster.position)){
+            categoryMap[roster.position!] = [];
+          }
+          categoryMap[roster.position]?.add(roster);
+        }
       }
-      categoryMap[roster.position!]!.add(roster);
     }
 
-    for(String? category in categoryMap.keys){
+    for(String category in categoryMap.keys){
       if(widgets.length > 0) {
         widgets.add(Container(height: 20,));
       }
