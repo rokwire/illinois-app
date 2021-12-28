@@ -766,13 +766,14 @@ class Storage with Service {
 
   static const String _calendarEventsTableKey = 'calendar_events_table';
 
-  dynamic get calendarEventsTable {
+  Map<String, String>? get calendarEventsTable {
     String? jsonString = _getStringWithName(_calendarEventsTableKey);
-    dynamic jsonData = AppJson.decode(jsonString);
-    return jsonData;
+    try { return (AppJson.decode(jsonString) as Map?)?.cast<String, String>(); }
+    catch(e) { print(e.toString()); }
+    return null;
   }
 
-  set calendarEventsTable(dynamic table) {
+  set calendarEventsTable(Map<String, String>? table) {
     String? tableToString = (table != null) ? json.encode(table) : null;
     _setStringWithName(_calendarEventsTableKey, tableToString);
   }

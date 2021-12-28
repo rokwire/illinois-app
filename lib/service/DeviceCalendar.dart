@@ -22,7 +22,7 @@ class DeviceCalendar with Service implements NotificationsListener{
   Calendar? _defaultCalendar;
   List<Calendar>? _deviceCalendars;
   Calendar? _selectedCalendar;
-  Map<String?, String?>? _calendarEventIdTable;
+  Map<String, String>? _calendarEventIdTable;
   DeviceCalendarPlugin _deviceCalendarPlugin = DeviceCalendarPlugin();
 
   static final DeviceCalendar _instance = DeviceCalendar._internal();
@@ -43,7 +43,7 @@ class DeviceCalendar with Service implements NotificationsListener{
 
   @override
   Future<void> initService() async {
-    dynamic storedTable = Storage().calendarEventsTable ?? Map();
+    Map<String, String>? storedTable = Storage().calendarEventsTable;
     _calendarEventIdTable = storedTable!=null ? Map<String, String>.from(storedTable): Map();
     await super.initService();
   }
@@ -89,16 +89,17 @@ class DeviceCalendar with Service implements NotificationsListener{
     _debugMessage("Add to calendar- id:${calendar?.id}, name:${calendar?.name}, accountName:${calendar?.accountName}, accountType:${calendar?.accountType}, isReadOnly:${calendar?.isReadOnly}, isDefault:${calendar?.isDefault},");
     //PLACE
     if(calendar!=null) {
-      final createEventResult = await (_deviceCalendarPlugin.createOrUpdateEvent(event.toCalendarEvent(calendar?.id)) as Future<Result<String>>);
-      if(createEventResult.data!=null){
-        _storeEventId(event.internalEventId, createEventResult.data);
+      Result<String>? createEventResult = await _deviceCalendarPlugin.createOrUpdateEvent(event.toCalendarEvent(calendar?.id));
+      if(createEventResult?.data!=null){
+        _storeEventId(event.internalEventId, createEventResult?.data);
       }
 
-      _debugMessage("result.data: ${createEventResult.data}, result?.errors?.toString(): ${createEventResult.errors.toString()}");
+      _debugMessage("result.data: ${createEventResult?.data}, result?.errors?.toString(): ${createEventResult?.errors.toString()}");
 
-      if(!createEventResult.isSuccess) {
-        AppToast.show(createEventResult.data ?? createEventResult.errors.toString());
-        print(createEventResult.errors.toString());
+      if((createEventResult == null) || !createEventResult.isSuccess) {
+        //TBD: handle UI in caller
+        AppToast.show(createEventResult?.data ?? createEventResult?.errors.toString() ?? 'Failed to create event');
+        print(createEventResult?.errors.toString());
         return false;
       }
     } else {
@@ -178,12 +179,16 @@ class DeviceCalendar with Service implements NotificationsListener{
   }
 
   void _storeEventId(String? exploreId, String? calendarEventId){
-    _calendarEventIdTable![exploreId] = calendarEventId;
-    Storage().calendarEventsTable = _calendarEventIdTable;
+    if ((_calendarEventIdTable != null) && (exploreId != null) && (calendarEventId != null)) {
+      _calendarEventIdTable![exploreId] = calendarEventId;
+      Storage().calendarEventsTable = _calendarEventIdTable;
+    }
   }
   
   void _eraseEventId(String? id){
-    _calendarEventIdTable!.removeWhere((key, value) => key == id);
+    if (_calendarEventIdTable != null) {
+      _calendarEventIdTable!.remove(id);
+    }
   }
 
   void _debugMessage(String msg){
