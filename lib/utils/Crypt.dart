@@ -88,7 +88,7 @@ class RSACrypt {
 
   static String? encrypt(String plainText, PublicKey publicKey) {
       try {
-        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey as RSAPublicKey?, privateKey: null));
+        final encrypter = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey as RSAPublicKey, privateKey: null));
         return encrypter.encrypt(plainText).base64;
       }
       catch(e) { print(e.toString()); }

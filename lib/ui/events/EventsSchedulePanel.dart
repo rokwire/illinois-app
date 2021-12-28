@@ -576,9 +576,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     _refresh((){});
   }
 
-  void _refresh(Function fn){
+  void _refresh(void fn()){
     if(mounted) {
-      this.setState(fn as void Function());
+      this.setState(fn);
     }
   }
 

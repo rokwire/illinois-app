@@ -419,7 +419,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 class GuideFeatureButton extends StatefulWidget {
   final String? title;
   final String? icon;
-  final Function? onTap;
+  final void Function()? onTap;
   GuideFeatureButton({this.title, this.icon, this.onTap});
 
   _GuideFeatureButtonState createState() => _GuideFeatureButtonState();
@@ -440,7 +440,7 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
   @override
   Widget build(BuildContext context) {
     return Semantics(button: true, child:
-      GestureDetector(onTap: widget.onTap as void Function()? ?? _nop, child:
+      GestureDetector(onTap: widget.onTap ?? _nop, child:
         Container(
           decoration: BoxDecoration(
             color: Styles().colors!.white,

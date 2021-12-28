@@ -626,9 +626,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     ]),);
   }
 
-  Widget _buildMembershipButton({required String title, required String description, Function? onTap}){
+  Widget _buildMembershipButton({required String title, required String description, void onTap()?}){
     return
-      InkWell(onTap: onTap as void Function()?,
+      InkWell(onTap: onTap,
       child:
         Container (
           decoration: BoxDecoration(

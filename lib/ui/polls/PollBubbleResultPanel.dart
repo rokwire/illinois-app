@@ -62,7 +62,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
   @override
   void onNotification(String name, dynamic param) {
     if ((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) {
-      if (widget.pollId == (param as String?)) {
+      if (widget.pollId == param) {
         setState(() {
         });
       }

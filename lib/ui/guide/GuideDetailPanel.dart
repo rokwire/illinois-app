@@ -446,7 +446,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       for (dynamic relatedEntry in related) {
         Map<String, dynamic>? guideEntry;
         if (relatedEntry is Map) {
-          guideEntry = relatedEntry as Map<String, dynamic>?;
+          guideEntry = AppJson.mapValue(relatedEntry);
         }
         else if (relatedEntry is String) {
           guideEntry = Guide().entryById(relatedEntry);

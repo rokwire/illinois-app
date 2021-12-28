@@ -488,9 +488,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
-  Widget _buildMembershipButton({required String title, required String description, Function? onTap}) {
+  Widget _buildMembershipButton({required String title, required String description, void onTap()?}) {
     return GestureDetector(
-        onTap: onTap as void Function()?,
+        onTap: onTap,
         child: Container(
             decoration: BoxDecoration(
                 color: Styles().colors!.white,

@@ -400,10 +400,10 @@ class _EventCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAddPostButton({String? photoUrl,Function? onTap}){
+  Widget _buildAddPostButton({String? photoUrl,void onTap()?}){
       return
         InkWell(
-          onTap: onTap as void Function()?,
+          onTap: onTap,
           child: Container(
           padding: EdgeInsets.only(top: 0,bottom: 16),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -432,7 +432,7 @@ class _EventCard extends StatelessWidget {
       ));
   }
 
-  void _onSettingsTap(BuildContext context, Event? event){
+  void _onSettingsTap(BuildContext context, GroupEvent? event){
     Analytics.instance.logSelect(target: "Settings");
     showDialog(
         context: context,
@@ -459,7 +459,7 @@ class _EventCard extends StatelessWidget {
                           borderWidth: 2,
                           onTap: (){
                             Navigator.pop(context);
-                            _onDeleteTap(context, event as GroupEvent?);
+                            _onDeleteTap(context, event);
                           },
                         ),
                         Container(height: 8,),

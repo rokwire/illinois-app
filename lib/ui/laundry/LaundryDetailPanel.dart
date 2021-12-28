@@ -74,7 +74,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
   Widget build(BuildContext context) {
     if (!(_availabilityLoaded && _appliancesLoaded)) {
       return Scaffold(
-        appBar: _buildHeaderBar() as PreferredSizeWidget?,
+        appBar: _buildHeaderBar(),
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -86,7 +86,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     bool isFavorite = Auth2().isFavorite(widget.room);
 
     return Scaffold(
-      appBar: _buildHeaderBar() as PreferredSizeWidget?,
+      appBar: _buildHeaderBar(),
       body: Stack(
         children: <Widget>[
           _mapAllowed ? MapWidget(
@@ -259,7 +259,7 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     );
   }
 
-  Widget _buildHeaderBar() {
+  PreferredSizeWidget _buildHeaderBar() {
     return SimpleHeaderBarWithBack(
       context: context,
       titleWidget: Text(Localization().getStringEx("panel.laundry_detail.header.title", "Laundry")!,
@@ -277,11 +277,11 @@ class _LaundryDetailPanelState extends State<LaundryDetailPanel> implements Noti
     if (laundryLocationDetails == null) {
       return Container();
     }
-    String locationText = laundryLocationDetails.getDisplayAddress();
+    String? locationText = laundryLocationDetails.getDisplayAddress();
     String? semanticText =sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location: %s "')!, [locationText]);
     if (AppString.isStringEmpty(locationText)) {
-      double? latitude = laundryLocationDetails.latitude as double?;
-      double? longitude = laundryLocationDetails.longitude as double?;
+      double? latitude = laundryLocationDetails.latitude?.toDouble();
+      double? longitude = laundryLocationDetails.longitude?.toDouble();
       locationText = '$latitude, $longitude';
 
       semanticText = sprintf(Localization().getStringEx('panel.laundry_detail.location_coordinates.format', '"Location coordinates, Latitude:%s , Longitude:%s "')!, [latitude,longitude]);

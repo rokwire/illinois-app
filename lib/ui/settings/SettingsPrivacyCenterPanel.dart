@@ -266,11 +266,11 @@ class _SettingsPrivacyCenterPanelState extends State<SettingsPrivacyCenterPanel>
       );
   }
 
-  Widget _buildSquareButton({Function? onTap, required String label, String? hint, required String iconPath}){
+  Widget _buildSquareButton({void Function()? onTap, required String label, String? hint, required String iconPath}){
     Color _boxShadowColor = Color.fromRGBO(19, 41, 75, 0.3);
 
     return GestureDetector(
-      onTap: onTap as void Function()?,
+      onTap: onTap,
       child: Semantics(label: label, hint:hint, button:true, excludeSemantics: true, child:Stack(
         children: <Widget>[
           Padding(

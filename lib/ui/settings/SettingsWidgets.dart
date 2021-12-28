@@ -256,14 +256,14 @@ class InfoButton extends StatelessWidget {
   final String? description;
   final String? iconRes;
   final String? additionalInfo;
-  final Function? onTap;
+  final void Function()? onTap;
 
   const InfoButton({Key? key, this.title, this.description, this.iconRes, this.onTap, this.additionalInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Semantics(button: true, container: true, child:
-    InkWell(onTap: onTap as void Function()?, child:
+    InkWell(onTap: onTap, child:
     Container(
       padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),

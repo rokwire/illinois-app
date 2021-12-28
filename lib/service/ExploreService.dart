@@ -90,7 +90,7 @@ class ExploreService with Service implements NotificationsListener {
 
   // Implementation
 
-  Future<List<Explore>?> loadEvents({String? searchText, Core.Position? locationData, Set<String?>? categories, EventTimeFilter? eventFilter = EventTimeFilter.upcoming, Set<String>? tags, bool excludeRecurring = true, int? recurrenceId, int limit = 0}) async {
+  Future<List<Event>?> loadEvents({String? searchText, Core.Position? locationData, Set<String?>? categories, EventTimeFilter? eventFilter = EventTimeFilter.upcoming, Set<String>? tags, bool excludeRecurring = true, int? recurrenceId, int limit = 0}) async {
     if(_enabled) {
       http.Response? response;
       String queryParameters = _buildEventsQueryParameters(
@@ -125,7 +125,7 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<Explore?> getEventById(String? eventId) async {
+  Future<Event?> getEventById(String? eventId) async {
     if(_enabled) {
       if (AppString.isStringEmpty(eventId)) {
         return null;
@@ -152,8 +152,7 @@ class ExploreService with Service implements NotificationsListener {
     return null;
   }
 
-  Future<String?> postNewEvent(Explore? explore) async{
-    Event? event = explore is Event ? explore : null;
+  Future<String?> postNewEvent(Event? event) async{
     if(_enabled && (event != null)) {
       http.Response? response;
       try {

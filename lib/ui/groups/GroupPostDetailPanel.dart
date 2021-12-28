@@ -488,7 +488,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       }
       GroupPost? reply = visibleReplies[i];
       String? optionsIconPath;
-      Function? optionsFunctionTap;
+      void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
         optionsIconPath = 'images/icon-groups-options-orange.png';
         optionsFunctionTap = () => _onTapReplyOptions(reply);

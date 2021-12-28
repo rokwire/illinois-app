@@ -878,11 +878,11 @@ class _PollCardState extends State<_PollCard>{
     return _createButton(Localization().getStringEx("panel.polls_home.card.button.title.vote","Vote")!, _onVoteTapped);
   }
 
-  Widget _createButton(String title, Function onTap, {bool enabled=true, bool loading = false}){
+  Widget _createButton(String title, void Function()? onTap, {bool enabled=true, bool loading = false}){
     return Container( padding: EdgeInsets.symmetric(horizontal: 54,),
           child: Semantics(label: title, button: true, excludeSemantics: true,
           child: InkWell(
-            onTap: onTap as void Function()?,
+            onTap: onTap,
             child: Stack(children: <Widget>[
               Container(
                 padding: EdgeInsets.symmetric(vertical: 5,horizontal: 16),

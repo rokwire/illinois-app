@@ -7,7 +7,7 @@ class ScalableRoundedButton extends StatelessWidget {
   final String? label;
   final String? hint;
   final Color? backgroundColor;
-  final Function? onTap;
+  final void Function()? onTap;
   final Color? textColor;
   final TextAlign textAlign;
   final String? fontFamily;
@@ -52,7 +52,7 @@ class ScalableRoundedButton extends StatelessWidget {
         excludeSemantics: true,
         enabled: enabled,
         child: InkWell(
-          onTap: onTap as void Function()?,
+          onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
               color: (backgroundColor ?? Styles().colors!.fillColorPrimary),
@@ -165,7 +165,7 @@ class ScalableSmallRoundedButton extends StatelessWidget{
   final String? label;
   final String hint;
   final Color? backgroundColor;
-  final Function? onTap;
+  final void Function()? onTap;
   final Color? textColor;
   final TextAlign textAlign;
   final String? fontFamily;

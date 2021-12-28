@@ -348,7 +348,7 @@ class _TestLocation extends StatelessWidget {
     LinkedHashMap<int,HealthLocationDayOfOperation> workingPeriods;
     List<HealthLocationDayOfOperation>? workTimes = testLocation?.daysOfOperation;
     if(workTimes?.isNotEmpty ?? false){
-      workingPeriods = Map<int?,HealthLocationDayOfOperation>.fromIterable(workTimes!, key: (period) => period?.weekDay) as LinkedHashMap<int, HealthLocationDayOfOperation>;
+      workingPeriods = LinkedHashMap<int,HealthLocationDayOfOperation>.fromIterable(workTimes!, key: (period) => period.weekDay ?? 0);
       items = workingPeriods.values.toList();
       period = _determineTodayPeriod(workingPeriods);
       if ((period == null) || !period.isOpen) {
@@ -479,8 +479,8 @@ class _TestLocation extends StatelessWidget {
     HealthLocationDayOfOperation? todayPeriod;
     if(AppCollection.isCollectionNotEmpty(testLocation?.daysOfOperation)) {
       todayPeriod = _determineTodayPeriod(
-          Map<int?, HealthLocationDayOfOperation>.fromIterable(
-              testLocation!.daysOfOperation!, key: (period) => period?.weekDay) as LinkedHashMap<int, HealthLocationDayOfOperation>);
+          LinkedHashMap<int, HealthLocationDayOfOperation>.fromIterable(
+              testLocation!.daysOfOperation!, key: (period) => period.weekDay ?? 0));
     }
 
     return todayPeriod?.isOpen ?? false;

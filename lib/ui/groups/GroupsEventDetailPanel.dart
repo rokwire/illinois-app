@@ -627,9 +627,8 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     emptySelectionText: Localization().getStringEx('panel.groups_event_detail.button.select_group.title', "Select a group.."),
                     buttonHint: Localization().getStringEx('panel.groups_event_detail.button.select_group.hint', "Double tap to show categories options"),
                     items: _adminGroups,
-                    constructTitle: (dynamic item) {
-                      Group? group = item as Group?;
-                      return group?.title;
+                    constructTitle: (Group group) {
+                      return group.title;
                       },
                     onValueChanged: (Group group) {
                       setState(() {

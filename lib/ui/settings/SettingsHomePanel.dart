@@ -1097,13 +1097,13 @@ class _PrivacyGridButton extends StatelessWidget {
   final String? title;
   final String? hint;
   final String? iconPath;
-  final Function? onTap;
+  final void Function()? onTap;
 
   const _PrivacyGridButton({Key? key, this.title, this.hint, this.iconPath, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: onTap as void Function()?, child:
+    return GestureDetector(onTap: onTap, child:
       Semantics(label: title, hint: hint, button: true, excludeSemantics: true, child:
         Padding(padding: EdgeInsets.all(2), child:
           Container(

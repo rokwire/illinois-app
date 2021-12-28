@@ -119,7 +119,7 @@ class _InfoToggleButton extends StatefulWidget {
   final bool toggled;
   final double height;
 
-  final Function? onTap;
+  final void Function()? onTap;
 
   const _InfoToggleButton({Key? key, this.title, this.iconRes, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconResDisabled="",}) : super(key: key);
 
@@ -136,7 +136,7 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
           child: Semantics(
             container: true,
             child: InkWell(
-            onTap: widget.enabled? widget.onTap as void Function()? : (){},
+            onTap: widget.enabled ? widget.onTap : (){},
               child: _buildButtonContent(),))
       );
   }

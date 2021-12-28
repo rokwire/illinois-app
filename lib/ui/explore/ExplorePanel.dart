@@ -1303,9 +1303,9 @@ class ExplorePanelState extends State<ExplorePanel>
     _filterOptionsVisible = false;
   }
 
-  void _refresh(Function fn){
+  void _refresh(void fn()){
     if(!disposed && mounted) {
-      this.setState(fn as void Function());
+      this.setState(fn);
     }
   }
 

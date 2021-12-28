@@ -1321,13 +1321,18 @@ class _OfficerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ImageProvider<Object> image;
+    if (AppString.isStringNotEmpty(groupMember?.photoURL))
+      image = NetworkImage(groupMember!.photoURL!);
+    else
+      image = AssetImage('images/missing-photo-placeholder.png');
 
     return Container(
       width: 128,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128,
           decoration: BoxDecoration(
-            image: DecorationImage(image: (AppString.isStringNotEmpty(groupMember?.photoURL) ? NetworkImage(groupMember!.photoURL!) : AssetImage('images/missing-photo-placeholder.png')) as ImageProvider<Object>, fit: BoxFit.contain),
+            image: DecorationImage(image: image, fit: BoxFit.contain),
               borderRadius: BorderRadius.all(Radius.circular(4))),
           ),
         Padding(padding: EdgeInsets.only(top: 4),

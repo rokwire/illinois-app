@@ -230,7 +230,7 @@ class _SettingsRolesPanelState extends State<SettingsRolesPanel> {
 
     if (button != null) {
 
-      UserRole? role = button.data as UserRole?;
+      UserRole? role = (button.data is UserRole) ? (button.data as UserRole) : null;
 
       Analytics.instance.logSelect(target: "Role: " + role.toString());
 

@@ -113,7 +113,7 @@ class _RecentItemsList extends StatelessWidget{
   final String? headingIconRes;
   final String slantImageRes;
   final Color? slantColor;
-  final Function? tapMore;
+  final void Function()? tapMore;
   final bool showMoreChevron;
   final bool showMoreButtonExplicitly;
   final String? moreButtonLabel;
@@ -145,7 +145,7 @@ class _RecentItemsList extends StatelessWidget{
         SmallRoundedButton(
           label: moreLabel,
           hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
-          onTap: tapMore as void Function()?,
+          onTap: tapMore,
           showChevron: showMoreChevron,),
         Container(height: 48,),
       ],
@@ -189,7 +189,7 @@ class _RecentItemsList extends StatelessWidget{
       return ExploreDetailPanel(explore: originalObject,);
     }
     else if ((item.recentItemType == RecentItemType.guide) && (originalObject is Map)) {
-      return GuideDetailPanel(guideEntryId: Guide().entryId(originalObject as Map<String, dynamic>?));
+      return GuideDetailPanel(guideEntryId: Guide().entryId(AppJson.mapValue(originalObject)));
     }
 
     return Container();
@@ -235,7 +235,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
       isFavorite = Auth2().isFavorite(originalItem);
     }
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
-      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(originalItem as Map<String, dynamic>?)));
+      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(AppJson.mapValue(originalItem))));
     }
     else {
       isFavorite = false;
@@ -368,8 +368,8 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     }
     else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
       Auth2().prefs?.toggleFavorite(GuideFavorite(
-        id: Guide().entryId(originalItem as Map<String, dynamic>?),
-        title: Guide().entryTitle(originalItem as Map<String, dynamic>?)
+        id: Guide().entryId(AppJson.mapValue(originalItem)),
+        title: Guide().entryTitle(AppJson.mapValue(originalItem))
       ));
     }
   }

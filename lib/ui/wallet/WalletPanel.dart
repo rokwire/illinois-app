@@ -583,7 +583,7 @@ class _RoundedWidget extends StatelessWidget{
 
   final String? title;
   final Widget child;
-  final Function onView;
+  final void Function() onView;
 
   _RoundedWidget({Key? key, this.title, required this.onView, required this.child}):super(key:key);
 
@@ -645,14 +645,14 @@ class _RoundedWidget extends StatelessWidget{
 class _ViewButton extends StatelessWidget{
 
   final String? label;
-  final Function onTap;
+  final void Function() onTap;
 
   _ViewButton({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap as void Function()?,
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(

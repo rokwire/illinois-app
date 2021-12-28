@@ -21,7 +21,7 @@ class RoundedButton extends StatelessWidget {
   final String? label;
   final String? hint;
   final Color? backgroundColor;
-  final Function? onTap;
+  final void Function()? onTap;
   final Color? textColor;
   final TextAlign textAlign;
   final String? fontFamily;
@@ -68,7 +68,7 @@ class RoundedButton extends StatelessWidget {
 //        excludeSemantics: true,
         enabled: enabled,
         child: InkWell(
-          onTap: onTap as void Function()?,
+          onTap: onTap,
           child: Container(
             height: height,
             width: width,

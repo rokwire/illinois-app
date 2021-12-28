@@ -22,7 +22,7 @@ class HomeHeader extends StatelessWidget {
   final String? title;
   final subTitle;
   final String? imageRes;
-  final Function? onSettingsTap;
+  final void Function()? onSettingsTap;
 
   HomeHeader({this.title, this.subTitle, this.imageRes, this.onSettingsTap});
 
@@ -61,7 +61,7 @@ class HomeHeader extends StatelessWidget {
               (onSettingsTap == null) ? Container() :
                 Semantics(label: "Settings", button: true,
                   child: GestureDetector(
-                    onTap: onSettingsTap as void Function()?,
+                    onTap: onSettingsTap,
                     child: Container(
                       padding: EdgeInsets.only(right: 20),
                         alignment: Alignment.centerRight,

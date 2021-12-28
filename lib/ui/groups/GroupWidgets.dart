@@ -476,10 +476,10 @@ class _GroupEventCardState extends State<GroupEventCard>{
               )));
   }
 
-  Widget _buildAddPostButton({String? photoUrl,Function? onTap}){
+  Widget _buildAddPostButton({String? photoUrl,void onTap()?}){
     return
       InkWell(
-          onTap: onTap as void Function()?,
+          onTap: onTap,
           child: Container(
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               photoUrl == null ? Container():
@@ -1198,10 +1198,10 @@ class GroupReplyCard extends StatefulWidget {
   final Group? group;
   final String? iconPath;
   final String? semanticsLabel;
-  final Function? onIconTap;
-  final Function? onCardTap;
+  final void Function()? onIconTap;
+  final void Function()? onCardTap;
   final bool showRepliesCount;
-  final Function? onImageTap;
+  final void Function()? onImageTap;
 
   GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
 
@@ -1255,7 +1255,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     child: Semantics( child:Container(
                     child: Semantics(label: widget.semanticsLabel??"", button: true,
                     child: GestureDetector(
-                        onTap: widget.onIconTap as void Function()?,
+                        onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3),
                             child: (AppString.isStringNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
@@ -1307,7 +1307,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 ],),
               Semantics( button: true, child:
                 GestureDetector(
-                  onTap: widget.onCardTap as void Function()? ?? _onTapCard,
+                  onTap: widget.onCardTap ?? _onTapCard,
                   child: Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [

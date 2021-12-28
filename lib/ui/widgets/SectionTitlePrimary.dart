@@ -31,7 +31,7 @@ class SectionTitlePrimary extends StatelessWidget{
   final Color? textColor;
   final String? rightIconPath;
   final String? rightIconLabel;
-  final Function? rightIconAction;
+  final void Function()? rightIconAction;
 
   SectionTitlePrimary({this.title, this.subTitle, this.iconPath, this.rightIconPath, this.children, this.listPadding,
     this.slantImageRes = "", this.slantColor, this.backgroundColor, this.textColor, this.rightIconAction, this.rightIconLabel});
@@ -100,7 +100,7 @@ class SectionTitlePrimary extends StatelessWidget{
                     button: true,
                     label: rightIconLabel,
                     child: GestureDetector(
-                      onTap: rightIconAction as void Function()? ?? (){},
+                      onTap: rightIconAction,
                       child: Container(
                         padding: EdgeInsets.only(
                             left: 16, right: 16, top: 8, bottom: 2),

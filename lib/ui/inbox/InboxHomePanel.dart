@@ -87,7 +87,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildHeaderBar() as PreferredSizeWidget?,
+      appBar: _buildHeaderBar(),
       // Text(Localization().getStringEx('panel.inbox.label.heading', 'Inbox'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies.extraBold),),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -337,7 +337,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   // Header bar
 
-  Widget _buildHeaderBar() {
+  PreferredSizeWidget _buildHeaderBar() {
     List<Widget> actions = <Widget>[];
     if (_isEditMode == true) {
       actions.addAll(<Widget>[
@@ -462,7 +462,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     );
   }
 
-  Widget _buildConfirmationDialog(BuildContext context, {String? title, String? message, String? positiveButtonTitle, String? negativeButtonTitle, Function? onPositive}) {
+  Widget _buildConfirmationDialog(BuildContext context, {String? title, String? message, String? positiveButtonTitle, String? negativeButtonTitle, void Function()? onPositive}) {
     return StatefulBuilder(builder: (context, setState) {
       return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
         Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), ), child:
@@ -817,7 +817,7 @@ enum _FilterType {
 class _InboxMessageCard extends StatefulWidget {
   final InboxMessage? message;
   final bool? selected;
-  final Function? onTap;
+  final void Function()? onTap;
   
   _InboxMessageCard({this.message, this.selected, this.onTap });
 
@@ -869,7 +869,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
         ),
         clipBehavior: Clip.none,
         child: Stack(children: [
-          InkWell(onTap: widget.onTap as void Function()?, child:
+          InkWell(onTap: widget.onTap, child:
             Padding(padding: EdgeInsets.only(left: leftPadding, right: 16, top: 16, bottom: 16), child:
               Row(children: <Widget>[
                 Visibility(visible: (widget.selected != null), child:

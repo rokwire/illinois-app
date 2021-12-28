@@ -41,13 +41,13 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
   Widget build(BuildContext context) {
     if(explore is Dining){
       return ExploreDiningDetailPanel(
-          dining: explore as Dining?,
+          dining: explore as Dining,
           initialLocationData: initialLocationData
       );
     }
     else if(explore is Event) {
       return ExploreEventDetailPanel(
-          event: explore as Event?,
+          event: explore as Event,
           initialLocationData: initialLocationData,
           browseGroupId: browseGroupId,
       );

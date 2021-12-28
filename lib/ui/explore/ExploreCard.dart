@@ -96,7 +96,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget build(BuildContext context) {
     bool isEvent = (widget.explore is Event);
     bool isGame = (widget.explore is Game);
-    Event? event = isEvent ? widget.explore as Event? : null;
+    Event? event = isEvent ? widget.explore as Event : null;
     bool isCompositeEvent = event?.isComposite ?? false;
     String imageUrl = AppString.getDefaultEmptyString(widget.explore!.exploreImageURL);
     String interestsLabelValue = _getInterestsLabelValue();
@@ -230,13 +230,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   int? _getConvergeScore() {
-    Event? event = (widget.explore is Event) ? (widget.explore as Event?) : null;
+    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
     int? eventConvergeScore = (event != null) ? event.convergeScore : null;
     return eventConvergeScore;
   }
 
   String? _getConvergeUrl() {
-    Event? event = (widget.explore is Event) ? (widget.explore as Event?) : null;
+    Event? event = (widget.explore is Event) ? (widget.explore as Event) : null;
     String? eventConvergeUrl = (event != null) ? event.convergeUrl : null;
     return eventConvergeUrl;
   }
@@ -392,7 +392,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget? _exploreWorkTimeDetail() {
-    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining?) : null;
+    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
     String? displayTime = dining?.displayWorkTime;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(label: displayTime, child:Padding(
@@ -421,7 +421,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   Widget _explorePaymentTypes() {
     List<Widget>? details;
-    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining?) : null;
+    Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
     List<PaymentType?>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
@@ -482,13 +482,13 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (!isCompositeEvent) {
       return Container();
     }
-    Event parentEvent = widget.explore as Event;
-    List<Event?>? subEvents = parentEvent.recurringEvents ?? parentEvent.featuredEvents;
+    Event? parentEvent = (widget.explore is Event) ? (widget.explore as Event) : null;
+    List<Event>? subEvents = parentEvent?.recurringEvents ?? parentEvent?.featuredEvents;
     bool showViewMoreCard = AppCollection.isCollectionNotEmpty(subEvents);
     if (showViewMoreCard && (subEvents != null) && (subEvents.length > 5)) {
       subEvents = subEvents.sublist(0, 5);
     }
-    _EventCardType type = parentEvent.isSuperEvent! ? _EventCardType.sup : _EventCardType.rec;
+    _EventCardType type = (parentEvent?.isSuperEvent == true) ? _EventCardType.sup : _EventCardType.rec;
     int eventsCount = (subEvents != null) ? subEvents.length : 0;
     int itemsCount = eventsCount + (showViewMoreCard ? 3 : 2);
     return Column(
@@ -548,8 +548,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     if (!(widget.explore is Game)) {
       return null;
     }
-    Game game = widget.explore as Game;
-    SportDefinition? sport = Sports().getSportByShortName(game.sport?.shortName);
+    Game? game = (widget.explore is Game) ? (widget.explore as Game) : null;
+    SportDefinition? sport = Sports().getSportByShortName(game?.sport?.shortName);
     return sport?.customName;
   }
 

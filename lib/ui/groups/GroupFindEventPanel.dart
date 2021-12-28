@@ -170,8 +170,8 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
         eventFilter = EventTimeFilter.next30Days;
       }
 
-      ExploreService().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Explore>? result) {
-        _events = result as List<Event>?;
+      ExploreService().loadEvents(searchText: _textEditingController.text, eventFilter: eventFilter).then((List<Event>? result) {
+        _events = result;
         _isEventLoading = false;
         _applyFilter();
       });

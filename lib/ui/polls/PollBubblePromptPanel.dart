@@ -67,7 +67,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
   @override
   void onNotification(String name, dynamic param) {
     if ((name == Polls.notifyVoteChanged) || (name == Polls.notifyResultsChanged) || (name == Polls.notifyStatusChanged)) {
-      if (widget.pollId == (param as String?)) {
+      if (widget.pollId == param) {
         setState(() {
           _poll = Polls().getPoll(pollId: widget.pollId);
         });
@@ -317,7 +317,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel> implement
     return result;
   }
 
-  Widget _buildVoteDoneButton(Function handler) {
+  Widget _buildVoteDoneButton(void Function() handler) {
     return Padding(padding: EdgeInsets.only(top: 20, left: 30, right: 30), child: ScalableRoundedButton(
         label: Localization().getStringEx('panel.poll_prompt.button.done_voting.title', 'Done Voting'),
         backgroundColor: Styles().colors!.fillColorPrimary,
