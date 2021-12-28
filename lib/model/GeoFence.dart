@@ -66,11 +66,11 @@ class GeoFenceRegion {
   }
 
   GeoFenceLocation? get location {
-    return (data is GeoFenceLocation) ? (data as GeoFenceLocation?) : null;
+    return (data is GeoFenceLocation) ? (data as GeoFenceLocation) : null;
   }
 
   GeoFenceBeacon? get beacon {
-    return (data is GeoFenceBeacon) ? (data as GeoFenceBeacon?) : null;
+    return (data is GeoFenceBeacon) ? (data as GeoFenceBeacon) : null;
   }
 
   static LinkedHashMap<String, GeoFenceRegion>? mapFromJsonList(List<dynamic>? values) {
