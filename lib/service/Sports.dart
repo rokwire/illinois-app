@@ -373,13 +373,13 @@ class Sports with Service implements NotificationsListener {
     Set<String>? preferredSports = Auth2().prefs?.sportsInterests;
 
     // Step 1: Group games by sport
-    Map<String?, List<Game>> gamesMap = Map<String?, List<Game>>();
+    Map<String, List<Game>> gamesMap = Map<String, List<Game>>();
     List<Game> preferredGames = [];
     for (Game game in gamesList!) {
-      if (!gamesMap.containsKey(game.sport!.shortName)) {
-        gamesMap[game.sport!.shortName] = [];
+      if ((game.sport?.shortName != null) && !gamesMap.containsKey(game.sport!.shortName)) {
+        gamesMap[game.sport!.shortName!] = [];
       }
-      gamesMap[game.sport!.shortName]!.add(game);
+      gamesMap[game.sport!.shortName!]!.add(game);
     }
 
     // Step 2: Add all preferred games

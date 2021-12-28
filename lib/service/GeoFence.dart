@@ -43,7 +43,7 @@ class GeoFence with Service implements NotificationsListener {
 
   static const bool _useAssets = false;
 
-  LinkedHashMap<String?, GeoFenceRegion?>? _regions;
+  LinkedHashMap<String, GeoFenceRegion>? _regions;
   Set<String> _currentRegions = Set();
   Map<String, List<GeoFenceBeacon>> _currentBeacons = Map();
 
@@ -121,7 +121,7 @@ class GeoFence with Service implements NotificationsListener {
 
   // Accessories
 
-  LinkedHashMap<String?, GeoFenceRegion?>? get regions {
+  LinkedHashMap<String, GeoFenceRegion>? get regions {
     return _regions;
   }
 
@@ -186,7 +186,7 @@ class GeoFence with Service implements NotificationsListener {
     return _regionsFromJsonString(await _loadRegionsStringFromCache());
   }
 
-  LinkedHashMap<String?, GeoFenceRegion?>? _loadRegionsFromAssets() {
+  LinkedHashMap<String, GeoFenceRegion>? _loadRegionsFromAssets() {
     return GeoFenceRegion.mapFromJsonList(Assets()['geo_fence.regions']);
   }
 
@@ -208,7 +208,7 @@ class GeoFence with Service implements NotificationsListener {
 
   Future<void> _updateRegions() async {
     String? jsonString = await _loadRegionsStringFromNet();
-    LinkedHashMap<String?, GeoFenceRegion?>? regions = _regionsFromJsonString(jsonString);
+    LinkedHashMap<String, GeoFenceRegion>? regions = _regionsFromJsonString(jsonString);
     if ((regions != null) && !_areRegionsEqual(_regions, regions)) { // DeepCollectionEquality().equals(_regions, regions)
       _regions = regions;
       _monitorRegions();

@@ -287,13 +287,13 @@ class Dining with Explore implements Favorite {
     return filterScheduleDates.toList();
   }
 
-  Map<String?,List<DiningSchedule>> get displayDateScheduleMapping{
-    Map<String?,List<DiningSchedule>> displayDateScheduleMapping = Map<String?,List<DiningSchedule>>();
+  Map<String,List<DiningSchedule>> get displayDateScheduleMapping{
+    Map<String,List<DiningSchedule>> displayDateScheduleMapping = Map<String,List<DiningSchedule>>();
 
     if (diningSchedules != null) {
       for(DiningSchedule schedule in diningSchedules!){
         String? displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
-        if(!displayDateScheduleMapping.containsKey(displayDate)){
+        if((displayDate != null) && !displayDateScheduleMapping.containsKey(displayDate)){
           displayDateScheduleMapping[displayDate] = [];
         }
 

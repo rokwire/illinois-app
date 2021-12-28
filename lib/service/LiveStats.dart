@@ -39,7 +39,7 @@ class LiveStats with Service implements NotificationsListener {
   }
 
   List<LiveGame>? _liveGames;
-  Map<String?, int> _currentTopics = new Map();
+  Map<String, int> _currentTopics = new Map();
 
   List<LiveGame>? get liveGames => _liveGames;
 
@@ -104,7 +104,7 @@ class LiveStats with Service implements NotificationsListener {
   }
 
   void addTopic(String? topic) {
-    if(_enabled) {
+    if(_enabled && (topic != null)) {
       //1. subscribe to Firebase
       FirebaseMessaging().subscribeToTopic(topic).then((bool success) {
         if (success) {
@@ -112,14 +112,14 @@ class LiveStats with Service implements NotificationsListener {
           int? currentCount = _currentTopics[topic];
           _currentTopics[topic] = currentCount == null ? 1 : currentCount + 1;
         } else {
-          Log.e("Error subscribing to topic " + topic!);
+          Log.e("Error subscribing to topic $topic");
         }
       });
     }
   }
 
   void removeTopic(String? topic) {
-    if(_enabled) {
+    if(_enabled && (topic != null)) {
       //1. remove it from the current topics
       int currentCount = _currentTopics[topic]!;
       _currentTopics[topic] = currentCount - 1;

@@ -171,12 +171,12 @@ class _AthleticsRosterListPanelState extends State<AthleticsRosterListPanel> imp
 
   List<Widget> _constructRostersByPositionList(){
     List<Widget> widgets = [];
-    Map<String?,List<Roster>> categoryMap = Map<String?,List<Roster>>();
+    Map<String,List<Roster>> categoryMap = Map<String,List<Roster>>();
     for (Roster roster in allRosters!){
-      if(!categoryMap.containsKey(roster.position)){
-        categoryMap[roster.position] = [];
+      if((roster.position != null) && !categoryMap.containsKey(roster.position)){
+        categoryMap[roster.position!] = [];
       }
-      categoryMap[roster.position]!.add(roster);
+      categoryMap[roster.position!]!.add(roster);
     }
 
     for(String? category in categoryMap.keys){

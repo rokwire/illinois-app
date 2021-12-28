@@ -63,7 +63,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   List<_EventTab> _eventTabs = [];
   _EventTab  _selectedTab = _EventTab.All;
 
-  Map<String?,Map<String?,List<Event>>>? _sortedEvents;
+  Map<String,Map<String,List<Event>>>? _sortedEvents;
   List<dynamic>? _eventCategories;
   List<String>? _eventTags;
   //Search tags
@@ -814,21 +814,21 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
         }
         //Sort by date
         String? eventDate = getEventDate(event);
-        Map<String?,List<Event>>? eventsForDate;
-        if(_sortedEvents!.containsKey(eventDate))
+        Map<String,List<Event>>? eventsForDate;
+        if(_sortedEvents!.containsKey(eventDate)) {
           eventsForDate = _sortedEvents![eventDate];
-        else {
-          eventsForDate = Map();
-          _sortedEvents![eventDate] = eventsForDate;
+        }
+        else if (eventDate != null) {
+          _sortedEvents![eventDate] = eventsForDate = Map();
         }
         //Sort By Category
         String? category = event.track;
         List<Event>? eventsForCategory;
-        if(eventsForDate!.containsKey(category))
+        if(eventsForDate!.containsKey(category)) {
           eventsForCategory = eventsForDate[category];
-        else {
-          eventsForCategory = [];
-          eventsForDate[category] = eventsForCategory;
+        }
+        else if (category != null) {
+          eventsForDate[category] = eventsForCategory = [];
         }
         eventsForCategory!.add(event);
     }

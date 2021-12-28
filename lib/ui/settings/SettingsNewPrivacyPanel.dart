@@ -624,7 +624,7 @@ class _PrivacyEntriesListWidget extends StatefulWidget {
 
 class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with TickerProviderStateMixin{
   List<AnimationController> _animationControllers = [];
-  Map<String?, bool> expansionState = Map();
+  Map<String, bool> expansionState = Map();
   Key expansionTileKey = new Key(new Random().nextInt(10000).toString());
 
   @override
@@ -632,7 +632,9 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
     if(widget.data?.categories?.isNotEmpty ?? false){
       widget.data!.categories!.forEach((PrivacyCategory category) {
         //prepare for expand/colapse
-        expansionState[category.title] = false;
+        if (category.title != null) {
+          expansionState[category.title!] = false;
+        }
       });
     }
     super.initState();
@@ -741,7 +743,9 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                 } else {
                   _controller.reverse();
                 }
-                expansionState[category.title] = expand;
+                if (category.title != null) {
+                  expansionState[category.title!] = expand;
+                }
                 setState(() {});
               },
             ))));

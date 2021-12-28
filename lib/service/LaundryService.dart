@@ -35,7 +35,7 @@ class LaundryService /* with Service */ {
   LaundryService._internal();
 
   Future<List<LaundryRoom>?> getRoomData() async {
-    Map<String?, Location?>? locationMapping = _loadLaundryLocationMapping();
+    Map<String, Location>? locationMapping = _loadLaundryLocationMapping();
     bool mappingExists =
         ((locationMapping != null) && locationMapping.isNotEmpty);
     List<LaundryRoom>? rooms;
@@ -152,7 +152,7 @@ class LaundryService /* with Service */ {
     return laundryRoomAppliances;
   }
 
-  Map<String?, Location?>? _loadLaundryLocationMapping() {
+  Map<String, Location>? _loadLaundryLocationMapping() {
     List<dynamic>? jsonData = Assets()['laundry.locations'];
     if (AppCollection.isCollectionEmpty(jsonData)) {
       return null;

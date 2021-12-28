@@ -863,7 +863,7 @@ class Analytics with Service implements NotificationsListener {
 
   void logGeoFenceRegion({String? action, String? regionId}) {
 
-    Map<String?, GeoFenceRegion?>? regions = GeoFence().regions;
+    Map<String, GeoFenceRegion?>? regions = GeoFence().regions;
     GeoFenceRegion? region = (regions != null) ? regions[regionId] : null;
     
     logEvent({

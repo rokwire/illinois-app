@@ -47,7 +47,7 @@ class Polls with Service implements NotificationsListener {
   static const String notifyVoteChanged  = "edu.illinois.rokwire.poll.votechanged"; // poll updated
   static const String notifyStatusChanged  = "edu.illinois.rokwire.poll.statuschnaged"; // poll closed, results could be presented
 
-  Map<String?, _PollChunk> _pollChunks = {};
+  Map<String, _PollChunk> _pollChunks = {};
 
   static final Polls _service = Polls._internal();
   Polls._internal();
@@ -523,14 +523,16 @@ class Polls with Service implements NotificationsListener {
 
   _PollChunk? _addPollToChunks(Poll poll, { _PollUIStatus? status, bool save = true}) {
     _PollChunk? pollChunk;
-    if (_pollChunks[poll.pollId] == null) {
-      if (status == null) {
-        status = (poll.status != PollStatus.closed) ? _PollUIStatus.waitingVote : _PollUIStatus.waitingClose;
-      }
-      _pollChunks[poll.pollId] = pollChunk = _PollChunk(poll: poll, status: status);
-      _openEventStream(poll.pollId);
-      if (save == true) {
-        _savePollChunks();
+    if (poll.pollId != null) {
+      if (_pollChunks[poll.pollId] == null) {
+        if (status == null) {
+          status = (poll.status != PollStatus.closed) ? _PollUIStatus.waitingVote : _PollUIStatus.waitingClose;
+        }
+        _pollChunks[poll.pollId!] = pollChunk = _PollChunk(poll: poll, status: status);
+        _openEventStream(poll.pollId);
+        if (save == true) {
+          _savePollChunks();
+        }
       }
     }
     return pollChunk;
@@ -693,8 +695,8 @@ class Polls with Service implements NotificationsListener {
   }
 
   void _savePollChunks() {
-    Map<String?, dynamic> chunksJson = {};
-    _pollChunks.forEach((String? pollId, _PollChunk pollChunk) {
+    Map<String, dynamic> chunksJson = {};
+    _pollChunks.forEach((String pollId, _PollChunk pollChunk) {
       chunksJson[pollId] = _pollUIStatusToString(pollChunk.status);
     });
     try { Storage().activePolls = chunksJson.isNotEmpty ? json.encode(chunksJson) : null; }

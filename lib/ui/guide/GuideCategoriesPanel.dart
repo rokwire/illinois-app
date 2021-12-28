@@ -24,7 +24,7 @@ class GuideCategoriesPanel extends StatefulWidget {
 class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements NotificationsListener {
 
   List<String>? _categories;
-  Map<String?, List<GuideSection>>? _categorySections;
+  Map<String, List<GuideSection>>? _categorySections;
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
     List<dynamic>? contentList = Guide().getContentList(guide: widget.guide);
     if (contentList != null) {
 
-      LinkedHashMap<String?, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String?, LinkedHashSet<GuideSection>>();
+      LinkedHashMap<String, LinkedHashSet<GuideSection>> categoriesMap = LinkedHashMap<String, LinkedHashSet<GuideSection>>();
       
       for (dynamic contentEntry in contentList) {
         Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
@@ -69,7 +69,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
           if (AppString.isStringNotEmpty(category) && (section != null)) {
             LinkedHashSet<GuideSection>? categorySections = categoriesMap[category];
             if (categorySections == null) {
-              categoriesMap[category] = categorySections = LinkedHashSet<GuideSection>();
+              categoriesMap[category!] = categorySections = LinkedHashSet<GuideSection>();
             }
             if (!categorySections.contains(section)) {
               categorySections.add(section);
@@ -81,8 +81,8 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
       _categories = List.from(categoriesMap.keys) ;
       _categories!.sort();
 
-      _categorySections = Map<String?, List<GuideSection>>();
-      categoriesMap.forEach((String? category, LinkedHashSet<GuideSection> sectionsSet) {
+      _categorySections = Map<String, List<GuideSection>>();
+      categoriesMap.forEach((String category, LinkedHashSet<GuideSection> sectionsSet) {
         List<GuideSection> sections = List.from(sectionsSet);
         sections.sort((GuideSection section1, GuideSection section2) {
           return section1.compareTo(section2);

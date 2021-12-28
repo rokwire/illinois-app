@@ -725,7 +725,7 @@ class _GiesNotesWidget extends StatefulWidget {
 
 class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
 
-  Map<String?, TextEditingController> _textEditingControllers = Map<String?, TextEditingController>();
+  Map<String, TextEditingController> _textEditingControllers = Map<String, TextEditingController>();
   FocusNode _focusNode = FocusNode();
   GlobalKey _focusKey = GlobalKey();
 
@@ -763,6 +763,11 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
           String title = AppJson.stringValue(note['title'])!;
           String? text = AppJson.stringValue(note['text']);
 
+          TextEditingController? controller = _textEditingControllers[noteId];
+          if ((controller == null) && (noteId != null)) {
+            _textEditingControllers[noteId] = controller = TextEditingController(text: text ?? '');
+          }
+
           noteWidgets.add(
             Padding(padding: EdgeInsets.only(bottom: 8), child:
               Column(key: (noteId == widget.focusNoteId) ? _focusKey : null, crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -771,7 +776,7 @@ class _GiesNotesWidgetState extends State<_GiesNotesWidget> {
                 TextField(
                   autocorrect: false,
                   focusNode: (noteId == widget.focusNoteId) ? _focusNode : null,
-                  controller: _textEditingControllers[noteId] ?? (_textEditingControllers[noteId] = TextEditingController(text: text ?? '')),
+                  controller: controller,
                   maxLines: null,
                   decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)), isDense: true, contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
                   style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),

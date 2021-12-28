@@ -286,13 +286,13 @@ class DiningUtils{
     return [];
   }
 
-  static Map<String?,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem>? allProducts){
-    Map<String?, List<DiningProductItem>> mapping = Map<String?,
+  static Map<String,List<DiningProductItem>> getStationGroupedProducts(List<DiningProductItem>? allProducts){
+    Map<String, List<DiningProductItem>> mapping = Map<String,
         List<DiningProductItem>>();
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
-        if(!mapping.containsKey(item.servingUnit)){
-          mapping[item.servingUnit] = [];
+        if((item.servingUnit != null) && !mapping.containsKey(item.servingUnit)){
+          mapping[item.servingUnit!] = [];
         }
         mapping[item.servingUnit]!.add(item);
       }
@@ -300,13 +300,13 @@ class DiningUtils{
     return mapping;
   }
 
-  static Map<String?,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem>? allProducts){
-    Map<String?, List<DiningProductItem>> mapping = Map<String?,
+  static Map<String,List<DiningProductItem>> getCourseGroupedProducts(List<DiningProductItem>? allProducts){
+    Map<String, List<DiningProductItem>> mapping = Map<String,
         List<DiningProductItem>>();
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
-        if(!mapping.containsKey(item.course)){
-          mapping[item.course] = [];
+        if((item.course != null) && !mapping.containsKey(item.course)){
+          mapping[item.course!] = [];
         }
         mapping[item.course]!.add(item);
       }

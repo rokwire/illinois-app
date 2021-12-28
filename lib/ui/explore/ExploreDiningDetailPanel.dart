@@ -655,7 +655,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   int _selectedDateFilterIndex = 0;
 
   List<DiningProductItem>? _productItems;
-  late Map<String?,DiningProductItem> _productItemsMapping;
+  late Map<String,DiningProductItem> _productItemsMapping;
 
   bool _isLoading = false;
 
@@ -741,9 +741,11 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
       DiningService().loadMenuItemsForDate(widget.dining!.id, filterDate).then((
           List<DiningProductItem>? items) {
         _productItems = items;
-        _productItemsMapping = Map<String?, DiningProductItem>();
+        _productItemsMapping = Map<String, DiningProductItem>();
         _productItems!.forEach((DiningProductItem item) {
-          _productItemsMapping[item.itemID] = item;
+          if (item.itemID != null) {
+            _productItemsMapping[item.itemID!] = item;
+          }
         });
 
         _isLoading = false;
