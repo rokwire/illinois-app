@@ -85,6 +85,8 @@ class AppDateTime with Service {
     return now != null ? now : DateTime.now();
   }
 
+  timezone.Location? get universityLocation => _universityLocation;
+
   DateTime? dateTimeFromString(String? dateTimeString, {String? format, bool isUtc = false}) {
     if (AppString.isStringEmpty(dateTimeString)) {
       return null;

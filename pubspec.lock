@@ -210,7 +210,7 @@ packages:
       name: device_calendar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.9.0"
+    version: "4.0.1"
   device_info:
     dependency: "direct main"
     description:

@@ -12,6 +12,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/utils/Utils.dart';
 import 'package:illinois/model/Event.dart' as ExploreEvent;
+import 'package:timezone/timezone.dart' as timezone;
 
 class DeviceCalendar with Service implements NotificationsListener{
   static const String notifyPromptPopup            = "edu.illinois.rokwire.device_calendar.messaging.message.popup";
@@ -314,13 +315,13 @@ class _DeviceCalendarEvent {
     calendarEvent.title = title ?? "";
 
     if (startDate != null) {
-      calendarEvent.start = startDate;
+      calendarEvent.start = timezone.TZDateTime.from(startDate!, AppDateTime().universityLocation!);
     }
 
     if (endDate != null) {
-      calendarEvent.end = endDate;
-    } else {
-      calendarEvent.end = AppDateTime().localEndOfDay(startDate);
+      calendarEvent.end = timezone.TZDateTime.from(endDate!, AppDateTime().universityLocation!);
+    } else if (startDate != null) {
+      calendarEvent.end = timezone.TZDateTime(AppDateTime().universityLocation!, startDate!.year, startDate!.month, startDate!.day, 24);
     }
 
     calendarEvent.description = AppUrl.getDeepLinkRedirectUrl(deepLinkUrl);
