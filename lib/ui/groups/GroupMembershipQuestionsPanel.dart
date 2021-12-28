@@ -37,7 +37,7 @@ class GroupMembershipQuestionsPanel extends StatefulWidget {
 }
 
 class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestionsPanel> {
-  List<GroupMembershipQuestion?>? _questions;
+  List<GroupMembershipQuestion>? _questions;
   List<FocusNode>? _focusNodes;
   List<TextEditingController>? _controllers;
 
@@ -236,7 +236,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     for (int index = 0; index < _questions!.length; index++) {
       String question = _controllers![index].text;
       if ((0 < question.length)) {
-        _questions![index]!.question = question;
+        _questions![index].question = question;
       }
       else {
         AppAlert.showDialogResult(context, Localization().getStringEx("panel.membership_questions.label.question.alert", 'Please input question #')!+(index+1).toString()).then((_){

@@ -131,10 +131,10 @@ class ExplorePanelState extends State<ExplorePanel>
   ExploreTab?    _selectedTab;
 
   List<dynamic>? _eventCategories;
-  List<Explore?>? _displayExplores;
-  List<String?>?  _filterWorkTimeValues;
-  List<String?>?  _filterPaymentTypeValues;
-  List<String?>?  _filterEventTimeValues;
+  List<Explore>? _displayExplores;
+  List<String>?  _filterWorkTimeValues;
+  List<String>?  _filterPaymentTypeValues;
+  List<String>?  _filterEventTimeValues;
   
   Position? _locationData;
   LocationServicesStatus? _locationServicesStatus;
@@ -149,7 +149,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   ScrollController _scrollController = ScrollController();
 
-  Future<List<Explore?>?>? _loadingTask;
+  Future<List<Explore>?>? _loadingTask;
   
 
   // When we click item[index == 2] -the TabBar creates and immediately dispose item[index == 1] (But _state.mounted = true)
@@ -351,23 +351,23 @@ class ExplorePanelState extends State<ExplorePanel>
     };
 
     _filterEventTimeValues = [
-      Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming'),
-      Localization().getStringEx('panel.explore.filter.time.today', 'Today'),
-      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 days'),
-      Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend'),
-      Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days'),
+      Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming')!,
+      Localization().getStringEx('panel.explore.filter.time.today', 'Today')!,
+      Localization().getStringEx('panel.explore.filter.time.next_7_days', 'Next 7 days')!,
+      Localization().getStringEx('panel.explore.filter.time.this_weekend', 'This Weekend')!,
+      Localization().getStringEx('panel.explore.filter.time.this_month', 'Next 30 days')!,
     ];
 
     _filterPaymentTypeValues = [
-      Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')  
+      Localization().getStringEx('panel.explore.filter.payment_types.all', 'All Payment Types')!  
     ];
     for (PaymentType paymentType in PaymentType.values) {
-      _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType));
+      _filterPaymentTypeValues!.add(PaymentTypeHelper.paymentTypeToDisplayString(paymentType) ?? '');
     }
 
     _filterWorkTimeValues = [
-      Localization().getStringEx('panel.explore.filter.worktimes.all', 'All Locations'),
-      Localization().getStringEx('panel.explore.filter.worktimes.open_now', 'Open Now'),
+      Localization().getStringEx('panel.explore.filter.worktimes.all', 'All Locations')!,
+      Localization().getStringEx('panel.explore.filter.worktimes.open_now', 'Open Now')!,
     ];
   }
 
@@ -449,7 +449,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     _selectMapExplore(null);
 
-    Future<List<Explore?>?>? task;
+    Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
 
       List<ExploreFilter>? selectedFilterList = (_tabToFilterMap != null) ? _tabToFilterMap![_selectedTab!] : null;
@@ -491,7 +491,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (task != null) {
       _refresh(() {
         _loadingTask = task;
-        _loadingTask!.then((List<Explore?>? explores) {
+        _loadingTask!.then((List<Explore>? explores) {
           if (_loadingTask == task) {
             _applyExplores(explores);
           }
@@ -503,7 +503,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _applyExplores(List<Explore?>? explores) {
+  void _applyExplores(List<Explore>? explores) {
     _refresh(() {
         _loadingTask = null;
         _displayExplores = explores;
@@ -753,7 +753,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return null;
   }
 
-  List<String?>? _getFilterValuesByType(ExploreFilterType filterType) {
+  List<String>? _getFilterValuesByType(ExploreFilterType filterType) {
     switch (filterType) {
       case ExploreFilterType.categories:
         return _getFilterCategoriesValues();
@@ -836,7 +836,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
     ExploreCard exploreView = ExploreCard(
         explore: explore,
-        onTap: () => _onExploreTap(explore!),
+        onTap: () => _onExploreTap(explore),
         locationData: _locationData,
         hideInterests: tags == null,
         showTopBorder: true,
@@ -1076,7 +1076,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (selectedFilter == null) {
       return Container();
     }
-    List<String?> filterValues = _getFilterValuesByType(selectedFilter.type)!;
+    List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
     List<String?>? filterSubLabels = (selectedFilter.type ==
         ExploreFilterType.event_time) ? _buildFilterEventDateSubLabels() : null;
     bool hasSubLabels = AppCollection.isCollectionNotEmpty(filterSubLabels);
@@ -1107,7 +1107,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       subLabel: hasSubLabels ? filterSubLabels![index] : null,
                       selected: (selectedFilter?.selectedIndexes != null && selectedFilter!.selectedIndexes.contains(index)),
                       onTap: () {
-                        Analytics.instance.logSelect(target: "FilterItem: "+filterValues[index]!);
+                        Analytics.instance.logSelect(target: "FilterItem: ${filterValues[index]}");
                         _onFilterValueClick(selectedFilter!, index);
                       },
                     );
@@ -1140,7 +1140,7 @@ class ExplorePanelState extends State<ExplorePanel>
             active: _initialSelectedFilter!.active);
         _initialSelectedFilter = null;
       }
-      List<String?> filterValues = _getFilterValuesByType(selectedFilter.type)!;
+      List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
       filterTypeWidgets.add(FilterSelectorWidget(

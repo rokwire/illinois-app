@@ -47,7 +47,7 @@ class Game with Explore implements Favorite {
   final Links? links;
   Opponent? opponent;
   String? sponsor;
-  List<GameResult?>? results;
+  List<GameResult>? results;
 
   Map<String, dynamic>? jsonData;
 
@@ -78,12 +78,7 @@ class Game with Explore implements Favorite {
       this.jsonData});
 
   static Game? fromJson(Map<String, dynamic>? json) {
-    if (json == null || json.isEmpty) {
-      return null;
-    }
-    List<dynamic>? resultsJson = json['results'];
-    List<GameResult?>? results = (resultsJson != null) ? resultsJson.map((value) => GameResult.fromJson(value)).toList() : null;
-    return Game(
+    return ((json != null) && json.isNotEmpty) ? Game(
       id: json['id'],
       dateToString: json['date'],
       timeToString: json['time'],
@@ -104,9 +99,9 @@ class Game with Explore implements Favorite {
       links: Links.fromJson(json['links']),
       opponent: Opponent.fromJson(json['opponent']),
       sponsor: json['sponsor'],
-      results: results,
+      results: GameResult.listFromJson(AppJson.listValue(json['results'])),
       jsonData: json,
-    );
+    ) : null;
   }
 
   String get title {
@@ -322,8 +317,19 @@ class Game with Explore implements Favorite {
       "links": links?.toJson(),
       "opponent": opponent?.toJson(),
       "sponsor": sponsor,
-      "results": GameResult.toJsonList(results)
+      "results": GameResult.listToJson(results)
     };
+  }
+
+  static List<Game>? listFromJson(List<dynamic>? jsonList) {
+    List<Game>? result;
+    if (jsonList != null) {
+      result = <Game>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, Game.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }
 
@@ -446,7 +452,18 @@ class GameResult {
     return GameResult(status: json['status'], teamScore: json['team_score'], opponentScore: json['opponent_score']);
   }
 
-  static List<dynamic>? toJsonList(List<GameResult?>? results) {
+  static List<GameResult>? listFromJson(List<dynamic>? jsonList) {
+    List<GameResult>? result;
+    if (jsonList != null) {
+      result = <GameResult>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, GameResult.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
+  }
+
+  static List<dynamic>? listToJson(List<GameResult?>? results) {
     List<dynamic>? jsonList;
     if (AppCollection.isCollectionNotEmpty(results)) {
       jsonList = [];

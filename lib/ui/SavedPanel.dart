@@ -73,13 +73,13 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   int _progress = 0;
 
-  List<Favorite?>? _events;
-  List<Favorite?>? _dinings;
-  List<Favorite?>? _athletics;
-  List<Favorite?>? _news;
-  List<Favorite?>? _laundries;
+  List<Favorite>? _events;
+  List<Favorite>? _dinings;
+  List<Favorite>? _athletics;
+  List<Favorite>? _news;
+  List<Favorite>? _laundries;
   List<Favorite>? _guideItems;
-  List<Favorite?>? _inboxMessageItems;
+  List<Favorite>? _inboxMessageItems;
 
   bool _showNotificationPermissionPrompt = false;
   bool _laundryAvailable = false;
@@ -359,7 +359,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       setState(() {
         _progress++;
       });
-      Inbox().loadMessages(messageIds: favoriteMessageIds).then((List<InboxMessage?>? messages) {
+      Inbox().loadMessages(messageIds: favoriteMessageIds).then((List<InboxMessage>? messages) {
         if (mounted) {
           setState(() {
             _progress--;
@@ -475,7 +475,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     ) : Container();
   }
 
-  Widget _buildItemsSection({required String? headingTitle, required String headingIconResource, required List<Favorite?>? items}) {
+  Widget _buildItemsSection({required String? headingTitle, required String headingIconResource, required List<Favorite>? items}) {
     return _SavedItemsList(
       heading: headingTitle,
       headingIconRes: headingIconResource,
@@ -583,7 +583,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
 class _SavedItemsList extends StatefulWidget {
   final int limit;
-  final List<Favorite?>? items;
+  final List<Favorite>? items;
   final String? heading;
   final String? headingIconRes;
   final String slantImageRes;

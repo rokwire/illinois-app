@@ -43,7 +43,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Group? _group;
 
   List<GroupPrivacy>? _groupPrivacyOptions;
-  List<String?>? _groupCategories;
+  List<String>? _groupCategories;
 
   bool _groupCategoeriesLoading = false;
   bool _creating = false;

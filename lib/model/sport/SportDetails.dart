@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
+import 'package:illinois/utils/Utils.dart';
+
 class SportSeasons {
   String? code;
   String? label;
   String? staff;
-  List<SportSeasonSchedule?>? seasons;
+  List<SportSeasonSchedule>? seasons;
 
   SportSeasons({this.code, this.label, this.staff, this.seasons});
 
   static SportSeasons? fromJson(Map<String, dynamic>? json) {
-    if (json == null || json.isEmpty) {
-      return null;
-    }
-    List<dynamic>? schedulesJson = json['schedules'];
-    List<SportSeasonSchedule?>? seasons = (schedulesJson != null)
-        ? schedulesJson.map((value) => SportSeasonSchedule.fromJson(value)).toList()
-        : null;
-    return SportSeasons(
-        code: json['code'],
-        label: json['label'],
-        staff: json['staff'],
-        seasons: seasons);
+    return ((json != null) && json.isNotEmpty) ? SportSeasons(
+      code: AppJson.stringValue(json['code']),
+      label: AppJson.stringValue(json['label']),
+      staff: AppJson.stringValue(json['staff']),
+      seasons: SportSeasonSchedule.listFromJson(AppJson.listValue(json['schedules']))
+    ) : null;
   }
 }
 
@@ -50,10 +46,21 @@ class SportSeasonSchedule {
       return null;
     }
     return SportSeasonSchedule(
-      year: json['year'],
-      roster: json['roster'],
-      schedule: json['schedule'],
+      year: AppJson.stringValue(json['year']),
+      roster: AppJson.stringValue(json['roster']),
+      schedule: AppJson.stringValue(json['schedule']),
     );
+  }
+
+  static List<SportSeasonSchedule>? listFromJson(List<dynamic>? jsonList) {
+    List<SportSeasonSchedule>? result;
+    if (jsonList != null) {
+      result = <SportSeasonSchedule>[];
+      for (dynamic jsonEntry in jsonList) {
+        AppList.add(result, SportSeasonSchedule.fromJson(AppJson.mapValue(jsonEntry)));
+      }
+    }
+    return result;
   }
 }
 
@@ -70,10 +77,10 @@ class SportSocialMedia {
       return null;
     }
     return SportSocialMedia(
-        shortName: json['shortname'],
-        twitterName: json['sport_twitter_name'],
-        instagramName: json['sport_instagram_name'],
-        facebookPage: json['sport_facebook_page']);
+        shortName: AppJson.stringValue(json['shortname']),
+        twitterName: AppJson.stringValue(json['sport_twitter_name']),
+        instagramName: AppJson.stringValue(json['sport_instagram_name']),
+        facebookPage: AppJson.stringValue(json['sport_facebook_page']));
   }
 
   static List<SportSocialMedia>? listFromJson(List<dynamic>? jsonList) {
@@ -116,18 +123,18 @@ class SportDefinition {
       return null;
     }
     return SportDefinition(
-      name: json["name"],
-      customName: json["custom_name"],
-      shortName: json["shortName"],
-      hasHeight: json["hasHeight"],
-      hasWeight: json["hasWeight"],
-      hasPosition: json["hasPosition"],
-      hasSortByPosition: json["hasSortByPosition"],
-      hasSortByNumber: json["hasSortByNumber"],
-      hasScores: json["hasScores"] ?? false,
-      gender: json["gender"],
-      ticketed: json["ticketed"],
-      iconPath: json["icon"],
+      name: AppJson.stringValue(json["name"]),
+      customName: AppJson.stringValue(json["custom_name"]),
+      shortName: AppJson.stringValue(json["shortName"]),
+      hasHeight: AppJson.boolValue(json["hasHeight"]),
+      hasWeight: AppJson.boolValue(json["hasWeight"]),
+      hasPosition: AppJson.boolValue(json["hasPosition"]),
+      hasSortByPosition: AppJson.boolValue(json["hasSortByPosition"]),
+      hasSortByNumber: AppJson.boolValue(json["hasSortByNumber"]),
+      hasScores: AppJson.boolValue(json["hasScores"]) ?? false,
+      gender: AppJson.stringValue(json["gender"]),
+      ticketed: AppJson.boolValue(json["ticketed"]),
+      iconPath: AppJson.stringValue(json["icon"]),
     );
   }
 }

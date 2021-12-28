@@ -19,11 +19,11 @@ import 'package:illinois/service/Localization.dart';
 import 'package:illinois/utils/Utils.dart';
 
 class PrivacyData{
-  List<PrivacyLevel?>? levels;
-  List<PrivacyType?>? types;
-  List<PrivacyDescription?>? privacyDescription;
+  List<PrivacyLevel>? levels;
+  List<PrivacyType>? types;
+  List<PrivacyDescription>? privacyDescription;
   List<PrivacyCategory>? categories;
-  List<PrivacyFeature2?>? features2;
+  List<PrivacyFeature2>? features2;
 
   Map<String,dynamic>? jsonData;
 

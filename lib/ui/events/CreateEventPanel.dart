@@ -2338,7 +2338,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
 }
 
 class _GroupsSelectionPopup extends StatefulWidget {
-  final List<Group?>? groups;
+  final List<Group>? groups;
 
   _GroupsSelectionPopup({this.groups});
 
@@ -2347,15 +2347,14 @@ class _GroupsSelectionPopup extends StatefulWidget {
 }
 
 class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
-  List<String?>? _selectedGroupIds;
+  List<String> _selectedGroupIds = [];
 
   @override
   void initState() {
     super.initState();
-    _selectedGroupIds = [];
     if (AppCollection.isCollectionNotEmpty(widget.groups)) {
-      for (Group? group in widget.groups!) {
-        _selectedGroupIds!.add(group!.id);
+      for (Group group in widget.groups!) {
+        AppList.add(_selectedGroupIds, group.id);
       }
     }
   }
@@ -2384,7 +2383,7 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) => ToggleRibbonButton(
                       borderRadius: _topRounding,
-                      label: widget.groups![index]!.title,
+                      label: widget.groups![index].title,
                       toggled: _isGroupSelected(index),
                       context: context,
                       onTap: () => _onTapGroup(index),
@@ -2405,12 +2404,12 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   }
 
   void _onTapGroup(int index) {
-    Group? group = widget.groups![index];
+    Group? group = (widget.groups != null) ? widget.groups![index] : null;
     String? groupId = group?.id;
     if (_isGroupSelected(index)) {
-      _selectedGroupIds!.remove(groupId);
-    } else {
-      _selectedGroupIds!.add(groupId);
+      _selectedGroupIds.remove(groupId);
+    } else if (groupId != null) {
+      _selectedGroupIds.add(groupId);
     }
     if (mounted) {
       setState(() {});
@@ -2418,10 +2417,10 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   }
 
   bool _isGroupSelected(int index) {
-    if ((index >= 0) && (index < widget.groups!.length) && AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
-      Group? group = widget.groups![index];
-      for (String? groupId in _selectedGroupIds!) {
-        if (groupId == group!.id) {
+    if ((widget.groups != null) && (index >= 0) && (index < widget.groups!.length) && AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
+      Group group = widget.groups![index];
+      for (String groupId in _selectedGroupIds) {
+        if (groupId == group.id) {
           return true;
         }
       }
@@ -2430,12 +2429,14 @@ class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
   }
 
   void _onTapSelect() {
-    List<Group?>? selectedGroups;
+    List<Group>? selectedGroups;
     if (AppCollection.isCollectionNotEmpty(_selectedGroupIds)) {
       selectedGroups = [];
-      for (Group? group in widget.groups!) {
-        if (_selectedGroupIds!.contains(group!.id)) {
-          selectedGroups.add(group);
+      if (widget.groups != null) {
+        for (Group group in widget.groups!) {
+          if (_selectedGroupIds.contains(group.id)) {
+            selectedGroups.add(group);
+          }
         }
       }
     }

@@ -455,7 +455,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget _buildEventsList() {
-    List<Event?>? eventList = widget.parentEvent!.isSuperEvent! ? widget.parentEvent!.featuredEvents : widget.parentEvent!.recurringEvents;
+    List<Event>? eventList = widget.parentEvent!.isSuperEvent! ? widget.parentEvent!.featuredEvents : widget.parentEvent!.recurringEvents;
     return _EventsList(events: eventList, parentEvent: widget.parentEvent,);
   }
 
@@ -638,7 +638,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
 class _EventsList extends StatefulWidget {
 
-  final List<Event?>? events;
+  final List<Event>? events;
   final Event? parentEvent;
 
   _EventsList({this.events, this.parentEvent});

@@ -60,7 +60,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   String? _allMembersFilter;
   String? _selectedMembersFilter;
-  List<String?>? _membersFilter;
+  List<String>? _membersFilter;
 
   @override
   void initState() {

@@ -32,7 +32,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
 
   static const int _maxItems = 3;
 
-  List<Map<String, dynamic>?>? _promotedItems;
+  List<Map<String, dynamic>>? _promotedItems;
 
   @override
   void initState() {
@@ -94,7 +94,7 @@ class _HomeCampusGuideHighlightsWidgetState extends State<HomeCampusGuideHighlig
   }
 
   void _updatePromotedItems() {
-    List<Map<String, dynamic>?>? promotedItems = Guide().promotedList;
+    List<Map<String, dynamic>>? promotedItems = Guide().promotedList;
     if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
         _promotedItems = promotedItems;

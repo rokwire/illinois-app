@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/utils/Utils.dart';
 
 //////////////////////////////
 /// Location
@@ -172,5 +173,27 @@ class LatLng {
       "latitude": latitude,
       "longitude": longitude
     };
+  }
+
+  static List<LatLng>? listFromJson(List<dynamic>? json) {
+    List<LatLng>? values;
+    if (json != null) {
+      values = [];
+      for (dynamic entry in json) {
+        AppList.add(values, LatLng.fromJson(AppJson.mapValue(entry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<LatLng>? values) {
+    List<dynamic>? json;
+    if (values != null) {
+      json = [];
+      for (LatLng value in values) {
+        json.add(value.toJson());
+      }
+    }
+    return json;
   }
 }

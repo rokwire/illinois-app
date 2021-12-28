@@ -22,7 +22,7 @@ class HomeMyGroupsWidget extends StatefulWidget {
 }
 
 class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
-  List<Group?>? _myGroups;
+  List<Group>? _myGroups;
   PageController? _pageController;
   DateTime? _pausedDateTime;
 
@@ -132,13 +132,13 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       );
   }
 
-  List<Group?>? _sortGroups(List<Group?>? groups){
+  List<Group>? _sortGroups(List<Group>? groups){
     if(groups?.isNotEmpty ?? false){
       groups!.sort((group1, group2) {
-        if (group2!.dateUpdatedUtc == null) {
+        if (group2.dateUpdatedUtc == null) {
           return -1;
         }
-        if (group1!.dateUpdatedUtc == null) {
+        if (group1.dateUpdatedUtc == null) {
           return 1;
         }
 

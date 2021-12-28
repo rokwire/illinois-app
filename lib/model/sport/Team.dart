@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/utils/Utils.dart';
 
 class TeamRecord {
   final String? overallRecordUnformatted;
@@ -42,17 +43,14 @@ class TeamRecord {
 }
 
 class TeamSchedule {
-  final List<Game?>? games;
+  final List<Game>? games;
   final String? label;
 
   TeamSchedule({this.games, this.label});
 
   static TeamSchedule? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    List<dynamic>? gamesJson = json['games'];
-    List<Game?>? games = (gamesJson != null) ? gamesJson.map((value) => Game.fromJson(value)).toList() : null;
-    return TeamSchedule(games: games, label: json['label']);
+    return (json != null) ? TeamSchedule(
+      games: Game.listFromJson(AppJson.listValue(json['games'])),
+      label: AppJson.stringValue(json['label'])) : null;
   }
 }

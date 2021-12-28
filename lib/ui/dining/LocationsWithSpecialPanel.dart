@@ -46,7 +46,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
 
   bool _isLoading = false;
 
-  List<Dining?>? _locationList;
+  List<Dining>? _locationList;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
       _isLoading = true;
     });
 
-    DiningService().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining?>? list){
+    DiningService().loadBackendDinings(widget.onlyOpened, null, widget.locationData).then((List<Dining>? list){
       setState(() {
         _isLoading = false;
       });
@@ -67,7 +67,7 @@ class _LocationsWithSpecialPanelState extends State<LocationsWithSpecialPanel> {
       if(list != null){
         if(widget.special!.hasLocationIds) {
           _locationList = list.where((location) {
-            return widget.special!.locationIds!.contains(location!.id);
+            return widget.special!.locationIds!.contains(location.id);
           }).toList();
         }
         setState(() {});

@@ -34,7 +34,7 @@ class GroupsSearchPanel extends StatefulWidget {
 }
 
 class _GroupsSearchPanelState extends State<GroupsSearchPanel> {
-  List<Group?>? _groups;
+  List<Group>? _groups;
   TextEditingController _searchController = TextEditingController();
   String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching only Groups Titles');
   int _resultsCount = 0;

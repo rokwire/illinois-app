@@ -51,7 +51,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   List<Group>? _myPendingGroups;
 
   String? _selectedCategory;
-  List<String?>? _categories;
+  List<String>? _categories;
 
   _TagFilter? _selectedTagFilter = _TagFilter.all;
   _FilterType __activeFilterType = _FilterType.none;

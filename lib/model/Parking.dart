@@ -141,7 +141,7 @@ class ParkingLot {
   final String? lotAddress;
   final int? totalSpots;
   final LatLng? entrance;
-  final List<LatLng?>? polygon;
+  final List<LatLng>? polygon;
   final int? spotsSold;
   final int? spotsPreSold;
 
@@ -151,31 +151,29 @@ class ParkingLot {
     if (json == null) {
       return null;
     }
-    Map<String, dynamic>? lotJson = json['lot'];
+    Map<String, dynamic>? lotJson = AppJson.mapValue(json['lot']);
     if (lotJson == null) {
       // For Parking events
       // Example: {"id": "c9c6842c-9cb6-4c10-89c5-aec9ba4e430b", "name": "Lot Illinois"}
-      return ParkingLot(lotId: json['id'], lotName: json['name']);
+      return ParkingLot(lotId:
+        AppJson.stringValue(json['id']),
+        lotName: AppJson.stringValue(json['name']));
     }
-    // For Inventory
-    // Example: {"lot": {"id": "12e8g939-b210-4019-de3b-19a00a31f58f", "name": "Lot - Illinois", "address1": "1800 S. First Street, Champaign, IL 61820", "total_spots": "483", "entrance": {"latitude": 40.094582, "longitude": -88.236374}, "polygon": [{"latitude": 40.094513, "longitude": -88.238494}, {"latitude": 40.095654, "longitude": -88.238505}, {"latitude": 40.095434, "longitude": -88.236751}, {"latitude": 40.09525, "longitude": -88.23655}, {"latitude": 40.246545, "longitude": -88.234361}]}, "spots_sold": 0, "spots_pre_sold": 0}
-    int? totalSpots = int.tryParse(lotJson['total_spots']);
-    LatLng? entrance = LatLng.fromJson(lotJson['entrance']);
-    List<dynamic>? polygonJson = lotJson['polygon'];
-    List<LatLng?>? polygon;
-    if (AppCollection.isCollectionNotEmpty(polygonJson)) {
-      polygon = polygonJson!.map((value) => LatLng.fromJson(value)).toList();
+    else {
+      // For Inventory
+      // Example: {"lot": {"id": "12e8g939-b210-4019-de3b-19a00a31f58f", "name": "Lot - Illinois", "address1": "1800 S. First Street, Champaign, IL 61820", "total_spots": "483", "entrance": {"latitude": 40.094582, "longitude": -88.236374}, "polygon": [{"latitude": 40.094513, "longitude": -88.238494}, {"latitude": 40.095654, "longitude": -88.238505}, {"latitude": 40.095434, "longitude": -88.236751}, {"latitude": 40.09525, "longitude": -88.23655}, {"latitude": 40.246545, "longitude": -88.234361}]}, "spots_sold": 0, "spots_pre_sold": 0}
+
+      return ParkingLot(
+        lotId: AppJson.stringValue(lotJson['id']),
+        lotName: AppJson.stringValue(lotJson['name']),
+        lotAddress: AppJson.stringValue(lotJson['address1']),
+        totalSpots: int.tryParse(AppJson.stringValue(lotJson['total_spots']) ?? '') ?? 0,
+        entrance: LatLng.fromJson(AppJson.mapValue(lotJson['entrance'])),
+        polygon: LatLng.listFromJson(AppJson.listValue(lotJson['polygon'])),
+        spotsSold: json['spots_sold'],
+        spotsPreSold: json['spots_pre_sold'],
+      );
     }
-    return ParkingLot(
-      lotId: lotJson['id'],
-      lotName: lotJson['name'],
-      lotAddress: lotJson['address1'],
-      totalSpots: totalSpots ?? 0,
-      entrance: entrance,
-      polygon: polygon,
-      spotsSold: json['spots_sold'],
-      spotsPreSold: json['spots_pre_sold'],
-    );
   }
 
   int get availableSpots {
@@ -193,7 +191,7 @@ class ParkingLot {
       "lot_address1": lotAddress,
       "total_spots": totalSpots,
       "entrance": entrance?.toJson(),
-      "polygon": polygon?.map((value) => value?.toJson()).toList(),
+      "polygon": LatLng.listToJson(polygon),
       "spots_sold": spotsSold,
       "spots_pre_sold": spotsPreSold,
     };

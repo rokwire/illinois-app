@@ -422,7 +422,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget _explorePaymentTypes() {
     List<Widget>? details;
     Dining? dining = (widget.explore is Dining) ? (widget.explore as Dining) : null;
-    List<PaymentType?>? paymentTypes = dining?.paymentTypes;
+    List<PaymentType>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
       for (PaymentType? paymentType in paymentTypes) {

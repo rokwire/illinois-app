@@ -1176,7 +1176,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
 
   int getVisibleRepliesCount() {
     int result = 0;
-    List<GroupPost?>? replies = widget.post?.replies;
+    List<GroupPost>? replies = widget.post?.replies;
     if (replies != null) {
       bool? memberOrAdmin = widget.group?.currentUserIsMemberOrAdmin;
       for (GroupPost? reply in replies) {

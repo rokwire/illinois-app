@@ -33,7 +33,7 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final String? guide;
   final String? category;
   final GuideSection? section;
-  final List<Map<String, dynamic>?>? contentList;
+  final List<Map<String, dynamic>>? contentList;
   final String? contentTitle;
 
   GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle});

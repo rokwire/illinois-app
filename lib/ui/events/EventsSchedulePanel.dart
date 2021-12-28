@@ -520,7 +520,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
             active: _initialSelectedFilter!.active);
         _initialSelectedFilter = null;
       }
-      List<String?>? filterValues = _getFilterValuesByType(selectedFilter.type);
+      List<String>? filterValues = _getFilterValuesByType(selectedFilter.type);
       if (AppCollection.isCollectionEmpty(filterValues)) {
         continue;
       }

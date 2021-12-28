@@ -251,7 +251,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
     List<_FilterEntry> filterValues;
     dynamic selectedFilterValue;
-    List<String?>? subLabels;
+    List<String>? subLabels;
     switch(_selectedFilter) {
       case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
@@ -281,12 +281,12 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     );
   }
 
-  List<String?> _buildTimeDates() {
+  List<String> _buildTimeDates() {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
     Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
 
-    List<String?> timeDates = <String?>[];
+    List<String> timeDates = <String>[];
     for (_FilterEntry timeEntry in _times) {
       String? timeDate;
       _DateInterval? interval = intervals[timeEntry.value];
@@ -303,7 +303,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
           timeDate = startStr;
         }
       }
-      timeDates.add(timeDate);
+      timeDates.add(timeDate ?? '');
     }
 
     return timeDates;
@@ -706,20 +706,20 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
 
   List<dynamic> _buildContentList() {
     Map<_TimeFilter, _DateInterval> intervals = _getTimeFilterIntervals();
-    Map<_TimeFilter, List<InboxMessage?>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
-    List<InboxMessage?>? otherList;
+    Map<_TimeFilter, List<InboxMessage>> timesMap = Map<_TimeFilter, List<InboxMessage>>();
+    List<InboxMessage>? otherList;
     for (InboxMessage? message in _messages) {
       _TimeFilter? timeFilter = _filterTypeFromDate(message!.dateCreatedUtc?.toLocal(), intervals: intervals);
       if (timeFilter != null) {
-        List<InboxMessage?>? timeList = timesMap[timeFilter];
+        List<InboxMessage>? timeList = timesMap[timeFilter];
         if (timeList == null) {
-          timesMap[timeFilter] = timeList = <InboxMessage?>[];
+          timesMap[timeFilter] = timeList = <InboxMessage>[];
         }
         timeList.add(message);
       }
       else {
         if (otherList == null) {
-          otherList = <InboxMessage?>[];
+          otherList = <InboxMessage>[];
         }
         otherList.add(message);
       }
@@ -728,7 +728,7 @@ class _InboxHomePanelState extends State<InboxHomePanel> implements Notification
     List<dynamic> contentList = <dynamic>[];
     for (_FilterEntry timeEntry in _times) {
       _TimeFilter? timeFilter = timeEntry.value;
-      List<InboxMessage?>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
+      List<InboxMessage>? timeList = (timeFilter != null) ? timesMap[timeFilter] : null;
       if (timeList != null) {
         contentList.add(timeEntry.name!.toUpperCase());
         contentList.addAll(timeList);

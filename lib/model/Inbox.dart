@@ -193,7 +193,7 @@ class InboxRecepient {
     return result;
   }
 
-  static List<dynamic>? listToJson(List<InboxRecepient?>? recepientsList) {
+  static List<dynamic>? listToJson(List<InboxRecepient>? recepientsList) {
     List<dynamic>? result;
     if (recepientsList != null) {
       result = [];

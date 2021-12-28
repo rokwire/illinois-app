@@ -23,11 +23,11 @@ class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttribu
 }
 
 class _GroupAllEventsState extends State<GroupAllEventsPanel>{
-  List<GroupEvent?>?   _groupEvents;
+  List<GroupEvent>?   _groupEvents;
 
   @override
   void initState() {
-    Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent?>>? eventsMap) {
+    Groups().loadEvents(widget.group).then((Map<int, List<GroupEvent>>? eventsMap) {
       if (mounted) {
         setState(() {
           _groupEvents = AppCollection.isCollectionNotEmpty(eventsMap?.values) ? eventsMap!.values.first : null;

@@ -568,7 +568,7 @@ class SettingsNewPrivacyPanelState extends State<SettingsNewPrivacyPanel> implem
 
   Widget _descriptionLayout() {
     int level = _sliderValue?.round() ?? _privacyLevel.truncate();
-    PrivacyDescription? description = _data?.privacyDescription?.firstWhere((element) => element!.level == level);
+    PrivacyDescription? description = _data?.privacyDescription?.firstWhere((element) => element.level == level);
     if(description == null){
       return Container(); //empty
     }

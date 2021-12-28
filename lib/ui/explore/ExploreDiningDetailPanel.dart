@@ -109,9 +109,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     if(!dining!.hasDiningSchedules){
       _isDiningLoading = true;
 
-      DiningService().loadBackendDinings(false, null, _locationData).then((List<Dining?>? dinings){
+      DiningService().loadBackendDinings(false, null, _locationData).then((List<Dining>? dinings){
         if(dinings != null){
-          Dining? foundDining = dinings.firstWhere((entry){return entry!.id == dining!.id;});
+          Dining? foundDining = Dining.diningFromList(dinings, id: dining!.id);
           if(foundDining != null){
             dining = foundDining;
             _isDiningLoading = false;
@@ -266,7 +266,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
 
   Widget? _explorePaymentTypes() {
     List<Widget>? details;
-    List<PaymentType?>? paymentTypes = dining?.paymentTypes;
+    List<PaymentType>? paymentTypes = dining?.paymentTypes;
     if ((paymentTypes != null) && (0 < paymentTypes.length)) {
       details = [];
       for (PaymentType? paymentType in paymentTypes) {
@@ -363,13 +363,13 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     );
   }
 
-  String paymentsToString(List<PaymentType?>? payments){
+  String paymentsToString(List<PaymentType>? payments){
     String result = "";
     final String paymentTypePrefix = "PaymentType.";
     if(AppCollection.isCollectionNotEmpty(payments)) {
       payments!.forEach((payment) {
-        String? paymentType = payment?.toString();
-        if ((paymentType != null) && paymentType.startsWith(paymentTypePrefix) && (paymentTypePrefix.length < paymentType.length)) {
+        String paymentType = payment.toString();
+        if (paymentType.startsWith(paymentTypePrefix) && (paymentTypePrefix.length < paymentType.length)) {
           result += paymentType.substring(paymentTypePrefix.length, paymentType.length) + "\n";
         }
       });
@@ -650,8 +650,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   List<DiningSchedule>? __schedules;
   int _selectedScheduleIndex = -1;
 
-  List<String?>? _displayDates;
-  List<DateTime?>? _filterDates;
+  List<String>? _displayDates;
+  List<DateTime>? _filterDates;
   int _selectedDateFilterIndex = 0;
 
   List<DiningProductItem>? _productItems;
@@ -663,8 +663,8 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
   void initState() {
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFoodChanged);
 
-    _displayDates = widget.dining!.displayScheduleDates;
-    _filterDates = widget.dining!.filterScheduleDates;
+    _displayDates = widget.dining?.displayScheduleDates;
+    _filterDates = widget.dining?.filterScheduleDates;
 
     _findTodayFilter();
 
@@ -685,12 +685,14 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   void _findTodayFilter(){
     DateTime nowUtc = DateTime.now().toUtc();
-    for(String? dateString in _displayDates!){
-      List<DiningSchedule> schedules = widget.dining!.displayDateScheduleMapping[dateString]!;
-      for(DiningSchedule schedule in schedules){
-        if(nowUtc.isBefore(schedule.endTimeUtc!)){
-          _selectedDateFilterIndex = _displayDates!.indexOf(dateString);
-          return;
+    if(_displayDates != null) {
+      for(String dateString in _displayDates!){
+        List<DiningSchedule> schedules = widget.dining!.displayDateScheduleMapping[dateString]!;
+        for(DiningSchedule schedule in schedules){
+          if(nowUtc.isBefore(schedule.endTimeUtc!)){
+            _selectedDateFilterIndex = _displayDates!.indexOf(dateString);
+            return;
+          }
         }
       }
     }
@@ -782,7 +784,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     if(_selectedDateFilterIndex < _filterDates!.length - 1) {
       _selectedDateFilterIndex++;
 
-      String? displayDate = _displayDates![_selectedDateFilterIndex];
+      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
       _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
 
       _loadProductItems();
@@ -798,7 +800,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
     if(_selectedDateFilterIndex > 0) {
       _selectedDateFilterIndex--;
 
-      String? displayDate = _displayDates![_selectedDateFilterIndex];
+      String? displayDate = (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : null;
       _schedules = widget.dining!.displayDateScheduleMapping[displayDate];
 
       _loadProductItems();
@@ -882,7 +884,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      _displayDates![_selectedDateFilterIndex]!,
+                      (_displayDates != null) ? _displayDates![_selectedDateFilterIndex] : '',
                       style: TextStyle(
                           fontFamily: Styles().fontFamilies!.extraBold,
                           fontSize: 20,

@@ -283,9 +283,9 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
-  List<Map<String, dynamic>?>? get remindersList {
+  List<Map<String, dynamic>>? get remindersList {
     if (_contentList != null) {
-      List<Map<String, dynamic>?> remindersList = <Map<String, dynamic>?>[];
+      List<Map<String, dynamic>> remindersList = <Map<String, dynamic>>[];
       DateTime nowUtc = DateTime.now().toUtc();
       DateTime midnightUtc = DateTime(nowUtc.year, nowUtc.month, nowUtc.day);
       for (dynamic entry in _contentList!) {
@@ -293,7 +293,7 @@ class Guide with Service implements NotificationsListener {
         if (isEntryReminder(guideEntry)) {
           DateTime? entryDate = reminderDate(guideEntry);
           if ((entryDate != null) && (midnightUtc.compareTo(entryDate) <= 0)) {
-            remindersList.add(guideEntry);
+            remindersList.add(guideEntry!);
           }
         }
       }
@@ -307,13 +307,13 @@ class Guide with Service implements NotificationsListener {
     return null;
   }
 
-  List<Map<String, dynamic>?>? get promotedList {
+  List<Map<String, dynamic>>? get promotedList {
     if (_contentList != null) {
-      List<Map<String, dynamic>?> promotedList = <Map<String, dynamic>?>[];
+      List<Map<String, dynamic>> promotedList = <Map<String, dynamic>>[];
       for (dynamic contentEntry in _contentList!) {
         Map<String, dynamic>? guideEntry = AppJson.mapValue(contentEntry);
         if (_isEntryPromoted(guideEntry)) {
-          promotedList.add(guideEntry);
+          promotedList.add(guideEntry!);
         }
       }
       return promotedList;
