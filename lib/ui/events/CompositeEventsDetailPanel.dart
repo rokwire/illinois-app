@@ -455,7 +455,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Widget _buildEventsList() {
-    List<Event>? eventList = widget.parentEvent!.isSuperEvent! ? widget.parentEvent!.featuredEvents : widget.parentEvent!.recurringEvents;
+    List<Event>? eventList = (widget.parentEvent?.isSuperEvent == true) ? widget.parentEvent?.featuredEvents : widget.parentEvent?.recurringEvents;
     return _EventsList(events: eventList, parentEvent: widget.parentEvent,);
   }
 
@@ -652,7 +652,7 @@ class _EventsListState extends State<_EventsList>{
 
   @override
   Widget build(BuildContext context) {
-    String titleKey = widget.parentEvent!.isSuperEvent!
+    String titleKey = (widget.parentEvent?.isSuperEvent == true)
         ? "panel.explore_detail.super_event.schedule.heading.title"
         : "panel.explore_detail.recurring_event.schedule.heading.title";
     return SectionTitlePrimary(
@@ -729,8 +729,8 @@ class _EventEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(event);
     bool starVisible = Auth2().canFavorite;
-    String title = parentEvent!.isSuperEvent! ? event!.title! : event!.displayDate!;
-    String subTitle = parentEvent!.isSuperEvent! ? event!.displaySuperTime : event!.displayStartEndTime!;
+    String title = ((parentEvent?.isSuperEvent == true) ? event?.title : event?.displayDate) ?? '';
+    String subTitle = ((parentEvent?.isSuperEvent == true) ? event?.displaySuperTime : event?.displayStartEndTime) ?? '';
     return GestureDetector(onTap: () => _onTapEvent(context), child: Container(
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1.0), borderRadius: BorderRadius.circular(4.0),
       ),
@@ -769,7 +769,7 @@ class _EventEntry extends StatelessWidget {
   }
 
   void _onTapEvent(BuildContext context) {
-    if (parentEvent!.isSuperEvent!) {
+    if (parentEvent?.isSuperEvent == true) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: event, superEventTitle: parentEvent!.title)));
     }
   }

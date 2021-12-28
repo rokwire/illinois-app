@@ -495,7 +495,7 @@ class ExploreService with Service implements NotificationsListener {
             }
             addEventToList = false;
           }
-        } else if(event.isSuperEvent!) {
+        } else if(event.isSuperEvent == true) {
           await _buildEventsForSuperEvent(event, eventFilter);
         }
         if (addEventToList && !displayOnlyWithSuperEvent) {

@@ -531,7 +531,7 @@ class Event with Explore implements Favorite {
   }
 
   void addSubEvent(Event event) {
-    if (!isSuperEvent!) {
+    if (isSuperEvent != true) {
       return;
     }
     if (_subEvents == null) {
@@ -545,7 +545,7 @@ class Event with Explore implements Favorite {
   }
 
   void addFeaturedEvent(Event event) {
-    if (!isSuperEvent!) {
+    if (isSuperEvent != true) {
       return;
     }
     if (_featuredEvents == null) {
@@ -682,7 +682,7 @@ class Event with Explore implements Favorite {
   }
 
   String? get displaySuperDates {
-    if (!isSuperEvent!) {
+    if (isSuperEvent != true) {
       return '';
     }
     if (subEvents == null || subEvents!.isEmpty) {
@@ -696,7 +696,7 @@ class Event with Explore implements Favorite {
   String? get timeDisplayString {
     if (isRecurring) {
       return displayRecurringDates;
-    } else if (isSuperEvent!) {
+    } else if (isSuperEvent == true) {
       return displaySuperDates;
     }
     return displayDateTime;
@@ -739,7 +739,7 @@ class Event with Explore implements Favorite {
   }
 
   bool get isComposite {
-    return isRecurring || isSuperEvent!;
+    return isRecurring || (isSuperEvent == true);
   }
 
   String _createRandomImageUrl() {
