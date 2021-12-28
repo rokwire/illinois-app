@@ -231,9 +231,15 @@ class DiningService  with Service {
 
   // Helpers
   void _sortExploresByLocation(List<Explore> explores, Position locationData) {
-    explores.sort((Explore? explore1, Explore? explore2) {
-      double distance1 = AppLocation.distance(explore1!.exploreLocation!.latitude as double, explore1.exploreLocation!.longitude as double, locationData.latitude, locationData.longitude);
-      double distance2 = AppLocation.distance(explore2!.exploreLocation!.latitude as double, explore2.exploreLocation!.longitude as double, locationData.latitude, locationData.longitude);
+    explores.sort((Explore explore1, Explore explore2) {
+      double? lat1 = explore1.exploreLocation?.latitude?.toDouble();
+      double? lng1 = explore1.exploreLocation?.longitude?.toDouble();
+      double distance1 = ((lat1 != null) && (lng1 != null)) ? AppLocation.distance(lat1, lng1, locationData.latitude, locationData.longitude) : double.infinity;
+      
+      double? lat2 = explore2.exploreLocation?.latitude?.toDouble();
+      double? lng2 = explore2.exploreLocation?.longitude?.toDouble();
+      double distance2 = ((lat2 != null) && (lng2 != null)) ? AppLocation.distance(lat2, lng2, locationData.latitude, locationData.longitude) : double.infinity;
+      
       if (distance1 < distance2) {
         return -1;
       }
